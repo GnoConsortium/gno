@@ -1,0 +1,9 @@
+Name:    df
+Version: 1.0 (28 Sep 97)
+Shell:   GNO/ME
+Author:  Evan Day (from FreeBSD source)
+Contact: day@engr.orst.edu
+Where:   /usr/bin
+FTP:     
+
+   Displays free disk space and disk usage statistics for GS/OS block devices.
