@@ -1,0 +1,31 @@
+/*
+ * Resources for whois version and comment
+ *
+ * $Id: whois.rez,v 1.1 1998/01/24 08:25:03 taubert Exp $
+ */
+#define PROG "whois"
+#define DESC "Internet user name directory service."
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 0, 0,	/* Version 1.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	PROG,	/* Program name */
+        DESC " Released with GNO/ME and GS/TCP."
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG " v1.0 (November 1997)\n"
+	"GNO utility: " DESC "\n"
+	"Ported from FreeBSD 2.1.0 code by Derek Taubert."
+};
