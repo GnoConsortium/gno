@@ -1,0 +1,27 @@
+LSEG(1)			Commands and Applications		LESS(1)
+
+
+
+NAME
+    lseg - list segments in an OMF file
+
+SYNOPSIS
+    lseg file ...
+
+DESCRIPTION
+    lseg lists the segments of an OMF executable file.  While it can
+    list the segments in an intermediate object file, the information
+    isn't as useful.
+
+    lseg is intended for discovering the location of stack segments in
+    existing applications (for editing to smaller sizes), as an
+    aid in determining how to segment large C files whose segments
+    exceed the bank size, and for deciding which segments to recombine
+    after excessive segmentation.
+
+AUTHOR
+    Jawaid Bazyar for GNO/ME 1.0.
+
+BUGS
+    Doesn't detect non-OMF files, and thus can get very confused if you
+    do "lseg *" and one of the files chosen isn't an OMF file.
