@@ -8,7 +8,7 @@
 # -------------------------------------------------------------------
 
 # Location of sed command to be tested
-set SED=/src/gno/usr.bin/sed/sed
+set SED=/obj/gno/usr.bin/sed/sed
 
 # GNO's rm command is implemented under the cp command
 set RM="cp -p rm"
