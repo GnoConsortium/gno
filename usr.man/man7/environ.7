@@ -1,0 +1,233 @@
+.\" This man page has been written to conform with the lenviron v1.1.3
+.\" release for Gno v2.0.3 and later by Devin Reade.  glyn@cs.ualberta.ca
+.\"
+.TH ENVIRON 7 "Miscellaneous" "13 April 1994" "Version 1.1.3"
+.SH NAME
+environ \- user environment for Gno and Orca
+.SH SYNOPSIS
+#include <stdlib.h>
+.LP
+.B "extern char **environ;"
+.SH DESCRIPTION
+Under UNIX, an array of strings called the `environment' is made available by
+.BR execve (2)
+when a process begins.  By convention these strings have the
+form \fIname=value\fR.
+However, because of the shell variable and environment passing mechanisms
+normally provided for the IIgs (and with Gno and Orca in particular), this
+method of controlling and accessing the environment has not previously been
+available.  Specifically, under Gno and Orca
+.BR environ
+is not initialized by the
+.BR exec (3)
+family of calls.  To accomodate this \'feature\', the library call
+.BR initenv (3)
+has been provided to properly initialize
+.BR environ .
+.LP
+The following names are used by various commands:
+.TP 20
+.B PATH
+The sequence of directory prefixes that
+.BR gsh (1),
+.BR sh (1),
+.BR time (1V),
+.BR nice (1),
+etc., apply in searching for a file known by an incomplete path name.
+The prefixes are delimited by spaces since colons are valid pathname
+characters under GS/OS.  Current versions of
+.B gsh
+parse
+.B PATH
+backwards, that is from back to front.
+.B lenviron
+has been compiled to match this behavior, but can be easily recompiled
+to conform to the more usual parsing method, front to back.  See the
+.B lenviron
+distribution README file for more information.
+.TP
+.B HOME
+The name of the user's login directory, set by
+.BR login (1)
+from the password file
+.B /etc/passwd
+(see
+.BR passwd (5)).
+.TP
+.B TERM
+The type of terminal on which the user is logged in.
+This information is used by commands, such as
+.BR nroff (1)
+or
+.BR plot (1G),
+which may exploit special terminal capabilities.  See
+.B /etc/termcap
+.RB ( termcap (5))
+for a list of terminal types.
+.TP
+.B SHELL
+The path name of the user's login shell.
+.TP
+.B TERMCAP
+The string describing the terminal in
+.SM TERM,
+or the name of the
+.B termcap
+file, see
+.BR termcap (3X),
+.BR termcap (5).
+.TP
+.B EXINIT
+A startup list of commands read by
+.BR ex (1),
+.BR edit ,
+and
+.BR vi (1).
+.TP
+.BR USER " or " LOGNAME
+The user's login name.
+.TP
+.B TZ
+The name of the time zone that the user is located in.  If
+.B TZ
+is not present in the environment, the system's default time zone,
+normally the time zone that the computer is located in, is used.
+.LP
+Further names may be placed in the environment by the
+.IR set " and " setenv
+commands under
+.BR gsh (1),
+the
+.I export
+command and
+.IR name = value
+arguments in
+.BR sh (1),
+or by the
+.B setenv
+command if you use
+.BR csh (1).
+It is unwise to conflict with certain
+.BR sh (1)
+variables that are frequently exported by
+.B .profile
+files:
+.BR \s-1MAIL\s0 ,
+.BR \s-1PS\s01 ,
+.BR \s-1PS\s02 ,
+.BR \s-1IFS\s0 .
+.LP
+Various names are expected to be defined and used by
+locale dependent commands and functions
+(see
+.BR locale (5)).
+.SH GNO IMPLEMENTATION
+The Gno implementation of the environment actually has two sets of shell
+variables.  The first is the NULL\-terminated array of strings pointed to by
+.BR environ .
+The second is the set of internal shell variables set by such system calls as
+.BR SetGS " and " UnsetVariableGS .
+The latter of these is the one normally used by Orca/C.  Unfortunately, the
+latter implementation makes the porting of some UNIX utilities more
+difficult.  The
+.BR environ
+library was created to solve this problem without adding significant overhead
+to environment calls when reference to
+.BR environ
+is not needed.
+.LP
+When the
+.BR environ
+variable is not needed, calls made to
+.BR putenv (3),
+.BR setenv "(3), and"
+.BR getenv (3)
+result in only the internal shell variables to be set, and
+.BR environ
+will remain NULL; its default value.
+.LP
+If, however,
+.BR environ
+is to accessed, then an initial call must be made to
+.BR initenv (3).
+This produces the array of strings based on the shell variables defined
+internally, and keeps the array current with further calls to
+.BR putenv "(3), or"
+.BR setenv (3).
+.SH CAVEATS                                                  
+Under the Orca shell, three `extraneous' shell variables are defined:
+.BR STATUS ,
+.BR Command ", and"
+.BR Exit .
+These are reset with every call to the Orca shell and should not, in general,
+be considered to be current.
+.LP
+When one of the
+.BR exec (3)
+family of calls is carried out, the environment will not be passed on through
+.BR environ .
+In order for the next process to use
+.BR environ ,
+it must make another call to
+.BR initenv (3).
+Note, however, that child processes will still have residing in the internal
+shell variables all previous modifications to the environment.
+.LP
+In order to conduct an environment context switch, you must invoke the functions
+.BR pushenv " (3) and " popenv (3).
+This context switch behaves similarily to
+.BR PushVariableGS " or " PopVariableGS ,
+but will result in both internal and external shell variables being saved
+and restored, rather than just the internal variables.
+.LP
+While the
+.BR environ
+array may be read by user applications, it cannot be directly modified with
+impudence; any additions or deletions to the
+.BR environ
+array other that through the mentioned routines will not be reflected in the
+internal shell variables. Also, since environ entries are dynamically
+allocated and freed, modifying those entries without using the library
+routines may result in memory trashing and unpredicable behavior.
+.SH FILES                                 
+.nf
+.LP
+.B /lib/lenviron
+.B /etc/passwd
+.B etc/termcap
+.fi
+.SH BUGS
+None are known at this time.  Send bug reports to Devin Reade at one of the
+addresses below.  If you cannot contact me at those addresses, look for
+me on the Internet comp.sys.apple2.* newsgroups.
+.SH AUTHORS
+.nf
+The environ library was created for Orca/Gno by:
+.LP
+.RS
+G. Devin Reade      glyn@cs.ualberta.ca
+                    dreade@gpu.srv.ualberta.ca
+                    glyn@ersys.edmonton.ab.ca
+.RE
+.LP
+It contains code fragments from:
+.LP
+.RS
+Dave Tribby         GEnie: D.TRIBBY
+                    Internet: tribby@cup.hp.com
+James Brookes       jamesb@cscihp.ecst.csuchico.edu
+.RE
+.fi                                 
+.LP
+The environ library also contains code is derived from software contributed
+to Berkeley by the American National Standards Committee X3, on
+Information Processing Systems.  Those portions are copyright (c) 1988,
+1991.  The Regents of the University of California.  All rights reserved.
+.SH SEE ALSO
+.BR gsh (1),
+.BR execve (2),
+.BR getenv (3),
+.BR system (3),
+.BR termcap (3X),
+.BR passwd (5),
+.BR termcap (5)
