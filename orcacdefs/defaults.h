@@ -1,13 +1,14 @@
 /*************************************************
  * Start of GNO v2.0.6 definitions.
  *
- * $Id: defaults.h,v 1.4 1997/09/21 22:23:53 gdr Exp $
+ * $Id: defaults.h,v 1.5 1997/09/21 22:24:49 gdr Exp $
  */
 
 #define	__appleiigs__
 #define	__GNO__
 
 #pragma path "/usr/include"
+#pragma path "/HFSinclude"
 #pragma path "/lang/orca/include"
 
 /*
