@@ -2,7 +2,7 @@
 # Compilation constants for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binconst.mk,v 1.10 1998/12/31 21:26:34 gdr-ftp Exp $
+# $Id: binconst.mk,v 1.11 1999/01/07 07:28:14 gdr-ftp Exp $
 #
 # Devin Reade, 1997.
 #
@@ -27,7 +27,8 @@ TMPDIR		= 14
 .END
 
 # $(DESC_SRC) is the created source file for the describe(1) database.
-DESC_DIR	= $(RELEASE_DIR)/usr/lib
+# DESC_DIR	= $(RELEASE_DIR)/usr/lib
+DESC_DIR	= $(SRC_DIR)/gno/doc/describe
 DESC_SRC	= $(DESC_DIR)/describe.src
 
 # If no source files were defined, use program name
