@@ -1,0 +1,29 @@
+/*
+ * $Id: calendar.rez,v 1.1 1998/07/07 02:14:30 gdr-ftp Exp $
+ */
+
+#define PROG "calendar"
+#define DESC "Prints out upcoming events."
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 2, 0,	/* Version */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	PROG,	/* Program name */
+        DESC " Released with GNO/ME."
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG " v1.2 (6 July 1998)\n"
+	"GNO utility: " DESC
+};

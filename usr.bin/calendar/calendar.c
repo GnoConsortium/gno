@@ -1,6 +1,32 @@
-/* Calendar file v1.0. Copyright 1994 by Christopher Neufeld       */
-/* The executable for this file contains linked runtime libraries
-   copyrighted by The Byte Works. Used with permission.                   */
+/*
+ * Calendar file v1.0. Copyright 1994-1998 by Christopher Neufeld
+ *
+ * The executable for this file contains linked runtime libraries
+ * copyrighted by The Byte Works. Used with permission.
+ *
+ * Change Log:
+ *
+ * 1.0 -- [Christopher Neufeld, 1994]  Initial version.
+ *
+ * 1.1 -- [Marlin Allred, 1 Jul 1998]
+ *        + the date can now appear anywhere on the line
+ *        + on the weekend, Monday events are also listed
+ *        + man page was converted from preformatted ASCII to nroff source
+ *        + binary linked with the v2.0.6 libraries
+ *
+ * 1.2 -- [Devin Reade, 6 Jul 1998]
+ *        + fixed a bug introduced in 1.1 where getting an error while
+ *          reading the calandar file could cause an infinite loop
+ *        + added the describe entry and resource fork
+ *        + added these "ChangeLog" comments for all versions
+ *        + added this program to the GNO base distribution
+ *        + eliminated "pragma stacksize" from the source file; it was too
+ *	    small (was 512 bytes, currently using 862 bytes) and overriding
+ *	    the value given on the command line during the GNO base build
+ *          process
+ *
+ * $Id: calendar.c,v 1.3 1998/07/07 02:14:30 gdr-ftp Exp $
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,8 +34,10 @@
 #include <time.h>
 #include <ctype.h>
 #include <string.h>
-
-#pragma stacksize 512
+#include <err.h>
+#ifdef __GNO__
+#include <gno/gno.h>
+#endif
 
 #define NMONTHS 12
 #define NDAYS 31
@@ -31,12 +59,16 @@ int main(void)
 {
   FILE *ifile;
   time_t t1, t2;
-  struct tm st1, st2;
+  static struct tm st1, st2;
   int monthnum, daynum, dayschk, i, j;
   char *ptr1, *ptr2, holdmnth[4];
   static char thislin[MAXLINELEN+1];
   long deltat;
   long ldayschk;
+
+#ifdef __GNO__
+  __REPORT_STACK();
+#endif
 
   if ((ifile = fopen(CALFILE, "r")) == NULL) exit(0); /* Open calendar file
                        in CWD. If there is none, exit successfully */
@@ -50,12 +82,9 @@ int main(void)
                        tomorrow, unless tomorrow is on the weekend, in
                        which case we check up to and including Monday  */
   thislin[MAXLINELEN] = 0;
-  while (!feof(ifile)) {
-    if (fgets(thislin, MAXLINELEN, ifile) == NULL) {   /* Get a line from the calendar file */
-      if (feof(ifile)) break;   /* Didn't read a line, if we're done, quit */
-      fprintf(stderr, "Can't happen\n");
-      continue;                 /* Something funny happened on the read */
-    }
+
+  /* Get each line from the calendar file */
+  while (fgets(thislin, MAXLINELEN, ifile) != NULL) {
     ptr1 = thislin;
     while (isspace(*ptr1) && *ptr1 != 0) ptr1++;  /* Flush initial whitespace */
     if (*ptr1 == 0) continue;                        /* Blank line */
@@ -103,6 +132,9 @@ int main(void)
     }
     if (deltat <= dayschk * SECSPERDAY) printf(thislin);
       /* print the entire line if it is inside our acceptance window */
+  }
+  if (ferror(ifile)) {
+    err(1, "error while reading %s", CALFILE);
   }
   fclose(ifile);
   exit(0);
