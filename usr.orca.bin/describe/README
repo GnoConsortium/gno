@@ -1,14 +1,14 @@
-$Id: README,v 1.5 1997/12/20 17:14:00 gdr Exp $
+$Id: README,v 1.6 1997/12/22 00:34:51 gdr Exp $
 
 This is the README file for the describe package.  This package is
-designated as version 1.0.4, and consists of the following utilities:
+designated as version 1.0.5, and consists of the following utilities:
 
-	describe v1.0.4  - show database entries describing the current
-                           status of programs
+	describe - show database entries describing the current
+                   status of programs
 
-	descc    v1.0.4  - the describe source compiler
+	descc    - the describe source compiler
 
-	descu    v1.0.4  - the describe source updater
+	descu    - the describe source updater
 
 ABOUT DESCRIBE AND DESCC
 ========================
@@ -94,6 +94,11 @@ CHANGES
 
 This details changes to the entire distribution.
 
+v1.0.5  December 1997
+	Updated descu so that the "Last Updated" line in the describe
+	source "header" is updated to reflect the current date and
+	time (GMT, if supported).
+
 v1.0.4  September 1997
 	This package is now part of the base GNO distribution.
 	Version numbers are now in lockstep.
@@ -140,17 +145,20 @@ AUTHORS
 The original describe and descc utilities and the describe format were
 written by James Brookes <jamesb@ecst.csuchico.edu>.
 
-The descu utility and v1.01 as well as 1.0.4 modifications to the describe
-package were by Devin Reade <gdr@myrias.ab.ca>.
+The descu utility was written by Devin Reade.
 
-v1.02/1.03 modifications to the describe package were by Soenke Behrens
-<sbehrens@bigfoot.com>.
+The following people have performed updates as listed:
+	v1.0.5	Devin Reade	<gdr@myrias.com>
+	v1.0.4	Devin Reade
+	v1.03	Soenke Behrens	<sbehrens@bigfoot.com>
+	v1.02	Soenke Behrens
+	v1.01	Devin Reade
 
 LEGALESE
 ========
 
-The describe and descc utilities are copyright (c) 1994-1995 by James
-Brookes.  The descu utility is copyright (c) 1995 by Devin Reade.
+The describe and descc utilities are copyright (c) 1994-1997 by James
+Brookes.  The descu utility is copyright (c) 1995-1997 by Devin Reade.
 
 These programs may be freely copied provided that the archive, including
 source files and this README, remain intact.  Modified versions of these
@@ -162,5 +170,5 @@ any commercial software collections.  Permission is granted to Usenet sites
 and GEnie Information Services for inclusion in software archives.
 
 The Apple IIGS executable files distributed with this archive contain
-material from the ORCA/C Run-Time Libraries, copyright 1987-1995 by
+material from the ORCA/C Run-Time Libraries, copyright 1987-1997 by
 Byte Works, Inc.  Used with permission.

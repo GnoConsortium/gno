@@ -2,11 +2,11 @@
  * Header file for the describe package.  This file is
  * used by describe(1), descc(8), and descu(8).
  *
- * $Id: desc.h,v 1.4 1997/09/26 05:56:54 gdr Exp $
+ * $Id: desc.h,v 1.5 1997/12/22 00:34:52 gdr Exp $
  */
 
 /* Keep these utilities in lockstep. */
-#define _VERSION_ "v1.0.4"
+#define _VERSION_ "v1.0.5"
 
 #define QUOTE_CHAR '#'
 #define DATABASE   "/usr/lib/describe.db"

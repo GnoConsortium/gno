@@ -11,7 +11,7 @@
  * Copyright 1995-1997 by Devin Reade for James Brookes' describe(1) utility.
  * See the included README file and man page for details.
  *
- * $Id: descu.c,v 1.5 1997/10/30 04:19:10 gdr Exp $
+ * $Id: descu.c,v 1.6 1997/12/22 00:34:52 gdr Exp $
  */
 
 #include <sys/types.h>
@@ -24,6 +24,7 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
+#include <time.h>
 #ifdef __GNO__
 #include <gno/gno.h>
 #endif
@@ -461,11 +462,14 @@ void usage(char *progName) {
  */
 
 int main(int argc, char **argv) {
+  static char *revisionMagic = "\n# Last revision:";
+  time_t t;
   char *buffer;
   int i, j;
   FILE *outfp, *rejfp, *temp = NULL;
   int c;
   char *outputfile=NULL;
+  char *p;
   int compare;
 
 #ifdef __STACK_CHECK__
@@ -550,7 +554,22 @@ int main(int argc, char **argv) {
 
   /* print the header, if it exists */
   if (header != NULL) {
-    fprintf(outfp,"%s\n",header);
+    if ((p = strstr(header, revisionMagic)) != NULL) {
+      /* found the "Last revision" line?  Update it */
+      *p = '\0';
+      p += strlen(revisionMagic);
+      while (*p && *p != '\n') {
+	p++;
+      }
+      if (*p) {
+	p++;
+      }
+      time(&t);
+      fprintf(outfp,"%s%s %s%s", header, revisionMagic,
+	      asctime(gmtime(&t)), p);
+    } else {
+      fprintf(outfp,"%s\n", header);
+    }
   }
 
   /* first stage; merge while we have two arrays */
