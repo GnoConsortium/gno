@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Sun Sep 27 15:49:35 1998
+# Last revision: Tue Nov  3 16:07:08 1998
 #
-# $Id: describe.src,v 1.13 1998/09/27 15:53:03 gdr-ftp Exp $
+# $Id: describe.src,v 1.14 1998/11/03 16:10:19 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -394,6 +394,16 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 This is an OMF disassembler designed for OMF 1.0 and 2.0 files.  Output is
 similar to the ORCA and APW utility 'dumpobj', although OMF and 65816
 disassemblies are much cleaner and more readable.
+
+Name:    col
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Filter reverse line feeds from input.
 
 Name:    colrm
 Version: 1.0
@@ -1625,6 +1635,17 @@ FTP:     ftp.gno.org
 
 Invoke a command immune from hangups.
 
+Name:    nologin
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD update)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/sbin
+FTP:     ftp.gno.org
+
+nologin is a program used to put a user's account in suspension. <0a> 
+It prints a message and then exits.
+
 Name:    now
 Version: 1.2
 Shell:   GNO, ORCA
@@ -1732,6 +1753,16 @@ FTP:     -
 
 Based on talk, phone allows two users to interactively chat in a
 split-screen format.
+
+Name:    quiz
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/games
+FTP:     ftp.gno.org
+
+Random knowledge tests.
 
 Name:    rattr
 Version: 1.0
@@ -2325,6 +2356,16 @@ Where:   /usr/local/bin
 FTP:     ftp.gno.org
 Remove ifdef'd lines.
 
+Name:    units
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Units conversion program.
+
 Name:    unpp
 Version: 1.1
 Shell:   ORCA/Shell, GNO/ME
@@ -2377,6 +2418,16 @@ FTP:     -
 
 Keeps track of system load averages for the uptime utility over the last
 1, 5 and 15 minutes.
+
+Name:    users
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+List current users.
 
 Name:    utp
 Version: 2.1.1
