@@ -1,7 +1,7 @@
 #
 # Devin Reade, 1998
 #
-# $Id: Makefile,v 1.2 1998/03/29 20:52:14 gdr-ftp Exp $
+# $Id: Makefile,v 1.3 1998/04/22 05:22:44 gdr-ftp Exp $
 #
 
 CUSTOM_RULES	= true		# provide our own build rules
@@ -73,11 +73,12 @@ RELDIRS	= $(RELSBIN) $(BINDIR) $(MANDIR)/man1 $(MANDIR)/man8 $(DESC_DIR)
 
 release: $(PROGS) $(M1) $(M8) $(DESC)
 	$(INSTALL) -d $(RELSBIN) $(RELBIN) $(RELMAN)/man1 $(RELMAN)/man8
-	$(INSTALL) -d $(DESC_DIR)
+	$(INSTALL) -d $(DESC_DIR) $(MKSO_DIR)
 	$(INSTALL) $(PROGS1) $(RELBIN)
 	$(INSTALL) $(PROGS8) $(RELSBIN)
 	$(INSTALL) $(M1) $(RELMAN)/man1
 	$(INSTALL) $(M8) $(RELMAN)/man8
+	$(INSTALL) mkso.data $(MKSO_DIR)/mkso.man
 	$(DESCU) -o $(DESC_SRC) $(DESC_SRC) $(DESC)
                                   
 install: $(PROGS) $(M1) $(M8)
