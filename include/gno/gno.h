@@ -2,7 +2,7 @@
  * gno/gno.h	This collection of declarations are for routines that
  *		reside in libc, but are Apple IIgs or GNO specific.
  *
- * $Id: gno.h,v 1.1 1997/02/28 04:42:06 gdr Exp $
+ * $Id: gno.h,v 1.2 1997/12/21 19:58:15 gdr Exp $
  */
 
 #ifndef _GNO_GNO_H_
@@ -55,8 +55,10 @@ pascal int	kernStatus(void)	inline(0x0603, udispatch);
 #endif
 
 /* Stack Checking */
+void		_assertStack __P((unsigned int, int, const char *));
 void		_beginStackCheck __P((void));
 int		_endStackCheck __P((void));
+unsigned int	_getStackBottom __P((void));
 
 /* String Conversions */
 #define		GIfree(a) free(a)
