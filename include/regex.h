@@ -35,12 +35,16 @@
  * SUCH DAMAGE.
  *
  *	@(#)regex.h	8.2 (Berkeley) 1/3/94
+ *
+ * $Id: regex.h,v 1.2 1997/10/07 15:00:23 gdr Exp $
  */
 
 #ifndef _REGEX_H_
 #define	_REGEX_H_
 
+#ifndef _SYS_CDEFS_H_
 #include <sys/cdefs.h>
+#endif
 
 /* types */
 typedef off_t regoff_t;
