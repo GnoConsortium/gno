@@ -1,9 +1,0 @@
-#  gsh command file to create the files for test lseg:
-#    procs.o    output from compiler
-#    procs      output from linker  (executable)
-#    procs.lib  output from makelib (library)
-
-17/occ -i -v -w -a0 procs.c -o procs
-
-rm -f procs.lib
-makelib -P procs.lib +procs.o

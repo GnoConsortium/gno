@@ -1,9 +1,0 @@
-Name:    cut
-Version: 2.0 (August 1997)
-Shell:   GNO
-Author:  Dave Tribby (from FreeBSD code)
-Contact: tribby@cup.hp.com
-Where:   /usr/bin
-FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
-
- Select portions of each line of a file.

@@ -1,5 +1,0 @@
-#include "types.rez" 
-resource rPString (1,protected) 
- {"This should be a protected Pascal string"}; 
-resource rPString (2) 
- {"This is an unprotected Pascal string"}; 

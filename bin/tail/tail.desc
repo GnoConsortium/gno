@@ -1,9 +1,0 @@
-Name:    tail
-Version: 2.0 (August 1997)
-Shell:   GNO
-Author:  Dave Tribby (from FreeBSD code)
-Contact: tribby@cup.hp.com
-Where:   /bin/tail
-FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
-
- Print the last part of a file.
