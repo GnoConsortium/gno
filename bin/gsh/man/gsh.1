@@ -1,0 +1,92 @@
+.\"
+.\" $Id: gsh.1,v 1.1 1998/06/04 03:11:28 gdr-ftp Exp $
+.\"
+.TH GSH 1 "2 June 1998" GNO "Commands and Applications"
+.SH NAME
+gsh \- GNO Shell
+.SH SYNOPSIS
+.B gsh
+[
+.B -f
+] [
+.BI -c " commands"
+] [
+.I scriptfile
+]
+.SH DESCRIPTION
+.BR gsh
+is the GNO Shell, so named because it was the first (and currently only)
+shell to be made GNO-compatible.
+It is the program which acts as the interface between the user and the
+GNO kernel and various programs.
+For a more complete description of
+.BR gsh ,
+see the
+.IR "GNO Shell User's Manual" .
+.LP
+If
+.IR scriptfile
+is specified, it is assumed to be a 
+.BR gsh
+shell script contained in a file of type SRC and auxtype EXEC.
+The script is executed and then
+.BR gsh
+exits.
+.LP
+If
+.BR -c " commands"
+is specified,
+.IR commands
+is assumed to be a series of
+.BR gsh
+commands which are then executed as if they had been contained in a
+.IR scriptfile .
+See the section on BUGS, below.
+.LP
+If neither
+.IR scriptfile
+nor the
+.BR -c
+flag is specified, then 
+.BR gsh
+starts up in interactive mode.  In this case,
+.BR gsh
+will execute commands entered by the user until it gets the 
+.BR exit (1)
+command, an EOF, or gets killed by another process.
+.LP
+The 
+.BR -f 
+flag indicates that on startup,
+.BR gsh
+should not attempt to parse the 
+.BR gshrc
+file or do other initializations.  This is intended to give a fast startup
+in situations where these initializations are not required, however see
+the section on BUGS, below.
+.SH BUGS
+The
+.BR -c
+flag does not work as advertised and may crash your machine if it is used.
+.LP
+Empirical tests are inconclusive as to whether or not the
+.BR -f
+flag really does speed up the starting of
+.BR gsh .
+.LP
+Unfortunately, there are currently
+.I many
+other bugs in
+.BR gsh .
+For more information, see the GNO bug tracking system at
+.BR http://www.gno.org/~gno/bugs.html .
+.SH AUTHOR
+.BR gsh
+was written by Tim Meekins.  It is currently maintained by Dave Tribby.
+.SH "SEE ALSO"
+.BR alias (1),
+.BR cd (1),
+.BR clear (1),
+.BR exit (1),
+the
+.IR "GNO Shell User's Manual" .
