@@ -6,7 +6,7 @@
 # directories:
 #		gen, gno, locale, stdio, stdlib, string, sys
 #
-# $Id: Makefile,v 1.1 1997/02/28 05:12:39 gdr Exp $
+# $Id: Makefile,v 1.2 1997/05/03 19:40:37 gdr Exp $
 #
 
 .INCLUDE:	../const.mk
@@ -45,6 +45,7 @@ LIBC_OBJ	= \
 	gen/tty.o \
 	gen/utime.o \
 	locale/table.o \
+	stdio/fgetln.o \
 	stdio/mktemp.o \
 	stdio/perror.o \
 	stdio/tempnam.o \
