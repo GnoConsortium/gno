@@ -19,14 +19,11 @@ GSOS     gequ  $E100A8
 ; Locations used on direct page
 ;
 CmdLn        gequ  $00	00-03 Command line address
-CmdIndx      gequ  $04	04-05 index into Command line
-RezHndl      gequ  $06	06-09 rVersion resource handle
-RezAddr      gequ  $0A	0A-0D rVersion resource address
-rezFieldAddr gequ  $0E	0E-11 rVersion field address
-AdrPStr      gequ  $12	12-15 pString addr for WritePString
-RezRefNum    gequ  $16	16-17 ref num for resource file
-CntryPStrAdr gequ  $18	18-1B addr of country pString
-; (Not used) UserID   gequ  $1C	1C-1D ID number of program
+RezHndl      gequ  $04	04-07 rVersion resource handle
+RezAddr      gequ  $08	08-0B rVersion resource address
+rezFieldAddr gequ  $0C	0C-0F rVersion field address
+AdrPStr      gequ  $10	10-13 pString addr for WritePString
+CntryPStrAdr gequ  $14	14-17 addr of country pString
 
 
 * -----------------------------------------------------------------
@@ -55,6 +52,7 @@ getvers  start GETVERS
 ; Were parameters provided?
          ldy   #8	Start beyond shell identifier.
          jsr   GetNxtPrm	1st parameter is program name.
+         stx   BufLen	
 ChkPrm   lda   [CmdLn],y	Get next command line
          and   #$FF	 character.
          bne   GetParam	If not end-of-string, continue.
@@ -80,13 +78,13 @@ AllDone  _ResourceShutDown	Close the resource manager.
 ;
 ; Process program's filename parameters
 ;
-GetParam jsr   GetNxtPrm	Get filename
+GetParam	jsr   GetNxtPrm	Get filename
          stx   BufLen	Set dest length.
          sty	CmdIndx	Save cmd line pointer.
 
 ; Was it a valid option?
          lda   EndOptFlg	If end-of-options flag is set,
-         bne   Fname	 process parameter as pathname.
+         bne   PRF	 process parameter as pathname.
 
          SHORT M	Use short mode to access chars.
          lda   Buffer	Get parameter.
@@ -100,8 +98,12 @@ GetPCh   lda   Buffer,x	Get option character.
          sta   bflag	    set bflag.
          bra   BumpIt
 ChkPc    cmp   #'c'	If it's 'c',
-         bne   ChkPq
+         bne   ChkPf
          sta   cflag	    set cflag.
+         bra   BumpIt
+ChkPf    cmp   #'f'	If it's 'f',
+         bne   ChkPq
+         sta   fflag	    set fflag.
          bra   BumpIt
 ChkPq    cmp   #'q'	If it's 'q',
          bne   BadParam
@@ -117,38 +119,25 @@ BumpIt   inx		Increment index.
 Frstname LONG  M	Restore long mode.
          inc   EndOptFlg	Set end-of-options flag.
 
-; Check for "quiet" mode
-Fname    lda   qflag	If -q option was specified,
-         bne   PRF	 go process the rez file.
-
-
-; Write the pathname
-         PH2   BufLen
-         PH4   #Buffer
-         jsr   WriteBuf
-
-; Write a colon and a space
-         PH4   #PstrColSp
-         jsr   WritePString
-
-
 ; Try to open the file and print rVersion information
-PRF      jsr   ProcessRezFile
+PRF      lda   bflag	Use "brief" flag for initial
+         sta   no_sep	 setting of "no separator" flag.
+
+         jsr   ProcessRezFile	Handle this file.
 
          ldy	CmdIndx	Restore cmd line pointer.
 
          lda   [CmdLn],y	Get next command line
          and   #$FF	 character.
          beq   AllDone	If end-of-string, all done.
-         lda   bflag	If "brief" option
-         ora   qflag                     and "quiet" options aren't set,
+         lda   no_sep	If "no separator" flag set,
          bne   GetParam
-         PH4   #PStrNewLn	   print newline separator.
+         PH4   #PStrNewLn	   print newline.
          jsr   WritePString
          bra   GetParam	Get next filename.
 
-
-; A parameter was offered, but it's not "b", "c" or "q".
+	
+; A parameter was offered, but it's not "b", "c", "f", or "q".
 BadParam sta   BadOpChr	Save character in error message.
          LONG  M	Restore long mode.
          PH4   #BadOption	Print "Illegal option"
@@ -172,29 +161,27 @@ ProcessRezFile pha	Word for result.
 
          ply		Discard return value.
 
-PrintErr ldy   qflag	If -q option was specified,
+PrintErr cmp   #$0063	If error = $0063,
+         beq   NoInfo	 handle as "no resource information".
+         ldy   qflag	If -q option was specified,
          bne   ErRtn	 don't print error message.
 
          sta   ErrGS_error	Save error value.
 
-; Check for two specific error cases
+         jsr   PrName	Print the filename.
+
+         lda   ErrGS_error
          cmp   #$0046	If error = $0046,
-         bne   chkerr2
-
          PH4   #E0046Msg	    print "File not found"
-         bra   MsgRtn                        and exit the subroutine.
-
-chkerr2  cmp   #$0063	If error = $0063,
-         bne   Generr
-
-         PH4   #E0063Msg	    print "No resource fork"
-MsgRtn   jsr   WritePString
+         jsr   WritePString
          PH4   #PStrNewLn
          jsr   WritePString
 
-; Return with error status
-ErRtn    lda   #1	Set error status
+ErRtn    lda   #1	Set error status.
          sta   rval
+WarnRtn  lda   qflag	If -q option was specified,
+         ora   no_sep                    make sure no linefeed separator
+         sta   no_sep	  is printed.
          rts		   and return from ProcessRezFile.
          
 ; Print a generic error message
@@ -220,15 +207,17 @@ OpenedOK PL2   RezRefNum	Save rtn value (file ref num).
          cmp   RezRefNum	 != loaded rez file number,
          beq   LoadVRez
 
-         ldy   qflag	  and -q option wasn't specified,
-         bne   ErRtn
+NoInfo   ldy   qflag	  and -q option wasn't specified,
+         bne   WarnRtn
 
-         PH4   #NoRezMsg	   print error message,
+         jsr   PrName	   print the filename,
+
+         PH4   #NoInfoMsg	   print error message,
          jsr   WritePString
          PH4   #PStrNewLn
          jsr   WritePString
 
-         bra   ErRtn	Set err stat & rtn from ProcessRezFile.
+         bra   WarnRtn	Set err stat & rtn from ProcessRezFile.
 
 ;
 ; The resource exists in the target file. Load it.
@@ -260,8 +249,13 @@ GotRez   PL4	RezHndl	Rtn value = resource handle.
          lda   [RezHndl],y	   save
          sta   RezAddr+2	    address.
 
+; Check for "print file name" mode
+         lda   fflag	If -f option was specified,
+         beq   CvtVrs
+         jsr   PrName	  print the filename.
+
 ; Convert version field to pString using _VersionString
-         pea   0	Flags (= 0).
+CvtVrs   pea   0	Flags (= 0).
          lda   [RezAddr],y	Version (long).
          pha	
          lda   [RezAddr]
@@ -400,6 +394,17 @@ Rtn      rts		Return from ProcessRezFile.
 
 
 ;
+; Subroutine to print the pathname stored at Buffer (length in BufLen)
+;
+PrName   PH2   BufLen	   Write the pathname,
+         PH4   #Buffer
+         jsr   WriteBuf
+         PH4   #PstrColTb	     a colon, and a tab.
+         jsr   WritePString
+         rts		Return from PrName.
+
+
+;
 ; Subroutine to copy next word of input line into Buffer
 ; Upon entry: Y-reg = index into CmdLn (beginning of parameter)
 ; Upon exit:  Y-reg = index into CmdLn (beyond end of parameter)
@@ -506,28 +511,119 @@ Wrt8bitPStr plx	Hold the return address.
          sta   GSWriteLen
 ;
 ; Alternate entry point to write 8-bit characters, with address
-; and length already stored at GSWriteAdr and GSEriteLen.
+; and length already stored at GSWriteAdr and GSWriteLen.
 ;
 Wrt8bitStr anop
 
-; Convert 8-bit characters to printable
+; Reset Buffer to contain "$80" characters. These will be translated
+; by _StringToText, so any that are left are not part of the translation.
+
+         ldx   #254
+         lda   #$8080	Value to be stored.
+SetBuf   sta   Buffer,x	Save special value in buffer.
+         dex		Decrement count
+         dex		  by two.
+	bpl   SetBuf	If x >= 0, stay in loop.
+
+; Call _StringToText to convert 8-bit characters to printable
          pha		Reserve space for
          pha		 return values.
-         PH2   #$4000	Flags: allow longer subs.
+         PH2   #$5000	Flags: allow long subs; pass ctl chrs.
          PH4   GSWriteAdr               Pointer to source text.
          PH2   GSWriteLen	Source text length.
-         PH4   #BufSize	Pointer to destination.
+         PH4   #GSOSBuf	Pointer to destination.
          _StringToText	
-         PL2   GSWriteLen               Save length.
-         pla		Ignore resultFlags.
+         plx		Hold printable len in X-reg.
+         stx   Printable
+         pla
+         sta   ResultFlags	Save results flags.
 
          PH4   #Buffer	Set GSWrite address
          PL4   GSWriteAdr                to the result buffer.
 
-         jsl   >GSOS	GSWrite
+; _StringToText does not count non-printables (e.g. tab, carriage-return)
+; in its printable length. Find first $80 in buffer to determine the true
+; length of the string.
+
+         SHORT M	Use short mode to access chars.
+CkLen	cpx   #255	Make sure that
+         beq   SvLen	 length <= 255.
+         lda   Buffer,x	Get next byte.
+	cmp   #$80	If it's the special value,
+         beq	SvLen	  done looking.
+         inx		Bump length
+	bra	CkLen	 and read the next character.
+SvLen    stx   GSWriteLen	Save length.
+         LONG  M	Restore long mode.
+
+	lda   ResultFlags	If any translations took place,
+         bmi   ChkNP	 need to check for non-printables.
+         cpx   Printable	If current length == # printable,
+         beq   DoWrite                   don't need to check.
+
+; Need to see if any of the non-printables need to be removed.
+
+ChkNP    ldx	#0	Start looking at beginning of Buffer.
+         SHORT M	Use short mode to access chars.
+; Skip over leading printable characters.
+GetAtStart lda Buffer,x	Get next character from Buffer.
+         jsr   ChkChar	Is it printable?
+         bcs   CopyLoop	No -- continue in copy loop.
+         inx		Yes -- just bump index
+         bra   GetAtStart	  and keep looking.
+
+; Copy printable characters, but skip non-printable ones.
+CopyLoop txy		Copy source index to destination index.
+
+ChkEnd   cmp   #$80	If it's the special character,
+         beq   CopyDone	 all done with checking.
+
+NextCh	inx		Bump source index.
+         lda   Buffer,x	Get next character from Buffer.
+         jsr   ChkChar	Is it printable?
+         bcs   ChkEnd	No -- see if we're at the end.
+         sta   Buffer,y	Yes -- store in buffer
+         iny		 and increment destination index.
+         bra   NextCh
+
+CopyDone LONG  M	Restore long mode.
+         sty   GSWriteLen	Save true length.
+
+
+DoWrite  jsl   >GSOS	GSWrite
          dc    i2'$2013'
          dc    a4'GSWritePB'
+
          rts		Return from Wrt8bitPStr/Wrt8bitStr.
+
+; Variables used in subroutine.
+Printable   dc i2'0'
+ResultFlags dc i2'0'
+               
+;
+; Subroutine called by Wrt8bit subroutines to determine whether the
+; character in the accumulator is printable. Return carry flag to
+; indicate the result: Set == non-printable; Clear == printable.
+;
+         longa off	Always called in SHORT M mode
+
+ChkChar	cmp   #$80	If >= $80,
+         bcs   ChkDone	  it's not printable.
+         cmp   #$20	If < $80 && > 20,
+	bcs   RtnClr	  it is printable.
+         cmp   #$0D	If == carriage-return
+	beq   RtnClr	  it is printable.
+         cmp   #$09	If == tab
+	beq   RtnClr	  it is printable.
+
+         sec		If it is none of these,
+         bra   ChkDone	  it is not printable.
+                                                             
+RtnClr   clc		Printable: clear carry flag.
+
+ChkDone  rts		Return from ChkChar w/result in carry
+
+         longa on
 
 ;
 ; Subroutine to write text; Addr and Len passed on stack
@@ -542,13 +638,12 @@ WriteBuf plx		Hold return address.
          dc    a4'GSWritePB'
          rts		Return from WriteBuf.
 
-
 ; -------------------------------------------------------------------
 ;  Miscellaneous program constants and storage
 ; -------------------------------------------------------------------
 
 ; Usage message
-UsageMsg dw    'usage: getvers [-b] [-c] [-q] file ...'
+UsageMsg dw    'usage: getvers [-b] [-c] [-f] [-q] file ...'
 
 ; Bad option error message (pString)
 BadOption dc   i1'BadOpChr-BadOption'
@@ -556,12 +651,20 @@ BadOption dc   i1'BadOpChr-BadOption'
 BadOpChr dc    c' '
                     
 ; File open error pStrings
-E0046Msg dw    'File not found'
-E0063Msg dw    'No resource fork'
-NoRezMsg dw    'No version resource'
+E0046Msg  dw   'File not found'
+NoInfoMsg dw   'No version information'
 
 ; Indicates whether this program opened stdout
 OpenFlag dc    i2'0'
+
+; index into Command line
+CmdIndx  dc    i2'0'
+
+; ref num for resource file
+RezRefNum dc   i2'0'
+
+; ID number of program (Not used)
+; UserID    dc   i2'0'
 
 ; Status value returned to shell
 rval	dc	i2'0'
@@ -570,10 +673,13 @@ rval	dc	i2'0'
 EndOptFlg dc   i2'0'	Has end-of-options been reached?
 bflag    dc    i2'0'	Has -b option been specified?
 cflag    dc    i2'0'	Has -c option been specified?
+fflag    dc    i2'0'	Has -f option been specified?
 qflag    dc    i2'0'	Has -q option been specified?
 
+no_sep   dc    i2'0'	Is newline separator needed?
+
 ; Miscellaneous pString constants:
-PstrColSp dw   ': '	Colon and space
+PstrColTb dc   h'023A09'	Colon and tab
 PstrSpace dw   ' '	Space
 PStrNewLn dc   h'010D'	Newline
 
@@ -644,11 +750,11 @@ Thailand dw    'Thailand'
 
 
 ; GS/OS input/result string: two length words followed by 256 bytes
+GSOSBuf  anop
 BufSize  dc    i2'260'	Total size (when used as result buf)
 BufLen   dc    i2'0'                    Num chars used in buffer
 Buffer   ds    256	Storage area (256 bytes)
-
-
+	dc	h'80'	Special character, flags end of buffer
 
 ; Parameter Block used for ErrorGS
 ErrorGSbuf  dc i2'1'	Number of parameters

@@ -5,6 +5,7 @@
 #define DESC "Print contents of resource version."
 
 #include "Types.rez"
+#include "/src/gno/build.tools/builddate.rez"
 
 /*
  * Version
@@ -15,7 +16,8 @@ resource rVersion (1, purgeable3) {
 	  0 },		/* non-final release number */
 	verUS,	/* Country */
 	PROG,	/* Program name */
-        DESC " Released with GNO/ME."
+        DESC " Released with GNO/ME.\n"
+        BUILD_DATE
 };
 
 
