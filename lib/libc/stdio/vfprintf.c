@@ -1,4 +1,3 @@
-#line 1 ":src:gno:lib:libc:stdio:vfprintf.c"
 /*-
  * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
@@ -37,14 +36,8 @@
 
 #ifdef __ORCAC__
 segment "libc_stdio";
-#pragma debug -1
-#pragma optimize 72
-#endif
-
-#ifdef __GNO__
-#define STATIC static
-#else
-#define STATIC
+#pragma optimize 78	/* bits 3 and 6, minimum */
+#pragma debug 0
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
@@ -100,42 +93,43 @@ __sprint(FILE *fp, register struct __suio *uio)
  * temporary buffer.  We only work on write-only files; this avoids
  * worries about ungetc buffers and so forth.
  */
+
 static int
 __sbprintf(register FILE *fp, const char *fmt, va_list ap)
 {
 	int ret;
-	FILE fake;
-/* ifdef __GNO__ */
-#if 0
-	char *buf;
-	if (buf = malloc(BUFSIZ)) {
-		/* not much we can do here */
+#if 1
+	FILE *fake;
+	unsigned char *buf;
+	if ((fake = malloc(BUFSIZ + sizeof(FILE))) == NULL) {
+		/* silent failure; hopefully benign */
 		return 0;
 	}
+	buf = (unsigned char *) ((unsigned long)fake + sizeof(FILE));
 #else
+	FILE fake;
 	unsigned char buf[BUFSIZ];
 #endif
 
 	/* copy the important variables */
-	fake._flags = fp->_flags & ~__SNBF;
-	fake._file = fp->_file;
-	fake._cookie = fp->_cookie;
-	fake._write = fp->_write;
+	fake->_flags = fp->_flags & ~__SNBF;
+	fake->_file = fp->_file;
+	fake->_cookie = fp->_cookie;
+	fake->_write = fp->_write;
 
 	/* set up the buffer */
-	fake._bf._base = fake._p = buf;
-	fake._bf._size = fake._w = sizeof(buf);
-	fake._lbfsize = 0;	/* not actually used, but Just In Case */
+	fake->_bf._base = fake->_p = buf;
+	fake->_bf._size = fake->_w = BUFSIZ; /* gdr: previously sizeof(buf) */
+	fake->_lbfsize = 0;	/* not actually used, but Just In Case */
 
 	/* do the work, then copy any error status */
-	ret = vfprintf(&fake, fmt, ap);
-	if (ret >= 0 && fflush(&fake))
+	ret = vfprintf(fake, fmt, ap);
+	if (ret >= 0 && fflush(fake))
 		ret = EOF;
-	if (fake._flags & __SERR)
+	if (fake->_flags & __SERR)
 		fp->_flags |= __SERR;
-/* ifdef __GNO__ */
-#if 0
-	free(buf);
+#if 1
+	free(fake);
 #endif
 	return (ret);
 }
@@ -299,9 +293,82 @@ static int exponent __P((char *, int, int));
 #define	ZEROPAD		0x080		/* zero (as opposed to blank) pad */
 #define FPT		0x100		/* Floating point number */
 
+#ifdef __ORCAC__
+typedef struct vfprintfData_t {
+	char *fmt;		/* format string */
+	int ch;			/* character from fmt */
+	int n;			/* handy integer (short term usage) */
+	char *cp;		/* handy char pointer (short term usage) */
+	struct __siov *iovp;	/* for PRINT macro */
+	int flags;		/* flags as above */
+	int ret;		/* return value accumulator */
+	int width;		/* width from format (%8d), or 0 */
+	int prec;		/* precision from format (%.3d), or -1 */
+	char sign;		/* sign prefix (' ', '+', '-', or \0) */
+#ifdef FLOATING_POINT
+	char softsign;		/* temporary negative sign for floats */
+	double_spec_t _double;	/* double precision arguments %[eEfgG] */
+	int expt;		/* integer value of exponent */
+	int expsize;		/* character count for expstr */
+	int ndig;		/* actual number of digits returned by cvt */
+	char expstr[7];		/* buffer for exponent string */
+#endif
+
+	u_long	ulval;		/* integer arguments %[diouxX] */
+#ifdef HAS_QUAD_T
+	u_quad_t uqval;		/* %q integers */
+#endif
+	int base;		/* base for [diouxX] conversion */
+	int dprec;		/* a copy of prec if [diouxX], 0 otherwise */
+	int fieldsz;		/* field size expanded by sign, etc */
+	int realsz;		/* field size expanded by dprec */
+	int size;		/* size of converted field or string */
+	char *xdigs;		/* digits for [xX] conversion */
+#define NIOV 8
+	struct __suio uio;	/* output information: summary */
+	struct __siov iov[NIOV];/* ... and individual io vectors */
+	char buf[BUF];		/* space for %c, %[diouxX], %[eEfgG] */
+	char ox[2];		/* space for 0x hex-prefix */
+} vfprintfData_t;       
+
+#define fmt		(vdata->fmt)
+#define ch		(vdata->ch)
+#define n		(vdata->n)
+#define cp		(vdata->cp)
+#define iovp		(vdata->iovp)
+#define flags		(vdata->flags)
+#define ret		(vdata->ret)
+#define width		(vdata->width)
+#define prec		(vdata->prec)
+#define sign		(vdata->sign)
+#define softsign	(vdata->softsign)
+#define _double		(vdata->_double)
+#define expt		(vdata->expt)
+#define expsize		(vdata->expsize)
+#define ndig		(vdata->ndig)
+#define expstr		(vdata->expstr)
+#define ulval		(vdata->ulval)
+#define uqval		(vdata->uqval)
+#define base		(vdata->base)
+#define dprec		(vdata->dprec)
+#define fieldsz		(vdata->fieldsz)
+#define realsz		(vdata->realsz)
+#define size		(vdata->size)
+#define xdigs		(vdata->xdigs)
+#define uio		(vdata->uio)
+#define iov		(vdata->iov)
+#define buf		(vdata->buf)
+#define ox		(vdata->ox)
+
+#endif	/* __ORCAC__ */
+
 int
 vfprintf(FILE *fp, const char *fmt0, va_list ap)
 {
+#ifdef __ORCAC__
+	vfprintfData_t *vdata;
+	int retval;
+#else	/* ! __ORCAC__ */
 	register char *fmt;	/* format string */
 	register int ch;	/* character from fmt */
 	register int n;		/* handy integer (short term usage) */
@@ -335,6 +402,7 @@ vfprintf(FILE *fp, const char *fmt0, va_list ap)
 	struct __siov iov[NIOV];/* ... and individual io vectors */
 	char buf[BUF];		/* space for %c, %[diouxX], %[eEfgG] */
 	char ox[2];		/* space for 0x hex-prefix */
+#endif	/* ! __ORCAC__ */
 
 	/*
 	 * Choose PADSIZE to trade efficiency vs. size.  If larger printf
@@ -346,6 +414,12 @@ vfprintf(FILE *fp, const char *fmt0, va_list ap)
 	 {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '};
 	static char zeroes[PADSIZE] =
 	 {'0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'};
+
+#ifdef __ORCAC__
+	if ((vdata = malloc(sizeof(vfprintfData_t))) == NULL) {
+		return 0;
+	}
+#endif
 
 	/*
 	 * BEWARE, these `goto error' on error, and PAD uses `n'.
@@ -391,13 +465,24 @@ vfprintf(FILE *fp, const char *fmt0, va_list ap)
 	    (u_long)va_arg(ap, u_int))
 
 	/* sorry, fprintf(read_only_file, "") returns EOF, not 0 */
-	if (cantwrite(fp))
+	if (cantwrite(fp)) {
+#ifdef __ORCAC__
+		free(vdata);
+#endif
 		return (EOF);
+	}
 
 	/* optimise fprintf(stderr) (and other unbuffered Unix files) */
 	if ((fp->_flags & (__SNBF|__SWR|__SRW)) == (__SNBF|__SWR) &&
-	    fp->_file >= 0)
+	    fp->_file >= 0) {
+#ifdef __ORCAC__
+		retval = __sbprintf(fp, fmt0, ap);
+		free(vdata);
+		return retval;
+#else
 		return (__sbprintf(fp, fmt0, ap));
+#endif
+	}
 
 	fmt = (char *)fmt0;
 	uio.uio_iov = iovp = iov;
@@ -834,9 +919,46 @@ number:			if ((dprec = prec) >= 0)
 done:
 	FLUSH();
 error:
+#ifdef __ORCAC__
+	retval = __sferror(fp) ? EOF : ret;
+	free(vdata);
+	return retval;
+#else
 	return (__sferror(fp) ? EOF : ret);
+#endif
 	/* NOTREACHED */
 }
+
+#ifdef __ORCAC__
+#undef fmt
+#undef ch
+#undef n
+#undef cp
+#undef iovp
+#undef flags	
+#undef ret	
+#undef width	
+#undef prec	
+#undef sign	
+#undef softsign
+#undef _double	
+#undef expt	
+#undef expsize	
+#undef ndig	
+#undef expstr	
+#undef ulval	
+#undef uqval	
+#undef base	
+#undef dprec	
+#undef fieldsz	
+#undef realsz	
+#undef size	
+#undef xdigs	
+#undef uio	
+#undef iov	
+#undef buf	
+#undef ox	
+#endif	/* __ORCAC__ */
 
 #ifdef FLOATING_POINT
 
@@ -888,7 +1010,10 @@ static int
 exponent(char *p0, int exp, int fmtch)
 {
 	register char *p, *t;
-	STATIC char expbuf[MAXEXP];
+#ifdef __ORCAC__
+	static
+#endif
+	char expbuf[MAXEXP];
 
 	p = p0;
 	*p++ = fmtch;
