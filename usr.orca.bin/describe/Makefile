@@ -14,8 +14,6 @@
 #	descu		861 bytes
 
 CFLAGS	+= -O78 -s1024 # -D__STACK_CHECK__
-LDFLAGS	+= -v
-LDLIBS	+= 
 
 # If this is not part of the GNO builds, RELEASE_DIR is not defined
 # so things get installed in a live file system instead.
@@ -35,47 +33,56 @@ VAEND		= # vaend.o
 DESC_FILES	= describe.desc descc.desc descu.desc
 
 # A stand-alone build might not have these defined.
-.IF $(INSTALL) == $(NULL)
-	INSTALL	= /usr/bin/install
-.END
-.IF $(CATREZ) == $(NULL)
-	CATREZ	= /usr/bin/catrez
-.END
+INSTALL	*= /usr/bin/install
+CATREZ	*= /usr/bin/catrez
 .IF $(DESC_DIR) == $(NULL)
 	DESC_DIR= $(RELEASE_DIR)/usr/lib
 	DESC_SRC= $(DESC_DIR)/describe.src
 .END
 
-build:  describe descc descu
+build:  $(OBJ_DIR) $(OBJ_DIR)describe $(OBJ_DIR)descc $(OBJ_DIR)descu
 
-descc:	descc.o $(BASENAME) descc.r
-	$(CC) $(LDFLAGS) descc.o $(BASENAME) -o $@ $(LDLIBS)
-	$(CATREZ) -d $@ descc.r
+$(OBJ_DIR):
+	$(INSTALL) -d $(OBJ_DIR)
 
-describe: describe.o $(BASENAME) describe.r
-	$(CC) $(LDFLAGS) describe.o $(BASENAME) -o $@ $(LDLIBS)
-	$(CATREZ) -d $@ describe.r
+$(OBJ_DIR)descc: descc.o $(BASENAME) descc.r
+	$(CC) -o $@ $(LDLIBS) $(LDFLAGS) $(OBJ_DIR)descc.o $(BASENAME)
+	$(CATREZ) -d $@ $(OBJ_DIR)descc.r
 
-descu:	descu.o $(BASENAME) $(VAEND) descu.r
-	$(CC) $(LDFLAGS) descu.o $(BASENAME) $(VAEND) -o $@ $(LDLIBS)
-	$(CATREZ) -d $@ descu.r
+$(OBJ_DIR)describe: describe.o $(BASENAME) describe.r
+	$(CC) -o $@ $(LDLIBS) $(LDFLAGS) $(OBJ_DIR)describe.o $(BASENAME)
+	$(CATREZ) -d $@ $(OBJ_DIR)describe.r
 
-descc.o:: desc.h
-describe.o:: desc.h
-descu.o:: desc.h
+$(OBJ_DIR)descu: descu.o $(BASENAME) $(VAEND) descu.r
+	$(CC) -o $@ $(LDLIBS) $(LDFLAGS) $(OBJ_DIR)descu.o $(BASENAME) $(VAEND)
+	$(CATREZ) -d $@ $(OBJ_DIR)descu.r
 
+descc.o: descc.c desc.h
+	$(CC) -o $@ $(CFLAGS:s/ -r / /) -a0 -c descc.c
+
+describe.o: describe.c desc.h
+	$(CC) -o $@ $(CFLAGS:s/ -r / /) -a0 -c describe.c
+
+descu.o: descu.c desc.h
+	$(CC) -o $@ $(CFLAGS:s/ -r / /) -a0 -c descu.c
+
+.IF $(RELEASE_DIR) == $(NULL)
+release:
+	@echo there is no release target on a stand alone build
+.ELSE
 release:
 	$(INSTALL) -d $(RELBIN) $(RELSBIN) $(RELMAN)/man1 $(RELMAN)/man8
 	$(INSTALL) -d $(DESC_DIR)
-	$(INSTALL) describe        $(RELBIN)
-	$(INSTALL) descc descu     $(RELSBIN)
+	$(INSTALL) $(OBJ_DIR)describe $(RELBIN)
+	$(INSTALL) $(OBJ_DIR)descc $(OBJ_DIR)descu $(RELSBIN)
 	$(INSTALL) describe.1      $(RELMAN)/man1
 	$(INSTALL) descc.8 descu.8 $(RELMAN)/man8
-	./descu -o $(DESC_SRC) $(DESC_SRC) $(DESC_FILES)
+	$(OBJ_DIR)descu -o $(DESC_SRC) $(DESC_SRC) $(DESC_FILES)
+.END
 
 install:
 	$(INSTALL) -d $(BINDIR) $(SBINDIR) $(MANDIR)/man1 $(MANDIR)/man8
-	$(INSTALL) describe        $(BINDIR)
-	$(INSTALL) descc descu     $(SBINDIR)
+	$(INSTALL) $(OBJ_DIR)describe $(BINDIR)
+	$(INSTALL) $(OBJ_DIR)descc $(OBJ_DIR)descu $(SBINDIR)
 	$(INSTALL) describe.1      $(MANDIR)/man1
 	$(INSTALL) descc.8 descu.8 $(MANDIR)/man8

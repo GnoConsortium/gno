@@ -1,14 +1,15 @@
 /*
  * Resources for version and comment
  *
- * $Id: descu.rez,v 1.3 1998/02/07 06:40:11 gdr-ftp Exp $
+ * $Id: descu.rez,v 1.4 1998/03/08 17:58:44 gdr-ftp Exp $
  */
 #include "Types.rez"
 
 /* Don't forget to update the version numbers, below (two places) */
 #define PROG	"descu"
 #define DESC	"describe(1) source update utility"
-#define AUTHOR	"Author: Devin Reade <gdr@trenco.gno.org>"
+#define AUTHOR	"Author: Devin Reade"
+#define BUILD_DATE "Build Date:  " $$Date
 
 /*
  * Version
@@ -19,7 +20,8 @@ resource rVersion (1, purgeable3) {
 	  0 },		/* non-final release number */
 	verUS,	/* Country */
 	PROG,	/* Program name */
-        DESC " (GNO)"
+        DESC " (GNO)\n"
+        BUILD_DATE
 };
 
 /*
@@ -28,6 +30,7 @@ resource rVersion (1, purgeable3) {
 resource rComment (1, purgeable3) {
 	PROG " v1.0.6\n"
 	DESC " (GNO) \n"
+	BUILD_DATE "\n"
 	AUTHOR
 };
 
