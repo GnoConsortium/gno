@@ -35,6 +35,8 @@
  * SUCH DAMAGE.
  *
  *	@(#)regex2.h	8.4 (Berkeley) 3/20/94
+ *
+ * $Id: regex2.h,v 1.2 1997/10/08 07:07:14 gdr Exp $
  */
 
 /*
@@ -79,7 +81,11 @@ typedef unsigned long sop;	/* strip operator */
 typedef long sopno;
 #define	OPRMASK	0xf8000000
 #define	OPDMASK	0x07ffffff
+#ifdef __ORCAC__		/* a 32-bit-ism? */
+#define	OPSHIFT	((unsigned long)27)
+#else
 #define	OPSHIFT	((unsigned)27)
+#endif
 #define	OP(n)	((n)&OPRMASK)
 #define	OPND(n)	((n)&OPDMASK)
 #define	SOP(op, opnd)	((op)|(opnd))
