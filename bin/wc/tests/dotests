@@ -1,5 +1,6 @@
 # Tests for wc command; invoked by command file "fulltests"
 #   Written by Dave Tribby (August 1997)
+#   $Id: dotests,v 1.2 1997/10/03 03:47:18 gdr Exp $
 
 # Location of the wc command to be tested
 set testcmd="../wc"
