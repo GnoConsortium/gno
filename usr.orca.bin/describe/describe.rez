@@ -1,7 +1,7 @@
 /*
  * Resources for version and comment
  *
- * $Id: describe.rez,v 1.5 1999/04/05 19:47:19 gdr-ftp Exp $
+ * $Id: describe.rez,v 1.6 1999/06/19 14:09:43 gdr-ftp Exp $
  */
 #include "Types.rez"
 
@@ -15,7 +15,7 @@
  * Version
  */
 resource rVersion (1, purgeable3) {
-	{ 1, 0, 6,	/* Version */
+	{ 1, 0, 7,	/* Version */
 	  release,	/* development|alpha|beta|final|release */
 	  0 },		/* non-final release number */
 	verUS,	/* Country */
