@@ -1,3 +1,29 @@
+14 January 1998: (Devin Reade, <gdr@trenco.gno.org>)
+	TAG:  beta_980324
+	Object files are now kept in a different directory hierarchy for
+	  the builds.
+	Fixes to:
+		utime (bad dates)
+		vfscanf (stack trashing)
+		vfprintf (errors with floats)
+		ecvt/fcvt (bad results)
+		strerror (faulty out-of-bounds check)
+	crypt routines have been split off to libcrypt
+	Added a rez fork to the library.
+
+22 December 1997: (Devin Reade, <gdr@trenco.gno.org>)
+	TAG:  beta_971222
+	Moved a bunch of optimization and other pragmas out of the source
+	  files and into the makefiles.
+	Got the fts*() routines working.
+	Got popen/pclose (mostly) working.
+	Added _getStackBottom, rmdir, settimeofday, and regex routines.
+	Checked in various time routines.  Not yet part of the build.
+	Changed the build procedure for stdio/vfprintf.c.
+	Added the "%b" specifier to the scanf() implementation.  This is
+	  currently disabled in printf() pending an ORCA/C bug fix.
+	Make use of dynamic GSStrings in various chapter 2 routines.
+
 21 September 1997: (Devin Reade, <gdr@eddore.myrias.com>)
 	Added man pages for:
 	  rename(2), clearerr(3), ecvt(3), fclose(3), fflush(3), fgets(3),
