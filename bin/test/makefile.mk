@@ -1,7 +1,7 @@
 #
 # This file is intended for use with dmake
 #
-# $Id: makefile.mk,v 1.1 1996/02/10 08:27:30 gdr Exp $
+# $Id: makefile.mk,v 1.2 1996/02/11 00:59:16 gdr Exp $
 #
 # VAFLAGS must use an optimization level of at least -O8, and no
 # -g or -G* flag
@@ -19,6 +19,8 @@ LDFLAGS	+= -v
 LDLIBS	=
 OBJS	= test.o    test2.o    operators.o
 ROOTS	= test.root test2.root operators.root
+BINDIR	= /bin
+MANDIR	= /man
 
 test:	$(OBJS) test.r
 	@purge
@@ -45,6 +47,10 @@ clean:
 
 clobber: clean
 	$(RM) -f test
+
+install:
+	cp test   $(BINDIR)
+	cp test.1 $(MANDIR)/man1
 
 # use this rule to if you update binary_ops, or unary_ops
 make_op: 

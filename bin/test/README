@@ -5,6 +5,10 @@ GNU version.  For those not familiar with it, read the man page.
 I admit that this has limited functionality with gsh, but it will
 become more useful when sh(1) comes out ...
 
+For installation, either type 'dmake install', or copy the files
+	test		to 		/bin
+	test.1		to		/man/man1
+
 For copying info, see the legalese at the beginning of the file
 test.c, or the man page (you have to view the file directly rather
 than than via nroff(1) to see it).
