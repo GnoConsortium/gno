@@ -1,0 +1,77 @@
+###
+#
+# GNO 2.0.6 gshrc file
+#
+# $Id: gshrc,v 1.1 1997/09/30 04:49:32 gdr Exp $
+#
+###
+
+#
+# Setup the other prefixes to emulate Orca for the benefit of utilities
+# If you're using Orca 2.0 stuff, be sure to set prefixes 13-17 also
+#
+
+prefix 31 \*
+
+prefix	13	/lib
+prefix	14	/tmp          
+prefix	15	/lang/orca/shell
+prefix	16	/lang/orca/languages
+prefix	17	/usr/orca/bin
+
+prefix 2 13
+prefix 3 14
+prefix 4 15
+prefix 5 16
+prefix 6 17
+
+#
+# Initializes our environment
+#
+
+# gsh reads its path backward!
+set path=". /usr/games /usr/orca/bin /usr/X/bin /usr/bin /bin /usr/local/bin"
+export path
+rehash
+
+# other shell items
+set prompt="%C> "
+set term=gnocon
+set EDITOR="/lang/orca/shell/editor"
+setenv history=25
+setenv savehist=25
+setenv MANPATH /man:/usr/man:/usr/local/man:/local/man:/usr/X/man:/usr/orca/man
+setenv	PAGER	less
+setenv	LESS	-e
+set	nonewline=1
+setenv	TMACDIR		/usr/lib/tmac
+setenv	MAKESTARTUP	/usr/lib/startup.mk
+export prompt term EDITOR nonewline TMACDIR MAKESTARTUP
+
+# Set environment variables for cc
+setenv CCEMULATE 1
+# setenv CCOPTS "-i"
+# setenv	CCOLD 1
+
+# Set environment variables for lpr
+setenv	lprPrinterCode	iwii
+setenv	iwiiPageSaver	on
+setenv	iwiiTypeFace	condensed
+
+# Setup necessary aliases
+alias /bin/rm	"cp -p rm"
+alias /bin/mv   "cp -p mv"
+alias cp 	"cp -i"
+alias fcat	"melt -c"
+alias gunzip	\'gzip -d\'
+# these aliases are broken
+# alias gzcat	\'gzip -cdfq \<filename\> \|cat\'
+# alias gzmore	\'gzip -cdfq \<filename\> \|more\'
+alias logout    "/bin/init 5"
+alias ls 	"ls -CF"
+alias make	dmake
+alias mv 	"cp -p mv -i"
+alias rm 	"cp -p rm"
+alias uncompress	"compress -d"
+alias view 	"vi -R"
+alias zcat 	"compress -cd"
