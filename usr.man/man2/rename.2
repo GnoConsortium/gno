@@ -1,0 +1,199 @@
+.\" Copyright (c) 1983, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)rename.2	8.1 (Berkeley) 6/4/93
+.\"
+.TH RENAME 2 "15 September 1997" GNO "System Calls"
+.SH NAME
+.BR rename
+\- change the name of a file
+.SH SYNOPSIS
+#include <stdio.h>
+.sp 1
+int \fBrename\fR (const char *\fIfrom\fR, const char *\fIto\fR);
+.SH DESCRIPTION
+.BR Rename 
+causes the link named
+.I from
+to be renamed as
+.IR to .
+If 
+.I to
+exists, it is first removed.
+Both 
+.I from
+and
+.I to
+must be of the same type (that is, both directories or both
+non-directories), and must reside on the same file system.
+.LP
+.BR Rename 
+guarantees that an instance of
+.I to
+will always exist, even if the system should crash in
+the middle of the operation.
+.LP
+If the final component of
+.I from
+is a symbolic link,
+the symbolic link is renamed,
+not the file or directory to which it points.
+.SH CAVEATS
+The system can deadlock if a loop in the file system graph is present.
+This loop takes the form of an entry in directory
+.IR a ,
+say
+.IR a/foo ,
+being a hard link to directory
+.IR b ,
+and an entry in
+directory
+.IR b ,
+say
+.IR b/bar ,
+being a hard link
+to directory
+.IR a .
+When such a loop exists and two separate processes attempt to
+perform
+\fBrename\fR (\fIa/foo\fR, \fIb/bar\fR)
+and
+\fBrename\fR (\fIb/bar\fR, \fIa/foo\fR),
+respectively, 
+the system may deadlock attempting to lock
+both directories for modification.
+Hard links to directories should be
+replaced by symbolic links by the system administrator.
+.LP
+GNO does not currently support symbolic or multiple hard links, so the above
+paragraph and the final paragraph of the DESCRIPTION section does not apply.
+.SH RETURN VALUES
+A 0 value is returned if the operation succeeds, otherwise
+.BR rename 
+returns -1 and the global variable 
+.IR errno
+indicates the reason for the failure.
+.SH ERRORS
+.BR Rename 
+will fail and neither of the argument files will be
+affected if:
+.RS
+.IP \fBEINVAL\fR
+Either pathname contains a character with the high-order bit set.
+.IP \fBENAMETOOLONG\fR
+A component of either pathname exceeded 255 characters,
+or the entire length of either path name exceeded 1023 characters.
+.IP \fBENOENT\fR
+A component of the
+.I from
+path does not exist,
+or a path prefix of
+.I to
+does not exist.
+.IP \fBEACCES\fR
+A component of either path prefix denies search permission.
+.IP \fBEACCES\fR
+The requested link requires writing in a directory with a mode
+that denies write permission.
+.IP \fBEPERM\fR
+The directory containing
+.I from
+is marked sticky,
+and neither the containing directory nor
+.I from
+are owned by the effective user ID.
+.IP \fBEPERM\fR
+The
+.I to
+file exists,
+the directory containing
+.I to
+is marked sticky,
+and neither the containing directory nor
+.I to
+are owned by the effective user ID.
+.IP \fBELOOP\fR
+Too many symbolic links were encountered in translating either pathname.
+.IP \fBENOTDIR\fR
+A component of either path prefix is not a directory.
+.IP \fBENOTDIR\fR
+.I from
+is a directory, but
+.I to
+is not a directory.
+.IP \fBEISDIR\fR
+.I to
+is a directory, but
+.I from
+is not a directory.
+.IP \fBEXDEV\fR
+The link named by
+.I to
+and the file named by
+.I from
+are on different logical devices (file systems).  Note that this error
+code will not be returned if the implementation permits cross-device
+links.
+.IP \fBENOSPC\fR
+The directory in which the entry for the new name is being placed
+cannot be extended because there is no space left on the file
+system containing the directory.
+.IP \fBEDQUOT\fR
+The directory in which the entry for the new name
+is being placed cannot be extended because the
+user's quota of disk blocks on the file system
+containing the directory has been exhausted.
+.IP \fBEIO\fR
+An I/O error occurred while making or updating a directory entry.
+.IP \fBEROFS\fR
+The requested link requires writing in a directory on a read-only file
+system.
+.IP \fBEFAULT\fR
+.IR Path 
+points outside the process's allocated address space.
+.IP \fBEINVAL\fR
+.I From
+is a parent directory of
+.IR to ,
+or an attempt is made to rename
+.BR \&.
+or
+.BR \&.. .
+.IP \fBENOTEMPTY\fR
+.I To
+is a directory and is not empty.
+.RE
+.SH SEE ALSO
+.BR open (2)
+.BR symlink (7)
+.SH STANDARDS
+.BR Rename 
+conforms to IEEE Std 1003.1-1988 (POSIX).

@@ -1,0 +1,523 @@
+.\" Copyright (c) 1983, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)fcntl.2	8.2 (Berkeley) 1/12/94
+.\"
+.TH FCNTL 2 "15 September 1997" GNO "System Calls"
+.SH NAME
+.BR fcntl
+\- file control
+.SH SYNOPSIS
+#include <fcntl.h>
+.sp 1
+int
+\fBfcntl\fR (int \fIfd\fR, int \fIcmd\fR, ... /* int \fIarg\fR */ );
+.SH DESCRIPTION
+.IB "See the " BUGS " section for caveats on the GNO implementation."
+.LP
+.BR Fcntl 
+provides for control over descriptors.
+The argument
+.I fd
+is a descriptor to be operated on by
+.I cmd
+as follows:
+.RS
+.IP \fBF_DUPFD\fR
+Return a new descriptor as follows:
+.sp 1
+.RS
+Lowest numbered available descriptor greater than or equal to
+.IR arg .
+.sp 1
+Same object references as the original descriptor.
+.sp 1
+New descriptor shares the same file offset if the object
+was a file.
+.sp 1
+Same access mode (read, write or read/write).
+.sp 1
+Same file status flags (i.e., both file descriptors
+share the same file status flags).
+.sp 1
+The close-on-exec flag associated with the new file descriptor
+is set to remain open across
+.BR execve (2)
+system calls.
+.RE
+.IP \fBF_GETFD\fR
+Get the close-on-exec flag associated with the file descriptor
+.IR fd .
+If the low-order bit of the returned value is 0,
+the file will remain open across
+.BR exec ,
+otherwise the file will be closed upon execution of
+.BR exec 
+.RI ( arg
+is ignored).
+.IP \fBF_SETFD\fR
+Set the close-on-exec flag associated with
+.I fd
+to the low order bit of
+.I arg
+(0 or 1 as above).
+.IP \fBF_GETFL\fR
+Get descriptor status flags, as described below
+.RI ( arg
+is ignored).
+.IP \fBF_SETFL\fR
+Set descriptor status flags to
+.IR arg .
+.IP \fBF_GETOWN\fB
+Get the process ID or process group
+currently receiving
+.BR SIGIO
+and
+.BR SIGURG
+signals; process groups are returned
+as negative values
+.RI ( arg
+is ignored).
+.IP \fBF_SETOWN\fR
+Set the process or process group
+to receive
+.BR SIGIO
+and
+.BR SIGURG
+signals;
+process groups are specified by supplying
+.I arg
+as negative, otherwise 
+.I arg
+is interpreted as a process ID.
+.RE
+.LP
+The flags for the
+.BR F_GETFL
+and
+.BR F_SETFL
+flags are as follows:
+.RS
+.IP \fBO_NONBLOCK\fR
+Non-blocking I/O; if no data is available to a
+.BR read (2)
+call, or if a
+.BR write (2)
+operation would block,
+the read or write call returns -1 with the error
+.BR EAGAIN .
+.IP \fBO_APPEND\fR
+Force each write to append at the end of file;
+corresponds to the
+.BR O_APPEND
+flag of
+.BR open (2).
+.IP \fBO_ASYNC\fR
+Enable the
+.BR SIGIO
+signal to be sent to the process group
+when I/O is possible, e.g.,
+upon availability of data to be read.
+.RE
+.LP
+Several commands are available for doing advisory file locking;
+they all operate on the following structure:
+.nf
+struct flock {
+	off_t	l_start;	/* starting offset */
+	off_t	l_len;		/* len = 0 means until end of file */
+	pid_t	l_pid;		/* lock owner */
+	short	l_type;		/* lock type: read/write, etc. */
+	short	l_whence;	/* type of l_start */
+};
+.fi
+The commands available for advisory record locking are as follows:
+.RS
+.IP \fBF_GETLK\fR
+Get the first lock that blocks the lock description pointed to by the
+third argument,
+.IR arg ,
+taken as a pointer to a
+.I "struct flock"
+(see above).
+The information retrieved overwrites the information passed to
+.BR fcntl
+in the
+.I flock
+structure.
+If no lock is found that would prevent this lock from being created,
+the structure is left unchanged by this function call except for the
+lock type which is set to
+.BR F_UNLCK .
+.IP \fBF_SETLK\fR
+Set or clear a file segment lock according to the lock description
+pointed to by the third argument,
+.IR arg ,
+taken as a pointer to a
+.I "struct flock"
+(see above).
+.BR F_SETLK
+is used to establish shared (or read) locks
+.RB ( F_RDLCK )
+or exclusive (or write) locks,
+.RB ( F_WRLCK ),
+as well as remove either type of lock
+.RB ( F_UNLCK ).
+If a shared or exclusive lock cannot be set,
+.BR fcntl
+returns immediately with
+.BR EACCES .
+.IP \fBF_SETLKW\fR
+This command is the same as
+.BR F_SETLK
+except that if a shared or exclusive lock is blocked by other locks,
+the process waits until the request can be satisfied.
+If a signal that is to be caught is received while
+.BR fcntl
+is waiting for a region, the
+.BR fcntl
+will be interrupted if the signal handler has not specified the
+.BR SA_RESTART
+(see
+.BR sigaction (2)).
+.RE
+.LP
+When a shared lock has been set on a segment of a file,
+other processes can set shared locks on that segment
+or a portion of it.
+A shared lock prevents any other process from setting an exclusive
+lock on any portion of the protected area.
+A request for a shared lock fails if the file descriptor was not
+opened with read access.
+.LP
+An exclusive lock prevents any other process from setting a shared lock or
+an exclusive lock on any portion of the protected area.
+A request for an exclusive lock fails if the file was not
+opened with write access.
+.LP
+The value of
+.I l_whence
+is
+.BR SEEK_SET ,
+.BR SEEK_CUR ,
+or
+.BR SEEK_END
+to indicate that the relative offset,
+.I l_start
+bytes, will be measured from the start of the file,
+current position, or end of the file, respectively.
+The value of
+.I l_len
+is the number of consecutive bytes to be locked.
+If
+.I l_len
+is negative, the result is undefined.
+The
+.I l_pid
+field is only used with
+.BR F_GETLK
+to return the process ID of the process holding a blocking lock.
+After a successful
+.BR F_GETLK
+request, the value of
+.I l_whence
+is
+.BR SEEK_SET .
+.LP
+Locks may start and extend beyond the current end of a file,
+but may not start or extend before the beginning of the file.
+A lock is set to extend to the largest possible value of the
+file offset for that file if
+.I l_len
+is set to zero. If
+.I l_whence
+and
+.I l_start
+point to the beginning of the file, and
+.I l_len
+is zero, the entire file is locked.
+If an application wishes only to do entire file locking, the
+.BR flock (2)
+system call is much more efficient.
+.LP
+There is at most one type of lock set for each byte in the file.
+Before a successful return from an
+.BR F_SETLK
+or an
+.BR F_SETLKW
+request when the calling process has previously existing locks
+on bytes in the region specified by the request,
+the previous lock type for each byte in the specified
+region is replaced by the new lock type.
+As specified above under the descriptions
+of shared locks and exclusive locks, an
+.BR F_SETLK
+or an
+.BR F_SETLKW
+request fails or blocks respectively when another process has existing
+locks on bytes in the specified region and the type of any of those
+locks conflicts with the type specified in the request.
+.LP
+This interface follows the completely stupid semantics of System V and
+POSIX 1003.1-88
+that require that all locks associated with a file for a given process are
+removed when \fIany\fP file descriptor for that file is closed by that process.
+This semantic means that applications must be aware of any files that
+a subroutine library may access.
+For example if an application for updating the password file locks the
+password file database while making the update, and then calls
+.BR getpwnam (3)
+to retrieve a record,
+the lock will be lost because 
+.BR getpwnam (3)
+opens, reads, and closes the password database.
+The database close will release all locks that the process has
+associated with the database, even if the library routine never
+requested a lock on the database.
+Another minor semantic problem with this interface is that
+locks are not inherited by a child process created using the
+.BR fork (2)
+function.
+The
+.BR flock (2)
+interface has much more rational last close semantics and
+allows locks to be inherited by child processes.
+.BR Flock (2)
+is recommended for applications that want to ensure the integrity
+of their locks when using library routines or wish to pass locks
+to their children.
+Note that 
+.BR flock (2)
+and 
+.BR fcntl (2)
+locks may be safely used concurrently.
+.LP
+All locks associated with a file for a given process are
+removed when the process terminates.
+.LP
+A potential for deadlock occurs if a process controlling a locked region
+is put to sleep by attempting to lock the locked region of another process.
+This implementation detects that sleeping until a locked region is unlocked
+would cause a deadlock and fails with an
+.BR EDEADLK
+error.
+.SH IMPLEMENTATION NOTES
+.LP
+In the non-threaded library
+.BR fcntl 
+is implemented as the
+.IR fcntl
+syscall.
+.LP
+In the threaded library, the
+.IR fcntl
+syscall is assembled to
+.BR _thread_sys_fcntl 
+and
+.BR fcntl 
+is implemented as a function which disables thread rescheduling, locks
+.IR fd
+for read and write, then calls
+.BR _thread_sys_fcntl .
+Before returning,
+.BR fcntl 
+unlocks
+.IR fd
+and enables thread rescheduling.
+.SH RETURN VALUES
+Upon successful completion, the value returned depends on
+.I cmd
+as follows:
+.RS
+.IP \fBF_DUPFD\fR
+A new file descriptor.
+.IP \fBF_GETFD\fR
+Value of flag (only the low-order bit is defined).
+.IP \fBF_GETFL\fR
+Value of flags.
+.IP \fBF_GETOWN\fR
+Value of file descriptor owner.
+.IP \fBother\fR
+Value other than -1.
+.RE
+.LP
+Otherwise, a value of -1 is returned and
+.IR errno
+is set to indicate the error.
+.SH ERRORS
+.BR Fcntl 
+will fail if:
+.RS
+.IP \fBEACCES\fR
+The argument
+.I arg
+is
+.BR F_SETLK ,
+the type of lock
+.RI ( l_type )
+is a shared lock
+.RB ( F_RDLCK )
+or exclusive lock
+.RB ( F_WRLCK ),
+and the segment of a file to be locked is already
+exclusive-locked by another process;
+or the type is an exclusive lock and some portion of the
+segment of a file to be locked is already shared-locked or
+exclusive-locked by another process.
+.IP \fBEBADF\fR
+.I Fildes
+is not a valid open file descriptor.
+.LP
+The argument
+.I cmd
+is
+.BR F_SETLK
+or
+.BR F_SETLKW ,
+the type of lock
+.RI ( l_type )
+is a shared lock
+.RB ( F_RDLCK ),
+and
+.I fildes
+is not a valid file descriptor open for reading.
+.LP
+The argument
+.I cmd
+is
+.BR F_SETLK
+or
+.BR F_SETLKW ,
+the type of lock
+.RI ( l_type )
+is an exclusive lock
+.RB ( F_WRLCK ),
+and
+.I fildes
+is not a valid file descriptor open for writing.
+.IP \fBEDEADLK\fR
+The argument
+.I cmd
+is
+.BR F_SETLKW ,
+and a deadlock condition was detected.
+.IP \fBEINTR\fR
+The argument
+.I cmd
+is
+.BR F_SETLKW ,
+and the function was interrupted by a signal.
+.IP \fBEINVAL\fR
+.I Cmd
+is
+.BR F_DUPFD
+and
+.I arg
+is negative or greater than the maximum allowable number
+(see
+.BR getdtablesize (2)).
+.LP
+The argument
+.I cmd
+is
+.BR F_GETLK ,
+.BR F_SETLK ,
+or
+.BR F_SETLKW ,
+and the data to which
+.I arg
+points is not valid, or
+.I fildes
+refers to a file that does not support locking.
+.IP \fBEMFILE\fR
+The argument
+.I cmd
+is
+.BR F_DUPFD
+and the maximum number of file descriptors permitted for the
+process are already in use,
+or no file descriptors greater than or equal to
+.I arg
+are available.
+.IP \fBENOLCK\fR
+The argument
+.I cmd
+is
+.BR F_SETLK
+or
+.BR F_SETLKW ,
+and satisfying the lock or unlock request would result in the
+number of locked regions in the system exceeding a system-imposed limit.
+.IP \fBESRCH\fR
+.I Cmd
+is
+.BR F_SETOWN
+and
+the process ID given as argument is not in use.
+.RE
+.LP
+In addition, if 
+.I fd
+refers to a descriptor open on a terminal device (as opposed to a
+descriptor open on a socket), a
+.I cmd
+of
+.BR F_SETOWN
+can fail for the same reasons as in
+.BR tcsetpgrp (3),
+and a
+.I cmd
+of
+.BR F_GETOWN
+for the reasons as stated in
+.BR tcgetpgrp (3).
+.SH BUGS
+Currently, the only
+.IR cmd s
+used by the GNO implementation are
+.BR F_DUPFD
+and
+.BR F_GETFL .
+Any other values will result in an error and set errno to
+.BR EINVAL .
+.SH SEE ALSO
+.BR close (2),
+.BR execve (2),
+.BR flock (2),
+.BR getdtablesize (2),
+.BR open (2),
+.BR sigvec (2),
+.BR tcgetpgrp (3),
+.BR tcsetpgrp (3)
+.SH HISTORY
+The
+.BR fcntl
+function call appeared in 4.2BSD.
