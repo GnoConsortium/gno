@@ -1,5 +1,5 @@
 /*
- * $Id: copyfile.c,v 1.1 1997/10/30 04:57:25 gdr Exp $
+ * $Id: copyfile.c,v 1.2 1998/03/25 04:04:20 gdr-ftp Exp $
  */
 
 /* Change the arg types of GS/OS parameter blocks. Must be before #includes */
@@ -334,6 +334,11 @@ DEBUG(("copying file\n"));
 		/* open the output file */
 		openrec.pathname = &(expandedTo->bufString);
 		openrec.requestAccess = writeEnable;
+		if (((flags & LC_COPY_REZ) == 0) &&
+	            (openrec.storageType == 0x05)) {
+	            	/* not copying resource fork; make it a standard file */
+	            	openrec.storageType = 0x01;
+		}
 		OpenGS(&openrec);
 		if ((j = _toolErr) != 0) {
 			closerec.pCount = 1;
