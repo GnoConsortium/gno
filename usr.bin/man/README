@@ -216,6 +216,14 @@ man
 TO DO:
 =====
 
+Here's a possible optimization option:
+	Create a database in the user's home directory that contains a
+	list of all man pages and their locations, based on MANPATH.
+	Keep a magic number (a checksum or hash?) in the file to see if
+	MANPATH has changed.  *maybe* check the date of the file against
+	the modification date of the respective directories and generate a
+	warning if the db is out-of-date.
+
 Makewhatis is not very well integrated with the rest of the package;
 there is still duplication of definitions and functions in some files.
 

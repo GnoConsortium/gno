@@ -1,7 +1,7 @@
 #
 # Devin Reade, 1998
 #
-# $Id: Makefile,v 1.1 1998/03/29 07:15:38 gdr-ftp Exp $
+# $Id: Makefile,v 1.2 1998/03/29 20:52:14 gdr-ftp Exp $
 #
 
 CUSTOM_RULES	= true		# provide our own build rules
@@ -24,8 +24,9 @@ DESC		= manpack.desc
 
 RELSBIN	= $(RELEASE_DIR)$(SBINDIR)
 
-PROGS		= $(OBJ_DIR)apropos $(OBJ_DIR)catman $(OBJ_DIR)makewhatis \
-		  $(OBJ_DIR)man $(OBJ_DIR)whatis
+PROGS1		= $(OBJ_DIR)apropos $(OBJ_DIR)man $(OBJ_DIR)whatis
+PROGS8		= $(OBJ_DIR)catman $(OBJ_DIR)makewhatis
+PROGS		= $(PROGS1) $(PROGS8)
 
 APROPOS_OBJ	= apropos.o apropos2.o util.o globals.o
 CATMAN_OBJ	= catman.o util.o globals.o common.o
@@ -73,16 +74,16 @@ RELDIRS	= $(RELSBIN) $(BINDIR) $(MANDIR)/man1 $(MANDIR)/man8 $(DESC_DIR)
 release: $(PROGS) $(M1) $(M8) $(DESC)
 	$(INSTALL) -d $(RELSBIN) $(RELBIN) $(RELMAN)/man1 $(RELMAN)/man8
 	$(INSTALL) -d $(DESC_DIR)
-	$(INSTALL) apropos man whatis $(RELBIN)
-	$(INSTALL) catman makewhatis $(RELSBIN)
+	$(INSTALL) $(PROGS1) $(RELBIN)
+	$(INSTALL) $(PROGS8) $(RELSBIN)
 	$(INSTALL) $(M1) $(RELMAN)/man1
 	$(INSTALL) $(M8) $(RELMAN)/man8
 	$(DESCU) -o $(DESC_SRC) $(DESC_SRC) $(DESC)
                                   
 install: $(PROGS) $(M1) $(M8)
 	$(INSTALL) -d $(SBINDIR) $(BINDIR) $(MANDIR)/man1 $(MANDIR)/man8
-	$(INSTALL) apropos man whatis $(BINDIR)
-	$(INSTALL) catman makewhatis $(SBINDIR)
+	$(INSTALL) $(PROGS1) $(BINDIR)
+	$(INSTALL) $(PROGS8) $(SBINDIR)
 	$(INSTALL) $(M1) $(MANDIR)/man1
 	$(INSTALL) $(M8) $(MANDIR)/man8
 
