@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.2 1998/01/17 08:29:21 gdr Exp $
+# $Id: Makefile,v 1.3 1998/01/17 21:21:05 gdr Exp $
 #
 # Devin Reade, January 1998
 #
@@ -69,7 +69,7 @@ release:	default $(RELDIR)/$(RELEASE_README) $(RELDIR)/$(RELEASE_SRC) \
 		$(RELDIR)/$(RELEASE_DB)
 
 clobber:
-	rm -rf $(XREF) $(TDIR) $(README_OUT)
+	rm -rf *~ $(XREF) $(TDIR) $(README_OUT)
 
 $(RELDIR)/$(RELEASE_README):	$(RELDIR) $(README_OUT)
 	install $(OWNER) $(MODE_F) $(README_OUT) $@
