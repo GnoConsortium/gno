@@ -1,7 +1,7 @@
 /*
  * Test by Devin Reade
  *
- * $Id: utime.c,v 1.1 1997/02/28 05:12:52 gdr Exp $
+ * $Id: utime.c,v 1.2 1998/02/04 07:26:53 gdr-ftp Exp $
  */
 
 #include <sys/types.h>
@@ -27,5 +27,7 @@ int main(int argc, char **argv) {
 	   err(1, "utime for %s failed", argv[1]);
   }
   printf("passed\n");
+  printf("access time:       %s\n", ctime(&utb.actime));
+  printf("modification time: %s\n", ctime(&utb.modtime));
   return 0;
 }
