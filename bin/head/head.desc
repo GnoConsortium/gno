@@ -1,0 +1,9 @@
+Name:    head
+Version: 2.0 (August 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin/head
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+ Print the first part of a file.
