@@ -1,4 +1,4 @@
-#define	VERSIONSTRING "1.0"
+#define	VERSIONSTRING "1.1, 29 May 1994"
 
 /* The size of the IO buffers */
 #define	BUFFERSIZE	1024
@@ -15,11 +15,4 @@ extern int	system (const char *);
 void			fillbuffer (char *filename);
 void 			process (char *filename, char *tmp_file, FILE *whatis_fp);
 
-extern short c_flag;
-extern short C_flag;
-extern short f_flag;
-extern short l_flag;
-extern short O_flag;
-extern short p_flag;
 extern short v_flag;
-extern short errflag;

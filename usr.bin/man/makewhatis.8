@@ -1,4 +1,4 @@
-.TH MAKEWHATIS 1 "Commands and Applications" "15 May 1994" "Version 1.0"
+.TH MAKEWHATIS 1 "Commands and Applications" "29 May 1994" "Version 1.1"
 .SH NAME
 .B makewhatis
 \- generate the whatis database file
@@ -9,13 +9,17 @@
 |
 .I -C
 ] [
-.I -ovV
-] [
 .I "-f outfile"
 ] [
 .I "-l logfile"
 ] [
+.I "-o dbfile"
+] [
 .I "-p path"
+] [
+.I "-v n"
+] [
+.I "-V"
 ]
 .SH DESCRIPTION
 .B makewhatis
@@ -82,17 +86,31 @@ man/catX sub-directories, not man/manX sub-directories.
 .I "-f outfile"
 causes the
 .B makewhatis
-status output to be placed in \fIoutfile\fR.
+status output to be placed in \fIoutfile\fR.  Invoking
+.I "-f"
+without
+.I "-v2"
+produces no output.
 .LP
 .I "-l logfile"
-will cause any error messages to be printed to \fIlogfile\fR.
+will cause any error messages to be printed to \fIlogfile\fR.  Invoking
+.I "-l"
+without either
+.I "-v1"
+or
+.I "-v2"
+produces no output.
 .LP
 .I "-o dbfile"
 will make
 .B makewhatis
 use
 .I dbfile
-as the name for the generated whatis databases.
+as the name for the generated whatis databases.  While it is possible to
+use a full pathname for
+.I dbfile
+, this will result in that file being overwritten for each space-delimited
+entry in \fIMANPATH\fR.
 .LP
 .I "-p path"
 overrides the environment variables
@@ -100,8 +118,10 @@ overrides the environment variables
 et al for determining for which manual page hierarchies the databases must
 be generated.
 .LP
-.I -v
-creates verbose status messages during execution.
+.I "-v n"
+creates verbose status messages during execution.  For n=1 only error
+messages are printed out.  For n=2, both error and status messages are
+printed.
 .LP
 .I -V
 will show version and usage information, then exit.
@@ -121,6 +141,14 @@ and
 .I .
 being part of these paths, it will not correctly handle \fI..\fR.
 .SH CAVEATS
+.B Makewhatis
+assumes that the programs
+.BR aroff ,
+.BR compress ", and"
+.BR freeze
+are available to the executing shell via the \fIsystem\fR(2) call.
+Nroff is not used and need not be available.
+.LP
 Because
 .B makewhatis
 looks for the string
@@ -130,12 +158,13 @@ and one of \fI.SH\fR, \fISYNOPSIS\fR, or
 when processing files, it can be confused by missing fields or
 some methods of formatting.  For example, if in a man/catX page
 .I NAME
-is boldfaced by repeated backspace characters as in \fIN^HNA^HAM^HME^HE\fR,
-then the generated description for that particular man page is unpredictable,
-though usually blank.  For any diehards who like placing such information
-in their hand-coded man/catX pages, using a string similar to
-.I "NAME^H^H^H^HNAME"
-will create a proper description in the database file.
+is underlined by repeated backspace-_ sequences, then the generated
+description for that particular man page is unpredictable,
+though usually blank.  When parsing man pages,
+.B makewhatis
+will understand the common double- and quadruple-boldfaced
+subheadings, provided
+that the backspace character (control-H) is used to achieve this effect.
 .LP
 Similarily,
 .B makewhatis
@@ -148,34 +177,29 @@ to be in the format:
 .fi
 If this is not so (ignoring whitespace), then the output is unpredictable.
 .LP
+Man pages must be CR-deliminated.
+.LP
+If aroff source is compressed or frozen, the database entry for that
+page is unpredictable.
+.LP
 Where unpredictable output has been mentioned above, this means that
 the description in the database file will either be blank or random
 text from the man page.  It
 .I "does not"
 mean that system integrity or that the remainder of the database file
 has been affected.
+.LP
+Any text appearing after
+.I NAME
+on the NAME header line will be ignored.
 .SH BUGS
-If a man page describes multiple items and has a NAME subheading such as
-.nf
-
-NAME
-       item1, item2, item3 - This is the description.
-
-.fi
-Then
-.B makewhatis
-should create a database record that reads:
-.nf
-
-       item1 (3), item2 (3), item3 (3) - This is the description.
-
-.fi
-Instead, if item2.l and item3.l are links to item1.3, the created record reads
-.nf
-
-       item1 (3) - This is the description.
-
-.fi
+.B Makewhatis
+reads files in blocks of 1024 characters.
+If formatting information is split by the end
+of the input buffer, you may see formatting infomation such as
+.I .BR
+in the output.  This was not fixed due to the overhead of having to
+check for such a condition.
 .SH FILES
 .nf
 /usr/sbin/makewhatis -- whatis database generator
@@ -183,8 +207,12 @@ man/whatis           -- the whatis database
 .fi
 .SH SEE ALSO
 .BR apropos (1),
+.BR aroff (1),
 .BR catman (1),
+.BR compress (1),
+.BR freeze (1),
 .BR man (1),
-.BR whatis (1),
+.BR nroff (1),
+.BR whatis (1)
 .SH AUTHOR
 Written by Devin Reade <glyn@cs.ualberta.ca> for the Apple IIgs and Gno.

@@ -9,9 +9,15 @@
 #include <string.h>
 #include <dirent.h>
 #include <unistd.h>
+#include "getopt.h"
 #include <libc.h>
 
 #include "makewhatis.h"
+
+#ifdef DEBUG
+	extern void begin_stack_check(void);
+   extern int  end_stack_check(void);
+#endif                               
 
 /*
  * Options:
@@ -23,7 +29,7 @@
  * -o dbfile		force whatis database output to <dbfile>
  * -p path			use the <path> rather than $MANPATH, $USRMAN, or $MANDIR
  * -s					sort the whatis database by manual page name
- * -v    			verbose
+ * -v{1|2}  		verbose
  * -V    			show version and usage info and exit
  */
 
@@ -40,18 +46,6 @@ char *man_subdir[] = {
    "manl",
    NULL
 };
-
-/* For the various command line flags */
-
-short c_flag  = 0;
-short C_flag  = 0;
-short o_flag  = 0;
-short p_flag  = 0;
-short v_flag  = 0;
-short errflag = 0;	/* This is set if there is a usage error or -V flag */
-
-static char filebuffer[FILENAME_MAX];	/* used when traversing cat* pages */
-static char progdir[FILENAME_MAX];	/* the directory where makewhatis started */
 
 /*
  * we include cat* since some Gno utility man pages aren't written in
@@ -71,6 +65,18 @@ char *cat_subdir[] = {
    "catl",
    NULL				/* _must_ be NULL terminated! */
 };
+
+/* For the various command line flags */
+
+short c_flag  = 0;
+short C_flag  = 0;
+short o_flag  = 0;
+short p_flag  = 0;
+short v_flag  = 0;
+short errflag = 0;	/* This is set if there is a usage error or -V flag */
+
+static char filebuffer[FILENAME_MAX];	/* used when traversing cat* pages */
+static char progdir[FILENAME_MAX];	/* the directory where makewhatis started */
 
 FILE *output_fp;
 FILE *error_fp;
@@ -98,6 +104,10 @@ int main (int argc, char **argv) {
       return 1;
    }
 
+#ifdef DEBUG
+	begin_stack_check();
+#endif
+
    /*
     * set the defaults
     */
@@ -113,7 +123,7 @@ int main (int argc, char **argv) {
     * parse the command line
     */
 
-	while((i = getopt(argc,argv,"cCf:l:o:p:vV")) != EOF)
+	while((i = getopt(argc,argv,"cCf:l:o:p:v:V")) != EOF)
 	   switch(i) {
       case 'c':
       	if (C_flag) errflag++;
@@ -148,11 +158,12 @@ int main (int argc, char **argv) {
          p = optarg;
          break;
       case 'v':
-	      v_flag++;
+	      v_flag = (short) atoi(optarg);
+         if ((v_flag!=1) && (v_flag!=2)) errflag++;
          break;
       case 'V':
 	      fprintf(stderr,
-         	"%s -- Create the %s database.\n\tVersion %s by Devin Reade\n\n",
+         	"%s --\n\tCreate the %s database.\n\tVersion %s by Devin Reade\n\n",
             argv[0],WHATIS,VERSIONSTRING);
          errflag++;
          break;
@@ -162,15 +173,17 @@ int main (int argc, char **argv) {
       }
 	if (errflag) {
    	fprintf(error_fp,
-"Usage:  %s [-c|-C] [-ovV] [-f outfile] [-l logfile] [-p path]\n\n\
+"Usage:\n%s\t[-c|-C] [-f outfile] [-l logfile] [-o dbfile] [-p path]\n\
+\t\t[-v 1|2] [-V]\n\n\
 -c\t\tCheck catX subdirectories as well\n\
 -C\t\tCheck _only_ catX subdirectories, not manX subdirectories.\n\
 -f outfile\tForce whatis output to <outfile>.\n\
 -l logfile\tLog errors to <logfile>.\n\
 -o dbfile\tforce whatis database output to <dbfile>.\n\
 -p path\t\tUse the <path> rather than $MANPATH, $USRMAN, or $MANDIR.\n\
--v\t\tVerbose.\n\
--V\t\tShow version and usage information, then exit.\n",argv[0],WHATIS);
+-v n\t\t<n>=1: Verbose, only displaying major errors.\n\
+\t\t<n>=2: Very verbose, displaying processing information.\n\
+-V\t\tShow version and usage information, then exit.\n",argv[0]);
 		return -1;
    }
                                                   
@@ -192,7 +205,8 @@ environment variables\n$MANPATH, $USRMAN, or $MANDIR, or use the -p flag.\n\n");
 
    /* make a copy of the location */
    if ((manpath = malloc (strlen(p) + 1)) == NULL) {
-	   if (v_flag) fprintf(error_fp,"couldn't make copy of \"%s\"",p);
+	   if (v_flag) fprintf(error_fp,
+      				"malloc failed while making copy of \"%s\"\nAborted.\n",p);
       return -1;
    }
    strcpy(manpath,p);
@@ -221,7 +235,8 @@ environment variables\n$MANPATH, $USRMAN, or $MANDIR, or use the -p flag.\n\n");
 	      whatis_fp = fopen(dbfile,"w");
          if (whatis_fp == NULL) {
 	         fprintf (error_fp,
-            	"Could not create whatis database file %s in directory %s.\n",
+            	"Could not create whatis database file %s in directory %s.\n\
+Aborted.\n",
 		      	dbfile,path);
            	exit(-1);
         	}
@@ -235,7 +250,7 @@ environment variables\n$MANPATH, $USRMAN, or $MANDIR, or use the -p flag.\n\n");
          	if (subdir != NULL) {
 
 	            /* print status */
-	         	if (v_flag) fprintf(output_fp,
+	         	if (v_flag>=2) fprintf(output_fp,
                	"Now working on directory %s\t%s ...\n",path,man_subdir[i]);
 
                /* no need to error check because of opendir() */
@@ -247,7 +262,7 @@ environment variables\n$MANPATH, $USRMAN, or $MANDIR, or use the -p flag.\n\n");
             	}
             	closedir(subdir);
          	} else {
-         		if (v_flag) fprintf(output_fp,
+         		if (v_flag>=2) fprintf(output_fp,
                	"Could not access files in %s\t%s ...\n",path,man_subdir[i]);
          	}
 	      	chdir(path);
@@ -263,7 +278,7 @@ environment variables\n$MANPATH, $USRMAN, or $MANDIR, or use the -p flag.\n\n");
          	if (subdir != NULL) {
 
 	            /* print status */
-	         	if (v_flag) fprintf(output_fp,
+	         	if (v_flag>=2) fprintf(output_fp,
                	"Now working on directory %s\t%s ...\n",path,cat_subdir[i]);
 
                /* no need to error check because of opendir() */
@@ -284,7 +299,7 @@ environment variables\n$MANPATH, $USRMAN, or $MANDIR, or use the -p flag.\n\n");
             	}
             	closedir(subdir);
          	} else {
-         		if (v_flag) fprintf(output_fp,
+         		if (v_flag>=2) fprintf(output_fp,
                	"Could not access files in %s\t%s ...\n",path,cat_subdir[i]);
          	}
 	      	chdir(path);
@@ -303,5 +318,10 @@ environment variables\n$MANPATH, $USRMAN, or $MANDIR, or use the -p flag.\n\n");
 	unlink(tmp_file);
    if (output_fp != stdout) fclose(output_fp);
    if (error_fp != stderr)  fclose(error_fp);
+
+#ifdef DEBUG
+	fprintf(stderr,"Makewhatis stack usage:  %d bytes\n",end_stack_check());
+#endif
+   
    return 0;
 }

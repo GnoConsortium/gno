@@ -13,12 +13,19 @@ MANDIR = /usr/man
 #
 # Nothing past this point should have to be changed
 #
+# -DISGRAPH_FIX should come out when Orca/C's isgraph() function is fixed.
+#
+# -DTEST_PROCESS is for debugging process().  Use "dmake process".
+# -DDEBUG will give stack usage.
+#
 
-CFLAGS = -w -O -v
+CFLAGS = -w -O -v -DISGRAPH_FIX -s1024
+
 OBJS = makewhatis.o fillbuffer.o process.o
+LDLIBS = -l/usr/lib/gnulib -l/usr/lib/stack
          
 makewhatis: $(OBJS)
-	$(CC) $(OBJS) -o makewhatis
+	$(CC) $(OBJS) $(LDLIBS) -o makewhatis
 
 makewhatis.o: makewhatis.c makewhatis.h
 	$(CC) -c $(CFLAGS) makewhatis.c

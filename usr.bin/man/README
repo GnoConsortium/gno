@@ -1,14 +1,71 @@
 --------------------------------------------
 Name:     makewhatis
-Version:  1.0
+Version:  1.1
 Author:   Devin Reade <glyn@cs.ualberta.ca>
 Computer: Apple IIgs
 Requires: Gno v2.x
 --------------------------------------------
 
-Description:  Generates the whatis database for apropos(1) and whatis(1)
-              See the man page for a detailed description.
+===========
+Description:
+===========
 
+Generates the whatis database for apropos(1) and whatis(1).  See the man
+page for a detailed description.
+
+============
 Installation:
-	Copy makewhatis to /usr/sbin and makewhatis.1 to $(USRMAN)/man1.
-	Alternately, you can type "dmake install" from this directory.
+============
+
+Copy makewhatis to /usr/sbin and makewhatis.1 to $(USRMAN)/man1.
+Alternately, you can type "dmake install" from this directory.
+
+============
+Distribution:
+============
+
+Makewhatis is freeware.  You may distribute this anywhere provided
+that the archive remains intact.
+
+=======
+Changes:
+=======
+
+v1.1: (29 May 94)
+	Makewhatis will now ignore any man page starting with ".so", in
+	order to eliminate multiple files.  The resultant blank lines in
+   the whatis database have therefore been eliminated.
+
+   Changed -v flag to {-v1|-v2} for differing stages of verbosity.
+   Only error output will be logged with the -l flag.
+
+   Manual page was updated, to include a correction to the -o flag usage
+   and the modification to the -v flag.  Descriptions of bugs unlikely
+   to be fixed were added.  Date and version were changed.
+
+	Fixed bug where input buffer wasn't properly terminated, and added
+   checks for buffer overflows.
+
+   Makewhatis will now display all commands about which the manual page
+   is written.  For example, if foo.1 described both foo(1) and bar(1),
+   and bar.1 was an .so (or .l) link to foo.1, then the database entry
+   will have changed from
+	   foo (1)					- extract and add thingys from the bork stream
+   to
+	   foo, bar (1)			- extract and add thingys from the bork stream
+
+   Makewhatis used to pick up the first NAME string in the file as a reference
+   point.  Now, any NAME is ignored in any line starting with .\" or .TH
+
+	Filename chapter numbers will now be correctly extracted regardless of the
+   existence of .Z, .z, .F, or .f suffixes, or of the existence of '.' within
+   the base file name.
+
+   Makewhatis is now linked with Soenke's gnulib for the getopt() function,
+   rather than using the libc version.
+
+	Stack usage was reduced to 1k.  Be aware, though, that a fair amount
+   of global storage is used, including three 1k buffers.
+
+v1.0: (15 May 94)
+	Initial release.
