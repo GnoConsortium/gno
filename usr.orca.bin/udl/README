@@ -4,7 +4,7 @@ udl -	Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
 
 	(c) 1993-1994 Soenke Behrens
 
-	Version 1.13: $Id: README,v 1.1 1994/12/13 18:08:18 gdr Exp $
+	Version 1.13: $Id: README,v 1.2 1995/02/08 05:05:36 gdr Exp $
 =============================================================================
 
 Udl converts text files between CR, LF and CR/LF (Apple, Unix and MS-DOS).
@@ -46,6 +46,9 @@ v1.13
 	Added ability to recurse through directories (-R flag).
 	Changed behavior to ignore binary files rather than exiting.
 	Merged Unix and Apple IIgs versions.
+        No message is printed out when a binary file (or, in the IIgs
+           implementation, a non-TXT or non-SRC file) is encountered
+           unless the -v option is specified.
 
 =========
 Compiling:
@@ -65,6 +68,13 @@ to your liking.
 Also, udl.c assumes that getopt() is declared in <unistd.h> and that
 the function strdup() exists in <string.h>. You might want to change
 these includes if that's not the case.
+
+==========
+Legalities:
+==========
+
+This program contains material from the Orca/C Run-Time Libraries,
+copyright 1987-1994 by Byte Works, Inc.  Used with permission.
 
 =============================================================================
 Enjoy,

@@ -4,7 +4,7 @@
  *
  * Routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.c,v 1.1 1994/12/13 18:08:20 gdr Exp $
+ * $Id: common.c,v 1.2 1995/02/08 05:05:38 gdr Exp $
  *
  * Copyright (c) 1993-1994 Soenke Behrens
  */
@@ -56,36 +56,36 @@ void convert_gs(FILE *infile, FILE *outfile) {
       *out_bufpos = '\r';
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-	my_fwrite(out_buffer,outfile,BUFFERSIZE);
-	out_bufpos = out_buffer;
+        my_fwrite(out_buffer,outfile,BUFFERSIZE);
+        out_bufpos = out_buffer;
       }
       /* fputc('\r',outfile); */
     } else if(a == '\r') {
       *out_bufpos = '\r';
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-	my_fwrite(out_buffer,outfile,BUFFERSIZE);
-	out_bufpos = out_buffer;
+        my_fwrite(out_buffer,outfile,BUFFERSIZE);
+        out_bufpos = out_buffer;
       }
       /* fputc('\r',outfile); */
       
       if (*in_bufpos == '\n' && file_remain != 0) {
-	in_bufpos++;
-	
-	if (in_bufpos >= in_bufend) {
-	  file_remain -= in_bufend - in_buffer;
-	  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-	  in_bufpos = in_buffer;
-	}
+        in_bufpos++;
+        
+        if (in_bufpos >= in_bufend) {
+          file_remain -= in_bufend - in_buffer;
+          in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+          in_bufpos = in_buffer;
+        }
       }
       /* if ((a = fgetc (infile)) != '\n')
-	 ungetc (a,infile); */
+         ungetc (a,infile); */
     } else {
       *out_bufpos = a;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-	my_fwrite(out_buffer,outfile,BUFFERSIZE);
-	out_bufpos = out_buffer;
+        my_fwrite(out_buffer,outfile,BUFFERSIZE);
+        out_bufpos = out_buffer;
       }
       /* fputc(a,outfile); */
     }
@@ -139,52 +139,52 @@ void convert_messy (FILE *infile, FILE *outfile) {
       *out_bufpos = '\r';
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-	my_fwrite(out_buffer,outfile,BUFFERSIZE);
-	out_bufpos = out_buffer;
+        my_fwrite(out_buffer,outfile,BUFFERSIZE);
+        out_bufpos = out_buffer;
       }
       /* fputc('\r',outfile); */
       
       *out_bufpos = '\n';
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-	my_fwrite(out_buffer,outfile,BUFFERSIZE);
-	out_bufpos = out_buffer;
+        my_fwrite(out_buffer,outfile,BUFFERSIZE);
+        out_bufpos = out_buffer;
       }
       /* fputc('\n',outfile); */
     } else if(a == '\r') {
       *out_bufpos = '\r';
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-	my_fwrite(out_buffer,outfile,BUFFERSIZE);
-	out_bufpos = out_buffer;
+        my_fwrite(out_buffer,outfile,BUFFERSIZE);
+        out_bufpos = out_buffer;
       }
       /* fputc('\r',outfile); */
 
       *out_bufpos = '\n';
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-	my_fwrite(out_buffer,outfile,BUFFERSIZE);
-	out_bufpos = out_buffer;
+        my_fwrite(out_buffer,outfile,BUFFERSIZE);
+        out_bufpos = out_buffer;
       }
       /* fputc('\n',outfile); */
 
       if (*in_bufpos == '\n' && file_remain != 0) {
-	in_bufpos++;
+        in_bufpos++;
 
-	if (in_bufpos >= in_bufend) {
-	  file_remain -= in_bufend - in_buffer;
-	  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-	  in_bufpos = in_buffer;
-	}
+        if (in_bufpos >= in_bufend) {
+          file_remain -= in_bufend - in_buffer;
+          in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+          in_bufpos = in_buffer;
+        }
       }
       /* if ((a = fgetc (infile)) != '\n')
-	 ungetc (a,infile); */
+         ungetc (a,infile); */
     } else {
       *out_bufpos = a;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-	my_fwrite(out_buffer,outfile,BUFFERSIZE);
-	out_bufpos = out_buffer;
+        my_fwrite(out_buffer,outfile,BUFFERSIZE);
+        out_bufpos = out_buffer;
       }
       /* fputc(a,outfile); */
     }
@@ -238,28 +238,28 @@ void convert_tunix (FILE *infile, FILE *outfile) {
       *out_bufpos = '\n';
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-	my_fwrite(out_buffer,outfile,BUFFERSIZE);
-	out_bufpos = out_buffer;
+        my_fwrite(out_buffer,outfile,BUFFERSIZE);
+        out_bufpos = out_buffer;
       }
       /* fputc('\n',outfile); */
       
       if (*in_bufpos == '\n' && file_remain != 0) {
-	in_bufpos++;
+        in_bufpos++;
 
-	if (in_bufpos >= in_bufend) {
-	  file_remain -= in_bufend - in_buffer;
-	  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-	  in_bufpos = in_buffer;
-	}
+        if (in_bufpos >= in_bufend) {
+          file_remain -= in_bufend - in_buffer;
+          in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+          in_bufpos = in_buffer;
+        }
       }
       /* if ((a = fgetc (infile)) != '\n')
-	 ungetc (a,infile); */
+         ungetc (a,infile); */
     } else {
       *out_bufpos = a;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-	my_fwrite(out_buffer,outfile,BUFFERSIZE);
-	out_bufpos = out_buffer;
+        my_fwrite(out_buffer,outfile,BUFFERSIZE);
+        out_bufpos = out_buffer;
       }
       /* fputc(a,outfile); */
     }
@@ -308,7 +308,7 @@ int convert_fast_gs(FILE *infile, FILE *outfile) {
   case apple:
     if (verbose)
       printf("%s: %s is already in Apple format, skipping.\n",
-	     program_name,current_file);
+             program_name,current_file);
     return (FALSE);
     break;
 
@@ -317,17 +317,17 @@ int convert_fast_gs(FILE *infile, FILE *outfile) {
     while (file_remain != 0) {
       a = *in_bufpos;
       if (a == '\n')
-	*in_bufpos++ = '\r';
+        *in_bufpos++ = '\r';
       else if (a == '\0') { /* End of buffer reached */
-	
-	/* Write changed buffer out */
-	my_fwrite(in_buffer,outfile,in_bufend - in_buffer);
-	
-	/* And reload it */
-	file_remain -= in_bufend - in_buffer;
-	in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-	*in_bufend = '\0';
-	in_bufpos = in_buffer;
+        
+        /* Write changed buffer out */
+        my_fwrite(in_buffer,outfile,in_bufend - in_buffer);
+        
+        /* And reload it */
+        file_remain -= in_bufend - in_buffer;
+        in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+        *in_bufend = '\0';
+        in_bufpos = in_buffer;
       } else in_bufpos++;
     }
     return (TRUE);
@@ -387,7 +387,7 @@ int convert_fast_messy (FILE *infile, FILE *outfile) {
   case dos:
     if (verbose)
       printf("%s: %s is already in MS-DOS format, skipping.\n",
-	     program_name,current_file);
+             program_name,current_file);
     return (FALSE);
     break;
 
@@ -448,7 +448,7 @@ int convert_fast_tunix (FILE *infile, FILE *outfile) {
   case tunix:
     if (verbose)
       printf("%s: %s is already in Unix format, skipping.\n",
-	     program_name,current_file);
+             program_name,current_file);
     return (FALSE);
     break;
 
@@ -457,17 +457,17 @@ int convert_fast_tunix (FILE *infile, FILE *outfile) {
     while (file_remain != 0) {
       a = *in_bufpos;
       if (a == '\r')
-	*in_bufpos++ = '\n';
+        *in_bufpos++ = '\n';
       else if (a == '\0'){       /* End of buffer reached */
 
-	/* Write changed buffer out */
-	my_fwrite(in_buffer,outfile,in_bufend - in_buffer);
+        /* Write changed buffer out */
+        my_fwrite(in_buffer,outfile,in_bufend - in_buffer);
 
-	/* And reload */
-	file_remain -= in_bufend - in_buffer;
-	in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-	*in_bufend = '\0';
-	in_bufpos = in_buffer;
+        /* And reload */
+        file_remain -= in_bufend - in_buffer;
+        in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+        *in_bufend = '\0';
+        in_bufpos = in_buffer;
       } else in_bufpos++;
     }
     return (TRUE);
@@ -513,9 +513,9 @@ enum file_format get_file_format (unsigned char *buffer) {
       break;
     } else if (c == '\r') {
       if (*buffer == '\n')
-	result = dos;
+        result = dos;
       else
-	result = apple;
+        result = apple;
       break;
     }
   }
@@ -523,8 +523,8 @@ enum file_format get_file_format (unsigned char *buffer) {
   if (result == 0) {
     if (verbose) 
       printf("%s: No EOL found on the first %d bytes "
-	     "of %s. Might be a binary file. File skipped\n",
-	     program_name,BUFFERSIZE, current_file);
+             "of %s. Might be a binary file. File skipped\n",
+             program_name,BUFFERSIZE, current_file);
     result = binary;
   }
 
@@ -625,14 +625,14 @@ void copy_file (char *from, char *to) {
     length = fread(buffer,1,BUFFERSIZE,fp1);
     if (ferror(fp1)) {
       fprintf(stderr,"%s: Error while trying to read %s\n",
-	      program_name, from);
+              program_name, from);
       free (buffer);
       exit (EXIT_FAILURE);
     }
 
     if (fwrite(buffer,1,length,fp2) != length) {
       fprintf(stderr,"%s: Error while trying to write out "
-	      "file %s\n",program_name,to);
+              "file %s\n",program_name,to);
       free (buffer);
       exit (EXIT_FAILURE);
     }
@@ -717,8 +717,19 @@ void build_file_list(char *file, short recurse) {
   DIR *dir;
   struct dirent *entry;
 
+  /* check for stack overflow */
+  recursionDepth++;
+#ifdef OVERFLOW_CHECK
+  if ((recursionDepth * BYTES_PER_DEPTH + BASESIZE) > STACKSIZE) {
+    fprintf(stderr,"%s:  Exceeded permitted nesting depth (%d levels)\n"
+            "Aborted.\n",program_name,recursionDepth);
+    exit(EXIT_FAILURE);
+  }
+#endif
+
   if (stat(file,&tstat)!=0) {
     fprintf(stderr,"%s:  Couldn't stat %s.  File skipped\n",program_name,file);
+    --recursionDepth;
     return;
   }
 
@@ -790,6 +801,7 @@ void build_file_list(char *file, short recurse) {
     add_to_pathList(currentDirectory, file);
   }
 
+  --recursionDepth;
   return;
 }
 
@@ -801,13 +813,13 @@ void add_to_pathList(char *thisdir, char *file) {
     pathSlots += PATHLIST_QUANTUM;
 #if BROKEN_REALLOC
     if ((pathList==NULL) &&
-	((pathList = malloc((pathSlots+1) * sizeof(char *)))==NULL)) {
+        ((pathList = malloc((pathSlots+1) * sizeof(char *)))==NULL)) {
       fprintf(stderr,"%s: Couldn't expand pathList\n",program_name);
       exit (EXIT_FAILURE);
     } else {
       if ((p = realloc(pathList, (pathSlots+1) * sizeof(char *)))==NULL) {
-	fprintf(stderr,"%s: Couldn't expand pathList\n",program_name);
-	exit (EXIT_FAILURE);
+        fprintf(stderr,"%s: Couldn't expand pathList\n",program_name);
+        exit (EXIT_FAILURE);
       }
       pathList = p;
     }
@@ -823,7 +835,7 @@ void add_to_pathList(char *thisdir, char *file) {
   pathList[pathSlotsUsed] = malloc(strlen(thisdir)+strlen(file)+2);
   if (pathList[pathSlotsUsed] == NULL) {
     fprintf(stderr,"%s: Couldn't duplicate filename %s%c%s\n",program_name,
-	    thisdir,dirbrk,file);
+            thisdir,dirbrk,file);
     exit (EXIT_FAILURE);
   }
   if (*thisdir) {

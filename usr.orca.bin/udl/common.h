@@ -4,7 +4,7 @@
  *
  * Header file for routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.h,v 1.1 1994/12/13 18:08:23 gdr Exp $
+ * $Id: common.h,v 1.2 1995/02/08 05:05:40 gdr Exp $
  *
  * Copyright (c) 1993-1994 Soenke Behrens
  */
@@ -24,6 +24,9 @@
 #define BUFFERSIZE 0x2000
 #define PATHLIST_QUANTUM 20
 #define UDL_VERSION "Version 1.13"
+#define STACKSIZE 2048
+#define BYTES_PER_DEPTH 40
+#define BASESIZE 700
 
 #ifndef   FALSE
 #  define FALSE 0

@@ -4,7 +4,7 @@
  *
  * Usage strings.
  *
- * $Id: udluse.c,v 1.1 1994/12/13 18:08:34 gdr Exp $
+ * $Id: udluse.c,v 1.2 1995/02/08 05:05:49 gdr Exp $
  *
  * Copyright (c) 1993-1994 Soenke Behrens
  */
@@ -23,7 +23,6 @@ char use1 [] =
 "written when it is done.\n";
 
 char use2 [] =
-"files may contain ORCA/Shell style wildcards.\n\n";
+"\nFiles may contain ORCA/Shell style wildcards.\n";
 
 /* End Of File */
-

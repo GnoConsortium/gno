@@ -1,6 +1,6 @@
 .\" Copyright (c) 1993-1994 Soenke Behrens
-.\" $Id: udl.1,v 1.1 1994/12/13 18:08:26 gdr Exp $
-.TH UDL 1 "22 November 1994" "Version 1.13" "Commands and Applications"
+.\" $Id: udl.1,v 1.2 1995/02/08 05:05:42 gdr Exp $
+.TH UDL 1 "Commands and Applications" "22 November 1994" "Version 1.13"
 .SH NAME
 udl - convert text files between different architectures
 .SH SYNOPSIS
@@ -16,10 +16,25 @@ udl - convert text files between different architectures
 .SH DESCRIPTION
 .B udl
 converts files between different computer systems by changing the EOL
-(End-Of-Line) character. It does
-.I not
-do a plausability check, so the user has to make sure udl is not invoked
-on object files or the like.
+(End-Of-Line) character.
+.PP
+On the Apple IIgs,
+.B udl
+will skip any file that is not of type TXT or SRC.
+No notice is given of this unless the
+.B -v
+flag is used.
+Since Unix file systems do not have file types
+.BR udl
+is limited in the types of checks which it can carry out,
+so the user must take care that
+it is not invoked on object files or the like.  On both platforms, if
+.I file
+appears to be a binary file (that is, no EOL is
+found in the first part of the file), the file will be skipped.
+Again, no notice is given of this unless the
+.B -v
+flag is used.
 .PP
 .B udl
 creates a temporary file the size of the file it is currently working on
@@ -55,14 +70,6 @@ one file). For conversions to or from MS-DOS,
 .B udl
 is always pedantic, so this only affects conversions from Unix to Apple
 or vice versa. Being pedantic slows udl down by a factor of 1.5.
-.PP
-If
-.B udl
-is given a file that seems to be a binary file \(that is, no EOL is
-found in the first part of the file\), the file will be skipped.  No
-notice is given of this unless the
-.B -v
-flag is used.
 .SH BUGS
 When compiling on some Solaris installations, files within subdirectories
 do not get their names properly resolved.
@@ -71,6 +78,15 @@ This seems to be due to bad definitions in
 If you have access to SunOS 4.x,
 .BR udl
 can be compiled there and used under Solaris.
+.PP
+When running under Gno on the Apple IIgs, there is a limit to the nesting
+depth when recusing on subdirectories.  This is because the routine that
+is responsible for this behavior is itself recursive.  The default 2k
+stack size will allow about 33 levels of nested directories, so this limit
+should not normally be a problem.  If the limit is exceeded,
+.BR udl
+will exit with an error message before any files are changed, and before
+the stack actually overflows.
 .LP
 If you find any other bugs, please send a report to the address given below.
 .SH AUTHOR

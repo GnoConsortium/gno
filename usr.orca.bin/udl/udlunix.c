@@ -4,7 +4,7 @@
  *
  * Unix specific routines.
  *
- * $Id: udlunix.c,v 1.1 1994/12/13 18:08:32 gdr Exp $
+ * $Id: udlunix.c,v 1.2 1995/02/08 05:05:48 gdr Exp $
  *
  * Copyright (c) 1993-1994 Soenke Behrens
  */
@@ -33,6 +33,7 @@ int main(int argc,char *argv[]) {
   pathSlots = 0;
   pathList = NULL;
   *currentDirectory = '\0';
+  recursionDepth=0;
 
   /* In case of exit(), free the mem I allocated */
 #ifdef HAS_ATEXIT
@@ -64,31 +65,31 @@ int main(int argc,char *argv[]) {
 
     case 'u':
       if (Tunix == TRUE || Messy == TRUE || GS == TRUE) {
-	fprintf(stderr, "%s: You may not "
-		"specify more than one conversion option\n",program_name);
-	exit (EXIT_FAILURE);
+        fprintf(stderr, "%s: You may not "
+                "specify more than one conversion option\n",program_name);
+        exit (EXIT_FAILURE);
       }
       Tunix = TRUE;
       break;
-	
+        
     case 'm':
       if (Tunix == TRUE || Messy == TRUE || GS == TRUE) {
-	fprintf(stderr, "%s: You may not specify more than one "
-		"conversion option\n",program_name);
-	exit (EXIT_FAILURE);
+        fprintf(stderr, "%s: You may not specify more than one "
+                "conversion option\n",program_name);
+        exit (EXIT_FAILURE);
       }
       Messy = TRUE;
       break;
-	
+        
     case 'g':
       if (Tunix == TRUE || Messy == TRUE || GS == TRUE) {
-	fprintf(stderr, "%s: You may not specify more than one "
-		"conversion option\n",program_name);
-	exit (EXIT_FAILURE);
+        fprintf(stderr, "%s: You may not specify more than one "
+                "conversion option\n",program_name);
+        exit (EXIT_FAILURE);
       }
       GS = TRUE;
       break;
-  	
+        
     case 'R':
       R_flag++;
       break;
@@ -96,7 +97,7 @@ int main(int argc,char *argv[]) {
     case '?':
       usage();
       exit (EXIT_FAILURE);
-	
+        
     default:
       fprintf (stderr, "%s: Internal getopt error\n", program_name);
       exit (EXIT_FAILURE);
@@ -112,7 +113,7 @@ int main(int argc,char *argv[]) {
 
   if (Tunix == FALSE && GS == FALSE && Messy == FALSE) {
     fprintf(stderr,"%s: You have to specify a destination "
-	    "format.\n",program_name);
+            "format.\n",program_name);
     exit (EXIT_FAILURE);
   }
 
@@ -152,7 +153,7 @@ int main(int argc,char *argv[]) {
     
     if (verbose == TRUE) {
       printf("%s: Working on %s\n",program_name,
-	     current_file);
+             current_file);
     }
    
     infile = tryopen(current_file,"rwb");
@@ -162,18 +163,18 @@ int main(int argc,char *argv[]) {
       converted = TRUE; /* always */
       
       if (GS)
-	convert_gs(infile,outfile);
+        convert_gs(infile,outfile);
       else if (Tunix)
-	convert_tunix(infile,outfile);
+        convert_tunix(infile,outfile);
       else
-	convert_messy(infile,outfile);
+        convert_messy(infile,outfile);
     } else {
       if (GS)
-	converted = convert_fast_gs(infile,outfile);
+        converted = convert_fast_gs(infile,outfile);
       else if (Tunix)
-	converted = convert_fast_tunix(infile,outfile);
+        converted = convert_fast_tunix(infile,outfile);
       else
-	converted = convert_fast_messy(infile,outfile);
+        converted = convert_fast_messy(infile,outfile);
     }
 
     if (fclose (infile) == EOF || fclose (outfile) == EOF) {
@@ -183,14 +184,14 @@ int main(int argc,char *argv[]) {
 
     if (converted) { /* Temp file contains converted data */
       if (remove (current_file) != 0) {
-	perror ("removing original file");
-	exit (EXIT_FAILURE);
+        perror ("removing original file");
+        exit (EXIT_FAILURE);
       }
       
       if (rename (tempfile,current_file) != 0) {
-	copy_file (tempfile,current_file);
-	remove (tempfile);
-	tempfile = NULL;
+        copy_file (tempfile,current_file);
+        remove (tempfile);
+        tempfile = NULL;
       }
     } else
       remove (tempfile);
@@ -202,5 +203,3 @@ int main(int argc,char *argv[]) {
 
   return (EXIT_SUCCESS);
 }
-
-

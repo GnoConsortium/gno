@@ -4,7 +4,7 @@
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.1 1994/12/13 18:08:29 gdr Exp $
+ * $Id: udlgs.c,v 1.2 1995/02/08 05:05:46 gdr Exp $
  *
  * Copyright (c) 1993-1994 Soenke Behrens
  */
@@ -18,6 +18,7 @@
 #include "common.h"
 
 #define QUITFLAG 0x4000 /* udl is restartable */
+#define DIRECTORY 0x0F
 
 /*
  * Globals
@@ -65,6 +66,7 @@ int main(int argc,char *argv[]) {
   pathSlots = 0;
   pathList = NULL;
   *currentDirectory = '\0';
+  recursionDepth=0;
   
 #ifdef CHECK_STACK
   begin_stack_check();
@@ -79,7 +81,7 @@ int main(int argc,char *argv[]) {
   
   if (right_shell_version() == FALSE) {
     fprintf(stderr,"%s requires at least ORCA/Shell 2.0"
-	    " or GNO/ME 1.0\n", argv[0]);
+            " or GNO/ME 1.0\n", argv[0]);
     exit (EXIT_FAILURE);
   }
 
@@ -109,27 +111,27 @@ int main(int argc,char *argv[]) {
       
     case 'u':
       if (Tunix == TRUE || Messy == TRUE || GS == TRUE) {
-	fprintf(stderr, "%s: You may not "
-		"specify more than one conversion option\n",program_name);
-	exit (EXIT_FAILURE);
+        fprintf(stderr, "%s: You may not "
+                "specify more than one conversion option\n",program_name);
+        exit (EXIT_FAILURE);
       }
       Tunix = TRUE;
       break;
       
     case 'm':
       if (Tunix == TRUE || Messy == TRUE || GS == TRUE) {
-	fprintf(stderr, "%s: You may not "
-		"specify more than one conversion option\n",program_name);
-	exit (EXIT_FAILURE);
+        fprintf(stderr, "%s: You may not "
+                "specify more than one conversion option\n",program_name);
+        exit (EXIT_FAILURE);
       }
       Messy = TRUE;
       break;
 
     case 'g':
       if (Tunix == TRUE || Messy == TRUE || GS == TRUE) {
-	fprintf(stderr, "%s: You may not "
-		"specify more than one conversion option\n",program_name);
-	exit (EXIT_FAILURE);
+        fprintf(stderr, "%s: You may not "
+                "specify more than one conversion option\n",program_name);
+        exit (EXIT_FAILURE);
       }
       GS = TRUE;
       break;
@@ -156,7 +158,7 @@ int main(int argc,char *argv[]) {
 
   if (Tunix == FALSE && GS == FALSE && Messy == FALSE) {
     fprintf(stderr,"%s: You have to specify a destination "
-	    "format.\n",program_name);
+            "format.\n",program_name);
     exit (EXIT_FAILURE);
   }
 
@@ -177,7 +179,11 @@ int main(int argc,char *argv[]) {
     rsp.bufSize = 259;
     NextWild.pathName = &rsp;
     InitWild.wFile = &gsp;
-    InitWild.flags = 0x8000 | 0x2000 | 0x1000;
+    if (R_flag) {
+      InitWild.flags = 0x2000 | 0x1000;
+    } else {
+      InitWild.flags = 0;
+    }
     
     /* loop through all command line args */
     for (; optind < argc; optind++) {
@@ -192,33 +198,33 @@ int main(int argc,char *argv[]) {
       
       /* loop through all matches of wildcards */
       for (;;) {
-	NextWildcardGS (&NextWild);
-	if (toolerror()) {
-	  fprintf(stderr,"%s: Fatal internal error, "
+        NextWildcardGS (&NextWild);
+        if (toolerror()) {
+          fprintf(stderr,"%s: Fatal internal error, "
                   "exiting\n", program_name);
-	  exit (EXIT_FAILURE);
-	}
-	
-	/* No further file found by NextWildcardGS */
-	if(!rsp.bufString.length)
-	  break;
-	
-	num_of_files++;
-	
-	if((current_file = calloc(1,rsp.bufString.length + 1)) == NULL) {
-	  fprintf(stderr,"%s: memory allocation failure\n",program_name);
-	  exit (EXIT_FAILURE);
-	}
-	strncpy(current_file, rsp.bufString.text,rsp.bufString.length);
-	
-	add_to_pathList("",current_file);
-	free(current_file);
-	current_file = NULL;
+          exit (EXIT_FAILURE);
+        }
+        
+        /* No further file found by NextWildcardGS */
+        if(!rsp.bufString.length)
+          break;
+        
+        num_of_files++;
+        
+        if((current_file = calloc(1,rsp.bufString.length + 1)) == NULL) {
+          fprintf(stderr,"%s: memory allocation failure\n",program_name);
+          exit (EXIT_FAILURE);
+        }
+        strncpy(current_file, rsp.bufString.text,rsp.bufString.length);
+        
+        add_to_pathList("",current_file);
+        free(current_file);
+        current_file = NULL;
       } /* for (;;) */
 
       if (num_of_files == 0)
-	fprintf(stderr,"%s: No files found that match %s\n",
-		program_name,argv[optind]);
+        fprintf(stderr,"%s: No files found that match %s\n",
+                program_name,argv[optind]);
     } /* for (; optind < argc; optind++) */
   }
   /* gsh or other Gno shell */
@@ -244,8 +250,6 @@ int main(int argc,char *argv[]) {
     current_file = *p;
     
     if (CheckGSOSType (current_file) == FALSE) {
-      fprintf(stderr,"%s: %s is not of type TXT or "
-	      "SRC ... skipping\n",program_name,current_file);
       p++;
       continue;
     }
@@ -260,18 +264,18 @@ int main(int argc,char *argv[]) {
       converted = TRUE; /* always */
       
       if (GS)
-	convert_gs(infile,outfile);
+        convert_gs(infile,outfile);
       else if (Tunix)
-	convert_tunix(infile,outfile);
+        convert_tunix(infile,outfile);
       else
-	convert_messy(infile,outfile);
+        convert_messy(infile,outfile);
     } else {
       if (GS)
-	converted = convert_fast_gs(infile,outfile);
+        converted = convert_fast_gs(infile,outfile);
       else if (Tunix)
-	converted = convert_fast_tunix(infile,outfile);
+        converted = convert_fast_tunix(infile,outfile);
       else
-	converted = convert_fast_messy(infile,outfile);
+        converted = convert_fast_messy(infile,outfile);
     }
     
     if (fclose (infile) == EOF || fclose (outfile) == EOF) {
@@ -281,14 +285,14 @@ int main(int argc,char *argv[]) {
 
     if (converted) { /* Temp file contains converted data */
       if (remove (current_file) != 0) {
-	perror ("removing original file");
-	exit (EXIT_FAILURE);
+        perror ("removing original file");
+        exit (EXIT_FAILURE);
       }
 
       if (rename (tempfile,current_file) != 0) {
-	copy_file (tempfile,current_file);
-	remove (tempfile);
-	tempfile = NULL;
+        copy_file (tempfile,current_file);
+        remove (tempfile);
+        tempfile = NULL;
       }
     } else
       remove (tempfile);
@@ -331,13 +335,16 @@ int CheckGSOSType(char *name) {
   
   if (toolerror()) {
     fprintf (stderr,"%s: GS/OS error on %s: 0x%04X\n",
-	     program_name,name,toolerror());
+             program_name,name,toolerror());
     exit (EXIT_FAILURE);
   }
   
-  if ((fir.fileType != TXT) && (fir.fileType != SRC))
+  if ((fir.fileType != TXT) && (fir.fileType != SRC)) {
+    if (verbose && (fir.fileType != DIRECTORY))
+      fprintf(stderr,"%s: %s is not of type TXT or "
+              "SRC ... skipping\n",program_name,current_file);
     return (FALSE);
-  else {
+  } else {
     theType = fir.fileType;
     theAuxType = fir.auxType;
     return (TRUE);
@@ -372,7 +379,7 @@ void SetGSOSType (char *name, int type, int auxtype) {
   
   if (toolerror()) {
     fprintf (stderr,"%s: GS/OS error on %s: 0x%04X\n",
-	     program_name,name,toolerror());
+             program_name,name,toolerror());
     exit (EXIT_FAILURE);
   }
 }
