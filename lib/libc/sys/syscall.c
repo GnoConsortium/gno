@@ -1,4 +1,3 @@
-#line 1 ":src:gno:lib:libc:sys:syscall.c"
 /*
  * libc/sys/syscall.c
  *
@@ -10,7 +9,7 @@
  * Unless otherwise specified, see the respective man pages for details
  * about these routines.
  *
- * $Id: syscall.c,v 1.3 1997/09/05 06:38:06 gdr Exp $
+ * $Id: syscall.c,v 1.4 1997/09/21 16:21:13 gdr Exp $
  *
  * This file is formatted with tab stops every 3 columns.
  */
@@ -19,17 +18,12 @@
 segment "libc_sys__";
 #endif
 
-#pragma debug 0
-#pragma memorymodel 0
-
 /*
  * Use bits 0, 1, 2, 6 (== decimal 71) for optimization.  In Orca/C v2.1.0,
  * bits 4 and 5 are still reported to be buggy.
  *
  * Around variadic routines, we also add in optimization bit 3 (== 79).
  */
-
-/* pragma optimize 71 */
 
 #include <sys/syslimits.h>
 #include <sys/types.h>
@@ -737,13 +731,17 @@ mkdir(char *dirname)
 }
 
 /*
- * raise
+ * raise -- This routine has been moved into ORCALib so that we can avoid
+ *          backward references through abort(3), which the current linker
+ *          (ZapLink) cannot handle.
  */
 
+#if 0
 int
 raise (int sig) {
 	return kill (getpid(), sig);
 }
+#endif
 
 /*              
  * read
@@ -1116,8 +1114,7 @@ write(int filds, void *buf, size_t bytecount) {
   return (size_t) iorec.transferCount;
 }
 
-/* pragma optimize 79 */
-#pragma optimize 8
+#pragma optimize 78
 #pragma debug 0
 
 #ifdef VERSION_CHECK
@@ -1166,7 +1163,16 @@ fcntl (int fd, int cmd, ...) {
 	      result = -1;
      } else {
 	      mode = sbuf.st_mode & (S_IRUSR | S_IWUSR);
-        if (mode == (S_IRUSR | S_IWUSR)) {
+        if ((mode == 0) &&
+        	 (S_ISCHR(sbuf.st_mode) || S_ISFIFO(sbuf.st_mode))) {
+	         /*
+            * There's a bug in the (beta 2.0.6) kernel where it's not setting
+	          * the read/write bits for pipes and character special files.
+            * Fake it out.  If/when the bug is fixed, this just becomes
+            * dead code.
+            */
+        	result = O_RDWR;
+        } else if (mode == (S_IRUSR | S_IWUSR)) {
 	         result = O_RDWR;
         } else if (mode == S_IRUSR) {
 	         result = O_RDONLY;
