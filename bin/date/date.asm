@@ -4,6 +4,7 @@
 
 		mcopy	date.mac
 		keep	date
+		copy	13/asmdefs/gno/e16.ioctl
 
 cline		gequ	0
 
@@ -34,7 +35,7 @@ lpp20		lda	[cline],y
 		and	#$ff
 		cmp	#'V'
 		beq	showvers
-		cmp	#'u'
+		cmp	#'c'
 		beq	updateflag
 showusg		~ErrWriteCString #usage
 		bra	getoutPASS
@@ -46,7 +47,31 @@ ok		anop
 		jsr	handle
 		lda	#15		; SIGTERM
 		jsr	handle
-refresh		pha
+
+		pha
+		pea	2		; stdout
+		pea	TIOCGETP|-16
+		pea	TIOCGETP
+		pea	sgttyb|-16
+		pea	sgttyb
+		pea	errno|-16
+		pea	errno
+		ldx	#$2603
+		jsl	$e10008
+		pla
+
+		lda	sgttyb+4
+		sta	oldflags
+		and	#$ffef
+		sta	sgttyb+4
+
+		jsr	csetp
+
+		lda	oldflags
+		sta	sgttyb+4
+
+refresh		anop
+		pha
 		pha
 		pha
 		pha
@@ -94,17 +119,33 @@ refresh		pha
 		sta	weekday
 		lda	weekdays-2,x
 		sta	weekday+1
-		~WriteString #ramit
+		WriteGS	ramit
 		lda	uflag
 		beq	exitall
-		pea	0
 		pea	1
 		case	on
 		jsl	sleep
 		case	off
 		brl	refresh
-exitall		~WriteString #justnewl
+exitall		WriteGS justnewl
+		jsr	csetp
 getout		QuitGS	qtrec
+
+csetp		anop
+		pha
+		pea	2
+		pea	TIOCSETP|-16
+		pea	TIOCSETP
+		pea	sgttyb|-16
+		pea	sgttyb
+		pea	errno|-16
+		pea	errno
+		ldx	#$2603
+		jsl	$e10008
+		pla
+		rts
+
+uflag		ds	2
 
 handler		anop
 		phb
@@ -181,7 +222,15 @@ qtrec		dc	i'2'
 		dc	a4'0'
 		dc	i'$4000'
 
-ramit		dc	i1'strend-strbeg'
+ramit		dc	i'4'
+		dc	i'2'
+		dc	a4'strbeg'
+		dc	i4'strend-strbeg'
+		ds	4
+
+sgttyb		ds	6
+oldflags	ds	2
+
 strbeg		anop
 
 weekday		dc	c'xxx '
@@ -196,21 +245,23 @@ year		dc	c'xxxx'
 
 strend		anop
 
-justnewl	dc	h'01 0a'
+justnewl	dc	i'4'
+		dc	i'2'
+		dc	a4'justnewl1'
+		dc	i4'1'
+		ds	4
+justnewl1	dc	h'0a'
+
 weekdays	dc	c'SunMonTueWedThuFriSat'
 months		dc	c'JanFebMarAprMayJunJulAugSepOctNovDec'
 
-versstr		dc	c'date utility, asm version 1.0'
+versstr		dc	c'date utility, asm version 1.1'
 		dc	h'0d 0a'
-usage		dc	c'usage: date [-uV]',h'0d 0a'
+usage		dc	c'usage: date [-cV]',h'0d 0a'
 		dc	h'0'
 		end
 
 errno		data
-		ds	2
-		end
-
-uflag		data
 		ds	2
 		end
 
