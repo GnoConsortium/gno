@@ -1,0 +1,48 @@
+.\" Converted to nroff source from the original aroff by Devin Reade,
+.\" 10 April 1998.
+.\"
+.\" $Id: more.1,v 1.1 1998/04/10 19:02:02 gdr-ftp Exp $
+.\"
+.TH MORE 1 "16 October 1993" GNO "Commands and Applications"
+.SH NAME
+more \- text pager
+.SH SYNOPSIS
+.BR more
+[
+.IR file " ..."
+]
+.SH DESCRIPTION
+.BR more
+allows the user to view the specified
+.IR file (s)
+screen by screen or line by line.  If no
+.IR file s
+are specified, standard input is used.
+.LP
+Every time 
+.BR more
+has displayed a screen of text, it displays a prompt:
+.nf
+	- \fIfile\fR (xx%) - 
+.fi
+indicating the name and percentage of the 
+.IR file
+that has been viewed.  If standard input is used, the prompt
+.nf
+	- more -
+.fi
+is used instead.
+.LP
+A number of key commands are available at the prompt:
+.RS
+.IP \fBq\fR
+Quit viewing the current file, and move to the next file (if any).
+.IP [\fBRETURN\fR]
+Display the next line of the file.
+.IP [\fBESC\fR]
+Abort more, including any more files that may have been specified.
+.IP [\fBSPACE\fR]
+Display the next page of the file.
+.SH AUTHOR
+This version of more was written by Jawaid Bazyar and Derek Taubert,
+then updated by Mike Horwath.
