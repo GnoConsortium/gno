@@ -11,7 +11,7 @@ set raw_file="/tmp/rawlist"
 set result_file="test.list"
 
 #  Location of tr command that knows how to handle classes
-set trcmd="/src/usr.bin/tr/tr"
+set trcmd="/src/gno/usr.bin/tr/tr"
 
 # --- Begin the tests ---
 
