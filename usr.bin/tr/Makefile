@@ -1,9 +1,8 @@
 #
 # This makefile is intended for use with dmake(1) on Apple IIGS
+# $Id: Makefile,v 1.3 1997/10/03 04:13:06 gdr Exp $
 #
 #	Created by Dave Tribby, August 1997
-#
-# $Id: Makefile,v 1.2 1997/09/24 06:21:24 gdr Exp $
 
 # Program name
 PROG=	tr
@@ -16,13 +15,11 @@ SRCS=	tr.c str.c
 	OPTIMIZE=79
 .END
 
-# Current implementation is using 810 bytes
-STACK	= 1024
-
 .INCLUDE : /src/gno/prog.mk
 
 #
 # Additional dependancies
 #
+
 tr.o::	extern.h
 str.o::	extern.h
