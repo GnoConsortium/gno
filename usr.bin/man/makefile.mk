@@ -1,54 +1,70 @@
 #
-# Makefile for dmake(1)
+# Makefile for the man package, for use with dmake(1).
 #
 
-# Location for executable.  It should be /usr/sbin
+# Location for executables.  They should normally be /usr/sbin and /usr/bin.
 
-BINDIR = /usr/sbin
+SBINDIR	= /usr/sbin
+BINDIR	= /usr/bin
 
-# Location for man pages.
+# Location for man pages.  Usually /usr/man.
 
-MANDIR = /usr/man
+MANDIR	= /usr/man
 
 #
-# Nothing past this point should have to be changed
+# You should not have to change anything below this line
 #
-# -DISGRAPH_FIX should come out when Orca/C's isgraph() function is fixed.
+# Define:	-DDEBUG to produce more debugging info and checks
 #
-# -DTEST_PROCESS is for debugging process().  Use "dmake process".
-# -DDEBUG will give stack usage.
+#		-DSTACK_CHECK to show stack usage.  If you use this
+#		one, ensure you add -l/usr/lib/stack to your LDLIBS.
 #
 
-CFLAGS = -w -O -v -DISGRAPH_FIX -s1024
+STACK		= -s1270
+DEFINES		=
+CFLAGS		= $(DEFINES) $(STACK) -w -v -O -I/usr/include
+LDFLAGS		= -v      
+LDLIBS		= -l/usr/lib/gnulib -l/usr/lib/stack
+CP		= /bin/cp -f
 
-OBJS = makewhatis.o fillbuffer.o process.o
-LDLIBS = -l/usr/lib/gnulib -l/usr/lib/stack
-         
-makewhatis: $(OBJS)
-	$(CC) $(OBJS) $(LDLIBS) -o makewhatis
+build: apropos catman makewhatis man whatis
 
-makewhatis.o: makewhatis.c makewhatis.h
-	$(CC) -c $(CFLAGS) makewhatis.c
+apropos: apropos.o apropos2.o util.o utilgs.o globals.o
+	$(CC) $(LDFLAGS) $< $(LDLIBS) -o $@
 
-fillbuffer.o: fillbuffer.c makewhatis.h
-	$(CC) -c $(CFLAGS) fillbuffer.c
+catman: catman.o util.o utilgs.o globals.o common.o
+	$(CC) $(LDFLAGS) $< $(LDLIBS) -o $@
 
-process.o: process.c makewhatis.h
-	$(CC) -c $(CFLAGS) process.c
+makewhatis: makewhatis.o fillbuffer.o process.o
+	$(CC) $(LDFLAGS) $< $(LDLIBS) -o $@
+
+man: man.o man2.o apropos2.o util.o utilgs.o globals.o common.o
+	$(CC) $(LDFLAGS) $< $(LDLIBS) -o $@
+
+whatis: whatis.o apropos2.o util.o utilgs.o globals.o
+	$(CC) $(LDFLAGS) $< $(LDLIBS) -o $@
+
+clobber:                                 
+	$(RM) *.o *.root
 
 install:
-	/bin/cp makewhatis   $(BINDIR)
-	/bin/cp makewhatis.1 $(MANDIR)/man1
+	$(CP) apropos man whatis $(BINDIR)
+	$(CP) catman makewhatis $(SBINDIR)
+	$(CP) apropos.1 man.1 whatis.1 $(MANDIR)/man1
+	$(CP) catman.8 makewhatis.8 $(MANDIR)/man8
 
-clean:
-	/bin/cp -p rm $(OBJS)
+# additional dependancies       
 
-#
-# These are just for debugging purposes
-#
-
-fillbuffer: fillbuffer.c makewhatis.h
-	$(CC) $(CFLAGS) -DTEST_FILLBUFFER -o fillbuffer fillbuffer.c
-
-process: process.o fillbuffer.o
-	$(CC) $(CFLAGS) process.o fillbuffer.o -o process
+apropos.o:: man.h util.h
+apropos2.o:: man.h util.h
+catman.o:: man.h util.h
+common.o:: man.h util.h
+fillbuffer.o:: makewhatis.h
+globals.o:: man.h
+makewhatis.o:: makewhatis.h
+man.o:: man.h util.h
+man2.o:: man.h util.h
+process.o:: makewhatis.h
+util.o:: util.h
+utilgs.o:: util.h
+whatis.o:: man.h util.h
