@@ -1,4 +1,4 @@
-$Id: README,v 1.4 1997/09/24 06:34:57 gdr Exp $
+$Id: README,v 1.5 1997/12/20 17:14:00 gdr Exp $
 
 This is the README file for the describe package.  This package is
 designated as version 1.0.4, and consists of the following utilities:
@@ -66,17 +66,28 @@ INSTALLATION
 
 You can either type "dmake install", or do the following:
 
-	mkdir -p /usr/local/lib
-	cp ./describe /usr/local/bin
+	cp ./describe /usr/bin
 	cp ./descc    /usr/sbin
 	cp ./descu    /usr/sbin
+	cp ./describe.1 /usr/man/man1
+	cp ./descc.8 ./descu.8 /usr/man/man8
+	rm /usr/local/lib/describe
 	rm /usr/local/bin/descc
+	rm /usr/local/bin/describe
 
 You will also want to do the following, which is NOT done by dmake's
 install target:
 
 	rehash
-	descc ./describe.source
+	/usr/sbin/descc ./describe.src
+
+Note that the describe database source file (describe.src) included in
+this archive is almost certainly out-of-date.  The most recent version
+of this file can be obtained online at:
+
+	http://www.arrowweb.com/sbehrens/describe.htm
+
+If the above url is unreachable, check the GNO FAQ for a new location.
 
 CHANGES
 =======
@@ -89,7 +100,7 @@ v1.0.4  September 1997
 	Some bugs were fixed in descu that cropped up when the
 		describe database source file didn't already exist.
 	Location of the system database has been changed to
-		/usr/lib/describe from /usr/local/lib/describe.
+		/usr/lib/describe.db from /usr/local/lib/describe.
 	Descc will now set the file type of the database to BIN vice TXT.
 
 v1.03   January 1996
@@ -129,11 +140,11 @@ AUTHORS
 The original describe and descc utilities and the describe format were
 written by James Brookes <jamesb@ecst.csuchico.edu>.
 
-The descu utility and v1.01 modifications to describe and descc were by
-Devin Reade <gdr@myrias.ab.ca>.
+The descu utility and v1.01 as well as 1.0.4 modifications to the describe
+package were by Devin Reade <gdr@myrias.ab.ca>.
 
-v1.02/1.03 modifications to describe, descc and descu were by Soenke Behrens
-<sbehrens@contech.demon.co.uk>.
+v1.02/1.03 modifications to the describe package were by Soenke Behrens
+<sbehrens@bigfoot.com>.
 
 LEGALESE
 ========
