@@ -11,7 +11,7 @@
  * Copyright 1995-1997 by Devin Reade for James Brookes' describe(1) utility.
  * See the included README file and man page for details.
  *
- * $Id: descu.c,v 1.8 1998/02/07 06:40:08 gdr-ftp Exp $
+ * $Id: descu.c,v 1.9 1999/04/05 19:47:19 gdr-ftp Exp $
  */
 
 #include <sys/types.h>
@@ -174,11 +174,6 @@ extract_info(char *source) {
   if (q < p) {
 	*q++ = '\n';
   }
-#if 0
-  if (q < p) {
-	*q++ = '\n';
-  }
-#endif
   if (q < p) {
 	*q = '\0';
   }
@@ -195,7 +190,7 @@ extract_info(char *source) {
 
 	/* move q to first non-whitespace character */
 	q = p;
-	while (isspace(*q)) q++;
+	while (isspace(*q) && *q != '\n') q++;
 	if (*q == '\0') break;
 	
 	/* shift the buffer */
@@ -426,9 +421,9 @@ int ns_stricmp (char *a, char *b) {
 
 void version (char *progName) {
   fprintf(stderr,
-          "%s version %s Copyright 1995-1997 Devin Reade\n"
+          "%s version %s Copyright 1995-%s Devin Reade\n"
           "Freeware.  See the manual page for copying restrictions.\n",
-          progName,versionStr);
+          progName, versionStr, CURRENT_YEAR);
   return;
 }
 
@@ -459,6 +454,7 @@ void usage(char *progName) {
 
 int main(int argc, char **argv) {
   static char *revisionMagic = "\n# Last revision:";
+  static struct stat sbuf;
   time_t t;
   char *buffer;
   int i, j;
@@ -501,6 +497,26 @@ int main(int argc, char **argv) {
   if (Vflag) version(basename(argv[0]));
 
   /*
+   * Open the rejects file.  Abort if it exists and is not a regular file
+   * (this is a security measure to avoid people putting in symlinks and
+   * thus overwriting files like, say, /etc/passwd).
+   */
+  if (lstat(REJECT_FILE, &sbuf) < 0) {
+    if (errno != ENOENT) {
+      fprintf(stderr, "couldn't stat rejects file %s: %s\n", 
+	      REJECT_FILE, strerror(errno));
+    }
+  } else if (! S_ISREG(sbuf.st_mode)) {
+    fprintf(stderr, "%s exists and is not a regular file.  Aborting\n", 
+	    REJECT_FILE);
+    exit(1);
+  }
+  if ((rejfp = fopen(REJECT_FILE,"w+"))==NULL) {
+    perror("couldn't open rejects file");
+    exit(1);
+  }
+
+  /*
    * open output file if necessary.  If the output filename matches
    * that of the first input file, then dump stuff to a temporary file.
    */
@@ -519,12 +535,6 @@ int main(int argc, char **argv) {
     }
   } else {
     outfp = stdout;
-  }
-
-  /* open the rejects file */
-  if ((rejfp = fopen(REJECT_FILE,"w+"))==NULL) {
-    perror("couldn't open rejects file");
-    exit(1);
   }
 
   /* read in original describe source file */
@@ -578,7 +588,9 @@ int main(int argc, char **argv) {
       fprintf(outfp,"%s\n%s\n",entryArray2[j]->name,entryArray2[j]->data);
       j++;
     } else {
-      fprintf(rejfp,"%s\n%s\n",entryArray1[i]->name,entryArray1[i]->data);
+      if (ns_stricmp(entryArray1[i]->data, entryArray2[j]->data) != 0) {
+	fprintf(rejfp,"%s\n%s\n",entryArray1[i]->name,entryArray1[i]->data);
+      }
       fprintf(outfp,"%s\n%s\n",entryArray2[j]->name,entryArray2[j]->data);
       i++; j++;
     }
@@ -599,8 +611,16 @@ int main(int argc, char **argv) {
     fprintf(outfp,"%s",trailer);
   }
 
-  /* close the files and exit */
+  /* Close the files and exit.  Don't keep the rejects file if it is empty. */
   fclose(rejfp);
+  if (lstat(REJECT_FILE, &sbuf) < 0) {
+    fprintf(stderr, "couldn't stat rejects file %s: %s\n", 
+	    REJECT_FILE, strerror(errno));
+  } else {
+    if ((sbuf.st_size == 0) && S_ISREG(sbuf.st_mode)) {
+      unlink(REJECT_FILE);
+    }
+  }
   if (oflag) {
     if (temp != NULL) {
       /* temp and outfp refer to the same FILE struct at this point */

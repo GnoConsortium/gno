@@ -1,7 +1,7 @@
-$Id: README,v 1.8 1998/02/07 06:39:53 gdr-ftp Exp $
+$Id: README,v 1.9 1999/04/05 19:47:19 gdr-ftp Exp $
 
 This is the README file for the describe package.  This package is
-designated as version 1.0.6, and consists of the following utilities:
+designated as version 1.0.7, and consists of the following utilities:
 
 	describe - show database entries describing the current
                    status of programs
@@ -130,6 +130,17 @@ CHANGES
 =======
 
 This details changes to the entire distribution.
+
+v1.0.7  April 1999
+	Make sure that if descu's rejects file already exists, that it
+		is a regular file.  This prevents us from overwriting it.
+	If the rejects file is empty at the end of the run, then delete it.
+	Don't emit unchanged entries into the rejects file.  Changes are
+		based on a whitespace-insensitive and case-insensitive
+		on all fields.
+	In descu, fix a bug that would sometimes eliminate blank lines
+		between the "FTP:" header and the description.
+	Removed some dead code in descu.
 
 v1.0.6	February 1998
 	There used to be a limit of 65k on the size of the describe

@@ -2,14 +2,15 @@
  * Header file for the describe package.  This file is
  * used by describe(1), descc(8), and descu(8).
  *
- * $Id: desc.h,v 1.7 1998/02/07 06:39:55 gdr-ftp Exp $
+ * $Id: desc.h,v 1.8 1999/04/05 19:47:19 gdr-ftp Exp $
  */
 
 /*
  * Keep these utilities in lockstep. Don't forget to change the version
  * number in the *.rez files and in the manual pages.
  */
-#define _VERSION_ "v1.0.6"
+#define _VERSION_ "v1.0.7"
+#define CURRENT_YEAR "1999"
 
 #define QUOTE_CHAR '#'
 #define DATABASE   "/usr/lib/describe.db"

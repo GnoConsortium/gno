@@ -1,7 +1,7 @@
 /*
  * Resources for version and comment
  *
- * $Id: describe.rez,v 1.4 1998/03/08 17:58:43 gdr-ftp Exp $
+ * $Id: describe.rez,v 1.5 1999/04/05 19:47:19 gdr-ftp Exp $
  */
 #include "Types.rez"
 
@@ -28,7 +28,7 @@ resource rVersion (1, purgeable3) {
  * Comment
  */
 resource rComment (1, purgeable3) {
-	PROG " v1.0.6\n"
+	PROG " v1.0.7\n"
 	DESC " (GNO) \n"
 	BUILD_DATE "\n"
 	AUTHOR
