@@ -1,0 +1,34 @@
+/*
+ * Resources for version and comment
+ *
+ * $Id: null.rez,v 1.1 1999/03/19 07:18:00 gdr-ftp Exp $
+ */
+
+#define PROG "/dev/null"
+#define DESC "NULL Device Driver\n"
+              
+#include "Types.rez"
+#include "builddate.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 2, 0,	/* Version  */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,		/* Country */
+	PROG,		/* Program name */
+        DESC
+        BUILD_DATE
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG "\n"
+	DESC
+	BUILD_DATE
+};

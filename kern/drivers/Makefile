@@ -1,10 +1,12 @@
-#	$Id: Makefile,v 1.3 1999/02/23 04:27:07 gdr-ftp Exp $
+#	$Id: Makefile,v 1.4 1999/03/19 07:18:00 gdr-ftp Exp $
 
 .INCLUDE: /src/gno/paths.mk
 
+TARGETS = $(OBJ_DIR)modem $(OBJ_DIR)printer $(OBJ_DIR)null
+
 build: all
 
-all: $(OBJ_DIR) $(OBJ_DIR)modem $(OBJ_DIR)printer $(OBJ_DIR)null
+all: $(OBJ_DIR) $(TARGETS)
 
 $(OBJ_DIR):
 	install -d $(OBJ_DIR)
@@ -21,13 +23,33 @@ $(OBJ_DIR)null: null.o
 	$(LD) $(LDFLAGS) -o $@ $<
 	chtyp -t 187 -a 32257 $@
 
-$(OBJ_DIR)console: console.o inout.o box.root conpatch.o
+$(OBJ_DIR)console: console.o inout.o box.o conpatch.o
 	$(LD) $(LDFLAGS) -o $@ $<
 	chtyp -t 187 -a 32257 $@
 
+$(OBJ_DIR)modem::   modem.r;	$(CATREZ) -d $@ $<
+$(OBJ_DIR)printer:: printer.r;	$(CATREZ) -d $@ $<
+$(OBJ_DIR)null::    null.r;	$(CATREZ) -d $@ $<
+$(OBJ_DIR)console:: console.r;	$(CATREZ) -d $@ $<
+
+release: all
+	$(INSTALL) -d $(RELEASE_DIR)/dev 
+	$(INSTALL) $(TARGETS) $(RELEASE_DIR)/dev
+
+install:
+	@echo You cannot install the device drivers into a live system.  Target ignored.
+
+# Implicit rule to handle Rez source on case sensitive Appleshare servers
+.IF $(APPLESHARE_CASE_SENSITIVE) != $(NULL)
+%.r : %.rez
+	$(INSTALL) $< $(TMPDIR)/$<
+	$(REZ) -o $@ -c $(REZFLAGS) $(TMPDIR)/$<
+	$(RM) -f $(TMPDIR)/$<
+.END
+
 ### Dependencies ###
 
-box.root: box.mac console.equates
+box.o: box.mac console.equates
 conpatch.asm: conpatch.mac
 console.root: port.mac console.equates kern.equates ../gno/inc/tty.inc
 inout.root: inout.mac console.equates kern.equates ../gno/inc/tty.inc

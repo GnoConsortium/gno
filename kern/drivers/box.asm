@@ -1,4 +1,4 @@
-*	$Id: box.asm,v 1.1 1998/02/02 08:17:52 taubert Exp $
+*	$Id: box.asm,v 1.2 1999/03/19 07:18:00 gdr-ftp Exp $
 **************************************************************************
 *
 * The GNO Shell Project
@@ -20,6 +20,10 @@
 	case	on
 	mcopy	../drivers/box.mac
 	copy	../drivers/console.equates
+
+dummyBox start			; ends up in .root and ignored
+	end
+
 
 * EraseBox takes the same parameters as DrawBox, except the Accum
 *  is the character to fill the box with.
