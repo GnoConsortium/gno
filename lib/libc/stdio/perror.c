@@ -1,14 +1,16 @@
 /*
  * Implementation by Devin Reade.
  *
- * $Id: perror.c,v 1.1 1997/02/28 05:12:49 gdr Exp $
+ * $Id: perror.c,v 1.2 1997/07/27 23:10:57 gdr Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
 
 /* I have to do this until I can modify ORCALib */
+#if 0
 #define sys_errlist	_gno_sys_errlist
 #define sys_nerr	_gno_sys_nerr
+#endif
 
 #ifdef __ORCAC__
 segment "libc_stdio";
@@ -137,4 +139,3 @@ perror (char *s)
 		fprintf(stderr,"%s%s%s\n", s1, s2, sys_errlist[errno]);
 	}
 }
-
