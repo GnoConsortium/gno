@@ -4,7 +4,7 @@
 
     Main loop driver code and awgs wordproc file read routines
 
-    $Id: aroff.c,v 1.3 1999/01/15 15:45:04 gdr-ftp Exp $
+    $Id: aroff.c,v 1.4 1999/01/15 15:46:08 gdr-ftp Exp $
 */
 
 #include <stdio.h>
@@ -154,11 +154,6 @@ int main(int argc, char *argv[])
 {
   int i,z;
   extern void printAWGS(void);
-#if 0
-  extern int _INITGNOSTDIO();
-  
-  _INITGNOSTDIO();
-#endif
 
   __REPORT_STACK(); /* show stack usage on exit if __CHECK_STACK__ defined */
   if (argc == 1) {
