@@ -1,6 +1,6 @@
 This file lists the status of the various files in the GNO base distribution.
 
-Version: $Id: status.bin,v 1.3 1997/09/21 22:47:37 gdr Exp $
+Version: $Id: status.bin,v 1.4 1997/09/24 06:59:57 gdr Exp $
 
 Person Working on Component ("Owner")
 -------------------------------------
@@ -30,7 +30,8 @@ Man		- Is the documentation complete?  This includes the man
 Compiled	- Has it been cleanly recompiled with new headers/libs?
 Tested		- Has it been tested?
 Archived	- Has it been entered in the CVS repository? (gdr to coord)
-Installed	- Are 'makerelease' and 'makeinstall' targets complete?
+Installed	- Are 'release' and 'makeinstall' targets complete?
+		  ('R' and 'I', respectively)
 
 			(Pkg) or							Archive	Install	In
 Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
@@ -91,14 +92,14 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/pax				N
 /bin/ps					Y		(replace functionality of /usr/bin/eps)
 /bin/purge			Y	Y
-/bin/pwd				Y
+/bin/pwd				Y	dave
 /bin/rcp				Y	dt
 /bin/rm					Y	dt
 /bin/rmail
 /bin/rmdir				Y	gdr	Y
 /bin/sh					Y	gdr
 /bin/shutdown			Y
-/bin/sleep			Y	Y
+/bin/sleep			Y	Y	dave
 /bin/split			Y	Y
 /bin/strings			Y	Y	lb
 /bin/stty			Y	Y
@@ -110,7 +111,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/test				Y	gdr	Y
 /bin/time			Y	Y
 /bin/touch			Y	Y	dt
-/bin/tr				Y	Y	dave	Y	P			Y
+/bin/tr				Y	Y	dave	Y	T	Y	Y	Y	R
 /bin/true				Y	gdr
 /bin/uncompress			Y	Y
 /bin/uniq			Y	Y
@@ -258,7 +259,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/rz			Y	Y
 /usr/bin/sb			Y
 /usr/bin/script			Y	Y
-/usr/bin/sed
+/usr/bin/sed					dave
 /usr/bin/sendmail			N		(waiting on NNTP/UUCP)
 /usr/bin/setvers		Y	Y
 /usr/bin/shar
@@ -287,7 +288,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/write				Y	lb
 /usr/bin/xargs
 /usr/bin/yankit			Y	Y
-/usr/bin/yes			Y
+/usr/bin/yes			Y		dave
 /usr/bin/zsh				Y	lb	(renamed to nosh)
 /usr/games			Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /usr/games/wump			Y
@@ -297,9 +298,9 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/lib/tmac			Y		gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /usr/lib/tmac/tmac.an	(nroff)	Y
 /usr/lib/tmac/tmac.s	(nroff)	Y
-/usr/orca/bin/describe	(describe)	Y	gdr	Y
-/usr/orca/bin/descc	(describe)	Y	gdr	Y
-/usr/orca/bin/descu	(describe)	Y	gdr	Y
+/usr/orca/bin/describe	(describe)	Y	gdr	Y	T	Y	Y	Y	R
+/usr/orca/bin/descc	(describe)	Y	gdr	Y	T	Y	Y	Y	R
+/usr/orca/bin/descu	(describe)	Y	gdr	Y	T	Y	Y	Y	R
 /usr/orca/bin/occ			Y	sonk
 /usr/orca/bin/rc			Y	sonk
 /usr/orca/bin/udl			Y	gdr	Y
