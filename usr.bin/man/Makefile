@@ -1,7 +1,7 @@
 #
 # Devin Reade, 1998
 #
-# $Id: Makefile,v 1.3 1998/04/22 05:22:44 gdr-ftp Exp $
+# $Id: Makefile,v 1.4 1999/01/11 06:05:34 gdr-ftp Exp $
 #
 
 CUSTOM_RULES	= true		# provide our own build rules
@@ -87,6 +87,13 @@ install: $(PROGS) $(M1) $(M8)
 	$(INSTALL) $(PROGS8) $(SBINDIR)
 	$(INSTALL) $(M1) $(MANDIR)/man1
 	$(INSTALL) $(M8) $(MANDIR)/man8
+
+.IF $(APPLESHARE_CASE_SENSITIVE) != $(NULL)
+%.r : %.rez
+	$(INSTALL) $< common.rez $(TMPDIR)
+	cd $(TMPDIR); $(REZ) -o $@ -c $(REZFLAGS) $(TMPDIR)/$<
+	$(RM) -f $(TMPDIR)/$< $(TMPDIR)/common.rez
+.END
 
 # additional dependancies       
 apropos.o:	man.h
