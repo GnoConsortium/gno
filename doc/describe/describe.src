@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Wed Jun  3 15:35:17 1998
+# Last revision: Sat Jul  4 17:11:25 1998
 #
-# $Id: describe.src,v 1.11 1998/06/04 03:41:42 gdr-ftp Exp $
+# $Id: describe.src,v 1.12 1998/07/04 17:13:43 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -262,12 +262,12 @@ FTP:     -
 Prints a calendar for the current month or any month.
 
 Name:    calendar
-Version: 1.0
+Version: 1.1
 Shell:   GNO
-Author:  Christopher Neufeld
-Contact: neufeld@physics.utoronto.ca
-Where:   /usr/local/games
-FTP:     ftp.gno.org, ground.isca.uiowa.edu
+Author:  Christopher Neufeld, Marlin Allred
+Contact: neufeld@physics.utoronto.ca, Marlin.Allred@unisys.com
+Where:   /usr/games
+FTP:     ftp.gno.org
 
 This program consults a calandar database, and prints out entries
 corresponding to today's or tomorrow's entries.  On weekends, "tomorrow"
@@ -715,6 +715,16 @@ Where:   /usr/bin
 FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Finds regular expressions, with an extended regular expression syntax.
+
+Name:    eject
+Version: 1.0
+Shell:   GNO, ORCA/Shell
+Author:  -
+Contact: -
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Ejects all removable media (floppies, Zip drives, etc).
 
 Name:    ekill
 Version: 1.0
