@@ -1,6 +1,6 @@
 #! /bin/gsh
 #
-# $Id: help,v 1.1 1997/08/02 20:49:21 gdr Exp $
+# $Id: help.gsh,v 1.1 1997/10/30 03:51:56 gdr Exp $
 #
 # When it becomes available, /bin/sh should be used for this and
 # it should be made a bit "smarter", such as using $PAGER if it is

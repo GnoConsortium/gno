@@ -1,0 +1,16 @@
+/*
+ * $Id: help.rez,v 1.1 1997/10/30 03:51:56 gdr Exp $
+ */
+
+#include "Types.Rez"
+
+resource rVersion (0x1, purgeable3, nocrossbank) {
+
+	{ 1, 1, 0,	/* version 1.1.0 */
+	  release,	/* development|alpha|beta|final|release */
+          0		/* non-final release number */
+        },
+        verUS,
+        "help",
+        "Print the help file for an ORCA utility"
+};

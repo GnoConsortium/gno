@@ -1,0 +1,49 @@
+.\"
+.\" $Id: help.1,v 1.1 1997/10/30 03:51:56 gdr Exp $
+.\"
+.TH HELP 1 "19 October 1997" GNO "Commands and Applications"
+.SH NAME
+.BR help
+\- print ORCA help file
+.SH SYNOPSIS
+.BR help
+.I program_name
+.SH DESCRIPTION
+The ORCA/Shell expects all of its utilities to be in the
+directory specified by GS/OS prefix
+.BR 17 .
+The brief descriptions
+for these utilities (and for built-in commands) are kept in the
+directory
+.BR 17/help ,
+and are printed, under the ORCA/Shell, by the built-in command
+.BR help .
+.LP
+Because this shell built-in is not available under GNO, the
+.BR help
+program is used to access these description files.  It is invoked in
+the same manner as under ORCA/Shell, but also provides pagination.
+.SH BUGS
+The GNO implementation of
+.BR help
+will only accept one
+.IR program_name .
+.LP
+.BR help
+is currently implemented as a very dumb
+.BR gsh (1)
+script.  When
+.BR sh (1)
+becomes available,
+.BR help
+should be updated to accept multiple file names, recognise the
+.BR PAGER
+environment variable, and give cleaner diagnostics when
+.IR program_name
+does not have a description file in
+.BR 17/help .
+.SH HISTORY
+The
+.BR help
+program appeared in GNO v1.0 as an emulation of the ORCA/Shell built-in
+command.
