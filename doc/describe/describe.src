@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Sat Apr 10 15:25:55 1999
+# Last revision: Sat Jun 19 14:10:46 1999
 #
-# $Id: describe.src,v 1.28 1999/04/10 15:27:35 gdr-ftp Exp $
+# $Id: describe.src,v 1.29 1999/06/19 14:12:59 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -225,18 +225,17 @@ FTP:     ftp.gno.org
 Shows only the basename of a given fully expanded filename.
 
 Name:    bc
-Version: 1.01
+Version: 1.04
 Shell:   GNO/ME
-Author:  Frank Petroski
-Contact: -
+Author:  Scott Moberly (FSF port)
+Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
-FTP:     apple2.caltech.edu
+FTP:     ftp.gno.org
 
-GNU bc is an arbitrary precision numeric processing language.  Syntax is
-similar to C, but differs in many substantial areas.  It supports
-interactive execution of statements.  bc is a utility included in the
-POSIX P1003.2/D11 draft standard.  Copyright Free Software Foundation.
-
+GNU bc is an arbitrary precision numeric processing language. sbc
+is compliant with the POSIX P1003.2/D11 draft standard. While GNU
+bc includes many extensions.  Copyright Free Software Foundation.  
+This is part of the bc 1.04 package.
 Name:    bcd
 Version: 1.0
 Shell:   GNO/ME
@@ -717,6 +716,17 @@ Where:   /usr/bin
 FTP:     -
 
 Shows the date and time (optionally, continuously).
+
+Name:    dc
+Version: 1.1
+Shell:   GNO/ME
+Author:  Scott Moberly (FSF port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+GNU dc is an arbitrary precision numeric processing language.  Copyright
+Free Software Foundation.  This is part of the bc 1.04 package.
 
 Name:    dd
 Version: 1.0
@@ -2270,6 +2280,16 @@ FTP:     ftp.gno.org
 
 Reverse lines of a file.
 
+Name:    rh
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (comp.sources.unix port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Recursive file locater.
+
 Name:    rimport
 Version: 1.0
 Shell:   GNO
@@ -2394,6 +2414,19 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Zmodem file transfer program.  This is the receiver, and is bundled with
 sz(1), the sender.
+
+Name:    sbc
+Version: 1.04
+Shell:   GNO/ME
+Author:  Scott Moberly (FSF port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+GNU bc is an arbitrary precision numeric processing language. sbc
+is compliant with the POSIX P1003.2/D11 draft standard. While GNU
+bc includes many extensions.  Copyright Free Software Foundation.  
+This is part of the bc 1.04 package.
 
 Name:    sc
 Version: 1.10
@@ -2851,6 +2884,16 @@ FTP:     ftp.gno.org apple2.caltech.edu ground.icaen.uiowa.edu
 
 Converts text between the CR, LF and CR/LF forms. Also available for UNIX
 machines, reasonably fast yet robust.
+
+Name:    ul
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Do underlining.
 
 Name:    uname
 Version: 3.0 (January 23, 1998)
