@@ -1,12 +1,15 @@
 #
 # This is the top-level makefile for libutil, GNO v2.0.6
 #
-# $Id: Makefile,v 1.1 1997/02/28 05:03:52 gdr Exp $
+# $Id: Makefile,v 1.2 1997/09/21 05:59:14 gdr Exp $
 #
 
-.INCLUDE: ../const.mk
+.INCLUDE: ../../paths.mk
+.INCLUDE: ../const.mk                          
 
-OBJS	= login.o logintty.o
+OBJS	= login.o logintty.o logwtmp.o
+
+CFLAGS	+= -O78
 
 libutil: $(OBJS)
 	$(RM) -f $@
