@@ -1,0 +1,95 @@
+$Id: adding.utils,v 1.1 1999/01/09 21:19:58 gdr-ftp Exp $
+
+General
+-------
+
+You should read this file if you are contemplating adding utilities
+to the base GNO distribution.
+
+The first question is whether or not your utility belongs with the 
+base distribution.  The criteria are loose, but if it is a commonly
+used utility among the majority of GNO users, or if it is required
+for building GNO itself, it may be incorporated into the base
+distribution.  If you think your utility matches these criteria,
+contact Devin Reade <gdr@trenco.gno.org>.
+
+Source Code
+-----------
+
+There is no restriction to which source language you use.  If you have
+successfully written a program written in something other than ORCA/C
+or ORCA/M, please share your observations with the GNO development group
+regarding using these other languages.
+
+[talk about hierarchy in the src directory]
+
+It should be clear from the *source* exactly from where the original code
+came.  In the case of GNO base distribution utilities ported from BSD, 
+changes should be reviewed by the GNO development team.
+
+Mandetory Makefile Targets
+--------------------------
+
+
+Documentation Requirements
+--------------------------
+
+For utilities that become part of the GNO base distribution, there
+are three *required* documentation files:
+
+	1.  A manual page.  Ensure that it is using a format understood
+	    by the GNO version of nroff.  BSD manual pages do not 
+	    usually fall into this category.  Some utilities have both
+	    a GNO and a BSD man page.  In this case, the BSD man page
+	    has a suffix of (for example) ".1" while the GNO version
+	    has a suffix of ".1G".  In either case, the suffix of the
+	    manual page after installation should be ".1".  See the
+	    ftp(1) source for an example.
+	2.  A describe(1) entry.
+	3.  A rez source file containing an rVersion entry.  This
+	    will become (part of) the program's resource fork.
+	    This file may contain other resources as well.  Some
+	    common ones include rComment and rProgInfo entries.
+
+The GNO FAQ has information on where samples of these documentation
+files may be found.
+
+Other documentation files can be included as necessary.  These include
+but are not limited to READMEs, ChangeLogs, and reference manuals.
+
+The README or other documentation should contain the following information:
+	1.  Who wrote or ported the program.
+	2.  How the maintainer may be contacted.
+	3.  A list of what features have been tested.
+	4.  The copying status; is it freeware, public domain, shareware,
+	    copyleft, or something else?
+
+There should be a detailed record of what changes have been made for
+the various versions.  Small projects can have this information in the
+README file; large projects should use a separate ChangeLog.
+
+
+RCS/CVS Identifiers
+-------------------
+
+When you're working on your utils please include, in comments near the
+top of each file, the character sequence "[Dollar sign]Id[Dollar sign]"
+(minus the quotes, and with [Dollar sign] repaced by '$').  This is an
+RCS identifer.  (RCS is the Revision Control System.  CVS, the Concurrent
+Versions System, depends on RCS.)  Adding in the RCS identifier  will
+cause the version number associated with each file in the repository to
+be displayed (and automatically updated) in each file.
+
+You should *not* add a RCS identifier to your describe(1) entry file.
+These files are cat'd together later when creating the database,
+and the RCS identifiers do not belong in the database.
+
+Note that some sources (notably some BSD files) already have such a string.
+In these cases, you need not add another.  An expanded string looks
+something like this:
+
+        $Id: adding.utils,v 1.1 1999/01/09 21:19:58 gdr-ftp Exp $
+
+When the sources are released, a 'cvs export' will be done which will
+keep the version number intact, even if someone at a remote site decides
+to import it into their own repository.

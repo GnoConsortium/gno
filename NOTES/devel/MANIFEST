@@ -1,0 +1,7 @@
+MANIFEST	This file.
+TO.DO		A list of things that still have to be done for GNO.  These
+		really belong in the bugs database at http://www.gno.org
+		as either bugs or feature requests.
+adding.utils	Discusses stuff necessary to add utils to the base
+		distribution.
+doing.builds	Explains how to create the base builds.
