@@ -1,0 +1,9 @@
+Name:    rm
+Version: 1.0 (May 1999)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ftp/gno/org ground.icaen.uiowa.edu apple2.caltech.edu
+
+ Remove directory entries
