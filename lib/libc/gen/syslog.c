@@ -31,11 +31,16 @@
  * SUCH DAMAGE.
  */
 
+#ifdef __ORCAC__
+segment "libc_gen__";
+#endif
+
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)syslog.c	8.4 (Berkeley) 3/18/94";
 #endif /* LIBC_SCCS and not lint */
 
 #define USE_PORTS		/* use ports mech rather than TCP/IP */
+#define USE_VZERO		/* use syslogd v0 protocol a la GNO 2.0.4 */
 #define __SYSLOG_INTERNALS	/* needed for the ports interface */
 
 #ifndef USE_PORTS
@@ -59,7 +64,10 @@ static char sccsid[] = "@(#)syslog.c	8.4 (Berkeley) 3/18/94";
 #include <unistd.h>
 
 #ifdef __GNO__
-#include <gno/gno.h>	/* __prognameGS() */
+#include <types.h>
+#include <gno/gno.h>
+#include <misctool.h>
+#include <memory.h>
 #endif
 
 #if __STDC__
@@ -87,7 +95,7 @@ extern char	*__progname;		/* Program name, from crt0. */
 #ifdef USE_PORTS
 #include	<sys/ports.h>
 static int	openPort(void);
-static int	sendPort(int port, const void *buf, int len, int insertTime);
+static int	sendPort(int port, int pri, const void *buf, int len);
 static void	closePort(int port);
 #endif
 
@@ -134,11 +142,13 @@ static ssize_t writehook(
  */
 
 void
-vsyslog(long pri, const char *fmt, va_list ap)
+vsyslog(int pri, const char *fmt, va_list ap)
 {
 	register int cnt;
 	register char ch, *p, *t;
+#ifndef USE_VZERO
 	time_t now;
+#endif
 	int fd, saved_errno;
 	char *stdp;
 	STATIC char tbuf[2048], fmt_cpy[1024];
@@ -172,9 +182,16 @@ vsyslog(long pri, const char *fmt, va_list ap)
 		return;
 
 	/* Build the message. */
+#ifndef USE_VZERO
+	/* 
+	 * If we're using Phil's syslogd, we don't need to prepend the
+	 * <facpri> or date stamp.  The facpri is provided separately and
+	 * the date stamp is determined by the daemon.
+	 */
 	(void)time(&now);
-	(void)fprintf(fp, "<%ld>", pri);
+	(void)fprintf(fp, "<%d>", pri);
 	(void)fprintf(fp, "%.15s ", ctime(&now) + 4);
+#endif
 	if (LogStat & LOG_PERROR) {
 		/* Transfer to string buffer */
 		(void)fflush(fp);
@@ -255,7 +272,7 @@ vsyslog(long pri, const char *fmt, va_list ap)
 	if (!connected)
 		openlog(LogTag, LogStat | LOG_NDELAY, 0);
 #ifdef USE_PORTS
-	if (sendPort(LogFile, tbuf, cnt, 0) >= 0)
+	if (sendPort(LogFile, pri, tbuf, cnt) >= 0)
 		return;
 #else
 	if (send(LogFile, tbuf, cnt, 0) >= 0)
@@ -342,10 +359,9 @@ vsyslog(long pri, const char *fmt, va_list ap)
 }
 
 void
-vsyslogmt(long pri, const char *fmt, va_list ap)
+vsyslogmt(int pri, const char *fmt, va_list ap)
 {
-#define _SYSLOG_BUFFERLEN_MT	128
-	char mt_buffer[_SYSLOG_BUFFERLEN_MT];
+	char mt_buffer[_SYSLOG_BUFFERLEN_MT];	/* defined in <sys/syslog.h> */
 	char *mt_bufptr;
 	int mt_bytesLeft;
 	int i;
@@ -353,7 +369,9 @@ vsyslogmt(long pri, const char *fmt, va_list ap)
 	int local_LogFile;
 	char *p;
 	char *stdp;
+#ifndef USE_VZERO
 	time_t now;
+#endif
 	int fd, saved_errno;
 #define MT_BYTES_USED	(_SYSLOG_BUFFERLEN_MT - mt_bytesLeft)
 
@@ -377,8 +395,14 @@ vsyslogmt(long pri, const char *fmt, va_list ap)
 	/* Build the message. */
 	mt_bufptr = mt_buffer;
 	mt_bytesLeft = _SYSLOG_BUFFERLEN_MT;	/* not off-by-one */
+#ifndef USE_VZERO
+	/* 
+	 * If we're using Phil's syslogd, we don't need to prepend the
+	 * <facpri> or date stamp.  The facpri is provided separately and
+	 * the date stamp is determined by the daemon.
+	 */
 	time(&now);
-	p = sprintmt(mt_bufptr, mt_bytesLeft, "<%ld>", pri);
+	p = sprintmt(mt_bufptr, mt_bytesLeft, "<%d>", pri);
 	mt_bytesLeft -= (p - mt_bufptr);
 	mt_bufptr = p;
 #if 0
@@ -386,6 +410,7 @@ vsyslogmt(long pri, const char *fmt, va_list ap)
 	STRNCPY2BUF(ctime(&now)+4, ((mt_bytesLeft < 15) ? mt_bytesLeft : 15));
 	STRCPY2BUF(" ");
 #endif
+#endif	/* USE_VZERO */
 
 	/* mark the beginning of the string for stderr, if necessary */
 	if (LogStat & LOG_PERROR) {
@@ -463,7 +488,7 @@ vsyslogmt(long pri, const char *fmt, va_list ap)
 	if (local_LogFile == -1) {	/* an openlog wasn't done? */
 		local_LogFile = openPort();
 	}
-	if (sendPort(local_LogFile, mt_buffer, MT_BYTES_USED, 1) >= 0) {
+	if (sendPort(local_LogFile, pri, mt_buffer, MT_BYTES_USED) >= 0) {
 		return;
 	}
 #else	/* not USE_PORTS -- no output if someone forgot to openlog() */
@@ -519,7 +544,7 @@ static struct sockaddr SyslogAddr;	/* AF_UNIX address of local logger */
 #endif
 
 void
-openlog(const char *ident, int logstat, long logfac)
+openlog(const char *ident, int logstat, int logfac)
 {
 	if (ident != NULL)
 		LogTag = ident;
@@ -570,8 +595,8 @@ closelog(void)
 }
 
 /* setlogmask -- set the log mask level */
-long
-setlogmask(long pmask)
+int
+setlogmask(int pmask)
 {
 	int omask;
 
@@ -589,76 +614,109 @@ openPort(void) {
 }
 
 static int
-sendPort(int port, const void *buf, int len, int insertTime) {
-	SyslogDataBuffer_t data;
-	long answer;
-	
+sendPort(int port, int pri, const void *buf, int len)
+{
+	Handle datahand;
+	Word memID;
+	char *buffer, *strptr;
+	int saved_errno, saved_toolerr;
+	SyslogDataBuffer_t *header;
+	int *lenptr, *offptr, *magicptr, length;
+
 	if (port == -1) {
 		/* not a valid port; silent error */
 		return 0;
 	}
-	data.sdb_magic    = _SYSLOG_MAGIC;
-	data.sdb_version  = _SYSLOG_STRUCT_VERSION;
-	data.sdb_buflen   = len+1;
-	data.sdb_msglen   = len;
-	data.sdb_busywait = 1;
-	data.sdb_needtime = insertTime;
-	data.sdb_buffer   = buf;
-	
-	/* send the data */
-	psend (port, (long) &data);
 
-#if 1
-	/* Wait for a reply.  We use a busy-wait here so that we can avoid
-	 * the following methods and their associated problems:
+	/* 
+	 * We don't have to worry about this process exiting before the
+	 * syslogd has a chance to change the ownership of the allocated
+	 * memory because we do a busy-wait before returning.  See the end
+	 * of this routine.
 	 *
-	 *	procreceive:	using it would preclude user code from using it
-	 *			since we might throw away their messages and
-	 *			vice versa.
-	 *	signals:	We don't have a special signal for this purpose,
-	 *			and it would be bad to either overload an
-	 *			already assigned signal, or to use up either
-	 *			SIGUSR1 or SIGUSR2.
-	 *	ports:		if the user fails to set up a port queue in
-	 *			the parent process, then we have no way to get
-	 *			the message out.  If they *do* set it up, then
-	 *			we could get *our* messages going to our
-	 *			siblings.
-	 *	ptys		We can't use these without a parent/child
-	 *			relationship between syslogd and every process
-	 *			that calls syslog(3).  Perhaps this is why
-	 *			Phil Vandry had initd/syslogd as part of the
-	 *			same executable, originally?
+	 * In order to avoid the busy wait, we would have to allocate a new
+	 * user id for every message and ensure that the temporary user id
+	 * was deleted after use.  That is probably more expensive than just
+	 * doing the busy-wait.
 	 *
-	 * As it turns out, a busy wait isn't _too_ bad because syslogd will
-	 * release our busy wait as soon as it has copied our buffer.  In
-	 * addition, syslogd has a port queue that is only one slot deep,
-	 * so if another process got to syslogd before us, we'll be blocked
-	 * on our send, anyway.
-	 *
-	 * We could optimize this busy wait by somehow forcing the kernel
-	 * to schedule us out.  We don't want to use sleep(3), because its
-	 * implementation relies on signals.
+	 * We could probably increase concurrency, though, if in syslogd we
+	 * queued up all incoming buffers after changing their ownership, 
+	 * then writing out the buffers only after no more processes are
+	 * attempting to send messages to syslogd.  With such a mechanism
+	 * in place, one could also optimize out a bunch of extraneous open(2)
+	 * and close(2) calls on the log files.
 	 */
-	 while (data.sdb_busywait);
-	 
-#else	/* 0 */
-	/* wait for a reply */
-	while((answer = procreceive()) != _SYSLOG_MAGIC) {
-		/* try to write a message to the console */
-		int fd;
-		char *s;
-#define BAD_MAGIC ": bad magic from syslogd\r"
-		if ((fd = open(_PATH_CONSOLE, O_WRONLY)) >= 0) {
-			s = __progname;
-			write(fd, s, strlen(s));
-			write(fd, BAD_MAGIC, sizeof(BAD_MAGIC)-1);
-			close(fd);
-		}
-#undef BAD_MAGIC
+	memID = _ownerid;
+
+	/*
+	 * Allocate the memory.  For v0 messages, We need:
+	 *	sizeof(SyslogDataBuffer_t) for version, prio, and numstrings
+	 *	sizeof(int) * 1		for the offset value
+	 *	sizeof(int) * 1		for the "sizeof struct" value
+	 *	sizeof(int) * 1		for the length word of the first str
+	 *	len			for the characters in buf
+	 *	1			for a terminating NULL byte at the end
+	 *				of buf -- expected by Phil's syslogd
+	 */
+	datahand = NewHandle(sizeof(SyslogDataBuffer_t) +  (3 * sizeof(int))
+			     + len +1, memID, 0x4000, NULL);
+	if (_toolErr) {
+		saved_toolerr = _toolErr;
+		DeleteID(memID);
+		_toolErr = saved_toolerr;
+		errno = _mapErr(_toolErr);
+		return -1;
 	}
-#endif	/* 0 */
-	return len;
+
+	/*
+	 * Initialize the data structure and copy the data.  The handle
+	 * is already locked. 
+	 */
+	header = (SyslogDataBuffer_t *) *datahand;
+	header->sdb0_version = 0;
+	header->sdb0_prio = pri;
+	header->sdb0_numstrings = 1;
+
+	offptr = (int *) (((char *) header) + sizeof(SyslogDataBuffer_t));
+	magicptr = (int *) (((char *) offptr) + sizeof(int));
+	lenptr = (int *) (((char *) magicptr) + sizeof(int));
+	strptr = (((char *) lenptr) + sizeof(int));
+	*offptr = 0;
+	*magicptr = sizeof(SyslogDataBuffer_t) + 2 * sizeof(int);
+	*lenptr = len;
+	memcpy(strptr, buf, len);
+	strptr[len] = '\0';	/* Phil's syslogd expects a NULL byte */
+
+	HUnlock(datahand);
+
+	if (psend(port, (long) datahand) == -1) {
+		/* We failed.  Dump the region to avoid a mem leak. */
+		saved_errno = errno;
+		saved_toolerr = _toolErr;
+		DisposeHandle(datahand);
+		_toolErr = saved_toolerr;
+		errno = saved_errno;
+		return -1;
+	}
+
+	/* 
+	 * Busy wait until we no longer own the memory block.  Use the
+	 * COP 0x7F instruction to force a context switch and thus minimize
+	 * wasted clock cycles.  We don't want to do a sleep(2) here because
+	 * we don't futz with the user's world of signals.  This is cleaner
+	 * anyway.
+	 *
+	 * We reuse (overload) 'magicptr' here so we don't have to allocate
+	 * more stack space just for this test.
+	 */
+	magicptr = (int *) ((char *) datahand + 6); /* pointer to owner */
+	while (*magicptr == memID) {
+		asm {
+			cop 127
+		}
+	}
+
+	return 0;
 }
 
 static void
@@ -675,7 +733,7 @@ closePort(int port) {
 
 void
 #if __STDC__
-syslog(long pri, const char *fmt, ...)
+syslog(int pri, const char *fmt, ...)
 #else
 syslog(pri, fmt, va_alist)
 	int pri;
@@ -696,7 +754,7 @@ syslog(pri, fmt, va_alist)
 
 #ifdef __GNO__
 void
-syslogmt(long pri, const char *fmt, ...)
+syslogmt(int pri, const char *fmt, ...)
 {
 	va_list ap;
 

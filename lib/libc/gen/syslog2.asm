@@ -12,13 +12,13 @@
 *
 * Phillip Vandry, August 1993
 *
-* $Id: syslog2.asm,v 1.2 1998/06/24 04:19:59 gdr-ftp Exp $
+* $Id: syslog2.asm,v 1.3 1999/01/04 05:10:36 gdr-ftp Exp $
 *
 * This file is formatted for tab stops at positions 10, 16, 41, 40, 57,
 * 65, and 73 (standard Orca/M systabs setting).
 *
-	keep	syslog
-	mcopy	syslog.mac
+	keep	syslog2
+	mcopy	syslog2.mac
 	case	on
 
 dummy	start		; ends up in .root
@@ -103,8 +103,8 @@ error	equ	23
 	sta	>memid
 
 * Log only if bit clear in LogMask
-	lda	>errno
-	sta	lerrno
+	lda	>errno		; save value of errno in lerrno for future
+	sta	lerrno		; reference
 	lda	prio
 	and	#7
 	tax
@@ -115,7 +115,8 @@ lsrloop	lsr	a
 * carry = apropriate bit
 	bcc	dolog
 
-* get rif of parameters by running through sprintf
+* LogMask was such that we're not logging the message; get rid of parameters
+* before returning by running through sprintf
 	jsr	mksendhand
 	pei	valist+2
 	pei	valist
@@ -127,6 +128,8 @@ lsrloop	lsr	a
 	~DisposeHandle <sendhand
 	brl	return
 
+* We will be logging.  Use the given prio if nonzero, else use the default
+* facility specified in the openlog() call.
 dolog	anop
 	lda	prio
 	and	#$3f8
@@ -135,20 +138,21 @@ dolog	anop
 	ora	>LogFacility
 	sta	prio
 gotone	anop
-	jsr	mksendhand
-	jsr	cpsendhand
+	jsr	mksendhand	; allocate mem, init sendhand and sendptr
+	jsr	cpsendhand	; init version, prio, numstrings, and offset
+				; in mem block.  Init locals cumlen and sendptr
 
-	lda	>LogTag
-	sta	cptr
+	lda	>LogTag		; if the tag has not been initialized, skip
+	sta	cptr		; to the 'notag' label
 	lda	>LogTag+2
 	sta	cptr+2
 	ora	cptr
 	beq	notag
 
-	lda	>TagLen
-	bne	already
-	ldy	#0
-	short	m
+	lda	>TagLen		; set y reg to length of LogTag string, store
+	bne	already		; the result in TagLen.  If we've already
+	ldy	#0		; determined it, use the cached value.
+	short	m		; Leave the TagLen value in the accumulator
 lppp	lda	[cptr],y
 	beq	foundlen
 	iny
@@ -157,15 +161,15 @@ foundlen	long	m
 	tya
 	sta	>TagLen
 
-already	sta	[cumlen]
+already	sta	[cumlen]	; store TagLen into length word of GS string
 	tay
 	short	m
-fincp2	dey
+fincp2	dey			; copy the LogTag into the GS string
 	bmi	fincp
 	lda	[cptr],y
 	sta	[sendptr],y
 	bra	fincp2
-fincp	long	m
+fincp	long	m		; make sendptr point to end of copied tag
 	lda	[cumlen]
 	clc
 	adc	sendptr
@@ -182,10 +186,10 @@ notag	anop
 	pha
 	ldx	#$0903
 	jsl	$e10008	; getpid
-	pea	fmt|-16
-	pea	fmt
-	pei	sendptr+2
-	pei	sendptr
+	pea	fmt|-16		; if the LOG_PID flag is set, append a text
+	pea	fmt		; representation of the pid to the GS string.
+	pei	sendptr+2	; update the length word and make sendptr
+	pei	sendptr		; point to the end of the string.
 	jsl	sprintf
 	pha
 	clc
@@ -199,10 +203,10 @@ notag	anop
 	adc	#0
 	sta	sendptr+2
 
-nopid	anop
-	lda	>LogTag
-	ora	>LogTag+2
-	beq	notagsecond
+nopid	anop			; if we had a log tag, append a " :" to
+	lda	>LogTag		; the GS string.  Update the length word
+	ora	>LogTag+2	; and make sendptr point to the end of the
+	beq	notagsecond	; string
 	lda	[cumlen]
 	inc	a
 	inc	a
@@ -217,10 +221,10 @@ nopid	anop
 	adc	#0
 	sta	sendptr+2
 
-notagsecond	anop
-	lda	lerrno
-	bne	isone
-	lda	#ptrtozero
+notagsecond	anop		; If errno was nonzero, make error point
+	lda	lerrno		; to the appropriate error string, otherwise
+	bne	isone		; make it a pointer to the empty string ("\0").
+	lda	#ptrtozero	; Set errlen to the length of the error string.
 	sta	error
 	lda	#^ptrtozero
 	sta	error+2
@@ -234,7 +238,10 @@ isone	pha
 	jsl	strlen
 	sta	errlen
 
-none	ldx	#2	; = bytes needed in copy (one null+slop)
+				; determine what the size of the format
+				; string will be after expanding all "%m"
+				; specifiers
+none	ldx	#2		; = bytes needed in copy (one null+slop)
 	ldy	#0
 runthrough lda	[format],y
 	cmp	#$6d25	; '%m'
@@ -254,7 +261,7 @@ account	iny
 endstring	pha
 	pha
 	pea	0
-	phx		; length
+	phx			; length
 	stz	chand
 	stz	chand+2
 	lda	format
@@ -266,8 +273,8 @@ endstring	pha
 	pea	$4000
 	pha
 	pha
-	~NewHandle *,*,*,*
-	pla
+	~NewHandle *,*,*,*	; allocate memory for copied format string,
+	pla			; handle is chand, dereferenced handle is cptr
 	plx
 	bcs	impossible
 	sta	chand
@@ -278,6 +285,8 @@ endstring	pha
 	lda	[chand]
 	sta	cptr
 
+				; copy format string to cptr, substituting
+				; %m specifiers along the way
 	pea	0	; offset in source
 	ldy	#0	; offset in dest
 realtime	tyx
@@ -312,14 +321,18 @@ anotherreal	tyx
 donerr	txy
 	bra	realtime
 excited	txy
-	sta	[cptr],y	; zero
+	sta	[cptr],y	; null terminate cptr
 
-impossible	anop	; jump here if malloc() failed
+impossible	anop		; jump here if mem alloc for copying format
+				; string failed, in which case cptr points to
+				; the original format string.
+				; We also fall through to here if we have
+				; successfully copied the format string.
 	pei	valist+2
 	pei	valist
-	pei	cptr+2
-	pei	cptr
-	pei	sendptr+2
+	pei	cptr+2		; use vsprintf to print format and any args
+	pei	cptr		; to the GS string.  Update the length word
+	pei	sendptr+2	; of the GS string.
 	pei	sendptr
 	jsl	vsprintf
 	clc
@@ -329,38 +342,38 @@ impossible	anop	; jump here if malloc() failed
 	and	#$20	; PERROR
 	beq	noper
 
-	ldx	cumlen
-	ldy	cumlen+2
+	ldx	cumlen		; Write the message to stderr if the necessary
+	ldy	cumlen+2	; bit was set.
 	lda	#3
-	jsl	WriteGString	; echo on standard error
+	jsl	WriteGString
 	ldx	#nlonly
 	ldy	#^nlonly
 	lda	#3
 	jsl	WriteGString
 		
-noper	lda	chand
-	ora	chand+2
+noper	lda	chand		; Release the mem from the copied format
+	ora	chand+2		; string, if it was successfully allocated
 	beq	nochand
 	~DisposeHandle <chand
 
-nochand	pei	sendhand+2
+nochand	pei	sendhand+2	; see if syslogd is running
 	pei	sendhand
 	pea	portname|-16
 	pea	portname
 	jsl	pgetport
-	cmp	#$ffff
-	beq	nosyslogd
+	cmp	#$ffff		; if not, use the old_syslog routine to print
+	beq	nosyslogd	; the message
 	pha
-	jsl	psend
+	jsl	psend		; send the message to syslogd
 	ldy	#6
 tryagain	lda	[sendhand],y
-	cmp	>memid
-	bne	return
-	cop	$7f
+	cmp	>memid		; busy wait until we no longer own the
+	bne	return		; memory block.  Use COP to force a context
+	cop	$7f		; switch to minimize wasted clock cycles
 	bra	tryagain
 
 return	plb
-	lda	argstart-3
+	lda	argstart-3	; va_end()
 	sta	valist+1
 	lda	argstart-2
 	sta	valist+2
@@ -372,6 +385,9 @@ return	plb
 	rtl
 nosyslogd jsl	old_syslog
 	bra	return
+
+* Allocate a memory region of 1024 bytes.  Create it locked.  Store the
+* handle into 'sendhand'.  Deref the handle and store the result into 'sendptr'
 
 mksendhand	pha
 	pha
@@ -387,7 +403,7 @@ mksendhand	pha
 	stx	sendhand
 	plx
 	stx	sendhand+2
-	bcs	giveup
+	bcs	giveup		; if alloc fails, sleep 1 second and try again
 	ldy	#2
 	lda	[sendhand],y
 	sta	sendptr+2
@@ -397,6 +413,13 @@ mksendhand	pha
 giveup	pea	1
 	jsl	sleep
 	bra	mksendhand
+
+* - Copy the five words of Xsyslog into the region pointed to by sendptr.
+*   This initializes the version, prio, numstrings, string1 offset, and
+*   sizeof(region) to 0, 0, 1, 0, and 10, respectively.
+* - Reset the prio field to the appropriate value
+* - Make cumlen point to the length word of the GS string
+* - Make sendptr point to the start of the text field of the GS string.
 
 cpsendhand ldy	#(Xthis-Xsyslog-2)	; is even
 	phb
@@ -416,15 +439,15 @@ still	lda	Xsyslog,y
 	adc	#(Xthis-Xsyslog)
 	sta	cumlen
 	lda	sendptr+2
-	adc	#0
-	sta	cumlen+2
+	adc	#0		; cumlen now holds a pointer to the length
+	sta	cumlen+2	; word of the first GS string.
 	lda	#0
-	sta	[cumlen]
+	sta	[cumlen]	; zero the length word
 	lda	cumlen
 	clc
 	adc	#2
-	sta	sendptr
-	lda	cumlen+2
+	sta	sendptr		; sendptr now points to the text field of
+	lda	cumlen+2	; the GS string.
 	adc	#0
 	sta	sendptr+2
 	rts
