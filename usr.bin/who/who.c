@@ -50,16 +50,37 @@ static char sccsid[] = "@(#)who.c	8.1 (Berkeley) 6/6/93";
 #include <pwd.h>
 #include <utmp.h>
 #include <stdio.h>
+#ifdef __ORCAC__
+#include <sys/errno.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#endif
 
-main(argc, argv)
-	int argc;
-	char **argv;
+static void output(struct utmp *up);
+static FILE *file(char *name);
+
+#ifdef __ORCAC__
+char *__progname = NULL;
+#endif
+
+int
+main(int argc, char **argv)
 {
 	register char *p;
-	struct utmp usr;
+	static struct utmp usr;
 	struct passwd *pw;
+#ifdef __ORCAC__
+	FILE *ufp;
+	char *t;
+#else
 	FILE *ufp, *file();
 	char *t, *rindex(), *strcpy(), *strncpy(), *ttyname();
+#endif
+
+#ifdef __ORCAC__
+	__progname = argv[0];
+#endif
 
 	switch (argc) {
 	case 1:					/* who */
@@ -84,7 +105,7 @@ main(argc, argv)
 			if (t = rindex(p, '/'))
 				p = t + 1;
 			while (fread((char *)&usr, sizeof(usr), 1, ufp) == 1)
-				if (usr.ut_name && !strcmp(usr.ut_line, p)) {
+				if (*usr.ut_name && !strcmp(usr.ut_line, p)) {
 					output(&usr);
 					exit(0);
 				}
@@ -105,27 +126,32 @@ main(argc, argv)
 	exit(0);
 }
 
-output(up)
-	struct utmp *up;
+static void
+output(struct utmp *up)
 {
-	char buf[80];
+static char buf[80];
 
 	(void)printf("%-*.*s %-*.*s", UT_NAMESIZE, UT_NAMESIZE, up->ut_name,
 	    UT_LINESIZE, UT_LINESIZE, up->ut_line);
+#ifdef __ORCAC__
+	sprintf(buf, "%s", asctime(localtime(&up->ut_time)));
+#else
 	(void)strftime(buf, sizeof(buf), "%c", localtime(&up->ut_time));
+#endif
 	(void)printf("%.12s", buf + 4);
 	if (*up->ut_host)
 		printf("\t(%.*s)", UT_HOSTSIZE, up->ut_host);
 	(void)putchar('\n');
 }
 
-FILE *
-file(name)
-	char *name;
+static FILE *
+file(char *name)
 {
 	extern int errno;
 	FILE *ufp;
+#ifndef __ORCAC__
 	char *strerror();
+#endif
 
 	if (!(ufp = fopen(name, "r"))) {
 		(void)fprintf(stderr, "who: %s: %s.\n", name, strerror(errno));
@@ -133,3 +159,4 @@ file(name)
 	}
 	return(ufp);
 }
+

@@ -2,4 +2,6 @@
 
 PROG=	who
 
-.include <bsd.prog.mk>
+.INCLUDEDIRS : ..
+.INCLUDE : <bsd.prog.mk>
+
