@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Fri Apr 24 17:16:58 1998
+# Last revision: Sat May 30 01:58:49 1998
 #
-# $Id: describe.src,v 1.8 1998/04/24 17:20:46 gdr-ftp Exp $
+# $Id: describe.src,v 1.9 1998/05/30 03:11:15 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -403,6 +403,16 @@ FTP:     ftp.gno.org
 
 Removes specified columns from a text file
 
+Name:    column
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Columnate lists.
+
 Name:    compress
 Version: 4.3
 Shell:   GNO/ORCA
@@ -747,6 +757,16 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 Evaluate is an ORCA/Shell (only) utility for evaluating expressions, and
 setting a shell variable to the value of the result.
 
+Name:    expand
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Expand tabs into spaces.
+
 Name:    expr
 Version: 1.1
 Shell:   GNO/ME
@@ -777,6 +797,16 @@ Where:   /usr/local/bin
 FTP:     ground.isca.uiowa.edu
 
 Creates styled large characters out of ordinary screen characters.
+
+Name:    file2c
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Convert file to C source.
 
 Name:    fill
 Version: 2.7
@@ -2172,6 +2202,16 @@ FTP:     ftp://apple2.caltech.edu/pub/apple2/shellutils/
 
 Unpacks files that were packed with ARJ 2.41 or earlier.
 
+Name:    unexpand
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Unexpand tabs from spaces.
+
 Name:    unpp
 Version: 1.1
 Shell:   ORCA/Shell, GNO/ME
@@ -2276,6 +2316,16 @@ Where:   /usr/bin
 FTP:     -
 
 Sends a message to the terminal of every logged on user.
+
+Name:    what
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Show what versions of object modules were used to construct a file.
 
 Name:    whatis
 Version: 3.0 (24 Jul 95)
