@@ -1,10 +1,12 @@
 #
-# Makefile for libc/gno
+# gno/libc/gno/Makefile
+#
 # Devin Reade, 1996
 #
-# $Id: Makefile,v 1.1 1997/02/28 05:12:46 gdr Exp $
+# $Id: Makefile,v 1.2 1997/09/05 06:12:22 gdr Exp $
 #
 
+.INCLUDE:	../../../paths.mk
 .INCLUDE: 	../../const.mk
 
 OBJ_ASM	= gnocmd.o parsearg.o stack.o
