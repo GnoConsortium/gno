@@ -6,7 +6,7 @@
 # 
 # Devin Reade, September 1997.
 #
-# $Id: fudgeinstall,v 1.4 1998/04/24 03:38:49 gdr-ftp Exp $
+# $Id: fudgeinstall,v 1.5 1998/07/07 02:31:22 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -210,7 +210,7 @@ install -V	/usr/bin/nroff		$RELDIR/usr/bin
 # rlogin	done
 # rsh		done
 install -V	/bin/script		$RELDIR/usr/bin
-install -V	17/sed			$RELDIR/usr/bin
+# sed		done
 install -V	/usr/bin/setvers	$RELDIR/usr/bin
 install -V	/usr/bin/unshar		$RELDIR/usr/bin
 install -V	/usr/bin/uptime		$RELDIR/usr/bin
