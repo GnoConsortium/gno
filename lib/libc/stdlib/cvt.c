@@ -2,10 +2,14 @@
  * Floating point conversion routines.
  * Devin Reade, 1997.
  *
- * $Id: cvt.c,v 1.1 1997/09/05 06:31:59 gdr Exp $
+ * $Id: cvt.c,v 1.2 1997/09/21 06:20:37 gdr Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
+
+#ifdef __ORCAC__
+segment "libc_stdlb";
+#endif
 
 #include <stdio.h>
 #include <string.h>
