@@ -1,8 +1,8 @@
 .\" Copyright (c) 1993-1997 Soenke Behrens, Devin Reade
 .\"
-.\" $Id: udl.1,v 1.12 1997/12/08 16:07:19 gdr Exp $
+.\" $Id: udl.1,v 1.13 1997/12/19 07:48:15 gdr Exp $
 .\"
-.TH UDL 1 "31 January 1996" GNO "Commands and Applications"
+.TH UDL 1 "11 December 1997" GNO "Commands and Applications"
 .SH NAME
 udl - convert text files between different architectures
 .SH SYNOPSIS
@@ -26,7 +26,7 @@ will skip any file that is not of type TXT or SRC.
 No notice is given of this unless the
 .B -v
 flag is used.
-Since Unix file systems do not have file types
+Since UNIX file systems do not have file types
 .BR udl
 is limited in the types of checks which it can carry out,
 so the user must take care that
@@ -46,20 +46,20 @@ creates a temporary file in the same directory as the original file.
 The temporary file is close to or exactly the same size as the original
 file.
 .PP
-When running under Byteworks' ORCA shell, the Orca shell wildcards
+When running under Byteworks' ORCA shell, the ORCA shell wildcards
 .BR =
 and
 .BR ?
 are properly expanded in file names.
 .SH OPTIONS
 .IP \fB\-u\fP
-Convert to use LF as EOL (Unix/Amiga).
+Convert to use LF as EOL (UNIX/Amiga).
 .IP \fB\-m\fP
 Convert to use CR/LF as EOL (MS-DOS).
 .IP \fB\-g\fP
 Convert to use CR as EOL (Apple).
 .IP \fB\-p\fP
-Be pedantic, only affects Unix<->Apple conversions, see below.
+Be pedantic, only affects UNIX<->Apple conversions, see below.
 .IP \fB\-R\fP
 Recurse through subdirectories.
 .IP \fB\-v\fP
@@ -75,10 +75,10 @@ switch,
 .B udl
 is pedantic while doing the conversion. This means: The input file may
 contain bytes with a value of zero (0), and the input file may contain
-different EOL characters (ie: MS-DOS and Unix style might be mixed in
+different EOL characters (ie: MS-DOS and UNIX style might be mixed in
 one file). For conversions to or from MS-DOS
 .B udl
-is always pedantic, so this only affects conversions from Unix to Apple
+is always pedantic, so this only affects conversions from UNIX to Apple
 or vice versa. Being pedantic slows udl down by a factor of 1.5.
 .SH LIMITATIONS
 When running under GNO on the Apple IIgs, there is a limit to the nesting
@@ -92,9 +92,9 @@ the stack actually overflows.
 .SH BUGS
 Bug reports should be directed to one of the two addresses below.
 .SH AUTHOR
-Soenke Behrens <sbehrens@contech.demon.co.uk> with contributions by
-Devin Reade <gdr@myrias.ab.ca>.
+Soenke Behrens <sbehrens@bigfoot.com> with contributions by
+Devin Reade <gdr@myrias.com>.
 .SH VERSION
 This manual page documents
 .B udl
-version 1.1.5.
+version 1.1.6.

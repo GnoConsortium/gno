@@ -1,10 +1,10 @@
 Name:    udl
-Version: 1.1.5
+Version: 1.1.6
 Shell:   GNO/ME, ORCA/Shell
 Author:  Soenke Behrens, Devin Reade
-Contact: sbehrens@contech.demon.co.uk, gdr@myrias.ab.ca
-Where:   /usr/local/bin
-FTP:     apple2.caltech.edu, grind.isca.uiowa.edu
+Contact: sbehrens@bigfoot.com, gdr@myrias.com
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
 
-   Converts text between the CR, LF and CR/LF forms. Also available for Unix
-machines, reasonably fast yet secure.
+   Converts text between the CR, LF and CR/LF forms. Also available for UNIX
+machines, reasonably fast yet robust.

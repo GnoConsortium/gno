@@ -4,7 +4,7 @@
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.11 1997/12/08 16:07:19 gdr Exp $
+ * $Id: udlgs.c,v 1.12 1997/12/19 07:48:16 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -55,7 +55,7 @@ printStack (void) {
 }
 #endif
 
-int main(int argc,char *argv[]) {
+int main(int argc, char **argv) {
   FILE *infile, *outfile;
   int Tunix = FALSE;
   int Messy = FALSE;
@@ -111,7 +111,7 @@ int main(int argc,char *argv[]) {
 
   /* Get and process arguments */
   
-  optind = 0;
+  optind = 1;	/* set these to ensure that the program is restartable */
   opterr = 1;
   while ((c = getopt (argc, argv, "pvugmRVh")) != EOF) {
     switch (c) {

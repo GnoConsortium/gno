@@ -1,16 +1,16 @@
 
 =============================================================================
-udl -	Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
+udl -	Convert EOL formats freely between MS-DOS (CR/LF), UNIX/Amiga (LF),
      	and Apple (CR).
 
-	(c) 1993-1996 Soenke Behrens, Devin Reade
+	(c) 1993-1997 Soenke Behrens, Devin Reade
 
-	Version 1.1.5
+	Version 1.1.6
 
-        $Id: HISTORY,v 1.3 1997/08/02 21:09:12 gdr Exp $
+        $Id: HISTORY,v 1.4 1997/12/19 07:48:15 gdr Exp $
 =============================================================================
 
-Udl converts text files between CR, LF and CR/LF (Apple, Unix and MS-DOS).
+Udl converts text files between CR, LF and CR/LF (Apple, UNIX and MS-DOS).
 It is a very fast utility that ensures that the integrity of the file
 cannot be compromised during the translation.  It is also much easier
 to use than tr(1).
@@ -38,17 +38,17 @@ v1.1.1
 	prefixed with the name it was invoked with.
 
 v1.1.2
-	Sped up Apple <-> Unix conversion further (factor 1.5).
+	Sped up Apple <-> UNIX conversion further (factor 1.5).
 
-v1.1.2 (Unix)
+v1.1.2 (UNIX)
 	(December 1993)
-	Modified source to produce a Unix version
+	Modified source to produce a UNIX version
 
 v1.1.3
 	(Updated by Devin Reade, November 1994)
 	Added ability to recurse through directories (-R flag).
 	Changed behavior to ignore binary files rather than exiting.
-	Merged Unix and Apple IIgs versions.
+	Merged UNIX and Apple IIgs versions.
         No message is printed out when a binary file (or, in the IIgs
            implementation, a non-TXT or non-SRC file) is encountered
            unless the -v option is specified.
@@ -66,18 +66,26 @@ v1.1.4
 	Modified Makefile.gs to properly write the new executable over
 	   the old resource fork for udl.  The resource fork originates with
 	   the file udl.r.
-	Added suggested defines to the README for various Unix platforms.
+	Added suggested defines to the README for various UNIX platforms.
 	Man page changes, including grammar and the deletion of a bug that
 	   no longer exists.
 	Fixed bug where invoking 'udl -u directory' would attempt to
 	   deref a NULL pointer, causing either memory tromping (IIgs) or
-	   a core dump (Unix).
+	   a core dump (UNIX).
 	Tested under SunOS 4.x, SunOS 5.x (Solaris), and AIX.
 
 v1.1.5
 	(Soenke Behrens, Devin Reade, January 1996)
 	Changed source slightly to compile under djgpp (MS-DOS) and Linux,
         linted source
-        Unix makefile changed by Devin Reade to automatically detect OS
+        UNIX makefile changed by Devin Reade to automatically detect OS
         type
         Apple IIgs source now opens files with "r+b" instead of "rwb"
+
+v1.1.6
+	(Devin Reade, December 1997)
+	Incorporated into the GNO base distribution.
+	Changed the initialization for the getopt(3) package to work with
+	   BSD-based systems (like GNO v2.0.6) as well as with GNU-based
+	   systems.
+	Use proper capitalization for "UNIX" and "ORCA".

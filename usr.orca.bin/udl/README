@@ -1,16 +1,16 @@
 =============================================================================
-udl -	Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
+udl -	Convert EOL formats freely between MS-DOS (CR/LF), UNIX/Amiga (LF),
      	and Apple (CR).
 
-	(c) 1993-1996 Soenke Behrens, Devin Reade
+	(c) 1993-1997 Soenke Behrens, Devin Reade
 
-	Version 1.1.5: $Id: README,v 1.11 1997/12/08 16:07:19 gdr Exp $
+	Version 1.1.6: $Id: README,v 1.12 1997/12/19 07:48:15 gdr Exp $
 =============================================================================
 
 Udl converts text files between the various end-of-line conventions, i.e.
-CR, LF, and CR/LF, used by the Apple IIgs, MS-DOS, Amiga, and Unix.
+CR, LF, and CR/LF, used by the Apple IIgs, MS-DOS, Amiga, and UNIX.
 After conversion, the original file is replaced with the converted file.
-Udl is known to run with ORCA/Shell 2.x, GNO/ME 2.x, and Unix.
+Udl is known to run with ORCA/Shell 2.x, GNO/ME 2.x, and UNIX.
 
 Not only is udl faster and simpler than tr(1), but it saves a step in
 the conversion process by automatically replacing the original file
@@ -33,9 +33,10 @@ so the risk is no greater.
 Compiling:
 =========
 
-Three makefiles are included:
-	Makefile.gs	For use on the Apple IIgs running GNO
-	Makefile.unx	For use with Unix systems
+Four makefiles are included:
+	Makefile	For use on the Apple IIgs running GNO (GNO Base Build)
+	Makefile.gs	For use on the Apple IIgs running GNO (Stand-alone)
+	Makefile.unx	For use with UNIX systems
 	Makefile.msd	For use with MS-DOS systems (djgpp)
 
 Although udl on the IIgs can be run from either GNO or ORCA shells,
@@ -46,8 +47,10 @@ The IIgs distribution should contain a binary of udl, including a
 resource fork.  Therefore, you should be able to skip straight to the
 section on installation.  For those who must know, however, building the
 binaries under GNO should just be a matter of typing 'dmake -f Makefile.gs'.
+(You cannot use the "Makefile" -- without the suffix -- unless you are
+building udl as part of the entire base GNO distribution.)
 
-If you are compiling on Unix operating systems that have been previously
+If you are compiling on UNIX operating systems that have been previously
 tested, you should be able to just type 'make -f Makefile.unx'.  This
 will select the appropriate DEFINES for your system.  For an explanation
 the various DEFINES, see the section below on "DEFINES Definitions".
@@ -85,14 +88,14 @@ If you have describe(1) installed, you can update the udl(1) entry
 with the file "udl.desc".  See the descu(8) and descc(8) man pages
 for details.
 
-Apple IIgs with Orca/Shell
+Apple IIgs with ORCA/Shell
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 Copy the following files to their respective destinations:
 
 	udl		to		17
 	help/udl	to		17/help
 
-Unix systems
+UNIX systems
 ^^^^^^^^^^^^
 Type 'make -f Makefile.unx install'.  By default the binary will
 go into /usr/local/bin and the man page into /usr/local/man/man1.
@@ -141,10 +144,12 @@ The following are the DEFINES values for tested operating systems:
 	APPLE IIGS:  (use "dmake -f Makefile.gs")
 	^^^^^^^^^^
 
-	ORCA/Shell and GNO/ME: (tested with occ)
-		-DGNO -D_POSIX_C_SOURCE -D_POSIX_SOURCE -DHAS_ATEXIT
-		-DOVERFLOW_CHECK
-
+	ORCA/Shell and GNO/ME v2.0.6: (tested with occ)
+		-DHAS_ATEXIT -DOVERFLOW_CHECK
+	The v2.0.6 libraries are POSIX compliant, but some functions
+	don't get prototyped if _POSIX_C_SOURCE and _POSIX_SOURCE are
+	defined.  This probably indicates that udl is not "strictly
+	conforming".
 
         MS-DOS: (use "make -f Makefile.msd")
         ^^^^^^
@@ -176,17 +181,18 @@ Files
 The following files are present in the udl package:
  	README			This file
  	HISTORY			Revision history
- 	Makefile.gs		make(1) script for GNO
- 	Makefile.unx		make(1) script for Unix
+	Makefile		dmake(1) script for GNO (base build)
+ 	Makefile.gs		dmake(1) script for GNO
+ 	Makefile.unx		make(1) script for UNIX
 	Makefile.msd		make(1) script for MS-DOS
- 	common.c		Routines common to GNO and Unix versions
+ 	common.c		Routines common to GNO and UNIX versions
  	common.h		Header file for common.c
  	globals.c		Global variable definitions
  	udl.1			Man page for udl command
  	udl.desc		short description of udl, FTP info
  	udlgs.c			Apple IIgs specific routines
  	udl.rez			Apple IIgs REZ source for resource fork
- 	udlunix.c		Unix specific routines
+ 	udlunix.c		UNIX specific routines
  	udluse.c		Strings for invocation information
 
 =====
@@ -211,7 +217,7 @@ This package may be redistributed so long as no fee is charged, the
 authors' names remain, and all modifications are clearly marked as
 such and the unmodified source is included.
 
-This program contains material from the Orca/C Run-Time Libraries,
+This program contains material from the ORCA/C Run-Time Libraries,
 Copyright 1987-1995 by Byte Works, Inc.  Used with permission.
 
 The GS executable of udl contains code CopyLeft by the FSF (Free Software
@@ -221,14 +227,14 @@ Foundation). Source and binaries to GNU getopt are available on request.
 Authors
 =======
 
-Original code by Soenke Behrens <sbehrens@contech.demon.co.uk>
-with modifications and version-merging by Devin Reade <gdr@myrias.ab.ca>.
+Original code by Soenke Behrens <sbehrens@bigfoot.com>
+with modifications and version-merging by Devin Reade <gdr@myrias.com>.
 
 Soenke Behrens
-sbehrens@contech.demon.co.uk
+sbehrens@bigfoot.com
 
 Devin Reade
-gdr@myrias.ab.ca
+gdr@myrias.com
 
-January 1996
-Version 1.1.5
+December 1997
+Version 1.1.6
