@@ -6,9 +6,6 @@
 #include <ctype.h>
 #include <stdio.h>
 
-/* Because isblank() is not defined in <ctype.h>... */
-extern int isblank(int);
-
 static int ch;
 static FILE *bf;
 
