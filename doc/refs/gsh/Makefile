@@ -10,24 +10,28 @@ CHAPTERS = \
 	termcap.sgml \
 	glossary.sgml
 
-all:  h ps
+all:	h ps
+h:	gsh/index.html
+ps:	gsh.ltr.ps.Z
 
-h:	gsh.sgml $(CHAPTERS)
+gsh.ltr.ps.Z: gsh.ltr.ps
+	compress < $< > $@
+
+gsh/index.html: gsh.sgml $(CHAPTERS)
 	sgmltools -b html gsh.sgml
 	../posthtml gsh/*
 
-ps:	gsh.sgml $(CHAPTERS)
+gsh.ltr.ps:	gsh.sgml $(CHAPTERS)
 	sgmltools -b ps gsh.sgml
+	mv gsh.ps gsh.ltr.ps
 
-gsh.sgml:	main.sgml
-	date="`../getdate -date main.sgml $(CHAPTERS)`"; \
+gsh.sgml: main.sgml $(CHAPTERS)
+	@date="`../getdate -date main.sgml $(CHAPTERS)`"; \
 	echo "generating $@"; \
-	perl -pe "s,%%%date%%%,$$date,g;" < $< > $@
-
-.PRECIOUS: gsh.sgml
+	perl -pe "s,%%%date%%%,$$date,g;" < main.sgml > $@
 
 clean:
 	rm -f gsh.sgml *~
 
 clobber: clean
-	rm -rf gsh
+	rm -rf gsh gsh.ltr.ps gsh.ltr.ps.Z

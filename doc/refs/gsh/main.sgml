@@ -1,5 +1,5 @@
 <!--
-;; $Id: main.sgml,v 1.1 1999/02/21 18:46:50 gdr-ftp Exp $
+;; $Id: main.sgml,v 1.2 1999/02/21 23:30:39 gdr-ftp Exp $
 -->
 
 <!DOCTYPE book PUBLIC "-//Davenport//DTD DocBook V3.0//EN" [
@@ -16,7 +16,10 @@
 <!entity gsh-glossary system "glossary.sgml">
 ]>
 
-<book>
+<!-- use the label "index" so that the top level HTML index file comes
+     out as "index.html" -->
+
+<book id="index">
 
 <bookinfo>
 
