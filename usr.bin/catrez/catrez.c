@@ -11,11 +11,13 @@
  *                                                      
  * Written by Dave Tribby (tribby@cup.hp.com) beginning 5-3-96
  *
+ * $Id: catrez.c,v 1.2 1997/09/26 06:32:43 gdr Exp $
+ *
  * ---------------------------------------------------------------------
  */
 
-char	*copyright    = "  Copyright 1996 by David M. Tribby\n";
-char    *prog_version = "  Version 1.0.1 (%s)\n";
+char	*copyright    = "  Copyright 1996-1997 by David M. Tribby\n";
+char    *prog_version = "  Version 1.0.2 (%s)\n";
 
 /* NOTE: if you need to compile this without code specific to gno, */
 /* #define __NO_GNO__                                              */
@@ -366,6 +368,13 @@ void CopyResources(char *fname)
    CloseResourceFile(file_id);
    }   /* CopyResources */
 
+#if defined(__GNO__) && defined(__STACK_CHECK__)
+#include <gno/gno.h>
+static void report_stack(void)
+{
+	fprintf(stderr,"\n ==> %d stack bytes used <== \n", _endStackCheck());
+}
+#endif
 
 /*----------------------------------------------------------------------*/
 int main (int argc, char **argv)
@@ -376,6 +385,11 @@ int	destfileprovided = FALSE;
 char	*illegal_opt="Warning: Illegal option %s ignored\n";
 char	*usage=
    "Usage:\n\tcatrez [-v] [-a] -d dest_file file1 [file2 ...]\n";
+
+#if defined(__GNO__) && defined(__STACK_CHECK__)
+_beginStackCheck();
+atexit(report_stack);
+#endif
 
 #ifndef __NO_GNO__
 /* Are we running under the GNO kernel? */
