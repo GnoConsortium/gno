@@ -6,5 +6,6 @@ Contact: tribby@cup.hp.com
 Where:   /usr/bin
 FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
 
- - stream editor
-  
+This is a stream editor with a regular expression command set.  It is
+intended for doing batch changes rather than for interactive use.
+
