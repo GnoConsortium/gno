@@ -5,7 +5,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.1 1997/11/24 05:07:26 gdr Exp $
+# $Id: Makefile,v 1.2 1997/11/24 05:46:28 gdr Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -96,7 +96,7 @@ UPLOADS	= htmld.tar.gz \
 #
 # targets
 #
-all:	h dvi ps
+all:	h dvi ps man
 dvi:	$(DVI)
 ps:	$(PS)
 h:	$(HTML) $(HTMLD)/index.html $(HTMLD)/unaval.html top.html cleanhtml
@@ -141,16 +141,18 @@ top.html:
 # This target creates the html versions of all the current man pages,
 # plus the chapter index pages.  Unfortunately, this target rebuilds
 # _all_ of it's files, not just those that are out of date.
-man:
+man:	mansetup
 	@GNOROOT=../.. MANHTML=$(MANHTML) NAME="$(NAME)" \
 	ADDR="$(ADDRESS)" MKSO="$(MKSO)" HTMLROOT="$(HTML_ROOT)" \
 	./mkhtmlman
+
+mansetup: newer
 
 clean:
 	-rm -rf *~ $(TEX_GARBAGE) $(DVIPS_GARBAGE) $(UPLOADS)
 
 clobber: clean
-	-rm -rf $(MANUAL_GARBAGE) $(HTMLD) $(PSD) $(DVID)
+	-rm -rf $(MANUAL_GARBAGE) $(HTMLD) $(PSD) $(DVID) newer
 
 #
 # default rules

@@ -2,7 +2,7 @@
 #
 # Devin Reade, November 1997.
 #
-# $Id: mkhtmlman,v 1.1 1997/11/24 05:07:27 gdr Exp $
+# $Id: mkhtmlman,v 1.2 1997/11/24 05:46:29 gdr Exp $
 
 man2html=/usr/local/bin/man2html
 TMPDIR=${TMPDIR:-/tmp}
@@ -26,6 +26,10 @@ if [ -z "$ADDR" ]; then
 	echo "ADDR variable not set"
 	exit 1
 fi
+if [ ! -x ./newer ]; then
+	echo "./newer does not exist"
+	exit 1
+fi
 set +e
 
 listfile=$TMPDIR/mkhtmlman.1.$$
@@ -42,13 +46,16 @@ for section in 1 2 3 4 5 6 7 8; do
 	| grep -v libcurses/PSD.doc`; do
 	[ "$F" = 00.DUMMY ] && continue;
 	f=`basename $F`
-	echo "creating $dest/$f.html"
 	echo "$f" >> $listfile
-	nroff -man $F | $man2html -nodepage | \
-	perl -p -e \
+	if ! ./newer $dest/$f.html $F; then
+	    echo "creating $dest/$f.html"
+	    nroff -man $F | $man2html -nodepage | \
+	    perl -p -e \
     's/<BODY>/<title>GNO: '"$f($section)"'<\/title><body bgcolor=\#ffffff>/;' \
 		> $dest/$f.html
+	fi
     done
+    echo "creating $dest/00.index.html"
     sort $listfile | \
 	./mkmandex -s$section -name="$NAME" -addr="$ADDR" -mkso="$MKSO" \
 		-hroot="$HTMLROOT" > $dest/00.index.html
