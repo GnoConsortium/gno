@@ -1,9 +1,9 @@
 # Tests for lseg command; invoked by command file "fulltests"
 #   Written by Dave Tribby (September 1997)
-#   $Id: dotests,v 1.1 1997/09/28 16:41:37 gdr Exp $
+#   $Id: dotests,v 1.2 1998/03/08 17:43:46 gdr-ftp Exp $
 
 # Location of the lseg command to be tested
-set testcmd="../lseg"
+set testcmd="/obj/gno/usr.bin/lseg/lseg"
 
 # Record starting time
 echo -n "Testing command $testcmd beginning at"
