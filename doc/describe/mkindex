@@ -6,11 +6,12 @@
 #
 # Devin Reade, January 1998
 #
-# $Id: mkindex,v 1.3 1999/04/05 19:56:02 gdr-ftp Exp $
+# $Id: mkindex,v 1.4 1999/07/03 16:55:42 gdr-ftp Exp $
 #
 
 $dirroot = "/ftp/pub/apple2/gs.specific";
 $dirlist = "gno orca";
+$describe = '/usr/local/bin/describe';
 
 # This is a list of describe entries which we want to force into a
 # given category.  This should only be used when a utility doesn't have
@@ -41,6 +42,7 @@ $fudgelist{"binprint"}		= "gno/editors";
 $fudgelist{"blist"}		= "gno/editors";
 $fudgelist{"cal"}		= "gno/games";
 $fudgelist{"cat"}		= "gno/editors";
+$fudgelist{"center"}		= "gno/text.utils";
 $fudgelist{"chtyp"}		= "gno/file.manip";
 $fudgelist{"cksum"}		= "gno/archive";
 $fudgelist{"cmp"}		= "gno/text.utils";
@@ -78,6 +80,21 @@ $fudgelist{"removerez"}		= "gno/file.convert";
 $fudgelist{"rlogin"}		= "gno/network";
 $fudgelist{"rsh"}		= "gno/network";
 $fudgelist{"rtf2text"}		= "gno/file.convert";
+$fudgelist{"sed"}		= "gno/editors";
+$fudgelist{"sendmail"}		= "gno/mail";
+$fudgelist{"sleep"}		= "gno/scripting";
+$fudgelist{"su"}		= "gno/sysadmin";
+$fudgelist{"syslogd"}		= "gno/daemons";
+$fudgelist{"sz"}		= "gno/comm";
+# $fudgelist{"tr"}		= "gno/text.utils";
+# $fudgelist{"trek"}		= "gno/games";
+$fudgelist{"true"}		= "gno/scripting";
+$fudgelist{"uniq"}		= "gno/text.utils";
+$fudgelist{"uptimed"}		= "gno/daemons";
+$fudgelist{"wc"}		= "gno/text.utils";
+$fudgelist{"who"}		= "gno/sys";
+$fudgelist{"whois"}		= "gno/sys";
+$fudgelist{"yes"}		= "gno/scripting";
 
 #
 # Get the list of .index.src files.  We will look in here for references
@@ -139,6 +156,14 @@ foreach $k (@keylist) {
 	    $s = ':' . $fudgelist{$k} . ':';
 	} else {
 	    $s = ':unsorted:';
+	    $result = system("$describe $k > /dev/null") / 256;
+	    if ($result == 0) {
+		printf(stderr
+		       "WARNING: '$k' is showing up as 'unsorted', but has ".
+		       "a describe(1) entry.\n\tThis probably means that the ".
+		       ".index.src file is not using an\n\texisting".
+		       "describe entry.\n", $k);
+	    }
 	}
     } elsif (defined($fudgelist{$k})) {
 	printf(stderr 

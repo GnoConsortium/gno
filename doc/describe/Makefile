@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.6 1999/01/29 07:03:56 gdr-ftp Exp $
+# $Id: Makefile,v 1.7 1999/07/03 16:55:41 gdr-ftp Exp $
 #
 # Devin Reade, January 1998
 #
@@ -72,6 +72,8 @@ MODE_X	= -m775
 $(RELDIR)/$(RELEASE_README):	$(README_OUT)
 	install $(OWNER) $(MODE_F) $(README_OUT) $@
 
+# We redirect nulib stdout to /dev/null because for some reason 
+# it's printing out a "-^H".
 $(RELDIR)/$(RELEASE_SRC):	$(DB_SRC)
 	@echo "installing $@"; \
 	cp $(DB_SRC) $(TDIR); \
@@ -79,9 +81,11 @@ $(RELDIR)/$(RELEASE_SRC):	$(DB_SRC)
 	rm -f $@; \
 	cd $(TDIR); \
 	rm -f $(RELEASE_SRC); \
-	nulib cf $(RELEASE_SRC) $(DB_SRC); \
+	nulib cf $(RELEASE_SRC) $(DB_SRC) > /dev/null; \
 	install $(OWNER) $(MODE_F) $(RELEASE_SRC) $@
 
+# We redirect nulib stdout to /dev/null because for some reason 
+# it's printing out a "-^H".
 $(RELDIR)/$(RELEASE_DB):	$(DB_SRC)
 	@echo "installing $@"; \
 	/usr/local/sbin/descc $(DB_SRC); \
@@ -89,7 +93,7 @@ $(RELDIR)/$(RELEASE_DB):	$(DB_SRC)
 	cd $(TDIR); \
 	NULIBOPT=type=BIN; export NULIBOPT; \
 	rm -f $(RELEASE_DB); \
-	nulib cf $(RELEASE_DB) describe.db; \
+	nulib cf $(RELEASE_DB) describe.db > /dev/null; \
 	install $(OWNER) $(MODE_F) $(RELEASE_DB) $@
 
 web:	setup

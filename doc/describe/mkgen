@@ -5,7 +5,7 @@
 #
 # Devin Reade, January 1998.
 #
-# $Id: mkgen,v 1.4 1999/01/29 07:03:57 gdr-ftp Exp $
+# $Id: mkgen,v 1.5 1999/07/03 16:55:42 gdr-ftp Exp $
 #
 
 $gnohome_internal = "/home/gno/public_html";
@@ -53,6 +53,7 @@ $categoryMap{"gno/mail"}		= "mail";
 $categoryMap{"gno/network"}		= "network";
 $categoryMap{"gno/news"}		= "news";
 $categoryMap{"gno/patches"}		= "patch";
+$categoryMap{"gno/productivity"}	= "productivity";
 $categoryMap{"gno/programming"}		= "prog";
 $categoryMap{"gno/scripting"}		= "script";
 $categoryMap{"gno/shells"}		= "shells";
@@ -81,6 +82,7 @@ $categoryNames{"mail"}		= "Mail Readers";
 $categoryNames{"network"}	= "Networking Utilities";
 $categoryNames{"news"}		= "News Readers";
 $categoryNames{"patch"}		= "Patch Programs";
+$categoryNames{"productivity"}	= "Productivity";
 $categoryNames{"prog"}		= "Programming Utilities";
 $categoryNames{"script"}	= "Scripting Utilities";
 $categoryNames{"shells"}	= "Shells";
