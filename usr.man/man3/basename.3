@@ -1,9 +1,9 @@
 .\"
 .\" Routines and man page by Devin Reade
 .\"
-.\" $Id: basename.3,v 1.1 1997/02/27 07:32:21 gdr Exp $
+.\" $Id: basename.3,v 1.2 1998/04/11 19:13:41 gdr-ftp Exp $
 .\"
-.TH BASENAME 3 "26 November 1995" GNO "Library Routines"
+.TH BASENAME 3 "29 March 1998" GNO "Library Routines"
 .SH NAME
 .BR basename ,
 .BR dirname
@@ -35,6 +35,9 @@ ends with a directory separator, then that character is the only part
 of
 .I path
 not included in the resultant string.
+If
+.I path
+contains no directory separator, then the string \fB"."\fR is returned.
 If
 .I path
 is NULL, an empty string is returned.

@@ -128,6 +128,20 @@ may also fail and set
 .IR errno
 for any of the errors specified for the routine
 .BR getchar (3).
+.SH GNO NOTES
+If these routines are used on a stream which has been opened in binary
+mode, the results may not be as is expected; this stdio implementation
+has the assumption that the newline character is the linefeed (\\n).
+Since a file opened in binary mode will usually, on the IIgs, use
+carridge returns as the newline characters, the 
+.BR fgets
+and 
+.BR gets 
+routines will return more characters than expected.  
+.I "This makes use of"
+.B gets
+.IR "particularly dangerous under GNO"
+(see the section on BUGS, below).
 .SH SEE ALSO
 .BR feof (3),
 .BR ferror (3),
