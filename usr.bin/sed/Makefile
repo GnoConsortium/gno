@@ -1,6 +1,6 @@
 #
 # This makefile is intended for use with dmake(1) on Apple IIGS
-# $Id: Makefile,v 1.2 1998/03/08 17:46:30 gdr-ftp Exp $
+# $Id: Makefile,v 1.3 1998/04/24 16:24:00 tribby Exp $
 #
 #	Created by Dave Tribby, October 1997
 
@@ -10,6 +10,9 @@ STACK	*= 1024
 
 # Program name
 PROG=	sed
+
+# Part of program containing main
+MAIN=	main
 
 # Source files
 SRCS=	main.c compile.c misc.c process.c
