@@ -36,7 +36,7 @@ segment "libc_gen_2";
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)fts.c       8.4 (Berkeley) 4/16/94";
+static char sccsid[] = "@(#)fts.c	8.6 (Berkeley) 8/14/94";
 #endif /* LIBC_SCCS and not lint */
 
 #include <sys/param.h>
@@ -50,10 +50,6 @@ static char sccsid[] = "@(#)fts.c       8.4 (Berkeley) 4/16/94";
 #include <unistd.h>
 #include <assert.h>
 #include <fts.h>
-
-#if 0 /* def __GNO__ */
-#define FORCE_NOCHDIR 1               /* GNO v2.0.4 doesn't have fchdir */
-#endif
 
 #ifdef MAX
 #undef MAX
@@ -70,10 +66,13 @@ static int       fts_palloc __P((FTS *, size_t));
 static FTSENT   *fts_sort __P((FTS *, FTSENT *, int));
 static u_short   fts_stat __P((FTS *, FTSENT *, int));
 
-#define ISDOT(a)        (a[0] == '.' && (!a[1] || (a[1] == '.' && !a[2])) )
-
-#define ISSET(opt)      (sp->fts_options & opt)
-#define SET(opt)        (sp->fts_options |= opt)
+static int	 fts_safe_changedir __P((FTS *, FTSENT *, int));
+  
+#define	ISDOT(a)	(a[0] == '.' && (!a[1] || (a[1] == '.' && !a[2])))
+  
+#define	CLR(opt)	(sp->fts_options &= ~(opt))
+#define	ISSET(opt)	(sp->fts_options & (opt))
+#define	SET(opt)	(sp->fts_options |= (opt))
 
 #define CHDIR(sp, path) (!ISSET(FTS_NOCHDIR) && (assert(path!=NULL), 1) && chdir(path))
 #define FCHDIR(sp, fd)  (!ISSET(FTS_NOCHDIR) && fchdir(fd))
@@ -107,12 +106,8 @@ fts_open(char * const *argv, register int options,
         sp->fts_options = options;
 
         /* Logical walks turn on NOCHDIR; symbolic links are too hard. */
-#ifdef FORCE_NOCHDIR
-        SET(FTS_NOCHDIR);
-#else
         if (ISSET(FTS_LOGICAL))
                 SET(FTS_NOCHDIR);
-#endif
 
         /*
          * Start out with 1K of path space, and enough, in any case,
@@ -181,10 +176,8 @@ fts_open(char * const *argv, register int options,
          * and ".." are all fairly nasty problems.  Note, if we can't get the
          * descriptor we run anyway, just more slowly.
          */
-#ifndef FORCE_NOCHDIR
         if (!ISSET(FTS_NOCHDIR) && (sp->fts_rfd = open(".", O_RDONLY, 0)) < 0)
                 SET(FTS_NOCHDIR);
-#endif
 
         return (sp);
 
@@ -246,39 +239,30 @@ fts_close(FTS *sp)
                 free(sp->fts_array);
         free(sp->fts_path);
 
-#ifndef FORCE_NOCHDIR
         /* Return to original directory, save errno if necessary. */
         if (!ISSET(FTS_NOCHDIR)) {
-#ifdef HAS_FCHDIR
                 saved_errno = fchdir(sp->fts_rfd) ? errno : 0;
                 (void)close(sp->fts_rfd);
-#else
-                assert(sp->fts_path != NULL);
-                saved_errno = chdir(sp->fts_path) ? errno : 0;
-#endif
         }
-#endif /* ! FORCE_NOCHDIR */
 
         /* Free up the stream pointer. */
         free(sp);
 
         /* Set errno and return. */
-#ifndef FORCE_NOCHDIR
         if (!ISSET(FTS_NOCHDIR) && saved_errno) {
                 errno = saved_errno;
                 return (-1);
         }
-#endif
         return (0);
 }
 
 /*
- * Special case a root of "/" so that slashes aren't appended which would
- * cause paths to be written as "//foo".
+ * Special case of "/" at the end of the path so that slashes aren't
+ * appended which would cause paths to be written as "....//foo".
  */
 #define NAPPEND(p)                                                      \
-        (p->fts_level == FTS_ROOTLEVEL && p->fts_pathlen == 1 &&        \
-            p->fts_path[0] == '/' ? 0 : p->fts_pathlen)
+	(p->fts_path[p->fts_pathlen - 1] == '/'				\
+	    ? p->fts_pathlen - 1 : p->fts_pathlen)
 
 FTSENT *
 fts_read(register FTS *sp)
@@ -314,7 +298,6 @@ fts_read(register FTS *sp)
         if (instr == FTS_FOLLOW &&
             (p->fts_info == FTS_SL || p->fts_info == FTS_SLNONE)) {
                 p->fts_info = fts_stat(sp, p, 1);
-#ifndef FORCE_NOCHDIR
                 if (p->fts_info == FTS_D && !ISSET(FTS_NOCHDIR)) {
                         if ((p->fts_symfd = open(".", O_RDONLY, 0)) < 0) {
                                 p->fts_errno = errno;
@@ -323,7 +306,6 @@ fts_read(register FTS *sp)
                                 p->fts_flags |= FTS_SYMFOLLOW;
                         }
                 }
-#endif
                 return (p);
         }
 
@@ -331,11 +313,9 @@ fts_read(register FTS *sp)
         if (p->fts_info == FTS_D) {
                 /* If skipped or crossed mount point, do post-order visit. */
                 if (instr == FTS_SKIP ||
-                    (ISSET(FTS_XDEV) && p->fts_dev != sp->fts_dev) ) {
-#ifndef FORCE_NOCHDIR
+		    (ISSET(FTS_XDEV) && p->fts_dev != sp->fts_dev)) {
                         if (p->fts_flags & FTS_SYMFOLLOW)
                                 (void)close(p->fts_symfd);
-#endif
                         if (sp->fts_child) {
                                 fts_lfree(sp->fts_child);
                                 sp->fts_child = NULL;
@@ -345,8 +325,8 @@ fts_read(register FTS *sp)
                 }
 
                 /* Rebuild if only read the names and now traversing. */
-                if (sp->fts_child && sp->fts_options & FTS_NAMEONLY) {
-                        sp->fts_options &= ~FTS_NAMEONLY;
+		if (sp->fts_child && ISSET(FTS_NAMEONLY)) {
+			CLR(FTS_NAMEONLY);
                         fts_lfree(sp->fts_child);
                         sp->fts_child = NULL;
                 }
@@ -364,7 +344,7 @@ fts_read(register FTS *sp)
                  * FTS_STOP or the fts_info field of the node.
                  */
                 if (sp->fts_child) {
-                        if (CHDIR(sp, p->fts_accpath)) {
+			if (fts_safe_changedir(sp, p, -1)) {
                                 p->fts_errno = errno;
                                 p->fts_flags |= FTS_DONTCHDIR;
                                 for (p = sp->fts_child; p; p = p->fts_link)
@@ -383,7 +363,7 @@ fts_read(register FTS *sp)
 
         /* Move to the next node on this level. */
 next:   tmp = p;
-        if ( (p = p->fts_link) ) {
+	if ((p = p->fts_link)) {
                 free(tmp);
 
                 /*
@@ -391,16 +371,10 @@ next:   tmp = p;
                  * load the paths for the next root.
                  */
                 if (p->fts_level == FTS_ROOTLEVEL) {
-#ifndef FORCE_NOCHDIR
-#ifdef HAS_FCHDIR
-                        if (!ISSET(FTS_NOCHDIR) && FCHDIR(sp, sp->fts_rfd)) {
-#else
-                        if (!ISSET(FTS_NOCHDIR) && CHDIR(sp, sp->fts_path)) {
-#endif
+			if (FCHDIR(sp, sp->fts_rfd)) {
                                 SET(FTS_STOP);
                                 return (NULL);
                         }
-#endif               
                         fts_load(sp, p);
                         return (sp->fts_cur = p);
                 }
@@ -414,7 +388,6 @@ next:   tmp = p;
                         goto next;
                 if (p->fts_instr == FTS_FOLLOW) {
                         p->fts_info = fts_stat(sp, p, 1);
-#ifndef FORCE_NOCHDIR
                         if (p->fts_info == FTS_D && !ISSET(FTS_NOCHDIR)) {
                                 if ((p->fts_symfd =
                                     open(".", O_RDONLY, 0)) < 0) {
@@ -424,7 +397,6 @@ next:   tmp = p;
                                         p->fts_flags |= FTS_SYMFOLLOW;
                                 }
                         }
-#endif
                         p->fts_instr = FTS_NOINSTR;
                 }
 
@@ -457,21 +429,12 @@ name:           t = sp->fts_path + NAPPEND(p->fts_parent);
          * one directory.
          */
         if (p->fts_level == FTS_ROOTLEVEL) {
-#ifndef FORCE_NOCHDIR
-#ifdef HAS_FCHDIR
-                if (!ISSET(FTS_NOCHDIR) && FCHDIR(sp, sp->fts_rfd)) {
-#else
-                if (!ISSET(FTS_NOCHDIR) && CHDIR(sp, sp->fts_path)) {
-#endif
+! 		if (FCHDIR(sp, sp->fts_rfd)) {
                         SET(FTS_STOP);
                         return (NULL);
                 }
         } else if (p->fts_flags & FTS_SYMFOLLOW) {
-#ifdef HAS_FCHDIR
                 if (FCHDIR(sp, p->fts_symfd)) {
-#else
-                if (FCHDIR(sp, p->fts_symfd)) {
-#endif
                         saved_errno = errno;
                         (void)close(p->fts_symfd);
                         errno = saved_errno;
@@ -479,7 +442,6 @@ name:           t = sp->fts_path + NAPPEND(p->fts_parent);
                         return (NULL);
                 }
                 (void)close(p->fts_symfd);
-#endif /* ! FORCE_NOCHDIR */
         } else if (!(p->fts_flags & FTS_DONTCHDIR)) {
                 if (CHDIR(sp, "..")) {
                         SET(FTS_STOP);
@@ -550,7 +512,7 @@ fts_children(register FTS *sp, int instr)
                 fts_lfree(sp->fts_child);
 
         if (instr == FTS_NAMEONLY) {
-                sp->fts_options |= FTS_NAMEONLY;
+		SET(FTS_NAMEONLY);
                 instr = BNAMES;
         } else
                 instr = BCHILD;
@@ -569,11 +531,7 @@ fts_children(register FTS *sp, int instr)
         if ((fd = open(".", O_RDONLY, 0)) < 0)
                 return (NULL);
         sp->fts_child = fts_build(sp, instr);
-#ifdef HAS_FCHDIR
         if (fchdir(fd))
-#else
-        if (chdir("."))
-#endif
                 return (NULL);
         (void)close(fd);
         return (sp->fts_child);
@@ -602,7 +560,7 @@ fts_build(register FTS *sp, int type)
         FTSENT *cur, *tail;
         DIR *dirp;
         void *adjaddr;
-        int cderrno, descend, len, level, maxlen, nlinks, saved_errno;
+	int cderrno, descend, len, level, maxlen, nlinks, oflag, saved_errno;
         char *cp;
 
         /* Set current node pointer. */
@@ -612,7 +570,15 @@ fts_build(register FTS *sp, int type)
          * Open the directory for reading.  If this fails, we're done.
          * If being called from fts_read, set the fts_info field.
          */
-        if ((dirp = opendir(cur->fts_accpath)) == NULL) {
+#ifdef FTS_WHITEOUT
+	if (ISSET(FTS_WHITEOUT))
+		oflag = DTF_NODUP|DTF_REWIND;
+	else
+		oflag = DTF_HIDEW|DTF_NODUP|DTF_REWIND;
+#else
+#define __opendir2(path, flag) opendir(path)
+#endif
+	if ((dirp = __opendir2(cur->fts_accpath, oflag)) == NULL) {
                 if (type == BREAD) {
                         cur->fts_info = FTS_DNR;
                         cur->fts_errno = errno;
@@ -654,16 +620,14 @@ fts_build(register FTS *sp, int type)
          */
         cderrno = 0;
         if (nlinks || type == BREAD)
-#ifdef HAS_FCHDIR
-                if (FCHDIR(sp, dirfd(dirp))) {
-#else
-                if (CHDIR(sp, cur->fts_accpath)) {
-#endif
+		if (fts_safe_changedir(sp, cur, dirfd(dirp))) {
                         if (nlinks && type == BREAD)
                                 cur->fts_errno = errno;
                         cur->fts_flags |= FTS_DONTCHDIR;
                         descend = 0;
                         cderrno = errno;
+			(void)closedir(dirp);
+			dirp = NULL;
                 } else
                         descend = 1;
         else
@@ -690,7 +654,7 @@ fts_build(register FTS *sp, int type)
 
         /* Read the directory, attaching each entry to the `link' pointer. */
         adjaddr = NULL;
-        for (head = tail = NULL, nitems = 0; (dp = readdir(dirp)); ) {
+	for (head = tail = NULL, nitems = 0; dirp && (dp = readdir(dirp));) {
                 if (!ISSET(FTS_SEEDOT) && ISDOT(dp->d_name))
                         continue;
 
@@ -721,6 +685,11 @@ mem1:                           saved_errno = errno;
                 p->fts_parent = sp->fts_cur;
                 p->fts_level = level;
 
+#ifdef FTS_WHITEOUT
+		if (dp->d_type == DT_WHT)
+			p->fts_flags |= FTS_ISW;
+#endif
+
                 if (cderrno) {
                         if (nlinks) {
                                 p->fts_info = FTS_NS;
@@ -730,8 +699,8 @@ mem1:                           saved_errno = errno;
                         p->fts_accpath = cur->fts_accpath;
                 } else if (nlinks == 0
 #ifdef DT_DIR
-                    || (nlinks > 0 &&
-                    dp->d_type != DT_DIR && dp->d_type != DT_UNKNOWN)
+		    || (nlinks > 0 &&
+		    dp->d_type != DT_DIR && dp->d_type != DT_UNKNOWN)
 #endif
                     ) {
                         p->fts_accpath =
@@ -763,7 +732,8 @@ mem1:                           saved_errno = errno;
                 }
                 ++nitems;
         }
-        (void)closedir(dirp);
+	if (dirp)
+		(void)closedir(dirp);
 
         /*
          * If had to realloc the path, adjust the addresses for the rest
@@ -777,7 +747,7 @@ mem1:                           saved_errno = errno;
          * state.
          */
         if (ISSET(FTS_NOCHDIR)) {
-                if (cp - 1 > sp->fts_path)
+		if (len == sp->fts_pathlen)
                         --cp;
                 *cp = '\0';
         }
@@ -791,11 +761,7 @@ mem1:                           saved_errno = errno;
          */
         if (descend && (type == BCHILD || !nitems) &&
             (cur->fts_level == FTS_ROOTLEVEL ?
-#ifdef HAS_FCHDIR
             FCHDIR(sp, sp->fts_rfd) :
-#else
-            CHDIR(sp, sp->fts_path) :
-#endif
             CHDIR(sp, ".."))) {
                 cur->fts_info = FTS_ERR;
                 SET(FTS_STOP);
@@ -826,6 +792,17 @@ fts_stat(FTS *sp, register FTSENT *p, int follow)
 
         /* If user needs stat info, stat buffer already allocated. */
         sbp = ISSET(FTS_NOSTAT) ? &sb : p->fts_statp;
+
+#ifdef FTS_WHITEOUT
+	/* check for whiteout */
+	if (p->fts_flags & FTS_ISW) {
+		if (sbp != &sb) {
+			memset(sbp, '\0', sizeof (*sbp));
+			sbp->st_mode = S_IFWHT;
+		}
+		return (FTS_W);
+	}
+#endif
 
         /*
          * If doing a logical walk, or application requested FTS_FOLLOW, do
@@ -960,7 +937,7 @@ fts_lfree(register FTSENT *head)
         register FTSENT *p;
 
         /* Free a linked list of structures. */
-        while ( (p = head) ) {
+	while ((p = head)) {
                 head = head->fts_link;
                 free(p);
         }
@@ -968,6 +945,40 @@ fts_lfree(register FTSENT *head)
 
 /*
  * Allow essentially unlimited paths; find, rm, ls should all work on any tree.
+}
+
+/*
+ * Change to dir specified by fd or p->fts_accpath without getting
+ * tricked by someone changing the world out from underneath us.
+ * Assumes p->fts_dev and p->fts_ino are filled in.
+ */
+static int
+fts_safe_changedir(FTS *sp, FTSENT *p, int fd)
+{
+	int ret, oerrno, newfd;
+	struct stat sb;
+
+	newfd = fd;
+	if (ISSET(FTS_NOCHDIR))
+		return (0);
+	if (fd < 0 && (newfd = open(p->fts_accpath, O_RDONLY, 0)) < 0)
+		return (-1);
+	if (fstat(newfd, &sb)) {
+		ret = -1;
+		goto bail;
+	}
+	if (p->fts_dev != sb.st_dev || p->fts_ino != sb.st_ino) {
+		errno = ENOENT;		/* disinformation */
+		ret = -1;
+		goto bail;
+	}
+	ret = fchdir(newfd);
+bail:
+	oerrno = errno;
+	if (fd < 0)
+		(void)close(newfd);
+	errno = oerrno;
+	return (ret);
  * Most systems will allow creation of paths much longer than MAXPATHLEN, even
  * though the kernel won't resolve them.  Add the size (not just what's needed)
  * plus 256 bytes so don't realloc the path 2 bytes at a time.
