@@ -66,8 +66,9 @@ to a given file.
 .LP
 The GNO
 .BR unlink ,
-unlike its Unix counterpart, cannot currently unlink an open file.
-Attempting to do so will return an error.
+unlike its UNIX counterpart, cannot currently unlink an open file.
+Attempting to do so will return an error, and the file will still exist
+when closed.
 .SH SEE ALSO
 .BR close (2),
 .BR link (2),
