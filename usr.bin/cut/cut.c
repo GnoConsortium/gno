@@ -42,6 +42,8 @@
  * Changes not related to compiler are replaced using #ifndef __GNO__
  *
  * Added prototyped headers, surrounded by #ifndef __STDC__
+ *
+ * $Id: cut.c,v 1.2 1997/09/26 06:34:37 gdr Exp $
  */
 
 
@@ -82,11 +84,10 @@ static void	usage __P((void));
 #ifndef _STDLIB_H_
 #include <stdlib.h>
 #endif
-extern void begin_stack_check(void);
-extern int end_stack_check(void);
+#include <gno/gno.h>
 static void report_stack(void)
 {
-	fprintf(stderr,"\n ==> %d stack bytes used <== \n", end_stack_check());
+	fprintf(stderr,"\n ==> %d stack bytes used <== \n", _endStackCheck());
 }
 #endif
 
@@ -106,7 +107,7 @@ main(int argc,
 	int ch;
 
 #if defined(__GNO__)  &&  defined(__STACK_CHECK__)
-	begin_stack_check();
+	_beginStackCheck();
 	atexit(report_stack);
 #endif
 	dchar = '\t';			/* default delimiter is \t */
