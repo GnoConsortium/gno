@@ -35,6 +35,8 @@
  * SUCH DAMAGE.
  *
  *	@(#)utils.h	8.3 (Berkeley) 3/20/94
+ *
+ * $Id: utils.h,v 1.2 1997/10/08 07:07:51 gdr Exp $
  */
 
 /* utility definitions */

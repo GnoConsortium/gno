@@ -35,7 +35,13 @@
  * SUCH DAMAGE.
  *
  *	@(#)regexec.c	8.3 (Berkeley) 3/20/94
+ *
+ * $Id: regexec.c,v 1.2 1997/10/08 07:07:50 gdr Exp $
  */
+
+#ifdef __ORCAC__
+segment "regex_1___";
+#endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)regexec.c	8.3 (Berkeley) 3/20/94";
@@ -153,12 +159,11 @@ static int nope = 0;		/* for use in asserts; shuts lint up */
  * have been prototyped.
  */
 int				/* 0 success, REG_NOMATCH failure */
-regexec(preg, string, nmatch, pmatch, eflags)
-const regex_t *preg;
-const char *string;
-size_t nmatch;
-regmatch_t pmatch[];
-int eflags;
+regexec(const regex_t *preg,
+	const char *string,
+	size_t nmatch,
+	regmatch_t pmatch[],
+	int eflags)
 {
 	register struct re_guts *g = preg->re_g;
 #ifdef REDEBUG

@@ -35,7 +35,13 @@
  * SUCH DAMAGE.
  *
  *	@(#)regerror.c	8.4 (Berkeley) 3/20/94
+ *
+ * $Id: regerror.c,v 1.2 1997/10/08 07:07:50 gdr Exp $
  */
+
+#ifdef __ORCAC__
+segment "regex_1___";
+#endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)regerror.c	8.4 (Berkeley) 3/20/94";
@@ -113,11 +119,10 @@ static struct rerr {
  */
 /* ARGSUSED */
 size_t
-regerror(errcode, preg, errbuf, errbuf_size)
-int errcode;
-const regex_t *preg;
-char *errbuf;
-size_t errbuf_size;
+regerror(int errcode,
+	const regex_t *preg,
+	char *errbuf,
+	size_t errbuf_size)
 {
 	register struct rerr *r;
 	register size_t len;
@@ -161,9 +166,8 @@ size_t errbuf_size;
  == static char *regatoi(const regex_t *preg, char *localbuf);
  */
 static char *
-regatoi(preg, localbuf)
-const regex_t *preg;
-char *localbuf;
+regatoi(const regex_t *preg,
+	char *localbuf)
 {
 	register struct rerr *r;
 	register size_t siz;

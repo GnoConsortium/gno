@@ -35,6 +35,8 @@
  * SUCH DAMAGE.
  *
  *	@(#)cclass.h	8.3 (Berkeley) 3/20/94
+ *
+ * $Id: cclass.h,v 1.2 1997/10/08 07:07:49 gdr Exp $
  */
 
 /* character-class table */

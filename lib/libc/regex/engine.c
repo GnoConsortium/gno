@@ -35,7 +35,13 @@
  * SUCH DAMAGE.
  *
  *	@(#)engine.c	8.5 (Berkeley) 3/20/94
+ *
+ * $Id: engine.c,v 1.2 1997/10/08 07:07:50 gdr Exp $
  */
+
+#ifdef __ORCAC__
+segment "regex_1___";
+#endif
 
 /*
  * The matching engine and friends.  This file is #included by regexec.c
@@ -136,12 +142,11 @@ static char *pchar __P((int ch));
  ==	size_t nmatch, regmatch_t pmatch[], int eflags);
  */
 static int			/* 0 success, REG_NOMATCH failure */
-matcher(g, string, nmatch, pmatch, eflags)
-register struct re_guts *g;
-char *string;
-size_t nmatch;
-regmatch_t pmatch[];
-int eflags;
+matcher(register struct re_guts *g,
+	char *string,
+	size_t nmatch,
+	regmatch_t pmatch[],
+	int eflags)
 {
 	register char *endp;
 	register int i;
@@ -302,12 +307,11 @@ int eflags;
  ==	char *stop, sopno startst, sopno stopst);
  */
 static char *			/* == stop (success) always */
-dissect(m, start, stop, startst, stopst)
-register struct match *m;
-char *start;
-char *stop;
-sopno startst;
-sopno stopst;
+dissect(register struct match *m,
+	char *start,
+	char *stop,
+	sopno startst,
+	sopno stopst)
 {
 	register int i;
 	register sopno ss;	/* start sop of current subRE */
@@ -490,13 +494,12 @@ sopno stopst;
  ==	char *stop, sopno startst, sopno stopst, sopno lev);
  */
 static char *			/* == stop (success) or NULL (failure) */
-backref(m, start, stop, startst, stopst, lev)
-register struct match *m;
-char *start;
-char *stop;
-sopno startst;
-sopno stopst;
-sopno lev;			/* PLUS nesting level */
+backref(register struct match *m,
+	char *start,
+	char *stop,
+	sopno startst,
+	sopno stopst,
+	sopno lev)			/* PLUS nesting level */
 {
 	register int i;
 	register sopno ss;	/* start sop of current subRE */
@@ -688,18 +691,21 @@ sopno lev;			/* PLUS nesting level */
 	/* NOTREACHED */
 }
 
+#ifdef __ORCAC__
+segment "regex_2___";
+#endif
+
 /*
  - fast - step through the string at top speed
  == static char *fast(register struct match *m, char *start, \
  ==	char *stop, sopno startst, sopno stopst);
  */
 static char *			/* where tentative match ended, or NULL */
-fast(m, start, stop, startst, stopst)
-register struct match *m;
-char *start;
-char *stop;
-sopno startst;
-sopno stopst;
+fast(register struct match *m,
+	char *start,
+	char *stop,
+	sopno startst,
+	sopno stopst)
 {
 	register states st = m->st;
 	register states fresh = m->fresh;
@@ -785,12 +791,11 @@ sopno stopst;
  ==	char *stop, sopno startst, sopno stopst);
  */
 static char *			/* where it ended */
-slow(m, start, stop, startst, stopst)
-register struct match *m;
-char *start;
-char *stop;
-sopno startst;
-sopno stopst;
+slow(register struct match *m,
+	char *start,
+	char *stop,
+	sopno startst,
+	sopno stopst)
 {
 	register states st = m->st;
 	register states empty = m->empty;
@@ -881,13 +886,12 @@ sopno stopst;
  == #define	NNONCHAR	(CODEMAX-CHAR_MAX)
  */
 static states
-step(g, start, stop, bef, ch, aft)
-register struct re_guts *g;
-sopno start;			/* start state within strip */
-sopno stop;			/* state after stop state within strip */
-register states bef;		/* states reachable before */
-int ch;				/* character or NONCHAR code */
-register states aft;		/* states already known reachable after */
+step(register struct re_guts *g,
+	sopno start,		/* start state within strip */
+	sopno stop,		/* state after stop state within strip */
+	register states bef,	/* states reachable before */
+	int ch,			/* character or NONCHAR code */
+	register states aft)	/* states already known reachable after */
 {
 	register cset *cs;
 	register sop s;
@@ -1003,12 +1007,11 @@ register states aft;		/* states already known reachable after */
  == #endif
  */
 static void
-print(m, caption, st, ch, d)
-struct match *m;
-char *caption;
-states st;
-int ch;
-FILE *d;
+print(struct match *m,
+	char *caption,
+	states st,
+	int ch,
+	FILE *d)
 {
 	register struct re_guts *g = m->g;
 	register int i;
@@ -1036,13 +1039,12 @@ FILE *d;
  == #endif
  */
 static void
-at(m, title, start, stop, startst, stopst)
-struct match *m;
-char *title;
-char *start;
-char *stop;
-sopno startst;
-sopno stopst;
+at(struct match *m,
+	char *title,
+	char *start,
+	char *stop,
+	sopno startst,
+	sopno stopst)
 {
 	if (!(m->eflags&REG_TRACE))
 		return;
@@ -1066,8 +1068,7 @@ sopno stopst;
  * the non-debug compilation anyway, so it doesn't matter much.
  */
 static char *			/* -> representation */
-pchar(ch)
-int ch;
+pchar(int ch)
 {
 	static char pbuf[10];
 

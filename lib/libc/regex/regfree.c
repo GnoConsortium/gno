@@ -35,7 +35,13 @@
  * SUCH DAMAGE.
  *
  *	@(#)regfree.c	8.3 (Berkeley) 3/20/94
+ *
+ * $Id: regfree.c,v 1.2 1997/10/08 07:07:51 gdr Exp $
  */
+
+#ifdef __ORCAC__
+segment "regex_1___";
+#endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)regfree.c	8.3 (Berkeley) 3/20/94";
@@ -54,8 +60,7 @@ static char sccsid[] = "@(#)regfree.c	8.3 (Berkeley) 3/20/94";
  = extern void regfree(regex_t *);
  */
 void
-regfree(preg)
-regex_t *preg;
+regfree(regex_t *preg)
 {
 	register struct re_guts *g;
 
