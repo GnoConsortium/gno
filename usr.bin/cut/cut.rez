@@ -1,5 +1,7 @@
 /*
  * Resources for cut version and comment
+ *
+ * $Id: cut.rez,v 1.2 1997/09/26 06:34:52 gdr Exp $
  */
 #define PROG "cut"
 #define DESC "Select portions of each line of a file."
