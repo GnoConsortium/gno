@@ -1,9 +1,9 @@
 /*
- * $Id: getty.rez,v 1.1 1998/04/10 16:17:41 gdr-ftp Exp $
+ * $Id: getty.rez,v 1.2 1998/12/22 16:05:45 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 resource rVersion (0x1, purgeable3, nocrossbank) {
 

@@ -1,12 +1,12 @@
 /*
- * $Id: compile.rez,v 1.1 1998/02/15 00:05:31 gdr-ftp Exp $
+ * $Id: compile.rez,v 1.2 1998/12/22 16:05:38 gdr-ftp Exp $
  */
 
 #define	NAME	"compile/cmpl/assemble/asml"
 #define DESC	"Compile (or assemble) a source file."
 
 #include "Types.rez"
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 /* Comment Templates */
 resource rComment (1, purgeable3) {

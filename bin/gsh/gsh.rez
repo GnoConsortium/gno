@@ -1,14 +1,14 @@
 /*
  * Resources for version and comment
  *
- * $Id: gsh.rez,v 1.8 1998/12/21 23:57:06 tribby Exp $
+ * $Id: gsh.rez,v 1.9 1998/12/22 16:05:32 gdr-ftp Exp $
  */
 
 #define PROG "gsh"
 #define DESC "GNO/Shell\n"
               
 #include "Types.rez"
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 /*
  * Version

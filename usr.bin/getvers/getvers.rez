@@ -5,7 +5,7 @@
 #define DESC "Print contents of resource version."
 
 #include "Types.rez"
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 /*
  * Version

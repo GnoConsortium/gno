@@ -1,12 +1,12 @@
 /*
- * $Id: link.rez,v 1.1 1998/03/31 03:32:52 gdr-ftp Exp $
+ * $Id: link.rez,v 1.2 1998/12/22 16:05:42 gdr-ftp Exp $
  */
 
 #define	NAME	"link"
 #define DESC	"link object files"
 
 #include "Types.rez"
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 /* Comment Templates */
 resource rComment (1, purgeable3) {

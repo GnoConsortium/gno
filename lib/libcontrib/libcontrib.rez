@@ -1,14 +1,14 @@
 /*
  * Resources for version and comment
  *
- * $Id: libcontrib.rez,v 1.2 1998/03/08 18:11:50 gdr-ftp Exp $
+ * $Id: libcontrib.rez,v 1.3 1998/12/22 16:05:33 gdr-ftp Exp $
  */
 #define LIB     "lcontrib"
 #define DESC    "A library of non-standard but still useful subroutines.\n"
 #define GNO_VER "GNO v2.0.6\n"
 
 #include "Types.rez"
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 /*
  * Version

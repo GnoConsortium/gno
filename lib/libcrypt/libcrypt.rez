@@ -1,14 +1,14 @@
 /*
  * Resources for version and comment
  * 
- * $Id: libcrypt.rez,v 1.1 1998/03/11 04:23:34 gdr-ftp Exp $
+ * $Id: libcrypt.rez,v 1.2 1998/12/22 16:05:34 gdr-ftp Exp $
  */
 
 #define LIB	"libcrypt for GNO"
 #define PORTED	"Ported from 4.4BSD\n"
 
 #include "Types.rez"
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 /*
  * Version

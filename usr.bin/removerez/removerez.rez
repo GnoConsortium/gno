@@ -1,9 +1,9 @@
 /*
- * $Id: removerez.rez,v 1.1 1998/03/31 03:33:03 gdr-ftp Exp $
+ * $Id: removerez.rez,v 1.2 1998/12/22 16:05:44 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 resource rVersion (0x1, purgeable3, nocrossbank) {
 

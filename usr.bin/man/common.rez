@@ -1,10 +1,10 @@
 /*
  * This file is intended to be #included by the other *.rez files.
  *
- * $Id: common.rez,v 1.1 1998/03/29 07:15:53 gdr-ftp Exp $
+ * $Id: common.rez,v 1.2 1998/12/22 16:05:43 gdr-ftp Exp $
  */
 
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 resource rVersion (0x1, purgeable3, nocrossbank) {
 

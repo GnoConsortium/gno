@@ -1,13 +1,13 @@
 /*
  * Resources for version and comment
  *
- * $Id: cksum.rez,v 1.2 1998/02/15 00:25:46 gdr-ftp Exp $
+ * $Id: cksum.rez,v 1.3 1998/12/22 16:05:38 gdr-ftp Exp $
  */
 #define PROG "cksum/sum"
 #define DESC "Display file checksums and block counts."
 
 #include "Types.rez"
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 /*
  * Version

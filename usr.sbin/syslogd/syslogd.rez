@@ -1,9 +1,9 @@
 /*
- * $Id: syslogd.rez,v 1.1 1998/10/31 19:02:47 gdr-ftp Exp $
+ * $Id: syslogd.rez,v 1.2 1998/12/22 16:05:46 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
-#include "/src/gno/build.tools/builddate.rez"
+#include "builddate.rez"
 
 resource rVersion (0x1, purgeable3, nocrossbank) {
 
