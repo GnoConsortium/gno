@@ -1,6 +1,6 @@
 #
 # This makefile is intended for use with dmake(1) on Apple IIGS
-# $Id: Makefile,v 1.1 1998/04/07 16:13:04 tribby Exp $
+# $Id: Makefile,v 1.2 1999/01/09 18:52:56 gdr-ftp Exp $
 #
 #	Created by Dave Tribby, January 1998
 
@@ -49,6 +49,10 @@ SRCS=	main.c run.c ytab.c b.c lib.c lex.c tran.c parse.c proctab.c
 BINDIR	= /usr/bin
 
 .INCLUDE : /src/gno/prog.mk
+
+# This line is here because if we don't have it, then PR#106 is observed.
+# Almost certainly, this just moves the problem; it doesn't fix it.
+NOTUSED = $(PWD)
 
 #
 # Additional dependancies
