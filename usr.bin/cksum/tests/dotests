@@ -1,9 +1,9 @@
 # Tests for cksum command; invoked by command file "fulltests"
 #   Written by Dave Tribby (January 1998)
-#   $Id: dotests,v 1.1 1998/01/16 04:16:16 gdr Exp $
+#   $Id: dotests,v 1.2 1998/02/15 00:22:30 gdr-ftp Exp $
 
 # Location of the cksum command to be tested
-set testcmd="../cksum"
+set testcmd="/obj/gno/usr.bin/cksum/cksum"
 
 # Record starting time
 echo -n "Testing command $testcmd beginning at"
