@@ -30,7 +30,7 @@
 .\" SUCH DAMAGE.
 .\"
 .\"	@(#)rcp.1	8.1 (Berkeley) 5/31/93
-.\"	$Id: rcp.1G,v 1.1 1998/01/26 05:25:18 gdr-ftp Exp $
+.\"	$Id: rcp.1G,v 1.2 1998/02/09 04:00:37 gdr-ftp Exp $
 .\"
 .TH RCP 1 "November 1997" GNO "Commands and Applications"
 .SH NAME
@@ -134,7 +134,7 @@ for distribution with GNO/ME 2.0.6.
 The
 .BR rcp
 command appeared in
-BSD 4.2.
+4.2BSD.
 The version of
 .BR rcp
 described here
@@ -153,5 +153,5 @@ file on the remote host.
 .LP
 The destination user and hostname may have to be specified as
 ``rhost.rname'' when the destination machine is running the
-BSD 4.2 version of
+4.2BSD version of
 .BR rcp  .
