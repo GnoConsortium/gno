@@ -3,18 +3,17 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.2 1997/09/05 06:35:22 gdr Exp $
+# $Id: Makefile,v 1.3 1997/09/21 16:15:29 gdr Exp $
 #
 
 .INCLUDE:	../../../paths.mk
 .INCLUDE: 	../../const.mk
 
-OBJS	= trap.o syscall.o exec.o
+OBJS	= exec.o syscall.o trap.o
+CFLAGS	+= -O78
 
-build:		$(OBJS)
-
-clean clobber:
-	$(RM) -f $(OBJS)
+build:	../libc
+obj:	$(OBJS)
 
 .INCLUDE:	../rules.mk
 
