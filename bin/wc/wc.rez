@@ -1,5 +1,7 @@
 /*
  * Resources for version and comment
+ *
+ * $Id: wc.rez,v 1.2 1997/09/26 06:28:24 gdr Exp $
  */
 #define PROG "wc"
 #define DESC "Word, line, and byte count."
