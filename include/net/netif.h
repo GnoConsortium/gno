@@ -13,7 +13,9 @@
 #ifndef _NETIF_
 #define _NETIF_
 
-#import <net/netbuf.h>
+#ifndef _NETBUF_
+#include <net/netbuf.h>
+#endif
 
 /*
  * BEGIN: BSD copyrighted material
