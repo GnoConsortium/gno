@@ -33,7 +33,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	$Id: cat.c,v 1.1 1997/09/17 05:29:24 gdr Exp $
+ *	$Id: cat.c,v 1.2 1997/09/26 06:13:46 gdr Exp $
  */
 
 /*
@@ -73,6 +73,9 @@ static char const sccsid[] = "@(#)cat.c	8.2 (Berkeley) 4/27/95";
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#if defined(__GNO__) && defined(__STACK_CHECK__)
+#include <gno/gno.h>
+#endif
 
 int bflag, eflag, nflag, sflag, tflag, vflag;
 int rval;
@@ -88,11 +91,9 @@ void raw_cat __P((int));
 #ifndef _STDLIB_H_
 #include <stdlib.h>
 #endif
-extern void begin_stack_check(void);
-extern int end_stack_check(void);
 static void report_stack(void)
 {
-	fprintf(stderr,"\n ==> %d stack bytes used <== \n", end_stack_check());
+	fprintf(stderr,"\n ==> %d stack bytes used <== \n", _endStackCheck());
 }
 #endif
 
@@ -111,7 +112,7 @@ main(int argc,
 	int ch;
 
 #if defined(__GNO__)  &&  defined(__STACK_CHECK__)
-	begin_stack_check();
+	_beginStackCheck();
 	atexit(report_stack);
 #endif
 #ifndef __GNO__
