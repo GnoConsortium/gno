@@ -1,0 +1,245 @@
+#! /bin/gsh
+#
+# This is a script that builds a bootable system given the components
+# of a partial v2.0.6, plus an available v2.0.4 distribution.  It is
+# an interim hack.
+# 
+# Devin Reade, September 1997.
+#
+# $Id: fudgeinstall,v 1.1 1997/09/30 04:01:00 gdr Exp $
+
+
+# What is our release directory?  (The second one must be HFS, and 
+# may be the same as the first.)
+setenv RELDIR	/dist
+setenv RELDIR2	/s22/dist
+
+# What is the "root" filesystem for the currently running GNO?
+setenv ROOT	/trenco3/v.206
+
+# Where are the GNO (and other) sources?
+setenv SRC	/src
+
+# Create the directories we need
+echo "creating directories"
+install -d $RELDIR2/HFSinclude
+install -d $RELDIR/bin
+install -d $RELDIR/dev
+install -d $RELDIR/doc
+install -d $RELDIR/etc
+install -d $RELDIR/home/root
+install -d $RELDIR/lang/orca/shell
+install -d $RELDIR/lang/orca/languages
+install -d $RELDIR/lib/orcacdefs
+install -d $RELDIR/sbin
+install -d $RELDIR/usr/bin
+# Don't explicitly create $RELDIR/usr/include
+install -d $RELDIR/usr/games
+install -d $RELDIR/usr/guest/operator
+install -d $RELDIR/usr/lib/tmac
+install -d $RELDIR/usr/orca/bin
+install -d $RELDIR/usr/sbin
+install -d $RELDIR/var/adm
+install -d $RELDIR/var/run
+install -d $RELDIR/var/spool
+
+
+unalias cp
+
+echo "installing files in /"
+cp	$ROOT/kern		$RELDIR
+cp	$ROOT/initrc		$RELDIR
+
+echo "installing files in /HFSinclude"
+cp -r	/HFSinclude/*		$RELDIR2/HFSinclude
+
+echo "installing files in /bin"
+cp	/bin/aroff	$RELDIR/bin
+cp	/bin/binprint	$RELDIR/bin
+# cat done
+cp	/bin/center	$RELDIR/bin
+cp	/usr/orca/bin/chmod	$RELDIR/bin
+cp	/bin/chtyp	$RELDIR/bin
+cp	/bin/cmp	$RELDIR/bin
+cp	/bin/compress	$RELDIR/bin
+cp	/bin/cp		$RELDIR/bin
+cp	/bin/date	$RELDIR/bin
+# df is gsh builtin
+cp	/bin/du		$RELDIR/bin
+cp	/bin/echo	$RELDIR/bin
+cp	/bin/egrep	$RELDIR/bin
+# false done
+cp	/bin/fgrep	$RELDIR/bin
+cp	/bin/freeze	$RELDIR/bin
+cp	/bin/grep	$RELDIR/bin
+cp	/bin/gsh	$RELDIR/bin
+cp	/bin/head	$RELDIR/bin
+cp	/bin/init	$RELDIR/bin
+# kill is gsh builtin
+cp	/bin/less	$RELDIR/bin
+cp	/bin/ls		$RELDIR/bin
+cp	/bin/mkdir	$RELDIR/bin
+cp	/bin/more	$RELDIR/bin
+# mv is actually cp
+cp	/bin/passwd	$RELDIR/bin
+cp	/usr/bin/eps	$RELDIR/bin/ps
+cp	/bin/purge	$RELDIR/bin
+cp	/bin/rmdir	$RELDIR/bin
+cp	/bin/sleep	$RELDIR/bin
+cp	/bin/split	$RELDIR/bin
+cp	/bin/strings	$RELDIR/bin
+cp	/bin/stty	$RELDIR/bin
+cp	/bin/su		$RELDIR/bin
+# tail done
+cp	/bin/tar	$RELDIR/bin
+cp	/bin/tee	$RELDIR/bin
+cp	/bin/test	$RELDIR/bin
+cp	/bin/time	$RELDIR/bin
+cp	/usr/local/bin/touch	$RELDIR/bin
+# tr done
+cp	/bin/true	$RELDIR/bin
+cp	/bin/uncompress	$RELDIR/bin
+cp	/bin/uniq	$RELDIR/bin
+cp	/bin/vi		$RELDIR/bin
+# wc done
+cp	/bin/who	$RELDIR/bin
+
+echo "installing files in /dev"
+cp	/dev/modem	$RELDIR/dev
+cp	/dev/printer	$RELDIR/dev
+cp	/dev/null	$RELDIR/dev
+
+echo "installing files in /etc"
+# don't need cronlog, crontab yet
+cp	/etc/freeze.cnf	$RELDIR/etc
+cp	/etc/gettytab	$RELDIR/etc
+cp	$SRC/gno/verbatim/etc/group	$RELDIR/etc
+cp	/etc/inittab	$RELDIR/etc
+cp	$SRC/gno/verbatim/etc/motd	$RELDIR/etc
+echo -n 'GNO release build date: ' >>	$RELDIR/etc/motd
+date >>					$RELDIR/etc/motd
+cp	$SRC/gno/verbatim/etc/namespace	$RELDIR/etc
+cp	$SRC/gno/verbatim/etc/passwd	$RELDIR/etc
+cp	$SRC/gno/verbatim/etc/rchost	$RELDIR/etc
+# syslog.conf?
+cp	/etc/termcap	$RELDIR/etc
+cp	/etc/tty.config	$RELDIR/etc
+cp	/etc/ttys	$RELDIR/etc
+touch $RELDIR/etc/wtmp; chtyp -tbin -a0 $RELDIR/etc/wtmp
+
+echo "installing files in /home/root"
+cp	$SRC/gno/verbatim/home/root/gshrc	$RELDIR/home/root
+
+echo "installing files in /lib"
+cp	13/libc		$RELDIR/lib
+cp	13/lsaneglue	$RELDIR/lib
+cp	13/orcalib	$RELDIR/lib
+cp	13/sysfloat	$RELDIR/lib
+
+echo "installing files in /lib/orcacdefs"
+cp	$SRC/gno/orcacdefs/defaults.h	$RELDIR/lib/orcacdefs
+
+echo "installing files in /sbin"
+cp	/usr/sbin/initd				$RELDIR/sbin
+cp	/tellus1/prosel.16/commands/renram5	$RELDIR/sbin
+
+echo "installing files in /usr/bin"
+cp	/usr/bin/apropos	$RELDIR/usr/bin
+cp	/usr/bin/awk		$RELDIR/usr/bin
+# catrez done
+cp	/usr/bin/cmpl		$RELDIR/usr/bin
+cp	/usr/local/bin/coff	$RELDIR/usr/bin
+cp	/usr/bin/compile	$RELDIR/usr/bin
+cp	/usr/bin/copycat	$RELDIR/usr/bin
+cp	/usr/bin/cpp		$RELDIR/usr/bin
+cp	/usr/bin/diff		$RELDIR/usr/bin
+cp	/usr/local/bin/dmake	$RELDIR/usr/bin
+cp	/usr/bin/getvers	$RELDIR/usr/bin
+cp	/usr/bin/help		$RELDIR/usr/bin
+cp	/usr/bin/install	$RELDIR/usr/bin
+cp	/usr/bin/last		$RELDIR/usr/bin
+cp	/usr/bin/launch		$RELDIR/usr/bin
+cp	/usr/bin/link		$RELDIR/usr/bin
+# lseg done
+cp	/usr/bin/man		$RELDIR/usr/bin
+cp	/usr/bin/nroff		$RELDIR/usr/bin
+cp	/bin/script		$RELDIR/usr/bin
+cp	17/sed			$RELDIR/usr/bin
+cp	/usr/bin/setvers	$RELDIR/usr/bin
+cp	/bin/uname		$RELDIR/usr/bin
+cp	/usr/bin/unshar		$RELDIR/usr/bin
+cp	/usr/bin/uptime		$RELDIR/usr/bin
+cp	/usr/bin/whatis		$RELDIR/usr/bin
+# whereis done
+cp	/usr/bin/yankit		$RELDIR/usr/bin
+cp	/bin/yes		$RELDIR/usr/bin
+
+echo "installing files in /usr/include"
+cp -p rm -rf 				$RELDIR/usr/include
+cp -r	$SRC/gno/include		$RELDIR/usr/include
+
+echo "installing files in /usr/lib"
+cp	/usr/lib/curses.lib		$RELDIR/usr/lib/libcurses
+cp	/lib/lregexp			$RELDIR/usr/lib/libregexp
+cp	/lib/ltermcap			$RELDIR/usr/lib/libtermcap
+cp	$SRC/gno/lib/libutil/libutil	$RELDIR/usr/lib/libutil
+cp	/usr/local/lib/startup.mk	$RELDIR/usr/lib/startup.mk
+cp	/usr/lib/tmac/tmac.an		$RELDIR/usr/lib/tmac
+cp	/usr/lib/tmac/tmac.s		$RELDIR/usr/lib/tmac
+
+echo "installing files in /usr/orca/bin"
+#	describe done
+cp	17/occ		$RELDIR/usr/orca/bin
+cp	17/udl		$RELDIR/usr/orca/bin
+
+# Skip man pages for now.
+
+echo "installing files in /usr/sbin"
+cp	/usr/sbin/catman	$RELDIR/usr/sbin
+cp	/usr/sbin/cron		$RELDIR/usr/sbin
+# descu done
+# descc done
+cp	/usr/sbin/getty		$RELDIR/usr/sbin
+cp	/usr/sbin/initd		$RELDIR/usr/sbin
+cp	/usr/sbin/login		$RELDIR/usr/sbin
+# lpc?
+cp	/usr/sbin/lpd		$RELDIR/usr/sbin
+cp	/usr/sbin/makewhatis	$RELDIR/usr/sbin
+cp	/usr/sbin/mktmp		$RELDIR/usr/sbin
+cp	/usr/sbin/newuser	$RELDIR/usr/sbin
+cp	/usr/sbin/newuserv	$RELDIR/usr/sbin
+cp	/usr/sbin/runover	$RELDIR/usr/sbin
+cp	/usr/sbin/uptimed	$RELDIR/usr/sbin
+
+echo "creating log files"
+touch		$RELDIR/var/adm/messages
+touch		$RELDIR/var/adm/debug
+touch		$RELDIR/var/adm/utmp $RELDIR/var/adm/wtmp $RELDIR/var/adm/lastlog
+chtyp -tbin -a0	$RELDIR/var/adm/utmp $RELDIR/var/adm/wtmp $RELDIR/var/adm/lastlog
+
+# We won't use these directories, but they should be created for the user
+echo "creating /usr/local hierarchy"
+install -d $RELDIR/usr/local/bin
+install -d $RELDIR/usr/local/doc
+install -d $RELDIR/usr/local/etc
+install -d $RELDIR/usr/local/include
+install -d $RELDIR/usr/local/lib
+install -d $RELDIR/usr/local/man/man1
+install -d $RELDIR/usr/local/man/man2
+install -d $RELDIR/usr/local/man/man3
+install -d $RELDIR/usr/local/man/man4
+install -d $RELDIR/usr/local/man/man5
+install -d $RELDIR/usr/local/man/man6
+install -d $RELDIR/usr/local/man/man7
+install -d $RELDIR/usr/local/man/man8
+install -d $RELDIR/usr/local/man/cat1
+install -d $RELDIR/usr/local/man/cat2
+install -d $RELDIR/usr/local/man/cat3
+install -d $RELDIR/usr/local/man/cat4
+install -d $RELDIR/usr/local/man/cat5
+install -d $RELDIR/usr/local/man/cat6
+install -d $RELDIR/usr/local/man/cat7
+install -d $RELDIR/usr/local/man/cat8
+install -d $RELDIR/usr/local/sbin
+
+echo "done"
