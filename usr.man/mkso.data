@@ -1,7 +1,7 @@
 # 0
 # 1  The first column is the "real" man page; the second is the .so link.
 # 2
-# 3  $Id: mkso.data,v 1.5 1997/10/03 05:46:31 gdr Exp $
+# 3  $Id: mkso.data,v 1.6 1997/10/08 07:09:08 gdr Exp $
 # 4
 man2/alarm.2		man2/alarm10.2
 man2/chdir.2		man2/fchdir.2
@@ -201,6 +201,10 @@ man3/queue.3		man3/TAILQ_INSERT_BEFORE.3
 man3/queue.3		man3/TAILQ_INSERT_HEAD.3
 man3/queue.3		man3/TAILQ_INSERT_TAIL.3
 man3/queue.3		man3/TAILQ_REMOVE.3
+man3/regex.3		man3/regcomp.3
+man3/regex.3		man3/regexec.3
+man3/regex.3		man3/regerror.3
+man3/regex.3		man3/regfree.3
 man3/scanf.3		man3/fscanf.3
 man3/scanf.3		man3/sscanf.3
 man3/scanf.3		man3/vfscanf.3
@@ -241,3 +245,4 @@ man3/tmpnam.3		man3/tmpfile.3
 man3/ttyname.3		man3/isatty.3
 man3/ttyname.3		man3/ttyslot.3
 man5/utmp.5		man5/wtmp.5
+man7/re.format.7	man7/re_format.7
