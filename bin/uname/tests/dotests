@@ -1,0 +1,129 @@
+# Tests for tr command; invoked by command file "fulltests"
+#   Adapted from a test script written by Dave Tribby
+#
+# $Id: dotests,v 1.1 1998/02/17 02:50:35 gdr-ftp Exp $
+
+# Location of the command to be tested
+set testcmd="../uname"
+
+# Record starting time
+echo -n "Testing command $testcmd beginning at"
+date
+
+echo "Setting hostname for tests"
+/bin/hostname testhost
+
+set cmp="uname.out"
+set dest="/tmp/$cmp"
+echo "Getting the OS name (the default when no arguments)"
+$testcmd > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="uname.aopt.out"
+set dest="/tmp/$cmp"
+echo "Getting all information about the system"
+$testcmd -a > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="uname.mopt.out"
+set dest="/tmp/$cmp"
+echo "Getting the machine type"
+$testcmd -m > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="uname.nopt.out"
+set dest="/tmp/$cmp"
+echo "Getting the node name"
+$testcmd -n > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="uname.ropt.out"
+set dest="/tmp/$cmp"
+echo "Getting the release level"
+$testcmd -r > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="uname.sopt.out"
+set dest="/tmp/$cmp"
+echo "Getting the OS name"
+$testcmd -s > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="uname.vopt.out"
+set dest="/tmp/$cmp"
+echo "Getting the version level"
+$testcmd -v > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="uname.msopt.out"
+set dest="/tmp/$cmp"
+echo "Getting the machine type and OS name"
+$testcmd -ms > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="uname.rvopt.out"
+set dest="/tmp/$cmp"
+echo "Getting the release and version levels"
+$testcmd -rv > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+echo "***** Version *****"
+
+set cmp="uname.ver.out"
+set dest="/tmp/$cmp"
+
+echo "Printing version information"
+$testcmd -V > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+echo "***** Error Messages *****"
+
+set cmp="uname.err.out"
+set dest="/tmp/$cmp"
+
+echo "Expected error: illegal option"
+$testcmd -x >& $dest
+echo "  Error completion status = $status (expected: 1)"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
