@@ -11,7 +11,7 @@
 *									*
 * Devin Reade, 10 April 1998.						*
 *									*
-* $Id: status.bin,v 1.19 1999/01/11 01:29:48 gdr-ftp Exp $		*
+* $Id: status.bin,v 1.20 1999/01/27 06:29:19 gdr-ftp Exp $		*
 *									*
 *************************************************************************
 
@@ -79,12 +79,13 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 */system/Drivers/fileport.data 	Y	Y	dt
 */system/Drivers/nullport 	Y	Y	dt
 */system/System.Setup		Y	Y	-	dir	-	-	-	-	-
+*/system/System.Setup/gnobug	Y	Y	gdr	.	.	.	.	.	.
 */system/System.Setup/sim	Y	Y	dt
 /				Y	Y	gdr	dir	-	-	-	-	-
 /HFSinclude			N	Y	gdr	dir	-	-	-	-	-
 /bin				Y	Y	gdr	dir	-	-	-	-	-
-/bin/aroff			Y	Y	.	Y	.	.	.	Y
-/bin/binprint			Y	.	.	Y	.	.	.	Y
+/bin/aroff			Y	Y	gdr	Y	T	Y	Y	Y	RI
+/bin/binprint			Y	Y	dt	Y	T	Y	Y	Y	RI
 /bin/cat			Y	Y	dave	Y	T	Y	Y	Y	RI
 /bin/center			Y	.	.	Y	.	.	.	Y
 /bin/chmod				Y	lb
@@ -203,6 +204,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /sbin/fsck
 /sbin/init			Y	Y	.	.	.	.	.	.	.	(initd)
 /sbin/initd			Y	Y	.	.	.	.	.	.	.	(initd)
+/sbin/mkso			N	Y	gdr	Y	T	Y	Y	Y	RI
 /sbin/newfs
 /sbin/ping
 /sbin/renram5			N	Y	gdr	Y	T	Y	Y	Y	RI
@@ -278,7 +280,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/news			Y	N									# waiting on NNTP
 /usr/bin/nm
 /usr/bin/nosh			N	Y	lb								# formerly zsh
-/usr/bin/nroff			Y	Y	gdr	Y	T	Y	Y	Y	R		# using termcap
+/usr/bin/nroff			Y	Y	gdr	Y	T	Y	Y	Y	RI		# using old termcap
 /usr/bin/patch			N	Y	gdr
 /usr/bin/pman			Y
 /usr/bin/pr
