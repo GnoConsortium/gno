@@ -1,10 +1,10 @@
 /*
  * Resources for version and comment
  * 
- * $Id: lseg.rez,v 1.1 1997/09/21 22:06:43 gdr Exp $
+ * $Id: lseg.rez,v 1.2 1997/09/26 06:36:01 gdr Exp $
  */
 
-#define PROG "lset"
+#define PROG "lseg"
 #define DESC "List segments of an Object Module Format file."
 
 #include "Types.rez"
