@@ -1,0 +1,10 @@
+Name:    catrez
+Version: 1.0.2 (September 1997)
+Shell:   GNO
+Author:  Dave Tribby
+Contact: tribby@cup.hp.com
+Where:   /usr/bin/catrez
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+ Concatenate resource forks.
+  
