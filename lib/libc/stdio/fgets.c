@@ -1,7 +1,10 @@
-#line 1 ":src:gno:lib:libc:stdio:mktemp.c"
-/*
- * Copyright (c) 1987, 1993
+#line 1 ":src:gno:lib:libc:stdio:fgets.c"
+/*-
+ * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,93 +40,68 @@ segment "gno_stdio_";
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)mktemp.c	8.1 (Berkeley) 6/4/93";
+static char sccsid[] = "@(#)fgets.c	8.2 (Berkeley) 12/22/93";
 #endif /* LIBC_SCCS and not lint */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
 #include <stdio.h>
-#include <ctype.h>
-#include <unistd.h>
+#include <string.h>
+#include "local.h"
 
-static int _gettemp(char *path, register int *doopen);
-
-int
-mkstemp(char *path)
-{
-	int fd;
-
-	return (_gettemp(path, &fd) ? fd : -1);
-}
-
+/*
+ * Read at most n-1 characters from the given file.
+ * Stop when a newline has been read, or the count runs out.
+ * Return first argument, or NULL if no characters were read.
+ */
 char *
-mktemp(char *path)
+fgets(char *buf, register size_t n, register FILE *fp)
 {
-	return(_gettemp(path, (int *)NULL) ? path : (char *)NULL);
-}
+	register size_t len;
+	register char *s;
+	register unsigned char *p, *t;
 
-static int
-_gettemp(char *path, register int *doopen)
-{
-	extern int errno;
-	register char *start, *trv;
-	struct stat sbuf;
-	u_int pid;
+	if (n == 0)		/* sanity check */
+		return (NULL);
 
-	pid = getpid();
-	for (trv = path; *trv; ++trv);		/* extra X's get set to 0's */
-	while (*--trv == 'X') {
-		*trv = (pid % 10) + '0';
-		pid /= 10;
-	}
-
-	/*
-	 * check the target directory; if you have six X's and it
-	 * doesn't exist this runs for a *very* long time.
-	 */
-	for (start = trv + 1;; --trv) {
-		if (trv <= path)
-			break;
-		if (*trv == '/') {
-			*trv = '\0';
-			if (stat(path, &sbuf))
-				return(0);
-			if (!S_ISDIR(sbuf.st_mode)) {
-				errno = ENOTDIR;
-				return(0);
-			}
-			*trv = '/';
-			break;
-		}
-	}
-
-	for (;;) {
-		if (doopen) {
-			if ((*doopen =
-			    open(path, O_CREAT|O_EXCL|O_RDWR, 0600)) >= 0)
-				return(1);
-			if (errno != EEXIST)
-				return(0);
-		}
-		else if (stat(path, &sbuf))
-			return(errno == ENOENT ? 1 : 0);
-
-		/* tricky little algorithm for backward compatibility */
-		for (trv = start;;) {
-			if (!*trv)
-				return(0);
-			if (*trv == 'z')
-				*trv++ = 'a';
-			else {
-				if (isdigit(*trv))
-					*trv = 'a';
-				else
-					++*trv;
+	s = buf;
+	n--;			/* leave space for NUL */
+	while (n != 0) {
+		/*
+		 * If the buffer is empty, refill it.
+		 */
+		if ((len = fp->_r) <= 0) {
+			if (__srefill(fp)) {
+				/* EOF/error: stop with partial or no line */
+				if (s == buf)
+					return (NULL);
 				break;
 			}
+			len = fp->_r;
 		}
+		p = fp->_p;
+
+		/*
+		 * Scan through at most n bytes of the current buffer,
+		 * looking for '\n'.  If found, copy up to and including
+		 * newline, and stop.  Otherwise, copy entire chunk
+		 * and loop.
+		 */
+		if (len > n)
+			len = n;
+		t = memchr((void *)p, '\n', len);
+		if (t != NULL) {
+			len = ++t - p;
+			fp->_r -= len;
+			fp->_p = t;
+			(void)memcpy((void *)s, (void *)p, len);
+			s[len] = 0;
+			return (buf);
+		}
+		fp->_r -= len;
+		fp->_p += len;
+		(void)memcpy((void *)s, (void *)p, len);
+		s += len;
+		n -= len;
 	}
-	/*NOTREACHED*/
+	*s = 0;
+	return (buf);
 }

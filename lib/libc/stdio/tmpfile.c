@@ -1,6 +1,9 @@
-/*
- * Copyright (c) 1988, 1993
+/*-
+ * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,57 +39,113 @@ segment "gno_stdio_";
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)perror.c	8.1 (Berkeley) 6/4/93";
+static char sccsid[] = "@(#)tmpfile.c	8.1 (Berkeley) 6/4/93";
 #endif /* LIBC_SCCS and not lint */
 
 #include <sys/types.h>
-#include <sys/uio.h>
+#include <signal.h>
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
+#include <paths.h>
+#include <stdlib.h>
 #include <string.h>
+#include "local.h"
 
-#if 0
-/* I need to implement writev(2) */
-void
-perror(const char *s)
+FILE *
+tmpfile(void)
 {
-	register struct iovec *v;
-	struct iovec iov[4];
-
-	v = iov;
-	if (s && *s) {
-		v->iov_base = (char *)s;
-		v->iov_len = strlen(s);
-		v++;
-		v->iov_base = ": ";
-		v->iov_len = 2;
-		v++;
-	}
-	v->iov_base = strerror(errno);
-	v->iov_len = strlen(v->iov_base);
-	v++;
-	v->iov_base = "\n";
-	v->iov_len = 1;
-	(void)writev(STDERR_FILENO, iov, (v - iov) + 1);
-}
-
+	sigset_t set, oset;
+	FILE *fp;
+	int fd, sverrno;
+#define	TRAILER	"tmp.XXXXXX"
+#ifndef __GNO__
+	char buf[sizeof(_PATH_TMP) + sizeof(TRAILER)];
 #else
-void
-perror (const char *s)
-{
-	char *s1, *s2;
+	static char *buf = NULL;
 
-	if (s == NULL) {
-		s1 = s2 = "";
-	} else {
-		s1 = s;
-		s2 = ": ";
+	if (buf == NULL) {
+		buf = malloc(sizeof(_PATH_TMP) + sizeof(TRAILER) + 2);
+		if (buf == NULL) {
+			return NULL;
+		}
 	}
-	if (errno <= 0 || errno >= sys_nerr) {
-		fprintf(stderr, "%s%s%s: %d\n", s1, s2, sys_errlist[0], errno);
-	} else {
-		fprintf(stderr,"%s%s%s\n", s1, s2, sys_errlist[errno]);
+#endif
+
+	(void)memcpy(buf, _PATH_TMP, sizeof(_PATH_TMP) - 1);
+	(void)memcpy(buf + sizeof(_PATH_TMP) - 1, TRAILER, sizeof(TRAILER));
+
+	sigfillset(&set);
+	(void)sigprocmask(SIG_BLOCK, &set, &oset);
+
+	fd = mkstemp(buf);
+	if (fd != -1)
+#ifdef __GNO__
+		__sUnlinkAtExit(buf);
+#else
+		(void)unlink(buf);
+#endif
+
+	(void)sigprocmask(SIG_SETMASK, &oset, NULL);
+
+	if (fd == -1)
+		return (NULL);
+
+	if ((fp = fdopen(fd, "w+")) == NULL) {
+		sverrno = errno;
+		(void)close(fd);
+		errno = sverrno;
+		return (NULL);
 	}
+	return (fp);
 }
+
+#ifdef __GNO__
+
+typedef struct __sUnlinkList_t {
+	struct __sUnlinkList_t *next;
+	char *name;
+} __sUnlinkList_t;
+
+static __sUnlinkList_t *unlinkList = NULL;
+
+/*
+ * __sUnlinkAtExit()	- maintains a linked list of file names that
+ *			  must be deleted when the program exits.
+ *
+ * __sExitDoUnlinks()	- called at exit to delete the files
+ */
+
+void
+__sUnlinkAtExit (const char *fname)
+{
+	__sUnlinkList_t *elem;
+
+	/* make sure __sExitDoUnlinks() will be called */
+	__cleanup = _cleanup;
+
+	elem = malloc(sizeof(__sUnlinkList_t) + strlen(fname) + 1);
+	if (elem == NULL) {
+		return;		/* it won't get deleted; tough luck */
+	}
+	elem->next = unlinkList;
+	elem->name = (char *)((unsigned long) elem + sizeof(__sUnlinkList_t));
+	strcpy(elem->name, fname);
+	unlinkList = elem;
+	return;
+}
+
+void
+__sExitDoUnlinks(void)
+{
+	__sUnlinkList_t *elem;
+
+	elem = unlinkList;
+	while (elem != NULL) {
+		unlink(elem->name);
+		elem = elem->next;
+	}
+	return;
+}
+
 #endif

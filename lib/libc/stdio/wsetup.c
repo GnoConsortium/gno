@@ -1,7 +1,9 @@
-#line 1 ":src:gno:lib:libc:stdio:mktemp.c"
-/*
- * Copyright (c) 1987, 1993
+/*-
+ * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,93 +39,56 @@ segment "gno_stdio_";
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)mktemp.c	8.1 (Berkeley) 6/4/93";
+static char sccsid[] = "@(#)wsetup.c	8.1 (Berkeley) 6/4/93";
 #endif /* LIBC_SCCS and not lint */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
 #include <stdio.h>
-#include <ctype.h>
-#include <unistd.h>
+#include <stdlib.h>
+#include "local.h"
 
-static int _gettemp(char *path, register int *doopen);
-
+/*
+ * Various output routines call wsetup to be sure it is safe to write,
+ * because either _flags does not include __SWR, or _buf is NULL.
+ * _wsetup returns 0 if OK to write, nonzero otherwise.
+ */
 int
-mkstemp(char *path)
+__swsetup(register FILE *fp)
 {
-	int fd;
+	/* make sure stdio is set up */
+	if (!__sdidinit)
+		__sinit();
 
-	return (_gettemp(path, &fd) ? fd : -1);
-}
-
-char *
-mktemp(char *path)
-{
-	return(_gettemp(path, (int *)NULL) ? path : (char *)NULL);
-}
-
-static int
-_gettemp(char *path, register int *doopen)
-{
-	extern int errno;
-	register char *start, *trv;
-	struct stat sbuf;
-	u_int pid;
-
-	pid = getpid();
-	for (trv = path; *trv; ++trv);		/* extra X's get set to 0's */
-	while (*--trv == 'X') {
-		*trv = (pid % 10) + '0';
-		pid /= 10;
+	/*
+	 * If we are not writing, we had better be reading and writing.
+	 */
+	if ((fp->_flags & __SWR) == 0) {
+		if ((fp->_flags & __SRW) == 0)
+			return (EOF);
+		if (fp->_flags & __SRD) {
+			/* clobber any ungetc data */
+			if (HASUB(fp))
+				FREEUB(fp);
+			fp->_flags &= ~(__SRD|__SEOF);
+			fp->_r = 0;
+			fp->_p = fp->_bf._base;
+		}
+		fp->_flags |= __SWR;
 	}
 
 	/*
-	 * check the target directory; if you have six X's and it
-	 * doesn't exist this runs for a *very* long time.
+	 * Make a buffer if necessary, then set _w.
 	 */
-	for (start = trv + 1;; --trv) {
-		if (trv <= path)
-			break;
-		if (*trv == '/') {
-			*trv = '\0';
-			if (stat(path, &sbuf))
-				return(0);
-			if (!S_ISDIR(sbuf.st_mode)) {
-				errno = ENOTDIR;
-				return(0);
-			}
-			*trv = '/';
-			break;
-		}
-	}
-
-	for (;;) {
-		if (doopen) {
-			if ((*doopen =
-			    open(path, O_CREAT|O_EXCL|O_RDWR, 0600)) >= 0)
-				return(1);
-			if (errno != EEXIST)
-				return(0);
-		}
-		else if (stat(path, &sbuf))
-			return(errno == ENOENT ? 1 : 0);
-
-		/* tricky little algorithm for backward compatibility */
-		for (trv = start;;) {
-			if (!*trv)
-				return(0);
-			if (*trv == 'z')
-				*trv++ = 'a';
-			else {
-				if (isdigit(*trv))
-					*trv = 'a';
-				else
-					++*trv;
-				break;
-			}
-		}
-	}
-	/*NOTREACHED*/
+	if (fp->_bf._base == NULL)
+		__smakebuf(fp);
+	if (fp->_flags & __SLBF) {
+		/*
+		 * It is line buffered, so make _lbfsize be -_bufsize
+		 * for the putc() macro.  We will change _lbfsize back
+		 * to 0 whenever we turn off __SWR.
+		 */
+		fp->_w = 0;
+		fp->_lbfsize = -fp->_bf._size;
+	} else
+		fp->_w = fp->_flags & __SNBF ? 0 : fp->_bf._size;
+	return (0);
 }

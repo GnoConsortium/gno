@@ -1,7 +1,9 @@
-#line 1 ":src:gno:lib:libc:stdio:mktemp.c"
-/*
- * Copyright (c) 1987, 1993
+/*-
+ * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,93 +39,33 @@ segment "gno_stdio_";
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)mktemp.c	8.1 (Berkeley) 6/4/93";
+static char sccsid[] = "@(#)gets.c	8.1 (Berkeley) 6/4/93";
 #endif /* LIBC_SCCS and not lint */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <stdio.h>
-#include <ctype.h>
 #include <unistd.h>
-
-static int _gettemp(char *path, register int *doopen);
-
-int
-mkstemp(char *path)
-{
-	int fd;
-
-	return (_gettemp(path, &fd) ? fd : -1);
-}
+#include <stdio.h>
 
 char *
-mktemp(char *path)
+gets(char *buf)
 {
-	return(_gettemp(path, (int *)NULL) ? path : (char *)NULL);
-}
+	register int c;
+	register char *s;
+	static int warned=0;
+	static char w[] =
+	    "warning: this program uses gets(), which is unsafe.\r";
 
-static int
-_gettemp(char *path, register int *doopen)
-{
-	extern int errno;
-	register char *start, *trv;
-	struct stat sbuf;
-	u_int pid;
-
-	pid = getpid();
-	for (trv = path; *trv; ++trv);		/* extra X's get set to 0's */
-	while (*--trv == 'X') {
-		*trv = (pid % 10) + '0';
-		pid /= 10;
+	if (!warned) {
+		(void) write(STDERR_FILENO, w, sizeof(w) - 1);
+		warned = 1;
 	}
-
-	/*
-	 * check the target directory; if you have six X's and it
-	 * doesn't exist this runs for a *very* long time.
-	 */
-	for (start = trv + 1;; --trv) {
-		if (trv <= path)
-			break;
-		if (*trv == '/') {
-			*trv = '\0';
-			if (stat(path, &sbuf))
-				return(0);
-			if (!S_ISDIR(sbuf.st_mode)) {
-				errno = ENOTDIR;
-				return(0);
-			}
-			*trv = '/';
-			break;
-		}
-	}
-
-	for (;;) {
-		if (doopen) {
-			if ((*doopen =
-			    open(path, O_CREAT|O_EXCL|O_RDWR, 0600)) >= 0)
-				return(1);
-			if (errno != EEXIST)
-				return(0);
-		}
-		else if (stat(path, &sbuf))
-			return(errno == ENOENT ? 1 : 0);
-
-		/* tricky little algorithm for backward compatibility */
-		for (trv = start;;) {
-			if (!*trv)
-				return(0);
-			if (*trv == 'z')
-				*trv++ = 'a';
-			else {
-				if (isdigit(*trv))
-					*trv = 'a';
-				else
-					++*trv;
+	for (s = buf; (c = getchar()) != '\n';)
+		if (c == EOF)
+			if (s == buf)
+				return (NULL);
+			else
 				break;
-			}
-		}
-	}
-	/*NOTREACHED*/
+		else
+			*s++ = c;
+	*s = 0;
+	return (buf);
 }

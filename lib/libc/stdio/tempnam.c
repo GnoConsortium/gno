@@ -1,112 +1,90 @@
 /*
- * Temporary file and filename routines.
+ * Copyright (c) 1988, 1993
+ *	The Regents of the University of California.  All rights reserved.
  *
- * $Id: tempnam.c,v 1.1 1997/02/28 05:12:49 gdr Exp $
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
  *
- * This file is formatted with tab stops every 8 characters.
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  */
 
 #ifdef __ORCAC__
-segment "libc_stdio";
+segment "gno_stdio_";
 #endif
 
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
+#if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)tempnam.c	8.1 (Berkeley) 6/4/93";
+#endif /* LIBC_SCCS and not lint */
 
+#include <sys/param.h>
+#include <errno.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-#define max(A,B) (((A)<(B))?(B):(A))
-
-/*
- * tempnam
- *
- * Generate a pathname for a temporary file.
- *
- * tempnam will select a directory for the temporary file by using the
- * following criteria:
- *
- *   If dir is not the NULL pointer, tempnam uses the pathname pointed to by
- *   dir as the directory,
- *
- *   otherwise, tmpdir uses the value of the TMPDIR environment variable if
- *   the variable is defined,
- *
- *   otherwise the directory defined by P_tmpdir in the stdio.h header file
- *   if that directory is writable by the caller,
- *
- *   otherwise, tempnam will use "/tmp" as a last resort.
- */
-
-
-static char  seed[4]="AAA";
-
-/*
- * cpdir - copy <str> into <buf>, removing the trailing directory separator
- *         if necessary.
- */
-
-static char *
-cpdir(char *buf, char *str)
-{
-	char *p, pbrk;
-
-	if(str != NULL) {
-		strcpy(buf, str);
-		p = buf + strlen(buf) -1;
-		pbrk = strchr(buf,':') ? ':' : '/';  /* for GS/OS */
-		if(*p == pbrk) *p = '\0';
-	}
-	return(buf);
-}
-
-/*
- * tempnam
- *	dir    -- use this directory please (if non-NULL)
- *	prefix -- use this (if non-NULL) as filename prefix
- */
+#include <paths.h>
+#include <string.h>
 
 char *
-tempnam (const char *dir, const char *prefix)
+tempnam(const char *dir, const char *pfx)
 {
-	register char *p, *q, *tmpdir, pbrk;
-	int tl=0, dl=0, pl;
+	int sverrno;
+	char *f, *name;
 
-	/* create a buffer <p> that's as large as necessary */
-	pl = strlen(P_tmpdir);
-	if( (tmpdir = getenv("TMPDIR")) != NULL ) tl = strlen(tmpdir);
-	if( dir != NULL ) dl = strlen(dir);
-	if( (p = malloc((unsigned int)(max(max(dl,tl),pl)+16))) == NULL )
+	if (!(name = malloc(MAXPATHLEN)))
 		return(NULL);
-	*p = '\0';
 
-#define PERM W_OK
+	if (!pfx)
+		pfx = "tmp.";
 
-	if( (dl == 0) || (access( cpdir(p, dir), PERM) != 0) )
-		if( (tl == 0) || (access( cpdir(p, tmpdir), PERM) != 0) )
-			if( access( cpdir(p, P_tmpdir), PERM) != 0 )
-				if( access( cpdir(p, "/tmp"), PERM) != 0 )
-					return(NULL);
-
-	pbrk = strchr(p,':') ? ':' : '/';
-	q = p + strlen(p);
-	*q++ = pbrk;
-	*q = '\0';
-	if(prefix) {
-		*(p+strlen(p)+5) = '\0';
-		(void)strncat(p, prefix, 5);
+	if (f = getenv("TMPDIR")) {
+		(void)snprintf(name, MAXPATHLEN, "%s%s%sXXXXXX", f,
+		    *(f + strlen(f) - 1) == '/'? "": "/", pfx);
+		if (f = mktemp(name))
+			return(f);
 	}
 
-	strcat(p, seed);
-	strcat(p, "XXXXXX");
+	if (f = (char *)dir) {
+		(void)snprintf(name, MAXPATHLEN, "%s%s%sXXXXXX", f,
+		    *(f + strlen(f) - 1) == '/'? "": "/", pfx);
+		if (f = mktemp(name))
+			return(f);
+	}
 
-	q = seed;
-	while(*q == 'Z') *q++ = 'A';
-	++*q;
+	f = P_tmpdir;
+	(void)snprintf(name, MAXPATHLEN, "%s%sXXXXXX", f, pfx);
+	if (f = mktemp(name))
+		return(f);
 
-	if(*mktemp(p) == '\0') return(NULL);
-	return(p);
+	f = _PATH_TMP;
+	(void)snprintf(name, MAXPATHLEN, "%s%sXXXXXX", f, pfx);
+	if (f = mktemp(name))
+		return(f);
+
+	sverrno = errno;
+	free(name);
+	errno = sverrno;
+	return(NULL);
 }

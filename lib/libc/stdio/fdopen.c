@@ -1,154 +1,96 @@
-/*
- * fdopen(3) implementation.
+/*-
+ * Copyright (c) 1990, 1993
+ *	The Regents of the University of California.  All rights reserved.
  *
- * Devin Reade, April 1997
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
  *
- * This file is formatted with tab stops every 8 columns
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
  *
- * $Id: fdopen.c,v 1.1 1997/07/27 23:15:09 gdr Exp $
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
  */
 
 #ifdef __ORCAC__
-segment "libc_stdio";
+segment "gno_stdio_";
 #endif
 
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
+#if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)fdopen.c	8.1 (Berkeley) 6/4/93";
+#endif /* LIBC_SCCS and not lint */
 
 #include <sys/types.h>
-#include <sys/stat.h>
-#include <stdio.h>
+#include <fcntl.h>
 #include <unistd.h>
-#include <stdlib.h>
+#include <stdio.h>
 #include <errno.h>
+#include "local.h"
 
 FILE *
-fdopen(int fildes, const char *cmode)
+fdopen(int fd, const char *mode)
 {
-	FILE *result;
-	struct stat *statbuf;
-	unsigned int mode, whence, isBinary;
+	register FILE *fp;
+	static int nofile;
+	int flags, oflags, fdflags, tmp;
 
-	/* allocate buffers */
-	if ((statbuf = malloc(sizeof(struct stat))) == NULL) {
-		goto fail1;
-	}
-	if ((result = malloc(sizeof(FILE))) == NULL) {
-		goto fail2;
-	}
-	if ((result->_base = malloc(BUFSIZ)) == NULL) {
-		goto fail3;
-	}
+	if (nofile == 0)
+		nofile = getdtablesize();
 
-	/* stat the file descriptor */
-	if ((fstat(fildes, statbuf)) == -1) {
-		goto fail4;
-	}
+	if ((flags = __sflags(mode, &oflags)) == 0)
+		return (NULL);
 
-	/* extract the mode */
-	result->_flag = _IOFBF | _IOMYBUF;
-	mode = 0;
-	whence = SEEK_SET;
-	isBinary = 0;
-	switch(*cmode) {
-	case 'r':
-		mode = _IOREAD;
-		break;
-	case 'a':
-		whence = SEEK_END;
-		/*FALLTHROUGH*/
-	case 'w':
-		mode = _IOWRT;
-		break;
-	default:
+	/* Make sure the mode the user wants is a subset of the actual mode. */
+#ifdef __ORCAC__
+	/* ORCA/C: Provide only required args to variadic functions */
+	if ((fdflags = fcntl(fd, F_GETFL)) < 0)
+#else
+	if ((fdflags = fcntl(fd, F_GETFL, 0)) < 0)
+#endif
+		return (NULL);
+	tmp = fdflags & O_ACCMODE;
+	if (tmp != O_RDWR && (tmp != (oflags & O_ACCMODE))) {
 		errno = EINVAL;
-		goto fail4;
+		return (NULL);
 	}
-	cmode++;     
-	switch (*cmode) {
-	case 0:
-		break;
-	case 'b':
-		isBinary = 1;
-		cmode++;
-		switch(*cmode) {
-		case 0:
-			break;
-		case '+':
-			mode = _IORW;
-			break;
-                default:
-			errno = EINVAL;
-			goto fail4;
-		}
-	case '+':
-		mode = _IORW;
-		/*
-		 * We don't document this behavior, but we will allow
-		 * the 'b' to come in the third position as well, since
-		 * it appears that this is the case for the ORCA fopen
-		 * implementation.
-		 */
-		cmode++;
-		if (*cmode == 'b') {
-			isBinary = 1;
-		}
-		break;
-	default:
-		errno = EINVAL;
-		goto fail4;
-	}
-	if (!isBinary) {
-		result->_flag |= _IOTEXT;
-	}
-	result->_flag |= mode;
 
+	if ((fp = __sfp()) == NULL)
+		return (NULL);
+	fp->_flags = flags;
 	/*
-	 * There is a bug in the beta v2.0.6 kernel that, when stat'ing
-	 * a character special device, only the S_IFCHR bit is set.  A
-	 * similar situation is occuring for pipes/sockets.
+	 * If opened for appending, but underlying descriptor does not have
+	 * O_APPEND bit set, assert __SAPP so that __swrite() will lseek to
+	 * end before each write.
 	 */
-	if (S_ISSOCK(statbuf->st_mode) || S_ISCHR(statbuf->st_mode)) {
-		goto pass;
-	}
-
-	/* verify that the req mode agrees with the file descriptor mode */
-	if ((result->_flag & (_IORW | _IOWRT)) &&
-	    !(statbuf->st_mode & S_IWUSR)) {
-		errno = EPERM;
-		goto fail4;
-	}
-	if ((result->_flag & (_IORW | _IOREAD)) &&
-	    !(statbuf->st_mode & S_IRUSR)) {
-		errno = EPERM;
-		goto fail4;
-	}
-	if (lseek(fildes, 0L, whence) == -1) {
-		if (errno != ENOTBLK) {
-			goto fail4;
-		}
-	}
-
-	/* set up remaining FILE struct members */
-    pass:
-	result->next = stderr->next;
-	stderr->next = result;
-	result->_ptr = result->_base;
-	result->_end = NULL;
-	result->_size = BUFSIZ;
-	result->_cnt = 0L;
-	result->_pbk[0] = -1;
-	result->_pbk[1] = -1;
-	result->_file = fildes;
-	return result;
-
-    fail4:
-    	free(result->_base);
-    fail3:
-    	free(result);
-    fail2:
-    	free(statbuf);
-    fail1:
-    	return NULL;
+	if ((oflags & O_APPEND) && !(fdflags & O_APPEND))
+		fp->_flags |= __SAPP;
+	fp->_file = fd;
+	fp->_cookie = fp;
+	fp->_read = __sread;
+	fp->_write = __swrite;
+	fp->_seek = __sseek;
+	fp->_close = __sclose;
+	return (fp);
 }

@@ -1,7 +1,9 @@
-#line 1 ":src:gno:lib:libc:stdio:mktemp.c"
-/*
- * Copyright (c) 1987, 1993
+/*-
+ * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,100 +32,61 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ *	@(#)local.h	8.2 (Berkeley) 1/2/94
  */
 
-#ifdef __ORCAC__
-segment "gno_stdio_";
+/*
+ * Information local to this implementation of stdio,
+ * in particular, macros and private variables.
+ */
+
+int	__sflush __P((FILE *));
+FILE	*__sfp __P((void));
+int	__srefill __P((FILE *));
+ssize_t	__sread __P((void *, char *, size_t));
+ssize_t	__swrite __P((void *, char const *, size_t));
+fpos_t	__sseek __P((void *, fpos_t, int));
+int	__sclose __P((void *));
+void	__sinit __P((void));
+void	_cleanup __P((void));
+#ifdef __GNO__
+void	__sUnlinkAtExit __P((const char *fname));
+void	__sExitDoUnlinks __P((void));
+extern			/* __cleanup is defined in orcalib/vars.asm */
 #endif
+void	(*__cleanup) __P((void));
+void	__smakebuf __P((FILE *));
+int	__swhatbuf __P((FILE *, size_t *, int *));
+int	_fwalk __P((int (*)(FILE *)));
+int	__swsetup __P((FILE *));
+int	__sflags __P((const char *, int *));
 
-#if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)mktemp.c	8.1 (Berkeley) 6/4/93";
-#endif /* LIBC_SCCS and not lint */
+extern int __sdidinit;
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <unistd.h>
+/*
+ * Return true iff the given FILE cannot be written now.
+ */
+#define	cantwrite(fp) \
+	((((fp)->_flags & __SWR) == 0 || (fp)->_bf._base == NULL) && \
+	 __swsetup(fp))
 
-static int _gettemp(char *path, register int *doopen);
-
-int
-mkstemp(char *path)
-{
-	int fd;
-
-	return (_gettemp(path, &fd) ? fd : -1);
+/*
+ * Test whether the given stdio file has an active ungetc buffer;
+ * release such a buffer, without restoring ordinary unread data.
+ */
+#define	HASUB(fp) ((fp)->_ub._base != NULL)
+#define	FREEUB(fp) { \
+	if ((fp)->_ub._base != (fp)->_ubuf) \
+		free((char *)(fp)->_ub._base); \
+	(fp)->_ub._base = NULL; \
 }
 
-char *
-mktemp(char *path)
-{
-	return(_gettemp(path, (int *)NULL) ? path : (char *)NULL);
-}
-
-static int
-_gettemp(char *path, register int *doopen)
-{
-	extern int errno;
-	register char *start, *trv;
-	struct stat sbuf;
-	u_int pid;
-
-	pid = getpid();
-	for (trv = path; *trv; ++trv);		/* extra X's get set to 0's */
-	while (*--trv == 'X') {
-		*trv = (pid % 10) + '0';
-		pid /= 10;
-	}
-
-	/*
-	 * check the target directory; if you have six X's and it
-	 * doesn't exist this runs for a *very* long time.
-	 */
-	for (start = trv + 1;; --trv) {
-		if (trv <= path)
-			break;
-		if (*trv == '/') {
-			*trv = '\0';
-			if (stat(path, &sbuf))
-				return(0);
-			if (!S_ISDIR(sbuf.st_mode)) {
-				errno = ENOTDIR;
-				return(0);
-			}
-			*trv = '/';
-			break;
-		}
-	}
-
-	for (;;) {
-		if (doopen) {
-			if ((*doopen =
-			    open(path, O_CREAT|O_EXCL|O_RDWR, 0600)) >= 0)
-				return(1);
-			if (errno != EEXIST)
-				return(0);
-		}
-		else if (stat(path, &sbuf))
-			return(errno == ENOENT ? 1 : 0);
-
-		/* tricky little algorithm for backward compatibility */
-		for (trv = start;;) {
-			if (!*trv)
-				return(0);
-			if (*trv == 'z')
-				*trv++ = 'a';
-			else {
-				if (isdigit(*trv))
-					*trv = 'a';
-				else
-					++*trv;
-				break;
-			}
-		}
-	}
-	/*NOTREACHED*/
+/*
+ * test for an fgetln() buffer.
+ */
+#define	HASLB(fp) ((fp)->_lb._base != NULL)
+#define	FREELB(fp) { \
+	free((char *)(fp)->_lb._base); \
+	(fp)->_lb._base = NULL; \
 }
