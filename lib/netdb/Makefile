@@ -1,27 +1,17 @@
 #
 # Makefile for netdb
 #
-# $Id: Makefile,v 1.1 1998/01/24 07:05:09 taubert Exp $
+# $Id: Makefile,v 1.2 1998/01/26 05:49:05 taubert Exp $
 #
 
-.INCLUDE:	../../paths.mk
-.INCLUDE: 	../const.mk
+LIB=	netdb
+SRCS=	rcmd.c getnetbyname.c getnetbyaddr.c getnetent.c getprotoname.c \
+	getproto.c getprotoent.c getservbyname.c getservbyport.c \
+	getservent.c gethostnamadr.c sethostent.c inet_addr.c inet_lnaof.c \
+	inet_makeaddr.c inet_netof.c inet_network.c inet_ntoa.c res_comp.c \
+	res_debug.c res_init.c res_mkquery.c res_query.c res_send.c \
+	herror.c writev.c
 
-OBJS=	rcmd.o getnetbyname.o getnetbyaddr.o getnetent.o getprotoname.o \
-	getproto.o getprotoent.o getservbyname.o getservbyport.o \
-	getservent.o gethostnamadr.o sethostent.o inet_addr.o inet_lnaof.o \
-	inet_makeaddr.o inet_netof.o inet_network.o inet_ntoa.o res_comp.o \
-	res_debug.o res_init.o res_mkquery.o res_query.o res_send.o \
-	herror.o writev.o
+OPTIMIZE=79
 
-CFLAGS	+=-O79
-
-libnetdb .PHONY: $(OBJS)
-	$(RM) $@
-	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(OBJS)
-              
-obj:	$(OBJS)
-
-%.o: %.c
-	$(CC) -o $@ -c $(__OFLAG) $(CFLAGS) $<
-
+.INCLUDE: /src/gno/lib/lib.mk
