@@ -39,6 +39,8 @@
  * Changes not related to compiler are replaced using #ifndef __GNO__
  *
  * Added prototyped headers, surrounded by #ifndef __STDC__
+ *
+ * $Id: str.c,v 1.2 1997/09/24 06:20:22 gdr Exp $
  */
 
 

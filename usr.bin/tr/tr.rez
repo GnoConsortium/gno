@@ -1,5 +1,7 @@
 /*
  * Resources for version and comment
+ *
+ * $Id: tr.rez,v 1.2 1997/09/24 06:20:22 gdr Exp $
  */
 #define PROG "tr"
 #define DESC "Translate characters in a file."
