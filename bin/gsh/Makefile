@@ -1,7 +1,7 @@
 #
 # makefile for building gsh.  This is for use with dmake.
 #
-# $Id: Makefile,v 1.2 1998/04/24 15:38:31 gdr-ftp Exp $
+# $Id: Makefile,v 1.3 1998/05/30 17:21:40 gdr-ftp Exp $
 #
 # Devin Reade, February 1998.
 #
@@ -28,6 +28,12 @@ LDLIBS	+= -l/trenco3/lib.206/ltermcap
 # LOCAL_SETUP	= macros
 
 .INCLUDE : /src/gno/prog.mk
+
+# We give a custom implicit rule for *.o files so that we don't get
+# duplicate "dummy" symbols in the link step.
+%.o: %.asm
+	$(AS) -o $@ $(ASFLAGS) $(__OFLAG) $<
+	-$(RM) -f $(OBJ_DIR)$*.root
 
 LOCAL_MACRO_SRC	= # gsh.mac
 MACRO_SRC = \
