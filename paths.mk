@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: paths.mk,v 1.7 1998/02/17 00:26:27 gdr-ftp Exp $
+# $Id: paths.mk,v 1.8 1998/03/08 17:12:34 gdr-ftp Exp $
 #
 
 # This one isn't really a path, but it affects the creation of path
@@ -24,8 +24,10 @@ PRODOS_OBJS	= true
 # OBJ_DIR can be used to store the resulting object and binary files on
 # a separate partition from the source.  This is very handy when the
 # source is stored on an AppleShare volume.  If you don't need this
-# feature, you can either define /obj in /etc/namespace to be the same
-# as /src, or simply comment out the OBJ_DIR line here.
+# feature, just define /obj in /etc/namespace to be the same as /src.
+# It is not sufficient to merely change the definition of OBJ_DIR below,
+# because various files in the builds assume that the /obj hierarchy
+# exists.
 
 SRC_DIR		= /src
 CWD		= $(PWD:s,:,/,g)

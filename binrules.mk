@@ -2,13 +2,13 @@
 # Standard compilation rules for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binrules.mk,v 1.6 1998/02/17 00:26:25 gdr-ftp Exp $
+# $Id: binrules.mk,v 1.7 1998/03/08 17:12:31 gdr-ftp Exp $
 #
 # Devin Reade, Dave Tribby, 1997.
 #
 
 # Default target, "build," generates the program file
-build: $(OBJ_DIR) $(OBJ_DIR)$(PROG)
+build: $(OBJ_DIR) $(LOCAL_SETUP) $(OBJ_DIR)$(PROG)
 
 # create the object directory hierarchy if necessary
 $(OBJ_DIR):

@@ -2,7 +2,7 @@
 # Compilation constants for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binconst.mk,v 1.7 1998/02/17 00:26:24 gdr-ftp Exp $
+# $Id: binconst.mk,v 1.8 1998/03/08 17:12:28 gdr-ftp Exp $
 #
 # Devin Reade, 1997.
 #
@@ -17,6 +17,8 @@ DESCU		= /usr/sbin/descu
 COPYFORK	= /usr/orca/bin/copyfork
 CATREZ		= /usr/bin/catrez
 INSTALL		= /usr/bin/install
+MACGEN		= 17/macgen
+MACGEN_FLAGS	+= -P
 
 # $(DESC_SRC) is the created source file for the describe(1) database.
 DESC_DIR	= $(RELEASE_DIR)/usr/lib
