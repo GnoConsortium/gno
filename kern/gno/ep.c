@@ -1,4 +1,4 @@
-/*	$Id: ep.c,v 1.1 1998/02/02 08:18:25 taubert Exp $ */
+/*	$Id: ep.c,v 1.2 2001/06/23 23:55:28 kelvin Exp $ */
 
 /* Things to do before this code can be installed:
 	kernel must mutex all prefixes
@@ -222,7 +222,7 @@ Gstr g;
 stackPtr sp;
 extern int OldGSOSSt(word callnum, void *pBlock);
 
-    if (go == NULL) go = malloc(1024l);
+    if (go == NULL) go = malloc(1026l);
 
     if (i_path->length > 1024) return (Gstr) 0xFFFF0040l;
     g_out = go;
