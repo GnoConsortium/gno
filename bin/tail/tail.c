@@ -43,6 +43,8 @@
  * (e.g., did not implement -r option)
  *
  * Added prototyped headers, surrounded by #ifndef __STDC__
+ *
+ * $Id: tail.c,v 1.2 1997/09/26 06:22:49 gdr Exp $
  */
 
 #ifndef __GNO__ /* Don't need what strings for GNO */
@@ -78,11 +80,10 @@ static void usage __P((void));
 #ifndef _STDLIB_H_
 #include <stdlib.h>
 #endif
-extern void begin_stack_check(void);
-extern int end_stack_check(void);
+#include <gno/gno.h>
 static void report_stack(void)
 {
-	fprintf(stderr,"\n ==> %d stack bytes used <== \n", end_stack_check());
+	fprintf(stderr,"\n ==> %d stack bytes used <== \n", _endStackCheck());
 }
 #endif
 
@@ -105,7 +106,7 @@ main(int argc,
 	char *p;
 
 #if defined(__GNO__)  &&  defined(__STACK_CHECK__)
-	begin_stack_check();
+	_beginStackCheck();
 	atexit(report_stack);
 #endif
 	/*
