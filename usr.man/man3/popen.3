@@ -197,6 +197,16 @@ chance that the forked child of
 may try to 
 .BR execl
 an arbitrary command, the results of which are undefined.
+.LP
+.BR gsh (1)
+appears to hang on occasion when executing
+.BR popen 's
+arguments.  The symptom is that the pclose never returns, and the process
+table (see 
+.BR ps (1))
+shows that the forked
+.BR gsh 's
+user time is forever increasing.
 .SH SEE ALSO
 .BR gsh (1),
 .BR sh (1),
