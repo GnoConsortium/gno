@@ -1,4 +1,8 @@
-#line 1 ":trenco4:custom.src:contrib:libc:tests:sys:trap1.c"
+/*
+ * Test by Devin Reade
+ *
+ * $Id: trap1.c,v 1.2 1997/02/28 05:43:54 gdr Exp $
+ */
 
 #include <sys/types.h>
 #include <stdio.h>

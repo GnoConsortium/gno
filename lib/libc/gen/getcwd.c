@@ -1,10 +1,9 @@
-#line 1 ":trenco4:gno.src:lib:libc:gen:getcwd.c"
 /*
  * getwd originally by Derek Taubert.  First appeared in GNO v1.0 (?).
  * Modified for BSD 4.4 compatibility and dynamically allocated structs
  * by Devin Reade.
  *
- * $Id: getcwd.c,v 1.1 1997/02/28 05:12:44 gdr Exp $
+ * $Id: getcwd.c,v 1.2 1997/02/28 05:43:29 gdr Exp $
  *
  * This file is formatted for tabs every 8 columns.
  */
