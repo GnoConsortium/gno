@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Sun Feb 14 18:48:30 1999
+# Last revision: Fri Mar 26 16:31:15 1999
 #
-# $Id: describe.src,v 1.23 1999/02/15 20:12:44 gdr-ftp Exp $
+# $Id: describe.src,v 1.24 1999/03/26 16:32:14 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -2042,6 +2042,16 @@ FTP:     -
 
 Based on talk, phone allows two users to interactively chat in a
 split-screen format.
+
+Name:    pig
+Version: 1.0
+Shell:   GNO/ME
+Author:  Kelvin Sherlock (FreeBSD)
+Contact: KWS@delphi.com
+Where:   /usr/games
+FTP:     ftp.gno.org
+
+Convert input into pig latin
 
 Name:    printf
 Version: 1.0
