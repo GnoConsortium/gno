@@ -11,7 +11,7 @@
 *									*
 * Devin Reade, 10 April 1998.						*
 *									*
-* $Id: status.bin,v 1.20 1999/01/27 06:29:19 gdr-ftp Exp $		*
+* $Id: status.bin,v 1.21 1999/04/29 15:48:51 gdr-ftp Exp $		*
 *									*
 *************************************************************************
 
@@ -87,7 +87,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /bin/aroff			Y	Y	gdr	Y	T	Y	Y	Y	RI
 /bin/binprint			Y	Y	dt	Y	T	Y	Y	Y	RI
 /bin/cat			Y	Y	dave	Y	T	Y	Y	Y	RI
-/bin/center			Y	.	.	Y	.	.	.	Y
+/bin/center			Y	Y	gdr	Y	T	Y	Y	Y	RI
 /bin/chmod				Y	lb
 /bin/chtyp			Y	Y	evan	Y	T	Y	Y	Y	RI
 /bin/cmp			Y	Y	evan	Y	T	Y	Y	Y	RI
@@ -102,7 +102,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /bin/du				Y	Y	evan	Y
 /bin/echo			N	Y	dt
 /bin/ed				N	.	mober	.	.	.	.	.	.	# avail separately (trenco)
-/bin/edit			Y	Y		Y
+/bin/edit			Y	Y	.	Y
 /bin/egrep			Y	Y	evan
 /bin/expr
 /bin/false			N	Y	gdr	Y	T	Y	Y	Y	RI
@@ -128,7 +128,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /bin/purge			Y	Y	.	Y	.	.	.	Y
 /bin/pwd			N	Y	dave	Y	T	Y	Y	Y	RI
 /bin/rcp			N	Y	dt	Y	T	Y	.	Y	RI
-/bin/rm				Y	Y
+/bin/rm				Y	Y	tribby
 /bin/rmail			N	N
 /bin/rmdir			N	Y	gdr	Y	T	Y	Y	Y	RI
 /bin/sh				N	Y	gdr
@@ -388,8 +388,8 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/sbin/makewhatis		N	Y	gdr	Y	T	Y	Y	Y	RI	(man)
 /usr/sbin/mctrl			Y
 /usr/sbin/mktmp
-/usr/sbin/newuser		N	.	.	Y	.	.	.	Y
-/usr/sbin/newuserv		N	.	.	Y	.	.	.	Y
+/usr/sbin/newuser		N	Y	gdr	Y	T	Y	Y	Y	.
+/usr/sbin/newuserv		N	Y	gdr	Y	T	Y	Y	Y	.	(newuser)
 /usr/sbin/nogetty		Y	Y	.	Y	.	.	.	Y
 /usr/sbin/runover		Y	Y
 /usr/sbin/syslogd		Y	Y	gdr	Y	.	Y	.	Y	.	# still alpha; needs work
