@@ -2,7 +2,7 @@
 # Compilation constants for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binconst.mk,v 1.8 1998/03/08 17:12:28 gdr-ftp Exp $
+# $Id: binconst.mk,v 1.9 1998/04/22 05:07:19 gdr-ftp Exp $
 #
 # Devin Reade, 1997.
 #
@@ -39,8 +39,10 @@ DESC	*= $(PROG).desc
 # it ends in ".1"
 .IF $(HAS_BSD_MANPAGE) == $(NULL)
 	MAN1SFX	= 1
+	MAN8SFX	= 8
 .ELSE
 	MAN1SFX	= 1G
+	MAN8SFX = 8G
 .END
 
 # Objects are source file names with [.c|.asm] changed to .o
@@ -51,3 +53,6 @@ DESC	*= $(PROG).desc
 .ELSE
 	OBJS	+= {$(SRCS:b)}.o
 .END
+
+# where do we put all the (renamed) mkso.data files?
+MKSO_DIR	= $(RELEASE_DIR)/install
