@@ -2,7 +2,7 @@
 #
 # Modified for GNO (Apple IIgs) and dmake(1) by Steve Reeves, January 1998
 #
-# $Id: Makefile,v 1.1 1998/02/17 03:12:27 gdr-ftp Exp $
+# $Id: Makefile,v 1.2 1998/03/08 17:36:27 gdr-ftp Exp $
 
 PROG=	colcrt
 
@@ -12,11 +12,7 @@ DEFINES+=	-DNOID
 
 # Default stack size and optimization (can be overridden by cmd line)
 #   These values have been tested and certified as working
-.IF $(STACK) == $(NULL)
-STACK=	1024
-.END
-.IF $(OPTIMIZE) == $(NULL)
-OPTIMIZE=	127
-.END
+STACK		*= 1024
+OPTIMIZE	*= 127
 
 .INCLUDE:	/src/gno/prog.mk

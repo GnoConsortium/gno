@@ -1,10 +1,10 @@
 # Tests for colcrt command; invoked by command file "fulltests"
 #   Adapted from a test script written by Dave Tribby
 #
-# $Id: dotests,v 1.1 1998/02/17 03:12:50 gdr-ftp Exp $
+# $Id: dotests,v 1.2 1998/03/08 17:36:35 gdr-ftp Exp $
 
 # Location of the command to be tested
-set testcmd="../colcrt"
+set testcmd="/obj/gno/usr.bin/colcrt/colcrt"
 
 # Record starting time
 echo -n "Testing command $testcmd beginning at"
