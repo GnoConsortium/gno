@@ -1,7 +1,7 @@
 #
 # The first column is the "real" man page; the second is the .so link.
 #
-# $Id: mkso.data,v 1.1 1997/02/27 07:31:17 gdr Exp $
+# $Id: mkso.data,v 1.2 1997/05/03 18:55:16 gdr Exp $
 #
 man2/alarm.2		man2/alarm10.2
 man2/chmod.2		man2/fchmod.2
@@ -90,6 +90,8 @@ man3/err.3		man3/warn.3
 man3/err.3		man3/warnx.3
 man3/exit.3		man2/_exit.2
 man3/exit.3		man3/rexit.3
+man3/fopen.3		man3/fdopen.3
+man3/fopen.3		man3/freopen.3
 man3/fts.3		man3/fts_children.3
 man3/fts.3		man3/fts_close.3
 man3/fts.3		man3/fts_open.3
