@@ -31,11 +31,15 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
+#if !defined(lint) && !defined(__GNO__)
 static char sccsid[] = "@(#)main.c	8.1 (Berkeley) 6/4/93";
 #endif /* not lint */
 
-main()
+extern int	yyparse(void);
+extern int	exit(int);
+
+int
+main(int argc, char **argv)
 {
 	exit(yyparse());
 }

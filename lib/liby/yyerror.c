@@ -31,14 +31,14 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
+#if !defined(lint) && !defined(__GNO__)
 static char sccsid[] = "@(#)yyerror.c	8.1 (Berkeley) 6/4/93";
 #endif /* not lint */
 
 #include <stdio.h>
 
-yyerror(msg)
-char *msg;
+int
+yyerror(char *msg)
 {
 	(void)fprintf(stderr, "%s\n", msg);
 	return(0);
