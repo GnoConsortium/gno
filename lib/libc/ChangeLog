@@ -1,3 +1,41 @@
+21 September 1997: (Devin Reade, <gdr@eddore.myrias.com>)
+	Added man pages for:
+	  rename(2), clearerr(3), ecvt(3), fclose(3), fflush(3), fgets(3),
+	  fputs(3), fread(3), fseek(3), funopen(3), getc(3), isblank(3),
+	  isinf(3), printf(3), putc(3), remove(3), scanf(3), setbuf(3),
+	  stdio(3), ungetc(3),  (plus .so links)
+	Modified fcntl(2) man page to mention limitations in current GNO
+	  implementation.
+	In the fcntl(2) stub, work around a kernel bug when getting flags
+	  for char-special files.  This affects fdopen(3).
+	Moved raise(3) implementation to ORCALib and ensured that backward
+	  linking references are not made.
+	Fixed popen(3)/pclose(3) implementation.  Added comment to man page
+	  about occasional hanging problem that seems to be due to gsh(1).
+	Added implementation, man pages for getlogin(2), and setlogin(2).
+	Set the default optimization level to 78 from zero.
+
+5 September 1997: (Devin Reade, <gdr@eddore.myrias.com>)
+
+	Headers:
+        - removed __ORCAC_VERSION macro from defaults.h
+        - new stdio.h (BSD based)
+        - new sane.h (from Soenke's lsaneglue)
+        - new math.h (from ORCA/C, but added _isnan() and _isinf() 
+                functions, and isnan() and isinf() macros).
+        - added F_GETFL bit to sys/fcntl.h
+
+	libc:
+        - use BSD stdio implementation
+        - added Soenke's _isfpe(), _isnan() routines (stdlib)
+        - stdio now depends on lsaneglue
+        - added non-ORCA rename(2) implementation
+        - added sigprocmask(2)
+        - changed unlink(2) not to depend on remove(3) [was briefly
+          mutually recursive]
+        - added fcntl(2)
+
+
 Since beta-970304: (Devin Reade, <gdr@myrias.com>)
 
 	Added the following routines to the build:
