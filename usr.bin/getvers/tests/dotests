@@ -2,7 +2,7 @@
 #
 # Tests for getvers command; invoked by command file "fulltests"
 #   Written by Dave Tribby (April 1998)
-#   $Id: dotests,v 1.1 1998/04/29 00:42:03 tribby Exp $
+#   $Id: dotests,v 1.2 1998/05/08 17:31:03 tribby Exp $
 #
 # -------------------------------------------------------------------
 
@@ -45,6 +45,17 @@ $compare $cmp $dest
 echo "  comparison status = $status"
 echo ""
 
+set src="US.r Russia.r Yugo.r Ireland.r Thai.r Portugal.r"
+set cmp="out/file.out"
+set dest="/tmp/$cmp"
+echo "Default output"
+$testcmd -f $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+echo ""
+
 set cmp="out/comment.out"
 set dest="/tmp/$cmp"
 echo "Complete output"
@@ -79,7 +90,7 @@ set src="Arabia.r Britain.r Cyprus.r Denmark.r Latvia.r France.r"
 set cmp="out/badver.out"
 set dest="/tmp/$cmp"
 echo "Illegal versions"
-$testcmd -c $src > $dest
+$testcmd -f -c $src > $dest
 echo "  Completion status = $status"
 echo "Checking results against control file $cmp (no differences expected)"
 $compare $cmp $dest
@@ -91,7 +102,7 @@ set src="$src Australia.r Finland.r FrSwiss.r GrSwiss.r Greece.r Iceland.r Malta
 set cmp="out/remain1.out"
 set dest="/tmp/$cmp"
 echo "Remaining countries (part 1)"
-$testcmd $src > $dest
+$testcmd -f $src > $dest
 echo "  Completion status = $status"
 echo "Checking results against control file $cmp (no differences expected)"
 $compare $cmp $dest
@@ -103,7 +114,7 @@ set src="$src Iran.r Korea.r China.r Taiwan.r FaeroeIsl.r Turkey.r FrCanada.r"
 set cmp="out/remain2.out"
 set dest="/tmp/$cmp"
 echo "Remaining countries (part 2)"
-$testcmd $src > $dest
+$testcmd -f $src > $dest
 echo "  Completion status = $status"
 echo "Checking results against control file $cmp (no differences expected)"
 $compare $cmp $dest
@@ -114,8 +125,33 @@ set src="Bad26.r Bad55.r Bad80.r"
 set cmp="out/unknown.out"
 set dest="/tmp/$cmp"
 echo "Unknown country"
-$testcmd -c $src > $dest
+$testcmd -f -c $src > $dest
 echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+echo ""
+
+
+set src="/tmp/newfile"
+$RM -f $src > /tmp/err.list
+echo "This is a file without a resource fork" > $src
+set cmp="out/norez.out"
+set dest="/tmp/$cmp"
+echo "Expected warning: $src: No version information"
+$testcmd -f $src > $dest
+echo "  Error completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+echo ""
+
+set src="norver.r"
+set cmp="out/norver.out"
+set dest="/tmp/$cmp"
+echo "Expected warning: $src: No version information"
+$testcmd $src > $dest
+echo "  Error completion status = $status"
 echo "Checking results against control file $cmp (no differences expected)"
 $compare $cmp $dest
 echo "  comparison status = $status"
@@ -136,36 +172,11 @@ $compare $cmp $dest
 echo "  comparison status = $status"
 echo ""
 
-set src="/tmp/newfile"
-$RM -f $src > /tmp/err.list
-echo "This is a file without a resource fork" > $src
-set cmp="out/norez.out"
-set dest="/tmp/$cmp"
-echo "Expected error: $src: No resource fork"
-$testcmd $src > $dest
-echo "  Error completion status = $status (expected: 1)"
-echo "Checking results against control file $cmp (no differences expected)"
-$compare $cmp $dest
-echo "  comparison status = $status"
-echo ""
-
-set src="norver.r"
-set cmp="out/norver.out"
-set dest="/tmp/$cmp"
-echo "Expected error: $src: No version resource"
-$testcmd $src > $dest
-echo "  Error completion status = $status (expected: 1)"
-echo "Checking results against control file $cmp (no differences expected)"
-$compare $cmp $dest
-echo "  comparison status = $status"
-echo ""
-
-
 set src="badname /tmp/newfile norver.r Portugal.r US.r"
 set cmp="out/mixerr.out"
 set dest="/tmp/$cmp"
 echo "Expected mix of errors and non-errors with no option"
-$testcmd $src > $dest
+$testcmd -f $src > $dest
 echo "  Error completion status = $status (expected: 1)"
 echo "Checking results against control file $cmp (no differences expected)"
 $compare $cmp $dest
@@ -175,7 +186,7 @@ echo ""
 set cmp="out/mixerrb.out"
 set dest="/tmp/$cmp"
 echo "Expected mix of errors and non-errors with -b option"
-$testcmd -b $src > $dest
+$testcmd -f -b $src > $dest
 echo "  Error completion status = $status (expected: 1)"
 echo "Checking results against control file $cmp (no differences expected)"
 $compare $cmp $dest
