@@ -1,7 +1,7 @@
 #
-# prog.mk    version 1.1.0  (August 31, 1997)
+# prog.mk
 #
-# $Id: prog.mk,v 1.6 1998/02/15 19:44:03 gdr-ftp Exp $
+# $Id: prog.mk,v 1.7 1998/02/18 18:22:04 tribby Exp $
 #
 
 # This makefile is intended for use with dmake(1) and occ(1) on Apple IIGS
@@ -13,7 +13,7 @@
 
 #
 # You have the option to set several macros (either in the makefile or on
-# the dmake command line) that will be recognized by gno.prog.mk:
+# the dmake command line) that will be recognized by prog.mk:
 #
 #  *  To turn on debugging, use
 #         DEBUG=<parm>
@@ -52,7 +52,7 @@
 # Was special optimizing requested?
 OPTIMIZE*= 78
 
-# Use stack size of 768 bytes if STACK macro isn't already defined
+# Use stack size of 1024 bytes if STACK macro isn't already defined
 STACK	*= 1024
 
 # Compile and load flags passed to occ
