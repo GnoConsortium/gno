@@ -34,16 +34,12 @@
 /*
  * This file is formatted for tab stops every 8 characters.
  *
- * $Id: logintty.c,v 1.1 1997/02/28 05:03:52 gdr Exp $
+ * $Id: logintty.c,v 1.2 1997/09/21 05:57:40 gdr Exp $
  */
  
 #ifdef __ORCAC__
 segment "libutil___";
 #endif
-
-#pragma optimize 0		/* was 73 */
-#pragma debug 0
-#pragma memorymodel 0
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)login_tty.c	1.2 (Berkeley) 6/21/90";
@@ -63,7 +59,7 @@ static char sccsid[] = "@(#)login_tty.c	1.2 (Berkeley) 6/21/90";
 
 int
 login_tty(int fd) {
-        /* Creates a session and sets the process gruop ID */
+        /* Creates a session and sets the process group ID */
         /*(void) setsid();*/
         tcnewpgrp(fd);
         settpgrp(fd);

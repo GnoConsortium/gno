@@ -35,10 +35,6 @@
 segment "libutil___";
 #endif
 
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
-
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)login.c	5.4 (Berkeley) 6/1/90";
 #endif /* LIBC_SCCS and not lint */
