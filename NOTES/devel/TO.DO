@@ -1,12 +1,27 @@
 *******
 * soon
 *
-* $Id: TO.DO,v 1.4 1997/09/29 05:29:46 gdr Exp $
+* $Id: TO.DO,v 1.5 1997/11/01 19:34:29 gdr Exp $
 *
 *******
 
+Verify if cp or gshk is corrupting the "fudgeinstall" script.
+
 Add implementations for Tilghman:
 	strftime(3)
+
+Incorporate Tilghman's setttimeofday(2) routine.
+
+Update funopen, fropen, fwopen, fsettext man pages:
+	If a user wants binary mode, he has to call fsetbinary
+	on the resulting file pointer; this info is not carried
+	over from the previous file pointer.
+
+Create a src/gno/build.tools/dupfile script for duplicating binary
+files at user install time.  Current packages that need this:
+	compress
+
+Complete mkso util
 
 As a group:
 	Update utmp.5, libutil (logout, logwtmp), last(1), login(1), who(1),
@@ -21,7 +36,6 @@ Use __STACK_CHECK__ macro for stack checking code.
 
 stdio:
 	- add %b modifier to fprintf implementation (ORCA/C compatibility)
-	- reduce stack requirements
 
 stdlib/cvt.c:
 	- handle modes 0 and 1 correctly.
@@ -78,7 +92,7 @@ NEED TO WRITE OR DUPLICATE MAN PAGES FOR
 	ms		7
 	man		7
 	cron		8
-	runover		8			(obsolete?)
+	runover		8			(obsolete?)  No, needed for single user mode.
 	dialup		8
 
 
