@@ -4,7 +4,7 @@
  *
  * This file is formatted for tab stops every eight columns.
  *
- * $Id: stack2.c,v 1.1 1997/12/21 20:11:17 gdr Exp $
+ * $Id: stack2.c,v 1.2 1998/03/28 16:46:56 gdr-ftp Exp $
  */
 
 #ifdef __ORCAC__
@@ -14,9 +14,21 @@
 segment "libc_gno__";
 #endif
 
+#include <stdlib.h>
 #include <err.h>
 #include <gno/gno.h>
 
+static void
+_printStack (void) {
+	warnx("stack usage: %d bytes", _endStackCheck());
+}
+
+void
+_reportStack (void) {
+	_beginStackCheck();
+	atexit(_printStack);
+}
+	
 void
 _assertStack (unsigned int bytes, int line, const char *file) {
 	static const char *fname = "_assertStack";
