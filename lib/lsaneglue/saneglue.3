@@ -1,0 +1,430 @@
+.\"
+.\" $Id: saneglue.3,v 1.1 1997/09/21 21:51:03 gdr Exp $
+.\"
+.TH SANEGLUE 3 "21 September 1997" GNO "Library Routines"
+.SH NAME
+.BR findfpcp ,
+.BR s_num2dec ,
+.BR s_dec2num ,
+.BR s_str2dec ,
+.BR s_dec2str ,
+.BR s_fabs ,
+.BR s_fneg ,
+.BR s_sqrt ,
+.BR s_rint ,
+.BR s_scalb ,
+.BR s_logb ,
+.BR s_copysign ,
+.BR s_nextfloat ,
+.BR s_nextdouble ,
+.BR s_nextextended ,
+.BR s_log2 ,
+.BR s_log ,
+.BR s_log1 ,
+.BR s_exp2 ,
+.BR s_exp ,
+.BR s_exp1 ,
+.BR s_power ,
+.BR s_ipower ,
+.BR s_compound ,
+.BR s_annuity ,
+.BR s_tan ,
+.BR s_sin ,
+.BR s_cos ,
+.BR s_atan ,
+.BR s_randomx ,
+.BR s_classfloat ,
+.BR s_classdouble ,
+.BR s_classcomp ,
+.BR s_classextended ,
+.BR s_signnum ,
+.BR s_setexception ,
+.BR s_testexception ,
+.BR s_sethalt ,
+.BR s_testhalt ,
+.BR s_setround ,
+.BR s_getround ,
+.BR s_setprecision ,
+.BR s_getprecision ,
+.BR s_setenvironment ,
+.BR s_getenvironment ,
+.BR s_procentry ,
+.BR s_procexit ,
+.BR s_gethaltvector ,
+.BR s_sethaltvector ,
+.BR s_relation ,
+.BR s_nan ,
+.BR s_inf ,
+.BR s_pi
+\- ORCA/C interface to SANE (the Standard Apple Numerics Environment)
+.SH SYNOPSIS
+#include <sane.h>
+.sp 1
+int \fBfindfpcp\fR(void);
+.br
+void \fBs_num2dec\fR(DecForm *\fIf\fR, extended \fIx\fR, Decimal *\fId\fR);
+.br
+extended \fBs_dec2num\fR(Decimal *\fId\fR);
+.br
+void \fBs_str2dec(char *\fIs\fR, short *\fIix\fR, Decimal *\fId\fR, short *\fIvp\fR);
+.br
+void \fBs_dec2str\fR(DecForm *\fIf\fR, Decimal *\fId\fR, char *\fIs\fR);
+.br
+extended \fBs_fabs\fR(extended \fIx\fR);
+.br
+extended \fBs_fneg\fR(extended \fIx\fR);
+.br
+extended \fBs_remainder\fR(extended \fIx\fR, extended \fIy\fR, short *\fIquo\fR);
+.br
+extended \fBs_sqrt\fR(extended \fIx\fR);
+.br
+extended \fBs_rint\fR(extended \fIx\fR);
+.br
+extended \fBs_scalb\fR(short \fIn\fR, extended \fIx\fR);
+.br
+extended \fBs_logb\fR(extended \fIx\fR);
+.br
+extended \fBs_copysign\fR(extended \fIx\fR, extended \fIy\fR);
+.br
+extended \fBs_nextfloat\fR(extended \fIx\fR, extended \fIy\fR);
+.br
+extended \fBs_nextdouble\fR(extended \fIx\fR, extended \fIy\fR);
+.br
+extended \fBs_nextextended\fR(extended \fIx\fR, extended \fIy\fR);
+.br
+extended \fBs_log2\fR(extended \fIx\fR);
+.br
+extended \fBs_log\fR(extended \fIx\fR);
+.br
+extended \fBs_log1\fR(extended \fIx\fR);
+.br
+extended \fBs_exp2\fR(extended \fIx\fR);
+.br
+extended \fBs_exp\fR(extended \fIx\fR);
+.br
+extended \fBs_exp1\fR(extended \fIx\fR);
+.br
+extended \fBs_power\fR(extended \fIx\fR, extended \fIy\fR);
+.br
+extended \fBs_ipower\fR(extended \fIx\fR, short \fIi\fR);
+.br
+extended \fBs_compound\fR(extended \fIr\fR, extended \fIn\fR);
+.br
+extended \fBs_annuity\fR(extended \fIr\fR, extended \fIn\fR);
+.br
+extended \fBs_tan\fR(extended \fIx\fR);
+.br
+extended \fBs_sin\fR(extended \fIx\fR);
+.br
+extended \fBs_cos\fR(extended \fIx\fR);
+.br
+extended \fBs_atan\fR(extended \fIx\fR);
+.br
+extended \fBs_randomx\fR(extended *\fIx\fR);
+.br
+numclass \fBs_classfloat\fR(extended \fIx\fR);
+.br
+numclass \fBs_classdouble\fR(extended \fIx\fR);
+.br
+numclass \fBs_classcomp\fR(extended \fIx\fR);
+.br
+numclass \fBs_classextended\fR(extended \fIx\fR);
+.br
+int \fBs_signnum\fR(extended \fIx\fR);
+.br
+void \fBs_setexception\fR(exception \fIe\fR, long \fIb\fR);
+.br
+long \fBs_testexception\fR(exception \fIe\fR);
+.br
+void \fBs_sethalt\fR(exception \fIe\fR, long \fIb\fR);
+.br
+long \fBs_testhalt\fR(exception \fIe\fR);
+.br
+void \fBs_setround\fR(rounddir \fIr\fR);
+.br
+rounddir \fBs_getround\fR(void);
+.br
+void \fBs_setprecision\fR(roundpre \fIp\fR);
+.br
+roundpre \fBs_getprecision\fR(void);
+.br
+void \fBs_setenvironment\fR(environment \fIe\fR);
+.br
+void \fBs_getenvironment\fR(environment *\fIe\fR);
+.br
+void \fBs_procentry\fR(environment *\fIe\fR);
+.br
+void \fBs_procexit\fR(environment \fIe\fR);
+.br
+haltvector \fBs_gethaltvector\fR(void);
+.br
+void \fBs_sethaltvector\fR(haltvector \fIv\fR);
+.br
+relop \fBs_relation\fR(extended \fIx\fR, extended \fIy\fR);
+.br
+extended \fBs_nan\fR(unsigned char \fIc\fR);
+.br
+extended \fBs_inf\fR(void);
+.br
+extended \fBs_pi\fR(void);
+.SH DESCRIPTION
+The
+.BR lsaneglue
+library contains code to let you call SANE functions directly from ORCA/C.
+To avoid namespace conflicts with 
+.IR <math.h> ,
+it was necessary to change
+.IR <sane.h> .
+Thus, all SANE functions are now prefixed with 
+.BR s_ .
+(For example,
+.BR annuity
+became
+.BR s_annuity ,
+and
+.BR sin
+became
+.BR s_sin .)
+This lets you choose easily between the SANE and ISO/C implementations of
+the same function.
+.LP
+Below is a brief overview of the functions in 
+.BR lsaneglue .
+This overview does not replace, however, proper documentation. To fully
+understand SANE, you will need the
+.IR "Apple Numerics Manual".
+SANE is also introduced in the 
+.IR "Apple IIgs Toolbox Reference" ,
+Volume 2", Chapter 18.
+.LP
+It is important that the file
+.IR <sane.h>
+is used as the reference for constants used for
+rounding direction, rounding precision, number classes, ordering relations,
+formatting styles, NaN codes, and for settine and testing exceptions,
+.LP
+In the following list, page numbers refer to the 
+.IR "Apple Numerics Manual" .
+.IP \fBfindfpcp\fR
+This function is specific to the 
+.BR lsaneglue
+library; it is not part of SANE proper and is not documented elsewhere.
+.sp 1
+.BR findfpcp
+will find an FPE (Innovative Systems' Floating Point Engine)
+or NC (Number Cruncher) card and return the slot number in which it resides.
+If a card is not found, it will return
+.BR -1 .
+.sp 1
+You can use the output of this function as the argument for the ORCA/C 
+.BR setfpeslot (3)
+routine, which is used when having ORCA/C create code for the FPE/NC
+directly (through the directive
+.BR "#pragma float 1 1" ).
+.IP \fBs_num2dec\fR
+Converts extended number
+.IR x
+to a SANE decimal record,
+.IR I .
+(pp 28)
+.IP \fBs_dec2num\fR
+Converts SANE decimal record 
+.IR f
+to an extended number. (pp 28f)
+.IP \fBs_str2dec\fR
+Converts string 
+.IR s
+to a SANE decimal record,
+.IR d .
+(pp 30f)
+.IP \fBs_dec2str\fR
+Convert a SANE decimal record 
+.IR d
+to a string.
+(pp 31ff)
+.IP \fBs_fabs\fR
+Returns the absolute value of 
+.IR x .
+(pp 49)
+.IP \fBs_fneg\fR
+Reverses the sign of 
+.IR x .
+(pp 49)
+.IP \fBs_remainder\fR
+Returns the remainder
+.IR "x / y" .
+(pp 46f)
+.IP \fBs_sqrt\fR
+Returns the square root of 
+.IR x .
+(pp 46)
+.IP \fBs_rint\fR
+Round 
+.IR x 
+to integer in current rounding direction. (pp 47)
+.IP \fBs_scalb\fR
+Returns (\fIx\fR times 2^\fIn\fR). (pp 50)
+.IP \fBs_logb\fR
+Computes binary exponent of normalized 
+.IR x .
+(pp 50)
+.IP \fBs_copysign\fR
+Returns
+.IR y
+with sign of
+.IR x .
+(pp 49)
+.IP \fBs_nextfloat\fR
+Returns next float number after 
+.IR x 
+in direction of 
+.IR y .
+(pp 50)
+.IP \fBs_nextdouble\fR
+Returns next double number after 
+.IR x
+in direction of 
+.IR y .
+(pp 50)
+.IP \fBs_nextextended\fR
+Returns next extended number after 
+.IR x
+in direction of
+.IR y .
+(pp 50)
+.IP \fBs_log2\fR
+Returns the base-2 logarithm of 
+.IR x .
+(pp 62)
+.IP \fBs_log\fR
+Returns base-e (natural) logarithm of
+.IR x .
+(pp 62)
+.IP \fBs_log1\fR
+Returns base-e (natural) logarithm of (\fIx\fR+1). (pp 62)
+.IP \fBs_exp2\fR
+Returns base-2 exponantial of \fIx\fR (2^\fIx\fR). (pp 63f)
+.IP \fBs_exp\fR
+Returns base-e (natural) exponantial of \fIx\fR (\fIx\fR^e). (pp 63f)
+.IP \fBs_exp1\fR
+Returns base-e (natural) exponantial of \fIx\fR minus 1 (\fIx\fR^e - 1).
+(pp 63f)
+.IP \fBs_power\fR
+Returns 
+.IR x ^ y .
+(pp 63f)
+.IP \fBs_ipower\fR
+Returns 
+.IR x ^ i .
+(pp 63f)
+.IP \fBs_compound\fR
+Compute compound (1+\fIr\fR)^\fIn\fR. (pp 64f)
+.IP \fBs_annuity\fR
+Compute annuity (1-(1+\fIr\fR)^\fIn\fR)/\fIr\fR. (pp 65)
+.IP \fBs_tan\fR
+Returns tangent of 
+.IR x .
+(pp 67f)
+.IP \fBs_sin\fR
+Returns sine of 
+.IR x .
+(pp 67)
+.IP \fBs_cos\fR
+Returns cosine of 
+.IR x .
+(pp 67)
+.IP \fBs_atan\fR
+Returns arctangent of 
+.IR x .
+(pp 67f)
+.IP \fBs_randomx\fR
+Returns a pseudorandom integer value with seed 
+.IR x .
+(pp 67)
+.IP \fBs_classfloat\fR
+Returns classification of float
+.IR x .
+(pp 44)
+.IP \fBs_classdouble\fR
+Returns classification of double 
+.IR x .
+(pp 44)
+.IP \fBs_classcomp\fR
+Returns classification of comp 
+.IR x .
+(pp 44)
+.IP \fBs_classextended\fR
+Returns classification of extended 
+.IR x .
+(pp 44)
+.IP \fBs_signnum\fR
+Returns sign of 
+.IR x ;
+zero if positive, 1 if negative. (pp 44)
+.IP \fBs_setexception\fR
+Clear or set SANE exceptions. (pp 54ff)
+.IP \fBs_testexception\fR
+Check whether SANE exception is currently set. (pp 54ff)
+.IP \fBs_sethalt\fR
+Clear or set SANE exception halts. (pp 54ff)
+.IP \fBs_testhalt\fR
+Check whether SANE exception halt is currently set. (pp 54ff)
+.IP \fBs_setround\fR
+Set SANE rounding direction. (pp 52f)
+.IP \fBs_getround\fR
+Get SANE rounding direction. (pp 52f)
+.IP \fBs_setprecision\fR
+Set SANE rounding precision. (pp 53)
+.IP \fBs_getprecision\fR
+Get SANE rounding precision. (pp 53)
+.IP \fBs_setenvironment\fR
+Set SANE environment word. (pp 57)
+.IP \fBs_getenvironment\fR
+Get SANE environment word. (pp 57)
+.IP \fBs_procentry\fR
+Save SANE environment word, then default it. (pp 57)
+.IP \fBs_procexit\fR
+Restore SANE environment word, then signal exceptions. (pp 57)
+.IP \fBs_gethaltvector\fR
+Get SANE halt vector. (pp 54)
+.IP \fBs_sethaltvector\fR
+Set SANE halt vector. (pp 54)
+.IP \fBs_relation\fR
+Returns relation of 
+.IR x 
+to 
+.IR y .
+(pp 49)
+.IP \fBs_nan\fR
+Returns 
+.BR NaN
+of type 
+.IR c .
+.IP \fBs_inf\fR
+Returns +\fBINF\fR (Infinity).
+.IP \fBs_pi\fR
+Returns 
+.BR pi
+(3.141592653589793238512808959).
+.SH "SANE TOOLKIT ERRORS"
+The fclass functions should return the sign of the passed number
+in n-bit and Y. They do not report the sign at all, though, which
+has to be considered a bug.
+.BR s_signnum
+has been rewritten to not rely on fclassx any more.
+.SH LEGALITIES
+This library and the accompanying source code are hereby placed
+into the Public Domain. There is no warranty, express or implied,
+on the performance of the library or source code. The author is not
+liable for any damage that may occur as a direct or indirect result
+of using the library or source code.
+.SH AUTHOR
+Soenke Behrens <sbehrens@bigfoot.com>
+.br
+September 1997
+.SH SEE ALSO
+Apple Computers, Inc, \fIApple Numerics Manual\fR.
+Addison-Wesley, 2nd Edition. 1988.  ISBN 0-201-17738-2.
+.sp 1
+Apple Comuters, Inc, \fIApple IIgs Toolbox Reference, Volume 2\fR.
+Addison-Wesley. 1988.  ISBN 0-201-17747-1.  (Chapter 18.)

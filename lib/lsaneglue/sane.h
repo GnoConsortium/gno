@@ -1,12 +1,13 @@
 /*
  * File: SANE.h
  *
- * Declarations, macros and prototypes for
- * the SANE glue functions in library
- * lsaneglue.
+ * Declarations, macros and prototypes for the SANE glue functions
+ * in library lsaneglue.
  *
  * Written in 1997 by Soenke Behrens.
  * This code is hereby placed into the Public Domain.
+ *
+ * $Id: sane.h,v 1.2 1997/09/21 21:51:02 gdr Exp $
  */
 
 #ifndef __SANE__
