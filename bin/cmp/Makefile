@@ -4,7 +4,7 @@
 #	Created by Dave Tribby, August 1997
 #	Modified by Evan Day, September 1997
 #
-# $Id: Makefile,v 1.1 1997/10/03 05:13:22 gdr Exp $
+# $Id: Makefile,v 1.2 1997/10/05 16:41:59 gdr Exp $
 
 # Program name
 PROG=	cmp
@@ -17,7 +17,7 @@ SRCS=	cmp.c misc.c rcmp.c special.c
 	OPTIMIZE=79
 .END
 
-# Current implementation is using 960 bytes give or take
+# Current implementation is using ~1050 bytes give or take
 STACK	= 1280
 
 # Installation point

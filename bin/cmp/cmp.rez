@@ -1,5 +1,5 @@
 /*
- * $Id: cmp.rez,v 1.1 1997/10/03 05:13:23 gdr Exp $
+ * $Id: cmp.rez,v 1.2 1997/10/05 16:42:00 gdr Exp $
  */
 #include "Types.Rez"
 #include "proginfo.rez"
@@ -25,8 +25,8 @@ resource rProgramInfo (0x1, purgeable3, nocrossbank) {
 	  release,
 	  0
 	},
-	30270,
-	32768,
+	80000,			/* Rough estimates - the library isn't */
+	80000,			/* final yet. */
 	1280,
 	progRequiresGNO+progAppleTalkOK+progAllowsCDAs,
 	piCompatible*ProgShellGSH+piSpecialFeatures*ProgShellGSH
