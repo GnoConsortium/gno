@@ -56,8 +56,8 @@ static char sccsid[] = "@(#)logger.c	8.1 (Berkeley) 6/6/93";
 #define	SYSLOG_NAMES
 #include <syslog.h>
 
-long	decode __P((char *, CODE *));
-long	pencode __P((char *));
+int	decode __P((char *, CODE *));
+int	pencode __P((char *));
 void	usage __P((void));
 
 /*
@@ -69,8 +69,7 @@ void	usage __P((void));
 int
 main(int argc, char **argv)
 {
-	int ch, logflags;
-	long pri;
+	int ch, logflags, pri;
 	char *tag;
 	static char buf[1024];
 
@@ -147,11 +146,11 @@ main(int argc, char **argv)
 /*
  *  Decode a symbolic name to a numeric value
  */
-long
+int
 pencode(register char *s)
 {
 	char *save;
-	long fac, lev;
+	int fac, lev;
 
 	for (save = s; *s && *s != '.'; ++s);
 	if (*s) {
@@ -177,7 +176,7 @@ pencode(register char *s)
 	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
 }
 
-long
+int
 decode(char *name, CODE *codetab)
 {
 	register CODE *c;
