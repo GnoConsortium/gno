@@ -1,7 +1,7 @@
 *
 * Test an extended to see whether it is NaN or INF
 *
-* $Id: fpspecnum.asm,v 1.1 1997/09/05 06:31:59 gdr Exp $
+* $Id: fpspecnum.asm,v 1.2 1997/12/21 20:12:27 gdr Exp $
 *
 * Soenke Behrens, August 1997
 *     
@@ -14,7 +14,7 @@
 *
 
 dummy	start
-	copy :lib:ainclude:e16.sane ; Apple-supplied SANE EQUs
+	copy :lang:orca:libraries:ainclude:e16.sane ; Apple-supplied SANE EQUs
 	end
 
 ****************************************************************
@@ -26,7 +26,7 @@ dummy	start
 ****************************************************************
 *
 
-_isnan	start	libc_stdlib
+_isnan	start	libc_stdlb
 result	equ	1
 space	equ	result+2
 
@@ -70,7 +70,7 @@ nan_x	dc	h'0000000000000040FF7F' ; Hex encoding of a NaN
 ****************************************************************
 *
 
-_isinf	start	libc_stdlib
+_isinf	start	libc_stdlb
 result	equ	1
 space	equ	result+2
 
