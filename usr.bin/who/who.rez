@@ -1,0 +1,31 @@
+/*
+ * Resources for who version and comment
+ *
+ * $Id: who.rez,v 1.1 1998/01/25 23:36:30 taubert Exp $
+ */
+#define PROG "who"
+#define DESC "Display users on the system."
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 0, 0,	/* Version 1.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	PROG,	/* Program name */
+        DESC " Released with GNO/ME."
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG " v1.0 (October 1997)\n"
+	"GNO utility: " DESC "\n"
+	"Ported from FreeBSD 2.1.0 code by Derek Taubert."
+};

@@ -31,74 +31,75 @@
 .\"
 .\"     @(#)who.1	8.2 (Berkeley) 12/30/93
 .\"
-.\" $Id: who.1,v 1.1 1997/10/26 17:12:24 gdr Exp $
-.\"
-.TH WHO 1 "26 October 1997" GNO "Commands and Applications"
-.SH NAME
-.BR who
-\- display who is logged in
-.SH SYNOPSIS
-.BR who
-.RB [ am
-.BR I ]
-.RI [ file ]
-.SH DESCRIPTION
+.Dd December 30, 1993
+.Dt WHO 1
+.Os
+.Sh NAME
+.Nm who
+.Nd display who is logged in
+.Sh SYNOPSIS
+.Nm who
+.Op Ar am I
+.Op Ar file 
+.Sh DESCRIPTION
 The utility
-.BR who
+.Nm who
 displays
 a list of all users currently logged on, showing for each user
 the login name,
 tty name, the date and time of login, and hostname if not local.
-.LP
+.Pp
 Available options:
-.RS
-.IP "\fBam I\fR"
+.Pp
+.Bl -tag -width file
+.It Ar \&am I
 Returns the invoker's real user name. 
-.IP \fIfile\fR
+.It Ar file
 By default,
-.BR who
+.Nm who
 gathers information from the file
-.BR /var/run/utmp .
+.Pa /var/run/utmp .
 An alternate
-.BR file
+.Ar file
 may be specified which is usually
-.BR /var/run/wtmp
+.Pa /var/run/wtmp
 (or
-.BR /var/run/wtmp.[0-6]
+.Pa /var/run/wtmp.[0-6]
 depending on site policy as
-.BR wtmp
+.Pa wtmp
 can grow quite large and daily versions may or may not
 be kept around after compression by
-.BR ac (8)).
+.Xr ac 8 ) .
 The
-.BR wtmp
+.Pa wtmp
 file contains a record of every login, logout,
 crash, shutdown and date change
 since
-.BR wtmp
+.Pa wtmp
 was last truncated or
 created.
-.RE
-.LP
+.El
+.Pp
 If
-.BR /var/log/wtmp
+.Pa /var/log/wtmp
 is being used as the file, the user name may be empty
 or one of the special characters '|', '}' and '~'.  Logouts produce
 an output line without any user name.  For more information on the
 special characters, see
-.BR utmp (5).
-.SH FILES
-.B /var/run/utmp
-.br
-.B /var/log/wtmp
-.br
-.B /var/log/wtmp.[0-6]
-.SH SEE ALSO
-.BR last (1),
-.BR users (1),
-.BR getuid (2),
-.BR utmp (5)
-.SH HISTORY
+.Xr utmp 5 .
+.Sh FILES
+.Bl -tag -width /var/log/wtmp.[0-6] -compact
+.It Pa /var/run/utmp
+.It Pa /var/log/wtmp
+.It Pa /var/log/wtmp.[0-6]
+.El
+.Sh SEE ALSO
+.Xr last 1 ,
+.Xr users 1 ,
+.Xr getuid 2 ,
+.Xr utmp 5
+.Sh HISTORY
 A
-.BR who
-command appeared in Version 6 AT&T UNIX.
+.Nm
+command appeared in
+.At v6 .
