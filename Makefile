@@ -2,7 +2,7 @@
 # This file is intended for use with dmake.  There are constructs in 
 # here that (as yet) make it unsuitable to be used on the GS.
 #
-# $Id: Makefile,v 1.1 1997/09/21 23:13:10 gdr Exp $
+# $Id: Makefile,v 1.2 1997/09/30 05:35:14 gdr Exp $
 #
 XFER	= xfer
 TMP	= /tmp/gnobuild
@@ -20,8 +20,9 @@ XFER_LIST= \
 	$(XFER)/root.shk \
 	$(XFER)/sbin.shk \
 	$(XFER)/usr.bin.shk \
-	$(XFER)/usr.orca.bin.shk \
-	$(XFER)/usr.man.shk
+	$(XFER)/usr.orcabin.shk \
+	$(XFER)/usr.man.shk \
+	$(XFER)/verbatim.shk
 
 NOT_YET= \
 	$(XFER)/libexec.shk \
@@ -34,6 +35,7 @@ ROOTFILES = Makefile binconst.mk binrules.mk paths.mk prog.mk
 
 $(XFER)/root.shk: $(ROOTFILES)
 	@echo "making $@"; \
+	$(RM) -f $@; \
 	[ -d $(XFER) ] || mkdir -p $(XFER); \
 	if [ -d $(TMP) ]; then \
 		echo "$(TMP) exists.  Aborted"; \
@@ -55,6 +57,7 @@ $(XFER)/usr.orcabin.shk: $(XFER)/usr.orca.bin.shk
 
 $(XFER)/%.shk:
 	@echo "making $@"; \
+	$(RM) -f $@; \
 	[ -d $(XFER) ] || mkdir -p $(XFER); \
 	if [ -d $(TMP) ]; then \
 		echo "$(TMP) exists.  Aborted"; \
