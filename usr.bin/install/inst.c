@@ -1,12 +1,15 @@
 /*
- * Copyright 1996-1997 Devin Reade <gdr@myrias.com>.
+ * Copyright 1996-1997 Devin Reade <gdr@trenco.gno.org>.
  * All rights reserved.
  *
  * For copying and distribution information, see the file "COPYING"
  * accompanying this file.
  *
- * $Id: inst.c,v 1.4 1998/03/08 18:18:58 gdr-ftp Exp $
+ * $Id: inst.c,v 1.5 1998/04/24 00:54:03 gdr-ftp Exp $
  */
+
+#define VERSION "1.2"
+#define EMAIL   "<gdr@trenco.gno.org>"
 
 #define	__USE_DYNAMIC_GSSTRING__
 
@@ -40,23 +43,8 @@
 #define S_WRITE   0222
 #define S_EXECUTE 0111
 
-#define VERSION "1.1"
-#define EMAIL   "<gdr@myrias.com>"
-
 char *versionMsg = "Version %s by Devin Reade %s\n";
-int dFlag;
-
-#ifdef __STACK_CHECK__
-/*
- * printStack
- *
- * prints stack usage (debugging only)
- */
-static void
-printStack (void) {
-	fprintf(stderr, "stack usage: %d bytes\n", _endStackCheck());
-}
-#endif
+int dFlag, verbose;
 
 /*
  * usage
@@ -67,7 +55,7 @@ printStack (void) {
 void
 usage(void)
 {
-  fputs("Usage: install [-cdhsv] [-o owner] [-g group] [-m mode] ", stderr);
+  fputs("Usage: install [-cdhsvV] [-o owner] [-g group] [-m mode] ", stderr);
   fputs("source [...] dest\n\n", stderr);
   fputs("Options:\n", stderr);
   fputs("\t-c             Ignored.  (Backwards Unix compatibility)\n", stderr);
@@ -77,6 +65,8 @@ usage(void)
   fputs("\t-m mode        Specify (Unix) access mode\n", stderr);
   fputs("\t-o owner       Specify owner id (not implemented)\n", stderr);
   fputs("\t-s             Strip binary (not implemented)\n", stderr);
+  fputs("\t-V             Print each file as it is created (verbose).\n",
+	stderr);
   fputs("\t-v             Show version number\n\n", stderr);
   fprintf(stderr, versionMsg, VERSION, EMAIL);
   exit(1);
@@ -252,10 +242,15 @@ mkdirs(int argc, char **argv)
       }
 
       /* go ahead and create the directory */
-      if (makeit && mkdir(path)) {
-	warn("couldn't create directory %s", path);
-	abortpath = 1;
-	result = 1;
+      if (makeit) {
+      	if (verbose) {
+      	  fprintf(stderr, "%s\n", path);
+      	}
+        if (mkdir(path)) {
+	  warn("couldn't create directory %s", path);
+	  abortpath = 1;
+	  result = 1;
+        }
       }
       /* reinstate the ':' that we "nulled-out" */
       if (p != path + pathlen) {
@@ -288,8 +283,11 @@ copyfiles(int argc, char **argv, int action, mode_t mode)
 {
 	static FileInfoRecGS inforec;
 	GSStringPtr src, dest, newname;
-        int total, i, result;
+        int total, i, result, printWhen;
 	unsigned short flags;
+#define PRINT_NEVER  0	/* used for printWhen (verbose mode) */
+#define PRINT_BEFORE 1
+#define PRINT_AFTER  2
 
 	static const char *nodup = "couldn't duplicate %s file name \"%s\"";
 
@@ -301,8 +299,8 @@ copyfiles(int argc, char **argv, int action, mode_t mode)
 	flags = LC_COPY_DATA | LC_COPY_REZ | LC_COPY_KEEPBUF;
 
 	/* duplicate the destination name */
-	if ((dest = __C2GSMALLOC(argv[argc - 1])) == NULL) {
-		err(1, nodup, "destination", argv[argc - 1]);
+	if ((dest = __C2GSMALLOC(argv[total])) == NULL) {
+		err(1, nodup, "destination", argv[total]);
 		/*NOTREACHED*/
 	}
 
@@ -327,7 +325,15 @@ copyfiles(int argc, char **argv, int action, mode_t mode)
 	}
 
 	/* copy each file */
+	if (verbose) {
+		printWhen = (argc == 2) ? PRINT_BEFORE : PRINT_AFTER;
+	} else {
+		printWhen = PRINT_NEVER;
+	}
 	for (i=0; i<total; i++) {
+		if (printWhen == PRINT_BEFORE) {
+			fprintf(stderr, "%s\n", argv[total]);
+		}
 	        if ((src = __C2GSMALLOC(argv[i])) == NULL) {
 			err(1, nodup, "source", argv[i]);
 			/*NOTREACHED*/
@@ -336,8 +342,11 @@ copyfiles(int argc, char **argv, int action, mode_t mode)
 		if (newname == NULL) {
 			result = errno;
 			warn("install of %s to %s failed", argv[i],
-			     argv[argc-1]);
+			     argv[total]);
 		} else {
+			if (printWhen == PRINT_AFTER) {
+				fprintf(stderr, "%s\n", newname->text);
+			}
 			if (action & ACTION_CHANGE_MODE) {
 				if (chmod(newname->text, mode) < 0) {
 					result = errno;
@@ -363,11 +372,8 @@ main(int argc, char **argv)
   int c, nfiles;
   int action = 0;
 
-#ifdef __STACK_CHECK__
-  _beginStackCheck();
-  atexit(printStack);
-#endif
-
+  __REPORT_STACK();
+  
   if (needsgno() == 0) {
 	errx(1, "requires GNO");
   }
@@ -377,7 +383,7 @@ main(int argc, char **argv)
   newmode = 0L;
 
   /* parse command line */
-  while ((c = getopt(argc, argv, "cdg:hm:o:sv")) != EOF) {
+  while ((c = getopt(argc, argv, "cdg:hm:o:svV")) != EOF) {
     switch (c) {
     case 'v':
       errx(1, versionMsg, VERSION, EMAIL);
@@ -391,6 +397,10 @@ main(int argc, char **argv)
       }
       break;
 
+    case 'V':
+      verbose=1;
+      break;
+      
     case 'd':  dFlag++;
     case 'c':			/* not implemented */
     case 'g':			/* not implemented */
@@ -404,6 +414,30 @@ main(int argc, char **argv)
   }
 
   nfiles = argc - optind;
+#if 1
+  if (nfiles < (dFlag ? 1 : 2)) {
+    usage();
+  }
+
+  c = 0;		/* using c as a temp variable */
+  BeginSessionGS(&c);
+  if (_toolErr) {
+  	errno = _mapErr(_toolErr);
+  	err(EXIT_FAILURE, "BeginSessionGS failed (0x%x)", _toolErr);
+  }
+  if (dFlag) {
+    c = mkdirs(nfiles, &argv[optind]);
+  } else {
+    /* ignore new user and group for now */
+    c = copyfiles(nfiles, &argv[optind], action, newmode);
+  }
+  action = 0;			/* using action as a temp variable */
+  EndSessionGS(&action);
+  if (_toolErr) {
+  	errno = _mapErr(_toolErr);
+  	err(EXIT_FAILURE, "EndSessionGS failed (0x%x)", _toolErr);
+  }
+#else
 
   if (dFlag) {
     if (nfiles < 1) {
@@ -417,7 +451,7 @@ main(int argc, char **argv)
     /* ignore new user and group for now */
     c = copyfiles(nfiles, &argv[optind], action, newmode);
   }
-
+#endif
 
   return c;
 }

@@ -1,13 +1,15 @@
-$Id: README,v 1.2 1997/10/30 04:14:21 gdr Exp $
+$Id: README,v 1.3 1998/04/24 00:54:00 gdr-ftp Exp $
 
 As the describe file says, install(1) is a utility similar to cp(1),
 except that it does a few more things and is intended for use in
 makefiles and scripts.
 
-To install install, type "dmake doinstall".  By default, it places the
+To install install, type "dmake install".  By default, it places the
 binary in /usr/bin and the man page in /usr/man/man1.  If you don't
 like these locations, either modify the makefile or copy the two files
-by hand.  There are no support files.
+by hand.  There are no support files.  [Note:  As of v1.1, the
+assumption is that you're building these files from within the GNO
+base source hierarchy.]
 
 As usual, please email me or post to comp.sys.apple2.gno if you
 encounter problems or bugs.
@@ -19,6 +21,11 @@ March 1996
 CHANGE LOG
 ==========
 
+v1.2	April 1998
+	- Added sessions to (hopefully) speed things up.
+	- Increased to use optimization level -1.  It seems to work.
+	- Added the -V (verbose) flag.
+
 v1.1	August 1997
 	- Incorporated install(1) into base GNO v2.0.6 distribution
 	- Use the GNO v2.0.6 libcontrib library
@@ -27,4 +34,4 @@ v1.1	August 1997
 	  usual UNIX usage.
 
 v1.0	March 1996
-	Initial Version
+	- Initial Version

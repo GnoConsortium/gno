@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.2 1998/03/08 18:18:57 gdr-ftp Exp $
+# $Id: Makefile,v 1.3 1998/04/24 00:53:59 gdr-ftp Exp $
 #
 
 # Don't name this "install"; we change the name later.
@@ -7,8 +7,8 @@ PROG		= inst
 BINDIR		= /usr/bin
 CUSTOM_RELEASE	= true
 LDADD		= -lcontrib
-OPTIMIZE	= 78
-STACK		= 1024
+OPTIMIZE	= -1
+STACK		= 1024		# largest observed is 707 bytes
 
 .INCLUDE:	/src/gno/prog.mk
 

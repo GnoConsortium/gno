@@ -1,8 +1,8 @@
-.\" Copyright 1996-1997 Devin Reade <gdr@myrias.com>
+.\" Copyright 1996-1997 Devin Reade <gdr@trenco.gno.org>.
 .\"
-.\" $Id: inst.1,v 1.2 1997/10/30 04:14:21 gdr Exp $
+.\" $Id: inst.1,v 1.3 1998/04/24 00:54:02 gdr-ftp Exp $
 .\"
-.TH INSTALL 1 "16 October 1997" GNO "Commands and Applications"
+.TH INSTALL 1 "23 April 1998" GNO "Commands and Applications"
 .SH NAME
 install \- copy files and set their attributes
 .SH SYNOPSIS
@@ -99,14 +99,27 @@ may also be numeric user ID.
 Strip the symbol tables from the installed programs.
 .sp
 \fBThis is currently ignored under GNO.\fR
+.IP \fB-V\fR
+Verbose output;
+.BR install
+will print out the name of each file or directory as it is created.
 .IP \fB-v\fR
 Show version number.
+.SH BUGS
+When installing multiple files into a directory and the
+.BR -V
+flag is given, the respective file names are printed
+.I after
+the file has been copied, rather than before.  This was done since the
+final file name is known only after the copying subroutine has returned.
+While the name could be determined prior to the copy, this extra work
+was left out for efficiency reasons.
 .SH VERSION
 This manual page documents
 .BR install
-version 1.1.
+version 1.2.
 .SH AUTHOR
-Devin Reade <gdr@eddore.myrias.com>
+Devin Reade <gdr@trenco.gno.org>.
 .SH "SEE ALSO"
 .BR cp (1)
 .BR chmod (2).
