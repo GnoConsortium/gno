@@ -1,0 +1,9 @@
+Name:    false
+Version: 1.0 (7 Aug 97)
+Shell:   GNO, ORCA/Shell
+Author:  Devin Reade.
+Contact: gdr@eddore.myrias.com
+Where:   /bin/false
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+  Returns a 'false' status to the shell.  Intended for use in shell scripts.
