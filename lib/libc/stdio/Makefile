@@ -3,7 +3,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: Makefile,v 1.6 1997/10/03 04:44:25 gdr Exp $
+# $Id: Makefile,v 1.7 1997/10/30 04:52:44 gdr Exp $
 #
 
 .INCLUDE:	../../../paths.mk
@@ -16,8 +16,9 @@ OBJS	= clrerr.o fclose.o fdopen.o feof.o ferror.o fflush.o fgetc.o \
 	getc.o getchar.o gets.o getw.o makebuf.o mktemp.o perror.o printf.o \
 	putc.o putchar.o puts.o putw.o refill.o remove.o rewind.o rget.o \
 	scanf.o setbuf.o setbuffer.o setvbuf.o snprintf.o sprintf.o sscanf.o \
-	stdio.o tempnam.o tmpfile.o tmpnam.o ungetc.o vfprintf.o vfscanf.o \
-	vprintf.o vscanf.o vsnprintf.o vsprintf.o vsscanf.o wbuf.o wsetup.o
+	stdio.o tempnam.o tmpfile.o tmpnam.o ungetc.o vfscanf.o \
+	vprintf.o vscanf.o vsnprintf.o vsprintf.o vsscanf.o wbuf.o wsetup.o \
+	vfprintf1.o vfprintf2.o
 
 CFLAGS	+= -O78
 
@@ -31,11 +32,17 @@ obj:	$(OBJS)
 # We can avoid the problem by preprocessing this file with a stand-alone
 # cpp(1).  This problem has been reported to Byte Works.
 #
-junk.c:		vfprintf.c
-	cpp -I/src/gno/include -I/lang/orca/include -D__ORCAC__ -D__appleiigs__ -D__GNO__ $< > $@
+JINCL	= -I/src/gno/include -I/lang/orca/include
+JDEFS	= -D__ORCAC__ -D__appleiigs__ -D__GNO__ -DSPLIT_FILE_2
 
-vfprintf.o:	junk.c
-	$(CC) -c -o $@ $(CFLAGS) $<
+junk.c:		vfprintf.c
+	cpp $(JINCL) $(JDEFS) $< > $@
+
+vfprintf1.o:	vfprintf.c
+	$(CC) -c -o $@ $(CFLAGS) -DSPLIT_FILE_1 $<
+
+vfprintf2.o:	junk.c
+	$(CC) -c -o $@ $(CFLAGS) -DSPLIT_FILE_2 $<
 
 .INCLUDE:	../rules.mk
 
@@ -69,6 +76,8 @@ sscanf.o::	local.h
 stdio.o::	local.h
 ungetc.o::	local.h
 vfprintf.o::	local.h fvwrite.h floatio.h
+vfprintf1.o::	local.h fvwrite.h floatio.h
+vfprintf2.o::	local.h fvwrite.h floatio.h
 vfscanf.o::	local.h floatio.h
 wbuf.o::	local.h
 wsetup.o::	local.h

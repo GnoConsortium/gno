@@ -38,6 +38,9 @@
 segment "libc_stdio";
 #pragma optimize 78	/* bits 3 and 6, minimum */
 #pragma debug 0
+#define PRIVATE
+#else
+#define PRIVATE static
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
@@ -69,11 +72,16 @@ static char sccsid[] = "@(#)vfprintf.c	8.1 (Berkeley) 6/4/93";
 /* Define FLOATING_POINT to get floating point. */
 #define FLOATING_POINT
 
+PRIVATE int	__sbprintf(register FILE *fp, const char *fmt, va_list ap);
+PRIVATE int	__sprint(FILE *fp, register struct __suio *uio);
+
+#ifdef SPLIT_FILE_1
+
 /*
  * Flush out all the vectors defined by the given uio,
  * then reset it so that it can be reused.
  */
-static int
+PRIVATE int
 __sprint(FILE *fp, register struct __suio *uio)
 {
 	register int err;
@@ -94,7 +102,7 @@ __sprint(FILE *fp, register struct __suio *uio)
  * worries about ungetc buffers and so forth.
  */
 
-static int
+PRIVATE int
 __sbprintf(register FILE *fp, const char *fmt, va_list ap)
 {
 	int ret;
@@ -134,6 +142,8 @@ __sbprintf(register FILE *fp, const char *fmt, va_list ap)
 	return (ret);
 }
 
+#endif	/* SPLIT_FILE_1 */
+
 /*
  * Macros for converting digits to letters and vice versa
  */
@@ -141,13 +151,18 @@ __sbprintf(register FILE *fp, const char *fmt, va_list ap)
 #define is_digit(c)	((unsigned)to_digit(c) <= 9)
 #define	to_char(n)	((n) + '0')
 
+PRIVATE char *
+__ultoa(register u_long val, char *endp, int base, int octzero, char *xdigs);
+
+#ifdef SPLIT_FILE_1
+
 /*
  * Convert an unsigned long to ASCII for printf purposes, returning
  * a pointer to the first character of the string representation.
  * Octal numbers can be forced to have a leading zero; hex numbers
  * use the given digits.
  */
-static char *
+PRIVATE char *
 __ultoa(register u_long val, char *endp, int base, int octzero, char *xdigs)
 {
 	register char *cp = endp;
@@ -204,7 +219,7 @@ __ultoa(register u_long val, char *endp, int base, int octzero, char *xdigs)
 
 #ifdef HAS_QUAD_T
 /* Identical to __ultoa, but for quads. */
-static char *
+PRIVATE char *
 __uqtoa(register u_quad_t val, char *endp, int base, int octzero, char *xdigs)
 {
 	register char *cp = endp;
@@ -253,6 +268,7 @@ __uqtoa(register u_quad_t val, char *endp, int base, int octzero, char *xdigs)
 	return (cp);
 }
 #endif	/* HAS_QUAD_T */
+#endif	/* SPLIT_FILE_1 */
 
 #ifdef FLOATING_POINT
 #include <math.h>
@@ -269,8 +285,8 @@ typedef double       double_spec_t;
 typedef long double ldouble_spec_t;
 #endif
 
-static char *cvt __P((double_spec_t, int, int, char *, int *, int, int *));
-static int exponent __P((char *, int, int));
+PRIVATE char *__cvt __P((double_spec_t, int, int, char *, int *, int, int *));
+PRIVATE int __exponent __P((char *, int, int));
 
 #else /* no FLOATING_POINT */
 
@@ -292,6 +308,8 @@ static int exponent __P((char *, int, int));
 #define	SHORTINT	0x040		/* short integer */
 #define	ZEROPAD		0x080		/* zero (as opposed to blank) pad */
 #define FPT		0x100		/* Floating point number */
+
+#ifdef SPLIT_FILE_2
 
 #ifdef __ORCAC__
 typedef struct vfprintfData_t {
@@ -646,7 +664,7 @@ fp_begin:		if (prec == -1)
 				break;
 			}
 			flags |= FPT;
-			cp = cvt(_double, prec, flags, &softsign,
+			cp = __cvt(_double, prec, flags, &softsign,
 				&expt, ch, &ndig);
 			if (ch == 'g' || ch == 'G') {
 				if (expt <= -4 || expt > prec)
@@ -656,7 +674,7 @@ fp_begin:		if (prec == -1)
 			}
 			if (ch <= 'e') {	/* 'e' or 'E' fmt */
 				--expt;
-				expsize = exponent(expstr, expt, ch);
+				expsize = __exponent(expstr, expt, ch);
 				size = expsize + ndig;
 				if (ndig > 1 || flags & ALT)
 					++size;
@@ -743,6 +761,28 @@ fp_begin:		if (prec == -1)
 				size = strlen(cp);
 			sign = '\0';
 			break;
+/*
+ * ORCA/C (maybe makelib?) has a problem with this right now.  If
+ * This code is included, then the resulting file cannot be successfully
+ * placed into a library file.
+ */
+#if 0
+#ifdef __GNO__
+		case 'b':
+			cp = va_arg(ap, char *);
+			if (cp == NULL) {
+				cp = "(null)";
+				size = 6;
+			} else {
+				size = *cp++;
+				if ((prec >= 0) && (size > prec)) {
+					size = prec;
+				}
+			}
+			sign = '\0';
+			break;
+#endif
+#endif	/* 0 */
 		case 'U':
 			flags |= LONGINT;
 			/*FALLTHROUGH*/
@@ -960,13 +1000,17 @@ error:
 #undef ox	
 #endif	/* __ORCAC__ */
 
+#endif	/* SPLIT_FILE_2 */
+
+#ifdef SPLIT_FILE_1
+
 #ifdef FLOATING_POINT
 
 extern char *__dtoa __P((double, int, int, int *, int *, char **));
 
-static char *
-cvt(double_spec_t value, int ndigits, int flags, char *sign, int *decpt, int ch,
-    int *length)
+PRIVATE char *
+__cvt(double_spec_t value, int ndigits, int flags, char *sign, int *decpt,
+      int ch, int *length)
 {
 	int mode, dsgn;
 	char *digits, *bp, *rve;
@@ -1006,8 +1050,8 @@ cvt(double_spec_t value, int ndigits, int flags, char *sign, int *decpt, int ch,
 	return (digits);
 }
 
-static int
-exponent(char *p0, int exp, int fmtch)
+PRIVATE int
+__exponent(char *p0, int exp, int fmtch)
 {
 	register char *p, *t;
 #ifdef __ORCAC__
@@ -1038,3 +1082,4 @@ exponent(char *p0, int exp, int fmtch)
 	return (p - p0);
 }
 #endif /* FLOATING_POINT */
+#endif	/* SPLIT_FILE_1 */
