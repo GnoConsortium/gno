@@ -1,6 +1,6 @@
 #
 # This makefile is intended for use with dmake(1) on Apple IIGS
-# $Id: Makefile,v 1.4 1999/01/11 01:24:02 gdr-ftp Exp $
+# $Id: Makefile,v 1.5 1999/01/28 18:52:03 gdr-ftp Exp $
 #
 #	Created by Dave Tribby, October 1997
 
@@ -13,6 +13,9 @@ PROG=	sed
 
 # Part of program containing main
 MAIN=	main
+
+# Where sed gets installed.
+BINDIR	= /usr/bin
 
 # Source files
 SRCS=	main.c compile.c misc.c process.c
