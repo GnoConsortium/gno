@@ -1,7 +1,7 @@
 # 0
 # 1  The first column is the "real" man page; the second is the .so link.
 # 2
-# 3  $Id: mkso.data,v 1.4 1997/09/19 15:46:10 gdr Exp $
+# 3  $Id: mkso.data,v 1.5 1997/10/03 05:46:31 gdr Exp $
 # 4
 man2/alarm.2		man2/alarm10.2
 man2/chdir.2		man2/fchdir.2
@@ -229,6 +229,13 @@ man3/syslog.3		man3/closelog.3
 man3/syslog.3		man3/openlog.3
 man3/syslog.3		man3/setlogmask.3
 man3/syslog.3		man3/vsyslog.3
+man3/termcap.3		man3/tgetent.3
+man3/termcap.3		man3/tgetflag.3
+man3/termcap.3		man3/tgetnum.3
+man3/termcap.3		man3/tgetstr.3
+man3/termcap.3		man3/tgoto.3
+man3/termcap.3		man3/tputs.3
+man3/termcap.3		man3/tparm.3
 man3/tmpnam.3		man3/tempnam.3
 man3/tmpnam.3		man3/tmpfile.3
 man3/ttyname.3		man3/isatty.3
