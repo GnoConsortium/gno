@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.3 1998/01/17 21:21:05 gdr Exp $
+# $Id: Makefile,v 1.4 1998/01/17 21:33:10 gdr Exp $
 #
 # Devin Reade, January 1998
 #
@@ -68,8 +68,8 @@ MODE_X	= -m775
 release:	default $(RELDIR)/$(RELEASE_README) $(RELDIR)/$(RELEASE_SRC) \
 		$(RELDIR)/$(RELEASE_DB)
 
-clobber:
-	rm -rf *~ $(XREF) $(TDIR) $(README_OUT)
+clobber:;	rm -rf *~ $(XREF) $(TDIR) $(README_OUT)
+nuke:;		rm -rf $(FINAL_DIR)/*
 
 $(RELDIR)/$(RELEASE_README):	$(RELDIR) $(README_OUT)
 	install $(OWNER) $(MODE_F) $(README_OUT) $@
