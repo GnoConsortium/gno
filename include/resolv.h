@@ -53,7 +53,7 @@
  *
  *	@(#)resolv.h	8.1 (Berkeley) 6/2/93
  *	From Id: resolv.h,v 4.9.1.2 1993/05/17 09:59:01 vixie Exp
- *	$Id: resolv.h,v 1.1 1997/02/28 04:42:02 gdr Exp $
+ *	$Id: resolv.h,v 1.2 1997/11/01 19:06:04 gdr Exp $
  */
 
 #ifndef _RESOLV_H_
@@ -204,7 +204,11 @@ typedef res_sendhookact (*res_send_rhook)__P((const struct sockaddr_in *ns,
 					      int anssiz,
 					      int *resplen));
 
+#ifdef __RES
 extern struct __res_state _res;
+#else
+extern struct state _res;
+#endif
 
 /* Private routines shared between libc/net, named, nslookup and others. */
 #define	dn_skipname	__dn_skipname
@@ -253,7 +257,7 @@ int	 res_search __P((const char *, int, int, u_char *, int));
 int	 res_querydomain __P((const char *, const char *, int, int,
 			      u_char *, int));
 int	 res_mkquery __P((int, const char *, int, int, const u_char *, int,
-			  const u_char *, u_char *, int));
+			  const struct rrec *, u_char *, int));
 int	 res_send __P((const u_char *, int, u_char *, int));
 int	 res_isourserver __P((const struct sockaddr_in *));
 int	 res_nameinquery __P((const char *, int, int,

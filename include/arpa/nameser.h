@@ -213,7 +213,8 @@ typedef struct {
 	unsigned	rd: 1;		/* recursion desired */
 			/* fields in fourth byte */
 	unsigned	ra: 1;		/* recursion available */
-	unsigned	unused :3;	/* unused bits (MBZ as of 4.9.3a3) */
+	unsigned	pr: 1;	/* primary server required (non standard) */
+	unsigned	unused :2;	/* unused bits (MBZ as of 4.9.3a3) */
 	unsigned	rcode :4;	/* response code */
 #endif
 #if BYTE_ORDER == LITTLE_ENDIAN || BYTE_ORDER == PDP_ENDIAN
@@ -225,7 +226,8 @@ typedef struct {
 	unsigned	qr :1;		/* response flag */
 			/* fields in fourth byte */
 	unsigned	rcode :4;	/* response code */
-	unsigned	unused :3;	/* unused bits (MBZ as of 4.9.3a3) */
+	unsigned	unused :2;	/* unused bits (MBZ as of 4.9.3a3) */
+	unsigned	pr: 1;	/* primary server required (non standard) */
 	unsigned	ra :1;		/* recursion available */
 #endif
 			/* remaining bytes */
