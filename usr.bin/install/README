@@ -1,0 +1,16 @@
+$Id: README,v 1.1 1996/09/03 03:54:55 gdr Exp $
+
+As the describe file says, install(1) is a utility similar to cp(1),
+except that it does a few more things and is intended for use in
+makefiles and scripts.
+
+To install install, type "dmake doinstall".  By default, it places the
+binary in /usr/bin and the man page in /usr/man/man1.  If you don't
+like these locations, either modify the makefile or copy the two files
+by hand.  There are no support files.
+
+As usual, please email me or post to comp.sys.apple2.gno if you
+encounter problems or bugs.
+
+Devin Reade
+March 1996

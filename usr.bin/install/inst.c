@@ -5,7 +5,7 @@
  * For copying and distribution information, see the file "COPYING"
  * accompanying this file.
  *
- * $Id: inst.c,v 1.1 1996/03/31 23:38:33 gdr Exp $
+ * $Id: inst.c,v 1.2 1996/09/03 03:54:58 gdr Exp $
  */
 
 #include <stdio.h>
@@ -16,9 +16,14 @@
 #include <assert.h>
 #include <string.h>
 #include <types.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <orca.h>
-#include "install.h"
+#include <gsos.h>
+
+extern int _mapErr(int);
+
+#include "contrib.h"
 
 /* actions */
 #define NOCHANGE   0
@@ -44,12 +49,12 @@
 #define EMAIL   "<gdr@myrias.com>"
 
 char *versionMsg = "Version %s by Devin Reade %s\n";
-int  dFlag;
+int dFlag;
 
 extern int mkdir(const char *);
 extern int needsgno(void);
 extern void begin_stack_check(void);
-extern int  end_stack_check(void);
+extern int end_stack_check(void);
 
 /*
  * usage
@@ -58,21 +63,21 @@ extern int  end_stack_check(void);
  */
 
 void
-usage (void)
+usage(void)
 {
-  fputs("Usage: install [-cdhsv] [-o owner] [-g group] [-m mode] ",stderr);
-  fputs("source [...] dest\n\n",stderr);
-  fputs("Options:\n",stderr);
-  fputs("\t-c             Ignored.  (Backwards Unix compatibility)\n",stderr);
-  fputs("\t-d             Create the specified directories\n",stderr);
-  fputs("\t-g group       Specify group id (not implemented)\n",stderr);
-  fputs("\t-h             Show usage information and exit.\n",stderr);
-  fputs("\t-m mode        Specify (Unix) access mode\n",stderr);
-  fputs("\t-o owner       Specify owner id (not implemented)\n",stderr);
-  fputs("\t-s             Strip binary (not implemented)\n",stderr);
-  fputs("\t-v             Show version number\n\n",stderr);
-  fprintf(stderr,versionMsg,VERSION,EMAIL);
-   exit(1);
+  fputs("Usage: install [-cdhsv] [-o owner] [-g group] [-m mode] ", stderr);
+  fputs("source [...] dest\n\n", stderr);
+  fputs("Options:\n", stderr);
+  fputs("\t-c             Ignored.  (Backwards Unix compatibility)\n", stderr);
+  fputs("\t-d             Create the specified directories\n", stderr);
+  fputs("\t-g group       Specify group id (not implemented)\n", stderr);
+  fputs("\t-h             Show usage information and exit.\n", stderr);
+  fputs("\t-m mode        Specify (Unix) access mode\n", stderr);
+  fputs("\t-o owner       Specify owner id (not implemented)\n", stderr);
+  fputs("\t-s             Strip binary (not implemented)\n", stderr);
+  fputs("\t-v             Show version number\n\n", stderr);
+  fprintf(stderr, versionMsg, VERSION, EMAIL);
+  exit(1);
 }
 
 /*
@@ -93,9 +98,9 @@ usage (void)
  */
 
 int
-getmode (char *str, unsigned long *mode, int *action)
+getmode(char *str, unsigned long *mode, int *action)
 {
-  unsigned long who  = 0L;
+  unsigned long who = 0L;
   unsigned long perm = 0L;
   char *p, *q;
 
@@ -103,47 +108,48 @@ getmode (char *str, unsigned long *mode, int *action)
   if (isdigit(*str)) {
     *action = ASSIGN;
     errno = 0;
-    *mode = strtoul(str,NULL,8);
+    *mode = strtoul(str, NULL, 8);
     return errno;
   }
-  
   /* it's not an absolute octal; treat as a string */
-  if (((p = strchr(str,'+')) == NULL) &&
-      ((p = strchr(str,'-')) == NULL) &&
-      ((p = strchr(str,'=')) == NULL)) {
+  if (((p = strchr(str, '+')) == NULL) &&
+      ((p = strchr(str, '-')) == NULL) &&
+      ((p = strchr(str, '=')) == NULL)) {
     errno = EINVAL;
     return errno;
   }
   switch (*p) {
-  case '+': *action = ADD;    break;
-  case '-': *action = REMOVE; break;
-  case '=': *action = ASSIGN; break;
-  default:    assert(0);
+  case '+': *action = ADD;     break;
+  case '-': *action = REMOVE;  break;
+  case '=': *action = ASSIGN;  break;
+  default:  assert(0);
   }
 
   /*
    * this condition should really be deduced from the umask, if it
    * were supported.
    */
-  if (str == p) who |= S_USER;
+  if (str == p) {
+    who |= S_USER;
+  }
 
-  for (q = str; q<p; q++) {
+  for (q = str; q < p; q++) {
     switch (*q) {
-    case 'u':  who |= S_USER;    break;
-    case 'g':  who |= S_GROUP;   break;
-    case 'o':  who |= S_OTHER;   break;
-    case 'a':  who |= S_ALL;     break;
-    default:   errno = EINVAL;   return errno;
+    case 'u': who |= S_USER;   break;
+    case 'g': who |= S_GROUP;  break;
+    case 'o': who |= S_OTHER;  break;
+    case 'a': who |= S_ALL;    break;
+    default:  errno = EINVAL;  return errno;
     }
   }
 
-  for (q = p+1; *q; q++) {
+  for (q = p + 1; *q; q++) {
     switch (*q) {
-    case 'r':  perm |= S_READ;           break;
-    case 'w':  perm |= S_WRITE;  break;
-    case 'x':  perm |= S_EXECUTE;   break;
-    case 's':  /* ignored */     break;
-    default:   errno = EINVAL;           return errno;
+    case 'r': perm |= S_READ;    break;
+    case 'w': perm |= S_WRITE;   break;
+    case 'x': perm |= S_EXECUTE; break;
+    case 's': /* ignored */      break;
+    default:  errno = EINVAL;    return errno;
     }
   }
 
@@ -151,7 +157,6 @@ getmode (char *str, unsigned long *mode, int *action)
   if (!(who & S_USER)) {
     *action = NOCHANGE;
   }
-
   *mode = who & perm;
   return 0;
 }
@@ -168,85 +173,88 @@ getmode (char *str, unsigned long *mode, int *action)
  */
 
 int
-mkdirs (int argc, char **argv)
+mkdirs(int argc, char **argv)
 {
-   static struct stat statbuf; /* reduce stack space */
-   char *path, *p;
+  static struct stat statbuf;	/* reduce stack space */
+  char *path, *p;
   size_t pathlen;
   int result = 0;
-  int makeit;       /* do we try a mkdir()? */
-  int abortpath;    /* we saw an error; don't both with rest of path */
-  int i,j;
+  int makeit;			/* do we try a mkdir()? */
+  int abortpath;		/* we saw an error; don't both with rest of path */
+  int i, j;
   int coloncount;
 
   /* loop over each of the pathnames in the array */
-  for (i=0; i<argc; i++) {
+  for (i = 0; i < argc; i++) {
 
-      /* expand to a full pathname */
-      if ((path = expandpath(argv[i]))==NULL) {
-         perror(argv[i]);
-        continue;
-     }
-     pathlen = strlen(path);
-      
-     /* is this pathname legal? */
-     /* place a call to JudgeName() [custom] here */
+    /* expand to a full pathname */
+    if ((path = expandpath(argv[i])) == NULL) {
+      perror(argv[i]);
+      continue;
+    }
+    pathlen = strlen(path);
 
-     /* find out how many path components there are */
-     coloncount = 0;
-     p = path;
-     while (*p) {
-         if (*p == ':') {
-            coloncount++;
-        }
-        p++;
-     }
-     p = path + 1;
+    /* is this pathname legal? */
+    /* place a call to JudgeName() [custom] here */
 
-     /* skip the volume name */
-     assert((p = strchr(p,':'))!=NULL);
+    /* find out how many path components there are */
+    coloncount = 0;
+    p = path;
+    while (*p) {
+      if (*p == ':') {
+	coloncount++;
+      }
       p++;
-     --coloncount;
+    }
+    p = path + 1;
 
-     /* create each component in path */
-     abortpath = 0;
-     for (j=0; !abortpath && j<coloncount; j++) {
-         if ((p = strchr(p,':')) == NULL) {
-            p = path + pathlen;
-        }
-        *p = '\0';
+    /* skip the volume name */
+    if ((p = strchr(p, ':')) == NULL) {
+      /* only the volume name was given; skip it */
+      free(path);
+      continue;
+    }
+    p++;
+    --coloncount;
 
-        if (stat(path,&statbuf) != 0) {
-            if (errno == ENOENT) {
-               makeit = 1;
-           } else {
-               perror(path);
-              makeit = 0;
-              abortpath = 1;
-              result = 1;
-           }
-        } else {
-            makeit = 0;
-           if (statbuf.st_mode & S_IFDIR == 0) {
-               fprintf(stderr,"%s exists and is not a directory\n",path);
-              abortpath = 1;
-               result = 1;
-           } /* else it exists and is a directory */
-        }
-   
-         /* go ahead and create the directory */
-        if (makeit && mkdir(path)) {
-            perror(path);
-           abortpath = 1;
-            result = 1;
-        }
+    /* create each component in path */
+    abortpath = 0;
+    for (j = 0; !abortpath && j < coloncount; j++) {
+      if ((p = strchr(p, ':')) == NULL) {
+	p = path + pathlen;
+      }
+      *p = '\0';
 
-         /* reinstate the ':' that we "nulled-out" */
-        if (p != path + pathlen) {
-         *p++ = ':';
-        }
-     }
-     free(path);
+      if (stat(path, &statbuf) != 0) {
+	if (errno == ENOENT) {
+	  makeit = 1;
+	} else {
+	  perror(path);
+	  makeit = 0;
+	  abortpath = 1;
+	  result = 1;
+	}
+      } else {
+	makeit = 0;
+	if (statbuf.st_mode & S_IFDIR == 0) {
+	  fprintf(stderr, "%s exists and is not a directory\n", path);
+	  abortpath = 1;
+	  result = 1;
+	}			/* else it exists and is a directory */
+      }
+
+      /* go ahead and create the directory */
+      if (makeit && mkdir(path)) {
+	perror(path);
+	abortpath = 1;
+	result = 1;
+      }
+      /* reinstate the ':' that we "nulled-out" */
+      if (p != path + pathlen) {
+	*p++ = ':';
+      }
+    }
+    free(path);
   }
   return result;
 }
@@ -269,111 +277,115 @@ mkdirs (int argc, char **argv)
  */
 
 static int
-copyfiles (int argc, char **argv, int action, unsigned long mode)
+copyfiles(int argc, char **argv, int action, unsigned long mode)
 {
-   static FileInfoRecGS inforec;
-  static GSString255   filenameGS;
-  int i,j;
-  int result=0;
+  static FileInfoRecGS inforec;
+  static GSString255 filenameGS;
+  int i, j;
+  int result = 0;
   char *destination;
   Word newaccess;
 
   if (argc < 2) {
-      errno = EINVAL;
-     perror("internal error: not enough arguments to copyfiles()");
-     return errno;
+    errno = EINVAL;
+    perror("internal error: not enough arguments to copyfiles()");
+    return errno;
   }
   if (argc > 2) {
-   
-   /* find out if argv[argc-1] is a directory */
 
-     if (__C2GS(argv[argc-1], &filenameGS) == NULL) {
-         errno = EINVAL;
-        perror("destination path too long");
-        return errno;
-     }
-      inforec.pCount = 5;
-     inforec.pathname = &filenameGS;
-   GetFileInfoGS(&inforec);
-   if ((errnoGS = toolerror()) != 0) {
-        perrorGS("%s",argv[argc-1]);
-         errno = _mapErr(errnoGS);
+    /* find out if argv[argc-1] is a directory */
+
+    if (__C2GS(argv[argc - 1], &filenameGS) == NULL) {
+      errno = EINVAL;
+      perror("destination path too long");
+      return errno;
+    }
+    inforec.pCount = 5;
+    inforec.pathname = &filenameGS;
+    GetFileInfoGS(&inforec);
+    if ((errnoGS = toolerror()) != 0) {
+      perrorGS("%s", argv[argc - 1]);
+      errno = _mapErr(errnoGS);
       return -1;
-   }
-   if ((inforec.storageType != 0x0D) && (inforec.storageType != 0x0F)) {
-        errno = ENOTDIR;
-         perror(argv[argc-1]);
-        return errno;
-     }
-  }   
-
+    }
+    if ((inforec.storageType != 0x0D) && (inforec.storageType != 0x0F)) {
+      errno = ENOTDIR;
+      perror(argv[argc - 1]);
+      return errno;
+    }
+  }
   --argc;
-  for (i=0; i<argc; i++) {
-      if ((destination = copyfile (argv[i],argv[argc])) == NULL) {
-         errnoGS = toolerror();
-         perrorGS("install of %s to %s",argv[i],argv[argc]);
-         result = errno = _mapErr(errnoGS);
+  for (i = 0; i < argc; i++) {
+    if ((destination = copyfile(argv[i], argv[argc])) == NULL) {
+      errnoGS = toolerror();
+      perrorGS("install of %s to %s", argv[i], argv[argc]);
+      result = errno = _mapErr(errnoGS);
+    }
+    if (action == NOCHANGE) {
+      continue;
+    }
+
+    /* get the file info for the source file */
+    if (__C2GS(argv[i], &filenameGS) == NULL) {
+      assert(0);
+    }
+    inforec.pCount = 7;
+    inforec.pathname = &filenameGS;
+    GetFileInfoGS(&inforec);
+    if ((errnoGS = toolerror()) != 0) {
+      perrorGS("GetFileInfo for %s failed", argv[i]);
+      result = errno = _mapErr(errnoGS);
+    }
+    /* modify the permissions as necessary */
+    switch (action) {
+    case ASSIGN:
+      newaccess = 0xFFFF;
+      if (!(mode & S_READ))  newaccess &= ~readEnable;
+      if (!(mode & S_WRITE)) newaccess &= ~writeEnable;
+      inforec.access &= newaccess;
+
+      if ((mode & S_EXECUTE) &&
+	  (inforec.fileType == TYPE_TXT) || (inforec.fileType == TYPE_SRC)) {
+	inforec.fileType = TYPE_SRC;
+	inforec.auxType = TYPE_EXEC;
       }
-     if (action == NOCHANGE) continue;
+      break;
 
-     /* get the file info for the source file */
-     assert(__C2GS(argv[i],&filenameGS));
-     inforec.pCount = 7;
-     inforec.pathname = &filenameGS;
-     GetFileInfoGS(&inforec);
-     if ((errnoGS = toolerror()) != 0) {
-         perrorGS("GetFileInfo for %s failed",argv[i]);
-         result = errno = _mapErr(errnoGS);
-     }
+    case ADD:
+      if (mode & S_READ)  inforec.access |= readEnable;
+      if (mode & S_WRITE) inforec.access |= writeEnable;
 
-     /* modify the permissions as necessary */
-     switch (action) {
-     case ASSIGN:
-         newaccess = 0xFFFF;
-         if (!(mode & S_READ))  newaccess &= ~readEnable;
-        if (!(mode & S_WRITE)) newaccess &= ~writeEnable;
-         inforec.access &= newaccess;
+      if ((mode & S_EXECUTE) &&
+	  (inforec.fileType == TYPE_TXT) || (inforec.fileType == TYPE_SRC)) {
+	inforec.fileType = TYPE_SRC;
+	inforec.auxType = TYPE_EXEC;
+      }
+      break;
 
-        if ((mode & S_EXECUTE) &&
-            (inforec.fileType == TYPE_TXT) || (inforec.fileType == TYPE_SRC)) {
-            inforec.fileType = TYPE_SRC;
-           inforec.auxType  = TYPE_EXEC;
-        }
-         break;
+    case REMOVE:
+      if (mode & S_READ)  inforec.access &= ~readEnable;
+      if (mode & S_WRITE) inforec.access &= ~writeEnable;
 
-     case ADD:
-         if (mode & S_READ)  inforec.access |= readEnable;
-        if (mode & S_WRITE) inforec.access |= writeEnable;
+      if ((mode & S_EXECUTE) &&
+	  (inforec.fileType == TYPE_TXT) || (inforec.fileType == TYPE_SRC)) {
+	inforec.fileType = TYPE_TXT;
+	inforec.auxType = TYPE_NONE;
+      }
+      break;
 
-        if ((mode & S_EXECUTE) &&
-            (inforec.fileType == TYPE_TXT) || (inforec.fileType == TYPE_SRC)) {
-            inforec.fileType = TYPE_SRC;
-           inforec.auxType  = TYPE_EXEC;
-        }
-         break;                         
+    default:
+      assert(0);
+    }
 
-     case REMOVE:
-         if (mode & S_READ)  inforec.access &= ~readEnable;
-        if (mode & S_WRITE) inforec.access &= ~writeEnable;
-
-        if ((mode & S_EXECUTE) &&
-            (inforec.fileType == TYPE_TXT) || (inforec.fileType == TYPE_SRC)) {
-            inforec.fileType = TYPE_TXT;
-           inforec.auxType  = TYPE_NONE;
-        }
-         break;
-
-     default:
-         assert(0);
-     }
-
-     /* set the modified file info for the destination file */
-     assert(__C2GS(destination,&filenameGS));
-      SetFileInfoGS(&inforec);
-     if ((errnoGS = toolerror()) != 0) {
-         perrorGS("SetFileInfo for %s failed",destination);
-         result = errno = _mapErr(errnoGS);
-     }
+    /* set the modified file info for the destination file */
+    if (__C2GS(destination, &filenameGS) == NULL) {
+      assert(0);
+    }
+    SetFileInfoGS(&inforec);
+    if ((errnoGS = toolerror()) != 0) {
+      perrorGS("SetFileInfo for %s failed", destination);
+      result = errno = _mapErr(errnoGS);
+    }
   }
   return result;
 }
@@ -383,61 +395,66 @@ copyfiles (int argc, char **argv, int action, unsigned long mode)
  */
 
 int
-main (int argc, char **argv)
+main(int argc, char **argv)
 {
   unsigned long mode;
   int c, nfiles;
-   int action = NOCHANGE;
+  int action = NOCHANGE;
 
 #ifdef CHECK_STACK
-   begin_stack_check();
+  begin_stack_check();
 #endif
 
-  if (needsgno()==0) {
-      fprintf(stderr,"Requires GNO/ME\n");
-     exit(1);
+  if (needsgno() == 0) {
+    fprintf(stderr, "Requires GNO/ME\n");
+    exit(1);
   }
-
   /* initialize */
-  dFlag   = 0;
-  mode    = 0L;
-  
+  dFlag = 0;
+  mode = 0L;
+
   /* parse command line */
-  while ((c = getopt(argc,argv,"cdg:hm:o:sv")) != EOF) {
+  while ((c = getopt(argc, argv, "cdg:hm:o:sv")) != EOF) {
     switch (c) {
     case 'v':
-      fprintf(stderr,versionMsg,VERSION,EMAIL);
+      fprintf(stderr, versionMsg, VERSION, EMAIL);
       exit(1);
       break;
-      
+
     case 'm':
-      if (getmode(optarg,&mode,&action)) usage();
+      if (getmode(optarg, &mode, &action)) {
+	usage();
+      }
       break;
-      
+
     case 'd':  dFlag++;
-    case 'c': /* not implemented */
-    case 'g':  /* not implemented */
-    case 'o':  /* not implemented */
-    case 's':  /* not implemented */
+    case 'c':			/* not implemented */
+    case 'g':			/* not implemented */
+    case 'o':			/* not implemented */
+    case 's':			/* not implemented */
       break;
-      
+
     case 'h':
-    default:      usage();
+    default:   usage();
     }
   }
 
   nfiles = argc - optind;
 
   if (dFlag) {
-     if (nfiles < 1) usage();
-    c = mkdirs(nfiles,&argv[optind]);
+    if (nfiles < 1) {
+      usage();
+    }
+    c = mkdirs(nfiles, &argv[optind]);
   } else {
-     if (nfiles < 2) usage();
+    if (nfiles < 2) {
+      usage();
+    }
     c = copyfiles(nfiles, &argv[optind], action, mode);
   }
 
 #ifdef CHECK_STACK
-   fprintf(stderr,"stack usage: %d bytes\n",end_stack_check());
+  fprintf(stderr, "stack usage: %d bytes\n", end_stack_check());
 #endif
 
   return c;
