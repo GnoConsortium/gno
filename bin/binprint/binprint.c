@@ -3,50 +3,50 @@
 
     Displays files in hex-dump format (with ascii subdisplay if desired)
 
-    v1.2  Optimized and fixed input from terminal bug (pv)
-    v1.1  Added stacksize directive (jb)
+    v1.3  Incorporated sources into GNO base build.  Reformatted sources,
+	  prototyped functions, added calls to fflush(3). (Devin Reade)
+    v1.2  Optimized and fixed input from terminal bug (Phil Vandry)
+    v1.1  Added stacksize directive (Jawaid Bazyar)
     v1.0  Original version by Derek Taubert
 
+    $Id: binprint.c,v 1.3 1999/01/16 18:35:57 gdr-ftp Exp $
 */
 
-#pragma optimize -1
-#pragma stacksize 1024
+#define VERSION "1.3"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <gno/gno.h>	/* for stack checking routines */
 
-extern FILE *fdopen(int,char *);
-
-unsigned int doline(char *dest, char *source,
-    unsigned int actual, unsigned int cols);
+unsigned int doline(char *dest, char *source, unsigned int actual,
+		    unsigned int cols);
+static void printGood(long off, unsigned char *buf, int real, int form);
 
 unsigned char *buffer2;
 
-main(argc,argv)
-     int argc;
-     char **argv;
+int
+main(int argc, char **argv)
 {
   int duh;
   int a;
-  int c,errflg = 0,columns = 16;
+  int c, errflg = 0, columns = 16;
   size_t pos = 0;
   unsigned char *buffer;
-  extern char *optarg;
-  extern int optind;
-  extern int getopt(int,char **,char*);
 
+  __REPORT_STACK();
   while ((c = getopt(argc,argv, "Vc:")) != EOF)
     switch (c) {
     case 'c' :
       columns = atoi(optarg);
       break;
     case 'V' :
-      fprintf(stdout, "binprint v1.2 for GNO/ME\n");
+      fprintf(stdout, "binprint v%s for GNO/ME\n", VERSION);
       exit(0);
-    default : errflg++;
+    default : 
+      errflg++;
     }
   if (errflg) {
     fprintf(stderr,"usage: binprint [-c<columns>] files...\n");
@@ -69,6 +69,7 @@ main(argc,argv)
       exit(1);
     }
     printf("\n%s\n",*argv);
+    fflush(stdout);	/* we write to STDOUT_FILENO directly */
   action:   
     while ((a = (int)read(duh, buffer,
 			  (size_t)(columns * sizeof(unsigned char)))) != 0) {
@@ -82,15 +83,13 @@ main(argc,argv)
   exit(0);
 }
 
-printGood(off,buf,real,form)
-     long off;
-     unsigned char *buf;
-     int real;
-     int form;
+static void
+printGood(long off, unsigned char *buf, int real, int form)
 {
   if (!real) return;
 #if 0
     printf("%8lX: ",off);
+    fflush(stdout);
 #endif
   
   /* The following is a hack required because of buffering by the stdio

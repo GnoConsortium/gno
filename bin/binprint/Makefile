@@ -1,8 +1,10 @@
-binprint.a: binprint.c
-    compile -p binprint.c keep=binprint
+#
+# $Id: Makefile,v 1.2 1999/01/16 18:35:57 gdr-ftp Exp $
+#
 
-bprasm.a: binprint.asm
-    compile -p binprint.asm
+PROG	= binprint
+SRCS	= binprint.c doline.asm
+OPTIMIZE= -1
 
-binprint: binprint.a bprasm.a
-    link -p binprint bprasm keep=binprint
+.INCLUDE : /src/gno/prog.mk
+

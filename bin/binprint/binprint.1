@@ -1,0 +1,55 @@
+.\"
+.\" $Id: binprint.1,v 1.1 1999/01/16 18:35:57 gdr-ftp Exp $
+.\"
+.TH BINPRINT 1 "15 January 1998" GNO "Commands and Applications"
+.SH NAME
+.BR binprint
+\- print Appleworks GS formatted manual pages
+.SH SYNOPSIS
+.BR binprint
+[
+.BI -c cols
+] [
+.B -V
+]
+.RI [ filename "] ..."
+.SH DESCRIPTION
+.BR binprint
+displays files in hex-dump format.
+.LP
+For each file,
+.BR binprint
+will print out the
+.IR filename ,
+followed by one line of output for each 16 bytes of input data.
+Each line consists of the file offset (in hexadecimal) of the first displayed
+byte in the line, a colon, up to 16 bytes of data in hexadecimal format,
+followed by the same 16 bytes shown in ASCII format:
+.in 0in
+.nf
+
+binprint.c
+       0: 2F 2A 20 0D 20 20 20 20 42 49 4E 50 52 49 4E 54 /* .    BINPRINT
+      10: 2E 43 0D 0D 20 20 20 20 44 69 73 70 6C 61 79 73 .C..    Displays
+      20: 20 66 69 6C 65 73 20 69 6E 20 68 65 78 2D 64 75  files in hex-du
+
+.fi
+.LP
+Where there is no printable ASCII equivalent of a given byte, a period is
+printed in its place.
+.LP
+If no
+.IR filename s
+are given, 
+.BR binprint
+reads from stdin.
+.SH OPTIONS
+.IP "\fB-c\fR \fIcols\fR"
+Specify the number of columns (one byte per column) to display per line.
+The default as shown in the example above is 16.
+Values less than 8 are silently ignored (the default is used).
+.IP \fB-V\fR
+Print version number and exit.
+.SH HISTORY
+.BR binprint
+appeared in GNO v2.0.1.

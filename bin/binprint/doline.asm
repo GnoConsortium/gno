@@ -1,6 +1,12 @@
-		case	on
+*
+* $Id: doline.asm,v 1.2 1999/01/16 18:35:57 gdr-ftp Exp $
+*
+dummy	start		; ends up in .root
+	end
 
-		keep	bprasm
+	setcom 60
+
+		case	on
 
 doline		start
 		pha
