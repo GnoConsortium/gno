@@ -1,6 +1,6 @@
 This file lists the status of the various files in the GNO base distribution.
 
-Version: $Id: status.bin,v 1.10 1998/03/31 15:22:15 gdr-ftp Exp $
+Version: $Id: status.bin,v 1.11 1998/04/10 20:28:36 gdr-ftp Exp $
 
 Person Working on Component ("Owner")
 -------------------------------------
@@ -47,7 +47,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 -------------------------------------------------------------------------------------------------------
 */system			Y	Y	-	dir	-	-	-	-	-
 */system/Desk.Accs		Y	Y	-	dir	-	-	-	-	-
-*/system/Desk.Accs/gnosnooper	Y	Y	dt	
+*/system/Desk.Accs/gnosnooper	Y	Y	dt
 */system/Desk.Accs/gsi		Y									(Superceded by TMTerm?)
 */system/Desk.Accs/tmterm	N	Y	dave
 */system/Desk.Accs/suspda 	Y	Y	dave	Y				Y
@@ -68,14 +68,14 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /bin/chtyp			Y	Y	evan	Y	T	Y	Y	Y	RI
 /bin/cmp			Y	Y	evan	Y	T	Y	Y	Y	RI
 /bin/compress			Y	Y	evan
-/bin/conv			Y				(should be replaced by /usr/bin/udl)
+/bin/conv			Y								(should be replaced by /usr/bin/udl)
 /bin/cp				Y	Y
 /bin/csh
-/bin/date			Y	Y	tl	
+/bin/date			Y	Y	tl	Y
 /bin/dd
 /bin/df					Y	evan	Y	T	Y	Y	Y	RI
 /bin/domainname
-/bin/du				Y	Y	evan	
+/bin/du				Y	Y	evan	Y
 /bin/echo				Y	dt
 /bin/ed
 /bin/egrep			Y	Y	evan
@@ -95,7 +95,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /bin/make			Y	Y		Y				Y
 /bin/makemake			Y	Y		Y				Y
 /bin/mkdir			Y	Y	dt	Y				Y
-/bin/more			Y	Y	matt	
+/bin/more			Y	Y	matt	Y
 /bin/mv					Y
 /bin/passwd			Y	Y		Y				Y
 /bin/pax				N
@@ -110,12 +110,12 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /bin/shutdown			Y
 /bin/sleep			Y	Y	dave	Y	T	Y	Y	Y	RI
 /bin/split			Y	Y	dave	Y	T	Y		Y	RI (test waiting on sed)
-/bin/strings			Y	Y	lb	
+/bin/strings			Y	Y	lb	Y
 /bin/stty			Y	Y		Y				Y
 /bin/su				Y	Y
 /bin/sync				Y
 /bin/tail			Y	Y	dave	Y	T	Y	Y	Y	RI
-/bin/tar			Y	Y	tl	
+/bin/tar			Y	Y	tl	Y
 /bin/tee			Y	Y	gdr	Y	T	Y	Y	Y	RI
 /bin/test				Y	gdr	Y	T	Y	Y	Y	RI
 /bin/time			Y	Y	dave	Y				Y
@@ -241,7 +241,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/bin/install			Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/join
 /usr/bin/last				Y	dt	Y	[G]	Y	Y	Y	RI
-/usr/bin/launch			Y	Y	tl	
+/usr/bin/launch			Y	Y	tl	Y
 /usr/bin/link	(ie: ld)	Y	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/locate					gdr
 /usr/bin/logger				Y
@@ -276,7 +276,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/bin/sed				Y	dave	Y	Y	Y	Fail	Y	RI
 /usr/bin/see			Y
 /usr/bin/sendmail			N		(waiting on NNTP/UUCP)
-/usr/bin/setvers		Y	Y	dave	
+/usr/bin/setvers		Y	Y	dave
 /usr/bin/shar
 /usr/bin/size
 /usr/bin/sort				Y	gdr	Y	(supercedes msort/dsort)
@@ -301,7 +301,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/bin/which
 /usr/bin/who			Y	Y	dt	Y	T	Y	Y	Y	RI
 /usr/bin/whois				Y	dt	Y	[G]	Y		Y	RI
-/usr/bin/write				Y	lb	
+/usr/bin/write				Y	lb	Y
 /usr/bin/xargs
 /usr/bin/yankit			Y	Y
 /usr/bin/zsh				Y	lb	(renamed to nosh)
@@ -354,9 +354,9 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/sbin/cron			Y	Y		Y				Y
 /usr/sbin/descc		(describe)	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/sbin/descu		(describe)	Y	gdr	Y	T	Y	Y	Y	RI
-/usr/sbin/getty			Y	Y		Y				Y
+/usr/sbin/getty			Y	Y	gdr	Y	[G]	Y	Y	Y	RI
 /usr/sbin/inetd				Y	dt	Y	[G]
-/usr/sbin/login			Y	Y	dt	Y	[G]	Y		Y	RI
+/usr/sbin/login			Y	Y	dt	Y	[G]	Y	Y	Y	RI
 /usr/sbin/lpc		(lpr)		Y	dt
 /usr/sbin/lpd		(lpr)	Y	Y	dt
 /usr/sbin/lptest	(lpr)		Y	dt
