@@ -1,17 +1,21 @@
 *******
 * soon
 *
-* $Id: TO.DO,v 1.1 1997/02/28 05:42:26 gdr Exp $
+* $Id: TO.DO,v 1.2 1997/08/08 05:09:51 gdr Exp $
 *
 *******
 
 Use result of _setModeEmulation(3) in appropriate calls.  These include
 	chmod	-
+	fchmod	-
 	creat	- done
 	open	- done
 	stat	- unnecessary
 	fstat	- unnecessary
 	lstat	- unnecessary
+
+specifying 'chmod +x' (effectively) on a file of type TXT or SRC should
+change that file to be type SRC and auxtype EXEC.
 
 check up on the type of nlink_t, used in stat(2)
 
@@ -33,30 +37,44 @@ libc/sys/exec.c:
 	These functions should operate closer to GS/OS when possible.
 	Also need to reduce stack requirements.
 
-******* 
-* remove from / replace in Orcalib 
-*******
+	For the exec* functions, there should be a test for whether
+	or not the file is of type SRC and auxtype EXEC.  If that
+	is the case, and if the first two characters of the file
+	are '#!', then the shell should be exec'd instead.  (currently,
+	shell scripts cannot be exec'd)
 
-strerror	orcalib/string.asm
-perror		orcalib/stdio.a
-sys_errlist	orcalib/stdio.a			problem
-sys_nerr	orcalib/vars.a			problem
+Fix filename mapping code:
+
+--- inclusion start
+ > A#38: The first thing to watch for is known compiler and library bugs.
+ >      [...]
+ >      validity of pathnames
+ >      [...]
+ >              - use dynamic directory delimiters.  The ':' character is
+ >                always considered to be a directory separator.  The '/'
+ >                character is considered to be a directory separator unless
+ >                ':' is present, in which case it is part of the file name.
+ >                This is the closest to GS/OS, but also has some problems
+ >                with POSIX compliance.  For example, the PATH environment
+ >                variable is _supposed_ to a list of pathnames delimited
+ >                by the ':' character.
+
+GS/OS behaves a little differently than this paragraph describes.  The
+first ':' or '/' encountered when scanning the pathname from left to
+right is assumed to be the separator.  If a '/' occurs first, then any
+':'s appearing later are illegal.  The paragraph suggests that the '/'
+will be considered part of the file name if a ':' appears later.  (Your
+point about POSIX compliance is still valid, though.)
+
+--- inclusion end
 
 ******* 
 * defer
 *******
 
-libc/stdio/perror.c:
-	use BSDish implementation for perror(3) to avoid stdio.
-
 libc/sys/syscall.c:
 	for unlink, if file is open, then register a call to unlink
 	(non-recursive) the file via atexit(3)
-
-libc/sys/trap.asm:
-	Insert conchecks in trap functions to check to see if GNO 
-	is active and at the right version level.  If not, they
-	should abort.
 
 libc/gen/environ.c:
 	Review routines.  Force them to use GSString routines, reduce
