@@ -52,8 +52,8 @@ static int argcnt;
 static va_list tparm_args;
 
 static int
-pusharg(arg)
-int arg; {
+pusharg(int arg)
+{
 	if (pos == MAX_PUSHED)
 		return 1;
 	S[pos].type = ARG;
@@ -62,8 +62,8 @@ int arg; {
 }
 
 static int
-pushnum(num)
-int num; {
+pushnum(int num)
+{
 	if (pos == MAX_PUSHED)
 		return 1;
 	S[pos].type = NUM;
@@ -73,9 +73,8 @@ int num; {
 
 /* VARARGS2 */
 static int
-getarg(argnum, type, p)
-int argnum, type;
-anyptr p; {
+getarg(int argnum, int type, anyptr p)
+{
 	while (argcnt < argnum) {
 		arg_list[argcnt].type = INTEGER;
 		arg_list[argcnt++].integer = (int) va_arg(tparm_args, int);
@@ -100,8 +99,8 @@ anyptr p; {
 
 
 static int
-popstring(str)
-char **str; {
+popstring(char **str)
+{
 	if (pos-- == 0)
 		return 1;
 	if (S[pos].type != ARG)
@@ -110,8 +109,8 @@ char **str; {
 }
 
 static int
-popnum(num)
-int *num; {
+popnum(int *num)
+{
 	if (pos-- == 0)
 		return 1;
 	switch (S[pos].type) {
@@ -125,8 +124,8 @@ int *num; {
 }
 
 static int
-cvtchar(sp, c)
-register char *sp, *c; {
+cvtchar(register char *sp, register char *c)
+{
 	switch(*sp) {
 	case '\\':
 		switch(*++sp) {
@@ -237,6 +236,14 @@ static int termcap;
 
 */
 
+#ifdef __ORCAC__
+#pragma debug 0
+#pragma optimize 78
+#define	STATIC static
+#else
+#define STATIC
+#endif
+
 char *tparm(const char *str, ...) {
 	static char OOPS[] = "OOPS";
 	static char buf[MAX_LINE];
@@ -248,8 +255,8 @@ char *tparm(const char *str, ...) {
 	int scan_depth = 0, if_depth;
 	static int i, j;
 	static char *s, c;
-	char fmt_buf[MAX_LINE];
-	char sbuf[MAX_LINE];
+	STATIC char fmt_buf[MAX_LINE];
+	STATIC char sbuf[MAX_LINE];
 
 	va_start(tparm_args, str);
 
@@ -283,7 +290,7 @@ char *tparm(const char *str, ...) {
 					if_depth++;
 				else if (*sp == ';') {
 					if (if_depth == 0)
-						return OOPS;
+						goto ret_OOPS;
 					else
 						if_depth--;
 				}
@@ -298,10 +305,10 @@ char *tparm(const char *str, ...) {
 			case '+':
 				if (!termcap) {
 					if (popnum(&j) || popnum(&i))
-						return OOPS;
+						goto ret_OOPS;
 					i += j;
 					if (pushnum(i))
-						return OOPS;
+						goto ret_OOPS;
 					sp++;
 					break;
 				}
@@ -309,7 +316,7 @@ char *tparm(const char *str, ...) {
 			case 'C':
 				if (*sp == 'C') {
 					if (getarg(termcap - 1, INTEGER, &i))
-						return OOPS;
+						goto ret_OOPS;
 					if (i >= 96) {
 						i /= 96;
 						if (i == '$')
@@ -321,11 +328,11 @@ char *tparm(const char *str, ...) {
 				/* FALLTHROUGH */
 			case 'a':
 				if (!termcap)
-					return OOPS;
+					goto ret_OOPS;
 				if (getarg(termcap - 1, INTEGER, (anyptr) &i))
-					return OOPS;
+					goto ret_OOPS;
 				if (*++sp == '\0')
-					return OOPS;
+					goto ret_OOPS;
 				if ((sp[1] == 'p' || sp[1] == 'c')
 			            && sp[2] != '\0' && fmt == NULL) {
 					/* GNU aritmitic parameter, what they
@@ -334,7 +341,7 @@ char *tparm(const char *str, ...) {
 					if (sp[1] == 'p'
 					    && getarg(termcap - 1 + sp[2] - '@',
 						      INTEGER, (anyptr) &val))
-						return OOPS;
+						goto ret_OOPS;
 					if (sp[1] == 'c') {
 						lc = cvtchar(sp + 2, &c) + 2;
 					/* Mask out 8th bit so \200 can be
@@ -376,10 +383,10 @@ char *tparm(const char *str, ...) {
 			case '-':
 				if (!termcap) {
 					if (popnum(&j) || popnum(&i))
-						return OOPS;
+						goto ret_OOPS;
 					i -= j;
 					if (pushnum(i))
-						return OOPS;
+						goto ret_OOPS;
 					sp++;
 					break;
 				}
@@ -388,9 +395,9 @@ char *tparm(const char *str, ...) {
 			case 's':
 				if (termcap && (fmt == NULL || *sp == '-')) {
 					if (getarg(termcap - 1, INTEGER, &i))
-						return OOPS;
+						goto ret_OOPS;
 					if (*++sp == '\0')
-						return OOPS;
+						goto ret_OOPS;
 					sp += cvtchar(sp, &c);
 					arg_list[termcap - 1].integer = c - i;
 					if (fmt == NULL)
@@ -398,7 +405,7 @@ char *tparm(const char *str, ...) {
 					sp--;
 				}
 				if (!termcap)
-					return OOPS;
+					goto ret_OOPS;
 				;/* FALLTHROUGH */
 			case '.':
 				if (termcap && fmt == NULL)
@@ -422,14 +429,14 @@ char *tparm(const char *str, ...) {
 			case '6': case '7': case '8': case '9':
 				if (fmt == NULL) {
 					if (termcap)
-						return OOPS;
+						goto ret_OOPS;
 					if (*sp == ':')
 						sp++;
 					fmt = fmt_buf;
 					*fmt++ = '%';
 					while(*sp != 's' && *sp != 'x' && *sp != 'X' && *sp != 'd' && *sp != 'o' && *sp != 'c' && *sp != 'u') {
 						if (*sp == '\0')
-							return OOPS;
+							goto ret_OOPS;
 						*fmt++ = *sp++;
 					}
 					*fmt++ = *sp;
@@ -439,16 +446,16 @@ char *tparm(const char *str, ...) {
 				conv_char = fmt[strlen(fmt) - 1];
 				if (conv_char == 's') {
 					if (popstring(&s))
-						return OOPS;
+						goto ret_OOPS;
 					sprintf(sbuf, fmt, s);
 				} else {
 					if (termcap) {
 						if (getarg(termcap++ - 1,
 							   INTEGER, &i))
-							return OOPS;
+							goto ret_OOPS;
 					} else
 						if (popnum(&i))
-							return OOPS;
+							goto ret_OOPS;
 					if (i == 0 && conv_char == 'c')
 						strcpy(sbuf, "\000");
 					else
@@ -464,7 +471,7 @@ char *tparm(const char *str, ...) {
 				break;
 			case 'r':
 				if (!termcap || getarg(1, INTEGER, &i))
-					return OOPS;
+					goto ret_OOPS;
 				arg_list[1].integer = arg_list[0].integer;
 				arg_list[0].integer = i;
 				sp++;
@@ -472,14 +479,14 @@ char *tparm(const char *str, ...) {
 			case 'i':
 				if (getarg(1, INTEGER, &i)
 				    || arg_list[0].type != INTEGER)
-					return OOPS;
+					goto ret_OOPS;
 				arg_list[1].integer++;
 				arg_list[0].integer++;
 				sp++;
 				break;
 			case 'n':
 				if (!termcap || getarg(1, INTEGER, &i))
-					return OOPS;
+					goto ret_OOPS;
 				arg_list[0].integer ^= 0140;
 				arg_list[1].integer ^= 0140;
 				sp++;
@@ -487,15 +494,15 @@ char *tparm(const char *str, ...) {
 			case '>':
 				if (!termcap) {
 					if (popnum(&j) || popnum(&i))
-						return OOPS;
+						goto ret_OOPS;
 					i = (i > j);
 					if (pushnum(i))
-						return OOPS;
+						goto ret_OOPS;
 					sp++;
 					break;
 				}
 				if (getarg(termcap-1, INTEGER, &i))
-					return OOPS;
+					goto ret_OOPS;
 				sp += cvtchar(sp, &c);
 				if (i > c) {
 					sp += cvtchar(sp, &c);
@@ -506,40 +513,40 @@ char *tparm(const char *str, ...) {
 				break;
 			case 'B':
 				if (!termcap || getarg(termcap-1, INTEGER, &i))
-					return OOPS;
+					goto ret_OOPS;
 				arg_list[termcap-1].integer = 16*(i/10)+i%10;
 				sp++;
 				break;
 			case 'D':
 				if (!termcap || getarg(termcap-1, INTEGER, &i))
-					return OOPS;
+					goto ret_OOPS;
 				arg_list[termcap-1].integer = i - 2 * (i % 16);
 				sp++;
 				break;
 			case 'p':
 				if (termcap > 1)
-					return OOPS;
+					goto ret_OOPS;
 				if (*++sp == '\0')
-					return OOPS;
+					goto ret_OOPS;
 				if (*sp == '0')
 					i = 9;
 				else
 					i = *sp - '1';
 				if (i < 0 || i > 9)
-					return OOPS;
+					goto ret_OOPS;
 				if (pusharg(i))
-					return OOPS;
+					goto ret_OOPS;
 				termcap = 0;
 				sp++;
 				break;
 			case 'P':
 				if (termcap || *++sp == '\0')
-					return OOPS;
+					goto ret_OOPS;
 				i = *sp++ - 'a';
 				if (i < 0 || i > 25)
-					return OOPS;
+					goto ret_OOPS;
 				if (pos-- == 0)
-					return OOPS;
+					goto ret_OOPS;
 				switch(vars[i].type = S[pos].type) {
 				case ARG:
 					vars[i].argnum = S[pos].argnum;
@@ -551,164 +558,164 @@ char *tparm(const char *str, ...) {
 				break;
 			case 'g':
 				if (termcap || *++sp == '\0')
-					return OOPS;
+					goto ret_OOPS;
 				i = *sp++ - 'a';
 				if (i < 0 || i > 25)
-					return OOPS;
+					goto ret_OOPS;
 				switch(vars[i].type) {
 				case ARG:
 					if (pusharg(vars[i].argnum))
-						return OOPS;
+						goto ret_OOPS;
 					break;
 				case NUM:
 					if (pushnum(vars[i].value))
-						return OOPS;
+						goto ret_OOPS;
 					break;
 				}
 				break;
 			case '\'':
 				if (termcap > 1)
-					return OOPS;
+					goto ret_OOPS;
 				if (*++sp == '\0')
-					return OOPS;
+					goto ret_OOPS;
 				sp += cvtchar(sp, &c);
 				if (pushnum(c) || *sp++ != '\'')
-					return OOPS;
+					goto ret_OOPS;
 				termcap = 0;
 				break;
 			case '{':
 				if (termcap > 1)
-					return OOPS;
+					goto ret_OOPS;
 				i = 0;
 				sp++;
 				while(isdigit(*sp))
 					i = 10 * i + *sp++ - '0';
 				if (*sp++ != '}' || pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				termcap = 0;
 				break;
 			case 'l':
 				if (termcap || popstring(&s))
-					return OOPS;
+					goto ret_OOPS;
 				i = strlen(s);
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case '*':
 				if (termcap || popnum(&j) || popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i *= j;
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case '/':
 				if (termcap || popnum(&j) || popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i /= j;
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case 'm':
 				if (termcap) {
 					if (getarg(1, INTEGER, &i))
-						return OOPS;
+						goto ret_OOPS;
 					arg_list[0].integer ^= 0177;
 					arg_list[1].integer ^= 0177;
 					sp++;
 					break;
 				}
 				if (popnum(&j) || popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i %= j;
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case '&':
 				if (popnum(&j) || popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i &= j;
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case '|':
 				if (popnum(&j) || popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i |= j;
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case '^':
 				if (popnum(&j) || popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i ^= j;
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case '=':
 				if (popnum(&j) || popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i = (i == j);
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case '<':
 				if (popnum(&j) || popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i = (i < j);
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case 'A':
 				if (popnum(&j) || popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i = (i && j);
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case 'O':
 				if (popnum(&j) || popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i = (i || j);
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case '!':
 				if (popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i = !i;
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case '~':
 				if (popnum(&i))
-					return OOPS;
+					goto ret_OOPS;
 				i = ~i;
 				if (pushnum(i))
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case '?':
 				if (termcap > 1)
-					return OOPS;
+					goto ret_OOPS;
 				termcap = 0;
 				if_depth++;
 				sp++;
 				break;
 			case 't':
 				if (popnum(&i) || if_depth == 0)
-					return OOPS;
+					goto ret_OOPS;
 				if (!i) {
 					scan_for = 'e';
 					scan_depth = if_depth;
@@ -717,24 +724,24 @@ char *tparm(const char *str, ...) {
 				break;
 			case 'e':
 				if (if_depth == 0)
-					return OOPS;
+					goto ret_OOPS;
 				scan_for = ';';
 				scan_depth = if_depth;
 				sp++;
 				break;
 			case ';':
 				if (if_depth-- == 0)
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case 'b':
 				if (--termcap < 1)
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			case 'f':
 				if (!termcap++)
-					return OOPS;
+					goto ret_OOPS;
 				sp++;
 				break;
 			}
@@ -750,4 +757,8 @@ char *tparm(const char *str, ...) {
 	va_end(tparm_args);
 	*dp = '\0';
 	return buf;
+
+ret_OOPS:
+	va_end(tparm_args);
+	return OOPS;
 }

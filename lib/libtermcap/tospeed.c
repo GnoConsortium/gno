@@ -31,7 +31,17 @@ static struct stable {
 	speed_t speed;
 	short code;
 } table[] = {
+#ifndef __GNO__
+	/* It may actually be possible to compile this speed for GNO.
+	 * There are, however, some concerns:
+	 *	1.  Will any hardware support it?
+	 *	2.  Do we overflow any state variables when we go past
+	 *	    B57600?
+	 *	3.  Do we need any changes to the kernel?
+	 * These issues are as yet unresolved.
+	 */
 	{B115200,17},
+#endif
 	{B57600, 16},
 	{B38400, 15},
 	{B19200, 14},
@@ -69,4 +79,3 @@ void __set_ospeed(speed_t speed)
 	}
 	ospeed = 1;     /* 50, min and not hangup */
 }
-

@@ -31,6 +31,8 @@
 .\"
 .\"     @(#)termcap.3	8.2 (Berkeley) 12/11/93
 .\"
+.\" $Id: termcap.3,v 1.2 1997/10/03 04:52:59 gdr Exp $
+.\"
 .TH TERMCAP 3 "September 1997" GNO "Library Routines"
 .SH NAME
 .BR tgetent ,
@@ -73,7 +75,8 @@ void \fB_set_ospeed\fR (long \fIspeed\fR);
 .SH DESCRIPTION
 These functions extract and use capabilities from a terminal capability data
 base, usually
-.BR /usr/share/misc/termcap ,
+.\" /usr/share/misc/termcap ,
+.BR /etc/termcap ,
 the format of which is described in
 .BR termcap (5).
 These are low level routines;
@@ -131,7 +134,8 @@ is different from
 searches the files
 .BR $HOME/.termcap
 and
-.BR /usr/share/misc/termcap ,
+.\" /usr/share/misc/termcap ,
+.BR /etc/termcap ,
 in that order, unless the environment variable
 .BR TERMPATH
 exists,
@@ -145,7 +149,8 @@ This can speed up entry into programs that call
 .BR tgetent ,
 as well as help debug new terminal descriptions
 or make one for your terminal if you can't write the file
-.BR /usr/share/misc/termcap .
+.\" /usr/share/misc/termcap .
+.BR /etc/termcap .
 .LP
 The
 .BR tgetnum 
@@ -272,14 +277,17 @@ returns
 .BR OOPS .
 .SH FILES
 .RS
-.IP \fB/usr/lib/libtermcap.a\fR
+.\" \fB/usr/lib/libtermcap.a\fR
+.IP \fB/usr/lib/libtermcap\fR
 The 
 .BR ltermcap
 library (also known as
 .BR ltermlib ).
-.IP \fB/usr/share/misc/termcap\fR
+.\" \fB/usr/share/misc/termcap\fR
+.IP \fB/etc/termcap\fR
 standard terminal capability data base
-.IP \fB$HOME/.termcap\fR
+.\" \fB$HOME/.termcap\fR
+.IP \fB$HOME/termcap\fR
 user's terminal capability data base
 .RE
 .SH SEE ALSO

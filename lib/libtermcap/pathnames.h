@@ -31,6 +31,12 @@
  * SUCH DAMAGE.
  *
  *	@(#)pathnames.h	8.1 (Berkeley) 6/4/93
+ *
+ * $Id: pathnames.h,v 1.2 1997/10/03 04:52:59 gdr Exp $
  */
 
+#ifdef __GNO__
+#define	_PATH_DEF	"termcap /etc/termcap"
+#else
 #define	_PATH_DEF	".termcap /usr/share/misc/termcap"
+#endif

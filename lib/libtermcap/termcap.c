@@ -31,7 +31,7 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
+#if !defined(lint) && !defined(__GNO__)
 static char sccsid[] = "@(#)termcap.c	8.1 (Berkeley) 6/4/93";
 #endif /* not lint */
 

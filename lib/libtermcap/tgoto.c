@@ -31,10 +31,11 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
+#if !defined(lint) && !defined(__GNO__)
 static char sccsid[] = "@(#)tgoto.c	8.1 (Berkeley) 6/4/93";
 #endif /* not lint */
 
+#include <string.h>
 #include "termcap.h"
 
 #define	CTRL(c)	((c) & 037)

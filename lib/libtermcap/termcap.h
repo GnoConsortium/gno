@@ -24,12 +24,14 @@
  * SUCH DAMAGE.
  */
 
-/* $Id: termcap.h,v 1.1 1997/09/30 06:23:55 gdr Exp $ */
+/* Don't include a cvs ident string; it interferes with the builds */
 
 #ifndef _TERMCAP_H_
 #define _TERMCAP_H_
 
+#ifndef _SYS_CDEFS_H_
 #include <sys/cdefs.h>
+#endif
 
 __BEGIN_DECLS
 

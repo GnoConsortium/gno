@@ -46,11 +46,13 @@ static char sccsid[] = "@(#)tc1.c	8.1 (Berkeley) 6/4/93";
  * dummy program to test termlib.
  * gets entry, counts it, and prints it.
  */
+#include <termcap.h>
 #include <stdio.h>
+#include <stdlib.h>
 char buf[1024];
-char *getenv();
 
-main(argc, argv) char **argv; {
+int
+main(int argc, char **argv) {
 	char *p;
 	int rc;
 

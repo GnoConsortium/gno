@@ -1,27 +1,36 @@
-#	@(#)Makefile	8.1 (Berkeley) 6/4/93
+#
+# This is the top-level makefile for libtermcap, GNO v2.0.6
+#
+# $Id: Makefile,v 1.2 1997/10/03 04:52:59 gdr Exp $
+#
 
-LIB=	termcap
-SHLIB_MAJOR= 2
-SHLIB_MINOR= 1
-CFLAGS+=-DCM_N -DCM_GT -DCM_B -DCM_D -I${.CURDIR}
-SRCS=   termcap.c tgoto.c tputs.c tparm.c tospeed.c
+.INCLUDE: ../../paths.mk
+.INCLUDE: ../const.mk                          
 
-MAN3=	termcap.3
-MLINKS=	termcap.3 tgetent.3 termcap.3 tgetflag.3 termcap.3 tgetnum.3 \
-	termcap.3 tgetstr.3 termcap.3 tgoto.3 termcap.3 tputs.3 \
-	termcap.3 tparm.3
-LINKS=	${LIBDIR}/libtermcap.a ${LIBDIR}/libtermlib.a
-.if !defined(NOPIC)
-LINKS+= ${SHLIBDIR}/libtermcap.so.${SHLIB_MAJOR}.${SHLIB_MINOR} \
-	${SHLIBDIR}/libtermlib.so.${SHLIB_MAJOR}.${SHLIB_MINOR}
-.endif
-.if !defined(NOPROFILE)
-LINKS+=	${LIBDIR}/libtermcap_p.a ${LIBDIR}/libtermlib_p.a
-.endif
+LIB	= libtermcap
+OBJS	= termcap.o tgoto.o tputs.o tparm.o tospeed.o
+LIBDIR	= /usr/lib
+MANDIR	= /usr/man/man3
+
+CFLAGS	+= -O78 -Slibtermcap -G25 -v -w
+CFLAGS	+= -DCM_N -DCM_GT -DCM_B -DCM_D -I.
+
+build:	$(LIB)
+
+$(LIB): $(OBJS) $(LIB).r
+	$(RM) -f $@
+	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(OBJS)
+	$(CATREZ) -d $@ $(LIB).r
+
+install: beforeinstall $(LIB)
+	$(INSTALL) -d $(LIBDIR) $(MANDIR)
+	$(INSTALL) $(LIB) $(LIBDIR)
+	$(INSTALL) termcap.3 $(MANDIR)
+
+release: beforeinstall $(LIB)
+	$(INSTALL) -d $(RELEASE_DIR)$(LIBDIR) $(RELEASE_DIR)$(MANDIR)
+	$(INSTALL) $(LIB) $(RELEASE_DIR)$(LIBDIR)
+	$(INSTALL) termcap.3 $(RELEASE_DIR)$(MANDIR)
 
 beforeinstall:
-	-cd ${.CURDIR}; cmp -s termcap.h ${DESTDIR}/usr/include/termcap.h || \
-	    ${INSTALL} -c -o ${BINOWN} -g ${BINGRP} -m 444 termcap.h \
-	    ${DESTDIR}/usr/include
-
-.include <bsd.lib.mk>
+	cmp ../../include/termcap.h termcap.h
