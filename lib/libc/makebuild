@@ -1,0 +1,37 @@
+#! /bin/gsh
+
+rm -f libc
+makelib.apw -w -r -p -l libc	gen/*.o
+makelib.apw -w -r -p -l libc	gno/*.o
+makelib.apw -w -r -p -l libc	locale/*.o
+makelib.apw -w -r -p -l libc	stdio/*.o
+makelib.apw -w -r -p -l libc	stdlib/*.o
+makelib.apw -w -r -p -l libc	string/*.o
+makelib.apw -w -r -p -l libc	sys/*.o /src/lib/orcalibs/Source/ORCALib/obj/assert.a
+                                       
+exit 0
+
+set CWD=/src/gno/lib/libc
+echo CWD is $CWD
+
+set DMAKE=dmake
+
+set d=gen
+	echo "doing build in" $d; cd $d; $dmake build;	cd $CWD
+set d=gno
+	echo "doing build in" $d; cd $d; $dmake build;	cd $CWD
+set d=locale
+	echo "doing build in" $d; cd $d; $dmake build;	cd $CWD
+set d=stdio
+	echo "doing build in" $d; cd $d; $dmake build;	cd $CWD
+set d=stdlib
+	echo "doing build in" $d; cd $d; $dmake build;	cd $CWD
+# set d=stdtime
+#	echo "doing build in" $d; cd $d; $dmake build;	cd $CWD
+set d=string
+	echo "doing build in" $d; cd $d; $dmake build;	cd $CWD
+set d=sys
+	echo "doing build in" $d; cd $d; $dmake build;	cd $CWD
+
+echo "doing build in $CWD"
+$dmake build

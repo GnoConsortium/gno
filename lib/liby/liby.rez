@@ -1,0 +1,30 @@
+/*
+ * Resources for version and comment
+ * 
+ * $Id: liby.rez,v 1.1 1997/10/03 04:45:43 gdr Exp $
+ */
+
+#define LIB	"liby for GNO"
+#define PORTED	"Ported from 4.4BSD by Devin Reade."
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 2, 0, 6,	/* Version 2.0.6 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	LIB,
+	PORTED
+};
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	LIB "\n"
+        PORTED
+};

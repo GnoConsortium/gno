@@ -1,0 +1,31 @@
+/*
+ * Resources for version and comment
+ *
+ * $Id: libcontrib.rez,v 1.1 1997/10/03 04:49:40 gdr Exp $
+ */
+#define LIB     "lcontrib"
+#define DESC    "A library of non-standard but still useful subroutines.\n"
+#define GNO_VER "GNO v2.0.6"
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 0, 0,	/* Version 1.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	LIB,	/* Program name */
+        DESC GNO_VER
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	LIB " v1.0 (September 1997)\n"
+	DESC GNO_VER
+};
