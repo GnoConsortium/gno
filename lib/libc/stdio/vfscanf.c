@@ -52,7 +52,7 @@ static char sccsid[] = "@(#)vfscanf.c	8.1 (Berkeley) 6/4/93";
 #endif
 #include "local.h"
 
-#undef FLOATING_POINT
+#define FLOATING_POINT
 
 #include "floatio.h"
 #define	BUF		513	/* Maximum length of numeric string. */
@@ -712,6 +712,8 @@ literal:
 			}
 			nread += p - buf;
 			break;
+#else
+#error "we should be using FLOATING_POINT"
 #endif /* FLOATING_POINT */
 		}
 	}
