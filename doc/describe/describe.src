@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Tue Nov  3 16:07:08 1998
+# Last revision: Thu Dec 10 19:08:13 1998
 #
-# $Id: describe.src,v 1.15 1998/11/03 16:12:53 gdr-ftp Exp $
+# $Id: describe.src,v 1.16 1998/12/10 19:12:27 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -726,6 +726,16 @@ This is a replacement for the shell builtin 'echo'.  This version of echo
 can ring the console bell, clear the screen before printing its arguments,
 delete the last newline or output just a CR as a terminator.
 
+Name:    ed
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /bin
+FTP:     ftp.gno.org
+
+Line-oriented text editor.
+
 Name:    egrep
 Version: 1.3
 Shell:   GNO/ORCA
@@ -1425,6 +1435,16 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This program converts between MacBinary, BinHex, and other Mac-related
 file formats.
+
+Name:    md5
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Calculate a message-digest fingerprint (checksum) for a file.
 
 Name:    mem
 Version: 1.2
@@ -2305,6 +2325,17 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 Trace effectively adds in a DebugStr(3) call to the beginning of a program
 without the need to recompile and relink it.  For use with GSBug.
 
+Name:    trek
+Version: 1.0
+Shell:   GNO
+Author:  Ported by Marlin Allred
+Contact: ma@slc.unisys.com
+Where:   /usr/local/games
+FTP:     ftp.gno.org
+
+"Trek is a game of space glory and war." This is a port of the BSD
+text-based Star Trek game.
+
 Name:    udl
 Version: 1.1.5
 Shell:   GNO/ME, ORCA/Shell
@@ -2387,6 +2418,16 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 Extracts "shar" archives, which are used on UNIX systems for shipping
 sources.  Analogous to the PAFF format.
 
+Name:    unvis
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Revert a visual representation of data back to original form.
+
 Name:    unzip
 Version: 0.2b (20 Mar 91)
 Shell:   GNO, ORCA
@@ -2459,6 +2500,16 @@ Where:   /bin
 FTP:     -
 
 This is the Stevie editor, a public domain clone of the UNIX editor 'vi'.
+
+Name:    vis
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Display non-printable characters in a visual format.
 
 Name:    vsc
 Version: 1.6.5b47
