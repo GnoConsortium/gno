@@ -1,0 +1,130 @@
+.TH DSORT 1 "Commands and Applications" "14 June 1994" "Version 1.0"
+.SH NAME
+dsort, msort \- sort text files lexicographically
+.SH SYNOPSIS
+.B msort
+[
+.I -hvV?
+] [
+.I "-o outfile"
+] [
+.I "-n lines"
+]
+.I file1
+[
+.I "file2 ..."
+]
+.LP
+.B dsort
+[
+.I -hvV?
+] [
+.I "-l length"
+] [
+.I "-n lines"
+] [
+.I "-o outfile"
+] [\fI-t path1\fR[,\fIpath2\fR[,\fIpath3\fR[,\fIpath4\fR]]]] \fIinfile\fR
+.SH DESCRIPTION
+.BR dsort " and " msort
+are robust text file sorting utilities.  While they do not support a lot
+of features, they are designed to sort large (and small) files very quickly.
+.LP
+.B msort
+is an in-place memory sort.  Since it uses the heapsort algorithm, it is
+O[n lg n] both on average and for worst-case.  Provided it has enough memory,
+.BR msort
+will sort files with lines of arbitrary length.  Unless overridden by the
+.I -n
+flag,
+.BR msort
+will sort files of up to 1000 lines.  Larger files can be sorted provided
+there is sufficient core memory.  If multiple input files are given, the
+output is the concatenated result of sorting the input files separately.
+Thus, the following would be equivalent:
+.LP
+.nf
+       % msort file1 file2 file3 >outfile
+and
+       % msort file1 >file1out
+       % msort file2 >file2out
+       % cat file1out file2out >outfile
+.fi
+.LP
+.B dsort
+is a disk sort intended for files too large to be sorted in memory.  It
+uses a four-file polyphase merge algorithm.  Since it is an I/O-bound
+program,
+.BR dsort "'s
+speed is very dependant on the speed of the device used for temporary files.
+By default,
+.BR dsort
+will sort files with lines up to 512 characters long.  Lines with more
+characters will be trucated unless the
+.I -l
+flag is used.  Also by default, 1000 lines at a time will be sorted in
+memory during the collection (first) phase of the merge sort algorithm.
+This can be changed using the
+.I -n
+flag.
+.BR dsort
+will accept only one input file.
+.LP
+Both
+.BR dsort " and " msort
+leave the input file(s) intact.
+.SH OPTIONS
+.nf
+\fI-h\fR \fI-?\fR         -- print version and usage info, then exit
+\fI-l\fR \fIlength\fR     -- use a line length of \fIlength\fR
+\fI-n\fR \fIlines\fR      -- sort \fIlines\fR lines in memory, (for \fBdsort\fR); don't
+                 try to sort files over \fIlines\fR long (for \fBmsort\fR).
+\fI-o\fR \fIoutfile\fR    -- send sorted output to \fIoutfile\fR rather than to stdout
+\fI-t\fR \fIpathlist\fR   -- use \fIpathlist\fR as the locations of temp files.  If any
+                 of these are not specified, dsort will attempt to use
+                 the directory specified by the environment variable
+                 $(TMPDIR), then the system default temp path.
+\fI-v\fR            -- verbose operation
+\fI-V\fR            -- print version information
+.fi
+.SH HINTS
+If you have more than one fast drive, the speed of
+.B dsort
+can in general be improved by using four different drives for the
+path list when using
+.I -t .
+The best speed observed, however, has occurred when $(TMPDIR) or /tmp
+reside on a RAM disk or ROM disk.
+It is not suggested that floppies be used for temporary files.
+.SH RESOURCE USAGE
+Both
+.BR dsort " and " msort
+use 1k of stack space.
+.LP
+.BR msort
+is an in-place sort, so in general the amount of core memory used is
+the same as the size of the file to be sorted.  When sorting multiple
+files,
+.BR msort "'s
+memory usage will match the size of the largest input file, not the
+total of all files.  It will use a minimum of approximately 4k of core
+memory.
+.LP
+.BR dsort
+by default uses approximately 512k of core memory.  This can be modified
+by changing the
+.I -l
+and
+.I -n
+parameters.  Core memory usage is approximately the product of these two
+parameters.
+.LP
+When using
+.BR dsort ,
+the amount free space on the temporary path(s) must be at least twice
+the size of the file to be sorted.
+.SH AUTHOR
+Devin Reade \- glyn@cs.ualberta.ca
+.SH SEE ALSO
+.BR sort (1),
+.BR uniq (1).
