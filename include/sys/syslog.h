@@ -31,7 +31,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)syslog.h	8.1 (Berkeley) 6/2/93
- * $Id: syslog.h,v 1.2 1998/06/24 00:12:30 gdr-ftp Exp $
+ * $Id: syslog.h,v 1.3 1998/10/31 18:48:50 gdr-ftp Exp $
  */
 
 #ifndef _SYS_SYSLOG_H_
@@ -108,15 +108,34 @@ CODE prioritynames[] = {
  */
 #define __SYSLOG_PORT_NAME "syslogd_v2"
 
-/* Max number of characters that syslog(3) will log per call. */
-#define	MSG_BUF_LEN	1024
-#define SYSLOG_MAGIC	0xB38F0E32
+/*
+ * _SYSLOG_BUFFERLEN is the max number of characters that syslog(3) and
+ *	vsyslog(3) will log per call.
+ * _SYSLOG_BUFFERLEN_MT is the max number of characters that syslogmt(3) and
+ *	vsyslogmt(3) will log per call.  This one cannot be large because,
+ *	to ensure multithreading, a buffer of this size must be allocated on
+ *	the stack.
+ */
+#define _SYSLOG_BUFFERLEN	1024
+#define _SYSLOG_BUFFERLEN_MT	128
+
+/* This is used for consistency checks */
+#define _SYSLOG_MAGIC	0xB38F0E32
+
+/*
+ * This _MUST_ be updated any time the SyslogDataBuffer_t definition
+ * is changed.
+ */
+#define _SYSLOG_STRUCT_VERSION	4
 
 typedef struct SyslogDataBuffer_t {
-	unsigned long	magic;
-	int		len;
-	pid_t		sender;
-	char		msg_buffer[MSG_BUF_LEN];
+	unsigned long	sdb_magic;	/* magic number for conchecks */
+	int		sdb_version;	/* should be SYSLOG_STRUCT_VERSION */
+	int		sdb_buflen;	/* how long is the sdb_buffer region? */
+	int		sdb_msglen;	/* how many bytes in sdb_buffer do we write? */
+	volatile int	sdb_busywait;	/* non-zero until syslogd got the msg */
+	int		sdb_needtime;	/* non-zero implies insert a date stamp */
+	char *		sdb_buffer;	/* contains the message */
 } SyslogDataBuffer_t;
 
 #endif	/* __SYSLOG_INTERNALS */
@@ -227,6 +246,8 @@ void	syslog __P((long, const char *, ...));
 void	vsyslog __P((long, const char *, _BSD_VA_LIST_));
 #ifndef _POSIX_SOURCE
 void	old_syslog __P((char **dataHandle));		/* GNO-specific */
+void	syslogmt __P((long, const char *, ...));	/* GNO-specific */
+void	vsyslogmt __P((long, const char *, _BSD_VA_LIST_)); /* GNO-specific */
 #endif
 __END_DECLS
 
