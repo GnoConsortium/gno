@@ -1,0 +1,12 @@
+Name:    aroff
+Version: 2.0
+Shell:   GNO, ORCA
+Author:  Jawaid Bazyar.  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /bin
+FTP:     ftp.gno.org
+
+Aroff (Apple ROFF) prints out documents that are in Appleworks GS word
+processor format. It is intended primarily for use with manual pages that
+have been so formatted.  New manual pages should be written for nroff rather
+than for aroff.

@@ -1,0 +1,31 @@
+.\"
+.\" $Id: aroff.1,v 1.1 1999/01/15 08:36:31 gdr-ftp Exp $
+.\"
+.TH AROFF 1 "15 January 1998" GNO "Commands and Applications"
+.SH NAME
+.BR aroff
+\- print Appleworks GS formatted manual pages
+.SH SYNOPSIS
+.BR aroff
+.RI [ -b ]
+.IR filename " ..."
+.SH DESCRIPTION
+.BR aroff
+is used to print out documents that are in Appleworks GS word processor
+format.  It is intended primarily for manual pages that have been so
+formatted.
+.LP
+Early versions of GNO used
+.BR aroff 
+formatted manual pages.  The use of this format has been superceded by
+.BR nroff (1);
+.BR aroff 
+should be avoided in new documentation.
+.SH OPTIONS
+.IP \fB-b\fR
+Do not use boldface text.
+.SH HISTORY
+.BR aroff
+appeared in GNO v1.0.
+.SH SEE ALSO
+.BR nroff (1).

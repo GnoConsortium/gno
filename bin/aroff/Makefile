@@ -1,13 +1,11 @@
 #
-# Makefile for aroff
-#  AWGS WordProc -> Text formatter
+# $Id: Makefile,v 1.2 1999/01/15 08:36:31 gdr-ftp Exp $
 #
 
-awgs.root: awgs.c awgs.h
-  compile awgs.c keep=awgs
+PROG	= aroff
+SRCS	= aroff.c print.c
 
-print.root: print.c awgs.h
-  compile print.c keep=print
+.INCLUDE : /src/gno/prog.mk
 
-awgs: awgs.root
-  link awgs print 2/direct256 keep=aroff
+aroff.o::	aroff.h
+print.o::	aroff.h

@@ -1,0 +1,19 @@
+/*
+ * $Id: aroff.rez,v 1.1 1999/01/15 08:36:31 gdr-ftp Exp $
+ */
+
+#include "Types.Rez"
+#include "builddate.rez"
+
+resource rVersion (0x1, purgeable3, nocrossbank) {
+
+	{ 2, 0, 0,	/* version 1.1.0 */
+	  release,	/* development|alpha|beta|final|release */
+          0		/* non-final release number */
+        },
+        verUS,
+        "aroff",
+        "Apple ROFF.\n"
+        "Print Appleworks GS format manual pages.\n"
+        BUILD_DATE
+};
