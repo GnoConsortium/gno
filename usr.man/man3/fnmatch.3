@@ -31,7 +31,8 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"     @(#)fnmatch.3	8.2 (Berkeley) 4/16/94
+.\"     @(#)fnmatch.3	8.3 (Berkeley) 4/28/95
+.\" $Id: fnmatch.3,v 1.2 1999/11/22 07:42:06 stever Exp $
 .\"
 .TH FNMATCH 3 "22 February 1996" GNO "Library Routines"
 .SH NAME
@@ -101,9 +102,17 @@ a period is ``leading'' if it immediately follows a slash.
 .IP FNM_CASEFOLD
 If this flag is set, then the filename matching will be case insensitive.
 This is an extension for GNO.
+.IP FNM_LEADING_DIR
+Ignore any trailing sequence
+.B /*
+after successfully matching
+.IR pattern .
+This is a GNU extension.
 .RE
 .LP
-In the GNO implementation, any colon
+In the GNO implementation, if the
+.B FNM_PATHNAME
+flag is set, any colon
 .RB ( : )
 characters appearing in
 .IR pattern
@@ -146,7 +155,9 @@ characters, the
 function conforms to POSIX 1003.2.
 The
 .BR FNM_CASEFOLD
-flag is an extension to the standard.
+and
+.B FNM_LEADING_DIR
+flags are extensions to the standard.
 .SH HISTORY
 The
 .BR fnmatch 
