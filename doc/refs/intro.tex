@@ -1,0 +1,321 @@
+%
+% GNO Overview
+%
+% $Id: intro.tex,v 1.1 1997/11/24 05:07:27 gdr Exp $
+% 
+
+\documentstyle{report}
+\begin{document}
+
+\title{GNO/ME Overview Version 2.0}
+\author{Jawaid Bazyar \\ Tim Meekins}
+\date{August 1996}
+\maketitle
+
+\parindent=0pt
+\parskip=1pc
+
+The GNO Multitasking Environment is Copyright 1991-1997 by
+Procyon Enterprises Incorporated.
+
+Documentation, second edition, August 1996.
+
+The ORCA/C run-time libraries are Copyright 1987-1997 Byte Works, Inc.,
+and distributed with permission.
+
+This product includes software developed by the University of California,
+Berkeley and its contributors.
+
+GNO/ME 2.0 also includes several utilities and libraries produced by
+outside authors and in the public domain. This software is included
+solely as a convenience to users of GNO/ME, and is not considered part
+of GNO/ME for copyright purposes.
+
+GNO and GNO/ME are trademarks of Procyon Enterprises Incorporated.
+
+Apple IIGS, APW, Finder, GS/OS, ProDOS, Macintosh, and HFS are registered
+trademarks of Apple Computer, Inc.
+
+AppleWorks GS is a trademark of Claris Corp.
+
+UNIX is a registered trademark of AT\&T Bell Laboratories.
+
+\bf
+Important Notice:
+\rm
+This is a fully 
+copyrighted work and as such is protected under the copyright
+laws of the United States of America. According to these laws,
+consumers of copywritten material may make copies for their
+personal use only. Duplication for any other purpose whatsoever
+would constitute infringement of copyright laws and the offender
+would be liable to civil damages of up to \$50,000 in addition to
+actual damages, plus criminal penalties of up to one year
+imprisonment and/or a \$10,000 fine.
+
+
+Procyon Enterprises Inc.
+MAKES NO
+WARRANTIES, EITHER EXPRESS OR IMPLIED, REGARDING THE ENCLOSED
+COMPUTER SOFTWARE PACKAGE, ITS MERCHANTABILITY OR ITS FITNESS FOR
+ANY PARTICULAR PURPOSE. THE EXCLUSION OF IMPLIED WARRANTIES IS
+NOT PERMITTED IN SOME STATES. THE ABOVE EXCLUSION MAY NOT APPLY
+TO YOU. THIS WARRANTY PROVIDES YOU WITH SPECIFIC LEGAL RIGHTS.
+THERE MAY BE OTHER RIGHTS THAT YOU MAY HAVE WHICH VARY FROM STATE
+TO STATE.
+
+
+This product is sold for use on a
+\em single computer
+\rm at a 
+\em single location .
+\rm For information on obtaining a site license for using multiple copies,
+contact the publisher.
+
+% \begin{verbatim}
+\leftline{Procyon Enterprises, Inc.}
+\leftline{P.O. Box 641}
+\leftline{Englewood, CO 80151-0641 USA}
+\leftline{(303) 781-3273}
+% \end{verbatim}
+\vfill
+
+\chapter{Credits}
+
+\begin{quote}
+Always listen to experts. They'll tell you what can't be done, and why.
+Then do it.
+
+\em Lazarus Long \rm
+\end{quote}
+
+The {\bf GNO} {\bf M}ultitasking {\bf E}nvironment for the Apple IIgs.
+
+Copyright 1991-1997, Procyon Enterprises Inc. and Tim Meekins.
+
+Please direct all inquiries to:
+\tt \begin{verbatim}
+	Procyon, Inc.
+        PO Box 641
+        Englewood, CO 80151-0641 USA
+        (303) 781-3273
+\end{verbatim} \rm 
+
+For on-line technical assistance, contact:
+\begin{tabbing}
+America OnLine \=GNOJawaid, GNOTim2 \\
+GEnie \>Procyon.Inc \\
+Internet \>bazyar@hypermall.com \\
+Delphi \>JAWAIDB \\
+\end{tabbing}
+
+
+
+\chapter{Miscellaneous}
+
+\section{Reporting Bugs}
+
+In any large piece of computer software
+such as the GNO/ME system, bugs are sure to turn up, no matter
+how much testing is performed on the software before it goes out
+the door. If you discover a bug in GNO/ME, we'd like to hear
+about it. There are several things we require, however, to make
+bug reports useful to us.
+
+First of all, we need a complete
+description of your computer system; how much RAM, what cards, in
+what slots, what type of disk storage, etc. This information is
+very important in tracking down hardware-dependent bugs. Also, we
+need to know the version numbers of the software involved; the
+GNO Kernel, the GNO Shell, and any utilities.
+
+Second, we need a step-by-step description
+of how to duplicate the bug. If this requires writing down
+individual keystrokes, then we need it. Only in this way can we
+decide whether the bug is hardware dependent or global.
+
+You can send bug reports to any of the
+electronic mail addresses listed on the 'Credits' page, or by
+mailing a disk containing a description of the problem and the
+necessary software and files to the Procyon address.
+
+\section{User Projects}
+
+If you're working on a project which
+utilizes GNO/ME in some way, we'd like to know about it. Just
+contact us by mail, phone, or whatever is most convenient for
+you, and tell us about your project. If possible, we'll
+coordinate your efforts with those of other programmers. If we
+really like your project and think it may be useful to others, we
+may include it on the next GNO/ME distribution!
+
+\section{Software Piracy}
+
+
+
+
+
+
+
+
+If you have illegally copied computer software from someone
+and are now reading this, take a moment to reflect on what you've done.
+Many computer software applications are huge projects, consuming
+many man-years of effort, huge amounts of money, and a lot of grief on the
+part of the developers.
+For example, the Byte Works' ORCA languages and development 
+environment (as of November 1997) consists of over 220,000 lines
+of source code, \em not \rm including the libraries, tool 
+interface files, test programs, samples, or the 5 800k disks
+of source in the courses for each language.  This work represents
+approximately 17 man-years of development, support, marketing,
+and management.
+
+Is it right that you're now benefiting from
+developers' efforts without any just compensation to the authors?
+
+Many programmers are born, bred, and raised in the spirit of
+computing. They love to write software, and probably always
+will. But if they cannot make enough money to make it
+worthwhile to continue their work, then they won't; because by
+worthwhile, we mean not only food on the table, but resources for
+expansion and continued growth. In short,
+support them and they'll support you.
+ 
+Computer software is very inexpensive when you
+consider what it allows you to do.
+ 
+To all you who properly pay for the software you use:
+Thank you.
+
+\chapter{Preface}
+
+Computers are tools. The flexibility of a
+tool determines how useful it is. Early computers were much like
+the one this software was written for: the Apple IIgs. They could
+only run one program at a time, and their usefulness was limited
+to what the particular program the user was executing offered. In
+the late 1960's, a team of researchers at AT\&T began
+developing the UNIX operating system. The UNIX design was
+partially based on the premise that most programs are I/O bound,
+that is, most of the time the program executes is spent waiting
+for user input or other I/O operations. While one program is
+waiting for I/O, why not allow another program to execute? This
+is what they did, and the result was one of the most successful
+computer operating systems ever created.
+
+The Apple IIgs, like the Macintosh it is
+modelled after, provides very limited multitasking abilities in
+the form of desk accessories (NDAs). The programs in the NDA menu
+are available in whatever application you use as long as it
+follows Apple's guidelines. However, there are many graphics
+based programs that don't support NDAs, and in addition there is
+a wealth of software that has been developed for the Byte Works'
+ORCA environment. This environment is mainly text-based, and thus
+makes access to NDAs impossible. As if that wasn't enough, it's
+very difficult to write an NDA to allow the application to keep
+running concurrently. So the benefits are lost, and we're back at
+ground zero.
+
+Enter the GNO Multitasking Environment.
+What was once just dreamed about is now a reality. GNO/ME
+provides an environment that is almost entirely compatible with
+software developed for the ORCA environment. But GNO/ME also
+provides a wealth of new abilities, lots of new ground for
+developers and users alike.
+
+Before we begin describing, we'd like to
+respond to those who say such a multitasking system isn't
+possible on the Apple IIgs. Obviously it is: you hold it in your
+hands. Some say the Apple IIgs isn't powerful enough to make
+multitasking useful. We point out that the Apple IIgs is much
+more powerful than the first computers UNIX was designed to run
+on; they only had 64K of real memory, and were 16 bit machines.
+Some ask why you'd ever need to run more than one program at
+once. These are the same people who asked why we'd ever need more
+than 64K of memory, or more than 140K of storage on disks (end
+soapbox).
+
+\chapter{Introduction}
+
+The GNO Multitasking Environment provides
+pre-emptive multitasking. Many programs can be executing at the
+same time; each is called a 'process'. Each process is allowed to
+run for a short period of time (1/20th of a second on average).
+When its time runs out, the current process is set aside and
+another one chosen to run next. This cycle continues until there
+are no more processes left (i.e. when you exit GNO/ME). Starting
+up processes to run 'in the background' is a simple matter of
+adding a few characters to the shell commands.
+
+GNO/ME provides a shell that takes full
+advantage of the multitasking ability provided. The most
+important feature of the shell is job control (starting,
+terminating, and suspending processes). But the shell also
+provides power never before seen on the Apple IIgs. The ability
+to choose files by 'wildcard' has been around for a while, but
+the GNO Shell takes this to a new level with 'regular
+expressions', a very powerful yet simple programming language.
+Other benefits of the GNO shell are too numerous to mention. (see
+the \bf GNO Shell User's Manual \rm for details).
+
+In addition to being compatible with the
+ORCA system, GNO/ME is a very powerful programming environment.
+Available to the programmer are all the calls needed to control
+processes, support Inter-Process Communication, and other tools
+needed in a multitasking environment.
+
+GNO/ME also boasts the first completely
+consistent method for accessing serial and console I/O. The IIgs
+TextTools have been incredibly enhanced to provide a truly
+all-encompassing interface for serial, console, and IPC
+applications. Imagine being able to attach terminals to your GS,
+and have a useful shell in each one. Multiuser BBSs, remote
+dial-ups, UUCP or SLIP that doesn't take over your computer- the
+applications are endless!
+
+With all this talk of shell utilities, have
+desktop users (users of programs like AppleWorks GS) been left
+behind? Absolutely not. GNO/ME doesn't allow more than one
+desktop program to run concurrently, but it DOES let you run a
+desktop program with as many text applications as you like. In
+other words, no functionality is lost from the IIgs by using
+GNO/ME.
+
+Finally, the GNO Multitasking Environment
+comes with a large number of free utilities that bring some of
+the power of a UNIX system to the Apple IIgs. Also, a number of
+programming libraries are included that make it easy to port
+programs from UNIX or MS-DOS systems to the Apple IIgs.
+
+\chapter{The GNO/ME Package}
+
+Included in your GNO/ME Version 2.0 package are:
+\begin{itemize}
+\item	This GNO/ME overview.
+\item	The GNO Shell User's Manual.
+\item	The GNO Kernel Reference Manual.
+\item	A selection of utility and library documentation.
+\item	A reading list containing a wide selection of books 
+	for both the user and the programmer
+\item	Three disks containing the GNO Kernel, GNO Shell, and 
+	loads of utilities.
+\end{itemize}
+
+\chapter{Hardware Requirements}
+
+GNO/ME will work on any Apple IIgs with at least 2 MegaBytes of
+memory and a hard drive.
+
+You should have at least 5 MegaBytes of hard disk space free.
+
+We recommend 4 MegaBytes of Memory and an 
+accellerator card, especially if you will be using GNO with many
+background processes. A modem and access to an on-line service
+will greatly speed access to technical assistance and new
+utilities as they are made available.
+
+
+\parindent=20pt
+
+\end{document}
