@@ -1,0 +1,171 @@
+.\" Copyright (c) 1983, 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)rsh.1	8.1 (Berkeley) 6/6/93
+.\"
+.TH RSH 1 "16 April 1998" GNO "Commands and Applications"
+.SH NAME
+.BR rsh
+\- remote shell
+.SH SYNOPSIS
+.BR rsh
+.RB [ -Kdnx ]
+.RB [ -k
+.IR realm ]
+.RB [ -l
+.IR username ]
+.I host
+.RI [ command ]
+.SH DESCRIPTION
+.BR Rsh
+executes
+.BR command
+on
+.BR host  .
+.LP
+.BR Rsh
+copies its standard input to the remote command, the standard
+output of the remote command to its standard output, and the
+standard error of the remote command to its standard error.
+Interrupt, quit and terminate signals are propagated to the remote
+command;
+.BR rsh
+normally terminates when the remote command does.
+The options are as follows:
+.IP \fB-K\fR
+The
+.B -K
+option turns off all Kerberos authentication.
+.IP \fB-d\fR
+The
+.B -d
+option turns on socket debugging (using
+.BR setsockopt (2))
+on the TCP sockets used for communication with the remote host.
+.IP \fB-k\fR
+The
+.B -k
+option causes
+.BR rsh
+to obtain tickets for the remote host in
+.IR realm
+instead of the remote host's realm as determined by
+.BR krb_realmofhost (3).
+.IP \fB-l\fR
+By default, the remote username is the same as the local username.  The
+.B -l
+option allows the remote name to be specified.
+Kerberos authentication is used, and authorization is determined as in
+.BR rlogin (1).
+.IP \fB-n\fR
+The
+.B -n
+option redirects input from the special device /dev/null (see the
+.B BUGS
+section of this manual page).
+.IP \fB-x\fR
+The
+.B -x
+option turns on DES
+encryption for all data exchange.
+This may introduce a significant delay in response time.
+.LP
+If no
+.BR command
+is specified, you will be logged in on the remote host using
+.BR rlogin (1).
+.LP
+Shell metacharacters which are not quoted are interpreted on local machine,
+while quoted metacharacters are interpreted on the remote machine.
+For example, the command
+.LP
+.nf
+	rsh otherhost cat remotefile >> localfile
+.fi
+.LP
+appends the remote file
+.IR remotefile
+to the local file
+.IR localfile ,
+while
+.LP
+.nf
+	rsh otherhost cat remotefile \&">>\&" other_remotefile
+.fi
+.LP
+appends
+.IR remotefile
+to
+.IR other_remotefile .
+.\" .LP
+.\" Many sites specify a large number of host names as commands in the
+.\" directory /usr/hosts.
+.\" If this directory is included in your search path, you can use the
+.\" shorthand ``host command'' for the longer form ``rsh host command''.
+.SH FILES
+/etc/hosts
+.SH SEE ALSO
+.BR rlogin (1),
+.BR kerberos (3),
+.BR krb_sendauth (3),
+.BR krb_realmofhost (3)
+.SH HISTORY
+The
+.BR rsh
+command appeared in 4.2BSD.
+.SH BUGS
+If you are using
+.BR csh (1)
+and put a
+.BR rsh
+in the background without redirecting its input away from the terminal,
+it will block even if no reads are posted by the remote command.
+If no input is desired you should redirect the input of
+.BR rsh
+to /dev/null using the
+.B -n
+option.
+.LP
+You cannot run an interactive command
+(like
+.BR rogue (6)
+or
+.BR vi (1))
+using
+.BR rsh  ;
+use
+.BR rlogin (1)
+instead.
+.LP
+Stop signals stop the local
+.BR rsh
+process only; this is arguably wrong, but currently hard to fix for reasons
+too complicated to explain here.
