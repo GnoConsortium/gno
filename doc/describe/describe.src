@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Fri Jan 15 00:32:16 1999
+# Last revision: Sun Jan 17 17:32:20 1999
 #
-# $Id: describe.src,v 1.21 1999/01/15 07:57:42 gdr-ftp Exp $
+# $Id: describe.src,v 1.22 1999/01/18 03:03:26 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -131,6 +131,19 @@ FTP:     -
 Emulates UNIX argv0 (manipulate argv array passed to programs). Runs
 shell scripts with #!/... syntax.  Runs s16 programs with arguments.
 
+Name:    aroff
+Version: 2.0
+Shell:   GNO, ORCA
+Author:  Jawaid Bazyar.  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /bin
+FTP:     ftp.gno.org
+
+Aroff (Apple ROFF) prints out documents that are in Appleworks GS word
+processor format. It is intended primarily for use with manual pages that
+have been so formatted.  New manual pages should be written for nroff rather
+than for aroff.
+
 Name:    asml
 Version: 1.1 (13 Feb 98)
 Shell:   GNO
@@ -247,14 +260,15 @@ A binary editor that can handle "infinitely" long lines and null bytes
 in the file.  Intended for editing binary files.
 
 Name:    binprint
-Version: 1.2
-Shell:   GNO/ME
-Author:  Phillip Vandry
-Contact: vandry@CAM.ORG
-Where:   /usr/bin
-FTP:     -
+Version: 1.3
+Shell:   GNO, ORCA
+Author:  Derek Taubert.
+Contact: taubert@geeks.org
+Where:   /bin
+FTP:     ftp.gno.org
 
-Prints a hex dump of files or standard in
+binprint displays files in hex-dump format.  It also provides an ASCII
+subdisplay if it is so desired.
 
 Name:    bison
 Version: 1.19
@@ -1363,7 +1377,7 @@ Starts and kills processes, maintains the system run level, and runs
 syslogd (log daemon)
 
 Name:    install
-Version: 1.2 (23 Apr 98)
+Version: 1.3 (16 Jan 99)
 Shell:   GNO
 Author:  Devin Reade
 Contact: gdr@trenco.gno.org
