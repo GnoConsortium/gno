@@ -1,6 +1,6 @@
 This file lists the status of the various files in the GNO base distribution.
 
-Version: $Id: status.bin,v 1.5 1997/09/29 05:36:00 gdr Exp $
+Version: $Id: status.bin,v 1.6 1997/11/01 19:36:19 gdr Exp $
 
 Person Working on Component ("Owner")
 -------------------------------------
@@ -55,15 +55,15 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/cat			Y	Y	dave	Y	T	Y	Y	Y	R
 /bin/center			Y
 /bin/chmod				Y	lb
-/bin/chtyp			Y	Y	evan
-/bin/cmp			Y	Y	evan
+/bin/chtyp			Y	Y	evan	Y	T	Y	Y	Y	R
+/bin/cmp			Y	Y	evan	Y	T	Y	Y	Y	R
 /bin/compress			Y	Y	evan
 /bin/conv			Y			(should be replaced by /usr/bin/udl)
 /bin/cp				Y	Y	dt
 /bin/csh
 /bin/date			Y	Y	tl
 /bin/dd
-/bin/df					Y	evan
+/bin/df					Y	evan	Y	T	Y	Y	Y	R
 /bin/domainname
 /bin/du				Y	Y	evan
 /bin/echo				Y	dt
@@ -91,14 +91,14 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/pax				N
 /bin/ps					Y		(replace functionality of /usr/bin/eps)
 /bin/purge			Y	Y
-/bin/pwd				Y	dave
+/bin/pwd				Y	dave	Y	T	Y	Y	Y	R
 /bin/rcp				Y	dt
 /bin/rm					Y	dt
 /bin/rmail
-/bin/rmdir				Y	gdr	Y
+/bin/rmdir				Y	gdr	Y	T	Y	Y	Y	R
 /bin/sh					Y	gdr
 /bin/shutdown			Y
-/bin/sleep			Y	Y	dave
+/bin/sleep			Y	Y	dave	Y	T	Y	Y	Y	R
 /bin/split			Y	Y
 /bin/strings			Y	Y	lb
 /bin/stty			Y	Y
@@ -106,8 +106,8 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/sync				Y
 /bin/tail			Y	Y	dave	Y	T	Y	Y	Y	R
 /bin/tar			Y	Y	tl
-/bin/tee			Y	Y	gdr	Y
-/bin/test				Y	gdr	Y
+/bin/tee			Y	Y	gdr	Y	T	Y	Y	Y	R
+/bin/test				Y	gdr	Y	T	Y	Y	Y	R
 /bin/time			Y	Y
 /bin/touch			Y	Y	dt
 /bin/tr				Y	Y	dave	Y	T	Y	Y	Y	R
@@ -118,7 +118,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/upper			Y
 /bin/vi				Y	Y
 /bin/wc				Y	Y	dave	Y	T	Y	Y	Y	R
-/bin/who			Y	Y	dt
+/bin/yes			Y		dave	Y	T	Y	Y	Y	R
 /dev				Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /dev/modem			Y	Y	dt	prop					Y	/gno.disk2/dev.shk
 /dev/null				Y	dt	prop					Y	/gno.disk2/dev.shk
@@ -193,7 +193,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/cal			Y
 /usr/bin/calendar
 /usr/bin/catrez				Y	dave	Y	T	Y	Y	Y	R
-/usr/bin/cclean				Y	gdr
+/usr/bin/cclean				Y	
 /usr/bin/cjpeg				N		(add on)
 /usr/bin/cksum				Y
 /usr/bin/cmpl			Y	Y
@@ -202,7 +202,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/column
 /usr/bin/compile		Y	Y
 /usr/bin/copycat		Y	Y	tl
-/usr/bin/cpp					gdr
+/usr/bin/cpp					gdr	Y				Y
 /usr/bin/ctags				Y	dt
 /usr/bin/cut				Y	dave	Y	T	Y	Y	Y	R
 /usr/bin/describe	(describe)	Y	gdr	Y	T	Y	Y	Y	R
@@ -217,7 +217,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/find					gdr
 /usr/bin/finger
 /usr/bin/flex			Y	N
-/usr/bin/fmt				Y	gdr	Y
+/usr/bin/fmt				Y	gdr	Y	T	Y	Y	Y	R
 /usr/bin/fold			Y
 /usr/bin/ftp				Y	dt
 /usr/bin/getopt
@@ -225,9 +225,9 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/gunzip				Y
 /usr/bin/gzip				Y
 /usr/bin/hear			Y
-/usr/bin/help			Y	Y	gdr	Y		-
+/usr/bin/help			Y	Y	gdr	Y	T	-	Y	Y	R
 /usr/bin/hexdump
-/usr/bin/install			Y	gdr	Y
+/usr/bin/install			Y	gdr	Y	T	Y	Y	Y	R
 /usr/bin/join
 /usr/bin/last				Y	dt
 /usr/bin/launch			Y	Y	tl
@@ -245,7 +245,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/news			Y	N		(waiting on NNTP/UUCP)
 /usr/bin/nm
 /usr/bin/nosh	(formerly zsh)		Y	lb
-/usr/bin/nroff			Y	Y	gdr	Y
+/usr/bin/nroff			Y	Y	gdr	Y	T	Y	Y	Y	R
 /usr/bin/patch				Y	gdr
 /usr/bin/pman			Y
 /usr/bin/pr
@@ -285,11 +285,11 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/whatis		(man)		Y	gdr	Y
 /usr/bin/whereis			Y	gdr	Y	T	Y	Y	Y	R
 /usr/bin/which
+/usr/bin/who			Y	Y	dt	Y				Y
 /usr/bin/whois				Y	dt
 /usr/bin/write				Y	lb
 /usr/bin/xargs
 /usr/bin/yankit			Y	Y
-/usr/bin/yes			Y		dave
 /usr/bin/zsh				Y	lb	(renamed to nosh)
 /usr/games			Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /usr/games/wump			Y
@@ -305,7 +305,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/lib/tmac/tmac.s	(nroff)	Y
 /usr/orca/bin/occ			Y	sonk
 /usr/orca/bin/rc			Y	sonk
-/usr/orca/bin/udl			Y	gdr	Y
+/usr/orca/bin/udl			Y	sonk	Y
 /usr/man			Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /usr/man/cat1			Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /usr/man/cat2			Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
