@@ -1,0 +1,9 @@
+Name:    wall
+Version: 1.0 (January 1998)
+Shell:   GNO
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+ Write to all users.
