@@ -5,7 +5,7 @@
  * January 19-22, 1992 by Jawaid Bazyar
  * Copyright 1992-1997, Procyon Inc.
  *
- * $Id: crypt.c,v 1.2 1997/09/21 06:04:59 gdr Exp $
+ * $Id: crypt.c,v 1.3 1998/02/08 03:20:23 gdr-ftp Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
@@ -24,6 +24,7 @@
 #define rotate(key)		__crypt_rotate(key)
 #define s_boxes			__crypt_s_boxes
 #define rots			__crypt_rots
+#define EP			__crypt_EP
 #endif
 
 struct block {

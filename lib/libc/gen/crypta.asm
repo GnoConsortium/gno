@@ -3,7 +3,7 @@
 * 19-22 January 1992 by Jawaid Bazyar
 * Copyright 1992, Procyon Inc.
 *
-* $Id: crypta.asm,v 1.2 1998/02/05 16:07:06 gdr-ftp Exp $
+* $Id: crypta.asm,v 1.3 1998/02/08 03:20:25 gdr-ftp Exp $
 *
 * Because of the four storage blocks listed below (copyOfData, e, ikey, and
 * yb), this doesn't seem to be compatible with the large memory model.
@@ -99,7 +99,7 @@ lp1	lda	[a],y
 	ph2	#48
 	ph4	__crypt_EP
 	ph4	#e
-	jsl	transpose
+	jsl	__crypt_transpose
 
 	lda	i
 	asl	a
@@ -109,7 +109,7 @@ lp1	lda	[a],y
 lp2	lda	k
 	beq	donelp2
 	ph4	key
-	jsl	rotate
+	jsl	__crypt_rotate
 	dec	k
 	bra	lp2
 
@@ -123,7 +123,7 @@ lp3	lda	[key],y
 	ph2	#48
 	ph4	#KeyTr2
 	ph4	#ikey
-	jsl	transpose
+	jsl	__crypt_transpose
 
 	short	m
 	ldy	#48
@@ -263,7 +263,7 @@ donekloop	anop
 	ph2	#32
 	ph4	#ptr
 	ph4	x
-	jsl	transpose
+	jsl	__crypt_transpose
 	return
 
 e	ds	64
