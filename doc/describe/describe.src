@@ -2,12 +2,12 @@
 # List of shell applications for GNO/ME and ORCA/Shell
 # Last revision: Sat Jan 17 21:29:17 1998
 #
-# $Id: describe.src,v 1.2 1998/01/17 21:30:28 gdr Exp $
+# $Id: describe.src,v 1.3 1998/01/23 07:00:06 gdr-ftp Exp $
 #=============================================================================
 #
-#     About this file
-#     ~~~~~~~~~~~~~~~
-#     This file is in human readable form, but is intended to be compiled with
+#  About this file
+#  ~~~~~~~~~~~~~~~
+#  This file is in human readable form, but is intended to be compiled with
 #  the program 'descc' into the 'describe' database.  Just type 'descc
 #  <filename>', where <filename> is the name you saved this file to, and
 #  descc will compile the file into the file /usr/lib/describe.db, or
@@ -16,26 +16,65 @@
 #  or /usr/lib exist first! Information may be later culled from the
 #  file with the command 'describe <utility>'.
 #
-#     While this file may be updated manually, new entries and updates may
-#  also be merged through the use of 'descu'.
+#  While this file may be updated manually, it is recommended that new
+#  entries and updates be merged through the use of 'descu'.  This will
+#  ensure that the file remains sorted.  Failure to do so may result in
+#  describe(1) not finding some entries.
 #
-#     This file is sorted lexicographically, ignoring case, based on the
-#  Name field.
+#  This file is sorted lexicographically, ignoring case, based on the
+#  "Name" field.
 #
-#      Online home of describe
-#      ~~~~~~~~~~~~~~~~~~~~~~~
-#  http://www.arrowweb.com/sbehrens/describe.htm
+#  Online home of describe
+#  ~~~~~~~~~~~~~~~~~~~~~~~
+#  The newest version of this file may be found at:
 #
-#    Updates and corrections may be sent by email to sbehrens@bigfoot.com.
+#	ftp://ftp.gno.org/pub/apple2/gs.specific/gno/doc/desc.src.shk
 #
-#      To obtain the version number of a file: 
-#      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  The describe web page may be found at:
+#
+#	http://www.gno.org/gno/describe
+#
+#  This page has:
+#	- links to the current version of describe, descu, and descc
+#	- links to the current version of this database, in both source
+#	  form (this file), and the precompiled database
+#	- indexed online describe entries
+#	- instructions on how to submit new and updated entries.
+#
+#  Updates and corrections may also be sent by email to:
+#
+#	describe-submit@trenco.gno.org
+#
+#  This address points to a filter.  If you use it, you *must* ensure the
+#  following:
+#
+#	- the subject line contains the word "describe";
+#	- you include only describe entries, in the format used in this
+#	  file;
+#	- if you have a signature attached to your email, it must be 
+#	  preceeded by the standard "--" on a line by itself;
+#	- only ASCII mail is accepted.  Don't try sending encoded mail,
+#         by MIME or other means;
+#	- all field names should be at the immediate start of a line;
+#	- the "Name" field must be a single word;
+#	- the "Where" field must be specified;
+#	- the description must be non-empty;
+#
+#  If your submission was successful, you will receive an email response
+#  (assuming your email address is real).
+#
+#  To obtain the version number of a program: 
+#  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #  A) use the shell program `getvers',
 #  B) any usage or -v/V flag supplied by the utility author
 #
 #
-#  NB: "Author" may mean who is maintaing the current port, and may not
-#  actually mean the original author of the program.
+#  NOTES:
+#	1.  The "Author" field may indicate who is maintaing the current
+#           port, and may not actually mean the original author of the
+#           program.
+#	2.  There may be more than one port of a given program.  Often the
+#	    older or obsolete ports are not listed.
 #==============================================================================
 Name:    alarm
 Version: 1.0 (Feb 94)
@@ -43,7 +82,7 @@ Shell:   GNO
 Author:  Christopher Neufeld
 Contact: neufeld@physics.utoronto.ca
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a reminder program, typically executed in the background.  The
 program sleeps until the specified alarm time is reached, and then beeps
@@ -55,7 +94,7 @@ Shell:   GNO
 Author:  Sean McAfee
 Contact: mcafee@umich.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 AmaTerm is a GNO-specific terminal emulation program with job control (it
 may be suspended), a simple macro language, and a scrollback buffer.
@@ -88,7 +127,7 @@ Shell:   GNO
 Author:  Jason Perez
 Contact: jasonp@norton.sps.mot.com
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 aspdisp prints out AppleWorks v3.0 Spreadsheet files.  The output is
 formatted as near as possible to what it would look like in Appleworks.
@@ -121,7 +160,7 @@ Shell:   GNO
 Author:  Jason Perez
 Contact: jasonp@amcu-tx.sps.mot.com
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This utility is used to access the gsh(1) command history buffer.  It has
 similar functionality to the "!" built-in command for csh(1) or bash(1).
@@ -145,7 +184,7 @@ Shell:   GNO, ORCA
 Author:  Alvin Tan, Brian Ballweber
 Contact: corey@drift.winternet.com
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is an alpha-level MOD/MED editor and player.  Not for use on ROM-3 
 machines.
@@ -217,7 +256,7 @@ Shell:   GNO
 Author:  Christopher Neufeld
 Contact: neufeld@physics.utoronto.ca
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This program consults a calandar database, and prints out entries
 corresponding to today's or tomorrow's entries.  On weekends, "tomorrow"
@@ -252,7 +291,7 @@ Shell:   GNO
 Author:  Dave Tribby
 Contact: tribby@cup.hp.com
 Where:   /usr/bin
-FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 Concatenate resource forks.
 
@@ -284,7 +323,7 @@ Shell:   GNO
 Author:  Michael Searl
 Contact: cmoore@acs.ucalgary.ca
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This utility plays audio compact disks.
 
@@ -294,7 +333,7 @@ Shell:   GNO/ME
 Author:  Phillip Vandry
 Contact: vandry@CAM.ORG
 Where:   /usr/bin
-FTP:     trenco.myrias.com
+FTP:     ftp.gno.org
 
 Sends strings and waits for strings. Used to send modem commands and wait
 for replies, etc..
@@ -318,7 +357,7 @@ Shell:   GNO, ORCA
 Author:  Mark Marr-Lyon
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Compress an image file to a JPEG file.  Part of the jpeg tools archive.
 
@@ -328,7 +367,7 @@ Shell:   GNO, ORCA, Merlin16+
 Author:  Albert Chin-A-Young
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is an OMF disassembler designed for OMF 1.0 and 2.0 files.  Output is
 similar to the ORCA and APW utility 'dumpobj', although OMF and 65816
@@ -340,7 +379,7 @@ Shell:   GNO/ORCA
 Author:  Ported by Donald Gloistein
 Contact: -
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 File compression utility.
 
@@ -350,7 +389,7 @@ Shell:   GNO, ORCA
 Author:  Jawaid Bazyar, Derek Taubert
 Contact: bazyar@hypermall.com
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Text file converter.  It either converts NL characters to CR characters
 (and back), converts tabs to spaces, or converts characters in a file
@@ -373,7 +412,7 @@ Shell:   GNO, ORCA
 Author:  -
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This utility selectively copies data forks, resource forks, or both.
 The command line syntax is a bit odd.  See also catrez.
@@ -384,7 +423,7 @@ Shell:   GNO
 Author:  Greg Thompson
 Contact: -
 Where:   /bin/cp
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 cp does file copy operations.  Suitably invoked, it also moves files (mv)
 and deletes files (rm).
@@ -395,7 +434,7 @@ Shell:   GNO, ORCA
 Author:  Doug McIntyre
 Contact: dougm@lakesys.lakesys.com
 Where:   /usr/lib
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a stand-alone C preprocessor based on code from the old
 Decus C compiler.  Two versions may be found in the cppDecus.shk archive,
@@ -447,7 +486,7 @@ Shell:   ORCA/Shell, GNO/ME
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
 Where:   /usr/sbin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, ftp.gno.org
 
 Compile a source file into a 'describe' database file.
 
@@ -457,7 +496,7 @@ Shell:   GNO/ORCA
 Author:  David Empson
 Contact: dempson@actrix.gen.nz
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Shell-based binscii decoder.
 
@@ -467,7 +506,7 @@ Shell:   ORCA/Shell, GNO/ME
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
 Where:   /usr/bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, ftp.gno.org
 
 Print a multi-line description obtained from the compiled 'describe'
 database; giving utility name, version, intended shell, author, author's
@@ -480,7 +519,7 @@ Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
 Contact: gdr@myrias.ab.ca
 Where:   /usr/sbin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, ftp.gno.org
 
 Update a 'describe' source file.
 
@@ -522,7 +561,7 @@ Shell:   GNO, ORCA
 Author:  Mark Marr-Lyon
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Decompress a JPEG file to an image file.  Part of the jpeg tools archive.
 
@@ -542,7 +581,7 @@ Shell:   GNO, ORCA, APW
 Author:  Delonge & Tucek Software
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 dos2gs will read MS-DOS disks on an Apple IIgs equipped with the
 Applied Engineering PC Transporter card and a 360 KByte TransDrive.
@@ -565,7 +604,7 @@ Shell:   GNO, ORCA
 Author:  David Ong Tat-Wee (DOTW)
 Contact: ongtatwe@iscs.nus.sg
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 DOTW's (command line) Sprite Compiler.  DSC takes a $C0 (Apple Preferred
 Format picture) file as input, and generates an ORCA/M compatible 65816
@@ -600,7 +639,7 @@ Shell:   GNO
 Author:  Phillip Vandry
 Contact: vandry@cam.org
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is part of the "seq" remote login package.  (See "seq".)
 
@@ -610,7 +649,7 @@ Shell:   GNO, ORCA
 Author:  Brian Tao
 Contact: -
 Where:   /bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a replacement for the shell builtin 'echo'.  This version of echo
 can ring the console bell, clear the screen before printing its arguments,
@@ -622,7 +661,7 @@ Shell:   GNO/ORCA
 Author:  Jawaid Bazyar, Mike Horwath
 Contact: -
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Finds regular expressions, with an extended regular expression syntax.
 
@@ -632,7 +671,7 @@ Shell:   GNO
 Author:  James Brookes
 Contact: -
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is an extended version of the kill(1) shell builtin, which is used
 for sending signals to processes.
@@ -643,7 +682,7 @@ Shell:   GNO
 Author:  -
 Contact: -
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is MicroEmacs (uemacs), an EMACS text editor clone.
 
@@ -663,7 +702,7 @@ Shell:   ORCA
 Author:  Dave Tribby
 Contact: tribby@cup.hp.com
 Where:   17/
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Evaluate is an ORCA/Shell (only) utility for evaluating expressions, and
 setting a shell variable to the value of the result.
@@ -685,7 +724,7 @@ Shell:   GNO/ORCA
 Author:  Christopher Neufeld
 Contact: -
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Finds regular expressions.
 
@@ -705,7 +744,7 @@ Shell:   GNO, ORCA
 Author:  James Brookes
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a simple text filter used for filling paragraphs.
 
@@ -727,7 +766,7 @@ Shell:   GNO
 Author:  Jeff Markham
 Contact: markhj01@winternet.com
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 The card game "Go Fish!", ported from NetBSD 1.3.
 
@@ -762,7 +801,7 @@ Shell:   GNO
 Author:  Sean McAfee
 Contact: mcafee@umich.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This utility provides a limited loop construct to gsh(1).  Used for scripting.
 
@@ -783,7 +822,7 @@ Shell:   GNO, ORCA
 Author:  Greg Thompson
 Contact: -
 Where:   /usr/local/games
-FTP:     trenco.myrias.com
+FTP:     ftp.gno.org
 
 This is a simple shell utility which displays a random fortune.  There are
 multiple ports of fortune(6) available for GNO.  (You should install only one.)
@@ -796,7 +835,7 @@ Shell:   GNO
 Author:  Douglas E. Mitton
 Contact: dmitton@mulberry.com
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu, GEnie A2Pro #4402
+FTP:     ftp.gno.org, ground.isca.uiowa.edu, GEnie A2Pro #4402
 
 This is a simple shell utility which displays a random fortune.  There are
 multiple ports of fortune(6) available for GNO.  (You should install only one.)
@@ -809,7 +848,7 @@ Shell:   GNO, ORCA
 Author:  Tilghman Lesher
 Contact: lesherjt@vuse.vanderbilt.edu
 Where:   /usr/local/games
-FTP:     trenco.myrias.com
+FTP:     ftp.gno.org
 
 This is a simple shell utility which displays a random fortune.  There are
 multiple ports of fortune(6) available for GNO.  (You should install only one.)
@@ -823,7 +862,7 @@ Shell:   GNO/ORCA
 Author:  Michael Frankowski
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Another file compression utility.
 
@@ -843,7 +882,7 @@ Shell:   GNO/ORCA
 Author:  Kent Squires
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a front end to yankit(1), which adds more options when extracting
 NuFX files.
@@ -854,7 +893,7 @@ Shell:   GNO
 Author:  Phillip Vandry
 Contact: -
 Where:   /usr/sbin/getty
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Getty sets the terminal mode, speed, and line discipline.  It is usually 
 started by initd(8), and is used in the login process.
@@ -875,7 +914,7 @@ Shell:   GNO, ORCA
 Author:  Frank M. Lin
 Contact: fmlin@ccnet.com
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 gmail is an elm-like mail reader.  It uses the GORP (Gregg's Offline Reader
 Protocol) protocol.
@@ -886,7 +925,7 @@ Shell:   GNO/ORCA
 Author:  Jawaid Bazyar, Mike Horwath
 Contact: -
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Finds regular expressions.
 
@@ -896,7 +935,7 @@ Shell:   GNO, ORCA
 Author:  Chris Shepherd
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This program converts Amiga sounds to Apple IIGS sounds by adding $80 to
 each byte.
@@ -918,7 +957,7 @@ Shell:   GNO, ORCA
 Author:  Christopher Neufeld
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This program provides a way to print text files on an HP DeskJet 500
 printer.  The printed text appears in half-height, 20 pitch characters
@@ -930,7 +969,7 @@ Shell:   GNO/ME
 Author:  Ported by Kelvin W Sherlock
 Contact: ksherloc@mole.uvm.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com
+FTP:     ftp.gno.org
 
 Format C programs in a variety of styles.
 
@@ -940,7 +979,7 @@ Shell:   GNO, ORCA
 Author:  Greg Thompson
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 info gets the OS file information for the files given on the command
 line, and searches the file type descriptors found in the */Icons
@@ -953,7 +992,7 @@ Shell:   GNO
 Author:  Evan Day
 Contact: day@engr.orst.edu
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Inform compiles C-like HLL source files into Z-code format that can be
 run with any infocom interpreter (such as the LTOI interpreters, the
@@ -965,7 +1004,7 @@ Shell:   GNO
 Author:  Leslie M. Barstow III 
 Contact: wdphoenix@delphi.com 
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a port of the Zip infocom interpreter, v2.0.  This should not
 be confused with the PC file compression program.
@@ -1010,7 +1049,7 @@ Shell:   GNO
 Author:  Sean McAfee
 Contact: mcafee@umich.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This program is intended to mirror the functionality of Sun Microsystems' JDK
 Java disassembler, javap.
@@ -1021,7 +1060,7 @@ Shell:   GNO
 Author:  Jawaid Bazyar
 Contact: bazyar@hypermall.com
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 A text filter which translates arbitrary text to its "jive" equivalent.
 
@@ -1043,7 +1082,7 @@ Shell:   GNO, ORCA
 Author:  Mark Marr-Lyon
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Lossless transcoding of JPEG files.  Part of the jpeg tools archive.
 
@@ -1065,7 +1104,7 @@ Shell:   GNO
 Author:  Mike Horwath, James Brookes, Dave Huang
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 less is text pager that is more fully featured than more(1).  Text pagers
 allow you to view text one screenful at a time.  less also has search
@@ -1077,7 +1116,7 @@ Shell:   GNO/ME only!
 Author:  Kelvin Sherlock
 Contact: ksherloc@mole.uvm.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com
+FTP:     ftp.gno.org
 
 Standard unix utility to read a line from standard input
 and display it to standard output.
@@ -1110,7 +1149,7 @@ Shell:   GNO
 Author:  Phillip Vandry
 Contact: vandry@cam.org
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 lpc is the controller for the line printer daemon.  See also lpr(1) and lpd(8).
 
@@ -1120,7 +1159,7 @@ Shell:   GNO
 Author:  Jawaid Bazyar, maintained by Jeff Markham
 Contact: markhj01@winternet.com
 Where:   /usr/sbin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is the line printer daemon.  It controls the printer(s), and
 is itself controlled through lpr(1), and lpc(1).
@@ -1131,7 +1170,7 @@ Shell:   GNO, ORCA
 Author:  Jason Perez
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a print formatting utility simliar to enscript.  It is a desktop
 program (intented to be invoked from a shell) which makes use of the
@@ -1143,7 +1182,7 @@ Shell:   GNO
 Author:  Jawaid Bazyar, maintained by Jeff Markham
 Contact: markhj01@winternet.com
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is the user interface to the line printer daemon, lpd(8).
 
@@ -1153,7 +1192,7 @@ Shell:   GNO
 Author:  Jawaid Bazyar (updated for GNO/ME 2.0.6 by Dave Tribby)
 Contact: tribby@cup.hp.com
 Where:   /usr/bin/lseg
-FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 List segments in an Object Module Format file.
 
@@ -1163,7 +1202,7 @@ Shell:   GNO
 Author:  Michael Frankowski
 Contact: -
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Prints out the machine type.
 
@@ -1227,7 +1266,7 @@ Shell:   GNO
 Author:  Mike Searl
 Contact: cmoore@acs.ucalgary.ca
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This program converts between MacBinary, BinHex, and other Mac-related
 file formats.
@@ -1248,7 +1287,7 @@ Shell:   GNO, ORCA
 Author:  Peter Watson
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 mformat is designed to format or erase a disk for use under MS-DOS. It requires
 an MFM-capable drive, such as Apple's FDHD drive with the Apple II 3.5 Drive
@@ -1260,7 +1299,7 @@ Shell:   GNO, ORCA
 Author:  Dave Roberts
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 [OBSOLETE].  mi is an early version of rimport.  It allows for mass
 import of data into a resource fork.
@@ -1271,7 +1310,7 @@ Shell:   GNO, ORCA
 Author:  Dave Tribby
 Contact: tribby@cup.hp.com
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Midi2gs is a shell interface to the MIDI Surgeon program, published in the
 Jan/Feb 1994 issue of GS+ magazine.
@@ -1302,7 +1341,7 @@ Shell:   GNO
 Author:  Jawaid Bazyar, Derek Taubert, Mike Horwath
 Contact: -
 Where:   /bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 more is a text pager; it allows you to view text one screenful at a time
 
@@ -1312,7 +1351,7 @@ Shell:   GNO
 Author:  Kent Radek
 Contact: goo@cwis.unomaha.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 MPager is a Postscript text formatter.  It will format your text files and
 generate Postscript code that you can then send to your favorite Postscript
@@ -1357,7 +1396,7 @@ Shell:   GNO
 Author:  J.S. Rand
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 nenscript converts text files into their postscript equivalents.
 See also a2ps and mpager.
@@ -1368,7 +1407,7 @@ Shell:   GNO
 Author:  Eric Shepherd
 Contact: sheppy@delphi.com
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Displays system news (site specific notifications).  This should not be
 confused with USENET news readers or transport programs.
@@ -1401,7 +1440,7 @@ Shell:   GNO, ORCA
 Author:  Jay Krell
 Contact: jay.krell@cornell.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 nl is a shell utility that gives shell access to Nifty List. Its main
 features are the shell's redirectable stdin and stdout, plus an optional
@@ -1413,7 +1452,7 @@ Shell:   GNO, ORCA
 Author:  Jawaid Bazyar
 Contact: bazyar@hypermall.com
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Prints out various random phrases.  The output of this program may be
 considered to be obscene by some people.
@@ -1449,7 +1488,7 @@ Shell:   GNO
 Author:  Jason Jeffries
 Contact: jeffries@talon.cup.edu
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 A simple text adventure game, ported from Linux.
 
@@ -1470,7 +1509,7 @@ Shell:   GNO
 Author:  Eric Shepherd
 Contact: sheppy@delphi.com
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This allows a user to change his password.
 
@@ -1511,7 +1550,7 @@ Shell:   GNO
 Author:  Dave Roberts
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Change the attributes of one or more resources.
 
@@ -1521,7 +1560,7 @@ Shell:   GNO
 Author:  Dave Roberts
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Compress resource forks so that they use less disk space.
 
@@ -1531,7 +1570,7 @@ Shell:   GNO
 Author:  Dave Roberts
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Copy individual resources from one file or another.
 
@@ -1541,7 +1580,7 @@ Shell:   GNO/ME
 Author:  Jeremy Rand.
 Contact: jeremy@gate.globalx.net
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com ground.isca.uiowa.edu
+FTP:     ftp.gno.org ground.isca.uiowa.edu
 
 Auto redial a system with a login script.
 
@@ -1551,7 +1590,7 @@ Shell:   GNO, ORCA
 Author:  Mark Marr-Lyon
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Display text comments from a JPEG file.  Part of the jpeg tools archive.
 
@@ -1561,7 +1600,7 @@ Shell:   GNO, ORCA
 Author:  Christopher Neufeld
 Contact: neufeld@helios.physics.utoronto.ca
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This provides an alarm clock and a calendar reminder program for the
 GNO/ME shell. The calendar program should also run under the ORCA shell,
@@ -1573,7 +1612,7 @@ Shell:   GNO
 Author:  Phillip Vandry
 Contact: vandry@cam.org
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is part of the "seq" remote login package.  (See "seq".)
 
@@ -1593,7 +1632,7 @@ Shell:   GNO
 Author:  Dave Roberts
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Mass import of data into a resource fork.
 
@@ -1603,7 +1642,7 @@ Shell:   ORCA/Shell, GNO/ME
 Author:  Kelvin W Sherlock
 Contact: ksherloc@mole.uvm.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com
+FTP:     ftp.gno.org
 
 List resources in a GS or Macintosh resource fork
 
@@ -1633,7 +1672,7 @@ Shell:   ORCA v2.x, GNO
 Author:  Andy McFadden
 Contact: -
 Where:   17/
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a front end for the Rose editor, for use with GNO and ORCA/Shell
 v2.x.  It fixes a problem with using the Rose editor from these shells, 
@@ -1657,7 +1696,7 @@ Shell:   GNO
 Author:  Dave Roberts
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Remove one or more resources.
 
@@ -1667,7 +1706,7 @@ Shell:   GNO/ME
 Author:  Douglas E. Mitton
 Contact: dmitton@mulberry.com
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu, GEnie A2Pro #4762
+FTP:     ftp.gno.org, ground.isca.uiowa.edu, GEnie A2Pro #4762
 
 This is a shell utility which will list and play any installed rSound in
 the '*:system:sounds' directory.
@@ -1688,7 +1727,7 @@ Shell:   GNO
 Author:  Ported by Sean McAfee
 Contact: mcafee@umich.edu
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Zmodem file transfer program.  This is the receiver, and is bundled with
 sz(1), the sender.
@@ -1699,7 +1738,7 @@ Shell:   ORCA  (maybe GNO?)
 Author:  Dave Roberts
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a code generator that generates assembly source code intended for 
 scrolling the SHR screen.
@@ -1722,7 +1761,7 @@ Shell:   GNO/ME
 Author:  Kelvin Sherlock
 Contact: ksherloc@mole.uvm.edu
 Where:   /usr/local/bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, ftp.gno.org
 
 Copy or paste text to or from the system clipboard.
 
@@ -1743,7 +1782,7 @@ Shell:   GNO
 Author:  Phillip Vandry
 Contact: vandry@cam.org
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a remote login package; it controls the modem such that an incoming
 call gets connected to a local shell.  NOTE:  This is a large security hole.
@@ -1774,7 +1813,7 @@ Shell:   GNO, ORCA
 Author:  Jawaid Bazyar
 Contact: bazyar@hypermall.com
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 The split program splits one file into many smaller pieces, based either
 on a number of lines or a number of bytes per piece.
@@ -1785,7 +1824,7 @@ Shell:   GNO, ORCA, APW
 Author:  Parik Rao
 Contact: -
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This program is a simple alarm clock that plays SoundSmith songs.
 
@@ -1795,7 +1834,7 @@ Shell:   GNO/ORCA
 Author:  Jawaid Bazyar
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 sscii is a shell utility version of Derek Taubert's GScii+ NDA.  It
 encodes binscii, and decodes binscii, UNIX uuencode, Macintosh BinHex,
@@ -1807,7 +1846,7 @@ Shell:   GNO
 Author:  Dave Roberts
 Contact: daver@rush.cc.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Plays SoundSmith/MegaTracker songs from the shell command line.
 
@@ -1817,7 +1856,7 @@ Shell:   GNO, ORCA
 Author:  C. Wilson
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Strips the high bit off of characters in a file.
 
@@ -1827,7 +1866,7 @@ Shell:   GNO, ORCA
 Author:  Douglas Gwyn
 Contact: -
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This program will encrypt and decrypt an Artworx "Strip Poker II" image
 file for the Apple IIgs.
@@ -1838,7 +1877,7 @@ Shell:   GNO
 Author:  -
 Contact: -
 Where:   /bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 stty is used to control terminal characteristics.
 
@@ -1858,7 +1897,7 @@ Shell:   GNO/ORCA
 Author:  Ported by Marek Pawlowski
 Contact: -
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Sum calculates and prints a 16-bit checksum for the named file, and also
 prints the number of blocks in the file.  It is typically used to look for
@@ -1870,7 +1909,7 @@ Shell:   GNO, ORCA
 Author:  Frank M. Lin
 Contact: -
 Where:   /usr/X/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Simple Window Interface.  It provides a quick way to access NDAs from GNO
 and other text shells.  See also drwm.
@@ -1891,7 +1930,7 @@ Shell:   GNO, ORCA
 Author:  Dave Tribby
 Contact: tribby@cup.hp.com
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Synthfile is a program that prints the contents of (and plays) MIDI Synth
 files.
@@ -1902,7 +1941,7 @@ Shell:   GNO
 Author:  Ported by Sean McAfee
 Contact: mcafee@umich.edu
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Zmodem file transfer program.  This is the sender, and is bundled with
 rz(1), the receiver.
@@ -1913,7 +1952,7 @@ Shell:   GNO, ORCA
 Author:  Sameer Parekh
 Contact: -
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Show the last few lines of a file.
 
@@ -1923,7 +1962,7 @@ Shell:   GNO/ORCA
 Author:  Jawaid Bazyar
 Contact: -
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Tape ARchive utility.  This extracts files from a tar archive.  Tar archives
 do not use file compression.
@@ -1958,7 +1997,7 @@ Shell:   GNO
 Author:  Ported Dave Roberts
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 thursday is a filter which accepts text on stdin, justifies it, then
 prints the result on stdout.
@@ -1981,7 +2020,7 @@ Shell:   GNO
 Author:  Ian Schmidt
 Contact: irsman@iastate.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 TmTerm provides a vt100 GNO console in an NDA window on your GS desktop.
 
@@ -2001,7 +2040,7 @@ Shell:   GNO, ORCA
 Author:  Leslie Barstow
 Contact: wdphoenix@delphi.com
 Where:   /usr/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Touch will set the file modification time to the current (or specified)
 date and time.  It will also create the file if it doesn't already exist.
@@ -2012,7 +2051,7 @@ Shell:   GNO, ORCA
 Author:  Tom Wyant
 Contact: -
 Where:   /bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Translate characters in a file.
 
@@ -2022,7 +2061,7 @@ Shell:   GNO, ORCA
 Author:  Jay Krell
 Contact: jay.krell@cornell.edu
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Trace effectively adds in a DebugStr(3) call to the beginning of a program
 without the need to recompile and relink it.  For use with GSBug.
@@ -2074,7 +2113,7 @@ Shell:   GNO/ORCA
 Author:  Andy McFadden
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Extracts "shar" archives, which are used on UNIX systems for shipping
 sources.  Analogous to the PAFF format.
@@ -2085,7 +2124,7 @@ Shell:   GNO, ORCA
 Author:  Eric Anderson
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Extracts zip archives, which are common on MS-DOS and MS-Windows platforms.
 
@@ -2117,7 +2156,7 @@ Shell:   GNO, ORCA
 Author:  Frank M. Lin
 Contact: fmlin@netcom.com
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is another newline converter.  It works for UNIX<-->Apple translation.
 See also udl.
@@ -2128,7 +2167,7 @@ Shell:   GNO
 Author:  Jawaid Bazyar
 Contact: bazyar@hypermall.com
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 A text filter which translates arbitrary text to its "valley girl" equivalent.
 
@@ -2148,7 +2187,7 @@ Shell:   GNO, ORCA
 Author:  Joseph Lee
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Virtual Shape Compiler.  This program compiles sprites into assembly code 
 for use with ORCA/M.
@@ -2214,7 +2253,7 @@ Shell:   GNO, ORCA
 Author:  Mark Marr-Lyon
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Insert text comments into a JPEG file.  Part of the jpeg tools archive.
 
@@ -2255,7 +2294,7 @@ Shell:   GNO
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
 Where:   */system/desk.accs
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 New desk accessory which displays a system load graph.
 
@@ -2275,7 +2314,7 @@ Shell:   GNO, ORCA
 Author:  Any McFAdden
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Yankit lists and extracts NuFX file archives, created by Shrinkit, gshk,
 and nulib.
@@ -2286,7 +2325,7 @@ Shell:   GNO/ORCA
 Author:  David Empson
 Contact: -
 Where:   /usr/local/bin
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is a simple program that runs Andy McFadden's yankit(1) utility
 for each filename argument on its command line.  This allows
@@ -2299,7 +2338,7 @@ Shell:   GNO, ORCA
 Author:  Greg Thompson
 Contact: gregt@visix.com
 Where:   /usr/local/games
-FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This program produces random Zippy The Pinhead quotes.
 
@@ -2309,7 +2348,7 @@ Shell:   GNO/ME
 Author:  Leslie M. Barstow III 
 Contact: wdphoenix@delphi.com 
 Where:   /bin 
-FTP:     trenco.myrias.com
+FTP:     ftp.gno.org
 zsh is a program used to put a user's account in suspension.
 It prints a message and then exits.
 
