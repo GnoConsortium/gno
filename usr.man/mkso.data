@@ -1,7 +1,7 @@
 # 0
 # 1  The first column is the "real" man page; the second is the .so link.
 # 2
-# 3  $Id: mkso.data,v 1.8 1998/10/25 17:17:21 gdr-ftp Exp $
+# 3  $Id: mkso.data,v 1.9 1999/01/07 05:18:07 gdr-ftp Exp $
 # 4
 man2/alarm.2		man2/alarm10.2
 man2/chdir.2		man2/fchdir.2
@@ -250,5 +250,8 @@ man3/tmpnam.3		man3/tempnam.3
 man3/tmpnam.3		man3/tmpfile.3
 man3/ttyname.3		man3/isatty.3
 man3/ttyname.3		man3/ttyslot.3
+man3/unvis.3		man3/strunvis.3
+man3/vis.3		man3/strvis.3
+man3/vis.3		man3/strvisx.3
 man5/utmp.5		man5/wtmp.5
 man7/re.format.7	man7/re_format.7
