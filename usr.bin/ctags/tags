@@ -1,0 +1,41 @@
+CBEGIN	ctags.c	/^#define	CBEGIN	"ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefg/
+CINTOK	ctags.c	/^#define	CINTOK	"ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefg/
+CNOTGD	ctags.c	/^#define	CNOTGD	",;"$/
+CTOKEN	ctags.c	/^#define	CTOKEN	" \\t\\n\\"'#()\[\]{}=-+%\*\/&|\^~!/
+CWHITE	ctags.c	/^#define	CWHITE	" \\f\\t\\n"$/
+ENDLINE	ctags.h	/^#define	ENDLINE		50		\/\* max length of pattern \*/
+EOS	ctags.h	/^#define	EOS		'\\0'$/
+GETC	ctags.h	/^#define	GETC(op,exp)	((c = getc(inf)) op (int)exp)/
+LISPCHR	ctags.c	/^#define	LISPCHR	";(\["$/
+MAXTOKEN	ctags.h	/^#define	MAXTOKEN	250		\/\* max size of single toke/
+Mctags	ctags.c	/^main(int argc, char \*\*argv)$/
+NO	ctags.h	/^#define	NO		0$/
+NODE	ctags.h	/^} NODE;$/
+PF_funcs	fortran.c	/^PF_funcs(void)$/
+SETLINE	ctags.h	/^#define	SETLINE		{++lineno;lineftell = ftell(inf);/
+YES	ctags.h	/^#define	YES		1$/
+add_node	tree.c	/^add_node(NODE \*node, NODE \*cur_node)$/
+begtoken	ctags.h	/^#define	begtoken(arg)	(_btk\[(unsigned)arg\])	\/\*/
+bool	ctags.h	/^#define	bool	char$/
+c_entries	C.c	/^c_entries(void)$/
+cicmp	fortran.c	/^cicmp(char \*cp)$/
+endtoken	ctags.h	/^#define	endtoken(arg)	(_etk\[(unsigned)arg\])	\/\*/
+find_entries	ctags.c	/^find_entries(char \*file)$/
+free_tree	tree.c	/^free_tree(NODE \*node)$/
+func_entry	C.c	/^func_entry(void)$/
+getline	print.c	/^getline(void)$/
+hash_entry	C.c	/^hash_entry(void)$/
+init	ctags.c	/^init(void)$/
+intoken	ctags.h	/^#define	intoken(arg)	(_itk\[(unsigned)arg\])	\/\* /
+isgood	ctags.h	/^#define	isgood(arg)	(_gd\[(unsigned)arg\])	\/\* T /
+iswhite	ctags.h	/^#define	iswhite(arg)	(_wht\[(unsigned)arg\])	\/\* /
+l_entries	lisp.c	/^l_entries(void)$/
+pfnote	tree.c	/^pfnote(char \*name, int ln)$/
+put_entries	print.c	/^put_entries(NODE \*node)$/
+skip_comment	C.c	/^skip_comment(void)$/
+skip_key	C.c	/^skip_key(int key)$/
+skip_string	C.c	/^skip_string(int key)$/
+str_entry	C.c	/^str_entry(int c)$/
+takeprec	fortran.c	/^takeprec(void)$/
+toss_yysec	yacc.c	/^toss_yysec(void)$/
+y_entries	yacc.c	/^y_entries(void)$/
