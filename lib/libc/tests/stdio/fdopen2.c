@@ -1,5 +1,11 @@
 /*
- * $Id: fdopen2.c,v 1.1 1997/09/05 06:46:30 gdr Exp $
+ * This test attaches a FILE stream to each of the descriptors STDIN_FILENO
+ * and STDOUT_FILENO, then reads from the former and writes to the latter
+ * in binary mode until EOF is reached.
+ *
+ * Devin Reade, 1997.
+ *
+ * $Id: fdopen2.c,v 1.2 1997/09/21 16:36:18 gdr Exp $
  */
 
 #include <stdio.h>
@@ -17,27 +23,11 @@ main(int argc, char **argv) {
 	int fd2 = STDOUT_FILENO;
 
 	fprintf(stderr,"starting\n");
-#ifdef FROM_FILE
-	if ((fp1 = fopen("data1", "rb")) == NULL) {
-#else
-#if 0
-	fd1 = dup(STDIN_FILENO);
-	fd2 = dup(STDOUT_FILENO);
-#endif
-	if ((fd1 < 0) || (fd2 < 0)) {
-		perror("dup failed");
-		exit(1);
-	}
 	if ((fp1 = fdopen(fd1, "rb")) == NULL) {
-#endif
 		perror("failed to do fdopen on stdin");
 		exit(1);
 	}
-#ifdef FROM_FILE
-	if ((fp2 = fopen("data5", "wb")) == NULL) {
-#else
 	if ((fp2 = fdopen(fd2, "wb")) == NULL) {
-#endif
 		perror("failed to do fdopen on stdout");
 		exit(1);
 	}
