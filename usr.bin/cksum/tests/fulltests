@@ -1,6 +1,6 @@
 # gsh script to run tests and collect results
 #   Written by Dave Tribby  *  August 1997
-#   $Id: fulltests,v 1.2 1998/02/15 00:22:31 gdr-ftp Exp $
+#   $Id: fulltests,v 1.3 1998/02/18 19:01:52 tribby Exp $
 
 #  Name of gsh script containing test cases
 set command="dotests"
@@ -22,7 +22,7 @@ pwd
 # Create a new gsh invocation and record all I/O
 echo "$command ; exit" | script $raw_file
 
-# Cleanup control chars using either of the following...
+# Clean up control characters
 echo "Done with tests. Removing control characters from results file"
 $trcmd -c -ds '[:print:]\r'  '\r'  < $raw_file > $result_file
 
