@@ -7,7 +7,7 @@ CHANGES
 
 1.2 (18 March 1997)
 	- Maintenance of nroff has been taken over by Devin Reade,
-	  <gdr@myrias.com>
+	  <gdr@gno.org>
 	- Fixed a significant number of memory trashing bugs.  Most of
 	  them were of the walking-off-an-array variety.
 	- Optimized for speed, mainly by translating some functions

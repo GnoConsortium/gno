@@ -1,5 +1,5 @@
 /*
- * $Id: false.rez,v 1.2 1997/09/26 06:39:12 gdr Exp $
+ * $Id: false.rez,v 1.3 1999/07/03 14:41:01 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
@@ -13,5 +13,5 @@ resource rVersion (0x1, purgeable3, nocrossbank) {
         verUS,
         "false",
         "Return a 'false' value to the shell\n"
-        "Author: Devin Reade <gdr@myrias.com>"
+        "Author: Devin Reade <gdr@gno.org>"
 };

@@ -4,7 +4,7 @@ udl -	Convert EOL formats freely between MS-DOS (CR/LF), UNIX/Amiga (LF),
 
 	(c) 1993-1997 Soenke Behrens, Devin Reade
 
-	Version 1.1.6: $Id: README,v 1.12 1997/12/19 07:48:15 gdr Exp $
+	Version 1.1.6: $Id: README,v 1.13 1999/07/03 14:45:43 gdr-ftp Exp $
 =============================================================================
 
 Udl converts text files between the various end-of-line conventions, i.e.
@@ -228,13 +228,13 @@ Authors
 =======
 
 Original code by Soenke Behrens <sbehrens@bigfoot.com>
-with modifications and version-merging by Devin Reade <gdr@myrias.com>.
+with modifications and version-merging by Devin Reade <gdr@gno.org>.
 
 Soenke Behrens
 sbehrens@bigfoot.com
 
 Devin Reade
-gdr@myrias.com
+gdr@gno.org
 
 December 1997
 Version 1.1.6

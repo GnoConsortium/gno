@@ -1,8 +1,8 @@
 ;
 ; Stack checking routines by Phillip Vandry <vandry@cam.org>.  Added
-; to GNO by Devin Reade <gdr@myrias.com>.  See the man page for details.
+; to GNO by Devin Reade <gdr@gno.org>.  See the man page for details.
 ;
-; $Id: stack.asm,v 1.3 1998/02/19 01:05:17 gdr-ftp Exp $
+; $Id: stack.asm,v 1.4 1999/07/03 14:37:36 gdr-ftp Exp $
 ;
 
 	keep	stack

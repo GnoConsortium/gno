@@ -1,7 +1,7 @@
 /*
  * libc/gno/map.c  -- various mapping functions
  *
- * $Id: map.c,v 1.3 1997/09/21 06:08:11 gdr Exp $
+ * $Id: map.c,v 1.4 1999/07/03 14:37:36 gdr-ftp Exp $
  *
  * This file is formatted with tabstops every 8 columns
  */
@@ -50,7 +50,7 @@ _setModeEmulation (int newval) {
 /*
  * _mapMode2GS -- Take a Unix mode and return the GS/OS equivalent.
  *
- * Devin Reade <gdr@myrias.com>
+ * Devin Reade <gdr@gno.org>
  */              
 
 mode_t
@@ -72,7 +72,7 @@ _mapMode2GS(mode_t oldmode) {
 /*
  * _mapMode2Unix -- Take a GS/OS mode and return the Unix equivalent.
  *
- * Devin Reade <gdr@myrias.com>
+ * Devin Reade <gdr@gno.org>
  */
 
 mode_t
@@ -99,7 +99,7 @@ _mapMode2Unix(mode_t oldmode) {
 /*
  * _setPathMapping -- control whether or not we map pathnames
  *
- * Devin Reade <gdr@myrias.com>
+ * Devin Reade <gdr@gno.org>
  */
 
 static int __force_slash = 0;	/* default: no pathname mapping */
@@ -120,7 +120,7 @@ _getPathMapping (void) {
 /*
  * _mapPath -- map all occurances of ':' to '/'
  *
- * Devin Reade <gdr@myrias.com>
+ * Devin Reade <gdr@gno.org>
  */
 
 char *
@@ -150,7 +150,7 @@ _mapPath (char *pathname) {
 /*
  * _mapPathGS -- map all occurances of ':' to '/'
  *
- * Devin Reade <gdr@myrias.com>
+ * Devin Reade <gdr@gno.org>
  */
 
 GSStringPtr

@@ -1,5 +1,5 @@
 /*
- * $Id: rmdir.rez,v 1.1 1997/10/30 02:33:49 gdr Exp $
+ * $Id: rmdir.rez,v 1.2 1999/07/03 14:34:54 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
@@ -13,6 +13,6 @@ resource rVersion (0x1, purgeable3, nocrossbank) {
         verUS,
         "rmdir",
         "remove (empty) directory\n"
-        "Devin Reade <gdr@eddore.myrias.com>\n"
+        "Devin Reade <gdr@gno.org>\n"
         "Canada"
 };

@@ -11,9 +11,9 @@
 .\" v1.10 7/22/90 rosenkra@convex.com (Bill Rosenkranz)
 .\" freely distributable (no copyright, etc.)
 .\" 
-.\" Modifications for GNO by Devin Reade <gdr@myrias.com>
+.\" Modifications for GNO by Devin Reade <gdr@gno.org>
 .\" 
-.\" $Id: tmac.an,v 1.2 1997/03/20 06:40:51 gdr Exp $
+.\" $Id: tmac.an,v 1.3 1999/07/03 14:42:53 gdr-ftp Exp $
 .\" 
 .\" **************************************************************************
 .\"

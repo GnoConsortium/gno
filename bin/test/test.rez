@@ -1,5 +1,5 @@
 /*
- * $Id: test.rez,v 1.2 1997/10/30 03:35:21 gdr Exp $
+ * $Id: test.rez,v 1.3 1999/07/03 14:36:14 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
@@ -13,6 +13,6 @@ resource rVersion (0x1, purgeable3, nocrossbank) {
         verUS,
         "test",
         "Condition evaluation utility\n"
-        "Devin Reade <gdr@myrias.com>\n"
+        "Devin Reade <gdr@gno.org>\n"
         "Canada"
 };

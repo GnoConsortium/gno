@@ -7,7 +7,7 @@
  *		- moved rmdir(2) implementation to libc
  *	v1.0	- initial revision
  *
- * Version 1.1 by Devin Reade <gdr@myrias.ab.ca>
+ * Version 1.1 by Devin Reade <gdr@gno.org>
  */
 
 #include <types.h>

@@ -1,14 +1,14 @@
 /*
  * tee - send a copy of stdin to a file as well as stdout.
  *
- * Version 1.1 and later by Devin Reade <gdr@myrias.ab.ca>
+ * Version 1.1 and later by Devin Reade <gdr@gno.org>
  *
  * tee originally appeared with GNO v1.x, but was fully buffered.
  * This is a complete re-write which by default uses full buffering
  * for the output file, but _no_ buffering on stdin and stdout.
  * This buffering behavior can be changed slightly by the -b flag.
  *
- * $Id: tee.c,v 1.4 1997/10/30 03:32:46 gdr Exp $
+ * $Id: tee.c,v 1.5 1999/07/03 14:33:38 gdr-ftp Exp $
  */
 
 #include <sys/types.h>

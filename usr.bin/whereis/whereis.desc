@@ -2,7 +2,7 @@ Name:    whereis
 Version: v1.3 (25 Sep 97)
 Shell:   GNO
 Author:  Modified from BSD code by Devin Reade
-Contact: gdr@eddore.myrias.com
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     apple2.caltech.edu ground.icaen.uiowa.edu ftp.gno.org
 

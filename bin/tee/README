@@ -1,4 +1,4 @@
-$Id: README,v 1.4 1997/10/30 03:32:45 gdr Exp $
+$Id: README,v 1.5 1999/07/03 14:33:38 gdr-ftp Exp $
 
 tee v1.3 for GNO
 
@@ -12,7 +12,7 @@ This program contains material from the Orca/C Run-Time Libraries,
 copyright 1987-1994 by Byte Works, Inc.  Used with Permission.
 
 Devin Reade
-<gdr@eddore.myrias.com>
+<gdr@gno.org>
 
 Change Log
 ==========

@@ -32,7 +32,7 @@
 	  currently disabled in printf() pending an ORCA/C bug fix.
 	Make use of dynamic GSStrings in various chapter 2 routines.
 
-21 September 1997: (Devin Reade, <gdr@eddore.myrias.com>)
+21 September 1997: (Devin Reade, <gdr@gno.org>)
 	Added man pages for:
 	  rename(2), clearerr(3), ecvt(3), fclose(3), fflush(3), fgets(3),
 	  fputs(3), fread(3), fseek(3), funopen(3), getc(3), isblank(3),
@@ -49,7 +49,7 @@
 	Added implementation, man pages for getlogin(2), and setlogin(2).
 	Set the default optimization level to 78 from zero.
 
-5 September 1997: (Devin Reade, <gdr@eddore.myrias.com>)
+5 September 1997: (Devin Reade, <gdr@gno.org>)
 
 	Headers:
         - removed __ORCAC_VERSION macro from defaults.h
@@ -70,7 +70,7 @@
         - added fcntl(2)
 
 
-Since beta-970304: (Devin Reade, <gdr@myrias.com>)
+Since beta-970304: (Devin Reade, <gdr@gno.org>)
 
 	Added the following routines to the build:
 	- the fts*(3) family of routines

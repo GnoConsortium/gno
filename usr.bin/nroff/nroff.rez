@@ -1,5 +1,5 @@
 /*
- * $Id: nroff.rez,v 1.2 1997/10/30 04:04:35 gdr Exp $
+ * $Id: nroff.rez,v 1.3 1999/07/03 14:42:53 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
@@ -13,6 +13,6 @@ resource rVersion (0x1, purgeable3, nocrossbank) {
         verUS,
         "nroff",
         "Text Processing Typesetter\n"
-        "Devin Reade <gdr@eddore.myrias.com>\n"
+        "Devin Reade <gdr@gno.org>\n"
         "Canada"
 };

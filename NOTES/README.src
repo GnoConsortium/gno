@@ -1,4 +1,4 @@
-$Id: README.src,v 1.1 1997/03/11 08:08:06 gdr Exp $
+$Id: README.src,v 1.2 1999/07/03 14:46:37 gdr-ftp Exp $
 
 Have a look in the NOTES directory, especially the files "status"
 and "notes.*".  There are notes in there on changed header files --
@@ -26,6 +26,6 @@ THEY WERE COMPILED, since struct FILE has changed.  See the comments in
 the NOTES/README.beta and orcacdefs/defaults.h files.
 
 Also as a reminder, the gno-beta mailing list has been set up.  To
-join it, send email to <majordomo@myrias.com> with the following text
+join it, send email to <majordomo@gno.org> with the following text
 and nothing else in the body of the message:
 	subscribe gno-beta

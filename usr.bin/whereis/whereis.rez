@@ -1,5 +1,5 @@
 /*
- * $Id: whereis.rez,v 1.1 1997/09/30 04:22:43 gdr Exp $
+ * $Id: whereis.rez,v 1.2 1999/07/03 14:43:42 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
@@ -13,5 +13,5 @@ resource rVersion (0x1, purgeable3, nocrossbank) {
         verUS,
         "whereis",
         "searches standard directories for a file\n"
-        "Author: Devin Reade <gdr@myrias.com>"
+        "Author: Devin Reade <gdr@gno.org>"
 };
