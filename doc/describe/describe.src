@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Sat Jun 19 14:10:46 1999
+# Last revision: Sat Jul  3 13:50:24 1999
 #
-# $Id: describe.src,v 1.29 1999/06/19 14:12:59 gdr-ftp Exp $
+# $Id: describe.src,v 1.30 1999/07/03 13:59:26 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -43,7 +43,7 @@
 #
 #  Updates and corrections may also be sent by email to:
 #
-#	describe-submit@trenco.gno.org
+#	describe-submit@gno.org
 #
 #  This address points to a filter.  If you use it, you *must* ensure the
 #  following:
@@ -103,7 +103,7 @@ may be suspended), a simple macro language, and a scrollback buffer.
 Name:    apropos
 Version: 3.1 (28 March 1998)
 Author:  Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:	 ftp.gno.org
 
@@ -135,7 +135,7 @@ Name:    aroff
 Version: 2.0
 Shell:   GNO, ORCA
 Author:  Jawaid Bazyar.  Maintained by Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /bin
 FTP:     ftp.gno.org
 
@@ -148,7 +148,7 @@ Name:    asml
 Version: 1.1 (13 Feb 98)
 Shell:   GNO
 Author:  Maintained by Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
@@ -172,7 +172,7 @@ Name:    assemble
 Version: 1.1 (13 Feb 98)
 Shell:   GNO
 Author:  Maintained by Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
@@ -225,9 +225,9 @@ FTP:     ftp.gno.org
 Shows only the basename of a given fully expanded filename.
 
 Name:    bc
-Version: 1.04
+Version: 1.05a
 Shell:   GNO/ME
-Author:  Scott Moberly (FSF port)
+Author:  Scott Moberly
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
 FTP:     ftp.gno.org
@@ -235,7 +235,8 @@ FTP:     ftp.gno.org
 GNU bc is an arbitrary precision numeric processing language. sbc
 is compliant with the POSIX P1003.2/D11 draft standard. While GNU
 bc includes many extensions.  Copyright Free Software Foundation.  
-This is part of the bc 1.04 package.
+This is part of the bc 1.05a package.
+
 Name:    bcd
 Version: 1.0
 Shell:   GNO/ME
@@ -358,7 +359,7 @@ Name:    calls
 Version: 2.0 (16 Dec 93)
 Shell:   GNO/ME
 Author:  Ported by Devin Reade
-Contact: gdr@myrias.ab.ca
+Contact: gdr@gno.org
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
 
@@ -379,7 +380,7 @@ Concatenate and list files.
 Name:    catman
 Version: 3.1 (28 March 1998)
 Author:  Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/sbin
 FTP:	 ftp.gno.org
 
@@ -432,7 +433,7 @@ Name:    center
 Version: 1.1
 Shell:   GNO
 Author:  Marek Pawlowski.  Maintained by Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /bin
 FTP:     ftp.gno.org
 
@@ -517,7 +518,7 @@ Name:    cmpl
 Version: 1.1 (13 Feb 98)
 Shell:   GNO
 Author:  Maintained by Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
@@ -592,7 +593,7 @@ Name:    compile
 Version: 1.1 (13 Feb 98)
 Shell:   GNO
 Author:  Maintained by Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
@@ -660,7 +661,7 @@ Name:    cpp
 Version: 2.0 (29 Oct 97)
 Shell:   GNO
 Author:  Ported by Devin Reade.
-Contact: gdr@eddore.myrias.com
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
@@ -708,25 +709,25 @@ FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 Select portions of each line of a file.
 
 Name:    date
-Version: 1.2
+Version: 2.0
 Shell:   GNO/ME
-Author:  Phillip Vandry
-Contact: vandry@CAM.ORG
-Where:   /usr/bin
-FTP:     -
+Author:  Scott Moberly (comp.sources.unix port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /bin
+FTP:     ftp.gno.org
 
-Shows the date and time (optionally, continuously).
+Display date and time.  POSIX comliant.
 
 Name:    dc
-Version: 1.1
+Version: 1.2
 Shell:   GNO/ME
-Author:  Scott Moberly (FSF port)
+Author:  Scott Moberly
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
 GNU dc is an arbitrary precision numeric processing language.  Copyright
-Free Software Foundation.  This is part of the bc 1.04 package.
+Free Software Foundation.  This is part of the bc 1.05a package.
 
 Name:    dd
 Version: 1.0
@@ -775,7 +776,7 @@ Name:    descu
 Version: 1.0.6
 Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/sbin
 FTP:     ftp.gno.org
 
@@ -816,7 +817,7 @@ Name:    diff
 Version: 1.0 (12 Dec 94)
 Shell:   GNO/ME
 Author:  Ported by Devin Reade
-Contact: <gdr@myrias.ab.ca>
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     cco.caltech.edu, ground.isca.uiowa.edu.
 
@@ -847,7 +848,7 @@ Name:    dmake
 Version: 1.0 (4 Jul 94)
 Shell:   GNO/ME
 Author:  Ported by Devin Reade.
-Contact: gdr@myrias.ab.ca
+Contact: gdr@gno.org
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
 
@@ -892,7 +893,7 @@ Name:    dsort
 Version: 1.0 (14 Jun 94)
 Shell:   GNO/ME
 Author:  Devin Reade.
-Contact: gdr@myrias.ab.ca
+Contact: gdr@gno.org
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu (in file sorts10.shk)
 
@@ -903,7 +904,7 @@ Name:    dsplit
 Version: 1.0 (19 Dec 93)
 Shell:   GNO/ME
 Author:  Ported by Devin Reade.
-Contact: gdr@myrias.ab.ca
+Contact: gdr@gno.org
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
 
@@ -1030,7 +1031,7 @@ Name:    false
 Version: 1.0 (7 Aug 97)
 Shell:   GNO, ORCA/Shell
 Author:  Devin Reade.
-Contact: gdr@eddore.myrias.com
+Contact: gdr@gno.org
 Where:   /bin
 FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
@@ -1128,7 +1129,7 @@ Name:    fmt
 Version: 1.0 (19 Oct 97)
 Shell:   GNO
 Author:  Ported by Devin Reade.
-Contact: gdr@eddore.myrias.com
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
@@ -1249,7 +1250,7 @@ NuFX files.
 Name:    getty
 Version: 2.1
 Author:  Maintained by Devin Reade
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/sbin
 FTP:     ftp.gno.org
 
@@ -1335,7 +1336,7 @@ Name:    help
 Version: 1.1 (19 Oct 97)
 Shell:   GNO
 Author:  Devin Reade.
-Contact: gdr@eddore.myrias.com
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
@@ -1444,7 +1445,7 @@ Name:    install
 Version: 1.3 (16 Jan 99)
 Shell:   GNO
 Author:  Devin Reade
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
@@ -1479,7 +1480,7 @@ Name:    joinpara
 Version: 1.0 (16 Dec 93)
 Shell:   GNO/ME
 Author:  Devin Reade
-Contact: gdr@myrias.ab.ca
+Contact: gdr@gno.org
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
 
@@ -1574,7 +1575,7 @@ Name:    link
 Version: 1.1 (30 Mar 98)
 Shell:   GNO
 Author:  Maintained by Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
@@ -1596,7 +1597,7 @@ Name:    listlib
 Version: 1.0 (9 Sep 96)
 Shell:	 GNO/ME, ORCA/Shell
 Author:  Devin Reade.
-Contact: gdr@eddore.myrias.com
+Contact: gdr@gno.org
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
 
@@ -1608,7 +1609,7 @@ Name:    logger
 Version: 1.0 (23 Jun 98)
 Shell:   GNO
 Author:  Ported by Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
@@ -1722,7 +1723,7 @@ Name:    makedmake
 Version: 1.1.1 (16 Jan 94)
 Shell:   GNO/ME
 Author:  Ported by Devin Reade
-Contact: gdr@myrias.ab.ca
+Contact: gdr@gno.org
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
 
@@ -1733,7 +1734,7 @@ This is a particularily brain-dead port that will likely be superceded.
 Name:    makewhatis
 Version: 3.1 (28 March 1998)
 Author:  Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/sbin
 FTP:	 ftp.gno.org
 
@@ -1743,7 +1744,7 @@ Bundled with apropos, catman, man, and whatis in the manpack archive.
 Name:    man
 Version: 3.1 (28 March 1998)
 Author:  Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:	 ftp.gno.org
 
@@ -1862,7 +1863,7 @@ Name:    mkso
 Version: 1.0 (21 Dec 97)
 Shell:   GNO
 Author:  Devin Reade
-Contact: gdr@eddore.myrias.com
+Contact: gdr@gno.org
 Where:   /sbin
 FTP:     ftp.gno.org
 
@@ -1905,7 +1906,7 @@ Name:    msort
 Version: 1.0 (14 Jun 94)
 Shell:   GNO/ME
 Author:  Devin Reade.
-Contact: gdr@myrias.ab.ca
+Contact: gdr@gno.org
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu (in file sorts10.shk)
 
@@ -1960,7 +1961,7 @@ Name:    newuser
 Version: 1.2
 Shell:   GNO
 Author:  James Brookes.  Maintained by Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/sbin
 FTP:     ftp.gno.org
 
@@ -1972,7 +1973,7 @@ Name:    newuserv
 Version: 1.2
 Shell:   GNO
 Author:  James Brookes.  Maintained by Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/sbin
 FTP:     ftp.gno.org
 
@@ -2028,7 +2029,7 @@ Name:    nroff
 Version: 1.2.1 (19 Oct 97)
 Shell:   GNO
 Author:  Various.  Maintained by Devin Reade.
-Contact: gdr@eddore.myrias.com
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ftp.gno.org apple2.caltech.edu ground.icaen.uiowa.edu
 
@@ -2090,7 +2091,7 @@ Name:    patch
 Version: 1.0 (12 Nov 95)
 Shell:   GNO/ME
 Author:  Ported by Devin Reade.
-Contact: gdr@myrias.com
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
 
@@ -2254,7 +2255,7 @@ Name:    removerez
 Version: 1.0 (29 Mar 98)
 Shell:   GNO, ORCA/Shell
 Author:  Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
@@ -2264,7 +2265,7 @@ Name:    renram5
 Version: 1.0.1 (3 Aug 97)
 Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/sbin
 FTP:     ftp.gno.org apple2.caltech.edu ground.icaen.uiowa.edu
 
@@ -2323,7 +2324,7 @@ Remote login.
 Name:    rmdir
 Version: 1.0 (28 Nov 94)
 Author:  Devin Reade.
-Contact: <gdr@myrias.ab.ca>
+Contact: gdr@gno.org
 Where:   /bin
 FTP:     ftp.gno.org apple2.caltech.edu ground.icaen.uiowa.edu
 
@@ -2416,9 +2417,9 @@ Zmodem file transfer program.  This is the receiver, and is bundled with
 sz(1), the sender.
 
 Name:    sbc
-Version: 1.04
+Version: 1.05a
 Shell:   GNO/ME
-Author:  Scott Moberly (FSF port)
+Author:  Scott Moberly
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
 FTP:     ftp.gno.org
@@ -2426,7 +2427,7 @@ FTP:     ftp.gno.org
 GNU bc is an arbitrary precision numeric processing language. sbc
 is compliant with the POSIX P1003.2/D11 draft standard. While GNU
 bc includes many extensions.  Copyright Free Software Foundation.  
-This is part of the bc 1.04 package.
+This is part of the bc 1.05a package.
 
 Name:    sc
 Version: 1.10
@@ -2443,7 +2444,7 @@ Name:    scpp
 Version: 1.1 (15 Feb 94)
 Shell:   GNO/ME
 Author:  Ported by Devin Reade
-Contact: gdr@myrias.ab.ca
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
 
@@ -2529,7 +2530,7 @@ Name:    splatprep
 Version: 1.0 (1 Dec 95)
 Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
-Contact: gdr@myrias.ab.ca
+Contact: gdr@gno.org
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
 
@@ -2684,7 +2685,7 @@ Name:    syslogd
 Version: 2.0 (Alpha-1: 31 Oct 98)
 Shell:   GNO
 Author:  Devin Reade
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/sbin
 FTP:     ftp.gno.org
 
@@ -2728,7 +2729,7 @@ Name:    tee
 Version: 1.3 (5 Oct 97)
 Shell:   GNO
 Author:  Devin Reade
-Contact: <gdr@trenco.gno.org>
+Contact: gdr@gno.org
 Where:   /bin
 FTP:     ftp.gno.org
 
@@ -2740,7 +2741,7 @@ Name:    test
 Version: 1.0 (9 Feb 96)
 Shell:   GNO/ME
 Author:  Devin Reade
-Contact: gdr@myrias.com
+Contact: gdr@gno.org
 Where:   /bin
 FTP:     ftp.gno.org ground.icaen.uiowa.edu
 
@@ -2773,7 +2774,7 @@ Name:    timelimit
 Version: 1.2 (10 Jan 96)
 Shell:   GNO/ME
 Author:  Devin Reade
-Contact: gdr@myrias.com
+Contact: gdr@gno.org
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
 
@@ -2858,7 +2859,7 @@ Name:    true
 Version: 1.0 (7 Aug 97)
 Shell:   GNO, ORCA/Shell
 Author:  Devin Reade.
-Contact: gdr@eddore.myrias.com
+Contact: gdr@gno.org
 Where:   /bin
 FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
@@ -2878,7 +2879,7 @@ Name:    udl
 Version: 1.1.6
 Shell:   GNO/ME, ORCA/Shell
 Author:  Soenke Behrens, Devin Reade
-Contact: sbehrens@bigfoot.com, gdr@myrias.com
+Contact: sbehrens@bigfoot.com, gdr@gno.org
 Where:   /usr/bin
 FTP:     ftp.gno.org apple2.caltech.edu ground.icaen.uiowa.edu
 
@@ -3133,7 +3134,7 @@ Show what versions of object modules were used to construct a file.
 Name:    whatis
 Version: 3.1 (28 March 1998)
 Author:  Devin Reade.
-Contact: gdr@trenco.gno.org
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:	 ftp.gno.org
 
@@ -3144,7 +3145,7 @@ Name:    whereis
 Version: v1.3 (25 Sep 97)
 Shell:   GNO
 Author:  Modified from BSD code by Devin Reade
-Contact: gdr@eddore.myrias.com
+Contact: gdr@gno.org
 Where:   /usr/bin
 FTP:     apple2.caltech.edu ground.icaen.uiowa.edu ftp.gno.org
 
