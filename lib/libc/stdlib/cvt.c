@@ -2,7 +2,7 @@
  * Floating point conversion routines.
  * Devin Reade, 1997.
  *
- * $Id: cvt.c,v 1.3 1998/03/24 16:20:30 gdr-ftp Exp $
+ * $Id: cvt.c,v 1.4 1998/03/28 16:42:32 gdr-ftp Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
@@ -128,7 +128,7 @@ mode0:					/* this label doesn't belong here */
 	}
 
 	/* special case the exponent for 0.0 */
-	if (*decpt == 0) {
+	if (number == 0) {
 		*decpt = 1;
 	}
 
