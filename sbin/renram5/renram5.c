@@ -15,10 +15,10 @@
  *
  * You probably need GNO/ME libraries in order to link this program.
  *
- * Written by Devin Reade <gdr@myrias.com> January 1996.
+ * Written by Devin Reade <gdr@gno.org> January 1996.
  * This program is placed in the public domain.
  *
- * $Id: renram5.c,v 1.3 1998/03/31 03:29:07 gdr-ftp Exp $
+ * $Id: renram5.c,v 1.4 1999/07/03 14:39:19 gdr-ftp Exp $
  *
  * This file is formatted with tab tops every 8 columns.
  */
@@ -52,7 +52,7 @@ void usage(char *progname) {
   printf("This program renames volumes.  It was intended to rename\n");
   printf("%s at boot time.  As a side effect, it can also rename files.\n\n",
 	 OLD_TMP);
-  printf("Version 1.0 by Devin Reade <gdr@myrias.com>\n");
+  printf("Version 1.0 by Devin Reade <gdr@gno.org>\n");
   printf("This program is in the public domain.\n");
   exit(1);
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: renram5.rez,v 1.4 1998/12/22 16:05:37 gdr-ftp Exp $
+ * $Id: renram5.rez,v 1.5 1999/07/03 14:39:19 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
@@ -14,6 +14,6 @@ resource rVersion (0x1, purgeable3, nocrossbank) {
         verUS,
         "renram5",
         "Rename /RAM5 at boot time.\n"
-        "Devin Reade <gdr@myrias.com>\n"
+        "Devin Reade <gdr@gno.org>\n"
 	BUILD_DATE
 };
