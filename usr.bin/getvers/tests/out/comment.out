@@ -1,29 +1,30 @@
-US.r: product 2.0
-00-0F:
+product 2.0
+00-0F:	
+
 Country: United States
 10-1F:
 
-Russia.r: product 99.9.9a99
+product 99.9.9a99
 20-2F: !"#$%&'()*+,-./
 Country: Russia
 30-3F:0123456789:;<=>?
 
-Yugo.r: getvers 0.0f0
+getvers 0.0f0
 40-4F:@ABCDEFGHIJKLMNO
 Country: Bosnia/Herzegovena/Yugoslavia/Croatia
 50-5F:PQRSTUVWXYZ[\]^_
 
-Ireland.r: getvers 3.2.1
+getvers 3.2.1
 60-6F:`abcdefghijklmno
 Country: Ireland
-70-7F:pqrstuvwxyz{|}~
+70-7F:pqrstuvwxyz{|}~
 
-Thai.r: getvers 1.2.3d4
+getvers 1.2.3d4
 80-8F:AACENOUaaaaaacee
 Country: Thailand
 90-9F:eeiiiinooooouuuu
 
-Portugal.r: Super Graphics Destroyer 2.0
+Super Graphics Destroyer 2.0
 (C) 1991 Pretty as a Picture, Inc.
 Country: Portugal
 This is the comment displayed by the Finder(TM) when file Information is requested.
