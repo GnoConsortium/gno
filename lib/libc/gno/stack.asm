@@ -2,7 +2,7 @@
 ; Stack checking routines by Phillip Vandry <vandry@cam.org>.  Added
 ; to GNO by Devin Reade <gdr@myrias.com>.  See the man page for details.
 ;
-; $Id: stack.asm,v 1.1 1997/02/28 05:12:47 gdr Exp $
+; $Id: stack.asm,v 1.2 1997/12/21 20:11:17 gdr Exp $
 ;
 
 	keep	stack
@@ -111,6 +111,12 @@ gotend	anop		; Y = Stack not used
 	sbc	1,s
 	ply
 terminate plb
+	rtl
+	end
+
+; This one was added by Devin Reade.  It is used by _assertStack(3).
+_getStackBottom start libc_gno__
+	lda	>~MINSTACK
 	rtl
 	end
 

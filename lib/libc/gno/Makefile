@@ -3,14 +3,14 @@
 #
 # Devin Reade, 1996
 #
-# $Id: Makefile,v 1.4 1997/10/03 04:44:22 gdr Exp $
+# $Id: Makefile,v 1.5 1997/12/21 20:11:17 gdr Exp $
 #
 
 .INCLUDE:	../../../paths.mk
 .INCLUDE: 	../../const.mk
 
 OBJ_ASM	= gnocmd.o parsearg.o stack.o
-OBJ_C	= gnomisc.o gsstring.o map.o
+OBJ_C	= gnomisc.o gsstring.o map.o stack2.o
 OBJS	= $(OBJ_ASM) $(OBJ_C)
 
 CFLAGS	+= -O78
