@@ -35,6 +35,8 @@
 .\"
 .\"	@(#)re_format.7	8.3 (Berkeley) 3/20/94
 .\"
+.\" $Id: re.format.7,v 1.3 1998/04/16 05:52:39 gdr-ftp Exp $
+.\"
 .TH RE_FORMAT 7 "7 October 1997" GNO "Miscellaneous"
 .SH NAME
 re_format \- POSIX 1003.2 regular expressions
@@ -50,18 +52,18 @@ and obsolete REs (roughly those of
 Obsolete REs mostly exist for backward compatibility in some old programs;
 they will be discussed at the end.
 1003.2 leaves some aspects of RE syntax and semantics open;
-`\(dg' marks decisions on these aspects that
+`***' marks decisions on these aspects that
 may not be fully portable to other 1003.2 implementations.
 .PP
-A (modern) RE is one\(dg or more non-empty\(dg \fIbranches\fR,
+A (modern) RE is one*** or more non-empty*** \fIbranches\fR,
 separated by `|'.
 It matches anything that matches one of the branches.
 .PP
-A branch is one\(dg or more \fIpieces\fR, concatenated.
+A branch is one*** or more \fIpieces\fR, concatenated.
 It matches a match for the first, followed by a match for the second, etc.
 .PP
 A piece is an \fIatom\fR possibly followed
-by a single\(dg `*', `+', `?', or \fIbound\fR.
+by a single*** `*', `+', `?', or \fIbound\fR.
 An atom followed by `*' matches a sequence of 0 or more matches of the atom.
 An atom followed by `+' matches a sequence of 1 or more matches of the atom.
 An atom followed by `?' matches a sequence of 0 or 1 matches of the atom.
@@ -70,7 +72,7 @@ A \fIbound\fR is `{' followed by an unsigned decimal integer,
 possibly followed by `,'
 possibly followed by another unsigned decimal integer,
 always followed by `}'.
-The integers must lie between 0 and RE_DUP_MAX (255\(dg) inclusive,
+The integers must lie between 0 and RE_DUP_MAX (255***) inclusive,
 and if there are two of them, the first may not exceed the second.
 An atom followed by a bound containing one integer \fIi\fR
 and no comma matches
@@ -84,19 +86,19 @@ a sequence of \fIi\fR through \fIj\fR (inclusive) matches of the atom.
 .PP
 An atom is a regular expression enclosed in `()' (matching a match for the
 regular expression),
-an empty set of `()' (matching the null string)\(dg,
+an empty set of `()' (matching the null string)***,
 a \fIbracket expression\fR (see below), `.'
 (matching any single character), `^' (matching the null string at the
 beginning of a line), `$' (matching the null string at the
 end of a line), a `\e' followed by one of the characters
 `^.[$()|*+?{\e'
 (matching that character taken as an ordinary character),
-a `\e' followed by any other character\(dg
+a `\e' followed by any other character***
 (matching that character taken as an ordinary character,
-as if the `\e' had not been present\(dg),
+as if the `\e' had not been present***),
 or a single character with no other significance (matching that character).
 A `{' followed by a character other than a digit is an ordinary
-character, not the beginning of a bound\(dg.
+character, not the beginning of a bound***.
 It is illegal to end an RE with `\e'.
 .PP
 A \fIbracket expression\fR is a list of characters enclosed in `[]'.
@@ -108,7 +110,7 @@ If two characters in the list are separated by `\-', this is shorthand
 for the full \fIrange\fR of characters between those two (inclusive) in the
 collating sequence,
 e.g. `[0-9]' in ASCII matches any decimal digit.
-It is illegal\(dg for two ranges to share an
+It is illegal*** for two ranges to share an
 endpoint, e.g. `a-c-e'.
 Ranges are very collating-sequence-dependent,
 and portable programs should avoid relying on them.
@@ -142,7 +144,7 @@ of all collating elements equivalent to that one, including itself.
 the treatment is as if the enclosing delimiters were `[.' and `.]'.)
 For example, if o and \o'o^' are the members of an equivalence class,
 then `[[=o=]]', `[[=\o'o^'=]]', and `[o\o'o^']' are all synonymous.
-An equivalence class may not\(dg be an endpoint
+An equivalence class may not*** be an endpoint
 of a range.
 .PP
 Within a bracket expression, the name of a \fIcharacter class\fR enclosed
@@ -164,7 +166,7 @@ These stand for the character classes defined in
 A locale may provide others.
 A character class may not be used as an endpoint of a range.
 .PP
-There are two special cases\(dg of bracket expressions:
+There are two special cases*** of bracket expressions:
 the bracket expressions `[[:<:]]' and `[[:>:]]' match the null string at
 the beginning and end of a word respectively.
 A word is defined as a sequence of
@@ -214,7 +216,7 @@ When it appears inside a bracket expression, all case counterparts
 of it are added to the bracket expression, so that (e.g.) `[x]'
 becomes `[xX]' and `[^x]' becomes `[^xX]'.
 .PP
-No particular limit is imposed on the length of REs\(dg.
+No particular limit is imposed on the length of REs***.
 Programs intended to be portable should not employ REs longer
 than 256 bytes,
 as an implementation can refuse to accept such REs and remain
@@ -228,9 +230,9 @@ with `{' and `}' by themselves ordinary characters.
 The parentheses for nested subexpressions are `\e(' and `\e)',
 with `(' and `)' by themselves ordinary characters.
 `^' is an ordinary character except at the beginning of the
-RE or\(dg the beginning of a parenthesized subexpression,
+RE or*** the beginning of a parenthesized subexpression,
 `$' is an ordinary character except at the end of the
-RE or\(dg the end of a parenthesized subexpression,
+RE or*** the end of a parenthesized subexpression,
 and `*' is an ordinary character if it appears at the beginning of the
 RE or the beginning of a parenthesized subexpression
 (after a possible leading `^').
