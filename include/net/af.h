@@ -27,7 +27,7 @@
  **********************************************************************
  */ 
  
-#endif	CMU
+#endif	/* CMU */
 /*
  * Copyright (c) 1980, 1986 Regents of the University of California.
  * All rights reserved.  The Berkeley software License Agreement

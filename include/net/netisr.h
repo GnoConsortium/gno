@@ -31,9 +31,9 @@
 int	soft_net_wakeup;
 #define	setsoftnet()	(wakeup((caddr_t)&soft_net_wakeup))
 
-#endif	defined(KERNEL) && !defined(LOCORE)
+#endif	/* defined(KERNEL) && !defined(LOCORE) */
 
-#else	MACH
+#else	/* MACH */
 /*
  * The networking code runs off software interrupts.
  *
@@ -45,7 +45,7 @@ int	soft_net_wakeup;
 #ifdef vax
 #define	setsoftnet()	mtpr(SIRR, 12)
 #endif
-#endif	MACH
+#endif	/* MACH */
 
 /*
  * Each ``pup-level-1'' input queue has a bit in a ``netisr'' status
