@@ -34,16 +34,12 @@
 /*
  * This file is formatted for tab stops every 8 characters.
  *
- * $Id: getopt.c,v 1.1 1997/02/28 05:12:49 gdr Exp $
+ * $Id: getopt.c,v 1.2 1997/09/21 06:21:07 gdr Exp $
  */
 
 #ifdef __ORCAC__
 segment "libc_stdlb";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)getopt.c	8.2 (Berkeley) 4/2/94";

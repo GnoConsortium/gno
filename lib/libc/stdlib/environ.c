@@ -1,7 +1,7 @@
 /*
  * These routines were written by Devin Reade for GNO 2.0.1.
  *
- * $Id: environ.c,v 1.1 1997/02/28 05:12:49 gdr Exp $
+ * $Id: environ.c,v 1.2 1997/09/21 06:21:07 gdr Exp $
  *
  * This file is formatted with tab stops every 3 columns.
  */
@@ -11,9 +11,6 @@ segment "libc_stdlb";
 #endif
 
 #pragma databank 1
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #include <stddef.h>
 #include <types.h>
