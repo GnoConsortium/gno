@@ -1,9 +1,30 @@
 *******
 * soon
 *
-* $Id: TO.DO,v 1.2 1997/08/08 05:09:51 gdr Exp $
+* $Id: TO.DO,v 1.3 1997/09/21 22:46:04 gdr Exp $
 *
 *******
+
+Add implementations for Tilghman:
+	strftime(3)
+
+As a group:
+	Update utmp.5, libutil (logout, logwtmp), last(1), login(1), who(1),
+	w(1), init(8), _PATH_UTMP (<utmp.h> and FAQ), rwho(1), users(1)
+
+Add to relevent util man pages:
+	.SH ATTRIBUTIONS
+	This command was ported from FreeBSD source code
+	for distribution with GNO/ME 2.0.6.
+
+Use __STACK_CHECK__ macro for stack checking code.
+
+stdio:
+	- add %b modifier to fprintf implementation (ORCA/C compatibility)
+	- reduce stack requirements
+
+stdlib/cvt.c:
+	- handle modes 0 and 1 correctly.
 
 Use result of _setModeEmulation(3) in appropriate calls.  These include
 	chmod	-
@@ -14,8 +35,7 @@ Use result of _setModeEmulation(3) in appropriate calls.  These include
 	fstat	- unnecessary
 	lstat	- unnecessary
 
-specifying 'chmod +x' (effectively) on a file of type TXT or SRC should
-change that file to be type SRC and auxtype EXEC.
+clean up <gno/kerntool.h> -- some require errno args, some don't
 
 check up on the type of nlink_t, used in stat(2)
 
@@ -43,30 +63,24 @@ libc/sys/exec.c:
 	are '#!', then the shell should be exec'd instead.  (currently,
 	shell scripts cannot be exec'd)
 
-Fix filename mapping code:
 
---- inclusion start
- > A#38: The first thing to watch for is known compiler and library bugs.
- >      [...]
- >      validity of pathnames
- >      [...]
- >              - use dynamic directory delimiters.  The ':' character is
- >                always considered to be a directory separator.  The '/'
- >                character is considered to be a directory separator unless
- >                ':' is present, in which case it is part of the file name.
- >                This is the closest to GS/OS, but also has some problems
- >                with POSIX compliance.  For example, the PATH environment
- >                variable is _supposed_ to a list of pathnames delimited
- >                by the ':' character.
+NEED TO WRITE OR DUPLICATE MAN PAGES FOR
+----------------------------------------
+	login		libc(3)
+	login_tty
+	regexp		libc(3)
+	termcap		libc(3)
+	queue		3
+	tty		4
+	grp		5
+	passwd		5
+	termcap		5
+	ms		7
+	man		7
+	cron		8
+	runover		8			(obsolete?)
+	dialup		8
 
-GS/OS behaves a little differently than this paragraph describes.  The
-first ':' or '/' encountered when scanning the pathname from left to
-right is assumed to be the separator.  If a '/' occurs first, then any
-':'s appearing later are illegal.  The paragraph suggests that the '/'
-will be considered part of the file name if a ':' appears later.  (Your
-point about POSIX compliance is still valid, though.)
-
---- inclusion end
 
 ******* 
 * defer
@@ -75,6 +89,7 @@ point about POSIX compliance is still valid, though.)
 libc/sys/syscall.c:
 	for unlink, if file is open, then register a call to unlink
 	(non-recursive) the file via atexit(3)
+	[not practical?]
 
 libc/gen/environ.c:
 	Review routines.  Force them to use GSString routines, reduce
@@ -96,6 +111,8 @@ do intro man pages:
 	7	done
 	8	done
 
+Add locale implementation to libc.
+
 various man pages:
 	add note under COMPATIBILITY as to whether the routines
 	are thread-safe.  If they write any globals or static
@@ -106,3 +123,31 @@ Verify that the setdebug(2) macros in gno/gno.h are correct.
 Add implementations for execle; the final
 envp can't appear in the prototype, but it can be found since it is 
 the last argument after the first NULL pointer.
+
+
+man(1) implementation: create a database in the user's home directory
+	that contains a list of all man pages and their locations, based
+	on MANPATH.  Keep a magic number the file to see if MANPATH has
+	changed.  *maybe* check the date of the file against the
+	modification date of the respective directories and generate a
+	warning if the db is out-of-date.
+
+The following have their macro version in ctype.h (except isblank()),
+but should have library versions as well:
+
+isalnum
+isalpha
+isascii
+isblank
+iscntrl
+iscsym
+iscsymf
+isdigit
+isgraph
+islower
+isodigit
+isprint
+ispunct
+isspace
+isupper
+isxdigit
