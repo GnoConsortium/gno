@@ -3,7 +3,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: Makefile,v 1.4 1997/09/05 06:18:46 gdr Exp $
+# $Id: Makefile,v 1.5 1997/09/21 06:19:50 gdr Exp $
 #
 
 .INCLUDE:	../../../paths.mk
@@ -19,7 +19,23 @@ OBJS	= clrerr.o fclose.o fdopen.o feof.o ferror.o fflush.o fgetc.o \
 	stdio.o tempnam.o tmpfile.o tmpnam.o ungetc.o vfprintf.o vfscanf.o \
 	vprintf.o vscanf.o vsnprintf.o vsprintf.o vsscanf.o wbuf.o wsetup.o
 
-default:	$(OBJS)
+CFLAGS	+= -O78
+
+build:	../libc
+obj:	$(OBJS)
+
+#
+# There is a problem with ORCA/C v2.1.1b2 (and likely earlier versions)
+# that keeps it from compiling vfprintf.c.  Instead the machine crashes.
+# (Perhaps buffer overflow?)
+# We can avoid the problem by preprocessing this file with a stand-alone
+# cpp(1).  This problem has been reported to Byte Works.
+#
+junk.c:		vfprintf.c
+	cpp -I/src/gno/include -I/lang/orca/include -D__ORCAC__ -D__appleiigs__ -D__GNO__ $< > $@
+
+vfprintf.o:	junk.c
+	$(CC) -c -o $@ $(CFLAGS) $<
 
 .INCLUDE:	../rules.mk
 
