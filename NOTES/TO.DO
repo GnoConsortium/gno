@@ -1,9 +1,16 @@
 *******
 * soon
 *
-* $Id: TO.DO,v 1.5 1997/11/01 19:34:29 gdr Exp $
+* $Id: TO.DO,v 1.6 1997/12/02 05:31:57 gdr Exp $
 *
 *******
+
+Finish index in kernel reference manual.
+
+in stack(3) man page, the user shouldn't have to allow for extra 
+bytes for _assertStack(3).  Determine what is necessary.  If the
+number of bytes left is less than this value, then print out
+an abbreviated error message rather than calling errx.
 
 Verify if cp or gshk is corrupting the "fudgeinstall" script.
 
