@@ -5,7 +5,7 @@
  * January 19-22, 1992 by Jawaid Bazyar
  * Copyright 1992-1997, Procyon Inc.
  *
- * $Id: crypt.c,v 1.3 1998/02/08 03:20:23 gdr-ftp Exp $
+ * $Id: crypt.c,v 1.1 1998/02/09 08:25:33 taubert Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
