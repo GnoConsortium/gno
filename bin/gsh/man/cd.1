@@ -1,0 +1,26 @@
+.TH CD 1 "31 August 1996" GNO "Commands and Applications"
+.SH NAME
+.LP
+cd \- change working directory (gsh builtin)
+.SH SYNOPSIS
+.LP
+.B cd
+[
+.I directory
+]
+.SH DESCRIPTION
+.LP
+.I directory
+becomes the new working directory.
+If
+.B cd
+is used without arguments, it returns you
+to your $HOME directory.
+.LP
+Because a new process is created to execute each command,
+.B cd
+would be ineffective if it were written as a normal command.  It is therefore
+recognized and executed by the shells. 
+.SH "SEE ALSO"
+.LP
+.BR pwd (1)

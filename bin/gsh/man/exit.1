@@ -1,0 +1,17 @@
+.TH EXIT 1 "31 August 1996" GNO "Commands and Applications"
+.SH NAME
+.LP
+exit \- terminate process (gsh builtin)
+.SH SYNOPSIS
+.LP
+exit
+.SH DESCRIPTION
+.LP
+.B exit
+causes the current shell to terminate.
+.LP
+If you receive the message
+.B "You have stopped jobs."
+You have attempted to exit the shell with stopped jobs under job control.
+An immediate second attempt to exit will succeed, terminating
+the stopped jobs.

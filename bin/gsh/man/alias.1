@@ -1,0 +1,45 @@
+.TH ALIAS 1 "31 August 1996" GNO "Commands and Applications"
+.SH NAME
+.LP
+alias - define alternate command name (gsh builtin)
+.SH SYNOPSIS
+.LP
+.B alias
+[ name command ]
+.SH DESCRIPTION
+.LP
+The shell maintains a list of aliases that you can create, display,
+and modify using the
+.B alias
+and
+.B unalias
+commands.
+The shell checks the first word in each command to see if it matches
+the name of an existing alias.
+If it does, the command is reprocessed
+with the alias definition replacing its name; the history
+substitution mechanism is made available as though that command
+were the previous input line.
+This allows history substitutions,
+escaped with a backslash in the definition, to be replaced with
+actual command-line arguments when the alias is used.
+If no
+history substitution is called for, the arguments remain unchanged.
+.LP
+Aliases can be nested. 
+That is, an alias definition can contain
+the name of another alias.
+Nested aliases are expanded before any
+history substitutions is applied. 
+This is useful in pipelines such as
+.IP
+alias  lm "ls  \-l  |  more"
+.LP
+which when called, pipes the output of
+.BR ls (1)
+through
+.BR more (1).
+.LP
+Except for the first word, the name of the alias may not appear in its
+definition, nor in any alias referred to by its definition. 
+Such loops are detected, and cause an error message.

@@ -1,0 +1,18 @@
+.TH CLEAR 1 "31 August 1996" GNO "Commands and Applications"
+.SH NAME
+.LP
+clear \- clear the terminal screen (gsh builtin)
+.SH SYNOPSIS
+.LP
+.B clear
+.SH DESCRIPTION
+.LP
+.B clear
+clears your screen if this is possible.
+It looks in the environment for the terminal type and then in
+.B 31/etc/termcap
+to figure out how to clear the screen.
+.SH FILES
+.LP
+.B 31/etc/termcap
+terminal capability data base
