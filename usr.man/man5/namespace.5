@@ -1,0 +1,71 @@
+.\"
+.\" $Id: namespace.5,v 1.1 1999/02/13 19:56:16 gdr-ftp Exp $
+.\"
+.TH NAMESPACE 5 "7 February 1999" GNO "File Formats"
+.SH NAME
+.BR namespace
+\- map GS/OS partitions to GNO mount points
+.SH SYNOPSIS
+/etc/namespace
+.SH DESCRIPTION
+The 
+.BR namespace
+file is parsed by the GNO kernel when the kernel is booting.  The mappings
+in this file allow the kernel to provide a continguous hierarchy of 
+directories without requiring those directories to be on the same physical
+disk partition.  This is similar to the UNIX concept of mount points.
+.LP
+The format of the
+.BR namespace 
+file is:
+.nf
+
+	:mountpoint	:path:to:real:directory
+
+.fi
+Comments are not currently allowed in the file.
+It is critical that only colons be used as pathname delimiters in this
+file, and that no trailing colons are specified.
+.SH EXAMPLE
+In this abbreviated example, the /usr directory hierarchy exists on a
+different physical partition than do /bin and /dev:
+.nf
+	:bin	:disk1:bin
+	:dev	:disk1:dev
+	:usr	:disk2:moreGNOstuff:usr
+.fi
+.SH BUGS
+There is currently a limit of about 20 entries in the 
+.BR namespace
+file.
+.LP
+Whitespace can appear in the names of neither the mount point nor the
+directory being mounted.
+.LP
+Only a single directory component can be specified for the mount point.
+Therefore, the following would be an illegal entry:
+.nf
+	:usr:local	:disk3:local
+.fi
+.LP
+One would expect that files existing in the same directory as the GNO
+kernel binary could be referenced relative to the root partition (for
+example, referencing the 
+.BR initrc
+file as
+.BR /initrc ).
+This is not permitted; such a reference will cause the relevent system
+call to fail with ENOENT.
+Similarily, one cannot refer to the directory in which the kernel resides as
+.BR / ).
+.LP
+The specified mount points cannot currently be used as home directories.
+For example, root's home directory cannot be /root, where /root is defined
+in /etc/namespace as:
+.nf
+        :root   :hd3:root
+.fi
+.SH HISTORY
+The 
+.BR namespace
+facility first appeared in GNO v2.0.
