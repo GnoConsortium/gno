@@ -1,0 +1,11 @@
+Name:    syslogd
+Version: 2.0 (Alpha-1: 31 Oct 98)
+Shell:   GNO
+Author:  Devin Reade
+Contact: gdr@trenco.gno.org
+Where:   /usr/sbin
+FTP:     ftp.gno.org
+
+System logging daemon.  Syslogd responds to logging requests from various
+programs and writes them to a file or files based on the facility and priority
+level.

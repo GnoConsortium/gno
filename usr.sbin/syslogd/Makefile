@@ -1,9 +1,14 @@
-#	@(#)Makefile	8.1 (Berkeley) 6/6/93
+#
+# $Id: Makefile,v 1.2 1998/10/31 19:02:47 gdr-ftp Exp $
+#
 
-PROG=	syslogd
-SRCS=	syslogd.c ttymsg.c
-.PATH:	${.CURDIR}/../../usr.bin/wall
-MAN5=	syslog.conf.5
-MAN8=	syslogd.8
+PROG	= syslogd
+MAIN	= syslogd2
+SRCS	= syslogd2.c
 
-.include <bsd.prog.mk>
+CFLAGS	+= -D__STACK_CHECK__
+STACK	= 4096
+BINDIR	= /usr/sbin
+CHAPTER	= 8
+
+.INCLUDE:	/src/gno/prog.mk
