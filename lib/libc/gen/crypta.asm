@@ -3,15 +3,19 @@
 * 19-22 January 1992 by Jawaid Bazyar
 * Copyright 1992, Procyon Inc.
 *
-* $Id: crypta.asm,v 1.1 1997/02/28 05:12:43 gdr Exp $
+* $Id: crypta.asm,v 1.2 1998/02/05 16:07:06 gdr-ftp Exp $
 *
 * Because of the four storage blocks listed below (copyOfData, e, ikey, and
 * yb), this doesn't seem to be compatible with the large memory model.
 * This should be changed.  These routines should also be placed in the
 * libc_gen__ load segment.
 *
-	mcopy	crypta.mac
 	case	on
+
+dummy	start			; ends up in .root
+	end
+
+	mcopy	crypta.mac
 
 * void __crypt_transpose (struct block *data, struct ordering *t, int n);
 __crypt_transpose START
