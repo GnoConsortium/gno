@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Mon Apr  5 19:57:11 1999
+# Last revision: Sat Apr 10 15:25:55 1999
 #
-# $Id: describe.src,v 1.27 1999/04/05 19:58:59 gdr-ftp Exp $
+# $Id: describe.src,v 1.28 1999/04/10 15:27:35 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -237,6 +237,16 @@ similar to C, but differs in many substantial areas.  It supports
 interactive execution of statements.  bc is a utility included in the
 POSIX P1003.2/D11 draft standard.  Copyright Free Software Foundation.
 
+Name:    bcd
+Version: 1.0
+Shell:   GNO/ME
+Author:  Kelvin Sherlock (FreeBSD)
+Contact: KWS@delphi.com
+Where:   /usr/games
+FTP:     ftp.gno.org
+
+format input as BCD punch cards
+
 Name:    beatbox
 Version: 1.0
 Shell:   GNO, ORCA
@@ -300,6 +310,28 @@ Where:   /usr/local/bin
 FTP:     ftp://apple2.caltech.edu/pub/apple2/shellutils
 
 Unpacks files that were packed with Zoo 2.1 or earlier.
+
+Name:    bork
+Version: 1.0
+Shell:   GNO/ME
+Author:  Kelvin Sherlock
+Contact: KWS@delphi.com
+Where:   /usr/games
+FTP:     ftp.gno.org
+
+Convert input into swedish chef speak. Bork Bork Bork!
+
+Name:    caesar
+Version: GNO/ME version 1.0
+Shell:   GNO/ME
+Author:  Kelvin Sherlock (FreeBSD)
+Contact: KWS@delphi.com
+Where:   /usr/games
+FTP:     ftp.gno.org
+
+Decrypt caesar ciphers (text where all letters have
+been rotated by a fixed number) or rotate text by a
+specific amount.
 
 Name:    cal
 Version: -
@@ -2085,6 +2117,16 @@ Where:   /usr/games
 FTP:     ftp.gno.org
 
 Convert input into pig latin
+
+Name:    pom
+Version: 1.0
+Shell:   GNO/ME, ORCA/Shell
+Author:  Kelvin Sherlock (FreeBSD)
+Contact: KWS@delphi.com
+Where:   /usr/games
+FTP:     ftp.gno.org
+
+Calculate the current Phase Of Moon.
 
 Name:    printf
 Version: 1.0
