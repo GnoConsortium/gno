@@ -1,3 +1,16 @@
+For more bug reports, see also http://www.gno.org/~gno/bugs.html
+
+Gsh is not currently running for GNO v2.0.6 (when it is rebuilt; the v2.0.4
+gsh works fine -- other than outstanding bug reports -- with the v2.0.6
+kernel).  This obviously has to be sorted out.
+
+Gsh requires the v2.0.4 ltermcap to link.  Termcap has changed in v2.0.6,
+and gsh should be updated to reflect this.
+
+There is a lot of duplication in the macro files.  They should be generated
+with macgen from a common source file.  (The constructs to do this are
+already in the makefile, but commented out.)
+
 Need to modify Tim's mutex code to be:
 
 t	lda	#1
@@ -24,7 +37,9 @@ recursive aliases.
 
 multiple files for 'edit'.
 
-'df' lists a bunch appleshare shit.
+'df' lists a bunch appleshare shit.  [gdr:  There is now a stand-alone df
+implementation.  The builtin should either use code from the other 
+implementation, or be declared obsolecent.
 
 change updatevars to do a read_variable for better performance (and
 for correctness!)

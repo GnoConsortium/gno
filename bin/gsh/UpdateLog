@@ -1,5 +1,30 @@
-GSH 1.1 UPDATES...
+GSH 2.0 UPDATES
+^^^^^^^^^^^^^^^
 
+24 Apr 98    [gdr] Fitted gsh sources into into GNO builds.  While gsh
+	     assembles and links (abeit using the v2.0.4 termcap library),
+	     it does not currently run -- it just crashes.  The changes
+	     that were made includes:
+	     - 'keep' lines were eliminated
+	     - the 'mcopy' now takes the macro from the /obj/gno/bin/gsh
+	       directory.  This is in anticipation of having the macro
+	       files generated from a single source file; there is a large
+	       amount of duplication.  For the moment, the makefile merely
+	       copies the old macro files from the "M" directory to the
+	       /obj/gno/bin/gsh directory.
+	     - start each file with a dummy routine so that the source
+	       code winds up in the *.o rather than the *.root file.
+	     - added the 'setcom 60' directive; there were many source
+	       lines that were otherwise getting truncated.
+
+18 Nov 97    - [gdr] initial checkin into v2.0.6 repository.  No changes
+	       were made to the sources.
+
+GSH 1.1 UPDATES
+^^^^^^^^^^^^^^^
+
+ (unknown)   - Removed two references to $E0C000 in shell.asm (signal
+	       handlers).  Bad Timmy!
  2/25/92 d01 - fixed a problem with the command-line aborting after certain
                built-ins are run.
  4/03/92 d02 - .ttya and .ttyb are displayed as 'ta' and 'tb' respectively in
@@ -43,7 +68,8 @@ GSH 1.1 UPDATES...
                ~2 if $home was /usr. Looked real dumb :) and was incorrect.
              - optimizations to job control
          d16 - echo flushes the stdio when finished.
- 6/24/92     - fixed bug in system() call vector..make should work better now :)
+ 6/24/92     - fixed bug in system() call vector..make should work better
+	       now :)
              - added a newline after 'pwd'.
              - wrote 'edit' built-in.
  6/26/92 d17 - began work on stdin for gsh. Uses GS/OS, ioctl(), etc...
@@ -106,7 +132,7 @@ GSH 1.1 UPDATES...
  9/03/92     - fixed memory trashing problem in 'source'
  9/04/92     - 'ps' only displays processes with the users uid. Be sure to
                use login, or you'll be the kernel's uid and get to see all
-	of the kernel's processes as your own.
+	       of the kernel's processes as your own.
  9/10/92     - forgot to 'clc' when alias not found in 'alias foo'.
  9/20/92     - fixed open-apple mapping
              - changed keyboard mapping
@@ -138,21 +164,22 @@ GSH 1.1 UPDATES...
                this now.
 02/17/93 b03 - gshrc is now read as '@:gshrc'
 03/02/93     - 'set' automatically detects changing $term and auto-peforms a
-	tset. manually typing 'tset' is no longer required though it is
-	still included.
+	       tset. manually typing 'tset' is no longer required though it is
+	       still included.
              - prompts can now contain \n,\r,\t,\b.
 03/10/93     - updated automatic variable setting code. works faster now.
              - optimized low-level string routines
 03/25/93     - fixed NULL commands aborting entire command-lines.
 04/04/93     - history commands can now be greater than 256 characters, though
-	when being read, they are clipped to 1024.
+	       when being read, they are clipped to 1024.
              - the history file location has been moved to '@:history'
              - if $ignoreeof is set, then EOF (^D) will not quit the shell.
              - %U and %u will start and end underlining in prompts.
 04/22/93 b04 - 'df' displays device numbers
              - gsh now takes commands as command-line input. ie.,
-	'gsh echo hello, world' will start gsh then gsh will run echo.
-             - fixed a nasty shell script bug that basically rendered it useless.
+	       'gsh echo hello, world' will start gsh then gsh will run echo.
+             - fixed a nasty shell script bug that basically rendered it
+	       useless.
              - fixed memory trashing in shell scripts.
              - fixed memory trashing in histories.
 04/26/94 b05 - which no longers displays the command-name first.
