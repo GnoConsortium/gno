@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Wed Feb 18 00:27:39 1998
+# Last revision: Thu Mar 26 00:25:41 1998
 #
-# $Id: describe.src,v 1.5 1998/02/18 00:29:28 gdr-ftp Exp $
+# $Id: describe.src,v 1.6 1998/03/26 00:31:55 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -164,6 +164,16 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This utility is used to access the gsh(1) command history buffer.  It has
 similar functionality to the "!" built-in command for csh(1) or bash(1).
+
+Name:    basename
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin/
+FTP:     ftp.gno.org
+
+Displays the basename portion of a fully expanded pathname.
 
 Name:    bc
 Version: 1.01
@@ -337,6 +347,16 @@ FTP:     ftp.gno.org
 
 Sends strings and waits for strings. Used to send modem commands and wait
 for replies, etc..
+
+Name:    checknr
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Checks nroff/troff files for syntax.
 
 Name:    chmod
 Version: 2.1
@@ -540,7 +560,7 @@ Shell:   GNO/ME
 Author:  Phillip Vandry
 Contact: vandry@CAM.ORG
 Where:   /usr/sbin
-FTP:     -
+FTP:     ftp.gno.org
 
 Run from inittab to handle modems on dialup lines.
 
@@ -554,6 +574,16 @@ FTP:     cco.caltech.edu, ground.isca.uiowa.edu.
 
 Show differences in files.  This is a port based on GNU diff v2.6.  Some
 less-used features have been temporarily disabled for v1.0.
+
+Name:    dirname
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Diplays the directory of a given fully expanded pathname.
 
 Name:    djpeg
 Version: 6
@@ -771,7 +801,7 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 The card game "Go Fish!", ported from NetBSD 1.3.
 
 Name:    flex
-Version: 2.38
+Version: 2.3 patch level 8
 Shell:   ORCA/Shell, GNO/ME
 Author:  Soenke Behrens
 Contact: sbehrens@bigfoot.com
@@ -1192,10 +1222,20 @@ Version: 1.1 (September 1997)
 Shell:   GNO
 Author:  Jawaid Bazyar (updated for GNO/ME 2.0.6 by Dave Tribby)
 Contact: tribby@cup.hp.com
-Where:   /usr/bin/lseg
+Where:   /usr/bin
 FTP:     ground.isca.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 List segments in an Object Module Format file.
+
+Name:    m2o
+Version: 1.1
+Shell:   GNO, ORCA
+Author:  Tim Meekins
+Contact: -
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+This program converts Merlin assembly source files to ORCA/M source files.
 
 Name:    machine
 Version: 1.0
@@ -1335,6 +1375,30 @@ Where:   /usr/bin
 FTP:     -
 
 Formats or erases physical devices and creates file systems on them.
+
+Name:    mkobj
+Version: 1.1
+Shell:   GNO, ORCA
+Author:  Tim Meekins
+Contact: -
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+This program reads in a GS/OS file and places it into an OMF file which can
+be directly linked into a program. For example, mkobj can be used for adding
+pictures, compressed data, sounds, and other binary-like images into your
+programs.
+
+Name:    mktmp
+Version: 1.0 (April 1993)
+Shell:   GNO
+Author:  Phillip Vandry
+Contact: -
+Where:   /usr/sbin
+FTP:     ftp.gno.org
+
+This utility searches the GS/OS device list for a RAM disk and renames it
+to /tmp.  See also renram5(8).
 
 Name:    more
 Version: 1.4
@@ -2230,8 +2294,8 @@ Version: 1.1
 Shell:   GNO/ME
 Author:  Phillip Vandry
 Contact: vandry@CAM.ORG
-Where:   /usr/bin
-FTP:     -
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
 
 Word wraps text to a certain length (79 default). Also filters binary
 data and is very fast.
