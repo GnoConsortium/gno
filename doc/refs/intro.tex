@@ -1,7 +1,7 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.12 1999/01/28 05:22:16 gdr-ftp Exp $
+% $Id: intro.tex,v 1.13 1999/01/29 07:07:26 gdr-ftp Exp $
 % 
 
 \documentclass{report}
@@ -1055,7 +1055,10 @@ They should not yet be extracted.
 
 \item{\bf gnohfs.shk\rm}
 This archive consists of files that do not conform to ProDOS naming 
-conventions.  While it is possible to run GNO without any HFS partitions
+conventions.
+It should be placed into the same directory as were the files
+{\bf gno.01.shk\rm, \bf gno.02.shk\rm, ... \bf gno.16.shk\rm}.
+While it is possible to run GNO without any HFS partitions
 at all, it is recommended that you have available to GNO a small amount
 of space on an HFS partition.  If you use the \bf namespace\rm(5) facility,
 it is unnecessary to dedicate an entire HFS partition to GNO.
@@ -1098,8 +1101,7 @@ below with the appropriate name.
 
 % We would like to be using bold face type for some parts of this, but
 % it appears that the current version of tex2html can't handle boldface
-% within an enumerated list.  I've left the pieces that used to be boldfaced
-% on lines by themselves.
+% within an enumerated list.
 
 \item
 From your program launcher (typically the Finder), run the program
@@ -1194,6 +1196,27 @@ See the kernel reference manual for a description of the
 namespace file.
 
 \item
+During the extraction process, the following files were placed
+into the /gno/System directory:
+
+\begin{verbatim}
+	/gno/System/Desk.Accs/GNOSnooperII
+	/gno/System/Desk.Accs/SuspDA
+	/gno/System/Drivers/FilePort
+	/gno/System/Drivers/FilePort.Data
+	/gno/System/Drivers/NullPort
+	/gno/System/System.Setup/GNOBug
+	/gno/System/System.Setup/SIM
+\end{verbatim}
+
+It is recommended that these files be copied into the relevent
+directories in the System folder of your boot partition.  The
+GNOBug PIF is only required if you have GSBug installed.  If
+you install GNOBug you should afterward sort the System.Setup
+directory so that GNOBug appears before GSBug (the latter of
+which is commonly called ``debug.init'').
+
+\item
 If you are not short of disk space, you should create .so links
 for your manual pages.  (See the mkso(8) man page for an
 explanation.)  You can do this by executing the following
@@ -1215,7 +1238,7 @@ following commands instead:
 \end{verbatim}
 
 \item
-You should now return to your program launcher (the Finder,
+You can now return to your program launcher (the Finder,
 ProSEL-16, or whatever you used to start /gno.boot/kern) by
 typing ``exit'' at the prompt.  To startup up your new version
 of GNO, you should then launch /gno/kern.  You will then see
