@@ -39,8 +39,6 @@
  * Changes not related to compiler are replaced using #ifndef __GNO__
  *
  * Added prototyped headers, surrounded by #ifndef __STDC__
- *
- * $Id: wc.c,v 1.2 1997/09/26 06:27:59 gdr Exp $
  */
 
 
@@ -56,7 +54,7 @@ static const char copyright[] =
 static const char sccsid[] = "@(#)wc.c	8.1 (Berkeley) 6/6/93";
 #else
 static const char rcsid[] =
-	"$Id: wc.c,v 1.2 1997/09/26 06:27:59 gdr Exp $";
+	"$Id: wc.c,v 1.3 1997/10/03 03:51:24 gdr Exp $";
 #endif
 #endif /* not lint */
 #endif
@@ -85,10 +83,9 @@ void usage __P((void));
 
 /* Interface to check on how much stack space a C program uses. */
 #if defined(__GNO__)  &&  defined(__STACK_CHECK__)
-#ifndef _STDLIB_H_
-#include <stdlib.h>
-#endif
+#ifndef _GNO_GNO_H_
 #include <gno/gno.h>
+#endif
 static void report_stack(void)
 {
 	fprintf(stderr,"\n ==> %d stack bytes used <== \n", _endStackCheck());
