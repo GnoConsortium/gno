@@ -1,0 +1,565 @@
+#===============================================================================
+# List of shell applications for GNO/ME                   Last revision: 11/2/93
+#===============================================================================
+#
+#     About this file
+#     ~~~~~~~~~~~~~~~
+#     This file is in human readable form, but is intended to be compiled with
+#  the program 'descc' into the 'describe' database.  Just type 'descc
+#  <filename>', where <filename> is the name you saved this file to, and
+#  descc will compile the file into the file /usr/local/lib/describe.  Make
+#  sure the directory structure '/usr/local/lib/' exists first!  Information
+#  may be later culled from the file with the command 'describe <utility>'.
+#
+#      Send additions/corrections to:
+#      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  James Brookes
+#
+#  jamesb@ecst.csuchico.edu     <-- Preferred
+#  bb252@cleveland.freenet.edu
+#
+#      To obtain the version number of a file: 
+#      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  A) use the shell program `getvers',
+#  B) any usage or -v/V flag supplied by the utility author
+#
+#
+#  NB: "Author" may mean who is maintaing the current port, and may not actually
+#  mean the original author of the program.
+#===============================================================================
+
+Name:    argv0
+Version: 1.0
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Emulates UNIX argv0 (manipulate argv array passed to programs). Runs
+shell scripts with #!/... syntax.  Runs s16 programs with arguments.
+
+Name:    aw30
+Version: 1.0
+Author:  Robert Hill
+Contact: rhill@eecs.ukans.edu
+Where:   /usr/local/bin
+FTP:     ...
+
+   Formats AppleWorks (Classic) Word Processor files for display.  Handles
+most options--including underline, boldface, margins, centering--on all
+terminal types.
+
+Name:    binprint
+Version: 1.2
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:
+
+   Prints a hex dump of files or standard in
+
+Name:    bison
+Version: 1.03
+Author:  Soenke Behrens
+Contact: behrenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin
+FTP:     ...
+
+   A port of the FSF's yacc replacement. bison is part of the GNU project. yacc
+is a parser generator (also known as "compiler compiler").
+
+Name:    booz
+Version: 2.0
+Author:  Soenke Behrens
+Contact: behrenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin
+FTP:     ...
+
+   Unpacks files that were packed with Zoo 2.1 or earlier.
+
+Name:    cal
+Version: x
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:
+
+   Prints a calendar for the current month or any month.
+
+Name:    calls
+Version: 2.0
+Author:  Devin Reade
+Contact: glyn@cs.ualberta.ca, glyn@ersys.edm.ab.ca
+Where:   ??
+FTP:     cco.caltech.edu and grind.isca.uiowa.edu.
+
+   A call chart generator, to show the sequence and calling dependancies of
+functions within a program.  It's more flexible than Orca shell version. 
+Requires cpp.
+
+Name:    cc
+Version: 1.06
+Author:  Soenke Behrens
+Contact: behrenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin
+FTP:     ...
+
+   Unixish front-end for ORCA/C. Particularly useful in combination with dmake.
+
+Name:    ccprep
+Version: 1.01
+Author:  Soenke Behrens
+Contact: behrenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin
+FTP:     ...
+
+   For use with cc. Allows the use of a kludge file for specifying #pragma
+statements from the command line.
+
+Name:    chat
+Version: 1.0
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Sends strings and waits for strings. Used to send modem commands and wait
+for replies, etc..
+
+Name:    chmod
+Version: 1.0
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /bin
+FTP:     ...
+
+   chmod allows the user to modify file permissions on a particular file;
+including the read, write, destroy, backup, and invisible bits.
+
+Name:    copycat
+Version: 1.4.1
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/bin
+FTP:     ...
+
+    copycat copies data bidirectionally between the two named ttys.  It
+can be used as a simple dumb terminal program.
+
+Name:    cron
+Version: x
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/sbin
+FTP:     ...
+
+   Runs certain processes at certain times. cron is started by init.
+
+Name:    date
+Version: 1.2
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Shows the date and time (optionally, continuously).
+
+Name:    descc
+Version: 1.0
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/local/bin
+FTP:     ...
+
+   Compile a source file into a 'describe' database file.
+
+Name:    describe
+Version: 1.0
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/local/bin
+FTP:     ...
+
+   Print a multi-line description obtained from the compiled 'describe'
+database; giving utility name, version, author, author's contact, where the
+utility is, as well as where the utility can be FTPd from on the InterNet.
+
+Name:    dial
+Version: 1.0
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Uses your modem to dial telephone numbers stored in a database by name,
+or looks up the numbers and reports without dialing.
+
+Name:    dialup
+Version: 1.1
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/sbin
+FTP:     ...
+
+   Run from inittab to handle modems on dialup lines.
+
+Name:    dmake
+Version: 0.4.3b (17 Jan 94)
+Author:  Devin Reade.
+Contact: <glyn@cs.ualberta.ca>,<glyn@ersys.edm.ab.ca>
+Where:   /usr/bin
+FTP:     cco.caltech.edu,grind.isca.uiowa.edu.
+
+   A Unix-style make utility for automated compilation.
+
+Name:    eps
+Version: 1.0
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/bin
+FTP:     ...
+
+   Display extensive process status information.
+
+Name:    expr
+Version: 1.1
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:
+
+   Evaluates matehmatical expressions; prints result in normal and
+scientific notation. Uses C like syntax.
+
+Name:    flex
+Version: 2.38
+Author:  Soenke Behrens
+Contact: berenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin
+FTP:     ...
+
+   A port of the FSF's lex replacement. flex is part of the GNU project. lex
+is a tokenizer generator, to be used in conjunction with yacc. Note that due
+to the way the FSF writes their code (yuck), flex has some problems with ints
+being 16-bit instead of 32-bit on the GS. A version that fixes these problems
+will be released as soon as the more annoying bugs are out of ORCA/C 2.0.1.
+
+Name:    fmake
+Version: 1.0
+Author:  Felix Blank
+Contact: behrenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin
+FTP:     ...
+
+   fmake is Unixish make utility. It only understands a small subset of make
+commands, though, barely enough to maintain small projects. Written originally
+by Felix Blank, now "maintained" by Soenke Behrens. The need for this utility
+will vanish with the advent of dmake.
+
+Name:    getvers
+Version: 1.2
+Author:  Ian Schmidt
+Contact: irsman@iastate.edu
+Where:   /usr/bin
+FTP:     pindarus.cs.uiuc.edu
+ 
+   Gets the rVersion information on a EXE, including name, version, and any
+other information the author wishes to include, printing it to standard out.
+
+Name:    init
+Version: 1.0
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Sends commands to the init daemon.
+
+Name:    initd
+Version: 1.4
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/sbin
+FTP:     ...
+
+   Starts and kills processes, maintains the system run level, and runs
+syslogd (log daemon)
+
+Name:    joinpara
+Version: 1.0
+Author:  Devin Reade
+Contact: glyn@cs.ualberta.ca, glyn@ersys.edm.ab.ca
+Where:   /usr/bin
+FTP:     cco.caltech.edu, grind.isca.uiowa.edu.
+
+   A filter to strip newlines from the middle of paragraphs, but not
+elsewhere.  Written to ease the importing of text files into word
+processor documents.
+
+Name:    last
+Version: 1.0
+Author:  Steve Reeves
+Contact: reevess@cse.fau.edu
+Where:   /usr/bin
+FTP:     grind.isca.uiowa.edu
+
+   last indicates last logins by user or terminal.  It searches
+through the login accounting file "/etc/wtmp" for this information.
+It is only useful with GNO's Multi-User package.
+
+Name:    machtype
+Version: 1.4
+Author:  Ian Schmidt
+Contact: irsman@iastate.edu
+Where:   /usr/bin
+FTP:     pindarus.cs.uiuc.edu
+ 
+   Gets and prints a wide variety of information on your IIgs system, including
+memory, versions of GNO, GS/OS, and the ROM, accelerator type if any, and more.
+
+Name:    makedmake
+Version: 1.1.1
+Author:  Devin Reade
+Contact: <glyn@cs.ualberta.ca>,<glyn@ersys.edm.ab.ca>
+Where:   /usr/bin
+FTP:     cco.caltech.edu,grind.isca.uiowa.edu,pindarus.cs.uiuc.edu
+
+   Calculates program dependencies and generates makefiles for dmake.
+This is a particularily brain-dead port that will likely be superceded.
+(By mkmf?)  Suitable for simple dependancies.
+
+Name:    martian
+Version: ??
+Author:  Soenke Behrens
+Contact: behrenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin or /usr/local/games
+FTP:     ...
+
+   Creates martian poetry in nroff format. The source is, alas, lost, it seems. 
+
+Name:    mem
+Version: 1.2
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Shows memory usage statistics in different formats.
+
+Name:    mkfs
+Version: 1.0
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Formats or erases physical devices and creates file systems on them.
+
+Name:    mkdir
+Version: 1.2
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /bin
+FTP:     ...
+
+   Make a directory.
+
+Name:    mugs
+Version: 3.0
+Author:  Brian Tao
+Contact: taob@io.org
+Where:   /usr/bin
+FTP:     ionews.io.org:/pub/apple/16bit/GNO
+
+   MuGS is a full-screen offline Internet e-mail and Usenet news
+processor.  Utilities for creating message packets on the UNIX system
+and delivering replies are included.  MicroEMACS 3.11c is required.
+
+Name:    newuser
+Version: 1.0
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/sbin
+FTP:     ...
+
+   Create a home directory with basic gshrc for a new user, and add user
+into /etc/passwd file for immediate access.
+
+Name:    newuserv
+Version: 1.0
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/sbin
+FTP:     ...
+
+   Create a home directory with basic gshrc for new user, and add user
+to /var/adm/newuser/newusers file for validation by the system operator.
+
+Name:    parent
+Version: 1.0
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Shows the current process or a specified process and climbs up to the top
+level process.
+
+Name:    phone
+Version: 1.0.1
+Author:  Robert Hill
+Contact: rhill@eecs.ukans.edu
+Where:   /usr/bin
+FTP:     ...
+
+   Based on talk, phone allows two users to interactively chat in a
+split-screen format.
+
+Name:    rndname
+Version: 4.0
+Author:  Soenke Behrens
+Contact: behrenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin or /usr/local/games
+FTP:     ...
+
+   Creates random names by a set of certain rules. Great if you have to come
+up with names for your next RPG session and hate having to think up 20+
+silly-sounding names all by yourself :)
+
+Name:    rtf2text
+Version: 1.0.6
+Author:  Robert Hill
+Contact: rhill@eecs.ukans.edu
+Where:   /usr/bin
+FTP:     ...
+
+   Converts RTF (Rich Text Format) files to text.
+
+Name:    sendmail
+Version: 1.1
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/lib/
+FTP:     ...
+
+   Sends mail from one local user to another, or spools mail for foreign
+destinations.
+
+Name:    setvers
+Version: 1.0.2
+Author:  Ian Schmidt
+Contact: irsman@iastate.edu
+Where:   /usr/bin
+FTP:     pindarus.cs.uiuc.edu
+ 
+   Sets the rVersion information on a EXE, including name, version, and any
+other information the author wishes to include.
+
+Name:    su
+Version: 1.0
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /bin
+FTP:     ...
+
+   Launch a new shell as another user.
+
+Name:    sync
+Version: x
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Causes GS/OS to commit all pending data to disk.
+
+Name:    timelimit
+Version: 1.1
+Author:  Devin Reade
+Contact: glyn@cs.ualberta.ca, glyn@ersys.edm.ab.ca
+Where:   /usr/bin
+FTP:     cco.caltech.edu, grind.isca.uiowa.edu.
+
+   Limits the run time of a process; when the time is up, it sends the
+specified process a series of SIGINTs.
+
+Name:    udl
+Version: 1.03
+Author:  Soenke Behrens
+Contact: behrenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin
+FTP:     ...
+
+   Converts text between the CR, LF and CR/LF forms. Somewhat on the slow side,
+so don't use it.
+
+Name:    unarj
+Version: 2.41
+Author:  Soenke Behrens
+Contact: behrenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin
+FTP:     ...
+
+   Unpacks files that were packed with ARJ 2.41 or earlier.
+
+Name:    unpp
+Version: 1.1
+Author:  Soenke Behrens
+Contact: behrenss@informatik.tu-muenchen.de
+Where:   /usr/local/bin
+FTP:     ...
+
+   Uncompresses PowerPacker(tm) documents, which are created by them Amigoids.
+
+Name:    uptime
+Version: 1.0
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/bin
+FTP:     ...
+
+   Reports the time, amount of time the system has been up, number of
+users, and system load averages for the last 1, 5, and 15 minutes.
+
+Name:    uptimed
+Version: 1.0
+Author:  Robert Hill
+Contact: rhill@eecs.ukans.edu
+Where:   /usr/sbin
+FTP:     ...
+
+   Keeps track of system load averages for the uptime utility over the last
+1, 5 and 15 minutes.
+
+Name:    wrap
+Version: 1.1
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Word wraps text to a certain length (79 default). Also filters binary
+data and is very fast.
+
+Name:    xbiff
+Version: 1.0
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   */system/desk.accs/
+FTP:     ...
+
+   XBiff is an NDA which gives the user a colorful mailbox announcing both
+aurally and visibly when the user has mail.  OA-clicking on the window's
+content region causes a title bar to appear, allowing the window to be moved.
+
+Name:    xclock
+Version: 1.0
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   */system/desk.accs/
+FTP:     ...
+
+   XClock is an NDA analog clock, similar to xclock -analog under XWindows.
+OA-clicking on the window's content region causes a title bar to appear,
+allowing the window to be moved and/or resized.
+
