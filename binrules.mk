@@ -2,7 +2,7 @@
 # Standard compilation rules for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binrules.mk,v 1.2 1997/09/24 06:43:53 gdr Exp $
+# $Id: binrules.mk,v 1.3 1997/11/01 19:10:37 gdr Exp $
 #
 # Devin Reade, Dave Tribby, 1997.
 #
@@ -14,8 +14,8 @@ build: $(PROG)
 # Include standard occ options
 #   -a0: use .o suffix for object file
 #   -c:  don't link after compiling
-$(PROG).o: $(PROG).c
-	$(CC) $(CFLAGS:s/ -r / /) -a0 -c $(PROG).c
+$(MAIN).o: $(MAIN).c
+	$(CC) $(CFLAGS:s/ -r / /) -a0 -c $(MAIN).c
 
 # Program depends upon all the objects. Add the version resource.
 $(PROG): $(OBJS) $(PROG).r
@@ -27,7 +27,7 @@ $(PROG): $(OBJS) $(PROG).r
 # exec the line directly
 clean:
 	-$(RM) -f $(OBJS)
-	-$(RM) -f $(PROG).root
+	-$(RM) -f $(MAIN).root
 	-$(RM) -f $(PROG).r
 	-$(RM) -f $(PROG).rej
 

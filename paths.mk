@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: paths.mk,v 1.2 1997/09/21 21:52:19 gdr Exp $
+# $Id: paths.mk,v 1.3 1997/11/01 19:10:37 gdr Exp $
 #
 
 # SRC_DIR is the top-level GNO source distribution directory (containing
@@ -25,9 +25,8 @@ RELEASE_DIR	= /dist
 
 # ORCA_DIST is the directory containing the standard Orca distribution.
 # It shouldn't contain any GNO-isms.
-# I recommend using /orca-native and defining it in /etc/namespace.
 
-ORCA_DIST	= /orca-native
+ORCA_DIST	= /lang/orca
 
 # ORCA_SRC is the directory containing the sources to the ORCA libraries
 # This is (and should only be) used when building libc.  We do this kludge
