@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.1 1997/12/21 22:39:13 gdr Exp $
+# $Id: Makefile,v 1.2 1998/04/22 05:09:52 gdr-ftp Exp $
 #
 # Devin Reade, 1997
 #
@@ -11,5 +11,6 @@ PROG	= mkso
 CFLAGS	+= # -D__STACK_CHECK__
 STACK	= 1024
 BINDIR	= /sbin
+CHAPTER	= 8
 
 .INCLUDE:	/src/gno/prog.mk
