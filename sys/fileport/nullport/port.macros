@@ -1,0 +1,212 @@
+
+; 
+;   Copyright (C) Kopriha Software, 1990 - 1991
+;   All rights reserved.
+;   Licensed material -- property of Kopriha Software
+; 
+;   This software is made available solely pursuant to the terms
+;   of a Kopriha Software license agreement which governs its use.
+;
+;
+; The following macros (port_routine/port_return) are support
+; routines for IIGS port drivers.
+;
+;
+; Macros: port_routine (<length>:<parm name>[,...])[,<work size>]
+;          - Enter a port driver routine
+;
+;         port_return <length>:<return name>[,<completion routine>]
+;          - Exit a port driver routine
+;          - This macro must be followed by an RTL.  By coding the
+;            macro this way you can customize the return (some, but
+;            not all port driver routines must return after a CMP #1.
+;            See the source to port.asm for the details).
+;
+;
+; Note: These macros are derived from the csubroutine/creturn
+;       macros supplied with Orca/C (on the demos disk).
+;
+ MACRO
+&lab port_subroutine &parms,&work
+&lab anop                                 Places the label from macro invocation
+ aif c:&work,.a                           If there is a work parm goto .a
+ lclc &work                               Local define work a string
+&work setc 0                              Set work to zero
+.a                                     .a
+ gbla &totallen                           Global define totallen
+ gbla &worklen                            Global define worklen
+ gbla &PClen                              Global define length of PC
+&worklen seta &work                       Set worklen = work (type conversion)
+&totallen seta 0                          Set totallen to zero
+&PClen seta 8                             Set PC length to 8 (6(rtnPC*2)+1(direct page)+1(data bank))
+ aif c:&parms=0,.e                        If there are no parms to routine then goto .e
+ lclc &len                                Local define char len
+ lclc &p                                  Local define char p
+ lcla &i                                  Local define int i
+&i seta 1                                 i = 1
+.b                                     .b
+&p setc &parms(&i)                        p = parms[i]
+&len amid &p,2,1                          len = substr(p,2,1)
+ aif "&len"=":",.c                        if len == ':' goto .c
+&len amid &p,1,2                          len = substr(p,1,2) {First 2 chars}
+&p amid &p,4,l:&p-3                       p = substr(p,4,strlen(p)-3) {get name}
+ ago .d                                   goto .d
+.c                                     .c
+&len amid &p,1,1                          len = substr(p,1,1) {only first char}
+&p amid &p,3,l:&p-2                       p = substr(p,3,strlen(p)-2) {get name}
+.d                                     .d We have a name and its length
+&p equ &totallen+&PClen+&work             {name} equ totallen+PClen+work
+&totallen seta &totallen+&len             totallen = totallen+len (length of parm)
+&i seta &i+1                              i = i + 1
+ aif &i<=c:&parms,^b                      if i<#parms goto b (backwards goto)
+.e                                     .e All parms setup (equ'd)
+ tsc                                      get stack pointer
+ aif &work=0,.f                           If you need work space...
+ sec                                       add it onto the stack pointer
+ sbc #&work
+ tcs
+.f                                       Stack is setup by here...
+ phd                                      Save the direct page
+ tcd                                      Set direct page == stack ptr
+ mend                                     Thus lda parm is a direct page reference...
+
+ MACRO
+&lab port_return &returnparm,&comproutine
+;
+; Parse the return parameter (if defined).
+;
+&lab anop                                 Place any label from macro invocation
+ lclc &len                                Local create len
+ aif c:&returnparm,.a                     If there is a parameter goto .a
+ lclc &returnparm                         Local create r (for parm length)
+&returnparm setc 0                        Set returnparm to zero
+&len setc 0                               Set len to zero
+ ago .h                                   Goto skip arguement parsing
+.a                                     .a We have a parameter - parse it!
+&len amid &returnparm,2,1                 len = substr(r,2,1)
+ aif "&len"=":",.b                        if (len == ':') goto .b
+&len amid &returnparm,1,2                 len = substr(r,1,2)
+&returnparm amid &returnparm,4,l:&returnparm-3   r = substr(r,4,strlen(r)-3)
+ ago .c                                   goto .c
+.b                                     .b One character length...
+&len amid &returnparm,1,1                 len = substr(r,1,1)
+&returnparm amid &returnparm,3,l:&returnparm-2   r = substr(3,1,strlen(r)-2)
+;
+; Get the return parameter - if we have something to
+;  return.  The return parameter can be 2,4 or 10 bytes
+;  (IE: Word, Long or Sane #).
+;
+.c
+ aif &len=0,.h                            If len == 0 then skip this...
+ aif &len<>2,.d                           if len != 2 goto .d
+ ldy &returnparm                            LDY <parm name>
+ ago .h                                     goto .h
+.d                                     .d Not length == 2
+ aif &len<>4,.e                           if length != 4 goto .e
+ ldx &returnparm+2                          LDX <parm name>+2 (high byte)
+ ldy &returnparm                            LDY <parm name>   (low byte)
+ ago .h                                     goto .h
+.e                                     .e Not length == 4
+ aif &len<>10,.g                          if length != 10 (IE: Sane #) goto .g
+ ldx #^&returnparm                          LDX #^<parm name> (high byte)
+ ldy #&returnparm                           LDY #<parm name>  (low byte)
+&len setc 4                               We're returning a pointer...len 4
+ ago .h                                     goto .h
+.g                                     .g Not sane # (hehehe)
+ mnote 'Not a valid return length',16     Print error}
+ mexit                                    Oops... stop here
+;
+; Setup the completion routine - if there is one.
+;
+.h
+ aif c:&comproutine=0,.m
+;
+; Ok, lets setup the completion routine JSR (but only if its not NIL)
+;
+ stz cjmp&SYSCNT+1                 Clear the completion routine address
+ stz cjmp&SYSCNT+2                  (all three words of it...)
+;
+ lda &comproutine
+ ora &comproutine+1                'OR' the other bits in...
+ beq compa&SYSCNT                  If its NIL, then return to our caller.
+;
+; Looks non-NIL to me.  Setup the completion routine call and then do it.
+;  (Ug... self modifying code... Its the easy solution for now...)
+;
+ lda &comproutine                 Get low 2 bytes
+ sta cjmp&SYSCNT+1                Save them in our JSR instruction
+ lda &comproutine+1               Get the high bytes (actually,
+ sta cjmp&SYSCNT+2                 just the bank byte...)
+compa&SYSCNT anop
+;
+; Setup the return parameters on the stack (if any)
+;
+.m
+ aif &len<>2,.k                           If return nothing, goto .j
+ sty &worklen+&totallen+&PClen-&len
+.k
+ aif &len<>4,.j
+ stx &worklen+&totallen+&PClen-&len       Store low byte
+ sty &worklen+&totallen+&PClen-&len+2     Store high byte
+.j
+;
+; If the return PCs need to be moved, then lets move
+;  them... the determination is based on if we have
+;  to remove parameters from the stack.
+; Note: The order of the moving these PCs is significant!
+;  We must move the PCs in the order coded... any other
+;  may cause the first store to overwrite part of the
+;  PCs before moving them.
+;
+ aif &totallen=0,.i                       if no parms to port_routine, goto .i
+ aif &totallen-&len=0,.i                  No sense in moving PCs nowhere...
+ lda &worklen+6                              Copy return PCs (both of them)
+ sta &worklen+&totallen+6-&len
+ lda &worklen+4
+ sta &worklen+&totallen+4-&len
+ lda &worklen+2
+ sta &worklen+&totallen+2-&len
+.i
+;
+; If there is a possible completion routine, then
+;  generate the code to check if it actually exists
+;  and if it does then call it (jsl) - otherwise rtl.
+;
+ aif c:&comproutine=0,.p
+;
+; Ok, lets go to the completion routine JSR (but only if its not NIL)
+;
+ lda cjmp&SYSCNT+1                 Is there a completion routine?
+ ora cjmp&SYSCNT+2                  'OR' the rest of the address...
+ beq compb&SYSCNT                  If its NIL, then return to our caller.
+.i
+;
+; Looks non-NIL to me.  Setup the completion routine call and then do it.
+;  (Ug... self modifying code... Its the easy solution for now...)
+;
+ clc                              Clear carry - no errors on this call
+ lda #0                            (Also need zero in ac for no error!)
+cjmp&SYSCNT jsr >123456           Jmp to the completion routine
+compb&SYSCNT anop                  (Jsl would come back to a rtl, may as well just go there)
+.p
+;
+; If we have to then it is time to adjust the stack pointer
+;  (also get the direct page/data bank restored for our caller)
+;
+ pld                                      Restore the direct page
+ plb                                      Restore the data bank
+ aif &worklen+&totallen-&len=0,.o         If we aren't changing the stack ptr
+ tsc                                      Fix the stack pointer
+ clc                                       ...
+ adc #&worklen+&totallen-&len              ...
+ tcs                                       ...
+.o
+ clc                              Clear carry - no errors on this call
+ lda #0                            (Also need zero in ac for no error!)
+ mend
+
+
+
+
+
+
