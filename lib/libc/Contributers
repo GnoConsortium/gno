@@ -1,7 +1,7 @@
 List of Contributers
 ====================
 
-$Id: Contributers,v 1.2 1997/07/27 22:47:59 gdr Exp $
+$Id: Contributers,v 1.3 1997/09/21 16:28:57 gdr Exp $
 
 The following people and organizations have contributed, knowingly or
 otherwise, to the code in this library.  Some other contributions were
@@ -16,6 +16,8 @@ Devin Reade
 Derek Taubert
 Dave Tribby
 Phillip Vandry
+Mike Westerfield
 
+Procyon, Inc.
 The Byte Works, Inc.
 University of California, Berkeley.
