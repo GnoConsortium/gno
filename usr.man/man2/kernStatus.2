@@ -1,0 +1,48 @@
+.\"
+.\" $Id: kernStatus.2,v 1.1 1997/02/27 07:32:14 gdr Exp $
+.\"
+.TH KERNSTATUS 2 "29 January 1997" GNO "System Calls"
+.SH NAME
+.BR kernStatus ,
+.BR kernVersion 
+\- detect presence and version of GNO kernel
+.SH SYNOPSIS
+#include <gno/gno.h>
+.sp 1
+int
+\fBkernStatus\fR (void);
+.br
+int
+\fBkernVersion\fR (void);
+.SH DESCRIPTION
+.BR kernStatus
+can be used to determine whether or not the GNO kernel is active.
+You may use this function to abort programs that use GNO-specific features,
+or to allow them to enable non-GNO environment-specific code.
+.LP
+If the GNO kernel is not active, the global variable
+.BR _toolErr
+will be non-zero on return from
+.BR kernStatus .
+This value is also accessible through the function
+.BR toolerror (3).
+C programmers may prefer to use
+.BR needsgno (3)
+for brevity.
+.LP
+.BR kernVersion
+returns the kernel version in the same fashion as the standard IIgs
+ToolBox calls.  For example, a return value of
+.B 0x0201
+indicates a version of 
+.BR 2.1 .
+.LP
+Note that both of these functions are inline system calls; you
+.IR must
+include the <gno/gno.h> header or they will wind up as being
+unresolved symbols when your program is linked.
+.SH SEE ALSO
+.BR needsgno (2),
+.BR toolerror (3),
+the
+.IR "GNO Kernel Reference Manual" .

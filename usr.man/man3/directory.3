@@ -1,0 +1,228 @@
+.\" Copyright (c) 1983, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)directory.3	8.1 (Berkeley) 6/4/93
+.\"
+.TH DIRECTORY 3 "29 January 1997" GNO "Library Routines"
+.SH NAME
+.BR opendir ,
+.BR readdir ,
+.BR telldir ,
+.BR seekdir ,
+.BR rewinddir ,
+.BR closedir ,
+.BR dirfd
+\- directory operations
+.SH SYNOPSIS
+.nf
+#include <sys/types.h>
+#include <dirent.h>
+
+DIR *\fBopendir\fR (const char *\fIfilename\fR);
+struct \fBdirent\fR *readdir (DIR *\fIdirp\fR);
+long \fBtelldir\fR (const DIR *\fIdirp\fR);
+void \fBseekdir\fR (DIR *\fIdirp\fR, long \fIloc\fR);
+void \fBrewinddir\fR (DIR *\fIdirp\fR);
+int \fBclosedir\fR (DIR *\fIdirp\fR);
+int \fBdirfd\fR (DIR *\fIdirp\fR);
+.fi
+.SH DESCRIPTION
+The
+.BR opendir 
+function
+opens the directory named by
+.IR filename ,
+associates a
+.IR "directory stream"
+with it
+and
+returns a pointer to be used to identify the
+.IR "directory stream"
+in subsequent operations.  The pointer
+.BR NULL
+is returned if
+.I filename
+cannot be accessed, or if it cannot
+.BR malloc (3)
+enough memory to hold the whole thing.
+.LP
+The
+.BR readdir 
+function
+returns a pointer to the next directory entry.  It returns
+.BR NULL
+upon reaching the end of the directory or detecting an invalid
+.BR seekdir 
+operation.
+The GNO implementation will not return entries for either the current
+directory
+.RB ( . )
+or the parent directory
+.RB ( .. ).
+Directory entries are defined by the following structure in <sys/dirent.h>:
+.nf
+
+struct dirent {
+	unsigned long	d_fileno;	/* file number of entry */
+	unsigned short	d_reclen;	/* length of this record */
+	unsigned char	d_type;		/* file type (non-IIgs) */
+	unsigned char	d_namlen;	/* length of string in d_name */
+	char		d_name[256];	/* name must be no longer than this */
+}
+
+.fi
+The value of
+.BR d_fileno
+is, on most architectures, the inode of the current file.  Since inodes
+are not used on any current GS/OS FSTs, this number corresponds to the
+offset of this file in the current directory.
+.BR d_reclen
+is the length of the entire struct dirent.
+The
+.BR d_type
+member is currently set to 
+.BR DT_DIR
+for directories, 
+.BR DT_REG
+otherwise.
+.BR d_namlen
+is the length of the file name contained in
+.BR d_name .
+.LP
+Subsequent calls to 
+.BR readdir 
+will overwrite previous results in the struct dirent; if the results
+must be saved then they should be 
+.BR memcpy \'d
+to a user-defined buffer.
+.LP
+The
+.BR telldir 
+function
+returns the current location associated with the named
+.IR "directory stream" .
+The result of a
+.BR telldir
+on a stream which has just been opened is undefined.
+.LP
+The
+.BR seekdir 
+function
+sets the position of the next
+.BR readdir 
+operation on the
+.IR "directory stream" .
+The new position reverts to the one associated with the
+.IR "directory stream"
+when the
+.BR telldir 
+operation was performed.  Values returned by
+.BR telldir 
+are good only for the lifetime of the
+.BR DIR
+pointer,
+.RI ( dirp )
+from which they are derived.
+If the directory is closed and then reopened, the 
+.BR telldir 
+value may be invalidated due to undetected directory compaction.
+.LP
+The
+.BR rewinddir 
+function
+resets the position of the named
+.IR "directory stream"
+to the beginning of the directory.
+.LP
+The
+.BR closedir 
+function
+closes the named
+.IR "directory stream"
+and frees the structure associated with the
+.I dirp
+pointer,
+returning 0 on success.
+On failure, \-1 is returned and the global variable
+.IR errno
+is set to indicate the error.
+.LP
+The
+.BR dirfd 
+function
+returns the integer file descriptor associated with the named
+.IR "directory stream" ,
+see
+.BR open (2).
+.SH EXAMPLE
+Sample code which searches a directory for entry ``name'' in a
+case-sensitive manner is:
+.nf
+
+len = strlen(name);
+dirp = opendir(".");
+while ((dp = readdir(dirp)) != NULL)
+	if (dp->d_namlen == len && !strcmp(dp->d_name, name)) {
+		(void)closedir(dirp);
+		return FOUND;
+	}
+(void)closedir(dirp);
+return NOT_FOUND;
+.fi
+.SH BUGS
+The GNO implementation of 
+.BR seekdir
+and
+.BR rewinddir
+rely on the GS/OS call
+.BR GetDirEntryGS .
+It is thus possible for these routines to fail.  If they do, the error
+will not be detected until a subsequent
+.BR readdir 
+is performed.
+.SH SEE ALSO
+.BR open (2),
+.BR close (2),
+.BR read (2),
+.BR lseek (2),
+.BR dir (5)
+.SH HISTORY
+The
+.BR opendir ,
+.BR readdir ,
+.BR telldir ,
+.BR seekdir ,
+.BR rewinddir ,
+.BR closedir ,
+and
+.BR dirfd 
+functions appeared in
+BSD 4.2.

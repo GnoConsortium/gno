@@ -1,0 +1,154 @@
+.\" Copyright (c) 1989, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)mktemp.3	8.1 (Berkeley) 6/4/93
+.\"
+.TH MKTEMP 3 "27 January 1997" GNO "Library Routines"
+.SH NAME
+.BR mktemp
+\- make temporary file name (unique)
+.SH SYNOPSIS
+#include <unistd.h>
+.sp 1
+char *
+\fBmktemp\fR (char *\fItemplate\fR);
+.br
+int
+\fBmkstemp\fR (char *\fItemplate\fR);
+.SH DESCRIPTION
+The
+.BR mktemp 
+function
+takes the given file name template and overwrites a portion of it
+to create a file name.
+This file name is unique and suitable for use
+by the application.
+The template may be any file name with some number of
+.IR X \'s
+appended
+to it, for example \fB/tmp/temp.\fIXXXX\fR.
+The trailing
+.IR X \'s
+are replaced with the current process number and/or a
+unique letter combination.
+The number of unique file names
+.BR mktemp 
+can return depends on the number of
+.IR X \'s
+provided; six
+.IR X \'s
+will
+result in
+.BR mktemp 
+testing roughly 26 ** 6 combinations.
+.LP
+The
+.BR mkstemp 
+function
+makes the same replacement to the template and creates the template file,
+mode 0600, returning a file descriptor opened for reading and writing.
+This avoids the race between testing for a file's existence and opening it
+for use.
+.SH RETURN VALUES
+The
+.BR mktemp 
+function
+returns a pointer to the template on success and
+.BR NULL
+on failure.
+The
+.BR mkstemp 
+function
+returns \-1 if no suitable file could be created.
+If either call fails an error code is placed in the global variable
+.IR errno .
+.SH ERRORS
+The
+.BR mktemp 
+and
+.BR mkstemp 
+functions
+may set
+.IR errno
+to one of the following values:
+.RS
+.IP \fBENOTDIR\fR
+The pathname portion of the template is not an existing directory.
+.RE
+.LP
+The
+.BR mktemp 
+and
+.BR mkstemp 
+functions
+may also set
+.IR errno
+to any value specified by the
+.BR stat (2)
+function.
+.LP
+The
+.BR mkstemp 
+function
+may also set
+.IR errno
+to any value specified by the
+.BR open (2)
+function.
+.SH NOTES
+A common problem that results in a core dump on many architectures
+is that the programmer passes in a read-only string to 
+.BR mktemp 
+or 
+.BR mkstemp .
+This is common with programs that were developed before 
+ANSI/C compilers were common.
+For example, calling
+.BR mkstemp 
+with an argument of \fB/tmp/tempfile.\fIXXXXXX\fR
+will result in a core dump due to 
+.BR mkstemp 
+attempting to modify the string constant that was given.
+If the program in question makes heavy use of that type
+of function call, some compilers have the option of compiling the program
+so that it will store string constants in a writable segment of memory
+(in the data rather than the text segment).  While it is good programming
+practise to avoid this problem, it is not strictly necessary under GNO
+due to the lack of a write-only text segment.
+.SH SEE ALSO
+.BR chmod (2),
+.BR getpid (2),
+.BR open (2),
+.BR stat (2)
+.SH HISTORY
+A
+.BR mktemp
+function appeared in v7.

@@ -1,0 +1,73 @@
+.\" Copyright (c) 1983, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)getdtablesize.2	8.1 (Berkeley) 6/4/93
+.\"
+.TH GETDTABLESIZE 2 "22 February 1996" GNO "System Calls"
+.SH NAME
+.BR getdtablesize
+\- get descriptor table size
+.SH SYNOPSIS
+#include <unistd.h>
+.sp 1
+int
+.BR getdtablesize (void);
+.SH DESCRIPTION
+Each process has a fixed size descriptor table,
+which is guaranteed to have at least 20 slots.  The entries in
+the descriptor table are numbered with small integers starting at 0.
+The call
+.BR getdtablesize 
+returns the size of this table.
+.LP
+This call is mainly intended for use on systems which have configurable
+kernels.  Since the GNO kernel is not yet configurable, this function
+always returns
+.BR OPEN_MAX .
+.SH BUGS
+The concept of the maximum number of concurrently open files is not 
+yet consistent between GS/OS, the GNO kernel, and the C library.  For
+example, the kernel uses
+.BR OPEN_MAX
+as the largest number of open files, yet GS/OS does not have a hard upper
+limit.  It is recommended for now that the return value of
+.BR getdtablesize
+be assumed in applications to be the largest number of open files, as
+it is the smallest value.
+.SH SEE ALSO
+.BR close (2),
+.BR dup (2),
+.BR open (2),
+.BR select (2)
+.SH HISTORY
+The
+.BR getdtablesize
+function call appeared in 4.2BSD.

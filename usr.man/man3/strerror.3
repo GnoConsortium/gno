@@ -1,0 +1,137 @@
+.\" Copyright (c) 1980, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the American National Standards Committee X3, on Information
+.\" Processing Systems.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)strerror.3	8.1 (Berkeley) 6/9/93
+.\"
+.TH STRERROR 3 "June 9, 1993" "BSD 4" "Library Routines"
+.SH NAME
+.BR perror ,
+.BR strerror ,
+.BR sys_errlist ,
+.BR sys_nerr ,
+.BR _errnoText
+\- system error messages
+.SH SYNOPSIS
+#include <stdio.h>
+.sp 1
+void
+\fBperror\fR(const char *\fIstring\fR);
+.sp 1
+extern const char * const \fBsys_errlist\fR[];
+.br
+extern const int \fBsys_nerr\fR;
+.sp 1
+#include <string.h>
+.sp 1
+char *
+\fBstrerror\fR(int \fIerrnum\fR);
+.SH DESCRIPTION
+The
+.BR strerror 
+and
+.BR perror 
+functions look up the error message string corresponding to an
+error number.
+.LP
+The
+.BR strerror 
+function accepts an error number argument
+.I errnum
+and
+returns a pointer to the corresponding
+message string.
+.LP
+The
+.BR perror 
+function finds the error message corresponding to the current
+value of the global variable
+.IR errno
+(see
+.BR intro (2))
+and writes it, followed by a newline, to the
+standard error file descriptor.
+If the argument
+.I string
+is non-NULL,
+it is prepended to the message
+string and separated from it by
+a colon and space.
+If
+.I string
+is
+.BR NULL ,
+only the error message string is printed.
+.LP
+If
+.I errnum
+is not a recognized error number,
+the error message string will contain
+.BR "unknown error:" ,
+followed by the error number in decimal.
+.LP
+The message strings can be accessed directly using the external
+array
+.IR sys_errlist .
+The external value
+.IR sys_nerr
+contains a count of the messages in
+.IR sys_errlist .
+For backwards compatibility with older versions of GNO,
+.BR sys_errlist
+can also be referenced through the variable 
+.BR _errnoText ,
+which has identical type.
+The use of these variables is deprecated;
+.BR strerror 
+should be used instead.
+.SH SEE ALSO
+.BR intro (2),
+.BR psignal (3)
+.SH HISTORY
+The
+.BR strerror 
+and
+.BR perror 
+functions first appeared in 4.4BSD.
+.SH BUGS
+For unknown error numbers, the
+.BR strerror 
+function will return its result in a static buffer which
+may be overwritten by subsequent calls.
+.LP
+Programs that use the deprecated
+.IR sys_errlist
+variable often fail to compile because they declare it
+inconsistently.

@@ -1,0 +1,38 @@
+.\"
+.\" Devin Reade, February 1997
+.\"
+.\" $Id: intro.3,v 1.1 1997/02/27 07:32:23 gdr Exp $
+.\"
+.TH INTRO 3 "2 February 1997" GNO "Library Routines"
+.SH NAME
+.BR intro
+\- introduction to library routines
+.SH DESCRIPTION
+This chapter provides information on various library routines.
+.LP
+The
+.BR SYNOPSIS
+section of each manual page details the prototype of the routine
+and any required header files.  The 
+.BR DESCRIPTION
+explains the semantics of the routine.
+.LP
+Reference may be made to symbolic links or other features
+or functions that are either unimplemented or otherwise unavailable
+under GNO.  This information has often been obtained from the original
+BSD manual pages.  In most cases such information has been retained
+in the GNO manual pages either because such functionality is planned
+or because the information is relevent to code intended to run on 
+other BSD operating systems.
+.SH RETURN VALUES
+In this chapter, return types and values are specific to the particular
+routine.  The appropriate manual page should be consulted.
+.LP
+Note that unlike the Chapter 2 calls, routines in this chapter cannot
+be relied upon to set
+.BR errno (2)
+in any predictable way unless doing so is specifically described in
+the manual page for that routine.
+.SH SEE ALSO
+.BR intro (2),
+.IR "GNO Kernel Reference Manual" .

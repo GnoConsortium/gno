@@ -1,0 +1,273 @@
+.\" Copyright (c) 1985, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)syslog.3	8.1 (Berkeley) 6/4/93
+.\"
+.TH SYSLOG 3 "28 January 1997" GNO "Library Routines"
+.SH NAME
+.BR syslog ,
+.BR vsyslog ,
+.BR openlog ,
+.BR closelog ,
+.BR setlogmask
+\- control system log
+.SH SYNOPSIS
+#include <syslog.h>
+.br
+#include <varargs.h>
+.sp 1
+void
+\fBsyslog\fR (int \fIpriority\fR, const char *\fImessage\fR, ...);
+.br
+void
+\fBvsyslog\fR (int \fIpriority\fR, const char *\fImessage\fR,
+va_list \fBargs\fR);
+.br
+void
+\fBopenlog\fR (const char *\fIident\fR, int \fIlogopt\fR, int \fIfacility\fR);
+.br
+void
+\fBcloselog\fR (void);
+.br
+int
+\fBsetlogmask\fR (int \fImaskpri\fR);
+.SH DESCRIPTION
+The
+.BR syslog 
+function
+writes
+.I message
+to the system message logger.
+The message is then written to the system console, log files,
+logged-in users, or forwarded to other machines as appropriate. (See
+.BR syslogd (8).)
+.LP
+The message is identical to a
+.BR printf (3)
+format string, except that
+.BR %m
+is replaced by the current error
+message. (As denoted by the global variable
+.IR errno ;
+see
+.BR strerror (3).)
+A trailing newline is added if none is present.
+.LP
+The
+.BR vsyslog 
+function
+is an alternate form in which the arguments have already been captured
+using the variable-length argument facilities of
+.BR varargs (3).
+.LP
+The message is tagged with
+.IR priority .
+Priorities are encoded as a
+.I facility
+and a
+.IR level .
+The facility describes the part of the system
+generating the message.
+The level is selected from the following
+.IR ordered 
+(high to low) list:
+.RS
+.IP "\fBLOG_EMERG\fR"
+A panic condition.
+This is normally broadcast to all users.
+.IP "\fBLOG_ALERT\fR"
+A condition that should be corrected immediately, such as a corrupted
+system database.
+.IP "\fBLOG_CRIT\fR"
+Critical conditions, e.g., hard device errors.
+.IP "\fBLOG_ERR\fR"
+Errors.
+.IP "\fBLOG_WARNING\fR"
+Warning messages.
+.IP "\fBLOG_NOTICE\fR"
+Conditions that are not error conditions,
+but should possibly be handled specially.
+.IP "\fBLOG_INFO\fR"
+Informational messages.
+.IP "\fBLOG_DEBUG\fR"
+Messages that contain information
+normally of use only when debugging a program.
+.RE
+.LP
+The
+.BR openlog 
+function
+provides for more specialized processing of the messages sent
+by
+.BR syslog 
+and
+.BR vsyslog .
+The parameter
+.I ident
+is a string that will be prepended to every message.
+The
+.I logopt
+argument
+is a bit field specifying logging options, which is formed by
+.BR OR 'ing
+one or more of the following values:
+.RS
+.IP "\fBLOG_CONS\fR"
+If
+.BR syslog 
+cannot pass the message to
+.BR syslogd (8)
+it will attempt to write the message to the console
+.BR .ttyco .
+.IP "\fBLOG_NDELAY\fR"
+Open the connection to
+.BR syslogd (8)
+immediately.
+Normally the open is delayed until the first message is logged.
+Useful for programs that need to manage the order in which file
+descriptors are allocated.
+.IP "\fBLOG_PERROR\fR"
+Write the message to standard error output as well to the system log.
+.IP "\fBLOG_PID\fR"
+Log the process id with each message: useful for identifying
+instantiations of daemons.
+.RE
+.LP
+The
+.I facility
+parameter encodes a default facility to be assigned to all messages
+that do not have an explicit facility encoded:
+.RS
+.IP "\fBLOG_AUTH\fR"
+The authorization system:
+.BR login (1),
+.BR su (1),
+.BR getty (8),
+etc.
+.IP "\fBLOG_AUTHPRIV\fR"
+The same as
+.BR LOG_AUTH ,
+but logged to a file readable only by
+selected individuals.
+.IP "\fBLOG_CRON\fR"
+The cron daemon:
+.BR cron (8).
+.IP "\fBLOG_DAEMON\fR"
+System daemons, such as
+.BR routed (8),
+that are not provided for explicitly by other facilities.
+.IP "\fBLOG_FTP\fR"
+The file transfer protocol daemon:
+.BR ftpd (8).
+.IP "\fBLOG_KERN\fR"
+Messages generated by the kernel.
+These cannot be generated by any user processes.
+.IP "\fBLOG_LPR\fR"
+The line printer spooling system:
+.BR lpr (1),
+.BR lpc (8),
+.BR lpd (8),
+etc.
+.IP "\fBLOG_MAIL\fR"
+The mail system.
+.IP "\fBLOG_NEWS\fR"
+The network news system.
+.IP "\fBLOG_SYSLOG\fR"
+Messages generated internally by
+.BR syslogd (8).
+.IP "\fBLOG_USER\fR"
+Messages generated by random user processes.
+This is the default facility identifier if none is specified.
+.IP "\fBLOG_UUCP\fR"
+The uucp system.
+.IP "\fBLOG_LOCAL0\fR"
+Reserved for local use.
+Similarly for
+.BR LOG_LOCAL1
+through
+.BR LOG_LOCAL7 .
+.RE 
+.LP
+The
+.BR closelog 
+function
+can be used to close the log file.
+.LP
+The
+.BR setlogmask 
+function
+sets the log priority mask to
+.I maskpri
+and returns the previous mask.
+Calls to
+.BR syslog 
+with a priority not set in
+.I maskpri
+are rejected.
+The mask for an individual priority
+.I pri
+is calculated by the macro
+.BR LOG_MASK pri ;
+the mask for all priorities up to and including
+.I toppri
+is given by the macro
+.BR LOG_UPTO toppri ; .
+The default allows all priorities to be logged.
+.SH RETURN VALUES
+The routines
+.BR closelog ,
+.BR openlog ,
+.BR syslog 
+and
+.BR vsyslog 
+return no value.
+.LP
+The routine
+.BR setlogmask 
+always returns the previous log mask level.
+.SH EXAMPLES
+.nf
+syslog(LOG_ALERT, "who: internal error 23");
+
+openlog("ftpd", LOG_PID | LOG_NDELAY, LOG_FTP);
+
+setlogmask(LOG_UPTO(LOG_ERR));
+
+syslog(LOG_INFO, "Connection from host %d", CallingHost);
+
+syslog(LOG_INFO|LOG_LOCAL2, "foobar error: %m");
+.fi
+.SH SEE ALSO
+.BR logger (1),
+.BR syslogd (8)
+.SH HISTORY
+These
+functions appeared in 4.2BSD.

@@ -1,0 +1,213 @@
+.\" Copyright (c) 1988, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     From: @(#)getpwent.3	8.2 (Berkeley) 12/11/93
+.\"
+.TH GETPWENT 3 "September 20, 1994" "" "Library Routines"
+.SH NAME
+.BR getpwent ,
+.BR getpwnam ,
+.BR getpwuid ,
+.BR setpassent ,
+.BR setpwent ,
+.BR endpwent
+\- password database operations
+.SH SYNOPSIS
+#include <sys/types.h>
+.br
+#include <pwd.h>
+.sp 1
+struct passwd *\fBgetpwent\fR (void);
+.br
+struct passwd *\fBgetpwnam\fR (const char *\fIlogin\fR);
+.br
+struct passwd *\fBgetpwuid\fR (uid_t \fIuid\fR);
+.br
+int \fBsetpassent\fR (int \fIstayopen\fR);
+.br
+int \fBsetpwent\fR (void);
+.br
+void \fBendpwent\fR (void);
+.SH DESCRIPTION
+These functions
+operate on the password database file
+which is described
+in
+.BR passwd (5).
+Each entry in the database is defined by the structure
+.BR passwd
+found in the include
+file <pwd.h>:
+.nf
+
+struct passwd {
+	char	*pw_name;	/* user name */
+	char	*pw_passwd;	/* encrypted password */
+	uid_t	pw_uid;		/* user uid */
+	gid_t	pw_gid;		/* user gid */
+	time_t	pw_change;	/* password change time */
+	char	*pw_class;	/* user access class */
+	char	*pw_gecos;	/* real name */
+	char	*pw_dir;	/* home directory */
+	char	*pw_shell;	/* default shell */
+	time_t	pw_expire;	/* account expiration */
+};
+
+.fi
+.LP
+The functions
+.BR getpwnam 
+and
+.BR getpwuid 
+search the password database for the given login name or user uid,
+respectively, always returning the first one encountered.
+.LP
+The
+.BR getpwent 
+function
+sequentially reads the password database and is intended for programs
+that wish to process the complete list of users.
+.LP
+The
+.BR setpassent 
+function
+accomplishes two purposes.
+First, it causes
+.BR getpwent 
+to ``rewind'' to the beginning of the database.
+Additionally, if
+.I stayopen
+is non-zero, file descriptors are left open, significantly speeding
+up subsequent accesses for all of the routines.
+(This latter functionality is unnecessary for
+.BR getpwent 
+as it doesn't close its file descriptors by default.)
+.LP
+It is dangerous for long-running programs to keep the file descriptors
+open as the database will become out of date if it is updated while the
+program is running.
+.LP
+The
+.BR setpwent 
+function
+is identical to
+.BR setpassent 
+with an argument of zero.
+.LP
+The
+.BR endpwent 
+function
+closes any open files.
+.LP
+These routines have been written to ``shadow'' the password file, e.g.
+allow only certain programs to have access to the encrypted password.
+If the process which calls them has an effective uid of 0, the encrypted
+password will be returned, otherwise, the password field of the returned
+structure will point to the string
+.BR * .
+.SH YP/NIS INTERACTION
+When the
+.BR yp (4)
+password database is enabled, the
+.BR getpwnam 
+and
+.BR getpwuid 
+functions use the YP maps
+.BR passwd.byname
+and
+.BR passwd.byuid ,
+respectively, if the requested password entry is not found in the 
+local database.  The
+.BR getpwent 
+function will step through the YP map
+.BR passwd.byname
+if the entire map is enabled as described in
+.BR passwd (5).
+.SH RETURN VALUES
+The functions
+.BR getpwent ,
+.BR getpwnam ,
+and
+.BR getpwuid ,
+return a valid pointer to a passwd structure on success
+and a null pointer if end-of-file is reached or an error occurs.
+The functions
+.BR setpassent 
+and
+.BR setpwent 
+return 0 on failure and 1 on success.
+The
+.BR endpwent 
+function
+has no return value.
+.SH FILES
+.IP \fB/etc/pwd.db\fR
+The insecure password database file
+.IP \fB/etc/spwd.db\fR
+The secure password database file
+.IP \fB/etc/master.passwd\fR
+The current password file
+.IP \fB/etc/passwd\fR
+A Version 7 format password file
+.SH SEE ALSO
+.BR getlogin (2),
+.BR getgrent (3),
+.BR yp (4),
+.BR passwd (5),
+.BR pwd_mkdb (8),
+.BR vipw (8)
+.SH HISTORY
+The
+.BR getpwent ,
+.BR getpwnam ,
+.BR getpwuid ,
+.BR setpwent,
+and
+.BR endpwent
+functions appeared in v7.
+The
+.BR setpassent
+function appeared in 4.3 Reno.
+.SH COMPATIBILITY
+The historic function
+.BR setpwfile (3),
+which allowed the specification of alternate password databases,
+has been deprecated and is no longer available.
+.SH BUGS
+The functions
+.BR getpwent ,
+.BR getpwnam ,
+and
+.BR getpwuid ,
+leave their results in an internal static object and return
+a pointer to that object. Subsequent calls to
+the same function
+will modify the same object.

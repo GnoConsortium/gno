@@ -1,0 +1,22 @@
+.\" Man page by Devin Reade.
+.\"
+.\" $Id: progname.3,v 1.1 1997/02/27 07:32:24 gdr Exp $
+.\"
+.TH "__PROGNAMEGS" 3 "21 January 1997" GNO "Library Routines"
+.SH NAME
+.BR __prognameGS
+\- get the program name
+.SH SYNOPSIS
+#include <gno/gno.h>
+.sp 1
+char *\fB__prognameGS\fR (void);
+.SH DESCRIPTION
+.BR __prognameGS
+returns a NULL-terminated string which is the base name of
+the executing program.  This is a wrapper function to the GS/OS
+.BR GetNameGS
+system call, and is used in the 
+.BR err (3)
+routines.
+.SH SEE ALSO
+.BR err (3)

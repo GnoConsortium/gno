@@ -1,0 +1,215 @@
+.\"
+.\" Devin Reade, 1997
+.\"
+.\" $Id: fork.2,v 1.1 1997/02/27 07:32:12 gdr Exp $
+.\"
+.\" .TH FORK2 2 GNO "System Calls" "16 December 1996"
+.TH FORK 2 GNO "16 January 1997" "System Calls"
+.SH NAME
+.BR fork ,
+.BR fork2 ,
+.BR vfork 
+\- start a new process from inside the current application space
+.SH SYNOPSIS
+#include <unistd.h>
+.sp 1
+int
+\fBfork\fR (void *\fIproc\fR);
+.br
+int
+\fBvfork\fR (void *\fIproc\fR);
+.br
+int
+\fBfork2\fR (void *\fIproc\fR, unsigned short \fIstack\fR,
+unsigned short \fIprio\fR, char *\fIprocname\fR,
+unsigned short \fInumargs\fR, ...);
+.SH DESCRIPTION
+.BR fork
+causes the creation of a new process.
+.LP
+.BR fork 's
+argument
+.IR proc
+is typically the address of a C function, although it can be any valid
+address inside the IIgs RAM space.  In a successful
+.BR fork
+call, the parent process resumes execution by returning from 
+.BR fork 
+and, under GNO, the child process resumes execution at the entry into function
+.IR proc .
+This is different from traditional Unix implementations.
+.LP
+.BR fork
+creates a new entry in the process table, and sets up default settings
+for the new process.  The process is allocated 1k (1024 bytes) of stack
+space, and the direct page is set to the beginning of this memory.  The
+process is executed in 16-bit full native mode, and the registers upon
+entry to the routine are set as follows:
+.RS
+.nf
+
+A	the userID assigned to the new process
+X	0
+Y	0
+.fi
+.RE
+.LP
+The child inherits the memory shadowing and machine state parameters of
+the parent, as well as signal blocking information and the ID of the 
+controlling TTY. In addition, the child inherits all the open
+files of its parent.
+.LP
+A forked process may share code with other children or the parent.
+However, this is only allowed in a forward manner; any forked process
+that exits by function return will be terminated.  Note that any shared
+global variables will need to be moderated with some type of mutual
+exclusion, either the kernel
+.BR semaphore (2)
+routines or custom routines.  This includes C stdio routines.
+.LP
+There is no way to pass parameters directly to a child with
+.BR fork .
+Use
+.BR fork2
+instead.
+.LP
+Under GNO,
+.BR vfork
+is identical to 
+.BR fork ;
+other than the 
+.IR proc
+parameter (and therefore the point at which the child process resumes
+execution), 
+.BR vfork
+is the same as the BSD implementation in that the two processes
+share an address space.
+.LP
+.B fork2
+is similar to
+.BR fork (2),
+except that it allows parameters to be passed both to 
+.IR proc
+and the execution environment:
+.RS
+.IP \fIstack\fR
+is the number of bytes of stack to allocate to the proess. If
+.I stack
+is not a multiple of 256, then it
+is rounded up to the next highest multiple of 256 bytes.
+.IP \fIprio\fR
+is the priority to assign to the process. Priorities are not currently
+implemented, and you should pass 0 for this argument.
+.IP \fIprocname\fR
+is a string you can have associated with the process when viewing
+the process table (See
+.BR ps (1)).
+.IP \fInumargs\fR
+is the number of (16-bit)
+.B words
+of arguments which follow, not the
+number of arguments.
+Any arguments following
+.I numargs
+are passed as parameters to the child's procedure.
+.RE
+See below for an example of the use of 
+.BR fork2 .
+.SH "RETURN VALUE"
+On success 
+.BR fork ,
+.BR vfork ,
+and
+.BR fork2
+return to the parent the process ID of the new (child) process.
+On failure, -1 is returned and
+.B errno
+is set.
+.SH CAVEATS
+Care must be taken such that the child process does not call
+.BR exit (3)
+either directly or by function call, since
+.BR exit
+will flush and close standard I/O data structures.  Instead, if 
+the child process does not or cannot 
+.BR execve (2),
+it should call
+.BR _exit (3).
+.LP
+Orca/C's stack checking and stack repair code should be turned off
+when compiling routines containing these functions.  See 
+.BR occ (1)
+or the Orca/C Reference Manual for details.
+.LP
+Because the
+.BR fork
+functions are called from the kernel (which is implemented as a user
+tool set), the child function
+.IR proc
+must restore the data bank register if it is going to access global 
+variables.  See the description of the
+.BR databank
+pragma in the Orca/C Reference Manual for details.
+.LP
+While
+.BR Splat!
+is an excellent source level debugger, it is (at the time of this
+writing) unable to handle the execution of 
+.BR fork ,
+.BR fork2 ,
+or 
+.BR vfork
+calls.  If you attempt to do so, your machine will almost certainly
+crash.  Otherwise, 
+.BR Splat!
+is strongly recommended as a powerful tool for GNO programmers using
+C as their source language.  (For the record, the author of this manual
+page receives no renumeration from the sales of 
+.BR Splat! )
+.SH CONFORMANCE
+Most Unix
+.BR fork s
+take no parameters; they copy the entire address space of the calling
+process and return witha different value in the parent and child.  Due
+to hardware limitations, this sort of manipulation isn't possible on
+the IIgs.  Unix programs utilizing
+.BR fork
+will have to be modified slightly to work under GNO.
+.LP
+The implementation of 
+.BR fork
+is therefore not  POSIX conforming, nor is the implementation of 
+.BR vfork
+conforming to traditional Unix implementations.
+.SH EXAMPLE
+.nf                            
+
+int main (int argc, char **argv) {
+   ...
+   pid = fork2(proc1,1024,0,"sub-process",3,argc,argv);
+   ...
+   return 0;
+}
+
+void proc1(int argc, char *argv[])
+{
+   ...
+}
+
+.fi
+.SH HISTORY
+.B fork2
+first appeared in XINU.
+.LP
+.B vfork
+first appeared in 3.0BSD.
+.SH "SEE ALSO"
+.BR occ (1),
+.BR exec (2),
+.BR execve (2),
+.BR semaphore (2),
+.BR wait (2),
+the
+.IR "GNO Kernel Reference Manual" ,
+and the
+.IR "Orca/C Reference Manual" .

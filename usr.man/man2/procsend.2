@@ -1,0 +1,60 @@
+.\"
+.\" $Id: procsend.2,v 1.1 1997/02/27 07:32:15 gdr Exp $
+.\"
+.\" .TH "MESSAGE IPC" 2 GNO "System Calls" "16 December 1996"
+.TH "MESSAGE IPC" 2 "16 December 1996" GNO "System Calls"
+.SH NAME
+.BR procreceive ,
+.BR procsend ,
+.BR procrecvclr ,
+.BR procrecvtim
+\- GNO message passing IPC system
+.SH SYNOPSIS
+.nf
+#include <gno/gno.h>
+
+int procsend (pid_t \fIpid\fR, unsigned long \fImsg\fR);
+unsigned long procreceive (void);
+unsigned long procrecvtim (short \fItimeout\fR);
+unsigned long procrecvclr (void);
+.fi
+.SH DESCRIPTION
+These kernel traps comprise GNO's message passing IPC (interprocess
+communication) system.  Messages are unsigned 32-bit data values.  A
+process sends a message to another by using the
+.BR procsend
+call.  You must specify the process ID of the recipient and the message
+to pass.
+.LP
+The
+.BR procreceive
+trap receives a message.  If no message has been sent to the process, the
+process sleeps until a message arrives.  A
+.BR procreceive
+that is interrupted by a signal will abort and return -1, with
+.BR errno
+set to 
+.BR EINTR .
+.LP
+.BR procrecvclr
+is used to clear any pending message a process may have waiting.
+.LP
+.BR procrecvtim
+is similar to
+.BR procreceive ,
+but takes a 
+.IR timeout
+argument, specified in 1/10ths of a second.  If no message has been
+received in 
+.IR timeout
+seconds, 
+.BR procrecvtim
+fails and returns -1.  The message buffer for a process is only one message
+deep; any attempt to 
+.BR procsend
+a message to a process that already has one queued will result in an error.
+.LP
+For an IPC system with a deeper queue, see the Ports IPC man page, 
+.BR ports (2).
+.SH "SEE ALSO"
+.BR ports (2).

@@ -1,0 +1,329 @@
+.\" Copyright (c) 1980, 1991, 1993, 1994
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)wait.2	8.2 (Berkeley) 4/19/94
+.\"
+.TH WAIT 2 "19 January 1997" GNO "System Calls"
+.SH NAME
+.BR wait ,
+.BR waitpid ,
+.BR wait4 ,
+.BR wait3
+\- wait for process termination
+.SH SYNOPSIS
+#include <sys/types.h>
+.br
+#include <sys/wait.h>
+.sp 1
+pid_t
+\fBwait\fR (union wait *\fIstatus\fR);
+.sp 1
+#include <sys/time.h>
+.br
+#include <sys/resource.h>
+.sp 1
+pid_t
+\fBwaitpid\fR (pid_t \fIwpid\fR, union wait *\fIstatus\fR, int \fIoptions\fR);
+.sp 1
+pid_t
+\fBwait3\fR (union wait *\fIstatus\fR, int \fIoptions\fR, struct rusage *\fIrusage\fR);
+.sp 1
+pid_t
+\fBwait4\fR (pid_t \fIwpid\fR, union wait *\fIstatus\fR, int \fIoptions\fR, struct rusage *\fIrusage\fR);
+.SH DESCRIPTION
+The
+.BR wait 
+function suspends execution of its calling process until
+.I status
+information is available for a terminated child process,
+or a signal is received.
+On return from a successful 
+.BR wait 
+call, 
+the
+.I status
+area contains termination information about the process that exited
+as defined below.
+.LP
+The
+.BR wait4 
+call provides a more general interface for programs
+that need to wait for certain child processes,
+that need resource utilization statistics accumulated by child processes,
+or that require options.
+.LP
+The
+.I wpid
+parameter specifies the set of child processes for which to wait.
+If
+.I wpid
+is -1, the call waits for any child process.
+If
+.I wpid
+is 0,
+the call waits for any child process in the process group of the caller.
+If
+.I wpid
+is greater than zero, the call waits for the process with process id
+.IR wpid .
+If
+.I wpid
+is less than -1, the call waits for any process whose process group id
+equals the absolute value of
+.IR wpid .
+.LP
+The
+.I status
+parameter is defined below.  The
+.I options
+parameter contains the bitwise OR of any of the following options.
+The
+.BR WNOHANG
+option
+is used to indicate that the call should not block if
+there are no processes that wish to report status.
+If the
+.BR WUNTRACED
+option is set,
+children of the current process that are stopped
+due to a
+.BR SIGTTIN , 
+.BR SIGTTOU , 
+.BR SIGTSTP ,
+or
+.BR SIGSTOP
+signal also have
+their status reported.
+.LP
+If
+.I rusage
+is non-zero, a summary of the resources used by the terminated
+process and all its
+children is returned (this information is currently not available
+for stopped processes).
+.LP
+When the
+.BR WNOHANG
+option is specified and no processes
+wish to report status, 
+.BR wait4 
+returns a process id of 0.
+.LP
+The
+.BR waitpid 
+call is identical to
+.BR wait4 
+with an
+.I rusage
+value of zero.
+The older
+.BR wait3 
+call is the same as
+.BR wait4 
+with a
+.I wpid
+value of -1.
+.LP
+The following macros may be used to test the manner of exit of the process.
+One of the first three macros will evaluate to a non-zero (true) value:
+.RS
+.IP \fBWIFEXITED\fR(\fIstatus\fR)
+True if the process terminated normally by a call to
+.BR _exit (2),
+.BR exit (3),
+.BR rexit (3),
+or a GS/OS quit call.
+.IP \fBWIFSIGNALED\fR(\fIstatus\fR)
+True if the process terminated due to receipt of a signal.
+.IP \fBWIFSTOPPED\fR(\fIstatus\fR)
+True if the process has not terminated, but has stopped and can be restarted.
+This macro can be true only if the wait call specified the
+.BR WUNTRACED
+option
+or if the child process is being traced (see
+.BR ptrace (2)).
+.RE
+.LP
+Depending on the values of those macros, the following macros
+produce the remaining status information about the child process:
+.RS
+.IP \fBWEXITSTATUS\fR(\fIstatus\fR)
+If
+\fBWIFEXITED\fR(\fIstatus\fR)
+is true, evaluates to the low-order 8 bits
+of the argument passed to
+.BR _exit (2),
+.BR exit (3),
+.BR rexit (3),
+or a GS/OS Quit call
+by the child.
+.IP \fBWTERMSIG\fR(\fIstatus\fR)
+If
+\fBWIFSIGNALED\fR(\fIstatus\fR)
+is true, evaluates to the number of the signal
+that caused the termination of the process.
+.IP \fBWCOREDUMP\fR(\fIstatus\fR)
+If
+\fBWIFSIGNALED\fR(\fIstatus\fR)
+is true, evaluates as true if the termination
+of the process was accompanied by the creation of a core file
+containing an image of the process when the signal was received.
+.I "This feature is not available under GNO."
+.IP \fBWSTOPSIG\fR(\fIstatus\fR)
+If
+\fBWIFSTOPPED\fR(\fIstatus\fR)
+is true, evaluates to the number of the signal
+that caused the process to stop.
+.RE
+.SH NOTES
+See
+.BR signal (2)
+for a list of termination signals.
+A status of 0 indicates normal termination.
+.LP
+Some Unix uses of these functions expect
+.IR status
+to be a pointer to an
+.BR int
+rather than to a
+.BR "union wait" .
+It is safe to use a cast under such circumstances.
+.LP
+If a parent process terminates without
+waiting for all of its child processes to terminate,
+the remaining child processes 
+are inherited by the Kernel Null Process (pid zero).
+.LP
+If a signal is caught while any of the
+.BR wait 
+calls is pending,
+the call may be interrupted or restarted when the signal-catching routine
+returns,
+depending on the options in effect for the signal;
+see
+.BR intro (2),
+System call restart.
+.SH BUGS
+Currently, only
+.BR wait
+is implemented in the GNO kernel.  There is a minimal version of 
+.BR waitpid
+in the libraries, but that version of 
+.BR waitpid
+ignores its
+.IR options
+parameter
+(making it impossible to make a non-blocking wait).
+It may also give unexpected results when there is more than one
+child task being waited upon.
+.LP
+.BR wait4
+and 
+.BR wait3
+are not implemented.
+.SH RETURN VALUES
+If
+.BR wait 
+returns due to a stopped
+or terminated child process, the process ID of the child
+is returned to the calling process.  Otherwise, a value of -1
+is returned and
+.IR errno
+is set to indicate the error.
+.LP
+If
+.BR wait4 ,
+.BR wait3 
+or
+.BR waitpid 
+returns due to a stopped
+or terminated child process, the process ID of the child
+is returned to the calling process.
+If there are no children not previously awaited,
+-1 is returned with
+.IR errno
+set to ECHILD.
+Otherwise, if
+.BR WNOHANG
+is specified and there are
+no stopped or exited children,
+0 is returned.
+If an error is detected or a caught signal aborts the call,
+a value of -1
+is returned and
+.IR errno
+is set to indicate the error.
+.SH ERRORS
+.BR Wait 
+will fail and return immediately if:
+.RS
+.IP \fBECHILD\fR
+The calling process has no existing unwaited-for
+child processes.
+.IP \fBEFAULT\fR
+The
+.I status
+or
+.I rusage
+arguments point to an illegal address.
+(May not be detected before exit of a child process.)
+.IP \fBEINTR\fR
+The call was interrupted by a caught signal,
+or the signal did not have the
+.BR SA_RESTART
+flag set.
+.RE
+.SH STANDARDS
+The
+.BR wait 
+and
+.BR waitpid 
+functions are defined by POSIX;
+.BR wait4 
+and
+.BR wait3 
+are not specified by POSIX.
+The
+.BR WCOREDUMP 
+macro
+and the ability to restart a pending
+.BR wait 
+call are extensions to the POSIX interface.
+.SH SEE ALSO
+.BR _exit (2),
+.BR execve (2),
+.BR signal (2),
+.BR exit (3)
+.BR rexit (3)
+.SH HISTORY
+A
+.BR wait3
+function call appeared in Version 6 AT&T UNIX.

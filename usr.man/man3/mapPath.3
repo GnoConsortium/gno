@@ -1,0 +1,90 @@
+.\" Man page by Devin Reade.
+.\"
+.\" $Id: mapPath.3,v 1.1 1997/02/27 07:32:23 gdr Exp $
+.\"
+.TH "MAPPATH" 3 "11 December 1996" GNO "Library Routines"
+.SH NAME
+.BR _mapPath,
+.BR _mapPathGS,
+.BR _setPathMapping
+\- (mapPath) convert GS/OS paths to Unix-style paths.
+.SH SYNOPSIS
+.nf
+#include <gno/gno.h>
+
+void _setPathMapping (int \fItoggle\fR);
+char *_mapPath (char *\fIpathname\fR);
+GSStringPtr _mapPathGS (GSStringPtr \fIpathname\fR);
+.nf
+.SH DESCRIPTION
+These routines are intended for use by application programmers who are
+porting programs from Unix systems.
+.LP
+The POSIX 1003.1 standard indicates that the pathname separator (that
+character which is used to delimit the components of a pathname) must
+be the
+.I slash
+('/') character.  However, GS/OS internally uses the
+.I colon
+(':') character.  This can cause problems with programs that make
+assumptions about the pathname separator.
+.LP
+The routines
+.BR _mapPath
+and 
+.BR _mapPathGS ,
+if active, map all occurances of the ':' character in
+.I pathname
+to the '/' character.  These routines are intended to be used whenever a
+pathname is returned from a GS/OS call.  No assumption is made as to the
+existance of the file nor the validity of the filename for any given 
+file system.
+.LP
+On success, these routines return their original arguments.  The only time 
+.BR _mapPath
+or
+.BR _mapPathGS 
+can fail is if mapping is active and
+.IR pathname
+contains
+.I both
+the ':' and '/' characters.  In such a case, the routine will return NULL and
+.IR pathname
+will be unchanged.
+.LP
+For compatibility with native IIgs programs, 
+.BR _mapPath
+and 
+.BR _mapPathGS
+are by default null operations --
+.IR pathname
+is not modified.  In order to activate mapping, the function
+.BR _setPathMapping
+must be called with a non-zero
+.IR toggle .
+Although the choice of whether or not to do mapping is usually only
+made once in a program, mapping can be turned off again by calling
+.BR _setPathMapping
+with a zero
+.IR toggle .
+.LP
+These functions are used in various parts of
+.BR libc .
+Those routines making use of this mapping list the fact in their respective
+man pages.
+.SH OPTIMIZATION
+In cases where it is desirable to avoid the overhead of a function call,
+the value of the global integer
+.BR __force_slash
+may be checked.  If it is non-zero, the mapping function should be called:
+.nf
+
+    if (__force_slash) {
+        _mapPath(filename);
+    }
+
+.fi
+.SH AUTHOR
+Devin Reade <gdr@myrias.com>
+.SH "SEE ALSO"
+.IR "GS/OS Reference Manual" .

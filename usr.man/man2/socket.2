@@ -1,0 +1,270 @@
+.\" Copyright (c) 1983, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     From: @(#)socket.2	8.1 (Berkeley) 6/4/93
+.\"	$Id: socket.2,v 1.1 1997/02/27 07:32:16 gdr Exp $
+.\"
+.TH SOCKET 2 "February 15, 1995" "BSD 4.2" "System Calls"
+.SH NAME
+.BR socket
+\- create an endpoint for communication
+.SH SYNOPSIS
+#include <sys/types.h>
+.br
+#include <sys/socket.h>
+.sp 1
+int
+socket (int domain, int type, int protocol);
+.SH DESCRIPTION
+.BR Socket 
+creates an endpoint for communication and returns a descriptor.
+.LP
+The
+.I domain
+parameter specifies a communications domain within which
+communication will take place; this selects the protocol family
+which should be used.
+These families are defined in the include file <sys/socket.h>
+The currently understood formats are
+.LP
+.RS
+.nf
+PF_LOCAL	(Host-internal protocols, formerly called PF_UNIX),
+PF_INET		(ARPA Internet protocols),
+PF_ISO		(ISO protocols),
+PF_CCITT	(ITU-T protocols, like X.25), and
+PF_NS		(Xerox Network Systems protocols).
+.fi
+.RE
+.LP
+The socket has the indicated
+.IR type ,
+which specifies the semantics of communication.  Currently
+defined types are:
+.LP
+.RS
+.nf
+SOCK_STREAM
+SOCK_DGRAM
+SOCK_RAW
+SOCK_SEQPACKET
+SOCK_RDM
+.fi
+.RE
+.LP
+A
+.BR SOCK_STREAM
+type provides sequenced, reliable,
+two-way connection based byte streams.
+An out-of-band data transmission mechanism may be supported.
+A
+.BR SOCK_DGRAM
+socket supports
+datagrams (connectionless, unreliable messages of
+a fixed (typically small) maximum length).
+A
+.BR SOCK_SEQPACKET
+socket may provide a sequenced, reliable,
+two-way connection-based data transmission path for datagrams
+of fixed maximum length; a consumer may be required to read
+an entire packet with each read system call.
+This facility is protocol specific, and presently implemented
+only for
+.BR PF_NS .
+.BR SOCK_RAW
+sockets provide access to internal network protocols and interfaces.
+The types
+.BR SOCK_RAW ,
+which is available only to the super-user, and
+.BR SOCK_RDM ,
+which is planned,
+but not yet implemented, are not described here.
+.LP
+The
+.I protocol
+specifies a particular protocol to be used with the socket.
+Normally only a single protocol exists to support a particular
+socket type within a given protocol family.  However, it is possible
+that many protocols may exist, in which case a particular protocol
+must be specified in this manner.  The protocol number to use is
+particular to the \*(lqcommunication domain\*(rq in which communication
+is to take place; see
+.BR protocols (5).
+.LP
+Sockets of type
+.BR SOCK_STREAM
+are full-duplex byte streams, similar
+to pipes.  A stream socket must be in a
+.IR connected 
+state before any data may be sent or received
+on it.  A connection to another socket is created with a
+.BR connect (2)
+call.
+Once connected, data may be transferred using
+.BR read (2)
+and
+.BR write (2)
+calls or some variant of the 
+.BR send (2)
+and
+.BR recv (2)
+calls.
+(Some protocol families, such as the Internet family,
+support the notion of an
+.Dq implied connect,
+which permits data to be sent piggybacked onto a connect operation by
+using the
+.BR sendto (2)
+call.)
+When a session has been completed a
+.BR close (2)
+may be performed.
+Out-of-band data may also be transmitted as described in
+.BR send (2)
+and received as described in
+.BR recv (2).
+.LP
+The communications protocols used to implement a
+.BR SOCK_STREAM
+insure that data
+is not lost or duplicated.  If a piece of data for which the
+peer protocol has buffer space cannot be successfully transmitted
+within a reasonable length of time, then
+the connection is considered broken and calls
+will indicate an error with -1 returns and with
+.BR ETIMEDOUT
+as the specific code
+in the global variable
+.IR errno .
+The protocols optionally keep sockets
+.Dq warm
+by forcing transmissions
+roughly every minute in the absence of other activity.
+An error is then indicated if no response can be
+elicited on an otherwise
+idle connection for a extended period (e.g. 5 minutes).
+A
+.BR SIGPIPE
+signal is raised if a process sends
+on a broken stream; this causes naive processes,
+which do not handle the signal, to exit.
+.LP
+.BR SOCK_SEQPACKET
+sockets employ the same system calls
+as
+.BR SOCK_STREAM
+sockets.  The only difference
+is that 
+.BR read (2)
+calls will return only the amount of data requested,
+and any remaining in the arriving packet will be discarded.
+.LP
+.BR SOCK_DGRAM
+and
+.BR SOCK_RAW
+sockets allow sending of datagrams to correspondents
+named in
+.BR send (2)
+calls.  Datagrams are generally received with
+.BR recvfrom (2),
+which returns the next datagram with its return address.
+.LP
+An 
+.BR fcntl (2)
+call can be used to specify a process group to receive
+a
+.BR SIGURG
+signal when the out-of-band data arrives.
+It may also enable non-blocking I/O
+and asynchronous notification of I/O events
+via
+.BR SIGIO .
+.LP
+The operation of sockets is controlled by socket level
+.IR options .
+These options are defined in the file
+.Ao Pa sys/socket.h Ac .
+.BR Setsockopt (2)
+and
+.BR getsockopt (2)
+are used to set and get options, respectively.
+.SH RETURN VALUES
+A -1 is returned if an error occurs, otherwise the return
+value is a descriptor referencing the socket.
+.SH ERRORS
+The
+.BR socket 
+call fails if:
+.RS
+.IP \fBEPROTONOSUPPORT\fR
+The protocol type or the specified protocol is not supported
+within this domain.
+.IP \fBEMFILE\fR
+The per-process descriptor table is full.
+.IP \fBENFILE\fR
+The system file table is full.
+.IP \fBEACCESS\fR
+Permission to create a socket of the specified type and/or protocol
+is denied.
+.IP \fBENOBUFS\fR
+Insufficient buffer space is available.
+The socket cannot be created until sufficient resources are freed.
+.RE
+.SH SEE ALSO
+.BR accept (2),
+.BR bind (2),
+.BR connect (2),
+.BR getprotoent (3),
+.BR getsockname (2),
+.BR getsockopt (2),
+.BR ioctl (2),
+.BR listen (2),
+.BR read (2),
+.BR recv (2),
+.BR select (2),
+.BR send (2),
+.BR shutdown (2),
+.BR socketpair (2),
+.BR write (2)
+.RS
+.LP
+.I "An Introductory 4.3 BSD Interprocess Communication Tutorial"
+.B PS1
+volume 7
+.LP
+.I "BSD Interprocess Communication Tutorial"
+.B PS1
+volume 8
+.RE
+.SH HISTORY
+The
+.BR socket
+function call appeared in 4.2BSD.

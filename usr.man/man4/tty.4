@@ -1,0 +1,274 @@
+.\"
+.\" Devin Reade, January 1997
+.\"
+.\" $Id: tty.4,v 1.1 1997/02/27 07:32:28 gdr Exp $
+.\"
+.TH TTY 4 "27 January 1997" GNO Devices
+.SH NAME
+.BR tty
+\- general terminal interface
+.SH SYNOPSIS
+#include <sgtty.h>
+.SH DESCRIPTION
+This file documents the special file
+.BR .tty
+and the terminal drivers used for user-oriented I/O.
+.IP "\fBThe Controlling Terminal\fR"
+Every process has associated with it a controlling terminal, which is
+the terminal from which the process was invoked.  In some versions of 
+Unix, the controlling terminal association is responsible for job 
+control; this is not so under GNO.  A process' controlling terminal is
+inherited from its parent.  By opening the special file
+.BR .tty ,
+a process can access its controlling terminal.  This is useful where the
+input and output of a process was redirected and the process wants to
+be sure of getting input from or output to the user at the terminal.
+.sp 1
+A process can remove the association it has with its controlling terminal
+by opening the file
+.BR .tty
+and issuing the system call
+.RS
+.sp 1
+ioctl (\fIfd\fR, TIOCNOTTY, 0);
+.sp 1
+.RE
+where
+.IR fd
+is the file descriptor associated with
+.BR .tty .
+This is often desirable in server processes.
+.IP "\fBProcess Groups\fR"
+Every terminal has an associated process group.  Any time a
+signal-generating special character is typed at the terminal, the 
+terminal's process group is sent that signal.  Unix systems set process
+groups using 
+.BR ioctl (2) 
+calls, but under GNO a new interface method is used; 
+process group assignments are controlled with the 
+.BR JOBCONTROL (2)
+routines.
+.IP \fBModes\fR
+There are four modes in which terminal drivers operate.  These modes 
+control how the driver deals with I/O.
+.RS
+.IP \fIcooked\fR
+This is the default mode of the terminal driver.  If an incoming
+character is one of the special characters defined in 
+.BR sgttyb , 
+.BR tchars ,
+or 
+.BR ltchars ,
+the appropriate action is performed (see below).   On Unix systems, 
+this mode also allows for input editing.  It is called 
+.IR cooked
+mode and is the normal state of the terminal driver.  Due to the history
+of the Apple II and it's operating systems, this precedent was not followed.
+Instead, to get input editing features, use the ReadLine Toolbox call.
+Cooked-mode input editing may be implemented for future releases of GNO.
+.sp 1
+.I "GDR:  This is a deviation from the GNO v2.0.4 man page ..."
+.IP \fInewline\fR
+
+
+This mode is selected by using the GS/OS NewLine call.  Input is collected until one of the newline characters specified in the NewLine call is encountered.  At that point, the line of input is returned, even if less than the number of bytes requested in the Read call are read.  I/O processing features are enabled and disabled independently of newline mode; see cooked, cbreak, and raw. 
+
+cbreak	With GNO/ME, this mode is the default state of the terminal driver, and is synonymous with cooked mode.  The requested number of characters are read without regard to any newline setting; input is not line buffered before being returned to the process.
+
+raw	No input or output processing is performed, and the driver does not check for any special characters.  
+
+
+Summary of terminal control modes
+
+Due to the colorful history of Unix systems, the data structures used to manipulate terminal modes and settings are separated into four groups.  Future revisions of GNO may implement the SunOS termio interface, which consolidate these structures into one place.
+
+sgtty
+The basic ioctls use the structure defined in <sgtty.h>:
+
+struct sgttyb {
+	char	sg_ispeed;
+	char	sg_ospeed;
+	char	sg_erase;
+	char	sg_kill;
+	short	sg_flags;
+};
+
+sg_ispeed and sg_ospeed indicate the baud rates for input and output according to the following table.  Speed changes that do not apply to a particular piece of hardware are ignored (for instance, the console driver does not access a serial port so all baud rate settings are, in effect, impossible).  Also, not all the baud rates supported by a particular device are allowed to be set from this interface.  
+
+These symbolic names for the baud rate settings are defined in <sgtty.h>.
+
+B0	0	(hang up dataphone)
+B50	1	50 baud
+B75	2	75 baud
+B110	3	110 baud
+B134	4	134.5 baud
+B150	5	150 baud
+B200	6	200 baud
+B300	7	300 baud
+B600	8	600 baud
+B1200	9	1200 baud
+B1800	10	1800 baud
+B2400	11	2400 baud
+B4800	12	4800 baud
+B9600	13	9600 baud
+B19200		and
+EXTA	14	19200 baud
+B38400		and
+EXTB	15	38400 baud
+
+The sg_erase and sg_kill fields specify the line-editing erase and kill characters; these are not currently used.
+
+sg_flags is a bitmapped value that indicates various state settings for the terminal driver (values are in hex).
+
+RAW	0000020	Raw mode: wake up on all characters, 8-bit interface
+CRMOD	0000010	Map CR into LF; output LF as CR-LF
+ECHO	0000008	Echo (full duplex)
+CBREAK	0000002	Return each character as soon as typed
+TANDEM	0000001	Automatic flow control
+
+RAW and CBREAK modes were described above, in Modes.
+
+If the CRMOD bit is set, a line feed character is appended to any echoed or ouputted carriage return.
+
+The ECHO bit controls input echoing; if enabled, any characters read from the terminal are echoed.  This behavior differs slightly from Unix, where input characters are echoed as soon as typed.
+
+TANDEM mode enables automatic software flow control utilizing the special characters t_startc and t_stopc in tchars (below).  Whenever the input queue is in danger of overflowing, the system sends t_stopc; when the queue has drained sufficiently, t_startc is sent.  This mode has no effect on the console driver.
+
+Note: t_startc and t_stopc are used for both directions of flow control; when t_stopc is received from a remote system (or user), the terminal stops output, and when t_startc is received output resumes.  Certain drivers may also require t_stopc and t_startc to be the same character, in which case one or the other setting will be ignored.  See the driver's documentation for details.
+
+
+Basic Ioctls
+
+Most ioctl() calls apply to terminals.  They have the form
+#include <sgtty.h>
+
+ioctl(int filedes, unsigned long code, void *arg)
+
+arg is usually a pointer to a structure or int.  The ioctl codes that apply to sgtty are:
+
+TIOCGETP	Fetch the basic parameters associated with the terminal, and store in the sgttyb structure pointed to by arg.
+
+TIOCSETP	Set the terminal's basic parameters according to the sgttyb structure pointed to by arg.  The input queue is flushed, and the call waits for the output queue to drain before the parameters are changed.
+
+TIOCSETN	This is like TIOCSETP, except there is no delay and the input queue is not flushed.
+
+With the following codes arg is ignored.
+
+TIOCEXCL	Set "exclusive-use" mode.  The terminal may not be opened again by any process until all existing references are closed.
+
+TIOCNXCL	Turns off "exclusive-use" mode.
+
+TIOCHPCL	When the last reference to the terminal is closed, the terminal line is forced to hang up.  This applies only to modem drivers.
+
+With the following codes, arg is a pointer to an int.
+
+TIOCGETD	The current line discipline number is stored in the int pointed to by arg.  This value is currently ignored.
+
+TIOCSETD	The line discipline is set according to the int pointed to by arg.
+
+
+
+TIOCFLUSH	The specified queue is flushed.  If the value pointed to by arg is zero, both the input and output queues are flushed.  If the value is FREAD (defined in <sys/file.h>), the input queue is flushed.  If the value is FWRITE, the output queue is flushed.
+
+The last few calls permit detailed control of the driver.  In cases where an argument is required, it is described.  Otherwise, arg should be a NULL pointer.
+
+TIOCSTI	The character pointed to by the argument is placed in the input queue as if it had been typed on the terminal.
+
+TIOCSBRK	Begins a break sequence on the terminal.
+
+TIOCCBRK	Ends a break sequence.
+
+TIOCSDTR	The DTR line is turned on
+
+TIOCCDTR	The DTR line is turned off
+
+TIOCSTOP	Output is stopped as if t_stopc had been typed on the terminal.
+
+TIOCSTART	If output is stopped, it is resumed as if t_startc had been typed on the terminal.
+
+TIOCOUTQ	The number of characters in the output queue is returned in the int pointed to by arg.
+
+FIONREAD	The number of characters immediately available for input from the terminal is returned in the int pointed to by arg.  This is the preferred method of non-blocking I/O (checking for the presence of characters without waiting for them).
+
+
+Tchars
+The second structure associated with a terminal defines special characters. The structure is defined in <sys/ioctl.h> which is automatically included by <sgtty.h>.
+
+struct tchars {
+	char	t_intrc;	/* interrupt */
+	char	t_quitc;	/* quit */
+	char	t_startc;	/* start output */
+	char	t_stopc;	/* stop output */
+	char	t_eofc;	/* end-of-file */
+	char	t_brkc;	/* input delimiter (like nl) */
+};
+
+The default values for these characters are ^C, ^\, ^Q, ^S, ^D and -1 respectively.  A value of -1 for any of the characters means that the effect of that character is ignored.  The stop and start characters may be the same to produce a 'toggle' effect.  It is not recommended to set any of the other characters to the same values; the order in which the special characters are checked is not defined, and the results you get may not be what was expected.
+The ioctl calls that apply to tchars are:
+
+TIOCGETC	Returns the special characters settings in the tchars structure pointed to by arg.
+
+TIOCSETC	The special characters are set according to the given structure.
+
+Local mode
+
+The third structure in the terminal interface is a local mode word.  None of the options are currently implemented for the console driver.  Other drivers may implement them; see the appropriate manpages for details.
+
+The ioctl's used to access the local mode follow.  arg in all cases is a pointer to an int.
+
+TIOCLBIS	The bits of the local mode word specified by `1' bits in the argument are set; this operation is a bit-wise OR.
+
+TIOCLBIC	The bits of the local mode word specified by `1' bits in the argument are cleared; this operation ANDs the local mode with the bitwise negation of the argument.
+
+TIOCLSET	Sets the local mode word to the value of the argument.
+
+TIOCLGET	Returns the local mode word in the int pointed to by arg.
+
+
+Local Special Characters
+The fourth terminal structure is another set of special characters.  The structure is named ltchars and is again defined in <ioctl.h>.
+
+struct ltchars {
+	char	t_suspc;	/* stop process signal */
+	char	t_dsuspc;	/* delayed stop process signal */
+	char	t_rprntc;	/* reprint line */
+	char	t_flushc;	/* flush output (toggles) */
+	char	t_werasc;	/* word erase */
+	char	t_lnextc;	/* literal next character */
+};
+
+Defaults for these characters are ^Z, ^Y, ^R, ^O, ^W, and ^V.  As with tchars, a value of -1 disables the effect of that character.  Only t_suspc is currently implemented for the console driver.
+
+The applicable ioctl functions are:
+
+TIOCSLTC	sets the local characters according to the ltchars structure pointed to by arg.
+
+TIOCGLTC	retreives the local characters, storing them in the argument.
+
+
+Window/terminal sizes
+
+Provision is made for storage of the current window or terminal size along with the other terminal information.  This info is recorded in a winsize structure, and is defined in <ioctl.h>:
+
+struct winsize {
+	unsigned short	ws_row;	/* rows, in characters */
+	unsigned short	ws_col;	/* columns, in characters */
+	unsigned short	ws_xpixel;	/* horizontal size, pixels */
+	unsigned short	ws_ypixel;	/* vertical size, pixels */
+};
+
+A '0' in a field indicates that the field value is undefined.  '0' is the default when a terminal is first opened.  These values are not used by the terminal driver itself; rather, they are for the benefit of applications.  The ioctl calls for winsize are:
+
+TIOCGWINSZ
+	Returns the window size parameters in the provided winsize structure.
+
+TIOCSWINSZ
+	Sets the window size parameters.  If any of the values differ from the old ones, a SIGWINCH signal is sent to the terminal's process group.
+
+FILES
+.tty
+.ttyco (console driver)
+.tty* (user-installed drivers)
+
+SEE ALSO
+GNO Shell Reference Manual, stty(1), ioctl(2), signal(2)

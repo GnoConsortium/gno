@@ -1,0 +1,28 @@
+.\"
+.\" Devin Reade, February 1997
+.\"
+.\" $Id: intro.8,v 1.1 1997/02/27 07:32:31 gdr Exp $
+.\"
+.TH INTRO 8 "2 February 1997" GNO "System Administration"
+.SH NAME
+intro \- introduction to system administration
+.SH DESCRIPTION
+The commands described in this chapter are intended only for system
+administration tasks.  On traditional Unix systems, use of these 
+routines are typically restricted to the superuser (root).
+.LP
+System administration commands are usually kept in either
+.BR /sbin ,
+.BR /usr/sbin ,
+or 
+.BR /etc .
+Because of the lack of user file permissions under GNO, it is often 
+possible for non-privaledged users to execute these commands.  Therefore,
+in the interest of system integrity, these directories should not be in the 
+.BR PATH
+of any user other than the superuser.
+.LP
+The manual page syntax of this chapter conforms to that of Chapter 1,
+.IR "Commands and Applications" .
+.SH SEE ALSO
+.BR intro (1)

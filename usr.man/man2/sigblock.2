@@ -1,0 +1,56 @@
+.\"
+.\" $Id: sigblock.2,v 1.1 1997/02/27 07:32:16 gdr Exp $
+.\"
+.TH SIGBLOCK 2 "19 January 1997" GNO "System Calls"
+.SH NAME
+.BR sigblock,
+.BR sigmask
+\- temporarily block signals
+.SH SYNOPSIS
+#include <signal.h>
+.sp 1
+long
+\fBsigblock\fR(long \fImask\fR);
+.br
+#define \fBsigmask\fR(\fIsignum\fR)
+.SH DESCRIPTION
+.BR sigblock
+is used ot temporarily block the reception of signals.  The input parameter
+.IR mask
+is a bit vector that specifies which signals are to be blocked; a 1 in bit
+.I n
+will block signal 
+.IR n +1.  
+The
+.IR mask
+is bitwise-or'd with the current signal mask to create the new
+signal mask.
+.LP
+.BR sigmask
+is a macro that can be used to calculate signal masks for 
+.BR sigsetmask .
+It takes a signal number
+.IR signum ,
+as listed in 
+.BR signal (2),
+as an argument and returns a mask corresponding to that signal.
+.LP
+If a signal is sent to a process but is blocked, the event is recorded
+for later release by 
+.BR sigsetmask (2).
+blocked signals are not stacked; further occurrences of a blocked signal
+will overwrite any previous pending signal of the same 
+.IR signum .
+.LP
+It is not possible to block
+.BR SIGKILL ,
+.BR SIGCONT ,
+or
+.BR SIGSTOP .
+This restriction is silently enforced by the kernel.
+.SH RETURN VALUE
+The previous value of the signal mask is returned.
+.SH SEE ALSO
+.BR kill (2),
+.BR sigsetmask (2),
+.BR signal (2)

@@ -1,0 +1,25 @@
+.\"
+.\" $Id: needsgno.3,v 1.1 1997/02/27 07:32:24 gdr Exp $
+.\"
+.TH NEEDSGNO 3 "29 January 1997" GNO "Library Routines"
+.SH NAME
+.BR needsgno
+\- determine if GNO is active
+.SH SYNOPSIS
+#include <gno/gno.h>
+.sp 1
+int
+\fBneedsgno\fR (void);
+.SH DESCRIPTION
+This function returns 1 if GNO is operating, and zero if it is not.
+Use this function to abort programs that use GNO-specific features,
+or to allow them to enable non-GNO environment-specific code.
+.LP
+This call is just a wrapper for the 
+.BR kernStatus (2)
+system call.
+.SH SEE ALSO
+.BR kernStatus (2),
+.BR kernVersion (2),
+the
+.IR "GNO Kernel Reference Manual" .

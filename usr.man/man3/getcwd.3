@@ -1,0 +1,155 @@
+.\" Copyright (c) 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)getcwd.3	8.2 (Berkeley) 12/11/93
+.\"
+.TH GETCWD 3 "18 December 1996" GNO "Library Routines"
+.SH NAME
+.BR getcwd ,
+.BR getwd
+\- get working directory pathname
+.SH SYNOPSIS
+#include <unistd.h>
+.sp 1
+char *
+\fBgetcwd\fR (char *\fIbuf\fR, size_t \fIsize\fR);
+.br
+char *
+\fBgetwd\fR (char *\fIbuf\fR);
+.SH DESCRIPTION
+The
+.BR getcwd 
+function copies the absolute pathname of the current working directory
+(GS/OS prefix 0 if not NULL, otherwise GS/OS prefix 8)
+into the memory referenced by
+.I buf
+and returns a pointer to
+.IR buf .
+The
+.I size
+argument is the size, in bytes, of the array referenced by
+.IR buf .
+.LP
+If
+.I buf
+is
+.BR NULL ,
+space is allocated as necessary to store the pathname.
+This space may later be released by
+.BR free (3).
+.LP
+The function
+.BR getwd 
+is a compatibility routine which calls
+.BR getcwd 
+with its
+.I buf
+argument and a size of
+.BR MAXPATHLEN
+(as defined in the include file
+.BR <sys/param.h> ).
+Obviously,
+.I buf
+should be at least
+.BR MAXPATHLEN
+bytes in length.
+.LP
+These routines make use of the 
+.BR _mapPath (3)
+facility.
+.SH RETURN VALUES
+Upon successful completion, a pointer to the pathname is returned.
+Otherwise a
+.BR NULL
+pointer is returned and the global variable
+.IR errno
+is set to indicate the error.
+In addition,
+.BR getwd 
+copies the error message associated with
+.IR errno
+into the memory referenced by
+.IR buf .
+.SH COMPATIBILITY
+These routines are thread safe.
+.SH ERRORS
+The
+.BR getcwd 
+function
+will fail if:
+.RS
+.IP \fBEACCESS\fR
+Read or search permission was denied for a component of the pathname.
+.IP \fBEINVAL\fR
+The
+.I size
+argument is zero, or if pathname mapping is active and the current working
+directory has a component which includes the slash ('/') character.  See
+.BR _mapPath (3).
+.IP \fBENOENT\fR
+A component of the pathname no longer exists.
+.IP \fBENOMEM\fR
+Insufficient memory is available.
+.IP \fBERANGE\fR
+The
+.I size
+argument is greater than zero but smaller than the length of the pathname
+plus 1.
+.RE
+.SH BUGS
+The
+.BR getwd 
+function
+does not do sufficient error checking and is not able to return very
+long, but valid, paths.
+It is provided for compatibility and should be avoided when possible.
+.SH STANDARDS
+The
+.BR getcwd 
+function
+conforms to
+.BR "ANSI C" .
+The ability to specify a
+.BR NULL
+pointer and have
+.BR getcwd 
+allocate memory as necessary is an extension.
+.SH HISTORY
+The
+.BR getwd 
+function appeared in 
+BSD 4.0.
+.SH SEE ALSO
+.BR chdir (2),
+.BR fchdir (2),
+.BR _mapPath (3),
+.BR malloc (3),
+.BR strerror (3)

@@ -1,0 +1,157 @@
+.\" Copyright (c) 1989, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Guido van Rossum.
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)fnmatch.3	8.2 (Berkeley) 4/16/94
+.\"
+.TH FNMATCH 3 "22 February 1996" GNO "Library Routines"
+.SH NAME
+.BR fnmatch
+\- match filename or pathname
+.SH SYNOPSIS
+#include <fnmatch.h>
+.sp 1
+int
+\fBfnmatch\fR (const char *\fIpattern\fR, const char *\fIstring\fR,
+int \fIflags\fR);
+.SH DESCRIPTION
+The
+.BR fnmatch 
+function
+matches patterns according to the rules used by the shell.
+It checks the string specified by the
+.I string
+argument to see if it matches the pattern specified by the
+.I pattern
+argument.
+.LP
+The
+.I flags
+argument modifies the interpretation of
+.I pattern
+and
+.IR string .
+The value of
+.I flags
+is the bitwise inclusive
+.BR OR
+of any of the following
+constants, which are defined in the include file <fnmatch.h>.
+.RS
+.IP FNM_NOESCAPE
+Normally, every occurrence of a backslash
+.BR \e
+followed by a character in
+.I pattern
+is replaced by that character.
+This is done to negate any special meaning for the character.
+If the
+.BR FNM_NOESCAPE
+flag is set, a backslash character is treated as an ordinary character.
+.IP FNM_PATHNAME
+Slash characters in
+.I string
+must be explicitly matched by slashes in
+.IR pattern .
+If this flag is not set, then slashes are treated as regular characters.
+.IP FNM_PERIOD
+Leading periods in
+.I string
+must be explicitly matched by periods in
+.IR pattern .
+If this flag is not set, then leading periods are treated as regular
+characters.
+The definition of ``leading'' is related to the specification of
+.BR FNM_PATHNAME.
+A period is always ``leading'' if it is the first character in
+.BR string .
+Additionally, if
+.BR FNM_PATHNAME
+is set,
+a period is ``leading'' if it immediately follows a slash.
+.IP FNM_CASEFOLD
+If this flag is set, then the filename matching will be case insensitive.
+This is an extension for GNO.
+.RE
+.LP
+In the GNO implementation, any colon
+.RB ( : )
+characters appearing in
+.IR pattern
+or
+.IR string
+will be mapped to slash
+.RB ( / )
+characters before any match is attempted, unless either
+.IR pattern
+or 
+.IR string
+contain both colons and slashes.
+.SH RETURN VALUES
+The
+.BR fnmatch 
+function returns zero if
+.I string
+matches the pattern specified by
+.IR pattern ,
+otherwise, it returns the value
+.BR FNM_NOMATCH .
+.SH BUGS
+The pattern
+.BR *
+matches the empty string, even if
+.BR FNM_PATHNAME
+is specified.
+.LP
+This implementation of 
+.BR fnmatch
+uses recursion.  While this is not strictly a bug, it is a serious
+limitation on the IIgs where stack space is at a premium.
+.SH STANDARDS
+Other than the mapping of 
+.BR :
+characters to 
+.BR /
+characters, the
+.BR fnmatch 
+function conforms to POSIX 1003.2.
+The
+.BR FNM_CASEFOLD
+flag is an extension to the standard.
+.SH HISTORY
+The
+.BR fnmatch 
+function first appeared in 4.4BSD.
+.SH SEE ALSO
+.BR sh (1),
+.BR glob (3),
+.BR regex (3)

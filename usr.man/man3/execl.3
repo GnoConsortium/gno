@@ -1,0 +1,187 @@
+.\" Copyright (c) 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     from: @(#)exec.3	6.4 (Berkeley) 4/19/91
+.\"	exec.3,v 1.2 1993/07/30 08:35:49 mycroft Exp
+.\"
+.\" This man page has been modified to conform with the lenviron v1.1.3
+.\" release for Gno v2.0.3 and later by Devin Reade.  glyn@cs.ualberta.ca
+.\"
+.TH EXECL 3 "19 January 1997" GNO "Library Routines"
+.SH NAME
+.BR execl ,
+.BR execlp ,
+.BR execv ,
+.BR execvp
+\- execute a file
+.SH SYNOPSIS
+#include <unistd.h>
+.sp 1
+extern char **environ;
+.sp 1
+int
+\fBexecl\fR(const char *\fIpath\fR, const char *\fIarg\fR, ...);
+.br
+int
+\fBexecle\fR(const char *\fIpath\fR, const char *\farg\fR, ...);
+.br
+int
+\fBexeclp\fR(const char *\fIfile\fR, const char *\fIarg\fR, ...);
+.br
+int
+\fBexecv\fR(const char *\fIpath\fR, char * const *\fIargv\fR);
+.br
+int
+\fBexecvp\fR(const char *\fIfile\fR, char * const *\fIargv\fR);
+.SH DESCRIPTION
+The
+.BR exec
+family of functions replaces the current process image with a
+new process image.
+The functions described in this manual page are front-ends for the function
+\fIexecve\fR(2). (See the manual page for \fIexecve\fR
+for detailed information about the replacement of the current process.)
+.LP
+The initial argument for these functions is the pathname of a file which
+is to be executed.
+.LP
+The
+.I arg
+and subsequent ellipses in the
+.IR execl ,
+.IR execle ,
+and
+.I execlp
+functions can be thought of as
+.IR arg0 ,
+.IR arg1 ,
+.IR "..." ,
+.IR argn .
+Together they describe a list of one or more pointers to NULL-terminated
+strings that represent the argument list available to the executed program.
+The first argument, by convention, should point to the file name associated
+with the file being executed.
+The list of arguments
+.I must
+be terminated by a NULL pointer.
+.LP
+The
+.BR execle
+function expects a final argument,
+.BR envp ,
+of type 'char * const *' to follow
+the trailing NULL pointer.  This is an array of environment strings,
+similar to that used by
+.BR execve (2).
+This array
+.IR must
+be NULL-terminated.
+.LP
+The
+.I execv
+and
+.I execvp
+functions provide an array of pointers to NULL-terminated strings that
+represent the argument list available to the new program.
+The first argument, by convention, should point to the file name associated
+with the file begin executed.
+The array of pointers
+.I must
+be terminated by a NULL pointer.
+.LP
+Some of these functions have special semantics.
+.LP
+The functions
+.I execlp
+and
+.I execvp
+will duplicate the actions of the shell in searching for an executable file
+if the specified file name does not contain a slash (/) character or a
+colon (:).
+The search path is the path specified in the environment by
+.B PATH
+variable.
+If this variable isn't specified, the default path
+.BR "/bin /usr/bin"
+(or
+.BR "/usr/bin /bin"
+for
+.BR gsh (1))
+is used.
+.SH RETURN VALUES
+If any of the
+.I exec
+functions returns, an error will have occurred.
+The return value is \fBSYSERR\fR (\-1), and the global variable
+.B errno
+will be set to indicate the error.
+.SH ERRORS
+These routines may fail and set
+.B errno
+for any of the errors specified for the library functions 
+.IR execve (2),
+.IR _execve (2),
+and 
+.IR malloc (3).
+.SH GNO IMPLEMENTATION
+When parsing the
+.B PATH
+environment variable,
+.I execvp
+and
+.I execlp
+assume that if there is no colon (:) within
+.B PATH
+then the pathname delimiter is a slash (/).  This is to facilitate use
+of GS/OS pathname delimiters.
+.LP
+The current version of the gsh shell searches
+.B PATH
+from back to front.  In most other shells, it is done front to back.  In
+order to provide consistency with gsh,
+.B PATH
+is currently scanned back to front.  With this backwards scanning, the
+default
+.B PATH
+used is
+.BR "/usr/bin /bin" .
+If gsh gets fixed, the     
+scan order will be quickly changed.
+.SH AUTHOR
+Implemented from the BSD specification by Devin Reade.
+.SH SEE ALSO
+.BR execve (2),
+.BR fork (2),
+.BR exec (3C).
+.SH HISTORY
+The GNO implementation of these routines first appeared in the
+.BR lenviron
+library.  They became part of the GNO distribution as of v2.0.6

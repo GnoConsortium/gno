@@ -1,0 +1,144 @@
+.\"
+.\" $Id: jobcontrol.2,v 1.1 1997/02/27 07:32:14 gdr Exp $
+.\"
+.TH "JOBCONTROL" 2 "19 January 1997" GNO "System Calls"
+.SH NAME
+.BR settpgrp ,
+.BR tcnewpgrp ,
+.BR tctpgrp
+\- interface for the new job control model
+.SH SYNOPSIS
+#include <gno/gno.h>
+.sp 1
+int
+\fBtcnewpgrp\fR(int \fIfdtty\fR);
+.br
+int
+\fBsettpgrp\fR(int \fIfdtty\fR);
+.br
+int
+\fBtctpgrp\fR(int \fIfdtty\fR, int \fIpid\fR);
+.SH DESCRIPTION
+The job control interface is used to control what processes are 'in
+the foreground' on a particular terminal.  Every tty has a process group.
+Each process is a member of a process group.  A process is a foreground
+process on a tty if and only if that process and the terminal belong
+to the same process group.  Certain characters (such as ^C) typed on a
+tty with a non-zero process group produce signals sent to every process
+which is a member of the group.
+.LP
+A process is suspended (stopped) if it performs a sufficiently invasive
+operation on a tty with a different process group.  This includes these
+job control calls, reads from a terminal, and writes to a terminal if
+it is configured to do so with 
+.BR ioctl (2).
+When a tty file is first opened, it is assigned process group zero
+.RB ( init (8)
+has process group zero).  As
+.BR init
+launches login processes on various ttys, it assigns process groups
+to those ttys and processes.
+.LP
+.BR tcnewpgrp
+allocates a new process group and assigns it to the terminal referred
+to by 
+.IR fdtty .
+If the calling process is not in the foreground, it is sent
+.BR SIGTTOU .
+.LP
+.BR settpgrp
+sets the current process to have the process group as 
+.IR fdtty .
+.LP
+.BR tctpgrp 
+sets the tty referred to by
+.IR fdtty
+to the same process group as the process
+.IR pid ,
+where
+.IR pid
+is the current process or a descendant of it.
+.SH RETURN VALUE
+These calls will return zero on success, otherwise they'll return -1
+and set
+.BR errno
+accordingly.
+.SH ERRORS
+.IP \fBEBADF\fR
+.IR fdtty 
+is not a valid file descriptor.
+.IP \fBENOTTY\fR
+.IR fdtty
+does not refer to a terminal file.
+.IP \fBESRCH\fR
+.IR pid
+is not a valid process identifier.
+.SH EXAMPLES
+The following are some example uses of the job control interface.
+.RS
+.LP
+Forking a pipeline in a job-control shell:  The shell starts with
+.BR tcnewpgrp
+so that the tty is in the new process group before there are even any 
+children. It then
+.BR fork s
+each process in the pipeline.  Each process does
+.BR settpgrp ,
+thus joining the new process group.
+.LP
+Handling a stopped child process:  When the shell sees that a pipeline
+has stopped or exited, it does
+.BR tctpgrp
+to set the tty to its own process group.  To resume the pipeline it does
+.BR tctpgrp
+where 
+.IR pid
+is one of the child processes, then sends 
+.BR SIGCONT .
+.LP
+Starting a process under a new tty:  When, for instance,
+telnetd (8)
+wants to grap a pseudo-tty, it opens the pty and
+.BR fork s
+a child process.  The child does
+.BR tcnewpgrp
+to give the tty a real process group, then
+.BR settpgrp 
+to place itself into the foregroup.
+.RE
+Security under this scheme is trivial.  there is no way a process can join
+a process group except by 
+.BR settpgrp ,
+and that requires a descriptor open to a tty with that
+.IR pgrp .
+To make a tty have that 
+.Ir pgrp
+requires either
+.BR tcnewpgrp
+(in which case nobody else is using the
+.IR pgrp ),
+or 
+.BR tctpgrp
+(which reduces to the first problem of having a process in the process
+group).
+.LP
+Note that 'using' must be defined as use both by ttys and by processes; the
+kernel keeps a table of 
+.IR pgrp s,
+each with a total tty and process reference count.  When the reference
+count reaches zero, the 
+.IR pgrp
+is automatically deallocated.
+.SH SEE ALSO
+.BR ioctl (2),
+.BR kill (2),
+.BR signal (2),
+.BR tty (4),
+.IR "GNO Shell Reference Manual" .
+.SH CREDITS
+This job control interface was designed by Dan Bernstein 
+<brnstnd@kramden.acf.nyu.edu>.  He was inspired by Chris Torek, and
+dedicated the system to Mark Teitelbaum.  The text of this manpage is
+derived from his original specifications.
+.LP
+The GNO implementation was written strictly from specs.

@@ -1,0 +1,344 @@
+.\" Copyright (c) 1983, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)getsockopt.2	8.3 (Berkeley) 4/19/94
+.\"
+.TH GETSOCKOPT 2 "16 January 1997" GNO "System Calls"
+.SH NAME
+.BR getsockopt ,
+.BR setsockopt
+\- get and set options on sockets
+.SH SYNOPSIS
+#include <sys/types.h>
+.br
+#include <sys/socket.h>
+.sp 1
+int
+\fBgetsockopt\fR (int \fIs\fR, int \fIlevel\fR, int \fIoptname\fR, 
+void *\fIoptval\fR, int *\fIoptlen\fR);
+.sp 1
+int
+\fBsetsockopt\fR (int \fIs\fR, int \fIlevel\fR, int \fIoptname\fR,
+const void *\fIoptval\fR, int \fIoptlen\fR);
+.SH DESCRIPTION
+.BR Getsockopt 
+and
+.BR setsockopt 
+manipulate the
+.IR options 
+associated with a socket.  Options may exist at multiple
+protocol levels; they are always present at the uppermost
+socket level.
+.LP
+When manipulating socket options the level at which the
+option resides and the name of the option must be specified.
+To manipulate options at the socket level,
+.I level
+is specified as
+.BR SOL_SOCKET .
+To manipulate options at any
+other level the protocol number of the appropriate protocol
+controlling the option is supplied.  For example,
+to indicate that an option is to be interpreted by the TCP
+protocol,
+.I level
+should be set to the protocol number of TCP; see
+.BR getprotoent (3).
+.LP
+The parameters
+.I optval
+and
+.I optlen
+are used to access option values for
+.BR setsockopt .
+For
+.BR getsockopt 
+they identify a buffer in which the value for the
+requested option(s) are to be returned.  For
+.BR getsockopt ,
+.I optlen
+is a value-result parameter, initially containing the
+size of the buffer pointed to by
+.IR optval ,
+and modified on return to indicate the actual size of
+the value returned.  If no option value is
+to be supplied or returned,
+.I optval
+may be NULL.
+.LP
+.I Optname
+and any specified options are passed uninterpreted to the appropriate
+protocol module for interpretation.
+The include file
+<sys/socket.h>
+contains definitions for
+socket level options, described below.
+Options at other protocol levels vary in format and
+name; consult the appropriate entries in
+section 4 of the manual.
+.LP
+Most socket-level options utilize an
+.I int
+parameter for
+.IR optval .
+For
+.BR setsockopt ,
+the parameter should be non-zero to enable a boolean option,
+or zero if the option is to be disabled.
+.BR SO_LINGER
+uses a
+.B "struct linger"
+parameter, defined in <sys/socket.h>,
+which specifies the desired state of the option and the
+linger interval (see below).
+.BR SO_SNDTIMEO
+and
+.BR SO_RCVTIMEO
+use a
+.B "struct timeval"
+parameter, defined in <sys/time.h>.
+.LP
+The following options are recognized at the socket level.
+Except as noted, each may be examined with
+.BR getsockopt 
+and set with
+.BR setsockopt .
+.RS
+.nf
+SO_DEBUG		enables recording of debugging information
+SO_REUSEADDR	enables local address reuse
+SO_REUSEPORT	enables duplicate address and port bindings
+SO_KEEPALIVE	enables keep connections alive
+SO_DONTROUTE	enables routing bypass for outgoing messages
+SO_LINGER 	linger on close if data present
+SO_BROADCAST	enables permission to transmit broadcast messages
+SO_OOBINLINE	enables reception of out-of-band data in band
+SO_SNDBUF		set buffer size for output
+SO_RCVBUF		set buffer size for input
+SO_SNDLOWAT	set minimum count for output
+SO_RCVLOWAT	set minimum count for input
+SO_SNDTIMEO	set timeout value for output
+SO_RCVTIMEO	set timeout value for input
+SO_TYPE		get the type of the socket (get only)
+SO_ERROR		get and clear error on the socket (get only)
+.fi
+.RE
+.LP
+.BR SO_DEBUG
+enables debugging in the underlying protocol modules.
+.BR SO_REUSEADDR
+indicates that the rules used in validating addresses supplied
+in a
+.BR bind (2)
+call should allow reuse of local addresses.
+.BR SO_REUSEPORT
+allows completely duplicate bindings by multiple processes
+if they all set
+.BR SO_REUSEPORT
+before binding the port.
+This option permits multiple instances of a program to each
+receive UDP/IP multicast or broadcast datagrams destined for the bound port.
+.BR SO_KEEPALIVE
+enables the
+periodic transmission of messages on a connected socket.  Should the
+connected party fail to respond to these messages, the connection is
+considered broken and processes using the socket are notified via a
+.BR SIGPIPE
+signal when attempting to send data.
+.BR SO_DONTROUTE
+indicates that outgoing messages should
+bypass the standard routing facilities.  Instead, messages are directed
+to the appropriate network interface according to the network portion
+of the destination address.
+.LP
+.BR SO_LINGER
+controls the action taken when unsent messages
+are queued on socket and a 
+.BR close (2)
+is performed.
+If the socket promises reliable delivery of data and
+.BR SO_LINGER is set,
+the system will block the process on the 
+.BR close (2)
+attempt until it is able to transmit the data or until it decides it
+is unable to deliver the information (a timeout period, termed the
+linger interval, is specified in the
+.BR setsockopt 
+call when
+.BR SO_LINGER
+is requested). 
+If
+.BR SO_LINGER
+is disabled and a 
+.BR close (2)
+is issued, the system will process the close in a manner that allows
+the process to continue as quickly as possible.
+.LP
+The option
+.BR SO_BROADCAST
+requests permission to send broadcast datagrams
+on the socket.
+Broadcast was a privileged operation in earlier versions of the system.
+With protocols that support out-of-band data, the
+.BR SO_OOBINLINE
+option
+requests that out-of-band data be placed in the normal data input queue
+as received; it will then be accessible with
+.BR recv (2)
+or
+.BR read (2)
+calls without the
+.BR MSG_OOB
+flag.
+Some protocols always behave as if this option is set.
+.BR SO_SNDBUF
+and
+.BR SO_RCVBUF
+are options to adjust the normal
+buffer sizes allocated for output and input buffers, respectively.
+The buffer size may be increased for high-volume connections,
+or may be decreased to limit the possible backlog of incoming data.
+The system places an absolute limit on these values.
+.LP
+.BR SO_SNDLOWAT
+is an option to set the minimum count for output operations.
+Most output operations process all of the data supplied
+by the call, delivering data to the protocol for transmission
+and blocking as necessary for flow control.
+Nonblocking output operations will process as much data as permitted
+subject to flow control without blocking, but will process no data
+if flow control does not allow the smaller of the low water mark value
+or the entire request to be processed.
+A
+.BR select (2)
+operation testing the ability to write to a socket will return true
+only if the low water mark amount could be processed.
+The default value for
+.BR SO_SNDLOWAT
+is set to a convenient size for network efficiency, often 1024.
+.BR SO_RCVLOWAT
+is an option to set the minimum count for input operations.
+In general, receive calls will block until any (non-zero) amount of data
+is received, then return with the smaller of the amount available or the amount
+requested.
+The default value for
+.BR SO_RCVLOWAT
+is 1.
+If 
+.BR SO_RCVLOWAT
+is set to a larger value, blocking receive calls normally
+wait until they have received the smaller of the low water mark value
+or the requested amount.
+Receive calls may still return less than the low water mark if an error
+occurs, a signal is caught, or the type of data next in the receive queue
+is different than that returned.
+.LP
+.BR SO_SNDTIMEO
+is an option to set a timeout value for output operations.
+It accepts a
+.B "struct timeval"
+parameter with the number of seconds and microseconds
+used to limit waits for output operations to complete.
+If a send operation has blocked for this much time,
+it returns with a partial count
+or with the error
+EWOULDBLOCK
+if no data were sent.
+In the current implementation, this timer is restarted each time additional
+data are delivered to the protocol,
+implying that the limit applies to output portions ranging in size
+from the low water mark to the high water mark for output.
+.BR SO_RCVTIMEO
+is an option to set a timeout value for input operations.
+It accepts a
+.B "struct timeval"
+parameter with the number of seconds and microseconds
+used to limit waits for input operations to complete.
+In the current implementation, this timer is restarted each time additional
+data are received by the protocol,
+and thus the limit is in effect an inactivity timer.
+If a receive operation has been blocked for this much time without
+receiving additional data, it returns with a short count
+or with the error
+EWOULDBLOCK
+if no data were received.
+.LP
+Finally,
+.BR SO_TYPE
+and
+.BR SO_ERROR
+are options used only with
+.BR getsockopt .
+.BR SO_TYPE
+returns the type of the socket, such as
+.BR SOCK_STREAM ;
+it is useful for servers that inherit sockets on startup.
+.BR SO_ERROR
+returns any pending error on the socket and clears
+the error status.
+It may be used to check for asynchronous errors on connected
+datagram sockets or for other asynchronous errors.
+.SH RETURN VALUES
+A 0 is returned if the call succeeds, -1 if it fails.
+.SH ERRORS
+The call succeeds unless:
+.RS
+.IP \fBEBADF\fR
+The argument
+.I s
+is not a valid descriptor.
+.IP \fBENOTSOCK\fR
+The argument
+.I s
+is a file, not a socket.
+.IP \fBENOPROTOOPT\fR
+The option is unknown at the level indicated.
+.IP \fBEFAULT\fR
+The address pointed to by 
+.I optval
+is not in a valid part of the process address space.
+For
+.BR getsockopt ,
+this error may also be returned if
+.I optlen
+is not in a valid part of the process address space.
+.RE
+.SH SEE ALSO
+.BR ioctl (2),
+.BR socket (2),
+.BR getprotoent (3)
+.BR protocols (5)
+.SH BUGS
+Several of the socket options should be handled at lower levels of the system.
+.SH HISTORY
+The
+.BR setsockopt
+system call appeared in 4.2BSD.

@@ -1,0 +1,50 @@
+.\"
+.\" $Id: sigsetmask.2,v 1.1 1997/02/27 07:32:16 gdr Exp $
+.\"
+.TH SIGSETMASK 2 "19 January 1997" GNO "System Calls"
+.SH NAME
+.BR sigsetmask
+\- set signal mask
+.SH SYNOPSIS
+#include <signal.h>
+.sp 1
+long
+\fBsigsetmask\fR(long \fImask\fR);
+.br
+#define \fBsigmask\fR(\fIsignum\fR)
+.SH DESCRIPTION
+.BR sigsetmask
+is usually used to restore signal masks after modifications by 
+.BR sigblock .
+The parameter mask is the absolute value to which the process signal
+mask will be set.  (Compare to
+.BR sigblock ,
+which adds the argument to the set of blocked signals.)
+.LP
+If there are pending instances of signals which become unblocked by the 
+.BR sigsetmask
+call, they are 'released' into the system signal queue and their 'pending'
+status is cleared.  The system signal queue is maintained by the kernel
+null process, and is used in situations where signals could not normally
+be sent (such as in interrupt handlers).
+.LP
+.BR sigmask
+is a macro that can be used to calculate signal masks for 
+.BR sigsetmask .
+It takes a signal number, as listed in 
+.BR signal (2),
+as an argument and returns a mask corresponding to that signal.
+.SH "RETURN VALUE"
+The previous value of the signal mask is returned from
+.BR sigsetmask .
+.SH CAVEATS
+If somehow the process re-blocks a signal released by 
+.BR sigsetmask
+before the system signal queue processes it, it will be blocked and marked
+as pending.  This can happen if a signal handler makes a 
+.BR sigblock
+call.
+.SH SEE ALSO
+.BR kill (2), 
+.BR sigblock (2),
+.BR signal (2)

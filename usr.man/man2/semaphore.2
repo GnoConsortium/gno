@@ -1,0 +1,88 @@
+.\"
+.\" $Id: semaphore.2,v 1.1 1997/02/27 07:32:15 gdr Exp $
+.\"
+.TH SEMAPHORE 2 "16 January 1997" GNO "System Calls"
+.SH NAME
+.BR scount ,
+.BR screate ,
+.BR sdelete ,
+.BR ssignal ,
+.BR swait 
+\- semaphore operations
+.SH SYNOPSIS
+#include <gno/gno.h>
+.sp 1
+int \fBscount\fR (int \fIsem\fR);
+.br
+int \fBscreate\fR (int \fIcount\fR);
+.br
+int \fBsdelete\fR (int \fIsem\fR);
+.br
+int \fBssignal\fR (int \fIsem\fR);
+.br
+int \fBswait\fR (int \fIsem\fR);
+.SH DESCRIPTION
+.BR screate
+is used to allocate a semaphore from the kernel semapore manager.
+Semaphores are the most basic form of interprocess communication (IPC),
+and these routines provide the power necessary to solve a large number
+of synchronization and communication problems.  (See an Operating Systems
+text).
+.LP
+The initial
+.IR count
+determines how many times
+.BR swait
+can be called before processes are blocked.
+.IR count
+must non-negative, and is usually set to 1.
+.BR screate
+returns a semaphore ID number as an integer.  This ID must be used in
+all the other semaphore calls.
+.LP
+.BR sdelete
+releases the specified semaphore, and returns to a ready state all
+processes that were blocked on that semaphore.
+.LP
+.BR swait
+decrements the value of the semaphore (initially specified by
+.IR count )
+by one.  If the semaphore count is less than zero, the process is blocked
+and queued for release by 
+.BR ssignal .
+This is what is traditionally referred to as a semaphore-down operation.
+.LP
+.BR ssignal
+increments the semaphore count by one.  If the semaphore count is less
+than zero, 
+.BR ssignal
+unblocks a process blocked on the semaphore.
+The selection of the process to be unblocked is arbitrary; FIFO operation
+is not guaranteed.
+.LP
+.BR scount
+retuns the current value of the semaphore referred to by
+.IR sem .
+Note that depending on this value for synchronization can lead to race
+conditions.
+.SH "RETURN VALUE"
+On success, 
+.BR screate
+returns the semaphore identifier, 
+.BR scount
+returns the semaphore value, and
+.BR sdelete ,
+.BR ssignal ,
+and
+.BR swait
+return zero.
+All functions return -1 and set
+.BR errno
+on failure.
+.SH BUGS
+There is currently no mechanism for deallocating semaphores that are 
+orphaned by abnormal process termination.
+.SH HISTORY
+These semaphore routines were designed for XINU, written by Douglas Comer.
+
+

@@ -1,0 +1,39 @@
+.\"
+.\" $Id: sigpause.2,v 1.1 1997/02/27 07:32:16 gdr Exp $
+.\"
+.TH SIGPAUSE 2 "19 January 1997" GNO "System Calls"
+.SH NAME
+.BR sigpause
+\- suspend process until a signal arrives
+.SH SYNOPSIS
+#include <signal.h>
+.sp 1
+int
+\fBsigpause\fR(long int \fImask\fR);
+.SH DESCRIPTION
+.BR sigpause
+suspends execution of the calling process until a signal arrives.  The
+.IR mask
+parameter is assigned to the set of blocked signals (see
+.BR sigsetmask (2)),
+and then the process is paused.  When a signal arrives, the regular
+signal handler (if any) is executed, and then the original signal mask
+is restored before returning to the caller.  Usually 
+.IR mask
+is zero to pause until any signal arrives.
+.LP
+.BR sigpause
+is normally used in situations where one must protect a critical section.
+A typical use begins with sigblock to block a signal (and enable mutual
+exclusion); variables modified on the occurance of that signal are then
+manipulated, code is executed, etc.  To end the critical section and
+wait for more work, sigpause is called.
+.SH RETURN VALUE
+.BR sigpause 
+always returns an error (-1) and sets
+.BR errno
+to EINTR.
+.SH SEE ALSO
+.BR signal (2),
+.BR sigblock (2),
+.BR sigsetmask (2)

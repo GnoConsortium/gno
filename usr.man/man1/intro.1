@@ -1,0 +1,78 @@
+.\"
+.\" Devin Reade, January 1997
+.\"
+.\" $Id: intro.1,v 1.1 1997/02/27 07:32:10 gdr Exp $
+.\"
+.TH INTRO 1 "12 January 1997" GNO "Commands and Applications"
+.SH NAME
+Intro \- Introduction the manual pages, commands and applications
+.SH DESCRIPTION
+These are the manual pages for GNO/ME v2.0.6, the multitasking UNIX-like
+environment for the Apple IIgs.  They are broken up into the following
+chapters or sections:
+.RS
+.nf
+
+1	Commands and Applications
+2	System Calls
+3	Library Routines
+3F	Fortran Routines
+4	Devices
+5	File Formats
+6	Games
+7	Miscellaneous
+8	System Administration
+
+.fi
+.RE
+Within each chapter, the manual pages are sorted alphabetically.
+Chapter
+.BR 3F ,
+.IR "Fortran Routines" ,
+is not currently used, but that chapter is reserved for Fortran routines
+(intrinsic and external).
+.LP
+This page is the introduction to Chapter 1,
+.IR "Commands and Applications" .
+It covers all external user commands.  It specifically excludes shell built-in
+commands, games, and programs intended for system administration.
+.LP
+For third party programs, it is the responsibility of the application
+programmer to provide suitable manual pages.
+.SH "COMMAND SYNTAX"
+Unless otherwise noted, commands described in the 
+.BR SYNOPSIS
+section of a manual page accept options and other arguments
+according to the following syntax and should be interpreted as explained
+below:
+.RS
+.sp 1
+.BR name
+[ \fB-option\fR [ \fIoptarg\fR ] ... ] [ \fIarg\fR ... ]
+.sp 1
+.RE
+where:
+.RS
+.IP \fBname\fR
+is the name of the executable file.
+.IP \fB-option\fR
+is a single character option flag, almost always preceeded by a hyphen.
+Programs which make use of the GNU 
+.BR getopt (3)
+package may also use long options, which are multi-character options
+preceeded by two hypens (such as
+.BR --recursive .)
+.IP \fIoptarg\fR
+is the option argument, if required.
+.IP \fIarg\fR
+is a regular argument, if required.
+.IP "[ ]"
+Surround an
+.BR option
+or
+.IR argument
+that is optional.
+.IP "..."
+indicate multiple occurances of the preceeding symbol.
+.SH "SEE ALSO"
+.I "GNO Shell User's Manual"

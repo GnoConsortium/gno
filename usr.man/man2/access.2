@@ -1,0 +1,91 @@
+.\"
+.\" Devin Reade, 1995
+.\"
+.\" $Id: access.2,v 1.1 1997/02/27 07:32:11 gdr Exp $
+.\"
+.TH ACCESS 2 "16 January 1997" GNO "System Calls"
+.SH NAME
+access \- determine accessibility of file
+.SH SYNOPSIS
+#include <unistd.h>
+.sp 1
+int
+\fBaccess\fR (const char *\fIpath\fR, int \fImode\fR);
+.SH DESCRIPTION
+.I path
+points to a path name naming a file.
+.B access(\|)
+checks the named file
+for accessibility according to
+.IR mode ,
+which is an inclusive or of the following bits:
+.RS
+.IP \fBR_OK\fR
+Test for read permission.
+.IP \fBW_OK\fR
+Test for write permission.  Under GNO, a file must have all three of
+its GS/OS write, rename, and destroy bits set to be considered writable.
+.IP \fBX_OK\fR
+Test for execute or search permission.  Under GNO, the test will pass if
+the file is of type EXE, S16, a directory, or of type SRC with an EXEC
+auxiliary type.
+.RE
+.LP
+The following value may also be supplied for
+.IR mode :
+.RS
+.IP \fBF_OK\fR
+test whether the directories leading to the file can be searched and the file exists.
+.RE
+.LP
+Notice that only access bits are checked.  A directory may be indicated as writable by
+.BR access(\|) ,
+but an attempt to open it for writing will fail
+(although files may be created there); a file may look executable, but
+.B execve(\|)
+will fail unless it is in proper format.
+.SH RETURN VALUES
+.B access(\|)
+returns zero on success.  On failure it returns -1 and sets
+.BR errno .
+.SH ERRORS
+.IP EACCES
+Search permission is denied for a component of the path prefix of
+.IR path .
+.sp 1
+The file access permissions do not permit the requested
+access to the file named by
+.IR path .
+.IP EFAULT
+.I path
+points outside the process's allocated address space.
+.IP EINVAL
+An invalid value was specified for
+.IR mode .
+.sp 1
+The length of the path argument exceeds
+.BR FILENAME_MAX .
+.IP EIO
+An I/O error occurred while reading from or writing to the file system.
+.IP ELOOP
+Too many symbolic links were encountered in translating
+.IR path .
+(Not currently possible under GNO.)
+.IP ENOENT
+The file named by
+.I path
+does not exist.
+.IP ENOTDIR
+A component of the path prefix of
+.I path
+is not a directory.
+.SH SYSTEM V ERRORS
+In addtion to the above, the following may also occur:
+.IP ENOENT
+.I path
+points to an empty string.
+.SH BUGS
+Nothing special is done for the AppleShare FST.
+.SH "SEE ALSO"
+.BR chmod (2V),
+.BR stat (2V)

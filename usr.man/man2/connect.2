@@ -1,0 +1,146 @@
+.\" Copyright (c) 1983, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)connect.2	8.1 (Berkeley) 6/4/93
+.\"
+.TH CONNECT 2 "16 January 1997" GNO "System Calls"
+.SH NAME
+.BR connect
+\- initiate a connection on a socket
+.SH SYNOPSIS
+#include <sys/types.h>
+.br
+#include <sys/socket.h>
+.sp 1
+int
+\fBconnect\fR (int \fIs\fR, struct sockaddr *\fIname\fR, int \fInamelen\fR);
+.SH DESCRIPTION
+The parameter
+.I s
+is a socket.
+If it is of type
+.BR SOCK_DGRAM ,
+this call specifies the peer with which the socket is to be associated;
+this address is that to which datagrams are to be sent,
+and the only address from which datagrams are to be received.
+If the socket is of type
+.BR SOCK_STREAM ,
+this call attempts to make a connection to
+another socket.
+The other socket is specified by
+.IR name ,
+which is an address in the communications space of the socket.
+Each communications space interprets the
+.I name
+parameter in its own way.
+Generally, stream sockets may successfully
+.BR connect 
+only once; datagram sockets may use
+.BR connect 
+multiple times to change their association.
+Datagram sockets may dissolve the association
+by connecting to an invalid address, such as a null address.
+.SH RETURN VALUES
+If the connection or binding succeeds, 0 is returned.
+Otherwise a -1 is returned, and a more specific error
+code is stored in
+.IR errno .
+.SH ERRORS
+The
+.BR connect 
+call fails if:
+.RS
+.IP \fBEBADF\fR
+.I S
+is not a valid descriptor.
+.IP \fBENOTSOCK\fR
+.I S
+is a descriptor for a file, not a socket.
+.IP \fBEADDRNOTAVAIL\fR
+The specified address is not available on this machine.
+.IP \fBEAFNOSUPPORT\fR
+Addresses in the specified address family cannot be used with this socket.
+.IP \fBEISCONN\fR
+The socket is already connected.
+.IP \fBETIMEDOUT\fR
+Connection establishment timed out without establishing a connection.
+.IP \fBECONNREFUSED\fR
+The attempt to connect was forcefully rejected.
+.IP \fBENETUNREACH\fR
+The network isn't reachable from this host.
+.IP \fBEADDRINUSE\fR
+The address is already in use.
+.IP \fBEFAULT\fR
+The
+.I name
+parameter specifies an area outside
+the process address space.
+.IP \fBEINPROGRESS\fR
+The socket is non-blocking 
+and the connection cannot
+be completed immediately.
+It is possible to
+.BR select (2)
+for completion by selecting the socket for writing.
+.IP \fBEALREADY\fR
+The socket is non-blocking
+and a previous connection attempt
+has not yet been completed.
+.RE
+.LP
+The following errors are specific to connecting names in the UNIX domain.
+These errors may not apply in future versions of the UNIX IPC domain.
+.RS
+.IP \fBENOTDIR\fR
+A component of the path prefix is not a directory.
+.IP \fBEINVAL\fR
+The pathname contains a character with the high-order bit set.
+.IP \fBENAMETOOLONG\fR
+A component of a pathname exceeded 255 characters,
+or an entire path name exceeded 1023 characters.
+.IP \fBENOENT\fR
+The named socket does not exist.
+.IP \fBEACCES\fR
+Search permission is denied for a component of the path prefix.
+.IP \fBEACCES\fR
+Write access to the named socket is denied.
+.IP \fBELOOP\fR
+Too many symbolic links were encountered in translating the pathname.
+.RE
+.SH SEE ALSO
+.BR accept (2),
+.BR select (2),
+.BR socket (2),
+.BR getsockname (2)
+.SH HISTORY
+The
+.BR connect
+function call appeared in 4.2BSD.
