@@ -15,10 +15,27 @@
 
 	mcopy /obj/gno/bin/gsh/main.mac
 
-dummy	start		; ends up in root
+	setcom 60
+
+**************************************************************************
+
+; Segment for direct-page and stack
+
+stack    data  STACK		; ends up in main.root
+         kind  $12
+
+; Define direct-page/stack in 256-byte (1-page) chunks.
+; Fill them with question marks so they can be examined for use.
+
+	dc	128c'??'	;  256 bytes
+	dc	128c'??'	;  512 bytes total
+	dc	128c'????'	; 1024 bytes total
+	dc	128c'????'
+	dc	128c'????'	; 2048 bytes total
+
 	end
 
-	setcom 60
+**************************************************************************
 
 init	START
 	jml	~GNO_COMMAND

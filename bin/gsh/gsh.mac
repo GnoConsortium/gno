@@ -1,0 +1,1845 @@
+; ----------------------------------------------------------------------
+; Macros used by gsh, the GNO shell.  They are presented in alphabetical
+; order, except for the following macros which are presented at the end
+; because of use by other macros:  bgt, ble, p16, ph2, pl2, tool
+; ----------------------------------------------------------------------
+
+********************
+*	add2
+********************
+	MACRO
+&lab	add2	&arg1,&arg2,&dest
+	lclc	&char
+&lab	clc
+&char	amid	&arg1,1,1
+	aif	"&char"="@",.at1
+	lda	&arg1
+	ago	.add
+.at1
+&char	amid	&arg1,2,1
+	aif	"&char"="x",.x1
+	aif	"&char"="X",.x1
+	aif	"&char"="y",.y1
+	aif	"&char"="Y",.y1
+	ago	.add
+.x1
+	txa
+	ago	.add
+.y1
+	tya
+.add
+	adc	&arg2
+&char	amid	&dest,1,1
+	aif	"&char"="@",.at2
+	sta	&dest
+	ago	.b
+.at2
+&char	amid	&dest,2,1
+	aif	"&char"="x",.x2
+	aif	"&char"="X",.x2
+	aif	"&char"="y",.y2
+	aif	"&char"="Y",.y2
+	ago	.b
+.x2
+	tax
+	ago	.b
+.y2
+	tay
+.b
+	mend
+
+********************
+*	add4
+********************
+	MACRO
+&lab	add4	&arg1,&arg2,&dest
+&lab	anop
+	lclc	&ch
+&ch	amid	&arg2,1,1
+	clc
+	lda	&arg1
+	adc	&arg2
+	sta	&dest
+	lda	&arg1+2
+	aif	"&ch"="#",.a
+	adc	&arg2+2
+	ago	.b
+.a
+	adc	&arg2|-16
+.b
+	sta	&dest+2
+	mend
+
+********************
+*	and2
+********************
+	MACRO
+&lab	and2	&arg1,&arg2,&dest
+&lab	anop
+	lclc	&char
+&char	amid	&arg1,1,1
+	aif	"&char"="@",.at1
+	lda	&arg1
+	ago	.add
+.at1
+&char	amid	&arg1,2,1
+	aif	"&char"="x",.x1
+	aif	"&char"="X",.x1
+	aif	"&char"="y",.y1
+	aif	"&char"="Y",.y1
+	ago	.add
+.x1
+	txa
+	ago	.add
+.y1
+	tya
+.add
+	and	&arg2
+&char	amid	&dest,1,1
+	aif	"&char"="@",.at2
+	sta	&dest
+	ago	.b
+.at2
+&char	amid	&dest,2,1
+	aif	"&char"="x",.x2
+	aif	"&char"="X",.x2
+	aif	"&char"="y",.y2
+	aif	"&char"="Y",.y2
+	ago	.b
+.x2
+	tax
+	ago	.b
+.y2
+	tay
+.b
+	mend
+
+********************
+*	asl2
+********************
+	MACRO
+&lab	asl2	&a
+&lab	asl	&a
+	asl	&a
+	mend
+
+********************
+*	asl3
+********************
+	MACRO
+&lab	asl3	&a
+&lab	asl	&a
+	asl	&a
+	asl	&a
+	mend
+
+********************
+*	asl4
+********************
+	MACRO
+&lab	asl4	&a
+&lab	asl	&a
+	asl	&a
+	asl	&a
+	asl	&a
+	mend
+
+********************
+*	Close
+********************
+	MACRO
+&lab	Close	&a1
+&lab	gsos	$2014,&a1
+	mend
+
+********************
+*	Create
+********************
+	MACRO
+&lab	Create	&a1
+&lab	gsos	$2001,&a1
+	mend
+
+********************
+*	dec2
+********************
+	MACRO
+&lab	dec2	&a
+&lab	dec	&a
+	dec	&a
+	mend
+
+********************
+*	Dec2Int
+********************
+	MACRO
+&lab	Dec2Int	&a1,&a2
+&lab	pha
+	ph4	&a1(1)
+	ph2	&a1(2)
+	ph2	&a1(3)
+	Tool	$280b
+	pl2	&a2
+	mend
+
+********************
+*	Destroy
+********************
+	MACRO
+&lab	Destroy	&a1
+&lab	gsos	$2002,&a1
+	mend
+
+********************
+*	dey2
+********************
+	MACRO
+&lab	dey2
+&lab	dey
+	dey
+	mend
+
+********************
+*	DInfo
+********************
+	macro
+&lab	DInfo	&a1
+&lab	gsos	$202C,&a1
+	mend
+
+********************
+*	DisposeHandle
+********************
+	macro
+&lab	DisposeHandle	&a1
+&lab	ph4	&a1
+	tool	$1002
+	mend
+
+********************
+*	dosin
+********************
+	macro
+&l	dosin	&adr
+&l	dc	i"l:~&sysname&syscnt"
+~&sysname&syscnt	dc	c"&adr"
+	mend
+
+********************
+*        dup2
+********************
+	MACRO
+&lab	dup2	&a1
+&lab	ph2	&a1(2)
+	ph2	&a1(1)
+	case	on
+	jsl	dup2
+	case	off
+	MEND
+
+********************
+*	eor2
+********************
+	MACRO
+&lab	eor2	&arg1,&arg2,&dest
+&lab	anop
+	lclc	&char
+&char	amid	&arg1,1,1
+	aif	"&char"="@",.at1
+	lda	&arg1
+	ago	.add
+.at1
+&char	amid	&arg1,2,1
+	aif	"&char"="x",.x1
+	aif	"&char"="X",.x1
+	aif	"&char"="y",.y1
+	aif	"&char"="Y",.y1
+	ago	.add
+.x1
+	txa
+	ago	.add
+.y1
+	tya
+.add
+	eor	&arg2
+&char	amid	&dest,1,1
+	aif	"&char"="@",.at2
+	sta	&dest
+	ago	.b
+.at2
+&char	amid	&dest,2,1
+	aif	"&char"="x",.x2
+	aif	"&char"="X",.x2
+	aif	"&char"="y",.y2
+	aif	"&char"="Y",.y2
+	ago	.b
+.x2
+	tax
+	ago	.b
+.y2
+	tay
+.b
+	mend
+
+********************
+*	ERROR
+********************
+	MACRO
+&lab	ERROR	&a1
+&lab	p16	$105,&a1
+	mend
+
+********************
+*	ErrWriteCString
+********************
+	macro
+&lab	ErrWriteCString	&a1
+&lab	ph4	&a1
+	Tool	$210c
+	mend
+
+********************
+*	ErrWriteLine
+********************
+	macro
+&lab	ErrWriteLine	&a1
+&lab	ph4	&a1
+	Tool	$1b0c
+	mend
+
+********************
+*	ExpandPath
+********************
+	macro
+&lab	ExpandPath	&a1
+&lab	gsos	$200E,&a1
+	mend
+
+********************
+*	EXPORT
+********************
+	macro
+&lab	EXPORT	&a1
+&lab	p16	$116,&a1
+	mend
+
+********************
+*	FindHandle
+********************
+	macro
+&lab	FindHandle	&a1,&a2
+&lab	pha
+	pha
+	ph4	&a1
+	tool	$1a02
+	pl4	&a2
+	mend
+
+********************
+*	Flush
+********************
+	macro
+&lab	Flush	&a1
+&lab	gsos	$2015,&a1
+	mend
+
+********************
+*        fork
+********************
+	MACRO
+&lab	fork	&a1
+&lab	ph4	&a1
+	case	on
+	jsl	fork
+	case	off
+	MEND
+
+********************
+*	GetBootVol
+********************
+	macro
+&lab	GetBootVol	&a1
+&lab	gsos	$2028,&a1
+	mend
+
+********************
+*	GetDirEntry
+********************
+	MACRO
+&lab	GetDirEntry	&a1
+&lab	gsos	$201C,&a1
+	mend
+
+********************
+*	GetFileInfo
+********************
+	MACRO
+&lab	GetFileInfo	&a1
+&lab	gsos	$2006,&a1
+	mend
+
+********************
+*        getpgrp
+********************
+	MACRO
+&lab	getpgrp	&a1
+&lab	ph2	&a1
+	case	on
+	jsl	getpgrp
+	case	off
+	MEND
+
+********************
+*        getpid
+********************
+	MACRO
+&lab	getpid
+&lab	case	on
+	jsl	getpid
+	case	off
+	MEND
+
+********************
+*	GetPrefix
+********************
+	MACRO
+&lab	GetPrefix	&a1
+&lab	gsos	$200A,&a1
+	mend
+
+********************
+*        getuid
+********************
+	MACRO
+&lab	getuid
+&lab	case	on
+	jsl	getuid
+	case	off
+	MEND
+
+********************
+*	gsos
+********************
+	MACRO
+&lab	gsos	&a1,&a2
+&lab	jsl	$E100A8
+	dc	i2'&a1'
+	dc	i4'&a2'
+	mend
+
+********************
+*	GSStr
+********************
+	MACRO
+&lab	GSStr	&string
+&lab	dc	i2'L:&string'
+	dc	c"&string"
+	mend
+
+********************
+*	if2
+********************
+	MACRO
+&lab	if2	&var,&rel,&val,&label
+&lab	ago	.skip
+	ble
+	bgt
+.skip
+	lclc	&char1
+	lclc	&char2
+&char1	amid	&var,1,1
+&char2	amid	&var,2,1
+	aif	"&char1"="@",.index
+	lda	&var
+.cmp
+	cmp	&val
+	ago	.branch
+.index
+	aif	"&char2"="x",.x1
+	aif	"&char2"="X",.x1
+	aif	"&char2"="y",.y1
+	aif	"&char2"="Y",.y1
+	ago	^cmp
+.x1
+	cpx	&val
+	ago	.branch
+.y1
+	cpy	&val
+.branch
+&char1	amid	&rel,1,1
+	aif	"&char1"="@",.done
+	b&rel	&label
+.done
+	mend
+
+********************
+*	inc2
+********************
+	macro
+&lab	inc2	&a
+&lab	inc	&a
+	inc	&a
+	mend
+
+********************
+*	INIT_WILDCARD
+********************
+	MACRO
+&lab	INIT_WILDCARD	&a1
+&lab	p16	$109,&a1
+	mend
+
+********************
+*	Int2Dec
+********************
+	MACRO
+&lab	Int2Dec	&a1
+&lab	ph2	&a1(1)
+	ph4	&a1(2)
+	ph2	&a1(3)
+	ph2	&a1(4)
+	Tool	$260b
+	mend
+
+********************
+*	Int2Hex
+********************
+	macro
+&lab	Int2Hex	&a1
+&lab	ph2	&a1(1)
+	ph4	&a1(2)
+	ph2	&a1(3)
+	Tool	$220b
+	mend
+
+********************
+*	inx2
+********************
+	MACRO
+&lab	inx2
+&lab	inx
+	inx
+	mend
+
+********************
+*	inx4
+********************
+	macro
+&lab	inx4
+&lab	inx
+	inx
+	inx
+	inx
+	mend
+
+********************
+*	iny2
+********************
+	MACRO
+&lab	iny2
+&lab	iny
+	iny
+	mend
+
+********************
+*	iny4
+********************
+	MACRO
+&lab	iny4
+&lab	iny
+	iny
+	iny
+	iny
+	mend
+
+********************
+*        ioctl
+********************
+	MACRO
+&lab	ioctl	&a1
+&lab	ph4	&a1(3)
+	ph4	&a1(2)
+	ph2	&a1(1)
+	case	on
+	jsl	ioctl
+	case	off
+	MEND
+
+********************
+*	jcc
+********************
+	MACRO
+&lab	jcc	&loc
+&lab	bcs	*+5
+	jmp	&loc
+	mend
+
+********************
+*	jcs
+********************
+	macro
+&lab	jcs	&loc
+&lab	bcc	*+5
+	jmp	&loc
+	mend
+
+********************
+*	jeq
+********************
+	MACRO
+&lab	jeq	&loc
+&lab	bne	*+5
+	jmp	&loc
+	mend
+
+********************
+*	jge
+********************
+	MACRO
+&lab	jge	&loc
+&lab	bcc	*+5
+	jmp	&loc
+	mend
+
+********************
+*	jmi
+********************
+	macro
+&lab	jmi	&loc
+&lab	bpl	*+5
+	jmp	&loc
+	mend
+
+********************
+*	jne
+********************
+	MACRO
+&lab	jne	&loc
+&lab	beq	*+5
+	jmp	&loc
+	mend
+
+********************
+*        kernstatus
+********************
+	MACRO
+&lab	kernStatus	&a1
+&lab	pha
+	ldx	#$603
+	jsl	$E10008
+	pl2	&a1
+	MEND
+
+********************
+*        key
+********************
+	MACRO
+&lab	key
+&lab	dc	i2'0'
+	MEND
+
+********************
+*        kill
+********************
+	MACRO
+&lab	kill	&a1
+&lab	ph2	&a1(2)
+	ph2	&a1(1)
+	case	on
+	jsl	kill
+	case	off
+	MEND
+
+********************
+*        kvm_close
+********************
+	MACRO
+&lab	kvm_close	&a1
+&lab	ph4	&a1
+	case	on
+	jsl	kvm_close
+	case	off
+	MEND
+
+********************
+*        kvm_open
+********************
+	MACRO
+&lab	kvm_open
+&lab	case	on
+	jsl	kvm_open
+	case	off
+	MEND
+
+********************
+*        kvmgetproc
+********************
+	MACRO
+&lab	kvmgetproc	&a1
+&lab	ph2	&a1(2)
+	ph4	&a1(1)
+	case	on
+	jsl	kvmgetproc
+	case	off
+	MEND
+
+********************
+*        kvmnextproc
+********************
+	MACRO
+&lab	kvmnextproc	&a1
+&lab	ph4	&a1
+	case	on
+	jsl	kvmnextproc
+	case	off
+	MEND
+
+********************
+*	LD2
+********************
+	MACRO
+&lab	LD2	&val,&adr
+&lab	lcla	&count
+	lda	#&val
+&count	seta	1
+.loop
+	sta	&adr(&count)
+&count	seta	&count+1
+	aif	&count>c:&adr,.done
+	ago	^loop
+.done
+	mend
+
+********************
+*	LD4
+********************
+	MACRO
+&lab	LD4	&val,&adr
+&lab	lcla	&count
+	lda	#<&val
+&count	seta	1
+.loop1
+	sta	&adr(&count)
+&count	seta	&count+1
+	aif	&count>c:&adr,.part2
+	ago	^loop1
+.part2
+	lda	#+(&val)|-16
+&count	seta	1
+.loop2
+	sta	&adr(&count)+2
+&count	seta	&count+1
+	aif	&count>c:&adr,.done
+	ago	^loop2
+.done
+	mend
+
+********************
+*        lock
+********************
+	MACRO
+&lab	lock	&a1
+&lab	lda	#1
+	tsb	&a1
+	beq	*+6
+	cop	$7F
+	bra	*-7
+	MEND
+
+********************
+*	long
+********************
+	MACRO
+&lab	long	&stat
+&lab	anop
+	lcla	&t
+	lcla	&len
+	lclc	&ch
+&t	seta	0
+&len	seta	l:&stat
+.a
+	aif	&len=0,.b
+&ch	amid	&stat,&len,1
+	aif	("&ch"="x").or.("&ch"="y").or.("&ch"="i"),.i
+	aif	("&ch"="a").or.("&ch"="m"),.m
+.c
+&len	seta	&len-1
+	ago	^a
+.i
+	longi	on
+&t	seta	&t+16
+	ago	^c
+.m
+	longa	on
+&t	seta	&t+32
+	ago	^c
+.b
+	aif	&t=0,.d
+	rep	#&t
+.d
+	mend
+
+********************
+*	Long2Dec
+********************
+	macro
+&lab	Long2Dec	&a1
+&lab	ph4	&a1(1)
+	ph4	&a1(2)
+	ph2	&a1(3)
+	ph2	&a1(4)
+	Tool	$270b
+	mend
+
+********************
+*	LongDivide
+********************
+	macro
+&lab	LongDivide	&a1,&a2
+&lab	pha
+	pha
+	pha
+	pha
+	ph4	&a1(1)
+	ph4	&a1(2)
+	Tool	$0d0b
+	pl4	&a2(1)
+	pl4	&a2(2)
+	mend
+
+********************
+*	LongMul
+********************
+	macro
+&lab	LongMul	&a1,&a2
+&lab	pha
+	pha
+	pha
+	pha
+	ph4	&a1(1)
+	ph4	&a1(2)
+	Tool	$0c0b
+	pl4	&a2(1)
+	pl4	&a2(2)
+	mend
+
+********************
+*	lsr2
+********************
+	MACRO
+&lab	lsr2	&a
+&lab	lsr	&a
+	lsr	&a
+	mend
+
+********************
+*	MV2
+********************
+	MACRO
+&lab	MV2	&src,&adr
+&lab	lcla	&count
+	lda	&src
+&count	seta	1
+.loop
+	sta	&adr(&count)
+&count	seta	&count+1
+	aif	&count>c:&adr,.done
+	ago	^loop
+.done
+	mend
+
+********************
+*	MV4
+********************
+	macro
+&lab	MV4	&src,&adr
+&lab	lcla	&count
+	lda	&src
+&count	seta	1
+.loop1
+	sta	&adr(&count)
+&count	seta	&count+1
+	aif	&count>c:&adr,.part2
+	ago	^loop1
+.part2
+	lda	&src+2
+&count	seta	1
+.loop2
+	sta	&adr(&count)+2
+&count	seta	&count+1
+	aif	&count>c:&adr,.done
+	ago	^loop2
+.done
+	mend
+
+********************
+*	name
+********************
+	MACRO
+&lab	name
+&lab	anop
+	aif	DebugSymbols=0,.pastName
+	brl	pastName&SYSCNT
+	dc	i'$7771'
+	dc	i1'L:&lab',c'&lab'
+pastName&SYSCNT	anop
+.pastName
+	MEND
+
+********************
+*	NewHandle
+********************
+	macro
+&lab	NewHandle	&a1,&a2
+&lab	pha
+	pha
+	ph4	&a1(1)
+	ph2	&a1(2)
+	ph2	&a1(3)
+	ph4	&a1(4)
+	tool	$0902
+	pl4	&a2
+	mend
+
+********************
+*	NewLine
+********************
+	MACRO
+&lab	NewLine	&a1
+&lab	gsos	$2011,&a1
+	mend
+
+********************
+*	NEXT_WILDCARD
+********************
+	MACRO
+&lab	NEXT_WILDCARD	&a1
+&lab	p16	$10A,&a1
+	mend
+
+********************
+*	Open
+********************
+	MACRO
+&lab	Open	&a1
+&lab	gsos	$2010,&a1
+	mend
+
+********************
+*	ora2
+********************
+	MACRO
+&lab	ora2	&arg1,&arg2,&dest
+&lab	anop
+	lclc	&char
+&char	amid	&arg1,1,1
+	aif	"&char"="@",.at1
+	lda	&arg1
+	ago	.add
+.at1
+&char	amid	&arg1,2,1
+	aif	"&char"="x",.x1
+	aif	"&char"="X",.x1
+	aif	"&char"="y",.y1
+	aif	"&char"="Y",.y1
+	ago	.add
+.x1
+	txa
+	ago	.add
+.y1
+	tya
+.add
+	ora	&arg2
+&char	amid	&dest,1,1
+	aif	"&char"="@",.at2
+	sta	&dest
+	ago	.b
+.at2
+&char	amid	&dest,2,1
+	aif	"&char"="x",.x2
+	aif	"&char"="X",.x2
+	aif	"&char"="y",.y2
+	aif	"&char"="Y",.y2
+	ago	.b
+.x2
+	tax
+	ago	.b
+.y2
+	tay
+.b
+	mend
+
+********************
+*	ph4
+********************
+	MACRO
+&lab	ph4	&parm
+	lclc	&char
+	lclc	&char1
+	lclc	&char2
+&lab	anop
+&char	amid	&parm,1,1
+	aif	"&char"="#",.immediate
+	aif	"&char"="@",.at
+	aif	s:longa=1,.chk1
+	rep	#%00100000
+.chk1
+	aif	"&char"<>"{",.chk2
+&char	amid	&parm,l:&parm,1
+	aif	"&char"<>"}",.error
+&parm	amid	&parm,2,l:&parm-2
+	ldy	#2
+	lda	(&parm),y
+	pha
+	lda	(&parm)
+	pha
+	ago	.shorten
+.chk2
+	aif	"&char"<>"[",.absolute
+	ldy	#2
+	lda	&parm,y
+	pha
+	lda	&parm
+	pha
+	ago	.shorten
+.absolute
+	lda	&parm+2
+	pha
+	lda	&parm
+	pha
+	ago	.shorten
+.at
+&char1	amid	&parm,2,1
+&char2	setc	&char1
+	ph&char1
+	aif	l:&parm<3,.chk2a
+&char2	amid	&parm,3,1
+.chk2a
+	ph&char2
+	ago	.shorten
+.immediate
+&parm	amid	&parm,2,l:&parm-1
+	pea	+(&parm)|-16
+	pea	&parm
+	ago	.done
+.shorten
+	aif	s:longa=1,.done
+	sep	#%00100000
+.done
+	mexit
+.error
+	mnote	"Missing	closing	'}'",16
+	mend
+
+********************
+*        pipe
+********************
+	MACRO
+&lab	pipe	&a1
+&lab	ph4	&a1
+	case	on
+	jsl	pipe
+	case	off
+	MEND
+
+********************
+*	pl4
+********************
+	macro
+&lab	pl4	&parm
+	lclc	&char
+	lclc	&char1
+	lclc	&char2
+&lab	anop
+	aif	s:longa=1,.start
+	rep	#%00100000
+.start
+&char	amid	&parm,1,1
+	aif	"&char"<>"{",.chk
+&char	amid	&parm,l:&parm,1
+	aif	"&char"<>"}",.error
+&parm	amid	&parm,2,l:&parm-2
+	pla
+	sta	(&parm)
+	ldy	#2
+	pla
+	sta	(&parm),y
+	ago	.shorten
+.chk
+	aif	"&char"<>"[",.chk2
+	pla
+	sta	&parm
+	ldy	#2
+	pla
+	sta	&parm,y
+	ago	.shorten
+.chk2
+	aif	"&char"<>"@",.absolute
+&char1	amid	&parm,2,1
+&char2	setc	&char1
+	pl&char1
+	aif	l:&parm<3,.chk2a
+&char2	amid	&parm,3,1
+.chk2a
+	pl&char2
+	ago	.shorten
+.absolute
+	pla
+	sta	&parm
+	pla
+	sta	&parm+2
+.shorten
+	aif	s:longa=1,.done
+	sep	#%00100000
+.done
+	mexit
+.error
+	mnote	"Missing	closing	'}'",16
+	mend
+
+********************
+*	PopVariables
+********************
+	MACRO
+&lab	PopVariables	&a1
+&lab	p16	$117,&a1
+	mend
+
+********************
+*	PtrToHand
+********************
+	macro
+&lab	PtrToHand	&a1
+&lab	ph4	&a1(1)
+	ph4	&a1(2)
+	ph4	&a1(3)
+	tool	$2802
+	mend
+
+********************
+*	PushVariables
+********************
+	MACRO
+&lab	PushVariables	&a1
+&lab	p16	$118,&a1
+	mend
+
+********************
+*	Quit
+********************
+	MACRO
+&lab	Quit	&a1
+&lab	gsos	$2029,&a1
+	mend
+
+********************
+*	Read
+********************
+	MACRO
+&lab	Read	&a1
+&lab	gsos	$2012,&a1
+	mend
+
+********************
+*	READ_INDEXED
+********************
+	MACRO
+&lab	READ_INDEXED	&a1
+&lab	p16	$108,&a1
+	mend
+********************
+*	READ_VARIABLE
+********************
+	MACRO
+&lab	READ_VARIABLE	&a1
+&lab	p16	$10B,&a1
+	mend
+
+********************
+*	ReadLine
+********************
+	macro
+&lab	ReadLine	&a1,&a2
+&lab	pha
+	ph4	&a1(1)
+	ph2	&a1(2)
+	ph2	&a1(3)
+	ph2	&a1(4)
+	Tool	$240c
+	pl2	&a2
+	mend
+
+********************
+*	ReadTimeHex
+********************
+	MACRO
+&lab	ReadTimeHex	&a1
+&lab	pha
+	pha
+	pha
+	pha
+	tool	$0d03
+	pl2	&a1(1)
+	pl2	&a1(2)
+	pl2	&a1(3)
+	pl2	&a1(4)
+	mend
+
+********************
+*	REDIRECT
+********************
+	macro
+&lab	REDIRECT	&a1
+&lab	p16	$110,&a1
+	mend
+
+********************
+*	return
+********************
+	MACRO
+&lab	return	&r
+&lab	anop
+	lclc	&len
+	aif	c:&r,.a
+	lclc	&r
+&r	setc	0
+&len	setc	0
+	ago	.h
+.a
+&len	amid	&r,2,1
+	aif	"&len"=":",.b
+&len	amid	&r,1,2
+&r	amid	&r,4,l:&r-3
+	ago	.c
+.b
+&len	amid	&r,1,1
+&r	amid	&r,3,l:&r-2
+.c
+	aif	&len<>2,.d
+	ldy	&r
+	ago	.h
+.d
+	aif	&len<>4,.e
+	ldx	&r+2
+	ldy	&r
+	ago	.h
+.e
+	aif	&len<>10,.g
+	ldy	#&r
+	ldx	#^&r
+	ago	.h
+.g
+	mnote	'Not	a	valid	return	length',16
+	mexit
+.h
+	aif	&totallen=0,.i
+	lda	&worklen+1
+	sta	&worklen+&totallen+1
+	lda	&worklen
+	sta	&worklen+&totallen
+.i
+	plb
+	pld
+	tsc
+	clc
+	adc	#&worklen+&totallen
+	tcs
+	aif	&len=0,.j
+	tya
+.j
+	rtl
+	mend
+
+********************
+*        screate
+********************
+	MACRO
+&lab	screate	&a1
+&lab	ph2	&a1
+	case	on
+	jsl	screate
+	case	off
+	MEND
+
+********************
+*        sdelete
+********************
+	MACRO
+&lab	sdelete	&a1
+&lab	ph2	&a1
+	case	on
+	jsl	sdelete
+	case	off
+	MEND
+
+********************
+*	SET_LINFOGS
+********************
+	macro
+&lab	SET_LINFOGS	&a1
+&lab	p16	$142,&a1
+	mend
+
+********************
+*	Set_Variable
+********************
+	macro
+&lab	Set_Variable	&a1
+&lab	p16	$106,&a1
+	mend
+
+********************
+*        setdebug
+********************
+	MACRO
+&lab	setdebug	&a1
+&lab	ph2	&a1
+	case	on
+	jsl	setdebug
+	case	off
+	MEND
+
+********************
+*	SetInGlobals
+********************
+	MACRO
+&lab	SetInGlobals	&a1
+&lab	ph2	&a1(1)
+	ph2	&a1(2)
+	Tool	$090c
+	mend
+
+********************
+*	SetInputDevice
+********************
+	macro
+&lab	SetInputDevice	&a1
+&lab	ph2	&a1(1)
+	ph4	&a1(2)
+	Tool	$0f0c
+	mend
+
+********************
+*	SetOutputDevice
+********************
+	macro
+&lab	SetOutputDevice	&a1
+&lab	ph2	&a1(1)
+	ph4	&a1(2)
+	Tool	$100c
+	mend
+
+********************
+*	SetPrefix
+********************
+	MACRO
+&lab	SetPrefix	&a1
+&lab	gsos	$2009,&a1
+	mend
+
+********************
+*        setsystemvector
+********************
+	MACRO
+&lab	setsystemvector	&a1
+&lab	ph4	&a1
+	case	on
+	jsl	setsystemvector
+	case	off
+	MEND
+
+********************
+*        settpgrp
+********************
+	MACRO
+&lab	settpgrp	&a1
+&lab	ph2	&a1
+	case	on
+	jsl	settpgrp
+	case	off
+	MEND
+
+********************
+*	short
+********************
+	MACRO
+&lab	short	&stat
+&lab	anop
+	lcla	&t
+	lcla	&len
+	lclc	&ch
+&t	seta	0
+&len	seta	l:&stat
+.a
+	aif	&len=0,.b
+&ch	amid	&stat,&len,1
+	aif	("&ch"="x").or.("&ch"="y").or.("&ch"="i"),.i
+	aif	("&ch"="a").or.("&ch"="m"),.m
+.c
+&len	seta	&len-1
+	ago	^a
+.i
+	longi	off
+&t	seta	&t+16
+	ago	^c
+.m
+	longa	off
+&t	seta	&t+32
+	ago	^c
+.b
+	aif	&t=0,.d
+	sep	#&t
+.d
+	mend
+
+********************
+*        sigblock
+********************
+	MACRO
+&lab	sigblock	&a1
+&lab	ph4	&a1
+	case	on
+	jsl	sigblock
+	case	off
+	MEND
+
+********************
+*        signal
+********************
+	MACRO
+&lab	signal	&a1
+&lab	ph4	&a1(2)
+	ph2	&a1(1)
+	case	on
+	jsl	signal
+	case	off
+	MEND
+
+********************
+*        sigpause
+********************
+	MACRO
+&lab	sigpause	&a1
+&lab	ph4	&a1
+	case	on
+	jsl	sigpause
+	case	off
+	MEND
+
+********************
+*        sigsetmask
+********************
+	MACRO
+&lab	sigsetmask	&a1
+&lab	ph4	&a1
+	case	on
+	jsl	sigsetmask
+	case	off
+	MEND
+
+********************
+*        ssignal
+********************
+	MACRO
+&lab	ssignal	&a1
+&lab	ph2	&a1
+	case	on
+	jsl	ssignal
+	case	off
+	MEND
+
+********************
+*	Str
+********************
+	MACRO
+&lab	Str	&string
+&lab	dc	i1'L:&string'
+	dc	c"&string"
+	mend
+
+********************
+*	sub2
+********************
+	MACRO
+&lab	sub2	&arg1,&arg2,&dest
+	lclc	&char
+&lab	sec
+&char	amid	&arg1,1,1
+	aif	"&char"="@",.at1
+	lda	&arg1
+	ago	.sub
+.at1
+&char	amid	&arg1,2,1
+	aif	"&char"="x",.x1
+	aif	"&char"="X",.x1
+	aif	"&char"="y",.y1
+	aif	"&char"="Y",.y1
+	ago	.sub
+.x1
+	txa
+	ago	.sub
+.y1
+	tya
+.sub
+	sbc	&arg2
+&char	amid	&dest,1,1
+	aif	"&char"="@",.at2
+	sta	&dest
+	ago	.b
+.at2
+&char	amid	&dest,2,1
+	aif	"&char"="x",.x2
+	aif	"&char"="X",.x2
+	aif	"&char"="y",.y2
+	aif	"&char"="Y",.y2
+	ago	.b
+.x2
+	tax
+	ago	.b
+.y2
+	tay
+.b
+	mend
+
+********************
+*	sub4
+********************
+	macro
+&lab	sub4	&arg1,&arg2,&dest
+&lab	anop
+	lclc	&ch
+&ch	amid	&arg2,1,1
+	sec
+	lda	&arg1
+	sbc	&arg2
+	sta	&dest
+	lda	&arg1+2
+	aif	"&ch"="#",.a
+	sbc	&arg2+2
+	ago	.b
+.a
+	sbc	&arg2|-16
+.b
+	sta	&dest+2
+	mend
+
+********************
+*	subroutine
+********************
+	MACRO
+&lab	subroutine	&parms,&work
+&lab	anop
+	aif	c:&work,.a
+	lclc	&work
+&work	setc	0
+.a
+	gbla	&totallen
+	gbla	&worklen
+&worklen	seta	&work
+&totallen	seta	0
+	aif	c:&parms=0,.e
+	lclc	&len
+	lclc	&p
+	lcla	&i
+&i	seta	c:&parms
+.b
+&p	setc	&parms(&i)
+&len	amid	&p,2,1
+	aif	"&len"=":",.c
+&len	amid	&p,1,2
+&p	amid	&p,4,l:&p-3
+	ago	.d
+.c
+&len	amid	&p,1,1
+&p	amid	&p,3,l:&p-2
+.d
+&p	equ	&totallen+3+&work
+&totallen	seta	&totallen+&len
+&i	seta	&i-1
+	aif	&i,^b
+.e
+	tsc
+	sec
+	sbc	#&work
+	tcs
+	inc	a
+	phd
+	tcd
+	phb
+	phk
+	plb
+	mend
+
+********************
+*        swait
+********************
+	MACRO
+&lab	swait	&a1
+&lab	ph2	&a1
+	case	on
+	jsl	swait
+	case	off
+	MEND
+
+********************
+*        tcnewpgrp
+********************
+	MACRO
+&lab	tcnewpgrp	&a1
+&lab	ph2	&a1
+	case	on
+	jsl	tcnewpgrp
+	case	off
+	MEND
+
+********************
+*        tctpgrp
+********************
+	MACRO
+&lab	tctpgrp	&a1
+&lab	ph2	&a1(2)
+	ph2	&a1(1)
+	case	on
+	jsl	tctpgrp
+	case	off
+	MEND
+
+********************
+*        tgetent
+********************
+	MACRO
+&lab	tgetent	&a1
+&lab	ph4	&a1(2)
+	ph4	&a1(1)
+	case	on
+	jsl	tgetent
+	case	off
+	MEND
+
+********************
+*        tgetstr
+********************
+	MACRO
+&lab	tgetstr	&a1
+&lab	ph4	&a1(2)
+	ph4	&a1(1)
+	case	on
+	jsl	tgetstr
+	case	off
+	MEND
+
+********************
+*        tputs
+********************
+	MACRO
+&lab	tputs	&a1
+&lab	ph4	&a1(3)
+	ph2	&a1(2)
+	ph4	&a1(1)
+	case	on
+	jsl	tputs
+	case	off
+	MEND
+
+********************
+*	UDivide
+********************
+	MACRO
+&lab	UDivide	&a1,&a2
+&lab	pha
+	pha
+	ph2	&a1(1)
+	ph2	&a1(2)
+	Tool	$0b0b
+	pl2	&a2(1)
+	pl2	&a2(2)
+	mend
+
+********************
+*        unlock
+********************
+	MACRO
+&lab	unlock	&a1
+&lab	stz	&a1
+	MEND
+
+********************
+*	UnsetVariable
+********************
+	macro
+&lab	UnsetVariable	&a1
+&lab	p16	$115,&a1
+	mend
+
+********************
+*	Volume
+********************
+	macro
+&lab	Volume	&a1
+&lab	gsos	$2008,&a1
+	mend
+
+********************
+*        wait
+********************
+	MACRO
+&lab	wait	&a1
+&lab	ph4	&a1
+	case	on
+	jsl	wait
+	case	off
+	MEND
+
+********************
+*	Write
+********************
+	MACRO
+&lab	Write	&a1
+&lab	gsos	$2013,&a1
+	mend
+
+********************
+*	WriteChar
+********************
+	MACRO
+&lab	WriteChar	&a1
+&lab	ph2	&a1
+	Tool	$180c
+	mend
+
+********************
+*	WriteCString
+********************
+	MACRO
+&lab	WriteCString	&a1
+&lab	ph4	&a1
+	Tool	$200c
+	mend
+
+********************
+*	WriteString
+********************
+	MACRO
+&lab	WriteString	&a1
+&lab	ph4	&a1
+	Tool	$1c0c
+	mend
+
+; ----------------------------------------------------------------------
+; Macros defined out of alphabetical order because they are used by
+; other macros.
+; ----------------------------------------------------------------------
+
+********************
+*	bgt
+********************
+	MACRO
+&lab	bgt	&loc
+&lab	beq	*+4
+	bcs	&loc
+	mend
+
+********************
+*	ble
+********************
+	MACRO
+&lab	ble	&loc
+&lab	bcc	&loc
+	beq	&loc
+	mend
+
+********************
+*	p16
+********************
+	MACRO
+&lab	p16	&a1,&a2
+&lab	jsl	$E100A8
+	dc	i2'&a1'
+	dc	i4'&a2'
+	mend
+
+
+********************
+*	ph2
+********************
+	MACRO
+&lab	ph2	&parm
+	lclc	&char
+&lab	anop
+	aif	c:&parm=0,.done
+&char	amid	&parm,1,1
+	aif	"&char"="#",.immediate
+	aif	"&char"="@",.at
+	aif	s:longa=1,.chk
+	rep	#%00100000
+.chk
+	aif	"&char"<>"{",.absolute
+&char	amid	&parm,l:&parm,1
+	aif	"&char"<>"}",.error
+&parm	amid	&parm,2,l:&parm-2
+	lda	(&parm)
+	pha
+	ago	.shorten
+.absolute
+	lda	&parm
+	pha
+	ago	.shorten
+.immediate
+&parm	amid	&parm,2,l:&parm-1
+	pea	&parm
+	ago	.done
+.at
+&char	amid	&parm,2,1
+	ph&char
+.shorten
+	aif	s:longa=1,.done
+	sep	#%00100000
+.done
+	mexit
+.error
+	mnote	"Missing	closing	'}'",16
+	mend
+
+********************
+*	pl2
+********************
+	MACRO
+&lab	pl2	&parm
+	lclc	&char
+&lab	anop
+	aif	s:longa=1,.start
+	rep	#%00100000
+.start
+&char	amid	&parm,1,1
+	aif	"&char"="@",.at
+	aif	"&char"<>"{",.absolute
+&char	amid	&parm,l:&parm,1
+	aif	"&char"<>"}",.error
+&parm	amid	&parm,2,l:&parm-2
+	pla
+	sta	(&parm)
+	ago	.shorten
+.absolute
+	pla
+	sta	&parm
+	ago	.shorten
+.at
+&char	amid	&parm,2,1
+	pl&char
+.shorten
+	aif	s:longa=1,.done
+	sep	#%00100000
+.done
+	mexit
+.error
+	mnote	"Missing	Closing	'}'",16
+	mend
+
+********************
+*	tool
+********************
+	MACRO
+&lab	tool	&a1
+&lab	ldx	#&a1
+	jsl	$e10000
+	mend

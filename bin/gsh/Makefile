@@ -1,7 +1,7 @@
 #
 # makefile for building gsh.  This is for use with dmake.
 #
-# $Id: Makefile,v 1.3 1998/05/30 17:21:40 gdr-ftp Exp $
+# $Id: Makefile,v 1.4 1998/06/09 16:22:50 tribby Exp $
 #
 # Devin Reade, February 1998.
 #
@@ -9,12 +9,31 @@
 PROG	= gsh
 MAIN	= main
 MAINSRC	= main.asm
-SRCS	= $(MAINSRC) alias.asm bufpool.asm builtin.asm cmd.asm dir.asm \
-	  edit.asm expand.asm hash.asm history.asm invoke.asm jobs.asm \
-	  orca.asm prompt.asm shell.asm shellutil.asm \
-	  shellvar.asm stdio.asm sv.asm term.asm
+SRCS	= $(MAINSRC) \
+	  shell.asm \
+	  history.asm \
+	  prompt.asm \
+	  cmd.asm \
+	  expand.asm \
+	  invoke.asm \
+	  shellutil.asm \
+	  builtin.asm \
+	  hash.asm \
+	  alias.asm \
+	  dir.asm \
+	  shellvar.asm \
+	  jobs.asm \
+	  sv.asm \
+	  stdio.asm \
+	  orca.asm \
+	  edit.asm \
+	  term.asm \
+	  bufpool.asm
 # unused:	mmdebug.asm
-STACK	= 4096
+
+# Note: STACK variable does not control size of stack/direct-page segment
+#       since this is assembly language. Edit stack segment in main.asm
+#       to change this size.
 
 # This is a problem.  gsh was written to use the old termcap library.
 # Not only do we no longer build this library, but we don't even have the
@@ -22,7 +41,8 @@ STACK	= 4096
 # ltermcap library from GNO v2.0.4.
 #
 # LDADD	= -ltermcap
-LDLIBS	+= -l/trenco3/lib.206/ltermcap
+###LDLIBS	+= -l/trenco3/lib.206/ltermcap
+LDLIBS	+= -l/h1/orca/libraries/ltermcap
 
 # Make sure our macro files get built before trying to assemble source files.
 # LOCAL_SETUP	= macros
@@ -35,16 +55,17 @@ LDLIBS	+= -l/trenco3/lib.206/ltermcap
 	$(AS) -o $@ $(ASFLAGS) $(__OFLAG) $<
 	-$(RM) -f $(OBJ_DIR)$*.root
 
-LOCAL_MACRO_SRC	= # gsh.mac
+LOCAL_MACRO_SRC	= gsh.mac
 MACRO_SRC = \
-	$(LOCAL_MACRO_SRC) \
-	/usr/ainclude/m16.gno \
-	$(LOCAL_MACRO_SRC) \
-	$(ORCA_DIST)/libraries/orcainclude/m16.orca \
-	$(ORCA_DIST)/libraries/orcainclude/m16.gs.os \
-	$(ORCA_DIST)/libraries/orcainclude/m16.tools \
-	$(ORCA_DIST)/libraries/orcainclude/m16.shell \
-	$(ORCA_DIST)/libraries/ainclude/m16.pascal \
+	$(LOCAL_MACRO_SRC)
+
+# Everything should be in gsh.mac. If usefule, the following could be added
+#	/usr/ainclude/m16.gno \
+#	$(ORCA_DIST)/libraries/orcainclude/m16.orca \
+#	$(ORCA_DIST)/libraries/orcainclude/m16.gs.os \
+#	$(ORCA_DIST)/libraries/orcainclude/m16.tools \
+#	$(ORCA_DIST)/libraries/orcainclude/m16.shell \
+#	$(ORCA_DIST)/libraries/ainclude/m16.pascal \
 	$(ORCA_DIST)/libraries/ainclude/m16.debug
 
 MACROS	= \
@@ -72,14 +93,14 @@ MACROS	= \
 
 macros:	$(MACROS)
 
-#$(OBJ_DIR)%.mac: %.asm
-#	@echo making $@
-#	@$(MACGEN) $(MACGEN_FLAGS) $*.asm $@ $(MACRO_SRC)
+$(OBJ_DIR)%.mac: %.asm
+	@echo making $@
+	@$(MACGEN) $(MACGEN_FLAGS) $*.asm $@ $(MACRO_SRC)
 
-# $(MACROS): $(LOCAL_MACRO_SRC)
+$(MACROS): $(LOCAL_MACRO_SRC)
 
-#$(OBJ_DIR)alias.mac: $(MACRO_SRC)
-#	$(MACGEN) $(MACGEN_FLAGS) alias.asm $@ $(MACRO_SRC)
+$(OBJ_DIR)alias.mac: $(MACRO_SRC)
+	$(MACGEN) $(MACGEN_FLAGS) alias.asm $@ $(MACRO_SRC)
 
 #bork:
 #	@echo OBJS are $(OBJS)
