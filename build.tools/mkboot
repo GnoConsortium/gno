@@ -5,7 +5,7 @@
 # 
 # Devin Reade, April 1998.
 #
-# $Id: mkboot,v 1.1 1998/04/22 04:51:09 gdr-ftp Exp $
+# $Id: mkboot,v 1.2 1998/04/24 03:38:51 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -49,6 +49,7 @@ install -V	$RELDIR/bin/gsh				$RELBOOT/bin
 install -V	$RELDIR/bin/ls				$RELBOOT/bin
 install -V	$RELDIR/bin/more			$RELBOOT/bin
 install -V	$RELDIR/bin/sleep			$RELBOOT/bin
+install -V	$RELDIR/bin/tee				$RELBOOT/bin
 install -V	/usr/local/bin/touch			$RELBOOT/bin
 install -V	$RELDIR/bin/vi				$RELBOOT/bin
 install -V	$RELDIR/usr/bin/install			$RELBOOT/bin
@@ -61,3 +62,12 @@ install -V	$RELDIR/etc/ttys			$RELBOOT/etc
 install -V	$RELDIR/sbin/mkso			$RELBOOT/sbin
 
 chtyp -lexec $RELBOOT/gshrc $RELBOOT/installboot*
+
+echo "installing temporary files since gshk will not archive empty directories"
+install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/home/root
+install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lang/orca/languages
+install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lang/orca/shell
+install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lang/orca/utilities
+install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lib
+install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/tmp
+install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/usr/bin

@@ -6,7 +6,7 @@
 # 
 # Devin Reade, September 1997.
 #
-# $Id: fudgeinstall,v 1.3 1998/04/22 04:51:07 gdr-ftp Exp $
+# $Id: fudgeinstall,v 1.4 1998/04/24 03:38:49 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -181,7 +181,7 @@ echo "installing files in /usr/bin"
 # apropos	done
 # asml			should be copied from compile
 # assemble		should be copied from compile
-install -V	/usr/bin/awk		$RELDIR/usr/bin
+# awk		done
 # basename	done
 # catrez	done
 # cksum		done
