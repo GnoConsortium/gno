@@ -52,9 +52,21 @@ static char sccsid[] = "@(#)whereis.c	5.5 (Berkeley) 4/18/91";
 #include <dirent.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <libc.h>
 
-#ifdef __GNO__    /* define this to use pathnames _without_ the leading 31/ */
-static char *bindirs[] = {
+/*
+ * Pointers that will correspond to the GNO_* or ORCA_* structs, below
+ */
+
+static char **bindirs;
+static char **mandirs;
+static char **srcdirs;
+
+/*
+ * These are the directories to check when running under the Gno shell
+ */
+
+static char *GNO_bindirs[] = {
 	"/bin",
 	"/usr/bin",
 	"/usr/sbin",
@@ -68,7 +80,7 @@ static char *bindirs[] = {
 	0
 };
 /* This needs to be redone - man pages live with sources */
-static char *mandirs[] = {
+static char *GNO_mandirs[] = {
 
 /*
    These are disabled since /man is not usually present; this eliminates
@@ -111,16 +123,18 @@ static char *mandirs[] = {
         "17/help",
         0           
 };
-static char *srcdirs[]  = {
+static char *GNO_srcdirs[]  = {
 	"/usr/src/bin",
 	"/usr/src/etc",
 	/* still need libs */
 	0
 };
 
-#else /* not __GNO__ */
+/*
+ * These are the directories to check when running under the Orca shell
+ */
 
-static char *bindirs[] = {
+static char *ORCA_bindirs[] = {
 	"31/bin",
 	"31/usr/bin",
 	"31/usr/sbin",
@@ -134,7 +148,7 @@ static char *bindirs[] = {
 	0
 };
 /* This needs to be redone - man pages live with sources */
-static char *mandirs[] = {
+static char *ORCA_mandirs[] = {
 
 /*
    These are disabled since /man is not usually present; this eliminates
@@ -177,14 +191,13 @@ static char *mandirs[] = {
         "17/help",
         0           
 };
-static char *srcdirs[]  = {
+static char *ORCA_srcdirs[]  = {
 	"31/usr/src/bin",
 	"31/usr/src/etc",
 	/* still need libs */
 	0
 };
 
-#endif /* not __GNO__ */
 
 #ifdef CASEFLAG
 int   cflag = 0;
@@ -201,11 +214,7 @@ char	**Mflag;
 int	Mcnt;
 char	uflag;
 
-#ifdef __GNO__
-char  *verstring = "whereis -- Gno/ME Version 1.1";
-#else 
-char  *verstring = "whereis -- Orca Version 1.1";
-#endif
+char  *verstring = "whereis -- Apple IIgs Version 1.2";
 
 void getlist (int *argcp, char ***argvp, char ***flagp, int *cntp);
 void zerof(void);
@@ -251,6 +260,18 @@ usage:
 
 		exit(1);
 	}
+
+   /* select which directory structures we're going to use */
+   if (needsgno()) {
+	   bindirs = GNO_bindirs;
+      mandirs = GNO_mandirs;
+      srcdirs = GNO_srcdirs;
+   } else {
+	   bindirs = ORCA_bindirs;
+      mandirs = ORCA_mandirs;
+      srcdirs = ORCA_srcdirs;
+   }
+
 	do
 		if (argv[0][0] == '-') {
 			register char *cp = argv[0] + 1;
