@@ -1,7 +1,7 @@
 /*
  * Implementation by Devin Reade.
  *
- * $Id: strerror.c,v 1.2 1997/09/21 06:23:08 gdr Exp $
+ * $Id: strerror.c,v 1.3 1998/02/04 15:16:19 gdr-ftp Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
@@ -93,13 +93,13 @@ char *
 strerror (int errnum)
 {
 	/*
-	 * the size of buff must be greater than
+	 * the size of buff must be no less than
 	 *	strlen(sys_errlist[0]) + max number of digits in an int + 3
 	 * ==  13 + 5 + 3 == 21
 	 */
 	static char buff[30];
 	
-	if (errnum > 0 || errnum < sys_nerr) {
+	if (errnum > 0 && errnum < sys_nerr) {
 		return sys_errlist[errnum];
 	}
 	sprintf(buff, "unknown error: %d", errnum);
