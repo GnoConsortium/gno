@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Fri Mar 26 16:31:15 1999
+# Last revision: Mon Apr  5 19:57:11 1999
 #
-# $Id: describe.src,v 1.26 1999/04/05 19:56:01 gdr-ftp Exp $
+# $Id: describe.src,v 1.27 1999/04/05 19:58:59 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -1331,6 +1331,16 @@ FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 Internet services daemon
 
+Name:    infer
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (comp.unix.sources port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/games
+FTP:     ftp.gno.org
+
+An inference engine written in C
+
 Name:    info
 Version: 1.1
 Shell:   GNO, ORCA
@@ -1571,6 +1581,16 @@ Where:   /usr/bin
 FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 Sign on to the system.
+
+Name:    logname
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Display users login name
 
 Name:    lpc
 Version: 1.0
@@ -2492,6 +2512,16 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Strips the high bit off of characters in a file.
 
+Name:    striptex
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (comp.unix.sources Port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Strips TeX-commands from input
+
 Name:    strypt
 Version: 1.0 (8 Jul 90)
 Shell:   GNO, ORCA
@@ -2532,6 +2562,16 @@ Where:   /usr/bin
 FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 Display file checksums and block counts (same as cksum)
+
+Name:    sun
+Version: 1.0
+Shell:   GNO/ME
+Author:  Robert Bond
+Contact: 
+Where:   /usr/games
+FTP:     ftp.gno.org
+
+Show sunrise and sunset times.
 
 Name:    swi
 Version: 1.2
@@ -2632,6 +2672,16 @@ FTP:     ftp.gno.org ground.icaen.uiowa.edu
 The test utility evaluates string and integer expressions and, if
 it evaluates to true, returns a zero (true) exit status; otherwise it
 returns 1 (false).  Test is used mainly in shell scripts.
+
+Name:    texi2roff
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (comp.unix.sources Port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Convert Texinfo commands in documents to nroff/troff commands.
 
 Name:    thursday
 Version: 1.0
