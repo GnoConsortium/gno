@@ -31,9 +31,11 @@
  * SUCH DAMAGE.
  */
 
+#ifndef __GNO__
 #ifndef lint
 static char sccsid[] = "@(#)init.c  5.6 (Berkeley) 3/27/91";
 #endif /* not lint */
+#endif
 
 /*
  * Getty table initializations.
@@ -41,8 +43,12 @@ static char sccsid[] = "@(#)init.c  5.6 (Berkeley) 3/27/91";
  * Melbourne getty.
  */
 #include <sgtty.h>
+#include <paths.h>
 #include "gettytab.h"
-#include "pathnames.h"
+
+#ifndef _PATH_LOGIN
+#define _PATH_LOGIN	"/usr/sbin/login"
+#endif
 
 extern  struct sgttyb tmode;
 extern  struct tchars tc;

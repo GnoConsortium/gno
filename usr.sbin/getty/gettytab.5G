@@ -1,0 +1,287 @@
+.\" Copyright (c) 1983, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\" This product includes software developed by the University of
+.\" California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)gettytab.5  6.7 (Berkeley) 5/10/91
+.\"
+.TH GETTYTAB 5 "8 April 1998" GNO "File Formats"
+.SH NAME
+.BR gettytab
+\- terminal configuration data base
+.SH SYNOPSIS
+.BR gettytab
+.SH DESCRIPTION
+The
+.BR gettytab
+file
+is a simplified version of the
+.BR termcap (5)
+data base
+used to describe terminal lines.
+The initial terminal login process
+.BR getty (8)
+accesses the
+.BR gettytab
+file each time it starts, allowing simpler
+reconfiguration of terminal characteristics.
+Each entry in the data base
+is used to describe one class of terminals.
+.LP
+There is a default terminal class,
+.IR default ,
+that is used to set global defaults for all other classes.
+(That is, the
+.IR default 
+entry is read, then the entry for the class required
+is used to override particular settings.)
+.SH CAPABILITIES
+Refer to
+.BR termcap (5)
+for a description of the file layout.
+The
+.IR default 
+column below lists defaults obtained if there is
+no entry in the table obtained, nor one in the special
+.IR default 
+table.
+.nf
+
+\fBName	Type	Default	Description\fR
+
+ap	bool	false	terminal uses any parity
+bd	num	0	backspace delay
+bk	str	0377	alternate end of line character (input break)
+cb	bool	false	use crt backspace mode
+cd	num	0	carriage-return delay
+ce	bool	false	use crt erase algorithm
+ck	bool	false	use crt kill algorithm
+cl	str	NULL	screen clear sequence
+co	bool	false	console - add '\en' after login prompt
+ds	str	\`^Y\'	delayed suspend character
+dx	bool	false	set DECCTLQ
+ec	bool	false	leave echo OFF
+ep	bool	false	terminal uses even parity
+er	str	\`^?\'	erase character
+et	str	\`^D\'	end of text (EOF character)
+ev	str	NULL	initial enviroment
+f0	num	unused	tty mode flags to write messages
+f1	num	unused	tty mode flags to read login name
+f2	num	unused	tty mode flags to leave terminal as
+fd	num	0	form-feed (vertical motion) delay
+fl	str	\`^O\'	output flush character
+hc	bool	false	do NOT hangup line on last close
+he	str	NULL	hostname editing string
+hn	str	hostname	hostname
+ht	bool	false	terminal has real tabs
+ig	bool	false	ignore garbage characters in login name
+im	str	NULL	initial (banner) message
+in	str	\`^C\'	interrupt character
+is	num	unused	input speed
+kl	str	\`^U\'	kill character
+lc	bool	false	terminal has lower case
+lm	str	login:	login prompt
+ln	str	\`^V\'	``literal next'' character
+lo	str	/usr/bin/login	program to exec when name obtained
+nd	num	0	newline (line-feed) delay
+nl	bool	false	terminal has (or might have) a newline character
+nx	str	default	next table (for auto speed selection)
+op	bool	false	terminal uses odd parity
+os	num	unused	output speed
+pc	str	\`\e0\'	pad character
+pe	bool	false	use printer (hard copy) erase algorithm
+pf	num	0	delay between first prompt and following flush (seconds)
+ps	bool	false	line connected to a MICOM port selector
+qu	str	\`\&^\e\'	quit character
+rp	str	\`^R\'	line retype character
+rw	bool	false	do NOT use raw for input, use cbreak
+sp	num	unused	line speed (input and output)
+su	str	\`^Z\'	suspend character
+tc	str	none	table continuation
+to	num	0	timeout (seconds)
+tt	str	NULL	terminal type (for environment)
+ub	bool	false	do unbuffered output (of prompts etc)
+uc	bool	false	terminal is known upper case only
+we	str	\`^W\'	word erase character
+xc	bool	false	do NOT echo control chars as \`^X\'
+xf	str	\`^S\'	XOFF (stop output) character
+xn	str	\`^Q\'	XON (start output) character
+.fi
+.LP
+If no line speed is specified, speed will not be altered
+from that which prevails when getty is entered.
+Specifying an input or output speed will override
+line speed for stated direction only.
+.LP
+Terminal modes to be used for the output of the message,
+for input of the login name,
+and to leave the terminal set as upon completion,
+are derived from the boolean flags specified.
+If the derivation should prove inadequate,
+any (or all) of these three may be overriden
+with one of the
+.IR \&f0 ,
+.IR \&f1 ,
+or
+.IR \&f2 
+numeric specifications, which can be used to specify
+(usually in octal, with a leading '0')
+the exact values of the flags.
+Local (new tty) flags are set in the top 16 bits
+of this (32 bit) value.
+.LP
+Should
+.BR getty 
+receive a null character
+(presumed to indicate a line break)
+it will restart using the table indicated by the
+.IR nx 
+entry. If there is none, it will re-use its original table.
+.LP
+Delays are specified in milliseconds, the nearest possible
+delay available in the tty driver will be used.
+Should greater certainty be desired, delays
+with values 0, 1, 2, and 3 are interpreted as
+choosing that particular delay algorithm from the driver.
+.LP
+The
+.IR \&cl 
+screen clear string may be preceded by a (decimal) number
+of milliseconds of delay required (a la termcap).
+This delay is simulated by repeated use of the pad character
+.IR \&pc .
+.LP
+The initial message, and login message,
+.IR \&im 
+and
+.IR \&lm 
+may include the character sequence
+.IR \&%h 
+or
+.IR \&%t 
+to obtain
+the hostname or tty name respectively.
+.RI ( %%
+obtains a single '%' character.)
+The hostname is normally obtained from the system,
+but may be set by the
+.IR \&hn 
+table entry.
+In either case it may be edited with
+.IR \&he .
+The
+.IR \&he 
+string is a sequence of characters, each character that
+is neither '@' nor '#' is copied into the final hostname.
+A '@' in the
+.IR \&he 
+string, causes one character from the real hostname to
+be copied to the final hostname.
+A '#' in the
+.IR \&he 
+string, causes the next character of the real hostname
+to be skipped.
+Surplus '@' and '#' characters are ignored.
+.LP
+When getty execs the login process, given
+in the
+.IR \&lo 
+string (usually 
+.BR /usr/bin/login ),
+it will have set
+the enviroment to include the terminal type, as indicated
+by the
+.IR \&tt 
+string (if it exists).
+The
+.IR \&ev 
+string, can be used to enter additional data into
+the environment.
+It is a list of comma separated strings, each of which
+will presumably be of the form
+.IR name=value .
+.LP
+If a non-zero timeout is specified, with
+.IR \&to ,
+then getty will exit within the indicated
+number of seconds, either having
+received a login name and passed control
+to
+.BR login ,
+or having received an alarm signal, and exited.
+This may be useful to hangup dial in lines.
+.LP
+Output from
+.BR getty 
+is even parity unless
+.IR \&op 
+is specified.
+The
+.IR \&op 
+string
+may be specified with
+.IR \&ap 
+to allow any parity on input, but generate odd parity output.
+Note: this only applies while getty is being run,
+terminal driver limitations prevent a more complete
+implementation.
+.BR Getty 
+does not check parity of input characters in
+.BR RAW
+mode.
+.SH SEE ALSO
+.BR login (1),
+.BR termcap (5),
+.BR getty (8).
+.SH BUGS
+The special characters (erase, kill, etc.) are reset to system defaults
+by
+.BR login (1).
+In
+.IR all 
+cases, '#' or '^H' typed in a login name will be treated as
+an erase character, and '@' will be treated as a kill character.
+.LP
+The delay stuff is a real crock.
+Apart form its general lack of flexibility, some
+of the delay algorithms are not implemented.
+The terminal driver should support sane delay settings.
+.LP
+The
+.IR \&he 
+capability is stupid.
+.LP
+The
+.BR termcap 
+format is horrid, something more rational should
+have been chosen.
+.SH HISTORY
+The
+.BR gettytab
+file format appeared in 4.2BSD.

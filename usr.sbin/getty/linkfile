@@ -1,8 +1,0 @@
-main
-init
-subr
-gettytab
-ttydflts
-../strftime/strftime
-2/libgno
-keep=getty

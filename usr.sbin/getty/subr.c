@@ -1,9 +1,3 @@
-/*#pragma debug 25 */
-/*#define BUG(__s) {fprintf(stderr,"%s\n",__s);} */
-#define BUG(__s)
-#pragma optimize 31
-#define index strchr
-
 /*
  * Copyright (c) 1983 The Regents of the University of California.
  * All rights reserved.
@@ -46,12 +40,12 @@ static char sccsid[] = "@(#)subr.c  5.10 (Berkeley) 2/26/91";
  */
 #define USE_OLD_TTY
 #include <stddef.h>
-#include <gno/gno.h> /* sleep... */
 #include <sgtty.h>
 #include <unistd.h>
 #include <shell.h>
 #include <string.h>
 #include <fcntl.h>
+#include <stdlib.h>
 #include "gettytab.h"
 
 extern  struct sgttyb tmode;
@@ -61,8 +55,8 @@ extern  struct ltchars ltc;
 /*
  * Get a table entry.
  */
-gettable(name, buf, area)
-    char *name, *buf, *area;
+void
+gettable(char *name, char *buf, char *area)
 {
     register struct gettystrs *sp;
     register struct gettynums *np;
@@ -95,7 +89,8 @@ gettable(name, buf, area)
     }
 }
 
-gendefaults()
+void
+gendefaults(void)
 {
     register struct gettystrs *sp;
     register struct gettynums *np;
@@ -114,7 +109,8 @@ gendefaults()
             fp->defalt = fp->invrt;
 }
 
-setdefaults()
+void
+setdefaults(void)
 {
     register struct gettystrs *sp;
     register struct gettynums *np;
@@ -146,7 +142,8 @@ charvars[] = {
     &ltc.t_werasc, &ltc.t_lnextc, 0
 };
 
-setchars()
+void
+setchars(void)
 {
     register int i;
     register char *p;
@@ -161,7 +158,7 @@ setchars()
 }
 
 long
-setflags(n)
+setflags(int n)
 {
     register long f;
 
@@ -280,7 +277,8 @@ struct delayval tbdelay[] = {
     0,      TAB2,
 };
 
-delaybits()
+int
+delaybits (void)
 {
     register f;
 
@@ -292,6 +290,7 @@ delaybits()
     return (f);
 }
 
+int
 adelay(long ms, struct delayval *dp)
 {
     if (ms == 0)
@@ -303,6 +302,7 @@ adelay(long ms, struct delayval *dp)
 
 char    editedhost[32];
 
+void
 edithost(char *pat)
 {
     register char *host = HN;
@@ -366,6 +366,7 @@ struct speedtab {
     0
 };
 
+int
 speed(long val)
 {
     register struct speedtab *sp;
@@ -382,7 +383,9 @@ speed(long val)
 
 #ifdef __ORCAC__
 
-void addenv(char *vdef)
+#if 0
+void
+addenv(char *vdef)
 {
 char *q,*vdef2;
 static Set_VarPB setp;
@@ -404,15 +407,36 @@ static ExportPB exp;
         }
         setp.var_name = vdef;
         setp.value = vdef2;
-        SET_VAR(setp);
+        SET_VAR(&setp);
         exp.name = vdef;
         exp.flags = 1;
         EXPORT(&exp);
     }
 }
+#endif	/* 0 */
 
 void makeenv(void)
 {
+#if 1
+    char *p, *q;
+
+    environPush();
+    if (TT && *TT) {
+	setenv("TERM", TT, 1);
+    }
+    if ((p = EV) != NULL) {
+        q = p;
+        while (q = strchr(q, ',')) {
+            *q++ = '\0';
+            putenv(p);
+            p = q;
+        }
+        if (*p) {
+            putenv(p);
+        }
+    }
+
+#else	/* 1 */
 #ifdef __ORCAC__
 static char termbuf[128] = "TERM";
 #else
@@ -435,6 +459,7 @@ char *p, *q;
         if (*p)
             addenv(p);
     }
+#endif	/* 0 */
 }
 
 #else
@@ -491,7 +516,7 @@ struct  portselect {
 };
 
 char *
-portselector()
+portselector(void)
 {
     char c, baud[20], *type = "default";
     register struct portselect *ps;
@@ -528,7 +553,7 @@ portselector()
 #endif
 
 char *
-autobaud()
+autobaud(void)
 {
     char c, *type = "9600-baud";
 #ifdef SYS_TIME

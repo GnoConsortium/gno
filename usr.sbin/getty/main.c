@@ -1,9 +1,3 @@
-/*#define BUG(__s) {fprintf(stderr,"%s\n",__s);}*/
-#pragma optimize 31
-#pragma stacksize 1024
-#define BUG(__s)
-#define rindex strrchr
-
 /*-
  * Copyright (c) 1980 The Regents of the University of California.
  * All rights reserved.
@@ -37,6 +31,7 @@
  * SUCH DAMAGE.
  */
 
+#ifndef __GNO__
 #ifndef lint
 char copyright[] =
 "@(#) Copyright (c) 1980 The Regents of the University of California.\n\
@@ -46,11 +41,11 @@ char copyright[] =
 #ifndef lint
 static char sccsid[] = "@(#)main.c  5.16 (Berkeley) 3/27/91";
 #endif /* not lint */
+#endif
 
 #define USE_OLD_TTY
 
 #include <stdio.h>
-#include <gno/gno.h>
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <signal.h>
@@ -64,17 +59,19 @@ static char sccsid[] = "@(#)main.c  5.16 (Berkeley) 3/27/91";
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <paths.h>
+#include <libutil.h>
+#include <err.h>
+#include <gno/gno.h>
 #include "gettytab.h"
-#include "pathnames.h"
 
-#ifndef HOSTNAME
-#define MAXHOSTNAMELEN 10
-gethostname(char *name, int namelen)
-{
-    strncpy(name,"apple",namelen);
-    return 0;
-}
-#endif
+static int	getname (void);
+static void	putpad (char *s);
+static int	puts (char *s);
+static void	putchr (int cc);
+static void	oflush (void);
+static void	prompt (void);
+static void	putf (char *cp);
 
 struct  sgttyb tmode = {
     0, 0, CERASE, CKILL, 0
@@ -94,7 +91,6 @@ char    hostname[MAXHOSTNAMELEN];
 char    name[16];
 char    dev[] = _PATH_DEV;
 char    ttyn[32];
-char    *portselector();
 
 #ifdef __ORCAC__
 char *ttyname(int fino);
@@ -158,9 +154,8 @@ interrupt(int sig, int code)
     longjmp(intrupt, 1);
 }
 
-main(argc, argv)
-    int argc;
-    char **argv;
+int
+main(int argc, char **argv)
 {
 #ifndef __ORCAC__
     extern  char **environ;
@@ -170,6 +165,9 @@ main(argc, argv)
     int repcnt = 0;
     int tmp;
 
+    __REPORT_STACK();
+
+    
     signal(SIGINT, SIG_IGN);
 /*
     signal(SIGQUIT, SIG_DFL);
@@ -178,6 +176,7 @@ main(argc, argv)
     gethostname(hostname, sizeof(hostname));
     if (hostname[0] == '\0')
         strcpy(hostname, "Amnesiac");
+    
     /*
      * The following is a work around for vhangup interactions
      * which cause great problems getting window systems started.
@@ -249,8 +248,6 @@ main(argc, argv)
         if (HC)
             ioctl(STDIN_FILENO, TIOCHPCL, 0);
         if (AB) {
-            extern char *autobaud();
-
             tname = autobaud();
             continue;
         }
@@ -323,7 +320,14 @@ main(argc, argv)
             {
             static char temp[256];
                 sprintf(temp,"login -p %s",name);
-                execve(LO,temp);
+#ifdef __STACK_CHECK__
+		/*
+		 * Because we're doing the _execve, we won't get it from
+		 * the atexit(3) registered function.
+		 */
+		warnx("stack usage: %d bytes", _endStackCheck());
+#endif
+                _execve(LO,temp);
             }
 #else
             execle(LO, "login", "-p", name, (char *) 0, env);
@@ -339,7 +343,8 @@ main(argc, argv)
     }
 }
 
-getname()
+static int
+getname(void)
 {
     register int c;
     register char *np;
@@ -425,6 +430,7 @@ short   tmspc10[] = {
     0, 2000, 1333, 909, 743, 666, 500, 333, 166, 83, 55, 41, 20, 10, 5, 15
 };
 
+static void
 putpad(char *s)
 {
     register pad = 0;
@@ -466,17 +472,20 @@ putpad(char *s)
 }
 
 /* odd, another prototyping bug */
+int
 puts(char *s)
     /*register char *s;*/
 {
     while (*s)
         putchr(*s++);
+    return 0;
 }
 
 char    outbuf[OBUFSIZ];
 int obufcnt = 0;
 
-putchr(cc)
+static void
+putchr(int cc)
 {
     char c;
 
@@ -494,14 +503,16 @@ putchr(cc)
         write(STDOUT_FILENO, &c, 1);
 }
 
-oflush()
+static void
+oflush(void)
 {
     if (obufcnt)
         write(STDOUT_FILENO, outbuf, obufcnt);
     obufcnt = 0;
 }
 
-prompt()
+static void
+prompt(void)
 {
 
     putf(LM);
@@ -509,6 +520,7 @@ prompt()
         putchr('\n');
 }
 
+static void
 putf(char *cp)
 {
     extern char editedhost[];
@@ -536,12 +548,26 @@ putf(char *cp)
             break;
 
         case 'd': {
+#ifdef NO_STRFTIME
+	    (void)time(&t);
+	    puts(ctime(&t));
+#else	/* NO_STRFTIME */
+#ifdef __GNO__
+	    /*
+	     * We don't use SCCS for the GNO sources, so we don't have
+	     * to worry about a 'M' after a '%' character.  As far as
+	     * %P is concerned, it looks like it was just plain wrong.
+	     */
+	    static char fmt[] = "%l:%M%p on %A, %d %B %Y";
+#else	/* __GNO__ */
             static char fmt[] = "%l:% %P on %A, %d %B %Y";
 
             fmt[4] = 'M';       /* I *hate* SCCS... */
+#endif	/* __GNO__ */
             (void)time(&t);
             (void)strftime(db, sizeof(db), fmt, localtime(&t));
             puts(db);
+#endif	/* NO_STRFTIME */
             break;
         }
 

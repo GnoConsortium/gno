@@ -41,8 +41,10 @@ static char sccsid[] = "@(#)ttydefaults.c   5.1 (Berkeley) 1/19/91";
 #include <sgtty.h>
 #endif
 
-set_ttydefaults(fd)
-    int fd;
+#include "gettytab.h"
+
+void
+set_ttydefaults(int fd)
 {
 #ifdef TERMIOS
     struct termios term;

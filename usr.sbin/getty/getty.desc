@@ -1,0 +1,10 @@
+Name:    getty
+Version: 2.1
+Author:  Maintained by Devin Reade
+Contact: gdr@trenco.gno.org
+Where:   /usr/sbin
+FTP:     ftp.gno.org
+
+Getty monitors serial lines and waits for users to log in, subsequently
+passing control to login(1).  It is not intended to be called by the
+user.

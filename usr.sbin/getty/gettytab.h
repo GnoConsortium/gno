@@ -136,12 +136,41 @@ struct gettyflags {
 #define DX  gettyflags[20].value
 #define NP  gettyflags[21].value
 
-int getent();
-long    getnum();
-int getflag();
-char    *getstr();
+struct	delayval;
+
+void	addenv (char *vdef);
+int	adelay (long ms, struct delayval *dp);
+int	delaybits (void);
+void	edithost (char *pat);
+void	gendefaults (void);
+void	gettable (char *name, char *buf, char *area);
+void	makeenv (void);
+void	setchars (void);
+void	setdefaults (void);
+long	setflags (int n);
+int	speed (long val);
+
+
+char *	portselector (void);
+char *	autobaud (void);
+void	set_ttydefaults (int fd);
+int	getent (char *bp, char *name);
+int	nchktc (void);
+int	namatch (char *np);
+long	getnum (char *id);
+int	getflag (char *id);
+char *	getstr (char *id, char **area);
 
 extern  struct gettyflags gettyflags[];
 extern  struct gettynums gettynums[];
 extern  struct gettystrs gettystrs[];
 extern  int hopcount;
+
+#if 0
+#define BUG(__s) {fprintf(stderr,"%s\n",__s);}
+#else
+#define BUG(__s)
+#endif
+
+#define rindex strrchr
+

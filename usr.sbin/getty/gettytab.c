@@ -1,8 +1,3 @@
-/*#pragma debug 25*/
-/*#define BUG(__s) {fprintf(stderr,"%s\n",__s);}*/
-#define BUG(__s)
-#pragma optimize 31
-
 /*
  * Copyright (c) 1983 The Regents of the University of California.
  * All rights reserved.
@@ -36,9 +31,11 @@
  * SUCH DAMAGE.
  */
 
+#ifndef __GNO__
 #ifndef lint
 static char sccsid[] = "@(#)gettytab.c  5.5 (Berkeley) 2/25/91";
 #endif /* not lint */
+#endif
 
 #include <stdio.h>
 #include <fcntl.h>
@@ -46,23 +43,28 @@ static char sccsid[] = "@(#)gettytab.c  5.5 (Berkeley) 2/25/91";
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "pathnames.h"
+#include <paths.h>
+#include "gettytab.h"
+
+#ifndef _PATH_GETTYTAB
+#define _PATH_GETTYTAB	"/etc/gettytab"
+#endif
 
 #define TABBUFSIZ   512
 
 static  char *tbuf;
 int hopcount;   /* detect infinite loops in termcap, init 0 */
-char    *skip();
-char    *getstr();
-char    *decode();
+
+static char *	skip (register char *bp);
+static char *	decode (register char *str, char **area);
 
 /*
  * Get an entry for terminal name in buffer bp,
  * from the termcap file.  Parse is very rudimentary;
  * we just notice escaped newlines.
  */
-getent(bp, name)
-    char *bp, *name;
+int
+getent(char *bp, char *name)
 {
     register char *cp;
     register int c;
@@ -120,7 +122,8 @@ getent(bp, name)
  * Note that this works because of the left to right scan.
  */
 #define MAXHOP  32
-nchktc()
+int
+nchktc(void)
 {
     register char *p, *q;
     char tcname[16];    /* name of similar terminal */
@@ -176,6 +179,7 @@ nchktc()
  * against each such name.  The normal : terminator after the last
  * name (before the first field) stops us.
  */
+int
 namatch(char *np)
 {
     register char *Np, *Bp;
@@ -202,8 +206,7 @@ namatch(char *np)
  * into the termcap file in octal.
  */
 static char *
-skip(bp)
-    register char *bp;
+skip(register char *bp)
 {
 
     while (*bp && *bp != ':')
@@ -222,8 +225,7 @@ skip(bp)
  * Note that we handle octal numbers beginning with 0.
  */
 long
-getnum(id)
-    char *id;
+getnum(char *id)
 {
     register long i, base;
     register char *bp = tbuf;
@@ -255,8 +257,8 @@ getnum(id)
  * of the buffer.  Return 1 if we find the option, or 0 if it is
  * not given.
  */
-getflag(id)
-    char *id;
+int
+getflag (char *id)
 {
     register char *bp = tbuf;
 
@@ -284,8 +286,7 @@ getflag(id)
  * No checking on area overflow.
  */
 char *
-getstr(id, area)
-    char *id, **area;
+getstr(char *id, char **area)
 {
     register char *bp = tbuf;
 
@@ -309,9 +310,7 @@ getstr(id, area)
  * string capability escapes.
  */
 static char *
-decode(str, area)
-    register char *str;
-    char **area;
+decode(register char *str, char **area)
 {
     register char *cp;
     register int c;
