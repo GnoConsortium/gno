@@ -1,4 +1,4 @@
-$Id: README.install,v 1.4 1999/01/28 05:34:38 gdr-ftp Exp $
+$Id: README.install,v 1.5 1999/01/29 07:13:09 gdr-ftp Exp $
 
 The install scripts assumes that your _new_ distribution will be installed
 on to the two volumes /gno (ProDOS) and /gno-hfs (HFS).  It also assumes
@@ -61,7 +61,25 @@ You should now do the following steps:
 	     See the kernel reference manual for a description of the
 	     namespace file.
 	     
-	 5.  If you are not short of disk space, you should create .so links
+	 5.  During the extraction process, the following files were placed
+	     into the /gno/System directory:
+	     
+		     	/gno/System/Desk.Accs/GNOSnooperII
+		     	/gno/System/Desk.Accs/SuspDA
+		     	/gno/System/Drivers/FilePort
+		     	/gno/System/Drivers/FilePort.Data
+		     	/gno/System/Drivers/NullPort
+		     	/gno/System/System.Setup/GNOBug
+		     	/gno/System/System.Setup/SIM
+	     
+	     It is recommended that these files be copied into the relevent
+	     directories in the System folder of your boot partition.  The
+	     GNOBug PIF is only required if you have GSBug installed.  If
+	     you install GNOBug you should afterward sort the System.Setup
+	     directory so that GNOBug appears before GSBug (the latter of
+	     which is commonly called "debug.init").
+	     
+	 6.  If you are not short of disk space, you should create .so links
 	     for your manual pages.  (See the mkso(8) man page for an
 	     explanation.)  You can do this by executing the following
 	     commands:
@@ -77,7 +95,7 @@ You should now do the following steps:
 		     	cd /gno/usr/man
 		     	mkso -v mkso.data
 	     
-	 6.  You should now return to your program launcher (the Finder,
+	 7.  You can now return to your program launcher (the Finder,
 	     ProSEL-16, or whatever you used to start /gno.boot/kern) by
 	     typing "exit" at the prompt.  To startup up your new version
 	     of GNO, you should then launch /gno/kern.  You will then see
