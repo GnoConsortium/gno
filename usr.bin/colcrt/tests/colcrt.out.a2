@@ -1,0 +1,132 @@
+
+
+COLCRT (1)             Commands and Applications              COLCRT (1)
+
+
+
+
+NAME  
+        colcrt - filter nroff output for CRT previewing 
+
+SYNOPSIS  
+        colcrt [ - ] [ -2 ] [ file ... ] 
+        colcrt -V 
+
+DESCRIPTION  
+        Colcrt   provides   virtual  half-line  and  reverse  line  feed
+        sequences for terminals without such capability,  and  on  which
+        overstriking is   destructive.      Half-line   characters   and
+        underlining (changed to dashing `-') are placed on new lines  in
+        between the normal output lines.  
+
+OPTIONS  
+
+        -  
+                Suppress all  underlining.    This  option is especially
+                useful for previewing allboxed tables from tbl(1). 
+
+        -2  
+                Causes all half-lines to be printed, effectively  double
+                spacing the  output.    Normally, a minimal space output
+                format is used which will suppress  empty  lines.    The
+                program  never  suppresses  two consecutive empty lines,
+                however.  The -2 option is useful for sending output  to
+                the  line  printer when the output contains superscripts
+                and subscripts which would otherwise be invisible.  
+
+        -V  
+                Prints version information and exits.  
+
+EXAMPLES  
+        A typical use of colcrt would be 
+
+        tbl exum2.n | nroff -ms | colcrt - | more 
+
+BUGS  
+        Should fold underlines onto blanks even with  the  -  option  so
+        that a true underline character would show.  
+
+        Can't back up more than 102 lines.  
+
+        General  overstriking  is  lost;  as a special case | overstruck
+        with - or underline becomes +. 
+
+        Lines are trimmed to 132 characters.  
+
+        Some provision should be made for  processing  superscripts  and
+        subscripts in documents which are already double-spaced.  
+
+
+
+
+
+
+GNO                         January 22, 1998                      Page 1
+
+
+
+
+COLCRT (1)             Commands and Applications              COLCRT (1)
+
+
+
+HISTORY  
+        The colcrt command appeared in 3.0BSD.  
+
+ATTRIBUTIONS  
+        This   command   was   ported   from  FreeBSD  source  code  for
+        distribution with GNO/ME 2.0.6.  
+
+        This  program  contains  material  from  the   ORCA/C   Run-Time
+        Libraries,  copyright  1987-1998  by  Byte Works, Inc. Used with
+        permission.  
+
+SEE ALSO  
+        col(1), more(1), nroff(1), troff(1), ul(1) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+GNO                         January 22, 1998                      Page 2
+
+

@@ -1,0 +1,9 @@
+Name:    colcrt
+Version: 1.0 (January 22, 1998)
+Shell:   GNO
+Author:  Steve Reeves (from FreeBSD code)
+Contact: stever@gate.net
+Where:   /usr/bin
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+   Filter nroff output for CRT previewing.

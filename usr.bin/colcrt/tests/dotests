@@ -1,0 +1,128 @@
+# Tests for colcrt command; invoked by command file "fulltests"
+#   Adapted from a test script written by Dave Tribby
+#
+# $Id: dotests,v 1.1 1998/02/17 03:12:50 gdr-ftp Exp $
+
+# Location of the command to be tested
+set testcmd="../colcrt"
+
+# Record starting time
+echo -n "Testing command $testcmd beginning at"
+date
+
+set src="input.a"
+set cmp="colcrt.out.a1"
+set dest="/tmp/$cmp"
+echo "Filtering nroff output contained in file $src"
+$testcmd $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="colcrt.out.a2"
+set dest="/tmp/$cmp"
+echo "Filtering nroff output contained in file $src, suppressing underlining"
+$testcmd - $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="colcrt.out.a3"
+set dest="/tmp/$cmp"
+echo "Filtering nroff output contained in file $src, printing all half-lines"
+$testcmd -2 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="colcrt.out.a4"
+set dest="/tmp/$cmp"
+echo "Filtering nroff output contained in file $src, suppressing underlining and printing half-lines"
+$testcmd - -2 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set src="input.b"
+set cmp="colcrt.out.b1"
+set dest="/tmp/$cmp"
+echo "Filtering nroff output redirected from file $src"
+$testcmd < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="colcrt.out.b2"
+set dest="/tmp/$cmp"
+echo "Filtering nroff output redirected from file $src, suppressing underlining"
+$testcmd - < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="colcrt.out.b3"
+set dest="/tmp/$cmp"
+echo "Filtering nroff output redirected from file $src, printing all half-lines"
+$testcmd -2 < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="colcrt.out.b4"
+set dest="/tmp/$cmp"
+echo "Filtering nroff output redirected from file $src, suppressing underlining and printing half-lines"
+$testcmd - -2 < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set src1="input.a"
+set src2="input.b"
+set cmp="colcrt.out.ab"
+set dest="/tmp/$cmp"
+echo "Filtering nroff output contained in both files $src1 and $src2"
+$testcmd $src1 $src2 > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+echo "***** Version *****"
+
+set cmp="colcrt.out.ver"
+set dest="/tmp/$cmp"
+echo "Printing version information"
+$testcmd -V > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+echo "***** Error Messages *****"
+
+set cmp="colcrt.out.err"
+set dest="/tmp/$cmp"
+echo "Expected error: illegal option"
+$testcmd -x >& $dest
+echo "  Error completion status = $status (expected: 1)"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"

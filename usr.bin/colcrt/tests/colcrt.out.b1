@@ -1,0 +1,26 @@
+      This is a sample file to test how colcrt filters nroff output.
+
+
+
+This is a regular line.
+This line is underlined.
+---- ---- -- ----------
+This line is continuously underlined.
+-------------------------------------
+
+This line is in Times Roman font.
+This line is in Times Italic font.
+---- ---- -- -- ----- ------ ----
+This line is in Times Bold font.
+
+This line has just a few words in Times Italic.
+                   - --- -----
+This line has just a few words in Times Bold.
+
+The next line contains a half-line character.
+                             o
+The current temperature is 72 F.
+
+| overstruck with - is + (should be +).
+- overstruck with | is + (should also be +).
+

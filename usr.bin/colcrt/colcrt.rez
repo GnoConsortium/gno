@@ -1,0 +1,32 @@
+/*
+ * Resources for colcrt
+ *
+ * $Id: colcrt.rez,v 1.1 1998/02/17 03:12:33 gdr-ftp Exp $
+ */
+
+#define PROG "colcrt"
+#define DESC "Filter nroff output for CRT previewing."
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 0, 0,	/* Version 1.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	PROG,	/* Program name */
+        DESC "\nReleased with GNO/ME."
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG " v1.0 (January 22, 1998)\n"
+	"GNO utility: " DESC "\n"
+	"Ported from FreeBSD code by Steve Reeves."
+};

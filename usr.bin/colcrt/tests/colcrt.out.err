@@ -1,0 +1,2 @@
+colcrt: illegal option -- x
+usage: colcrt [ - ] [ -2 ] [ -V ] [ file ... ]
