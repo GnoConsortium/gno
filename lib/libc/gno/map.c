@@ -1,7 +1,7 @@
 /*
  * libc/gno/map.c  -- various mapping functions
  *
- * $Id: map.c,v 1.1 1997/02/28 05:12:47 gdr Exp $
+ * $Id: map.c,v 1.2 1997/09/05 06:14:16 gdr Exp $
  *
  * This file is formatted with tabstops every 8 columns
  */
@@ -196,6 +196,7 @@ _mapPathGS (GSStringPtr pathname) {
  
 int
 _mapErr (int err) {
+	int ret;
 	if (!err) {
 		return 0;
 	}
@@ -204,24 +205,26 @@ _mapErr (int err) {
 		return (err & 0x00ff);
 	}
 	switch (err) {
-	case 0x43: return EBADF;
+	case 0x43:	ret = EBADF;	break;
 
 	case 0x44:
     	case 0x45:
-    	case 0x46: return ENOENT;
+    	case 0x46:	ret = ENOENT;	break;
 
-    	case 0x47: return EEXIST;
+    	case 0x47:
+	case 0x50:	ret = EEXIST;	break;
 
     	case 0x48:
-    	case 0x49: return ENOSPC;
-        case 0x4A: return ENOTDIR;
+    	case 0x49:	ret = ENOSPC;	break;
+        case 0x4A:	ret = ENOTDIR;	break;
 
     	case 0x4B:
     	case 0x4F:
-    	case 0x53: return EINVAL;
-    	case 0x54: return ENOMEM;
-    	case 0x4E: return EACCES;
-    	case 0x58: return ENOTBLK;
-    	default:   return EIO;
-    }
+    	case 0x53:	ret = EINVAL;	break;
+    	case 0x54:	ret = ENOMEM;	break;
+    	case 0x4E:	ret = EACCES;	break;
+    	case 0x58:	ret = ENOTBLK;	break;
+    	default:	ret = EIO;	break;
+	}
+	return ret;
 }
