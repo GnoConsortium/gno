@@ -5,7 +5,7 @@
 # this filter -- no everything is handled, nor is everything handled 
 # correctly.
 #
-# $Id: bsd2man,v 1.1 1997/03/05 04:43:54 gdr Exp $
+# $Id: bsd2man,v 1.2 1997/10/30 04:21:56 gdr Exp $
 #
 # Devin Reade, December 1996
 #
@@ -57,7 +57,8 @@ while (<>) {
 	$line =~ s/\s+$//;
 	printf(".IP \\fB%s\\fR\n", $line);
 
-    } elsif (/^\.(sp|I|\\\"|if)/) {		# pass through verbatim
+    } elsif (/^\.(RI|PP|SH|sp|ft|I|nf|fi|br|TH|\\\"|if)/) {
+	# pass through verbatim
 	printf("%s\n", $_);
 
     } elsif (/^\.(Ar|Dv|El|Pp|Re|Rs|Sh|Va|%B|%T)/) { # simple replacement
