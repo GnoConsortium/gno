@@ -20,11 +20,13 @@
  *	- Heavily hacked up to conform to "real" nroff by Bill Rosenkranz
  *      - Heavily modified by Devin Reade to avoid memory trashing bugs.
  *
- * $Id: text.c,v 1.1 1997/03/14 06:22:29 gdr Exp $
+ * $Id: text.c,v 1.2 1997/03/20 06:40:51 gdr Exp $
  */
 
 #ifdef __ORCAC__
 segment "text______";
+#pragma noroot
+#pragma optimize 78
 #endif
 
 #include <stdio.h>
@@ -33,7 +35,7 @@ segment "text______";
 #ifdef __GNO__
 #include <termcap.h>
 #else
-#include "termcap.h"
+#include "unix/termcap.h"
 #endif
 
 #include "nroff.h"
@@ -846,4 +848,3 @@ void
 setPrinting(int val) {
     co.lpr = val;
 }
-

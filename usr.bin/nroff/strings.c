@@ -19,11 +19,13 @@
  *	- Heavily hacked up to conform to "real" nroff by Bill Rosenkranz
  *      - Heavily modified by Devin Reade to avoid memory trashing bugs.
  *
- * $Id: strings.c,v 1.1 1997/03/14 06:22:29 gdr Exp $
+ * $Id: strings.c,v 1.2 1997/03/20 06:40:51 gdr Exp $
  */
 
 #ifdef __ORCAC__
 segment "strings___";
+#pragma noroot
+#pragma optimize 79
 #endif
 
 #include <stdio.h>
@@ -32,11 +34,11 @@ segment "strings___";
 #ifdef __GNO__
 #include <err.h>
 #else
-#include "err.h"
+#include "unix/err.h"
 #endif
 
 #ifdef sparc
-#include "sunos.h"
+#include "unix/sunos.h"
 #endif
 
 #include "nroff.h"

@@ -22,14 +22,17 @@
  *	- Heavily hacked up to conform to "real" nroff by Bill Rosenkranz
  *      - Heavily modified by Devin Reade to avoid memory trashing bugs.
  *
- * $Id: nroff.c,v 1.1 1997/03/14 06:22:27 gdr Exp $
+ * $Id: nroff.c,v 1.2 1997/03/20 06:40:50 gdr Exp $
  */
 
 #ifdef __ORCAC__
 segment "main______";
+#pragma stacksize 6144
+#pragma optimize 79
 #endif
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <sys/types.h>
 #include <sys/time.h>
 #include <time.h>
@@ -40,14 +43,15 @@ segment "main______";
 #ifdef __GNO__
 #include <err.h>
 #include <termcap.h>
+#include <gno/gno.h>
 #else
-#include "err.h"
-#include "termcap.h"
+#include "unix/err.h"
+#include "unix/termcap.h"
 #endif
 
 #ifdef sparc
 #include <memory.h>
-#include "sunos.h"
+#include "unix/sunos.h"
 #endif
 
 #include "nroff.h"
@@ -103,6 +107,13 @@ static char    *version = "(GNO) v1.2, 5 Mar 97 gdr";
  *
  *************************************************************************/
 
+#ifdef CHECK_STACK
+static void
+stackCleanup (void) {
+    fprintf(stderr, "stack usage: %d bytes\n", _endStackCheck());
+}
+#endif
+
 int
 main (int argc, char *argv[]) {
     register int	i;
@@ -115,6 +126,10 @@ main (int argc, char *argv[]) {
     char	       *ps;
 
 #ifdef __GNO__
+#ifdef CHECK_STACK
+    _beginStackCheck();
+    atexit(stackCleanup);
+#endif
     if (argc > 0) {
 	progname = __prognameGS();
     } else {
@@ -211,14 +226,14 @@ main (int argc, char *argv[]) {
     /*
      *   parse cmdline flags
      */
-    for (i = 1; i < argc; ++i) {
+    for (i = 1; i < argc; ++i) {   
 	if (*argv[i] == '-' || *argv[i] == '+') {
 	    if (pswitch (argv[i], &swflg) == ERR) {
 		err_exit (-1);
 	    }
 	}
     }
-    
+
     /*
      *   loop on files
      */

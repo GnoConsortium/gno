@@ -1,15 +1,20 @@
 .\" man(7) manpage by rosenkra@convex.com (Bill Rosenkranz, 7/22/90)
+.\"          modifications by Devin Reade, 18 March 97
 .\"
-.TH MAN 7
+.\" $Id: man.7,v 1.2 1997/03/20 06:40:50 gdr Exp $
+.\"
+.TH MAN 7 "18 March 1997"
 .SH NAME
 man - nroff macro package for manual pages
 .SH SYNOPSIS
-nroff -man file ...
+.BR nroff
+.BR -man
+.IR file ...
 .SH DESCRIPTION
 These macros are used to lay out reference pages for manuals.
 .PP
 Any text argument
-t
+.I t
 may be zero to six words.
 Quotes may be used to include blanks in a 'word'.
 Text
@@ -21,27 +26,44 @@ reaching a non-indented paragraph (i.e. at .SH or .SS).
 In contrast with normal Unix procedure, all indents (tabs) are 8 spaces
 instead of 5.
 This can be changed by modifying tmac.an.
-.SH FILES
-.ec |
-\lib\tmac\tmac.an       the macro library
-.ec \
-.SH SEE ALSO
-nroff(1), man(1)
 .SH "REQUEST SUMMARY"
 .nf
 .cc +
 Request        Cause    Explanation
                Break?
 
-.B t           no       Text t is bold. Quote to imbed blanks.
-.I t           no       Text t is italic. Quote to imbed blanks.
+.B t ...       no	Text \fIt\fR and subsequent arguments
+			are bold.  Quote to imbed blanks.
+			There is no intervening space.
+.I t ...       no	Text \fIt\fR and subsequent arguments
+			are italic.  Quote to imbed blanks.
+			There is no intervening space.
+.R t ...       no	Text \fIt\fR and subsequent arguments
+			are roman.  Quote to imbed blanks.
+			There is no intervening space.
+.BR t ...      no	Alternate bold and roman fonts for
+			specified arguments.  There is no
+			intervening space.
+.RB t ...      no	Alternate roman and bold fonts for
+			specified arguments.  There is no
+			intervening space.
+.IR t ...      no	Alternate italic and roman fonts for
+			specified arguments.  There is no
+			intervening space.
+.RI t ...      no	Alternate roman and italic fonts for
+			specified arguments.  There is no
+			intervening space.
+.LP            yes      Begin paragraph. Set prevailing
+                        indent to 8.
+.PP            yes      Same as .LP.
 .IP x          yes      Set prevailing indent to 8. Begin
                         indented paragraph with hanging tag
-                        given by first argument. Tag x is
+                        given by first argument. Tag \fIx\fR is
                         always placed on a separate line.
-.LP            yes      Same as .PP.
-.PP            yes      Begin paragraph. Set prevailing
-                        indent to 8.
+.TP x          yes	Same as .IP.  Note that this is a deviation from
+			normal Unix usage.  This macro should be avoided
+			until it is fixed.
+.HP            yes	Indented paragraph without tag.
 .RE            yes      End of relative indent. Set prevailing
                         indent to amount of starting .RS.
 .RP x          yes      Like .IP, but use relative indent. Must
@@ -50,11 +72,18 @@ Request        Cause    Explanation
                         in distance 8.
 .SH t          yes      Subhead. Quote to imbed blanks.
 .SS t          yes      Subsection. Quote to imbed blanks. No
-                        indent for t.
-.TH n s c v d  yes      Begin page named n of chapter s; c is
-                        the chapter name; d is the date of the
-                        most recent change; v is version number.
+                        indent for \fBt\fR.
+.TH n s d v c  yes      Begin page named \fIn\fR of chapter number \fIs\fR.
+			\fId\fR is the date of the most recent change
+			or the current date (prefixed by
+			"\fBPrinted:\fR") if not specified.  \fIv\fR is the
+			version number, or \fBGNO\fR if not specified.
+			\fIc\fR is the chapter name.  If \fIc\fR is not
+			specified, it is derived based on the
+			value of \fIs\fR.
                         Sets prevailing indent and tabs to 8.
+.EX            no	Exit now, leaving no extra space the
+			end of the document.
 
 +cc .
 .fi
@@ -67,7 +96,7 @@ with this macro package:
 .cc +
 
 .\\\|" this is a comment
-.TH DEMO 1 "Commands Manual" "Version 1.0" "\\\|*\|(DA"
+.TH DEMO 1 "\\\|*\|(DA" "Version 1.0" "Commands Manual"
 .SH NAME
 demo - show how to use -man package  \\\|" this is a comment
 .SH SYNOPSIS
@@ -246,3 +275,8 @@ net:    rosenkra@convex.com
 CIS:    71460,17
 GENIE:  W.ROSENKRANZ
 .fi
+.SH FILES
+\fB/usr/lib/tmac/tmac.an\fR \- the macro library
+.SH SEE ALSO
+nroff(1), man(1)
+   

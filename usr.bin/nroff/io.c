@@ -19,11 +19,13 @@
  *	- Heavily hacked up to conform to "real" nroff by Bill Rosenkranz
  *      - Heavily modified by Devin Reade to avoid memory trashing bugs.
  *
- * $Id: io.c,v 1.1 1997/03/14 06:22:27 gdr Exp $
+ * $Id: io.c,v 1.2 1997/03/20 06:40:50 gdr Exp $
  */
 
 #ifdef __ORCAC__
 segment "io________";
+#pragma noroot
+#pragma optimize 79
 #endif
 
 #include <stdio.h>
@@ -34,12 +36,12 @@ segment "io________";
 #include <err.h>
 #include <termcap.h>
 #else
-#include "err.h"
-#include "termcap.h"
+#include "unix/err.h"
+#include "unix/termcap.h"
 #endif
 
 #ifdef sparc
-#include "sunos.h"
+#include "unix/sunos.h"
 #endif
 
 #include "nroff.h"
@@ -322,4 +324,3 @@ putc_lpr (char c, FILE *fp)
 }
 
 #endif /* NOT_USED */
-

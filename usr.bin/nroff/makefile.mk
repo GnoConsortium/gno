@@ -1,15 +1,16 @@
 #
 # Makefile for nroff(1).
 #
-# $Id: makefile.mk,v 1.1 1997/03/14 06:22:28 gdr Exp $
+# $Id: makefile.mk,v 1.2 1997/03/20 06:40:50 gdr Exp $
 #
 
-IIGS		= FALSE	# TRUE or FALSE
+IIGS		= TRUE	# TRUE or FALSE
 USE_INSIGHT	= FALSE # TRUE or FALSE
 
 BINDIR		= /usr/bin
 TMACDIR		= /usr/lib/tmac
 MANDIR		= /usr/man
+INSTALL		= /usr/bin/install
 
 #
 ###### end of configuration
@@ -19,26 +20,29 @@ PROFILE		= # -pg
 
 .IF $(IIGS) == TRUE
 DEFINES		=
-OPTIMIZE	=
-LDLIBS		=
-.ELIF $(USE_INSIGHT) == TRUE
+OPTIMIZE	= -v -w -G1
+LDFLAGS		+= -v
+LDLIBS		= -l/lib/ltermcap -l/trenco4/gno.src/lib/libc/libc.v211b2
+.ELIF $(USE_INSIGHT) == TRUE     
 CC		= insight 
 DEFINES		=
 OPTIMIZE	= -g
-LDLIBS		= int.tqs -ltermcap
-.ELSE
+LDLIBS		= unix/int.tqs -ltermcap
+.ELSE                    
 CC		= gcc
 DEFINES		= # -DDEBUG
 OPTIMIZE	= $(PROFILE) -g
 LDLIBS		= $(PROFILE) -ltermcap
-.END
+.END             
 
 .IF $(IIGS) == TRUE
 UX_SRC		=
 UX_OBJ		=
+REZ_OBJ		= nroff.r
 .ELSE
-UX_SRC		= err.c
-UX_OBJ		= err.o
+UX_SRC		= unix/err.c
+UX_OBJ		= unix/err.o
+REZ_OBJ		=
 .END
 
 GCC_PARANOIA	= \
@@ -55,9 +59,9 @@ GCC_FLAGS	=
 .END
 
 
-CFLAGS	= $(OPTIMIZE) $(GCC_FLAGS) $(DEFINES)
+CFLAGS	+= $(OPTIMIZE) $(GCC_FLAGS) $(DEFINES)
 
-SUNOS_H	= sunos.h
+SUNOS_H	= unix/sunos.h
 OBJS	= main.o command.o escape.o io.o low.o macros.o strings.o \
 	  text.o $(UX_OBJ)
 SRCS	= main.c command.c escape.c io.c low.c macros.c strings.c \
@@ -65,8 +69,9 @@ SRCS	= main.c command.c escape.c io.c low.c macros.c strings.c \
 
 default: nroff
 
-nroff: $(OBJS)
+nroff: $(OBJS) $(REZ_OBJ)
 	$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LDLIBS)
+	copyfork $(REZ_OBJ) $@ -r
 
 clobber:
 	$(RM) -f nroff $(OBJS) 
@@ -79,13 +84,14 @@ callchart:
 	cflow $(SRCS) > $@
 
 install:
+	$(RM) -f /bin/nroff
 	$(INSTALL) -d $(BINDIR) $(TMACDIR) $(MANDIR)/man1 $(MANDIR)/man7
 	$(INSTALL) -m755 nroff $(BINDIR)
 	$(INSTALL) -m644 tmac.an $(TMACDIR)
 	$(INSTALL) -m644 tmac.s $(TMACDIR)
-	$(INSTALL) -m644 nroff.1 $(TMACDIR)/man1
-	$(INSTALL) -m644 man.7 $(TMACDIR)/man7
-	$(INSTALL) -m644 ms.7 $(TMACDIR)/man7
+	$(INSTALL) -m644 nroff.1 $(MANDIR)/man1
+	$(INSTALL) -m644 man.7 $(MANDIR)/man7
+	$(INSTALL) -m644 ms.7 $(MANDIR)/man7
 
 #
 # additional dependancies

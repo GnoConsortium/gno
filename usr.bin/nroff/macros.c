@@ -19,20 +19,22 @@
  *	- Heavily hacked up to conform to "real" nroff by Bill Rosenkranz
  *      - Heavily modified by Devin Reade to avoid memory trashing bugs.
  *
- * $Id: macros.c,v 1.1 1997/03/14 06:22:27 gdr Exp $
+ * $Id: macros.c,v 1.2 1997/03/20 06:40:50 gdr Exp $
  */
 
 #ifdef __ORCAC__
 segment "macros____";
+#pragma noroot
+#pragma optimize 78
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "err.h"
+#include "unix/err.h"
 
 #ifdef sparc
-#include "sunos.h"
+#include "unix/sunos.h"
 #endif
 
 #include "nroff.h"
@@ -92,9 +94,9 @@ defmac (char *line, FILE *infp)
     char    	defn[MXMLEN];
     char		newend[10];
 
-
+#undef BORK
 #ifdef BORK
-    fprintf(stderr, "DEBUG: defmac: \"%s\"\n", line);
+    fprintf(stderr, "DEBUG defmac (%s:%d): \"%s\"\n", __FILE__, __LINE__, line);
 #endif
 
     /*

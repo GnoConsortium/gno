@@ -35,4 +35,9 @@ Compatibility
 Bugs
 ----
 	This program uses recursion, Not A Good Thing on the IIgs.
-	It really needs a rewrite.
+	It really needs a rewrite.  In the interim, I have left stack
+	overflow checking on.  It currently uses 6k of stack which
+	is too much for a well behaved program of this size.
+
+	The -ms package has not been reviewed recently and is not believed
+	to be generally usable.
