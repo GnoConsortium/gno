@@ -10,7 +10,7 @@
  * Copyright 1995 by Devin Reade for James Brookes' describe(1) utility.
  * See the included README file and man page for details.
  *
- * $Id: descu.c,v 1.1 1996/01/22 01:38:05 gdr Exp $
+ * $Id: descu.c,v 1.2 1996/01/22 02:40:49 gdr Exp $
  */
 
 #pragma optimize -1
@@ -28,7 +28,7 @@
 #include <getopt.h>
 #include "desc.h"
 
-#define _VERSION_     "v1.0.1"
+#define _VERSION_     "v1.0.2"
 #define MAX_BUFFER    65534
 #define SLOTS_QUANTUM 20
 #define REJECT_FILE   "descu.rej"
@@ -38,6 +38,7 @@ ssize_t read(int, void *, size_t);
 #endif
 char *strerror(int);
 void convert (char *);
+int my_stricmp (const char *cs, const char *ct);
 
 char *versionStr = _VERSION_;
 static char *header=NULL;    /* comments before the first describe entry */
@@ -251,7 +252,7 @@ void insert(char *buffer, int initial_buffer) {
 /*
  * sortArray - do a heapsort on <array> consisting of <slotsUsed> elements.
  *             The sort is based on the field array[i]->name, sorted
- *             lexicographically.
+ *             lexicographically ignoring case.
  */
 
 void sortArray(descEntry **array, int slotsUsed) {
@@ -286,8 +287,8 @@ void sortArray(descEntry **array, int slotsUsed) {
     i = l;           /* set up to sift down element rra to its proper place */
     j = l << 1;
     while (j<=ir) {
-      if (j<ir && (strcmp(array[j]->name,array[j+1]->name)<0)) ++j;
-      if (strcmp(rra->name,array[j]->name)<0) {         /* demote rra */
+      if (j<ir && (my_stricmp(array[j]->name,array[j+1]->name)<0)) ++j;
+      if (my_stricmp(rra->name,array[j]->name)<0) {         /* demote rra */
         array[i] = array[j];
         i = j;
         j += i;
@@ -297,6 +298,27 @@ void sortArray(descEntry **array, int slotsUsed) {
   }
 }
 
+/*
+ * int my_stricmp (const char *cs, const char *ct);
+ *
+ * Compare the two strings cs and ct case-insensitive. Return
+ * <0 if cs<ct, 0 if cs == ct, >0 if cs>ct.
+ *
+ */
+
+int my_stricmp (const char *cs, const char *ct)
+{
+  char a, b;
+
+  while ((a = tolower(*cs)) && (b = tolower(*ct))) {
+    if (a < b) return -1;
+    if (a > b) return 1;
+    cs++; ct++;
+  }
+  if (*cs == *ct) return 0;
+  else if (*cs) return -1;
+  else return 1;
+}
 
 /*
  * ns_strcmp (no-space string compare) -- compare two strings, ignoring

@@ -1,6 +1,10 @@
 /*                                                                        */
 /* descc - compile info file into describe database file                  */
 /*                                                                        */
+/*      v1.0.2  -  One bug removed. Recompiled to accomodate new          */
+/*                 SHELL line and DESCDB environment var                  */
+/*                 Soenke Behrens [Sun Oct 22 1995]                       */
+/*                                                                        */
 /*      v1.0.1  -  Added -h and -V flags  [Sat May 06 1995]               */
 /*                 Extracted certain #defines to "desc.h"                 */
 /*                 Now uses getopt for command line parsing.              */
@@ -26,7 +30,7 @@
 /*                                                                        */
 /*      Records                                                           */
 /*                                                                        */
-/*         7 variable-length Null-terminated strings.                     */
+/*         8 variable-length Null-terminated strings.                     */
 /*                                                                        */
 
 #pragma optimize 15
@@ -38,7 +42,7 @@
 #include <assert.h>
 #include "desc.h"
 
-#define _VERSION_ "v1.0.1"
+#define _VERSION_ "v1.0.2"
 
 /* prototypes */
 
@@ -114,6 +118,7 @@ int main (int argc, char **argv) {
   int2 lines, namecount, i, j;
   nameEntry nameStruct;
   int c, errflag;
+  char *db_path;
 
   /* initialize globals */
   Vflag=0;
@@ -125,6 +130,24 @@ int main (int argc, char **argv) {
   assert(sizeof(int2)==2);
   assert(sizeof(int4)==4);
 
+  /* Get database path: If DESCDB is set, use it,
+     otherwise use DATABASE */
+
+  if (getenv("DESCDB") == 0)
+  {
+    if ((db_path = strdup(DATABASE)) == 0)
+    {
+      fprintf(stderr,"couldn't allocate path variable\n");
+      exit (-1);
+    }
+  } else {
+    if ((db_path = strdup(getenv("DESCDB"))) == 0)
+    {
+      fprintf(stderr,"couldn't allocate path variable\n");
+      exit (-1);
+    }
+  }
+     
   /* parse command line */
   while ((c = getopt(argc, argv, "hV")) != EOF) {
     switch (c) {
@@ -138,23 +161,29 @@ int main (int argc, char **argv) {
     }
   }
   if (errflag || (argc-optind != 1))
+  {
+    free (db_path);
     usage(basename(argv[0]));
+  }
 
   /* open input and output files */
 
   if ((buffer = malloc (MAX_LINE_LENGTH)) == NULL) {
     fprintf(stderr,"couldn't allocate line buffer\n");
+    free (db_path);
     exit (-1);
   }
   
   if ((FInPtr = fopen(argv[argc-1],"r")) == NULL) {
     fprintf(stderr,"Error opening %s; exiting.\n",argv[argc-1]);
+    free (db_path);
     free(buffer);
     exit(1);
   }
 
-  if ((FOutPtr = fopen(DATABASE,"wb+")) == NULL) {
-    fprintf(stderr,"Error opening database file %s; exiting.\n",DATABASE);
+  if ((FOutPtr = fopen(db_path,"wb+")) == NULL) {
+    fprintf(stderr,"Error opening database file %s; exiting.\n",db_path);
+    free (db_path);
     free(buffer);
     exit(1);
   }
@@ -164,13 +193,13 @@ int main (int argc, char **argv) {
   namecount = 0;
 
   /* space for # of array entries */
-  fwrite(&namecount,sizeof(namecount),1,FOutPtr);
+  fwrite((void *)&namecount,sizeof(namecount),1,FOutPtr);
 
   while(mygets(buffer,&lines,FInPtr) != -1) {
     if (!strncmp(buffer,NAME,FIELD_LEN)) {     /* found a match */
       strncpy(nameStruct.name,&buffer[FIELD_LEN],NAME_LEN-1);
       nameStruct.name[NAME_LEN-1] = '\0';
-      fwrite(&nameStruct,sizeof(nameStruct),1,FOutPtr);
+      fwrite((void *)&nameStruct,sizeof(nameStruct),1,FOutPtr);
       namecount++;
     }
   }
@@ -181,21 +210,27 @@ int main (int argc, char **argv) {
     exit(-1);
   }
   rewind(FInPtr);
-  fflush(FInPtr);
   buffer[0] = '\0';
   lines = 0;
-  fprintf(FOutPtr,"\t");
-    
+  fputc('\t',FOutPtr);
   /* Increment to first field */
 
   while (strncmp(buffer,NAME,FIELD_LEN))    /* found a match! */
     mygets(buffer,&lines,FInPtr);
 
+  { /* BUGBUG 22/10/95 Soenke Behrens                      */ 
+    /* ORCA/C does not advance the file position indicator */
+    /* correctly after above fputc(). This tries to remedy */
+    /* the situation. Take out once library has been fixed */
+    fprintf(FOutPtr,"Junk");
+    fseek(FOutPtr,-4,SEEK_CUR);
+  }
+
   /* Write out records and keep track of their file offsets */
   for (i = 0; i < namecount; i++) {
     record_locs[i] = ftell(FOutPtr);
 
-    /* print out <Version>, <Author>, <Contact>, <Where>, <FTP> */
+    /* print out <Version>, <Shell>, <Author>, <Contact>, <Where>, <FTP> */
     for (j = 0; j < FIELD_COUNT-1; j++) {
       buffer[FIELD_LEN] = '\0';
       mygets(buffer,&lines,FInPtr);
@@ -208,13 +243,13 @@ int main (int argc, char **argv) {
       if (!strncmp(buffer,NAME,FIELD_LEN)) break;
       fprintf(FOutPtr,"%s ",buffer);
     }
-    fprintf(FOutPtr,"\n");
+    fputc('\n',FOutPtr);
   }
 
   endOfFile = ftell(FOutPtr);
   fflush(FOutPtr); /*gdr 1*/
   rewind(FOutPtr);
-  fwrite(&namecount,sizeof(namecount),1,FOutPtr);
+  fwrite((void *)&namecount,sizeof(namecount),1,FOutPtr);
   fflush(FOutPtr); /*gdr 1*/
 
   /* time to go through the record_locs array and backpatch in */
@@ -225,12 +260,13 @@ int main (int argc, char **argv) {
     fread(&nameStruct,sizeof(nameStruct),1,FOutPtr);
     fseek(FOutPtr,-(sizeof(nameStruct)),SEEK_CUR);
     nameStruct.offset = record_locs[i];
-    fwrite(&nameStruct,sizeof(nameStruct),(size_t) 1,FOutPtr);
+    fwrite((void *)&nameStruct,sizeof(nameStruct),(size_t) 1,FOutPtr);
     fflush(FOutPtr);
   }
 
   fseek(FOutPtr,endOfFile,SEEK_SET);
   fclose(FOutPtr);
+  free(db_path);
   free(record_locs);
   free(buffer);
 

@@ -1,14 +1,14 @@
-$Id: README,v 1.1 1996/01/22 01:37:59 gdr Exp $
+$Id: README,v 1.2 1996/01/22 02:40:43 gdr Exp $
 
 This is the README file for the describe package.  This package is
-designated as version 1.0.1, and consists of the following utilities:
+designated as version 1.0.2, and consists of the following utilities:
 
-	describe v1.0.1  - show database entries describing the current
+	describe v1.0.2  - show database entries describing the current
                            status of programs
 
-	descc    v1.0.1  - the describe source compiler
+	descc    v1.0.2  - the describe source compiler
 
-	descu    v1.0    - the describe source updater
+	descu    v1.0.2  - the describe source updater
 
 ABOUT DESCRIBE AND DESCC
 ========================
@@ -21,9 +21,10 @@ different people are releasing these days.  The reason it sat around on
 my harddrive so long is I was having qualms about its designated role in
 life.  I wasn't sure exactly what I wanted it to do.  Well, I've decided
 to KISS for now: descc simply compiles the utility list, which I maintain,
-into a (very) simple "database" located in /usr/local/lib/.  The companion
-utility 'describe' is used to fetch information about a particular utility
-from this "database".
+into a (very) simple "database" located in /usr/local/lib/
+[alternatively, the full path given in the environment variable DESCDB will be
+used, if it is set. sb].  The companion utility 'describe' is used to
+fetch information about a particular utility from this "database".
 
    descc is fairly limited, as is the "database" format itself.  Part of the
 KISS (or it wouldn't be out now) design philosophy ;).  Usage is simple:
@@ -81,7 +82,18 @@ CHANGES
 
 This details changes to the entire distribution.
 
-v1.1	May 1995
+v1.02	October 1995
+	descc now circumvents a bug in ORCA/C's ftell() function.
+	describe can now find entries that are not all lower-case.
+	describe will now print the name of entries in the case
+		they were entered into the database.
+	descu now sorts the describe source file case-insensitive.
+	describe and descc can now find the database in a path given
+		by the environment variable DESCDB. If DESCDB is not set,
+		/usr/local/lib/describe is used, as before.
+	A new "Shell:" field has been added to the format of the database.
+
+v1.01	May 1995
 	Initial release for descu.
 	Added -h and -v flags to describe and descc.
 	Common defines and typedefs were extracted to desc.h.
@@ -102,8 +114,11 @@ AUTHORS
 The original describe and descc utilities and the describe format were
 written by James Brookes <jamesb@ecst.csuchico.edu>.
 
-The descu utility and v1.1 modifications to describe and descc were by
+The descu utility and v1.01 modifications to describe and descc were by
 Devin Reade <gdr@myrias.ab.ca>.
+
+v1.02 modifications to describe, descc and descu were by Soenke Behrens
+<sbehrens@contech.demon.co.uk>.
 
 LEGALESE
 ========

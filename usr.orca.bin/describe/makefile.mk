@@ -15,17 +15,20 @@ INSTALL	= /bin/cp
 
 build:  describe descc descu
 
-descc:	descc.o basename.o
+descc:	descc.o basename.o descc.r
 	@purge
 	$(CC) $(LDFLAGS) $< -o $@ $(LDLIBS)
+	copyfork descc.r descc
 
-describe: describe.o basename.o
+describe: describe.o basename.o describe.r
 	@purge
 	$(CC) $(LDFLAGS) $< -o $@ $(LDLIBS)
+	copyfork describe.r describe
 
-descu:	descu.o basename.o
+descu:	descu.o basename.o descu.r
 	@purge
 	$(CC) $(LDFLAGS) $< -o $@ $(LDLIBS)
+	copyfork descu.r descu
 
 basename.o: basename.c
 	$(CC) -c $(CFLAGS) basename.c

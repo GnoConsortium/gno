@@ -9,10 +9,11 @@
 #define FIELD_LEN        9
 #define NAME_LEN        34
 #define MAX_LINE_LENGTH 81
-#define FIELD_COUNT      6 /* number of fields below, not including comments */
+#define FIELD_COUNT      7 /* number of fields below, not including comments */
 
 #define NAME    "Name:    "
 #define VERSION "Version: "
+#define SHELL   "Shell:   "
 #define AUTHOR  "Author:  "
 #define CONTACT "Contact: "
 #define WHERE   "Where:   "
@@ -20,6 +21,7 @@
 
 #define NAME_SHORT    "Name:"
 #define VERSION_SHORT "Version:"
+#define SHELL_SHORT   "Shell:"
 #define AUTHOR_SHORT  "Author:"
 #define CONTACT_SHORT "Contact:"
 #define WHERE_SHORT   "Where:"

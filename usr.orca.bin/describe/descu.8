@@ -1,4 +1,4 @@
-.TH DESCU 8 "System Administration" "7 May 1995" "Version 1.0"
+.TH DESCU 8 "System Administration" "7 May 1995" "Version 1.0.2"
 .SH NAME
 descu \- the describe(1) source updater
 .SH SYNOPSIS
@@ -31,13 +31,14 @@ field.  If an entry in
 is already in
 .IR sourcefile ,
 it replaces the original; otherwise the entry is appended.  In both
-cases, the output is sorted lexicographically, based on the
+cases, the output is sorted lexicographically (ignoring case), based on
+the
 .BR Name:
 field.
 .LP
 .BR descu
 will create the file
-.B describe.rej
+.B descu.rej
 in the current directory.  This contains all records that were removed
 from 
 .IR sourcefile .

@@ -1,4 +1,4 @@
-.TH DESCRIBE 1 "Commands and Applications" "7 May 1995" "Version 1.0.1"
+.TH DESCRIBE 1 "Commands and Applications" "7 May 1995" "Version 1.0.2"
 .SH NAME
 describe \- show information about a program
 .SH SYNOPSIS
@@ -13,6 +13,7 @@ This information includes:
 
 	The name of the program;
 	The program version number;
+	The shell the program was written for;
 	The author (or the person currently maintaining the program);
 	Contact information for the author;
 	Where the utility should be installed;
@@ -35,7 +36,16 @@ uses a database compiled by
 .SH FILES
 /usr/local/lib/describe \- the system
 .B describe
-database.
+database. If the environment variable
+.B DESCDB
+is set, its value will be used instead.
+.SH ENVIRONMENT
+.IP DESCDB
+Full path to the system describe database. If
+.B DESCDB
+is set, its value is used instead of the default location
+/usr/local/lib/describe.
+
 .SH AUTHOR
 James Brookes <jamesb@ecst.csuchico.edu>.
 .SH "SEE ALSO"

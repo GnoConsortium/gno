@@ -1,4 +1,4 @@
-.TH DESCC 8 "System Administration" "7 May 1995" "Version 1.0.1"
+.TH DESCC 8 "System Administration" "7 May 1995" "Version 1.0.2"
 .SH NAME
 descc \- the describe(1) source compiler
 .SH SYNOPSIS
@@ -19,12 +19,13 @@ and saves the result to the system describe database.
 The describe source file consists of comments and records.  A comment
 is any line starting with the
 .BR #
-character.  Each record consists of seven fields.  The first 
-six consist of one line of text and begin with the following identifiers:
+character.  Each record consists of eight fields.  The first 
+seven consist of one line of text and begin with the following identifiers:
 .nf
 
         Name:    (The name of the program.)
         Version: (The current version number.)
+        Shell:   (The shell(s) the program was written for.)
         Author:  (The author or maintainer of the program.)
         Contact: (How to contact the Author, typically an 
                   email address.)
@@ -38,16 +39,17 @@ a brief description of the program.  The following is an example of
 a complete record:
 .nf
 
-        Name:    descc
-        Version: 1.0.1
+        Name:    describe
+        Version: 1.0.2
+        Shell:   ORCA/Shell, GNO/ME
         Author:  James Brookes
         Contact: jamesb@ecst.csuchico.edu
         Where:   /usr/local/bin
         FTP:     ftp.cco.caltech.edu
 
-        Print a multi-line description obtained from the compiled
-        'describe' database; giving utility name, version, author, 
-        author's contact, where the utility is, as well as where the 
+           Print a multi-line description obtained from the compiled
+        'describe' database; giving utility name, version, intended shell,
+        author, author's contact, where the utility is, as well as where the
         utility can be FTPd from on the InterNet.
 
 .fi
@@ -69,13 +71,22 @@ in the following format:
            4 bytes:  Long Int, offset of the \fBrecord\fR in file.
 
         Records
-           7 variable-length NULL-terminated strings.
+           8 variable-length NULL-terminated strings.
 
 .fi
 .SH FILES
 /usr/local/lib/describe \- the system
 .B describe
-database.
+database. If the environment variable
+.B DESCDB
+is set, its value will be used instead.
+.SH ENVIRONMENT
+.IP DESCDB
+Full path to the system describe database. If
+.B DESCDB
+is set, its value is used instead of the default location
+/usr/local/lib/describe.
+
 .SH AUTHOR
 James Brookes <jamesb@ecst.csuchico.edu>.
 .SH "SEE ALSO"
