@@ -1,0 +1,21 @@
+	System calls new in v2.0.6
+	==========================
+
+	select			$4303
+	InstallNetDriver	$4403
+	socket			$4503
+	bind			$4603
+	connect			$4703
+	listen			$4703
+	accept			$4903
+	recvfrom		$4A03
+	sendto			$4B03
+	recv			$4C03
+	send			$4D03
+	getpeername		$4E03
+	getsockname		$4F03
+	getsockopt		$5003
+	setsockopt		$5103
+	shutdown		$5203
+	setreuid		$5303
+	setregid		$5403
