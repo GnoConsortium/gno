@@ -7,7 +7,7 @@
 # This file is parsed whenever a gsh shell is started.
 # See also /etc/glogin and $HOME/glogin.
 #
-# $Id: gshrc,v 1.1 1999/02/15 01:00:45 gdr-ftp Exp $
+# $Id: gshrc,v 1.2 1999/07/04 19:18:52 gdr-ftp Exp $
 #
 ###
 
@@ -36,7 +36,6 @@ setenv	iwiiPageSaver	on
 setenv	iwiiTypeFace	condensed
 
 # Setup necessary aliases
-alias /bin/rm	"cp -p rm"
 alias /bin/mv   "cp -p mv"
 alias cp 	"cp -i"
 alias fcat	"melt -c"
@@ -48,7 +47,6 @@ alias logout    "/bin/init 5"
 alias ls 	"ls -CF"
 alias make	dmake
 alias mv 	"cp -p mv -i"
-alias rm 	"cp -p rm"
 alias uncompress	"compress -d"
 alias view 	"vi -R"
 alias zcat 	"compress -cd"

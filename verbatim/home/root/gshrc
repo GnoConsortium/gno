@@ -3,7 +3,7 @@
 # GNO 2.0.6 gshrc file
 # This file is parsed whenever a gsh shell is started.
 #
-# $Id: gshrc,v 1.5 1999/01/18 02:01:29 gdr-ftp Exp $
+# $Id: gshrc,v 1.6 1999/07/04 19:18:51 gdr-ftp Exp $
 #
 ###
 
@@ -36,7 +36,6 @@ setenv	iwiiPageSaver	on
 setenv	iwiiTypeFace	condensed
 
 # Setup necessary aliases
-alias /bin/rm	"cp -p rm"
 alias /bin/mv   "cp -p mv"
 alias cp 	"cp -i"
 alias fcat	"melt -c"
@@ -48,7 +47,6 @@ alias logout    "/bin/init 5"
 alias ls 	"ls -CF"
 alias make	dmake
 alias mv 	"cp -p mv -i"
-alias rm 	"cp -p rm"
 alias uncompress	"compress -d"
 alias view 	"vi -R"
 alias zcat 	"compress -cd"
