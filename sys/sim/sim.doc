@@ -1,0 +1,104 @@
+Serial Interrupt Manager Tool Set
+---------------------------------
+
+The Serial Interrupt Manager (SIM) is a code module that is installed by
+a permanent init (PIF) file residing in the *:System:System.Setup
+directory of an Apple IIGS.  SIM arbitrates serial interrupt vector
+'patches' by providing a simple interface for applications and device
+drivers to handle serial interrupts (from the IIGS's built-in SCC 8530)
+in a manner completely consistent with Apple's guidelines on the subject.
+
+SIM replaces the first quarter or so of the IIGS' main interrupt handler.
+Most of the code is identical to that found in the ROM, with the
+following notable exception: non-MIDI asynchronous serial interrupts
+are handled by dispatching to routines that can be installed by using
+the SIM tool.
+
+SCC interrupt handlers installed through SIM are called, according
+to Apple guidelines, immediately _after_ checking for AppleTalk and MIDI
+interrupts.  This prevents AppleTalk or MIDI data loss, and provides the
+lowest allowable overhead in processing asynchronous serial interrupts.
+Data rates of up to 57600 baud are possible with no resulting data loss.
+
+Since SIM handles serial interrupts through its own vector, and not
+the $E10024 vector, the IIGS Serial Firmware can be used in combination
+with SIM; SIM always has priority over the standard firmware handlers,
+and if the firmware is used to initialize a port which is already being
+handled by a SIM handler a crash may result.  Any suggestions for better
+arbitration of the firmware are welcome.  (SIM could possibly check to see
+if the firmware's SerFlag has been set, and automatically uninstall
+the SIM handler and queue a warning dialog in the Scheduler.)
+
+------------------------------------------------------------------------
+SIM consists of a number of routines which are accessed via the
+System 6.0 SendRequest IPC mechanism.  To reduce development times, SIM
+comes with a library that can be used to access SIM in a language-
+independent manner.
+
+The following call descriptions show the various SIM calls in C format.
+The calls expect their arguments in C order (i.e., pushing parameters
+right to left).
+
+The return value of the calls is either zero, indicating that no error
+occurred, or a non-zero integer indicating the error number.  All of the
+calls can return SIMNotFound in the event the SIM tool could not be located.
+
+---------------------
+int SIMVersion(void)
+
+Returns the version number (in tool version format) of the SIM tool.
+
+Errors:
+SIMNotFound	- indicates that the SIM tool could not be located
+($0006)		  Upon receiving this error, the application should
+		  terminate attempting to install an interrupt
+		  handler and should notify the user that the port
+		  could not be opened.
+
+---------------------
+int InstallIntVect(word port, longword address)
+
+InstallIntVect installs a serial handler routine into SIM's interrupt
+dispatch code.  'address' is a pointer to an interrupt handler which
+conforms to the serial interrupt handlers described in the Apple IIGS
+Firmware Reference (which are called through the $E10024 vector).
+
+The following steps should be taken to install a SIM handler:
+
+	Initialize SCC, but do not enable interrupts
+	call InstallIntVect
+	Enable SCC Interrupts
+
+Errors:
+SIMInvalidPort	An invalid port number was specified.  The only port numbers
+($0005)		currently supported are SIMModemPort (2) and SIMPrinterPort (1)
+
+SIMATalkActive	The specified port is already in use by AppleTalk, and thus
+($0003)		cannot be used.
+
+SIMAlreadyInst	Some other system component (a driver or application) already
+($0001)		has an interrupt handler installed for that port.
+
+In the last two cases, an application should notify the user that the port
+is busy and cannot be used, and drivers should return an error code
+appropriate to the condition.
+
+---------------------
+int RemoveIntVect(word port, longword address)
+
+RemoveIntVect is used to uninstall a previously installed interrupt handler.
+The port number and address of the handler must be specified.  This prevents
+a program from trying to forcibly uninstall some other program's interrupt
+handler, an approach which is not acceptable.
+
+The procedure for uninstalling an interrupt handler should be as follows:
+
+	Turn of SCC interrupts and shutdown SCC chip if desired
+	Call RemoveIntVect
+
+Errors:
+SIMInvalidAddr	The address passed to RemoveIntVect does not match the
+		actual address of the handler on the specified port.
+
+SIMNotInstalled	There is no handler currently installed for the specified
+		port.

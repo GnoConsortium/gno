@@ -1,0 +1,1 @@
+SIMInstallHand	gequ	$8000SIMRemoveHand	gequ	$8001SIMGetVersion	gequ	$8002* SIM Error codesSIMNoError	gequ	0SIMAlreadyInst	gequ	1SIMInvalidAddr	gequ	2SIMATalkActive	gequ	3SIMNotInstalled gequ	4SIMInvalidPort gequ	5SIMNotFound	gequ	6* SIM Port codesSIMModemPort   gequ  2SIMPrinterPort gequ  1

@@ -1,0 +1,84 @@
+Joe,
+
+This is a primitive disassembly of the ROM 03 interrupt handler
+firmware.  You need to fix this up to look like the ROM 01 version
+I have in SIM.ASM.
+
+MasterIntHandler clc                    (E1/0010 JMPs here, FF/BC6C)
+         xce
+         LONG  I,M
+         php
+         phb
+         Assume B=00E1
+         pea   $E1E1
+         plb
+         sta   |ASave                   ($108)
+         lda   SHADOW                   shadow register
+         sta   |ShadSave                ($119)
+         ora   #$8000
+         and   #$9F3E
+         sta   SHADOW                   shadow register
+         stx   |XSave                   ($10a)
+         sty   |YSave                   ($10c)
+         tdc
+         sta   |DPSave                  ($110)
+         lda   #$0000
+         tcd
+         SHORT I,M
+         bcc   NotSure                  ; check emulation mode
+         lda   $04,s
+         and   #$10
+         adc   #$70
+NotSure  bvs   hmm2
+         lda   #$03
+         sta   SCCAREG                  SCC channel A cmd register
+         lda   SCCAREG                  SCC channel A cmd register
+         bit   |ATlkFlag
+         beq   SerInt2
+         pha
+         and   #$07
+         bne   ChanB
+         lda   SCCADATA                 SCC channel A data register
+         sta   |SerIntData
+         lda   SCCADATA                 SCC channel A data register
+         sta   |SerIntData+1
+         jsl   >IRQ_ATalk
+         bra   Next
+ChanB    lda   SCCBDATA                 SCC channel B data register
+         sta   |SerIntData
+         lda   SCCBDATA                 SCC channel B data register
+         sta   |SerIntData+1
+         jsl   >IRQ_ATalk
+Next     lda   >$010101
+         sta   |EmulStakSave
+         lda   #$00
+         ror   a
+         sta   |$E10101
+         pla
+         bra   Next2
+SerInt2  pha
+         lda   >$010101
+         sta   |EmulStakSave
+         stz   |$E10101
+         jsl   >$E1021C                 MIDI?
+         pla
+         bcc   $BD0C
+         clc
+Next2    pha
+         and   |SerFlag
+         beq   NoSerial
+         jsl   >IRQ_Serial
+         ror   |$E10101
+         pla
+         lda   |$E10101
+         bne   NoMoreSer
+         LONG  I,M
+         plb
+         jmp   Exit
+NoSerial pla
+         bne   $BD07
+NoMoreSer clv
+hmm2     lda   >$010101
+         sta   |EmulStakSave
+         LONG  I,M
+         ....
