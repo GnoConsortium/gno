@@ -1,0 +1,22 @@
+This is test(1) for GNO/ME.  For those of you familiar with it
+from other platforms, it is a minimal BSD version, not a code-bloated
+GNU version.  For those not familiar with it, read the man page.
+
+I admit that this has limited functionality with gsh, but it will
+become more useful when sh(1) comes out ...
+
+For copying info, see the legalese at the beginning of the file
+test.c, or the man page (you have to view the file directly rather
+than than via nroff(1) to see it).
+
+Also, regarding the GNO binary:
+
+	This program contains material from the ORCA/C Run-Time
+	Libraries, copyright 1987-1996 by Byte Works, Inc.  Used
+	with permission.
+
+If you have problems with this, let me know.  It was a two-hour port.
+
+Devin Reade
+February, 1996
+<gdr@myrias.com>

@@ -1,0 +1,11 @@
+Name:    test
+Version: 1.0 (9 Feb 96)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /bin
+FTP:     grind.isca.uiowa.edu
+
+  The test utility evaluates string and integer expressions and, if
+it evaluates to true, returns a zero (true) exit status; otherwise it
+returns 1 (false).  Test is used mainly in shell scripts.
