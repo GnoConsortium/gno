@@ -8,19 +8,24 @@
 # directories:
 #		gen, gno, locale, stdio, stdlib, stdtime, string, sys
 #
+# Before 'make' is run in this directory, you must also build ORCALib, 
+# since we steal some of our object files from that hierarchy.
+#
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.8 1998/02/09 08:44:06 taubert Exp $
+# $Id: Makefile,v 1.9 1998/02/19 01:00:34 gdr-ftp Exp $
 #
 
-LIB=	c
-# assert.a must be copied from $(ORCA_SRC)/ORCALib/obj into $(OBJ_DIR)
-OBJS=	assert.a
+LIB	= c
+
+# This actually resides in the ORCALib source tree
+SRCS	= assert.asm
 
 # This library goes into /lib.
 USE_SLASH_LIB= true
 
 .INCLUDE: /src/gno/lib/lib.mk
 
-$(LIBTARGET):: lib$(LIB).r
-	$(CATREZ) -d $@ $<
+# Use cp(1) rather than install(1) here so that we get a newer timestamp.
+assert.o: $(ORCA_SRC)/ORCALib/obj/assert.a
+	cp $< $@
