@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: paths.mk,v 1.3 1997/11/01 19:10:37 gdr Exp $
+# $Id: paths.mk,v 1.4 1998/01/26 00:44:20 gdr-ftp Exp $
 #
 
 # SRC_DIR is the top-level GNO source distribution directory (containing
@@ -33,27 +33,6 @@ ORCA_DIST	= /lang/orca
 # to avoid backward references during linking.
 
 ORCA_SRC	= /src/lib/orcalibs/Source
-
-# INCLUDE_GNO is the directory containing only the header files (and subdirs
-# containing header files) that will be shipped with GNO.  Normally, this
-# should be $(SRC_DIR)/gno/include
-
-INCLUDE_GNO	= $(SRC_DIR)/gno/include
-
-# INCLUDE_ORCA is the directory containing the completely unmodified Orca/C
-# header files.  (The current version is v2.1.1b2.)  If a file in here
-# requires modifications, it should be copied into $(INCLUDE_GNO) and edited
-# there.  Presumably, INCLUDE_ORCA is $(ORCA_DIST)/libraries/orcacdefs.
-
-INCLUDE_ORCA	= $(ORCA_DIST)/libraries/orcacdefs
-
-# INCLUDE_GNO_ALT is a directory residing on an HFS volume.  It is used for
-# those header files which have ProDOS-incompatible file names.  These
-# headers are actually "links" to the "real" headers, which reside in the
-# $(INCLUDE_GNO) hierarchy.
-# I recommend using /HFS-src/HFSinclude and defining /HFS-src in /etc/namespace.
-
-INCLUDE_GNO_ALT	= /HFS-src/HFSinclude
 
 # These are the directories that will wind up becoming the distributions
 # disks.  We want to be able to ship on floppy, although the preferred

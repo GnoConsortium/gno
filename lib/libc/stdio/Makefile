@@ -3,7 +3,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: Makefile,v 1.8 1997/11/01 19:16:29 gdr Exp $
+# $Id: Makefile,v 1.9 1998/01/26 00:44:25 gdr-ftp Exp $
 #
 
 .INCLUDE:	../../../paths.mk
@@ -32,7 +32,10 @@ obj:	$(OBJS)
 # We can avoid the problem by preprocessing this file with a stand-alone
 # cpp(1).  This problem has been reported to Byte Works.
 #
-JINCL	= -I$(INCLUDE_GNO) -I$(INCLUDE_ORCA)
+# It is *critical* that the directories specified here match those defined
+# by the "path" pragma in 13/orcacdefs/defaults.h.
+#
+JINCL	= -I/usr/include -I/lang/orca/libraries/orcacdefs
 JDEFS	= -D__ORCAC__ -D__appleiigs__ -D__GNO__ -DSPLIT_FILE_2
 
 junk.c:		vfprintf.c
