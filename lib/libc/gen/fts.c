@@ -32,8 +32,12 @@
  */
 
 #ifdef __ORCAC__
-segment "fts_______";
+segment "libc_gen_2";
 #endif
+
+#pragma optimize 0
+#pragma debug 0
+#pragma memorymodel 0
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)fts.c       8.4 (Berkeley) 4/16/94";
@@ -49,12 +53,11 @@ static char sccsid[] = "@(#)fts.c       8.4 (Berkeley) 4/16/94";
 #include <string.h>
 #include <unistd.h>
 #include <assert.h>
+#include <fts.h>
 
-#ifdef __GNO__
+#if 0 /* def __GNO__ */
 #define FORCE_NOCHDIR 1               /* GNO v2.0.4 doesn't have fchdir */
 #endif
-
-#include "fts.h"
 
 #ifdef MAX
 #undef MAX
