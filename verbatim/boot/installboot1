@@ -1,7 +1,7 @@
 #
 # installboot1
 #
-# $Id: installboot1,v 1.4 1999/01/28 06:55:24 gdr-ftp Exp $
+# $Id: installboot1,v 1.5 1999/02/15 20:15:34 gdr-ftp Exp $
 #
 
 echo "Before running this script, you should have set your DOWNLOAD_DIR"
@@ -117,6 +117,9 @@ echo " "
 
 ###########################################
 
+echo "All done extractions."
+echo " "
+
 echo "Creating empty directories required by GNO ..."
 install -dV	doc
 install -dV	lang/orca/languages	lang/orca/shell	lang/orca/utilities
@@ -143,10 +146,11 @@ touch		var/adm/debug
 touch		var/adm/utmp var/adm/wtmp var/adm/lastlog
 chtyp -tbin -a0	var/adm/utmp var/adm/wtmp var/adm/lastlog
 
+echo "duplicating certain files due to the lack of hard or symbolic links"
+/tmp/mklinks
 
 ###########################################
 
-echo "All done extractions."
 echo " "
 echo "You should now proceed to extract the gnohfs.shk archive, as described"
 echo "in /gno.boot/README.install."
