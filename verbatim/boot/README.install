@@ -1,4 +1,4 @@
-$Id: README.install,v 1.5 1999/01/29 07:13:09 gdr-ftp Exp $
+$Id: README.install,v 1.6 1999/02/15 01:05:58 gdr-ftp Exp $
 
 The install scripts assumes that your _new_ distribution will be installed
 on to the two volumes /gno (ProDOS) and /gno-hfs (HFS).  It also assumes
@@ -66,6 +66,7 @@ You should now do the following steps:
 	     
 		     	/gno/System/Desk.Accs/GNOSnooperII
 		     	/gno/System/Desk.Accs/SuspDA
+		     	/gno/System/Desk.Accs/TMTerm
 		     	/gno/System/Drivers/FilePort
 		     	/gno/System/Drivers/FilePort.Data
 		     	/gno/System/Drivers/NullPort
