@@ -10,7 +10,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.5 1997/09/21 16:28:30 gdr Exp $
+# $Id: Makefile,v 1.6 1997/10/03 04:42:51 gdr Exp $
 #
 
 .INCLUDE: ../../paths.mk
@@ -21,3 +21,5 @@ ORCALIB_OBJ	= \
 
 libc:
 	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(ORCALIB_OBJ)
+
+.PHONY:	libc
