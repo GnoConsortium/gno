@@ -1,0 +1,59 @@
+.TH catrez 1 "Commands and Applications" "27 July 1996" "Version 1.0"
+.SH NAME
+catrez \- concatenate resource forks from files
+.SH SYNOPSIS
+.B catrez
+[
+.I -v
+]
+[
+.I -a
+]
+.RI "-d " dest_file
+.I file1
+[
+.IR file2 ...
+]
+.SH DESCRIPTION
+.B catrez
+concatenates resources from multiple files into the resource fork of a
+single file. (The data fork of the destination file is not modified.)
+This is useful to programmers who create
+resources for a program in several different files and need to combine
+them into the resource fork of the final executable file.
+
+.SH OPTIONS
+.IP -v
+Produce verbose output, including: the program version,
+the name of each source file, the type & ID of each copied resource, and
+whether a resource converter is required.
+.IP -a
+Append resources to the destination file rather than overwriting the
+resource fork.
+.IP "-d destfile"
+Existing destination file name [required parameter].
+
+.SH "GNO COMPATIBILITY"
+.B catrez
+will shut itself down if it receives any of the following signals:
+SIGHUP (hang-up),
+SIGINT (user keyboard interrupt),
+SIGPIPE (writing to a pipe with no reader),
+SIGALRM (alarm timer expiration), or
+SIGTERM (kill). User signals (SIGUSR1 and SIGUSR2) are ignored.
+
+.SH EXAMPLES
+Append the resources from menu.r to the resource fork of progfile
+.nf
+     catrez -a -d progfile menu.r
+
+.fi
+Combine several resource files and add to progfile
+.nf
+     catrez -d progfile version.r menu.r window.r startup.r
+.fi
+.SH "RETURN VALUES"
+.B catrez
+returns zero on success, non-zero otherwise.
+.SH AUTHOR
+Dave Tribby <tribby@cup.hp.com>

@@ -1,0 +1,25 @@
+/*
+ * Resources for catrez version and comments
+ *    Written by Dave Tribby
+ */
+
+#include ":H1:Orca:Libraries:Rinclude:Types.rez"
+
+// Version
+resource rVersion (1, $0000) {
+	{1, 0, 1, release, 0},
+	verUS,
+	"catrez",
+	"Copyright 1996 by David M. Tribby"
+};
+
+
+// Comment Templates
+
+resource rComment (1, $0000) {
+	"catrez v1.0.1\n"
+        "Shell program to concatenate resource forks of files\n"
+	"by Dave Tribby\n"
+	"Copyright 1996\n\n"
+        "Freeware: Distribute freely, but don't charge."
+};
