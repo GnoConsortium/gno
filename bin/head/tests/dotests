@@ -1,5 +1,6 @@
 # Tests for head command; invoked by command file "fulltests"
 #   Written by Dave Tribby (August 1997)
+#   $Id: dotests,v 1.2 1997/10/03 03:56:35 gdr Exp $
 
 # Location of the head command to be tested
 set testcmd="../head"
