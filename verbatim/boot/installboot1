@@ -1,7 +1,7 @@
 #
 # installboot1
 #
-# $Id: installboot1,v 1.2 1998/04/24 06:02:20 gdr-ftp Exp $
+# $Id: installboot1,v 1.3 1999/01/18 01:59:52 gdr-ftp Exp $
 #
 
 echo "Before running this script, you should have set your DOWNLOAD_DIR"
@@ -121,6 +121,7 @@ echo "Creating empty directories required by GNO ..."
 install -dV	doc
 install -dV	lang/orca/languages	lang/orca/shell	lang/orca/utilities
 install -dV	lang/orca/libraries/orcacdefs
+install -dV	tmp
 install -dV	usr/games		usr/guest/operator
 install -dV	usr/local/bin		usr/local/doc	usr/local/etc
 install -dV	usr/local/include	usr/local/lib

@@ -1,4 +1,4 @@
-$Id: README.install,v 1.2 1998/04/24 06:02:17 gdr-ftp Exp $
+$Id: README.install,v 1.3 1999/01/18 01:59:52 gdr-ftp Exp $
 
 The install scripts assumes that your _new_ distribution will be installed
 on to the two volumes /gno (ProDOS) and /gno-hfs (HFS).  It also assumes
@@ -8,46 +8,78 @@ If your volumes are named something else, replace the names in the cd commands
 below with the appropriate name.
  
 You should now do the following steps:
-	1.  Set your DOWNLOAD_DIR environment variable to the directory
-	    containing the binary distribution NuFX (*.shk) files.
-	    These files are named gno.01.shk, gno.02.shk, and so forth.
-	    For example, if your files were in /download, you would type:
-		setenv DOWNLOAD_DIR /download
-
-	2.  Issue the commands:
-		cd /gno
-		/gno.boot/installboot1
-
-	3.  Issue the commands:
-		cd /gno-hfs
-		/gno.boot/installboot2
-
-	4.  You should now edit the file /gno/etc/namespace.  If your
-	    files were extracted onto a volume other than /gno, you will
-	    have to replace all the ":gno:" strings with the appropriate
-	    path.
-
-	    You may want to put /usr onto a different partition; it will
-	    get fairly large over time.
-
-	    If you have a RAM disk, you should consider having it renamed
-	    to /tmp using renram5(8) or mktmp(8), in which case its entry
-	    should be removed from the namespace file.
-	    
-	    See the kernel reference manual for a description of this file.
-
-	5.  If you are not short of disk space, you should create .so links
-	    for your manual pages.  (See the mkso(8) man page for an
-	    explanation.)  You can do this by executing the following
-	    commands:
-
-	    	cd /gno/usr/man
-	    	mkso -v -H /gno-hfs/man mkso.data
-	    	
-	6.  You should now return to your program launcher (the Finder,
-	    ProSEL-16, or whatever you used to start /gno.boot/kern) by
-	    typing "exit" at the prompt.  To startup up your new version
-	    of GNO, you should then launch /gno/kern.  You will then see
-	    a "login:" prompt.  Enter "root" as the user name; you will
-	    not yet need a password.
-
+	 1.  Set your DOWNLOAD_DIR environment variable to the directory
+	     into which you placed the above NuFX (*.shk) files. For example,
+	     if the files gnohfs.shk, gno.01.shk, gno.02.shk (and so forth)
+	     were in /download, you would type:
+	     
+		     	setenv DOWNLOAD_DIR /download
+	     
+	     Ensure that you use slashes ( /) rather than colons ( :) as the
+	     pathname delimiter.  Do not use a trailing slash.
+	     
+	 2.  Install the majority of the GNO base distribution files by
+	     changing directory into your destination directory and running
+	     the installboot1 script. Assuming that you will be installing
+	     to the partition /gno, the commands would be:
+	     
+		     	cd /gno
+		     	/gno.boot/installboot1
+	     
+	     This step takes quite a while, even with an accelerated IIgs.
+	     Have patience.
+	     
+	 3.  There are a small number of recommended files that do not follow
+	     ProDOS naming conventions.  If you wish to install these files,
+	     make sure that you have an HFS or Appleshare disk online. Change
+	     directories to that disk (or subdirectory) and run installboot2.
+	     Assuming that the HFS disk is /gno-hfs, the commands are:
+	     
+		     	cd /gno-hfs
+		     	/gno.boot/installboot2
+	     
+	     This step is optional.  It is possible to use the GNO binary
+	     distribution without an HFS partition, but some information
+	     will be missing.
+	     
+	 4.  You should now edit the file /gno/etc/namespace.  If your
+	     files were extracted onto a volume other than /gno, you will
+	     have to replace all the ":gno:" strings with the appropriate
+	     path.  Similarily, you will have to replace ":gno-hfs:" if
+	     that is not the name of your HFS (or Appleshare) partition
+	     where you ran the installboot2 script.
+	     
+	     The gno.boot disk includes the vi utility to do these edits.
+	     You can also edit the namespace file with any other text editor
+	     of your choosing, as long as it is done before you try to run
+	     your new GNO distribution.
+	     
+	     A vi tutorial and quick reference guide may be found at
+	     http://www.jaws.umn.edu/~tobkin/vi.
+	     
+	     See the kernel reference manual for a description of the
+	     namespace file.
+	     
+	 5.  If you are not short of disk space, you should create .so links
+	     for your manual pages.  (See the mkso(8) man page for an
+	     explanation.)  You can do this by executing the following
+	     commands:
+	     
+		     	cd /gno/usr/man
+		     	mkso -v -H /gno-hfs/man mkso.data
+	     
+	     If you installed GNO somewhere other than /gno and /gno-hfs, then
+	     edit the above lines accordingly.  If you did not install files
+	     onto an HFS (or Appleshare) partition at all, then execute the
+	     following commands instead:
+	     
+		     	cd /gno/usr/man
+		     	mkso -v mkso.data
+	     
+	 6.  You should now return to your program launcher (the Finder,
+	     ProSEL-16, or whatever you used to start /gno.boot/kern) by
+	     typing "exit" at the prompt.  To startup up your new version
+	     of GNO, you should then launch /gno/kern.  You will then see
+	     a "login:" prompt.  Enter "root" as the user name; you will
+	     not yet need a password.
+	     

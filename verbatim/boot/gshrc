@@ -1,29 +1,11 @@
 ###
 #
-# GNO 2.0.6 gshrc file (for the bootstrap disk)
+# GNO 2.0.6 gshrc file (for the bootstrap disk).
+# This file is parsed whenever a gsh shell is started.
 #
-# $Id: gshrc,v 1.2 1998/04/24 06:02:18 gdr-ftp Exp $
+# $Id: gshrc,v 1.3 1999/01/18 01:59:52 gdr-ftp Exp $
 #
 ###
-
-#
-# Setup the other prefixes to emulate ORCA for the benefit of utilities
-# If you're using ORCA 2.0 stuff, be sure to set prefixes 13-17 also
-#
-
-prefix 31 \*
-
-prefix	13	/lib
-prefix	14	/tmp          
-prefix	15	/lang/orca/shell
-prefix	16	/lang/orca/languages
-prefix	17	/lang/orca/utilities
-
-prefix 2 13
-prefix 3 14
-prefix 4 15
-prefix 5 16
-prefix 6 17
 
 #
 # Initializes our environment
@@ -38,7 +20,6 @@ rehash
 # set prompt="%C> "
 set prompt="gno.boot# "
 set term=gnocon
-setenv EDITOR	vi
 setenv history	25
 setenv savehist	25
 setenv MANPATH	/man
@@ -59,12 +40,13 @@ echo "= Don't worry about the fact that this disk contains a v2.0.4 kernel;"
 echo "= a more recent one will be installed.  See Problem Report #62 at"
 echo "= http://www.gno.org/~gno/bugs.html for details."
 echo "="
-echo '= $Id: gshrc,v 1.2 1998/04/24 06:02:18 gdr-ftp Exp $'
+echo '= $Id: gshrc,v 1.3 1999/01/18 01:59:52 gdr-ftp Exp $'
 echo "====================================================================="
 echo " "
 echo " "
 echo "Please read the file README.install on the /gno.boot disk.  You can"
 echo "do this by issuing the command:"
 echo "        more README.install"
-echo "The vi editor is also available."
+echo "The vi editor is also available.  A vi tutorial is available from"
+echo "http://www.jaws.umn.edu/~tobkin/vi"
 echo " "
