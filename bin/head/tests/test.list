@@ -1,0 +1,63 @@
+Script started on: Mon Sep 01 15:03:17 1997
+[61] test=> dotests ; exit 
+Testing command ../head beginning at Mon Sep  1 15:03:29 1997
+Listing first ten lines (default) of file500.txt 
+ ==> 593 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.10l (no differences expected) 
+  Completion status = 0 
+ 
+Listing first ten lines (default) of file500.txt using stdin 
+ ==> 589 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.10l (no differences expected) 
+  Completion status = 0 
+ 
+Listing first ten lines (explicit) of file500.txt 
+ ==> 589 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.10l (no differences expected) 
+  Completion status = 0 
+ 
+Listing first ten lines (obsolescent) of file500.txt 
+ ==> 589 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.10l (no differences expected) 
+  Completion status = 0 
+ 
+Listing first 90 chars of file500.txt 
+ ==> 666 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.90c (no differences expected) 
+  Completion status = 0 
+ 
+Listing first 3 lines of f*.* 
+ ==> 790 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file multi.out (no differences expected) 
+  Completion status = 0 
+ 
+***** Error Messages ***** 
+ 
+Expected error: illegal option 
+head: illegal option -- x
+usage: head [-n lines | -c bytes] [file ...]
+       head [-count] [file ...]
+ ==> 1837 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: illegal byte count 
+head: illegal byte count -- 12x
+ ==> 1854 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: can't combine line and byte counts 
+head: can't combine line and byte counts
+ ==> 1850 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: badname: no such file or directory 
+head: badname: no such file or directory
+ ==> 1852 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+Script done on: Mon Sep 01 15:04:17 1997
