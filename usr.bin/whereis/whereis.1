@@ -1,5 +1,7 @@
-.\" @(#)whereis.1 1.17 90/02/15 SMI; from UCB 4.2
-.TH WHEREIS 1 "Commands and Applications" "2 January 1994" "Orca/Gno Version 1.1"
+.\"
+.\" $Id: whereis.1,v 1.2 1997/09/30 04:22:43 gdr Exp $
+.\"
+.TH WHEREIS 1 "25 September 1997" GNO "Commands and Applications"
 .SH NAME
 whereis \- locate the binary, source, and manual page files for a command
 .SH SYNOPSIS
@@ -13,6 +15,10 @@ whereis \- locate the binary, source, and manual page files for a command
 ]
 \fIfilename\fP\|
 .SH DESCRIPTION
+This manual page documents
+.BR whereis
+version 1.0.3.
+.LP
 .B whereis
 locates source/binary and manuals sections for specified
 files.
@@ -26,36 +32,28 @@ Prefixes of
 resulting from use of source code control are also dealt with.
 .B whereis
 then attempts to locate the desired program in
-a list of standard places:
-.RS
-.nf
-/bin
-/usr/bin
-/usr/sbin
-/usr/games
-/usr/include
-/usr/hosts
-/usr/local
-/usr/local/bin
-/etc
-/man            (disabled)
-/usr/man
-/usr/src/bin
-/usr/src/etc
-17/
-17/help
-.fi
-.RE
+a list of standard places, defined by the
+.BR /etc/whereis.conf
+configuration file.  (The location of this file can be overridden with the
+.BR WHEREIS_CONF
+environment variable.)
 .SH OPTIONS
-.B \-b
+.IP \fB\-b\fR
 Search only for binaries.
-.LP
-.B \-c
-Make the search case\-insensitive.
-.LP
-.B \-f
-Terminate the last directory list and signals the start of file names,
-and
+.IP \fB\-c\fR
+Make the search case\-sensitive.
+.sp 1
+.BR NOTE :
+In
+.BR whereis
+versions 1.2 and earlier, this flag had the opposite effect.  As of
+.BR whereis
+version 1.3, searches are case insensitive by default since that is more
+appropriate to the filesystems available to GS/OS.
+.sp 1
+This flag is GNO-specific.
+.IP \fB\-f\fR
+Terminates the last directory list and signals the start of file names.  This
 .I must
 be used when any of the
 .BR \-B ,
@@ -63,38 +61,74 @@ be used when any of the
 or
 .B \-S
 options are used.
-.LP
-.B \-m
+.IP \fB\-m\fR
 Search only for manual sections.
-.LP
-.B \-s
+.IP \fB\-s\fR
 Search only for sources.
-.LP
-.B \-u
+.IP \fB\-u\fR
 Search for unusual entries.  A file is said to be unusual if it does
 not have one entry of each requested type. Therefore
 .B "whereis -m -u *"
 asks for those files in the current
 directory which have no documentation.
-.LP
-.B \-B
+.IP \fB\-B\fR
 Change or otherwise limit the places where
 .B whereis
 searches for binaries.
-.LP
-.B \-M
+.IP \fB\-M\fR
 Change or otherwise limit the places where
 .B whereis
 searches for
 manual sections.
-.LP
-.B \-S
+.IP \fB\-S\fR
 Change or otherwise limit the places where
 .B whereis
 searches for sources.
-.LP
-.B \-V
+.IP \fB\-V\fR
 Print version information.
+.SH "CONFIGURATION FILE"
+The configuration file,
+.BR /etc/whereis.conf ,
+has three sections.  Each section specifies a list of directories
+to search.  One section is used for programs, another for documentation,
+and the last for sources.
+.LP
+Each section starts with the section identifier.  The recognised identifiers
+are
+.BR bindirs ,
+.BR mandirs ,
+and
+.BR srcdirs .
+A colon (\fB:\fR) must follow each section identifier.  Following the
+colon is a whitespace-delimited list of paths that
+.BR whereis
+will search (these may appear on separate lines).  The list is terminated
+with the first semicolon (\fB;\fR) character.
+.LP
+The colon and semicolon characters must be delimited with whitespace; they
+must not be run together with pathnames or identifiers.
+.LP
+If the hash (\fB#\fR) character appears on a line, it and any following
+characters on that line are taken to be comments, as are blank lines.
+.LP
+The following is a sample of how the
+.BR whereis.conf
+may look.
+.RS
+.nf
+# Sample whereis.conf file.
+bindirs :
+	/bin
+	/usr/bin ;
+mandirs :
+	/usr/man/man1
+	/usr/local/man/man1
+	;
+srcdirs :
+	# none configured here
+	;
+.fi
+.RE
 .SH EXAMPLE
 Find all files in
 .B /usr/bin
@@ -110,20 +144,24 @@ example% cd /usr/ucb
 example% whereis \-u \-M /usr/share/man/man1 \-S /usr/src/cmd \-f *
 .fi
 .RE
+.SH ENVIRONMENT
+.IP \fBWHEREIS_CONF\fR
+If this environment variable is set and non-empty, it is taken as the
+pathname of the configuration file, rather than using the default
+.BR /etc/whereis.conf .
+.SH ATTRIBUTIONS
+This command was ported from 4.2BSD by Devin Reade.
 .SH FILES
-.nf
-/usr/src/*
-/usr/{doc,man}/*
-/usr/{lib,bin,ucb,old,new,local}
-/etc
-.fi
-.SH SEE ALSO
-.BR chdir (2V)
+.IP \fB/etc/whereis.conf\fR
+The
+.BR whereis
+configuration file.  It contains a list of directories to search for
+programs, documentation, and sources.
 .SH BUGS
 Since
 .B whereis
 uses
-.BR chdir (2V)
+.BR chdir (2)
 to run faster, pathnames given with the
 .BR \-M ,
 .BR \-S ,
@@ -131,3 +169,7 @@ or
 .B \-B
 must be full; that is, they must begin with a
 .BR / .
+.SH SEE ALSO
+.BR find (1),
+.BR locate (1),
+.BR chdir (2)

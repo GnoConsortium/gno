@@ -1,6 +1,3 @@
-#ifdef __CCFRONT__
-#include <14:pragma.h>
-#endif
 /*-
  * Copyright (c) 1980 The Regents of the University of California.
  * All rights reserved.
@@ -32,177 +29,53 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * $Id: whereis.c,v 1.3 1997/09/30 04:22:43 gdr Exp $
  */
 
-#ifndef lint
+#if !defined(lint) && !defined(__GNO__)
 char copyright[] =
 "@(#) Copyright (c) 1980 The Regents of the University of California.\n\
  All rights reserved.\n";
-#endif /* not lint */
 
-#ifndef lint
 static char sccsid[] = "@(#)whereis.c	5.5 (Berkeley) 4/18/91";
 #endif /* not lint */
 
+#include <sys/param.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/param.h>
-#include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <libc.h>
+#include <err.h>
+#include <assert.h>
+#include <gno/contrib.h>
+
+#define LINEBUF_SIZE	128			/* max size of conf line */
+#define	CONF_PATH	"/etc/whereis.conf"	/* default path */
+#define CONF_ENV	"WHEREIS_CONF"		/* name of environ variable */
+
+#define PROWORD_BIN	"bindirs"	/* keyword in whereis.conf */
+#define PROWORD_MAN	"mandirs"	/* keyword in whereis.conf */
+#define PROWORD_SRC	"srcdirs"	/* keyword in whereis.conf */
 
 /*
- * Pointers that will correspond to the GNO_* or ORCA_* structs, below
+ * These string arrays will hold the paths that we want to check, as
+ * defined in the whereis.conf file.
  */
 
-static char **bindirs;
-static char **mandirs;
-static char **srcdirs;
+LC_StringArray_t Sbindirs = NULL;
+LC_StringArray_t Smandirs = NULL;
+LC_StringArray_t Ssrcdirs = NULL;
 
-/*
- * These are the directories to check when running under the Gno shell
- */
+/* pointers to the vectors in the above string arrays; legacy code */
+char **bindirs;
+char **mandirs;
+char **srcdirs;
 
-static char *GNO_bindirs[] = {
-	"/bin",
-	"/usr/bin",
-	"/usr/sbin",
-	"/usr/games",
-	"/usr/include",
-	"/usr/hosts",
-   "/usr/local",
-   "/usr/local/bin",
-   "17", 
-	"/etc",
-	0
-};
-/* This needs to be redone - man pages live with sources */
-static char *GNO_mandirs[] = {
-
-/*
-   These are disabled since /man is not usually present; this eliminates
-   a long series of accesses to the 3.5" drive.
-
-        "/man/man1",   
-        "/man/man2",
-        "/man/man3",
-        "/man/man4",
-        "/man/man5",
-        "/man/man6",
-        "/man/man7",
-        "/man/man8",
-        "/man/cat1",
-        "/man/cat2",
-        "/man/cat3",
-        "/man/cat4",
-        "/man/cat5",
-        "/man/cat6",
-        "/man/cat7",
-        "/man/cat8",
-*/
-
-		  "/usr/man/cat1",
-	     "/usr/man/cat2",
-	     "/usr/man/cat3",
-	     "/usr/man/cat4",
-	     "/usr/man/cat5",
-	     "/usr/man/cat6",
-	     "/usr/man/cat7",
-	     "/usr/man/cat8",
-	     "/usr/man/man1",
-	     "/usr/man/man2",
-	     "/usr/man/man3",
-	     "/usr/man/man4",
-	     "/usr/man/man5",
-	     "/usr/man/man6",
-	     "/usr/man/man7",
-	     "/usr/man/man8",
-        "17/help",
-        0           
-};
-static char *GNO_srcdirs[]  = {
-	"/usr/src/bin",
-	"/usr/src/etc",
-	/* still need libs */
-	0
-};
-
-/*
- * These are the directories to check when running under the Orca shell
- */
-
-static char *ORCA_bindirs[] = {
-	"31/bin",
-	"31/usr/bin",
-	"31/usr/sbin",
-	"31/usr/games",
-	"31/usr/include",
-	"31/usr/hosts",
-   "31/usr/local",
-   "31/usr/local/bin",
-   "17", 
-	"31/etc",
-	0
-};
-/* This needs to be redone - man pages live with sources */
-static char *ORCA_mandirs[] = {
-
-/*
-   These are disabled since /man is not usually present; this eliminates
-   a long series of accesses to the 3.5" drive.
-
-        "31/man/man1",   
-        "31/man/man2",
-        "31/man/man3",
-        "31/man/man4",
-        "31/man/man5",
-        "31/man/man6",
-        "31/man/man7",
-        "31/man/man8",
-        "31/man/cat1",
-        "31/man/cat2",
-        "31/man/cat3",
-        "31/man/cat4",
-        "31/man/cat5",
-        "31/man/cat6",
-        "31/man/cat7",
-        "31/man/cat8",
-*/
-
-		  "31/usr/man/cat1",
-	     "31/usr/man/cat2",
-	     "31/usr/man/cat3",
-	     "31/usr/man/cat4",
-	     "31/usr/man/cat5",
-	     "31/usr/man/cat6",
-	     "31/usr/man/cat7",
-	     "31/usr/man/cat8",
-	     "31/usr/man/man1",
-	     "31/usr/man/man2",
-	     "31/usr/man/man3",
-	     "31/usr/man/man4",
-	     "31/usr/man/man5",
-	     "31/usr/man/man6",
-	     "31/usr/man/man7",
-	     "31/usr/man/man8",
-        "17/help",
-        0           
-};
-static char *ORCA_srcdirs[]  = {
-	"31/usr/src/bin",
-	"31/usr/src/etc",
-	/* still need libs */
-	0
-};
-
-
-#ifdef CASEFLAG
-int   cflag = 0;
-#endif
-
+int	cflag = 1;
 char	sflag = 1;
 char	bflag = 1;
 char	mflag = 1;
@@ -214,65 +87,120 @@ char	**Mflag;
 int	Mcnt;
 char	uflag;
 
-char  *verstring = "whereis -- Apple IIgs Version 1.2";
+char  *verstring = "whereis version 1.3";
 
-void getlist (int *argcp, char ***argvp, char ***flagp, int *cntp);
-void zerof(void);
-void lookup (register char *cp);
-void looksrc (char *cp);
-void lookbin (char *cp);
-void lookman (char *cp);
-void findv (char **dirv, int dirc, char *cp);
-void find (char **dirs, char *cp);
-void findin (char *dir, char *cp);
-int  itsit (register char *cp, register char *dp);
+void	getlist (int *argcp, char ***argvp, char ***flagp, int *cntp);
+void	zerof(void);
+void	lookup (register char *cp);
+void	findin (char *dir, char *cp);
+int	itsit (register char *cp, register char *dp);
+void	getDirectories (void);
+void	addIdent (int ident, char *path);
 
-#ifdef DEBUG
-void begin_stack_check(void);
-int  end_stack_check(void);
+/*
+ * If INLINE_FUNCS is defined, we use macro versions of some very
+ * short routines.  Unfortunately, ORCA/C v2.1.x doesn't have the
+ * ability to do this itself.
+ */
+#define INLINE_FUNCS
+
+#ifdef INLINE_FUNCS
+#define find(dirs, cp) \
+{ \
+	char **ldirs = dirs; \
+	while (*ldirs) { \
+		findin(*ldirs++, cp); \
+	} \
+}
+
+#define findv(dirv, dirc, cp) \
+{ \
+	char **ldirv = dirv; \
+	int ldirc = dirc; \
+	while (ldirc > 0) { \
+		findin(*ldirv++, cp); \
+		dirc--; \
+	} \
+}
+
+#define looksrc(cp) \
+{ \
+	if (Sflag == 0) { \
+		find(srcdirs, cp); \
+	} else { \
+		findv(Sflag, Scnt, cp); \
+	} \
+}
+
+#define lookbin(cp) \
+{ \
+	if (Bflag == 0) { \
+		find(bindirs, cp); \
+	} else { \
+		findv(Bflag, Bcnt, cp); \
+	} \
+}
+
+#define lookman(cp) \
+{ \
+	if (Mflag == 0) { \
+		find(mandirs, cp); \
+	} else { \
+		findv(Mflag, Mcnt, cp); \
+	} \
+}
+
+#else
+void	looksrc (char *cp);
+void	lookbin (char *cp);
+void	lookman (char *cp);
+void	find (char **dirs, char *cp);
+void	findv (char **dirv, int dirc, char *cp);
+#endif
+
+#if defined(__GNO__) && defined(__STACK_CHECK__)
+#include <gno/gno.h>
+static void
+stackResults(void) {
+	fprintf(stderr, "stack usage:\t ===> %d bytes <===\n",
+		_endStackCheck());
+}
 #endif
 
 /*
  * whereis name
  * look for source, documentation and binaries
  */
-int main(int argc, char **argv)
-{
+int
+main(int argc, char **argv) {
 
-#ifdef DEBUG
-   begin_stack_check();
+#ifdef __STACK_CHECK__
+	_beginStackCheck();
+	atexit(stackResults);
 #endif
 
+	/* quick usage check */
 	argc--, argv++;
 	if (argc == 0) {
 usage:
-
-#ifdef CASEFLAG
-		fprintf(stderr, "whereis [ -sbmucV ] [ -SBM dir ... -f ] name...\n");
-#else /* not CASEFLAG */
-		fprintf(stderr, "whereis [ -sbmuV ] [ -SBM dir ... -f ] name...\n");
-#endif
-
-#ifdef DEBUG
-      if (getenv("CHECKSTACK"))
-   		printf("Stack Usage: %d\n",end_stack_check());
-#endif
-
+		fprintf(stderr,
+			"whereis [ -sbmucV ] [ -SBM dir ... -f ] name...\n");
 		exit(1);
 	}
 
-   /* select which directory structures we're going to use */
-   if (needsgno()) {
-	   bindirs = GNO_bindirs;
-      mandirs = GNO_mandirs;
-      srcdirs = GNO_srcdirs;
-   } else {
-	   bindirs = ORCA_bindirs;
-      mandirs = ORCA_mandirs;
-      srcdirs = ORCA_srcdirs;
-   }
+	/* initialize string arrays */
+	Sbindirs = LC_StringArrayNew();
+	Smandirs = LC_StringArrayNew();
+	Ssrcdirs = LC_StringArrayNew();
 
-	do
+	/* get the list of directories where we will look */
+        getDirectories();
+
+	bindirs = Sbindirs->lc_vec;
+	mandirs = Smandirs->lc_vec;
+	srcdirs = Ssrcdirs->lc_vec;
+
+	do {
 		if (argv[0][0] == '-') {
 			register char *cp = argv[0] + 1;
 			while (*cp) switch (*cp++) {
@@ -311,30 +239,24 @@ usage:
 				mflag++;
 				continue;
 
-#ifdef CASEFLAG
 			case 'c':
-	         cflag++;
-	         continue;
-#endif /* not CASEFLAG */
+				cflag = 0;
+				continue;
 
 			case 'V':
-	         printf("%s\n",verstring);
-            continue;
+				printf("%s\n",verstring);
+				continue;
 
 			default:
 				goto usage;
 			}
 			argv++;
-		} else
+		} else {
 			lookup(*argv++);
-	while (--argc > 0);
+		}
+	} while (--argc > 0);
 
-#ifdef DEBUG
-   if (getenv("CHECKSTACK"))
-   	printf("Stack Usage: %d\n",end_stack_check());
-#endif
-	
-   exit(0);
+	exit(0);
 }
 
 void getlist (int *argcp, char ***argvp, char ***flagp, int *cntp) {
@@ -407,6 +329,8 @@ again:
 		printf("\n");
 }
 
+#ifndef INLINE_FUNCS
+
 void looksrc (char *cp) {
 	if (Sflag == 0) {
 		find(srcdirs, cp);
@@ -421,7 +345,7 @@ void lookbin (char *cp) {
 		findv(Bflag, Bcnt, cp);
 }
 
-void lookman (char *cp) {
+void lookman (char *cp) {     
 	if (Mflag == 0) {
 		find(mandirs, cp);
 	} else
@@ -429,14 +353,18 @@ void lookman (char *cp) {
 }
 
 void findv (char **dirv, int dirc, char *cp) {
-	while (dirc > 0)
-		findin(*dirv++, cp), dirc--;
+	while (dirc > 0) {
+		findin(*dirv++, cp);
+		dirc--;
+	}
 }
 
 void find (char **dirs, char *cp) {
 	while (*dirs)
 		findin(*dirs++, cp);
 }
+
+#endif	/* ! INLINE_FUNCS */
 
 void findin (char *dir, char *cp) {
 	DIR *dirp;
@@ -455,14 +383,12 @@ void findin (char *dir, char *cp) {
 	closedir(dirp);
 }
 
-
-#ifdef CASEFLAG
-
 int itsit (register char *cp, register char *dp) {
 	register int i = strlen(dp);
 
-   if (cflag) {
-		if ( (dp[0] == 's' || dp[0] == 'S') && dp[1] == '.' && itsit(cp, dp+2))
+	if (cflag) {
+		if ( (dp[0] == 's' || dp[0] == 'S')
+		    && dp[1] == '.' && itsit(cp, dp+2))
 			return (1);
 		while (*cp && *dp && (tolower(*cp) == tolower(*dp)))
 			cp++, dp++, i--;
@@ -471,12 +397,13 @@ int itsit (register char *cp, register char *dp) {
 		while (isdigit(*dp))
 			dp++;
 		if (*cp == 0 && *dp++ == '.') {
+/* removed for GNO, because we want to look up compressed files also. */
+#ifndef __GNO__
 			--i;
-/* removed for GNO/ME, cause we want to look up compressed files also. */
-/*			while (i > 0 && *dp)
+			while (i > 0 && *dp)
 				if (--i, *dp++ == '.')
 					return (*dp++ == 'C' && *dp++ == 0);
- */
+#endif
 			return (1);
 		}
    } else {
@@ -489,40 +416,125 @@ int itsit (register char *cp, register char *dp) {
 		while (isdigit(*dp))
 			dp++;
 		if (*cp == 0 && *dp++ == '.') {
+/* removed for GNO, because we want to look up compressed files also. */
+#ifndef __GNO__
 			--i;
-/* removed for GNO/ME, cause we want to look up compressed files also. */
-/*			while (i > 0 && *dp)
+			while (i > 0 && *dp)
 				if (--i, *dp++ == '.')
 					return (*dp++ == 'C' && *dp++ == 0);
- */
+#endif
 			return (1);
 		}
    }
 	return (0);
 }
 
-#else  /* not CASEFLAG */
+/*
+ * addDirectories
+ *	Parse the configuration file and determine in what directories
+ *	we're supposed to be looking.
+ */
 
-int itsit (register char *cp, register char *dp) {
-	register int i = strlen(dp);
+char linebuf[LINEBUF_SIZE];
 
-	if (dp[0] == 's' && dp[1] == '.' && itsit(cp, dp+2))
-		return (1);
-	while (*cp && *dp && *cp == *dp)
-		cp++, dp++, i--;
-	if (*cp == 0 && *dp == 0)
-		return (1);
-	while (isdigit(*dp))
-		dp++;
-	if (*cp == 0 && *dp++ == '.') {
-		--i;
-/* removed for GNO/ME, cause we want to look up compressed files also. */
-/*		while (i > 0 && *dp)
-			if (--i, *dp++ == '.')
-				return (*dp++ == 'C' && *dp++ == 0);*/
-		return (1);
+#define STATE_AT_FILE	1
+#define STATE_SAW_ID	2
+#define STATE_SAW_COLON	3
+#define STATE_SAW_PATHS	4
+
+#define IDENT_BIN	1
+#define	IDENT_MAN	2
+#define	IDENT_SRC	3
+
+void
+getDirectories (void) {
+	char *confpath, *p;
+        FILE *fp;
+        int state, line, ident;
+
+	if (((confpath = getenv(CONF_ENV)) == NULL) ||
+	    (*confpath == '\0')) {
+		confpath = CONF_PATH;
 	}
-	return (0);
+	if ((fp = fopen(confpath, "r")) == NULL) {
+		err(1, "couldn't open config file %s", confpath);
+	}
+	state = STATE_AT_FILE;
+	line = 0;
+	while (fgets (linebuf, LINEBUF_SIZE, fp) != NULL) {
+
+		/* increment the line count */
+		line++;
+
+		/* delete any comments */
+		if ((p = strchr(linebuf, '#')) != NULL) {
+			*p = '\0';
+		}
+
+		/* parse each word */
+		if ((p = strtok(linebuf, " \t\r\n\v")) == NULL) {
+			continue;
+		}
+		do {
+			switch(state) {
+			case STATE_AT_FILE:
+				if (!strcmp(p, PROWORD_BIN)) {
+					state = STATE_SAW_ID;
+					ident = IDENT_BIN;
+				} else if (!strcmp(p, PROWORD_MAN)) {
+					state = STATE_SAW_ID;
+					ident = IDENT_MAN;
+				} else if (!strcmp(p, PROWORD_SRC)) {
+					state = STATE_SAW_ID;
+					ident = IDENT_SRC;
+				} else {                  
+					errx(1,
+					     "%s: line %d: identifier expected",
+					     confpath, line);
+				}
+				break;
+			case STATE_SAW_ID:
+				if ((*p != ':') || (*(p+1) != '\0')) {
+					errx(1, "%s: line %d: expected ':'",
+					     confpath, line);
+				}
+				state = STATE_SAW_COLON;
+				break;
+			case STATE_SAW_COLON:
+				if ((*p == ';') && (*(p+1) == '\0')) {
+					state = STATE_AT_FILE;
+				} else {
+					addIdent(ident, p);
+				}
+				break;
+			case STATE_SAW_PATHS:
+				break;
+			default:	assert(0);
+			}             
+		} while ((p = strtok(NULL, NULL)) != NULL);
+	}
+	fclose(fp);
 }
 
-#endif
+/*
+ * addIdent
+ *	Add an entry to the bindirs, mandirs, or srcdirs arrays, as
+ *	appropriate.
+ */
+void addIdent (int ident, char *path) {
+	char ***dirptr;
+
+	switch(ident) {
+	case IDENT_BIN:
+		LC_StringArrayAdd(Sbindirs, path);
+		break;
+	case IDENT_MAN:
+		LC_StringArrayAdd(Smandirs, path);
+		break;
+	case IDENT_SRC:
+		LC_StringArrayAdd(Ssrcdirs, path);
+		break;
+	default:
+		assert(0);
+	}
+}
