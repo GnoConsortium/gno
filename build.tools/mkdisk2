@@ -1,0 +1,105 @@
+#! /bin/gsh
+#
+# This script is used to make the NuFX archives for distribution.
+# Part 2.
+#
+# Devin Reade, April 1998
+#
+# $Id: mkdisk2,v 1.1 1998/04/22 04:51:12 gdr-ftp Exp $
+
+# What is our release directory?  (The second one must be HFS, and 
+# may be the same as the first.)
+setenv RELDIR	/gno
+setenv RELDIR2	/gno-hfs
+setenv RELBOOT	/gno.boot
+
+echo " "
+echo "Returning files in temporary directories to original locations."
+echo " "
+echo " "
+
+echo gno.16
+mv $RELDIR/gno.16/* $RELDIR
+rmdir $RELDIR/gno.16
+
+echo gno.15
+mv $RELDIR/gno.15/usr $RELDIR
+rmdir $RELDIR/gno.15
+
+echo gno.14
+mv $RELDIR/gno.14/usr/man $RELDIR/usr
+rmdir $RELDIR/gno.14/usr
+rmdir $RELDIR/gno.14
+
+echo gno.13
+mv $RELDIR/gno.13/usr/man/man* $RELDIR/usr/man
+rmdir $RELDIR/gno.13/usr/man
+rmdir $RELDIR/gno.13/usr
+rmdir $RELDIR/gno.13
+
+echo gno.12
+mv $RELDIR/gno.12/usr/man/man* $RELDIR/usr/man
+rmdir $RELDIR/gno.12/usr/man
+rmdir $RELDIR/gno.12/usr
+rmdir $RELDIR/gno.12
+
+echo gno.11
+mv $RELDIR/gno.11/usr/man/man* $RELDIR/usr/man
+rmdir $RELDIR/gno.11/usr/man
+rmdir $RELDIR/gno.11/usr
+rmdir $RELDIR/gno.11
+
+echo gno.10
+mv $RELDIR/gno.10/usr/include $RELDIR/usr
+rmdir $RELDIR/gno.10/usr
+rmdir $RELDIR/gno.10
+
+echo gno.09
+mv $RELDIR/gno.09/usr/bin $RELDIR/usr
+rmdir $RELDIR/gno.09/usr
+rmdir $RELDIR/gno.09
+
+echo gno.08
+mv $RELDIR/gno.08/usr/bin/* $RELDIR/usr/bin
+rmdir $RELDIR/gno.08/usr/bin
+rmdir $RELDIR/gno.08/usr
+rmdir $RELDIR/gno.08
+
+echo gno.07
+mv $RELDIR/gno.07/usr/bin/* $RELDIR/usr/bin
+rmdir $RELDIR/gno.07/usr/bin
+rmdir $RELDIR/gno.07/usr
+rmdir $RELDIR/gno.07
+
+echo gno.06
+mv $RELDIR/gno.06/usr/bin/* $RELDIR/usr/bin
+rmdir $RELDIR/gno.06/usr/bin
+rmdir $RELDIR/gno.06/usr
+rmdir $RELDIR/gno.06
+
+echo gno.05
+mv $RELDIR/gno.05/bin $RELDIR
+rmdir $RELDIR/gno.05
+
+echo gno.04
+mv $RELDIR/gno.04/bin/* $RELDIR/bin
+rmdir $RELDIR/gno.04/bin
+rmdir $RELDIR/gno.04
+
+echo gno.03
+mv $RELDIR/gno.03/bin/* $RELDIR/bin
+rmdir $RELDIR/gno.03/bin
+rmdir $RELDIR/gno.03
+
+echo gno.02
+mv $RELDIR/gno.02/bin/* $RELDIR/bin
+rmdir $RELDIR/gno.02/bin
+rmdir $RELDIR/gno.02
+
+echo gno.01
+mv $RELDIR/gno.01/* $RELDIR
+rmdir $RELDIR/gno.01
+
+echo " "
+echo "All done."
+echo " "

@@ -6,158 +6,163 @@
 # 
 # Devin Reade, September 1997.
 #
-# $Id: fudgeinstall,v 1.2 1998/04/10 17:46:28 gdr-ftp Exp $
-
+# $Id: fudgeinstall,v 1.3 1998/04/22 04:51:07 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
 setenv RELDIR	/gno
 setenv RELDIR2	/gno-hfs
+setenv RELBOOT	/gno.boot
 
 # What is the "root" filesystem for the currently running GNO?
 setenv ROOT	/trenco3/v.206
 
 # Where are the GNO (and other) sources?
 setenv SRC	/src
+setenv DIST	/dist
 
-# Create the directories we need
+# Create the directories we need.  Unfortunately, gsh is too stupid to
+# even allow us multiline commands by escaping the newline, so we have
+# to call install many times.
 echo "creating directories"
-install -d $RELDIR2/HFSinclude
-install -d $RELDIR/bin
-install -d $RELDIR/dev
-install -d $RELDIR/doc
-install -d $RELDIR/etc
-install -d $RELDIR/home/root
-install -d $RELDIR/lang/orca/shell
-install -d $RELDIR/lang/orca/languages
-install -d $RELDIR/lib/orcacdefs
-install -d $RELDIR/sbin
-install -d $RELDIR/usr/bin
+install -dV $RELDIR2/HFSinclude
+install -dV $RELDIR/bin
+install -dV $RELDIR/dev
+install -dV $RELDIR/doc
+install -dV $RELDIR/etc
+install -dV $RELDIR/home/root
+install -dV $RELDIR/lang/orca/shell
+install -dV $RELDIR/lang/orca/languages
+install -dV $RELDIR/lib/orcacdefs
+install -dV $RELDIR/sbin
+install -dV $RELDIR/usr/bin
 # when we finally get a working cp(1) again, we can eliminate creating
 # of the /usr/include and /HFSinclude directories.
-install -d $RELDIR/usr/include/arpa
-install -d $RELDIR/usr/include/gno
-install -d $RELDIR/usr/include/machine
-install -d $RELDIR/usr/include/net
-install -d $RELDIR/usr/include/netinet
-install -d $RELDIR/usr/include/protocols
-install -d $RELDIR/usr/include/rpc
-install -d $RELDIR/usr/include/sys
-install -d $RELDIR2/HFSinclude/net
-install -d $RELDIR2/HFSinclude/netinet
-install -d $RELDIR2/HFSinclude/netsys
-install -d $RELDIR/usr/games
-install -d $RELDIR/usr/guest/operator
-install -d $RELDIR/usr/lib/tmac
-install -d $RELDIR/usr/man/man1
-install -d $RELDIR/usr/man/man2
-install -d $RELDIR/usr/man/man3
-install -d $RELDIR/usr/man/man4
-install -d $RELDIR/usr/man/man5
-install -d $RELDIR/usr/man/man6
-install -d $RELDIR/usr/man/man7
-install -d $RELDIR/usr/man/man8
-install -d $RELDIR/usr/man/cat1
-install -d $RELDIR/usr/man/cat2
-install -d $RELDIR/usr/man/cat3
-install -d $RELDIR/usr/man/cat4
-install -d $RELDIR/usr/man/cat5
-install -d $RELDIR/usr/man/cat6
-install -d $RELDIR/usr/man/cat7
-install -d $RELDIR/usr/man/cat8
-install -d $RELDIR/usr/orca/bin
-install -d $RELDIR/usr/sbin
-install -d $RELDIR/var/adm
-install -d $RELDIR/var/run
-install -d $RELDIR/var/spool
+install -dV $RELDIR/usr/include/arpa
+install -dV $RELDIR/usr/include/gno
+install -dV $RELDIR/usr/include/machine
+install -dV $RELDIR/usr/include/net
+install -dV $RELDIR/usr/include/netinet
+install -dV $RELDIR/usr/include/protocols
+install -dV $RELDIR/usr/include/rpc
+install -dV $RELDIR/usr/include/sys
+install -dV $RELDIR2/HFSinclude/net
+install -dV $RELDIR2/HFSinclude/netinet
+install -dV $RELDIR2/HFSinclude/sys
+install -dV $RELDIR/usr/games
+install -dV $RELDIR/usr/guest/operator
+install -dV $RELDIR/usr/lib/tmac
+install -dV $RELDIR/usr/man/man1
+install -dV $RELDIR/usr/man/man2
+install -dV $RELDIR/usr/man/man3
+install -dV $RELDIR/usr/man/man4
+install -dV $RELDIR/usr/man/man5
+install -dV $RELDIR/usr/man/man6
+install -dV $RELDIR/usr/man/man7
+install -dV $RELDIR/usr/man/man8
+install -dV $RELDIR/usr/man/cat1
+install -dV $RELDIR/usr/man/cat2
+install -dV $RELDIR/usr/man/cat3
+install -dV $RELDIR/usr/man/cat4
+install -dV $RELDIR/usr/man/cat5
+install -dV $RELDIR/usr/man/cat6
+install -dV $RELDIR/usr/man/cat7
+install -dV $RELDIR/usr/man/cat8
+install -dV $RELDIR/usr/orca/bin
+install -dV $RELDIR/usr/sbin
+install -dV $RELDIR/var/adm
+install -dV $RELDIR/var/run
+install -dV $RELDIR/var/spool
 
 echo "installing files in /"
-install		$ROOT/kern.971027	$RELDIR/kern
-install		$ROOT/initrc		$RELDIR
+install -V	$ROOT/kern.971027	$RELDIR/kern
+install -V	$ROOT/initrc		$RELDIR
 
 echo "installing files in /HFSinclude"
-install		/HFSinclude/net/*.h	$RELDIR2/HFSinclude/net
-install		/HFSinclude/netinet/*.h	$RELDIR2/HFSinclude/netinet
-install		/HFSinclude/sys/*.h	$RELDIR2/HFSinclude/sys
+install -V	/HFSinclude/net/*.h	$RELDIR2/HFSinclude/net
+install -V	/HFSinclude/netinet/*.h	$RELDIR2/HFSinclude/netinet
+install -V	/HFSinclude/sys/*.h	$RELDIR2/HFSinclude/sys
 
 echo "installing files in /bin"
-install		/bin/aroff	$RELDIR/bin
-install		/bin/binprint	$RELDIR/bin
+install -V	/bin/aroff	$RELDIR/bin
+install -V	/bin/binprint	$RELDIR/bin
 # cat		done
-install		/bin/center	$RELDIR/bin
-install		/usr/orca/bin/chmod	$RELDIR/bin
+install -V	/bin/center	$RELDIR/bin
+install -V	/usr/orca/bin/chmod	$RELDIR/bin
 # chtyp		done
 # cmp		done
-install		/bin/compress	$RELDIR/bin
-install		/bin/date	$RELDIR/bin
+install -V	/bin/compress	$RELDIR/bin
+install -V	/bin/cp		$RELDIR/bin
+install -V	/bin/date	$RELDIR/bin
 # df		done
-install		/bin/du		$RELDIR/bin
-install		/bin/echo	$RELDIR/bin
-install		/bin/egrep	$RELDIR/bin
+install -V	/bin/du		$RELDIR/bin
+install -V	/bin/echo	$RELDIR/bin
+install -V	/bin/egrep	$RELDIR/bin
 # false		done
-install		/bin/fgrep	$RELDIR/bin
-install		/bin/freeze	$RELDIR/bin
-install		/bin/grep	$RELDIR/bin
-install		/bin/gsh	$RELDIR/bin
+install -V	/bin/fgrep	$RELDIR/bin
+install -V	/bin/freeze	$RELDIR/bin
+install -V	/bin/grep	$RELDIR/bin
+install -V	/bin/gsh	$RELDIR/bin
 # head		done
-install		/bin/hostname	$RELDIR/bin
-install		/bin/init	$RELDIR/bin
+install -V	/bin/hostname	$RELDIR/bin
+install -V	/bin/init	$RELDIR/bin
 # kill		done
-install		/bin/less	$RELDIR/bin
-install		/bin/ls		$RELDIR/bin
-install		/bin/mkdir	$RELDIR/bin
-install		/bin/more	$RELDIR/bin
+install -V	/bin/less	$RELDIR/bin
+install -V	/bin/ls		$RELDIR/bin
+install -V	/bin/mkdir	$RELDIR/bin
+install -V	/bin/more	$RELDIR/bin
 # mv is actually cp
-install		/bin/passwd	$RELDIR/bin
-install		/usr/bin/eps	$RELDIR/bin/ps
-install		/bin/purge	$RELDIR/bin
+install -V	/bin/passwd	$RELDIR/bin
+install -V	/usr/bin/eps	$RELDIR/bin/ps
+install -V	/bin/purge	$RELDIR/bin
 # pwd		done
 # rmdir		done
 # sleep		done
 # split		done
-install		/bin/strings	$RELDIR/bin
-install		/bin/stty	$RELDIR/bin
-install		/bin/su		$RELDIR/bin
+install -V	/bin/strings	$RELDIR/bin
+install -V	/bin/stty	$RELDIR/bin
+install -V	/bin/su		$RELDIR/bin
 # tail		done
-install		/bin/tar	$RELDIR/bin
+install -V	/bin/tar	$RELDIR/bin
 # tee		done
 # test		done
-install		/bin/time	$RELDIR/bin
-install		/usr/local/bin/touch	$RELDIR/bin
+install -V	/bin/time	$RELDIR/bin
+install -V	/usr/local/bin/touch	$RELDIR/bin
 # tr		done
 # true		done
 # uname		done
-install		/bin/uncompress	$RELDIR/bin
+install -V	/bin/uncompress	$RELDIR/bin
 # uniq		done
-install		/bin/vi		$RELDIR/bin
+install -V	/bin/vi		$RELDIR/bin
 # wc		done
 # yes		done
 
 echo "installing files in /dev"
-install		/dev/modem	$RELDIR/dev
-install		/dev/printer	$RELDIR/dev
-install		/dev/null	$RELDIR/dev
+install -V	/dev/modem	$RELDIR/dev
+install -V	/dev/printer	$RELDIR/dev
+install -V	/dev/null	$RELDIR/dev
 
 echo "installing files in /etc"
 # don't need cronlog, crontab yet
-install		/etc/freeze.cnf	$RELDIR/etc
-install		$SRC/gno/verbatim/etc/gettytab	$RELDIR/etc
-install		$SRC/gno/verbatim/etc/group	$RELDIR/etc
-install		$SRC/gno/verbatim/etc/inittab	$RELDIR/etc
-install		$SRC/gno/verbatim/etc/motd	$RELDIR/etc
+install -V	/etc/freeze.cnf	$RELDIR/etc
+# gettytab	done
+install -V	$SRC/gno/verbatim/etc/group	$RELDIR/etc
+install -V	$SRC/gno/verbatim/etc/inittab	$RELDIR/etc
+install -V	$SRC/gno/verbatim/etc/motd	$RELDIR/etc
+echo >>					$RELDIR/etc/motd
 echo -n 'GNO release build date: ' >>	$RELDIR/etc/motd
 date >>					$RELDIR/etc/motd
-install		$SRC/gno/verbatim/etc/namespace	$RELDIR/etc
-install		$SRC/gno/verbatim/etc/passwd	$RELDIR/etc
-install		$SRC/gno/verbatim/etc/rchost	$RELDIR/etc
+install -V	$SRC/gno/verbatim/etc/namespace	$RELDIR/etc
+install -V	$SRC/gno/verbatim/etc/passwd	$RELDIR/etc
+install -V	$SRC/gno/verbatim/etc/rchost	$RELDIR/etc
 # syslog.conf?
-install		$SRC/gno/verbatim/etc/termcap		$RELDIR/etc
-install		$SRC/gno/verbatim/etc/tty.config	$RELDIR/etc
-install		$SRC/gno/verbatim/etc/ttys		$RELDIR/etc
+install -V	$SRC/gno/verbatim/etc/termcap		$RELDIR/etc
+install -V	$SRC/gno/verbatim/etc/tty.config	$RELDIR/etc
+install -V	$SRC/gno/verbatim/etc/ttys		$RELDIR/etc
 touch $RELDIR/etc/wtmp; chtyp -tbin -a0 $RELDIR/etc/wtmp
 
 echo "installing files in /home/root"
-install		$SRC/gno/verbatim/home/root/gshrc	$RELDIR/home/root
+install -V	$SRC/gno/verbatim/home/root/gshrc	$RELDIR/home/root
 
 # echo "installing files in /lib"
 # install		13/libc		$RELDIR/lib
@@ -166,65 +171,65 @@ install		$SRC/gno/verbatim/home/root/gshrc	$RELDIR/home/root
 # install		13/sysfloat	$RELDIR/lib
 
 echo "installing files in /lib/orcacdefs"
-install		$SRC/gno/orcacdefs/defaults.h	$RELDIR/lib/orcacdefs
+install -V	$SRC/gno/orcacdefs/defaults.h	$RELDIR/lib/orcacdefs
 
 echo "installing files in /sbin"
-install		/usr/sbin/initd				$RELDIR/sbin
+install -V	/usr/sbin/initd				$RELDIR/sbin
 # renram5	done
 
 echo "installing files in /usr/bin"
 # apropos	done
 # asml			should be copied from compile
 # assemble		should be copied from compile
-install		/usr/bin/awk		$RELDIR/usr/bin
+install -V	/usr/bin/awk		$RELDIR/usr/bin
 # basename	done
 # catrez	done
 # cksum		done
 # colcrt	done
 # cmpl			should be copied from compile
-install		/usr/local/bin/coff	$RELDIR/usr/bin
+install -V	/usr/local/bin/coff	$RELDIR/usr/bin
 # compile	done
-install		/usr/bin/copycat	$RELDIR/usr/bin
-install		/usr/bin/cpp		$RELDIR/usr/bin
+install -V	/usr/bin/copycat	$RELDIR/usr/bin
+install -V	/usr/bin/cpp		$RELDIR/usr/bin
 # cut		done
 # ctags		done
-install		/usr/bin/diff		$RELDIR/usr/bin
+install -V	/usr/bin/diff		$RELDIR/usr/bin
 # dirname	done
-install		/usr/local/bin/dmake	$RELDIR/usr/bin
+install -V	/usr/local/bin/dmake	$RELDIR/usr/bin
 # fmt		done
-install		/usr/bin/getvers	$RELDIR/usr/bin
+install -V	/usr/bin/getvers	$RELDIR/usr/bin
 # help		done
 # install	done
 # last		done
-install		/usr/bin/launch		$RELDIR/usr/bin
+install -V	/usr/bin/launch		$RELDIR/usr/bin
 # link		done
 # lseg		done
 # man		done
-install		/usr/bin/nroff		$RELDIR/usr/bin
+install -V	/usr/bin/nroff		$RELDIR/usr/bin
 # removerez	done
 # rlogin	done
 # rsh		done
-install		/bin/script		$RELDIR/usr/bin
-install		17/sed			$RELDIR/usr/bin
-install		/usr/bin/setvers	$RELDIR/usr/bin
-install		/usr/bin/unshar		$RELDIR/usr/bin
-install		/usr/bin/uptime		$RELDIR/usr/bin
+install -V	/bin/script		$RELDIR/usr/bin
+install -V	17/sed			$RELDIR/usr/bin
+install -V	/usr/bin/setvers	$RELDIR/usr/bin
+install -V	/usr/bin/unshar		$RELDIR/usr/bin
+install -V	/usr/bin/uptime		$RELDIR/usr/bin
 # whatis	done
 # whereis	done
 # who		done
 # whois		done
-install		/usr/bin/yankit		$RELDIR/usr/bin
+install -V	/usr/bin/yankit		$RELDIR/usr/bin
 
 echo "installing files in /usr/include"
-install		$SRC/gno/include/*.h		$RELDIR/usr/include
-install		$SRC/gno/include/arpa/*.h	$RELDIR/usr/include/arpa
-install		$SRC/gno/include/gno/*.h	$RELDIR/usr/include/gno
-install		$SRC/gno/include/machine/*.h	$RELDIR/usr/include/machine
-install		$SRC/gno/include/net/*.h	$RELDIR/usr/include/net
-install		$SRC/gno/include/netinet/*.h	$RELDIR/usr/include/netinet
-install		$SRC/gno/include/protocols/*.h	$RELDIR/usr/include/protocols
-install		$SRC/gno/include/rpc/*.h	$RELDIR/usr/include/rpc
-install		$SRC/gno/include/sys/*.h	$RELDIR/usr/include/sys
+install -V	$SRC/gno/include/*.h		$RELDIR/usr/include
+install -V	$SRC/gno/include/arpa/*.h	$RELDIR/usr/include/arpa
+install -V	$SRC/gno/include/gno/*.h	$RELDIR/usr/include/gno
+install -V	$SRC/gno/include/machine/*.h	$RELDIR/usr/include/machine
+install -V	$SRC/gno/include/net/*.h	$RELDIR/usr/include/net
+install -V	$SRC/gno/include/netinet/*.h	$RELDIR/usr/include/netinet
+install -V	$SRC/gno/include/protocols/*.h	$RELDIR/usr/include/protocols
+install -V	$SRC/gno/include/rpc/*.h	$RELDIR/usr/include/rpc
+install -V	$SRC/gno/include/sys/*.h	$RELDIR/usr/include/sys
 chtyp -lcc 	$RELDIR/usr/include/*.h
 chtyp -lcc 	$RELDIR/usr/include/arpa/*.h
 chtyp -lcc 	$RELDIR/usr/include/gno/*.h
@@ -236,7 +241,7 @@ chtyp -lcc 	$RELDIR/usr/include/rpc/*.h
 chtyp -lcc 	$RELDIR/usr/include/sys/*.h
 
 echo "installing files in /usr/lib"
-install		/usr/lib/curses.lib		$RELDIR/usr/lib/libcurses
+install -V	/usr/lib/curses.lib		$RELDIR/usr/lib/libcurses
 # describe.src	done
 # libcontrib	done
 # libcrypt	done
@@ -244,49 +249,49 @@ install		/usr/lib/curses.lib		$RELDIR/usr/lib/libcurses
 # libtermcap	done
 # libutil	done
 # liby		done
-install		$SRC/gno/build.tools/startup.mk	$RELDIR/usr/lib/startup.mk
-install		/usr/lib/tmac/tmac.an		$RELDIR/usr/lib/tmac
-install		/usr/lib/tmac/tmac.s		$RELDIR/usr/lib/tmac
+install -V	$SRC/gno/build.tools/startup.mk	$RELDIR/usr/lib/startup.mk
+install -V	/usr/lib/tmac/tmac.an		$RELDIR/usr/lib/tmac
+install -V	/usr/lib/tmac/tmac.s		$RELDIR/usr/lib/tmac
 
 echo "installing files in /usr/orca/bin"
 # describe	done
-install		17/occ		$RELDIR/usr/orca/bin
+install -V	17/occ		$RELDIR/usr/orca/bin
 # udl		done
 
-# Skip man pages for now.
+# install man pages
 echo "installing files in /usr/man/man1"
-install $SRC/gno/usr.man/man1/*.1 $RELDIR/usr/man/man1
+install -V $SRC/gno/usr.man/man1/*.1 $RELDIR/usr/man/man1
 echo "installing files in /usr/man/man2"
-install $SRC/gno/usr.man/man2/*.2 $RELDIR/usr/man/man2
+install -V $SRC/gno/usr.man/man2/*.2 $RELDIR/usr/man/man2
 echo "installing files in /usr/man/man3"
-install $SRC/gno/usr.man/man3/*.3 $RELDIR/usr/man/man3
+install -V $SRC/gno/usr.man/man3/*.3 $RELDIR/usr/man/man3
 echo "installing files in /usr/man/man4"
-install $SRC/gno/usr.man/man4/*.4 $RELDIR/usr/man/man4
+install -V $SRC/gno/usr.man/man4/*.4 $RELDIR/usr/man/man4
 echo "installing files in /usr/man/man5"
-install $SRC/gno/usr.man/man5/*.5 $RELDIR/usr/man/man5
+install -V $SRC/gno/usr.man/man5/*.5 $RELDIR/usr/man/man5
 echo "installing files in /usr/man/man6"
-install $SRC/gno/usr.man/man6/*.6 $RELDIR/usr/man/man6
+install -V $SRC/gno/usr.man/man6/*.6 $RELDIR/usr/man/man6
 echo "installing files in /usr/man/man7"
-install $SRC/gno/usr.man/man7/*.7 $RELDIR/usr/man/man7
+install -V $SRC/gno/usr.man/man7/*.7 $RELDIR/usr/man/man7
 echo "installing files in /usr/man/man8"
-install $SRC/gno/usr.man/man8/*.8 $RELDIR/usr/man/man8
+install -V $SRC/gno/usr.man/man8/*.8 $RELDIR/usr/man/man8
 
 echo "installing files in /usr/sbin"
 # catman	done
-install		/usr/sbin/cron		$RELDIR/usr/sbin
+install -V	/usr/sbin/cron		$RELDIR/usr/sbin
 # descu		done
 # descc		done
-install		/usr/sbin/getty		$RELDIR/usr/sbin
-install		/usr/sbin/initd		$RELDIR/usr/sbin
+# getty		done
+install -V	/usr/sbin/initd		$RELDIR/usr/sbin
 # login		done
 # lpc?
-install		/usr/sbin/lpd		$RELDIR/usr/sbin
+install -V	/usr/sbin/lpd		$RELDIR/usr/sbin
 # makewhatis	done
-install		/usr/sbin/mktmp		$RELDIR/usr/sbin
-install		/usr/sbin/newuser	$RELDIR/usr/sbin
-install		/usr/sbin/newuserv	$RELDIR/usr/sbin
-install		/usr/sbin/runover	$RELDIR/usr/sbin
-install		/usr/sbin/uptimed	$RELDIR/usr/sbin
+install -V	/usr/sbin/mktmp		$RELDIR/usr/sbin
+install -V	/usr/sbin/newuser	$RELDIR/usr/sbin
+install -V	/usr/sbin/newuserv	$RELDIR/usr/sbin
+install -V	/usr/sbin/runover	$RELDIR/usr/sbin
+install -V	/usr/sbin/uptimed	$RELDIR/usr/sbin
 
 echo "creating log files"
 touch		$RELDIR/var/adm/messages
@@ -294,29 +299,36 @@ touch		$RELDIR/var/adm/debug
 touch		$RELDIR/var/adm/utmp $RELDIR/var/adm/wtmp $RELDIR/var/adm/lastlog
 chtyp -tbin -a0	$RELDIR/var/adm/utmp $RELDIR/var/adm/wtmp $RELDIR/var/adm/lastlog
 
+# We make the .so links at user installation time.  We leave the comments in
+# from the file /src/gno/usr.man/mkso.data, but strip the comments out of
+# all of the others.
+echo "creating the /usr/man/mkso.data file"
+install $SRC/gno/usr.man/mkso.data $RELDIR/usr/man/mkso.data
+cat $DIST/install/mkso.* | egrep -v -e '^#' | msort >> $RELDIR/usr/man/mkso.data
+
 # We won't use these directories, but they should be created for the user
 echo "creating /usr/local hierarchy"
-install -d $RELDIR/usr/local/bin
-install -d $RELDIR/usr/local/doc
-install -d $RELDIR/usr/local/etc
-install -d $RELDIR/usr/local/include
-install -d $RELDIR/usr/local/lib
-install -d $RELDIR/usr/local/man/man1
-install -d $RELDIR/usr/local/man/man2
-install -d $RELDIR/usr/local/man/man3
-install -d $RELDIR/usr/local/man/man4
-install -d $RELDIR/usr/local/man/man5
-install -d $RELDIR/usr/local/man/man6
-install -d $RELDIR/usr/local/man/man7
-install -d $RELDIR/usr/local/man/man8
-install -d $RELDIR/usr/local/man/cat1
-install -d $RELDIR/usr/local/man/cat2
-install -d $RELDIR/usr/local/man/cat3
-install -d $RELDIR/usr/local/man/cat4
-install -d $RELDIR/usr/local/man/cat5
-install -d $RELDIR/usr/local/man/cat6
-install -d $RELDIR/usr/local/man/cat7
-install -d $RELDIR/usr/local/man/cat8
-install -d $RELDIR/usr/local/sbin
+install -dV $RELDIR/usr/local/bin
+install -dV $RELDIR/usr/local/doc
+install -dV $RELDIR/usr/local/etc
+install -dV $RELDIR/usr/local/include
+install -dV $RELDIR/usr/local/lib
+install -dV $RELDIR/usr/local/man/man1
+install -dV $RELDIR/usr/local/man/man2
+install -dV $RELDIR/usr/local/man/man3
+install -dV $RELDIR/usr/local/man/man4
+install -dV $RELDIR/usr/local/man/man5
+install -dV $RELDIR/usr/local/man/man6
+install -dV $RELDIR/usr/local/man/man7
+install -dV $RELDIR/usr/local/man/man8
+install -dV $RELDIR/usr/local/man/cat1
+install -dV $RELDIR/usr/local/man/cat2
+install -dV $RELDIR/usr/local/man/cat3
+install -dV $RELDIR/usr/local/man/cat4
+install -dV $RELDIR/usr/local/man/cat5
+install -dV $RELDIR/usr/local/man/cat6
+install -dV $RELDIR/usr/local/man/cat7
+install -dV $RELDIR/usr/local/man/cat8
+install -dV $RELDIR/usr/local/sbin
 
 echo "done"

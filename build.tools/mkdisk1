@@ -1,0 +1,124 @@
+#! /bin/gsh
+#
+# This script is used to make the NuFX archives for distribution.
+# Part 1.
+#
+# Devin Reade, April 1998
+#
+# $Id: mkdisk1,v 1.1 1998/04/22 04:51:10 gdr-ftp Exp $
+
+# What is our release directory?  (The second one must be HFS, and 
+# may be the same as the first.)
+setenv RELDIR	/gno
+setenv RELDIR2	/gno-hfs
+setenv RELBOOT	/gno.boot
+
+echo " "
+echo "The distribution in $RELDIR will now be sorted into temporary directories."
+echo "You may safely ignore any messages from gsh that say No Match."
+echo " "
+echo " "
+
+echo gno.01
+install -d $RELDIR/gno.01
+mv $RELDIR/kern $RELDIR/initrc $RELDIR/lib $RELDIR/gno.01
+
+echo gno.02
+install -d $RELDIR/gno.02/bin
+mv $RELDIR/bin/a* $RELDIR/gno.02/bin
+mv $RELDIR/bin/b* $RELDIR/gno.02/bin
+mv $RELDIR/bin/c* $RELDIR/gno.02/bin
+mv $RELDIR/bin/d* $RELDIR/gno.02/bin
+mv $RELDIR/bin/e* $RELDIR/gno.02/bin
+mv $RELDIR/bin/f* $RELDIR/gno.02/bin
+
+echo gno.03
+install -d $RELDIR/gno.03/bin
+mv $RELDIR/bin/g* $RELDIR/gno.03/bin
+mv $RELDIR/bin/h* $RELDIR/gno.03/bin
+mv $RELDIR/bin/i* $RELDIR/gno.03/bin
+mv $RELDIR/bin/j* $RELDIR/gno.03/bin
+mv $RELDIR/bin/k* $RELDIR/gno.03/bin
+mv $RELDIR/bin/l* $RELDIR/gno.03/bin
+mv $RELDIR/bin/m* $RELDIR/gno.03/bin
+
+echo gno.04
+install -d $RELDIR/gno.04/bin
+mv $RELDIR/bin/n* $RELDIR/gno.04/bin
+mv $RELDIR/bin/o* $RELDIR/gno.04/bin
+mv $RELDIR/bin/p* $RELDIR/gno.04/bin
+mv $RELDIR/bin/q* $RELDIR/gno.04/bin
+mv $RELDIR/bin/r* $RELDIR/gno.04/bin
+mv $RELDIR/bin/s* $RELDIR/gno.04/bin
+
+echo gno.05
+install -d $RELDIR/gno.05
+mv $RELDIR/bin $RELDIR/gno.05
+
+echo gno.06
+install -d $RELDIR/gno.06/usr/bin
+mv $RELDIR/usr/bin/a* $RELDIR/gno.06/usr/bin
+mv $RELDIR/usr/bin/b* $RELDIR/gno.06/usr/bin
+mv $RELDIR/usr/bin/c* $RELDIR/gno.06/usr/bin
+mv $RELDIR/usr/bin/d* $RELDIR/gno.06/usr/bin
+mv $RELDIR/usr/bin/e* $RELDIR/gno.06/usr/bin
+mv $RELDIR/usr/bin/f* $RELDIR/gno.06/usr/bin
+
+echo gno.07
+install -d $RELDIR/gno.07/usr/bin
+mv $RELDIR/usr/bin/g* $RELDIR/gno.07/usr/bin
+mv $RELDIR/usr/bin/h* $RELDIR/gno.07/usr/bin
+mv $RELDIR/usr/bin/i* $RELDIR/gno.07/usr/bin
+mv $RELDIR/usr/bin/j* $RELDIR/gno.07/usr/bin
+mv $RELDIR/usr/bin/k* $RELDIR/gno.07/usr/bin
+mv $RELDIR/usr/bin/l* $RELDIR/gno.07/usr/bin
+mv $RELDIR/usr/bin/m* $RELDIR/gno.07/usr/bin
+
+echo gno.08
+install -d $RELDIR/gno.08/usr/bin
+mv $RELDIR/usr/bin/n* $RELDIR/gno.08/usr/bin
+mv $RELDIR/usr/bin/o* $RELDIR/gno.08/usr/bin
+mv $RELDIR/usr/bin/p* $RELDIR/gno.08/usr/bin
+mv $RELDIR/usr/bin/q* $RELDIR/gno.08/usr/bin
+mv $RELDIR/usr/bin/r* $RELDIR/gno.08/usr/bin
+mv $RELDIR/usr/bin/s* $RELDIR/gno.08/usr/bin
+
+echo gno.09
+install -d $RELDIR/gno.09/usr
+mv $RELDIR/usr/bin $RELDIR/gno.09/usr
+
+echo gno.10
+install -d $RELDIR/gno.10/usr
+mv $RELDIR/usr/include $RELDIR/gno.10/usr
+
+echo gno.11
+install -d $RELDIR/gno.11/usr/man
+mv $RELDIR/usr/man/man1 $RELDIR/gno.11/usr/man
+
+echo gno.12
+install -d $RELDIR/gno.12/usr/man
+mv $RELDIR/usr/man/man2 $RELDIR/gno.12/usr/man
+
+echo gno.13
+install -d $RELDIR/gno.13/usr/man
+mv $RELDIR/usr/man/man3 $RELDIR/gno.13/usr/man
+
+echo gno.14
+install -d $RELDIR/gno.14/usr
+mv $RELDIR/usr/man $RELDIR/gno.14/usr
+
+echo gno.15
+install -d $RELDIR/gno.15
+mv $RELDIR/usr $RELDIR/gno.15
+
+echo gno.16
+install -d $RELDIR/gno.16
+mv $RELDIR/dev $RELDIR/doc $RELDIR/etc $RELDIR/home $RELDIR/install $RELDIR/lang $RELDIR/sbin $RELDIR/var $RELDIR/gno.16
+
+echo " "
+echo " "
+echo "You must now use gshk to (manually) create archives of all the gno.??"
+echo "directories.  When that is complete, you should run the mkdisk2 script."
+echo "Do not forget to archive the $RELDIR2 and $RELBOOT disks as well."
+echo " "
+

@@ -1,0 +1,63 @@
+#! /bin/gsh
+#
+# This is a script that builds a the bootstrap floppy used for
+# installing GNO.
+# 
+# Devin Reade, April 1998.
+#
+# $Id: mkboot,v 1.1 1998/04/22 04:51:09 gdr-ftp Exp $
+
+# What is our release directory?  (The second one must be HFS, and 
+# may be the same as the first.)
+setenv RELDIR	/gno
+setenv RELDIR2	/gno-hfs
+setenv RELBOOT	/gno.boot
+
+# Where are the GNO (and other) sources?
+setenv SRC	/src
+
+#==================================
+
+echo "creating directories ..."
+install -dV	$RELBOOT/bin
+install -dV	$RELBOOT/dev
+install -dV	$RELBOOT/etc
+install -dV	$RELBOOT/home/root
+install -dV	$RELBOOT/lang/orca/languages
+install -dV	$RELBOOT/lang/orca/shell
+install -dV	$RELBOOT/lang/orca/utilities
+install -dV	$RELBOOT/lib
+install -dV	$RELBOOT/sbin
+install -dV	$RELBOOT/tmp
+install -dV	$RELBOOT/usr/bin
+
+echo "installing files ..."
+# There's a bug in the v2.0.6 kernel right now that keeps us from
+# using it to boot "single user" straight into gsh (without initd).
+# See PR#62.  In the interim, use a v2.0.4 kernel for the boot disk.
+install -V	/trenco3/kern				$RELBOOT/kern
+# install -V	$RELDIR/kern				$RELBOOT/kern
+install -V	$RELDIR/bin/gsh				$RELBOOT
+install -V	$SRC/gno/verbatim/boot/README.install	$RELBOOT
+install -V	$SRC/gno/verbatim/boot/gshrc		$RELBOOT
+install -V	$SRC/gno/verbatim/boot/initrc		$RELBOOT
+install -V	$SRC/gno/verbatim/boot/installboot1	$RELBOOT
+install -V	$SRC/gno/verbatim/boot/installboot2	$RELBOOT
+install -V	$RELDIR/bin/chtyp			$RELBOOT/bin
+install -V	$RELDIR/bin/cp				$RELBOOT/bin
+install -V	$RELDIR/bin/gsh				$RELBOOT/bin
+install -V	$RELDIR/bin/ls				$RELBOOT/bin
+install -V	$RELDIR/bin/more			$RELBOOT/bin
+install -V	$RELDIR/bin/sleep			$RELBOOT/bin
+install -V	/usr/local/bin/touch			$RELBOOT/bin
+install -V	$RELDIR/bin/vi				$RELBOOT/bin
+install -V	$RELDIR/usr/bin/install			$RELBOOT/bin
+install -V	$RELDIR/usr/bin/yankit			$RELBOOT/bin
+install -V	$RELDIR/dev/*				$RELBOOT/dev
+install -V	$SRC/gno/verbatim/boot/namespace	$RELBOOT/etc
+install -V	$RELDIR/etc/termcap			$RELBOOT/etc
+install -V	$RELDIR/etc/tty.config			$RELBOOT/etc
+install -V	$RELDIR/etc/ttys			$RELBOOT/etc
+install -V	$RELDIR/sbin/mkso			$RELBOOT/sbin
+
+chtyp -lexec $RELBOOT/gshrc $RELBOOT/installboot*
