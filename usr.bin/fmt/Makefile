@@ -1,24 +1,16 @@
 #
-# $Id: Makefile,v 1.1 1997/09/21 22:12:26 gdr Exp $
+# $Id: Makefile,v 1.2 1997/10/30 03:49:46 gdr Exp $
 #
-include ../../../paths.mk
-include ../../constants.mk
 
-BUILD_TARGET = $(BUILD_DIR)/fmt
-CPPFLAGS += -I../../hdr
+# Program name
+PROG	= fmt
+SRCS	= fmt.c head.c
 
-build: setup $(BUILD_TARGET)
+# Add -D__STACK_CHECK__	to print, on exit, the amount of stack used
+CFLAGS	+= -DBUILD_FMT -DNO_LOCALE
+STACK	= 1536
+BINDIR	= /usr/bin
 
-$(BUILD_TARGET): $(OBJS)
-	$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LDLIBS)
+.INCLUDE:	/src/gno/prog.mk
 
-install:
-	$(INSTALL) -m755 -d $(INSTROOT)/$(BUILD_DIR)/install
-	$(INSTALL) -m755 $(BUILD_TARGET) $(INSTROOT)/$(BUILD_DIR)/install
-	$(INSTALL) -m644 fmt.README $(INSTROOT)/$(BUILD_DIR)/install
-
-clobber::
-	$(RM) -f *~
-
-include ../../rules.mk
--include $(BUILD_DIR)/dependencies
+head.o::	def.h extern.h

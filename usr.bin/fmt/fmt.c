@@ -31,9 +31,7 @@
  * SUCH DAMAGE.
  */
 
-#ifdef __GNUC__
-#define lint
-#endif
+#ifndef __GNO__
 
 #ifndef lint
 static char copyright[] =
@@ -45,43 +43,44 @@ static char copyright[] =
 static char sccsid[] = "@(#)fmt.c	8.1 (Berkeley) 7/20/93";
 #endif /* not lint */
 
+#endif	/* ! __GNO__ */
+
 #include <stdio.h>
 #include <ctype.h>
+#ifndef NO_LOCALE
 #include <locale.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 
+/* some architectures have a broken (and non-standard) realloc(3) */
 #ifdef SUNOS4
-#include "sunos4stdio.h"
-#endif
-
-#ifndef __P
-#ifdef __STDC__
-#define __P(a) a
-#else
-#define __P(a) ()
-#endif
-#endif
-
 #define REALLOC my_realloc
+static void *	my_realloc __P((void *buf, size_t size));
+#else
+#define REALLOC realloc
+#endif
+
+/* reduce stack usage */
+#ifdef	__ORCAC__
+#define	STATIC	static
+#else
+#define	STATIC
+#endif
 
 static void fmt __P((FILE *fi));
 static void prefix __P((char *line));
 static void split __P((char *line));
 static void setout __P((void));
-static void pack __P((char *word, int wl));
+static void pack __P((char *textword, int wl));
 static void oflush __P((void));
 static void tabulate __P((char *line));
 static void leadin __P((void));
 static int  ispref __P((char *s1, char *s2));
-static void *my_realloc __P((void *buf, size_t size));
-#if 0
-static char *savestr __P((char *str));
-#endif
 
 extern int  ishead __P((char *));
 
-#if defined(SOLARIS) || defined(HALOS)
+#if defined(SOLARIS) || defined(HALOS) || defined(__ORCAC__)
 #define INDEX(s,c) strchr((s),(c))
 #else
 #define INDEX index
@@ -112,6 +111,14 @@ int	mark;			/* Last place we saw a head line */
 
 char	*headnames[] = {"To", "Subject", "Cc", 0};
 
+#ifdef __STACK_CHECK__
+#include <gno/gno.h>
+static void
+printStack (void) {
+	printf("stack usage: %d bytes\n", _endStackCheck());
+}
+#endif
+
 /*
  * Drive the whole formatter by managing input files.  Also,
  * cause initialization of the output stuff and flush it out
@@ -119,15 +126,20 @@ char	*headnames[] = {"To", "Subject", "Cc", 0};
  */
 
 int
-main(argc, argv)
-	int argc;
-	char **argv;
+main(int argc, char **argv)
 {
 	register FILE *fi;
 	register int errs = 0;
 	int number;		/* LIZ@UOM 6/18/85 */
 
+#ifdef __STACK_CHECK__
+	_beginStackCheck();
+	atexit(printStack);
+#endif
+
+#ifndef NO_LOCALE
 	(void) setlocale(LC_CTYPE, "");
+#endif
 
 	goal_length = GOAL_LENGTH;
 	max_length = MAX_LENGTH;
@@ -176,8 +188,7 @@ main(argc, argv)
  * and sending each line down for analysis.
  */
 static void
-fmt(fi)
-	FILE *fi;
+fmt(FILE *fi)
 {
 	static char *linebuf = 0, *canonb = 0;
 	register char *cp, *cp2, cc;
@@ -289,8 +300,7 @@ fmt(fi)
  * it on a line by itself.
  */
 static void
-prefix(line)
-	char line[];
+prefix(char *line)
 {
 	register char *cp, **hp;
 	register int np, h;
@@ -337,20 +347,19 @@ prefix(line)
  * line packer.
  */
 static void
-split(line)
-	char line[];
+split(char *line)
 {
 	register char *cp, *cp2;
-	char word[BUFSIZ];
+	STATIC char textword[BUFSIZ];
 	int wordl;		/* LIZ@UOM 6/18/85 */
 
 	cp = line;
 	while (*cp) {
-		cp2 = word;
+		cp2 = textword;
 		wordl = 0;	/* LIZ@UOM 6/18/85 */
 
 		/*
-		 * Collect a 'word,' allowing it to contain escaped white
+		 * Collect a 'textword,' allowing it to contain escaped white
 		 * space.
 		 */
 		while (*cp && *cp != ' ') {
@@ -373,9 +382,9 @@ split(line)
 			*cp2++ = *cp++;
 		*cp2 = '\0';
 		/*
-		 * LIZ@UOM 6/18/85 pack(word);
+		 * LIZ@UOM 6/18/85 pack(textword);
 		 */
-		pack(word, wordl);
+		pack(textword, wordl);
 	}
 }
 
@@ -395,35 +404,33 @@ char	*outp;				/* Pointer in above */
  * Initialize the output section.
  */
 static void
-setout()
+setout(void)
 {
 	outp = NOSTR;
 }
 
 /*
- * Pack a word onto the output line.  If this is the beginning of
+ * Pack a textword onto the output line.  If this is the beginning of
  * the line, push on the appropriately-sized string of blanks first.
- * If the word won't fit on the current line, flush and begin a new
- * line.  If the word is too long to fit all by itself on a line,
+ * If the textword won't fit on the current line, flush and begin a new
+ * line.  If the textword is too long to fit all by itself on a line,
  * just give it its own and hope for the best.
  *
- * LIZ@UOM 6/18/85 -- If the new word will fit in at less than the
+ * LIZ@UOM 6/18/85 -- If the new textword will fit in at less than the
  *	goal length, take it.  If not, then check to see if the line
- *	will be over the max length; if so put the word on the next
+ *	will be over the max length; if so put the textword on the next
  *	line.  If not, check to see if the line will be closer to the
- *	goal length with or without the word and take it or put it on
+ *	goal length with or without the textword and take it or put it on
  *	the next line accordingly.
  */
 
 /*
- * LIZ@UOM 6/18/85 -- pass in the length of the word as well
- * pack(word)
- *	char word[];
+ * LIZ@UOM 6/18/85 -- pass in the length of the textword as well
+ * pack(textword)
+ *	char textword[];
  */
 static void
-pack(word,wl)
-	char word[];
-	int wl;
+pack(char *textword, int wl)
 {
 	register char *cp;
 	register int s, t;
@@ -432,9 +439,9 @@ pack(word,wl)
 		leadin();
 	/*
 	 * LIZ@UOM 6/18/85 -- change condition to check goal_length; s is the
-	 * length of the line before the word is added; t is now the length
-	 * of the line after the word is added
-	 *	t = strlen(word);
+	 * length of the line before the textword is added; t is now the length
+	 * of the line after the textword is added
+	 *	t = strlen(textword);
 	 *	if (t+s <= LENGTH)
 	 */
 	s = outp - outbuf;
@@ -444,14 +451,14 @@ pack(word,wl)
 		/*
 		 * In like flint!
 		 */
-		for (cp = word; *cp; *outp++ = *cp++);
+		for (cp = textword; *cp; *outp++ = *cp++);
 		return;
 	}
 	if (s > pfx) {
 		oflush();
 		leadin();
 	}
-	for (cp = word; *cp; *outp++ = *cp++);
+	for (cp = textword; *cp; *outp++ = *cp++);
 }
 
 /*
@@ -460,7 +467,7 @@ pack(word,wl)
  * line prefix.
  */
 static void
-oflush()
+oflush(void)
 {
 	if (outp == NOSTR)
 		return;
@@ -474,8 +481,7 @@ oflush()
  * output on standard output (finally).
  */
 static void
-tabulate(line)
-	char line[];
+tabulate(char *line)
 {
 	register char *cp;
 	register int b, t;
@@ -514,7 +520,7 @@ tabulate(line)
  * leading blanks.
  */
 static void
-leadin()
+leadin(void)
 {
 	register int b;
 	register char *cp;
@@ -530,9 +536,10 @@ leadin()
  * This little goodie is needed for
  * a headline detector in head.c
  */
+static char *savestr __P((char *str));
+
 static char *
-savestr(str)
-	char str[];
+savestr(char *str)
 {
 	register char *top;
 
@@ -550,8 +557,7 @@ savestr(str)
  * Is s1 a prefix of s2??
  */
 static int
-ispref(s1, s2)
-	register char *s1, *s2;
+ispref(register char *s1, register char *s2)
 {
 
 	while (*s1++ == *s2)
@@ -560,6 +566,7 @@ ispref(s1, s2)
 }
 
 
+#ifndef __ORCAC__
 /*
  * some architectures' reallocs are too damned stupid to accept NULL
  * buf arguments ...
@@ -574,3 +581,4 @@ my_realloc (void *buf, size_t size)
 	return (void *) realloc(buf, size);
     }
 }
+#endif

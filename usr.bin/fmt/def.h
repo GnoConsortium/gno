@@ -50,7 +50,9 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#ifndef BUILD_FMT
 #include "pathnames.h"
+#endif
 
 #define	APPEND				/* New mail goes to end of mailbox */
 
@@ -102,6 +104,7 @@ struct message {
  * The actual table is declared and initialized
  * in lex.c
  */
+#ifndef BUILD_FMT
 struct cmd {
 	char	*c_name;		/* Name of command */
 	int	(*c_func)();		/* Implementor of the command */
@@ -109,6 +112,7 @@ struct cmd {
 	short	c_msgflag;		/* Required flags of messages */
 	short	c_msgmask;		/* Relevant flags of messages */
 };
+#endif
 
 /* Yechh, can't initialize unions */
 

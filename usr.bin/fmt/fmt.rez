@@ -1,0 +1,17 @@
+/*
+ * $Id: fmt.rez,v 1.1 1997/10/30 03:49:47 gdr Exp $
+ */
+
+#include "Types.Rez"
+
+resource rVersion (0x1, purgeable3, nocrossbank) {
+
+	{ 1, 0, 0,	/* version 1.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+          0		/* non-final release number */
+        },
+        verUS,
+        "fmt",
+        "Simple text formatter\n"
+        "Ported by Devin Reade for GNO v2.0.6"
+};

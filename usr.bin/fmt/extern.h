@@ -33,14 +33,6 @@
  *	@(#)extern.h	8.1 (Berkeley) 6/6/93
  */
 
-#ifndef __P
-#ifdef __STDC__
-#define __P(a) a
-#else
-#define __P(a) ()
-#endif
-#endif
-
 struct name *cat __P((struct name *, struct name *));
 struct name *delname __P((struct name *, char []));
 struct name *elide __P((struct name *));
@@ -208,7 +200,10 @@ void	 regret __P((int));
 void	 relsesigs __P((void));
 int	 respond __P((int *));
 int	 retfield __P((char *[]));
+#ifndef __GNO__
+	/* hmmm.. conflict through mutual namespace pollution */
 int	 rexit __P((int));
+#endif
 int	 rm __P((char *));
 int	 run_command __P((char *, int, int, int, char *, char *, char *));
 int	 save __P((char []));

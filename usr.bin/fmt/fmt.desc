@@ -1,0 +1,9 @@
+Name:    fmt
+Version: 1.0 (19 Oct 97)
+Shell:   GNO
+Author:  Ported by Devin Reade.
+Contact: gdr@eddore.myrias.com
+Where:   /usr/bin
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+Simple text formatter.

@@ -35,11 +35,22 @@
 #define lint
 #endif
 
-#ifndef lint
+#if !defined(lint) && !defined(__GNO__)
 static char sccsid[] = "@(#)head.c	8.1 (Berkeley) 6/6/93";
 #endif /* not lint */
 
-#include "rcv.h"
+/* save some stack space */
+#ifdef	__ORCAC__
+#define	STATIC	static
+#else
+#define	STATIC
+#endif
+
+#ifdef CHECK_RECURSION
+#include <assert.h>
+#endif
+
+#include "def.h"
 #include "extern.h"
 
 /*
@@ -54,36 +65,50 @@ static char sccsid[] = "@(#)head.c	8.1 (Berkeley) 6/6/93";
  * accomodate all funny formats.
  */
 int
-ishead(linebuf)
-	char linebuf[];
+ishead(char linebuf[])
 {
 	register char *cp;
 	struct headline hl;
-	char parbuf[BUFSIZ];
+	STATIC char parbuf[BUFSIZ];
+#ifdef CHECK_RECURSION
+	static int recursing = 0;
+	
+	assert(recursing == 0);
+	recursing++;
+#define RETURN(val) { recursing--; return val; }
+#else
+#define RETURN(val) return (val)
+#endif
 
 	cp = linebuf;
 	if (*cp++ != 'F' || *cp++ != 'r' || *cp++ != 'o' || *cp++ != 'm' ||
 	    *cp++ != ' ')
-		return (0);
+		RETURN (0);
 	parse(linebuf, &hl, parbuf);
 	if (hl.l_from == NOSTR || hl.l_date == NOSTR) {
+#ifndef BUILD_FMT
 		fail(linebuf, "No from or date field");
-		return (0);
+#endif
+		RETURN (0);
 	}
 	if (!isdate(hl.l_date)) {
+#ifndef BUILD_FMT
 		fail(linebuf, "Date field not legal date");
-		return (0);
+#endif
+		RETURN (0);
 	}
 	/*
 	 * I guess we got it!
 	 */
-	return (1);
+	RETURN (1);
 }
 
+#undef RETURN
+
+#ifndef BUILD_FMT
 /*ARGSUSED*/
 void
-fail(linebuf, reason)
-	char linebuf[], reason[];
+fail(char *linebuf, char *reason)
 {
 
 	/*
@@ -92,6 +117,7 @@ fail(linebuf, reason)
 	fprintf(stderr, "\"%s\"\nnot a header because %s\n", linebuf, reason);
 	*/
 }
+#endif
 
 /*
  * Split a headline into its useful components.
@@ -100,13 +126,17 @@ fail(linebuf, reason)
  * structure.  Actually, it scans.
  */
 void
-parse(line, hl, pbuf)
-	char line[], pbuf[];
-	register struct headline *hl;
+parse(char line[], register struct headline *hl, char pbuf[])
 {
 	register char *cp;
 	char *sp;
-	char word[LINESIZE];
+	STATIC char word[LINESIZE];
+#ifdef CHECK_RECURSION
+	static int recursing = 0;
+	
+	assert(recursing == 0);
+	recursing++;
+#endif
 
 	hl->l_from = NOSTR;
 	hl->l_tty = NOSTR;
@@ -126,6 +156,9 @@ parse(line, hl, pbuf)
 	}
 	if (cp != NOSTR)
 		hl->l_date = copyin(cp, &sp);
+#ifdef CHECK_RECURSION
+	recursing--;
+#endif
 }
 
 /*
@@ -135,9 +168,7 @@ parse(line, hl, pbuf)
  * the left string into it.
  */
 char *
-copyin(src, space)
-	register char *src;
-	char **space;
+copyin(register char *src, char **space)
 {
 	register char *cp;
 	char *top;
@@ -170,10 +201,8 @@ char ctype[] = "Aaa Aaa O0 00:00:00 0000";
 char tmztype[] = "Aaa Aaa O0 00:00:00 AAA 0000";
 
 int
-isdate(date)
-	char date[];
+isdate(char date[])
 {
-
 	return cmatch(date, ctype) || cmatch(date, tmztype);
 }
 
@@ -182,8 +211,7 @@ isdate(date)
  * Return 1 if they match, 0 if they don't
  */
 int
-cmatch(cp, tp)
-	register char *cp, *tp;
+cmatch(register char *cp, register char *tp)
 {
 
 	while (*cp && *tp)
@@ -229,8 +257,7 @@ cmatch(cp, tp)
  * or NOSTR if none follow.
  */
 char *
-nextword(wp, wbuf)
-	register char *wp, *wbuf;
+nextword(register char *wp, register char *wbuf)
 {
 	register c;
 
