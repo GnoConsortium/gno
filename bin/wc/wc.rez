@@ -1,0 +1,29 @@
+/*
+ * Resources for version and comment
+ */
+#define PROG "wc"
+#define DESC "Word, line, and byte count."
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 2, 0, 0,	/* Version 2.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	PROG,	/* Program name */
+        DESC " Released with GNO/ME."
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG " v2.0 (August 1997)\n"
+	"GNO utility: " DESC "\n"
+	"Ported from FreeBSD code by Dave Tribby."
+};
