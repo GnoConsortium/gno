@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: builtin.asm,v 1.8 1998/12/21 23:57:04 tribby Exp $
+* $Id: builtin.asm,v 1.9 1998/12/31 18:29:11 tribby Exp $
 *
 **************************************************************************
 *
@@ -117,20 +117,32 @@ loop	ldy	#2
 	bpl	done
 	add2	tbl,#10,tbl
 	bra	loop
-
-foundit	ldy	#4
-	lda	[tbl],y
-	sta	ourproc+1
-	iny
-	lda	[tbl],y
-	sta	ourproc+2
-
-	pei	(argv+2)
+;
+; Found the command handler address. Since we don't have a "jsl [tbl],y"
+; instruction, after pushing parameters on the stack we will push the
+; return address, then the command's address - 1 (2 bytes only, since it's
+; in the current bank).  An rts will take us to the command handler, and a
+; rtl at the end of the handler will bring us back.
+;
+foundit	anop
+	pei	(argv+2)	Push parameters (3 words)
 	pei	(argv)
 	pei	(argc)
-ourproc	jsl	>$FFFFFF	;might want to mutex this!!!!!!
-	sta	val	Save return status.
+	phk		Push return address (high byte)
+	per	return-1	Push return address (low bytes)
+	ldy	#4	Get address of builtin handler
+	lda	[tbl],y	 (16 bytes; assume in this bank)
+	dec	a	  subtract 1 so rts will take us there
+	pha
+	rts		Go to builtin handler routine.
+;
+; Return from handler to this  location
+;
+return	sta	val	Save return status.
 
+;
+; Free the argv array
+;
 	ph4	#0	(no path)
 	pei	(argc)
 	pei	(argv+2)
@@ -727,9 +739,7 @@ end	equ	argv+4
 	ldy	#1	Return status = 1.
 	bra	exit
 
-wait	lock	pwdmutex	
-
-	pea	0
+wait	pea	0
 	jsl	getpfxstr	Get value of prefix 0.
 	sta	ptr
 	stx	ptr+2
@@ -752,8 +762,7 @@ doputs	jsr	puts	Print the c-string
 freebuf	ph4	ptr	Free the buffer.
 	jsl	nullfree
 
-done	unlock pwdmutex
-	ldy	#0	Return status = 0.
+done	ldy	#0	Return status = 0.
 
 exit	lda	space	Deallocate stack space
 	sta	end-3	 and return to the caller.
@@ -768,8 +777,6 @@ exit	lda	space	Deallocate stack space
 	tya		Return status.
 
 	rtl	  
-
-pwdmutex	key
 
 Usage	dc	c'Usage: pwd',h'0d00'
 
@@ -883,7 +890,7 @@ foundhash	sta	sptr
 ;
 ; It must be in the current prefix, so check it out.
 ;
-thispfx	lock	pwdmutex
+thispfx	lock	whichmutex
 ;
 ; check for existence of file
 ;
@@ -938,7 +945,7 @@ freebuf	ph4	ptr	Free the buffer.
 nofile	ldx	#^cantdoit
 	lda	#cantdoit
 	jsr	puts
-donecwd	unlock pwdmutex
+donecwd	unlock whichmutex
 	pei	(ptr+2)
 	pei	(ptr)
 	jsl	nullfree
@@ -968,7 +975,7 @@ builtstr	dc	c'Shell Built-in Command',h'00'
 cantdoit	dc	c'Command Not Found',h'00'
 aliasstr	dc	c'Aliased as ',h'00'
 
-pwdmutex	key
+whichmutex	key
 
 GRec	dc	i'4'
 GRecPath	ds	4
@@ -1007,7 +1014,7 @@ end	equ	argv+4
 	phd
 	tcd
 
-	lock	mutex
+	lock	prefixmutex
 
 	stz	status	Clear return status.
 	lda	argc	Get number of arguments.
@@ -1187,7 +1194,7 @@ finish	ph4	PRecPath	Free the name string buffer.
 ;
 ; Exit through here if PRecPath wasn't used
 ;
-done	unlock mutex
+done	unlock prefixmutex
 
 	ldy	status
 
@@ -1205,7 +1212,7 @@ done	unlock mutex
 
 	rtl	  
 
-mutex	key
+prefixmutex	key
 
 errorstr	dc	c'prefix: could not set prefix, pathname may not exist.'
 	dc	h'0d00'

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shellutil.asm,v 1.7 1998/12/21 23:57:08 tribby Exp $
+* $Id: shellutil.asm,v 1.8 1998/12/31 18:29:14 tribby Exp $
 *
 **************************************************************************
 *
@@ -479,19 +479,39 @@ done	ldx	new+2
 
 nullfree	START
 		
-	lda	4,s
-	ora	6,s
-	bne	ok
-	lda	2,s
-	sta	6,s
-	lda	1,s
+	lda	4,s	Hold address
+	tay		 parameter in
+	lda	6,s	  X and Y registers.
+	tax
+	lda	2,s	Move return
+	sta	6,s	 address on
+	lda	1,s	  the stack.
 	sta	5,s
+	tya		Put address
+	sta	1,s	 parameter back
+	txa		  on the stack.
+	sta	3,s
+
+	ora	1,s	If address is NULL,
+	bne	ok
+	plx			clean up stack
 	plx
-	plx
+	rtl			  and return to caller.
+
+ok	~DISPOSE	NOTE: macro locks/unlocks mem mutex
+
 	rtl
 
-ok	~DISPOSE
+	END
 
+;=====================================================================
+;
+; Data area that holds memory manager mutual exclusion key,
+; which is referenced in the ~NEW and ~DISPOSE macros
+;
+;=====================================================================
+memglobal	DATA
+memmutex	key
 	END
 
 ;=====================================================================

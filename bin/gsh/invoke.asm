@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: invoke.asm,v 1.9 1998/12/21 23:57:06 tribby Exp $
+* $Id: invoke.asm,v 1.10 1998/12/31 18:29:13 tribby Exp $
 *
 **************************************************************************
 *
@@ -72,6 +72,8 @@ sfile	equ	dfile+4
 end	equ	sfile+4
 
 ;	subroutine (4:sfile,4:dfile,4:efile,2:app,2:eapp,2:pipein,2:pipeout,2:pipein2,2:pipeout2),space
+
+* NOTE: only called from invoke, after fork_mutex is locked
 
 	tsc
 	phd
@@ -672,7 +674,7 @@ prefork	lock	fork_mutex	Lock the fork mutual exclusion.
 ;
 ; Tasks the parent process does right after forking
 ;
-postfork	sta	rtnval
+postfork	sta	rtnval	Save pid as return value.
 	lda	pipein	If pipein != 0,
 	beq	postfork2
 	sta	CloseRef
@@ -723,11 +725,18 @@ postfork6	rts
 ;
 infork	phk		Make sure data bank register
 	plb		 is the same as program bank.
-
-	lda	_jobflag	If jobflag == 0,
+;
+; NOTE: next two lines were added for v2.0.6 in order to prevent background
+;       processes from being waited on when they are kicked off from an
+;       exec file.  The side effect of having the process become owned by
+;       the null process may not be desired. (Perhaps there is a better way!)
+;
+	lda	_bg	If in background
+	bne	optty
+	lda	_jobflag	 or jobflag == 0,
 	bne	infork0b
 
-	Open	ttyopen	Open tty.
+optty	Open	ttyopen	Open tty.
 	jcs	errinfork
 
 	lda	_pipein
@@ -735,7 +744,6 @@ infork	phk		Make sure data bank register
 	tcnewpgrp ttyref	 allocate new process group.
 infork0a	settpgrp ttyref	Set current process to have proc group.
 	lda	_bg	If in background,
-	and	#$FF
 	beq	infork0b
 	tctpgrp (gshtty,gshpid)	  reset tty to the shell process group.
 

@@ -1,6 +1,56 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Dec 30 98  [dmt] Added mutual exclusion to ~NEW and ~DISPOSE macros. Lack
+	   of mutex could cause one fork to modify a memory table while
+	   another fork was searching it, leaving one or both processes
+	   in an infinite loop. This caused some recoding in nullfree
+	   (shellutil.mac), since we have to unlock the mutex after
+	   calling ~DISPOSE but before returning to the caller.
+
+Dec 29 98  [dmt] For some sizes of the hash table, the hash command
+	   would sometimes print an entry more than once. Made 2 changes
+	   to sv_colprint (in sv.asm): 1) Ensure the number of columns is
+	   never > number of entries. This is only a problem when there are
+	   fewer than 6 files hashed.  2) Never look beyond the number of
+	   entries stored in offtbl. Results could be affected by the
+	   previous call to sv_colprint.
+
+Dec 28 98  [dmt] Review code for mutual exclusion requirements.
+	   = Change jsl to builtin subroutine near "foundit" in builtin.asm
+	     into stack setup followed by rts, so that mutex is not required
+	     to protect the setup and execution of the invocation.
+	   = Add AliasMutex to protect data used by alias and unalias
+	     commands (alias.asm)
+	   = Remove pwdmutex from pwd command (builtin.asm).
+	   = Remove mutex from dotods routine (dir.asm).
+	   = Add DirMutex (for DirData) to dirs, pushd, and popd commands
+	     (dir.asm).
+	   = Add offtblmutex to sv_colprint routine (sv.asm).
+	   = Change ErrorGS and SetGS calls so that parameter blocks are
+	     on the stack for ShellExec (cmd.asm).
+	   = Add lock/unlock of hashmutex to search routine so that the
+	     hash function is protected. (hash.asm)
+
+Dec 27 98  [dmt] Running a process in the background from inside a
+	   script (not 'source', but executing the script as a command)
+	   caused the script to wait for that background process to end.
+	   Caused the script to run without waiting by checking for
+	   background processing near beginning of "infork" (invoke.asm).
+	   Because the parent process is the script, not gsh, when control
+	   returns to gsh the script has terminated and the parent process
+	   ID is 1 (null process). gsh cannot use its normal job control
+	   commands, except "kill <pid>" (not "kill %<job>") works.
+
+Dec 26 98  [dmt] Make gsh globbing work more like csh: if none of the
+	   requested patterns are found, print "No match" and exit.
+
+Dec 23 98  [dmt] At startup, if /etc/glogin, $HOME/glogin, or $HOME/gshrc
+	   does not exist, skip "file not found" error message. (PR#100)
+
+Dec 21 98  [dmt] Changes to this point checked-in to master archive.
+	   Released as version 2.0d7
+
 Dec 20 98    [dmt] For calls to system(), if input pointer is null or
 	     lower level routines detect an error, return -1.  This change
 	     caused change to internal routine execute(): return -1 rather

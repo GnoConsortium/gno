@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shell.asm,v 1.8 1998/12/21 23:57:07 tribby Exp $
+* $Id: shell.asm,v 1.9 1998/12/31 18:29:14 tribby Exp $
 *
 **************************************************************************
 *
@@ -63,7 +63,6 @@ shell	start
 	using	pdata
 	using	HistoryData
 	using	termdata
-	using hashdata
                
 p	equ	0	General pointer
 cflag	equ	p+4	Flag: set when path converted
@@ -186,7 +185,8 @@ nopathconv	anop
 	pha		argc = 0
 	pha		argv = NULL
 	pha
-	pha		jobflag = 0
+	lda	#$8000
+	pha		jobflag = $8000
 	jsl	ShellExec
 	
 ; Read and execute $HOME/glogin
@@ -209,7 +209,7 @@ fastskip2	anop
 didit	anop
 	jsr	dispose_hash	Remove old table (if set in
 	jsl	hashpath	 login files) and hash $PATH.
-	ld2	1,hash_print	Set hash print flag.
+	ld2	1,done_init	Set initialization done flag.
 
 ;
 ; Check for command-line arguments -c and -e
@@ -385,7 +385,8 @@ no_ovf	phx
 	pha		argc = 0
 	pha		argv = NULL
 	pha
-	pha		jobflag = 0
+	lda	#$8000
+	pha		jobflag = $8000
 	jsl	ShellExec
 
 ; Dispose $HOME/gshrc string
@@ -587,6 +588,7 @@ gshtty	ds	2
 gshpid	ds	2
 exit_requested	dc	i'0'	;!=0 if exit
 signalled	dc	i'0'
+done_init	dc	i2'0'	0 until init is complete
 
 FastFlag	dc	i'0'
 CmdFlag	dc	i'0'

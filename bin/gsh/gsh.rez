@@ -1,7 +1,7 @@
 /*
  * Resources for version and comment
  *
- * $Id: gsh.rez,v 1.9 1998/12/22 16:05:32 gdr-ftp Exp $
+ * $Id: gsh.rez,v 1.10 1998/12/31 18:29:13 tribby Exp $
  */
 
 #define PROG "gsh"
@@ -16,7 +16,7 @@
 resource rVersion (1, purgeable3) {
 	{ 2, 0, 0,	/* Version 2.0.0 */
 	  development,	/* development|alpha|beta|final|release */
-	  7 },		/* non-final release number */
+	  8 },		/* non-final release number */
 	verUS,		/* Country */
 	PROG,		/* Program name */
         DESC

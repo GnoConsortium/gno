@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: orca.asm,v 1.7 1998/12/21 23:57:07 tribby Exp $
+* $Id: orca.asm,v 1.8 1998/12/31 18:29:14 tribby Exp $
 *
 **************************************************************************
 *
@@ -19,6 +19,12 @@
 * Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
 *              |     |                  |       |       |       |
 *	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+*   edit	subroutine (4:argv,2:argc)		builtin command
+*
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/orca.mac

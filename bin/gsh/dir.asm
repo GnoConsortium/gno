@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: dir.asm,v 1.8 1998/12/21 23:57:05 tribby Exp $
+* $Id: dir.asm,v 1.9 1998/12/31 18:29:12 tribby Exp $
 *
 **************************************************************************
 *
@@ -84,6 +84,8 @@ space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
+	lock	DirMutex
+
 	stz	status
 	lda	argc
 	dec	a
@@ -121,7 +123,8 @@ showshort	jsl	dotods	Set top of stack to current directory.
 	pea	1
 	jsl	showdir
 
-exit	return 2:status
+exit	unlock DirMutex
+	return 2:status
 
 usingstr	dc	c'usage: dirs [-l]',h'0d00'
 
@@ -149,6 +152,7 @@ space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
+	lock	DirMutex
 	stz	status
 	lda	argc	Get number of arguments.
 	dec	a	If no parameters,
@@ -312,7 +316,8 @@ done	lda	varpushdsil	If $PUSHDSILENT not defined,
 	pea	1
 	jsl	showdir	  show the directory stack.
 
-exit	return 2:status
+exit	unlock DirMutex
+	return 2:status
 
 usagestr	dc	c'usage: pushd [+n | dir]',h'0d00'
 err1	dc	c'pushd: No other directory',h'0d00'
@@ -344,6 +349,7 @@ space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
+	lock	DirMutex
 	stz	status
 	lda	argc
 	dec	a
@@ -448,7 +454,8 @@ gototop	lda	tods
 	pea	1
 	jsl	showdir
 
-exit	return 2:status
+exit	unlock DirMutex
+	return 2:status
 
 usingstr	dc	c'Usage: popd [+n]',h'0d00'
 err1	dc	c'popd: Directory stack empty',h'0d00'
@@ -615,9 +622,7 @@ space	equ	idx+2
 	pha
 	jsl	nullfree		free it.
 
-setit	lock	mutex
-
-	pea	0
+setit	pea	0
 	jsl	getpfxstr	Get value of prefix 0.
 	sta	p
 	stx	p+2
@@ -656,12 +661,8 @@ ok	clc		Source is result
 	lda	p+2
 	sta	dirstack+2,y
 
-done	unlock mutex
-
-	return
+done	return
 		
-mutex	key
-
 	END
 
 **************************************************************************
@@ -674,6 +675,7 @@ DirData	DATA
 
 dirstack	ds	MAXD*4
 tods	dc	i'0'
+DirMutex	key
 
 	END
 

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: hash.asm,v 1.7 1998/12/21 23:57:06 tribby Exp $
+* $Id: hash.asm,v 1.8 1998/12/31 18:29:13 tribby Exp $
 *
 **************************************************************************
 *
@@ -98,24 +98,33 @@ num	equ	space+2
 name	equ	num+2
 end	equ	name+4
 
+* NOTE: hash should only be called after hashmutex is locked
+
+;
+; No local variables; just need to save old Dir Page pointer and set
+; up new one to point to parameters.
+;
 	tsc
 	phd
 	tcd
 
-	lda	num
-	bne	hasher
+	lda	num	If this isn't the first time
+	bne	hasher	 through, reuse the value of "h".
 
+;
+; First time through for the name: calculate value for "h"
+;
 	stz	h
 	ldy	#0
 loop	lda	[name],y
 	and	#$FF
 	beq	hasher
-	sta	addit+1
+	sta	addit+1	Modify "adc #$FFFF"
 	lda	h	;left shift 7
 	xba
 	and	#$FF00
 	lsr	a
-addit	adc	#0	;(cf=0)
+addit	adc	#$FFFF	NOTE: immediate data was modified.
 	phy
 	UDivide (@a,t_size),(@a,@a)
 	sta	h
@@ -123,6 +132,9 @@ addit	adc	#0	;(cf=0)
 	iny
 	bra	loop
 
+;
+; "h" has been calculated; now do the rest of the hash function
+;
 hasher	lda	num	;num*num
 	sta	tmp
 	lda	#0
@@ -139,7 +151,7 @@ nomul	dex
 	asl	a
 	asl	a
 	sec
-	sbc	1,s
+	sbc	1,s	(Use top word on stack as temp var)
 	asl	a
 	asl	a
 	adc	1,s
@@ -154,9 +166,12 @@ nomul	dex
 	adc	h
 	sec
 	sbc	num
-	plx
+	plx		(Remove temp var from stack)
 	UDivide (@a,t_size),(@a,@y)
 
+;
+; Return the hashed value to the user
+;
 	lda	space
 	sta	end-2
 	pld
@@ -165,10 +180,10 @@ nomul	dex
 	adc	#end-3
 	tcs
 
-	tya
+	tya		Final hash value is in accumulator.
 	rts
 
-h	ds	2
+h	ds	2	NOTE: h must be a "static" variable.
 tmp	ds	2
 
 	END
@@ -359,6 +374,8 @@ done	anop
 **************************************************************************
 
 search	START
+
+	using	hashdata
 	
 ptr	equ	1
 name_len	equ	ptr+4
@@ -378,6 +395,8 @@ end	equ	file+4
 	tcs
 	phd
 	tcd
+
+	lock	hashmutex
 
 	stz	qh
 	stz	full_path	Set result to NULL.
@@ -468,7 +487,9 @@ found	lda	[ptr]
 	pha
 	jsr	copycstr	Put filename at end of pathname.
 
-done	ldx	full_path+2	Load return value into Y- & X- regs
+done	unlock hashmutex
+
+	ldx	full_path+2	Load return value into Y- & X- regs
 	ldy	full_path
 
 ; Adjust stack in preparation for return
@@ -572,6 +593,9 @@ ptr	equ	numEntries+2
 space	equ	ptr+4
 
 	subroutine (4:dir,2:dirNum,4:files),space
+
+* NOTE: dir_search is only called from hashpath (after hashmutex locked)
+
 ;
 ; Open directory name passed as 1st parameter
 ;
@@ -731,6 +755,7 @@ hashpath	START
 	
 	using hashdata
 	using	vardata
+	using global
 
 len	equ	1
 pathnum	equ	len+2
@@ -1062,7 +1087,7 @@ filesdone	anop
 	ph4	gsosbuf	Free memory allocated for
 	jsl	nullfree	 $PATH string.
 
-	lda	hash_print	If initialization isn't complete,
+	lda	done_init	If initialization isn't complete,
 	beq	noprint	 don't print the # of files.
 
 	Int2Dec (hash_numexe,#hashnum,#3,#0)
@@ -1089,8 +1114,6 @@ noprint	anop
 	tcs
 
 	rtl
-
-hashmutex	key		Mutual exclusion key
 
 pathname	gsstr	'path'
 
@@ -1167,12 +1190,13 @@ done	rts
 
 hashdata	DATA
 
+hashmutex	key		Mutual exclusion key
+
 t_size	ds	2	t_size = (TAB_MULT * numexe) - 1
 
 hash_paths	dc	32i4'0'	32 paths max for now.
 hash_files	dc	i4'0'
 hash_table	dc	i4'0'	Pointer to table (t_size entries)
 hash_numexe	dc	i2'0'	Number of hashed executables
-hash_print	dc	i2'0'	Print flag; 0 until init is complete
 
 	END

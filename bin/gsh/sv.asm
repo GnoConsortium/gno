@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: sv.asm,v 1.6 1998/09/08 16:53:14 tribby Exp $
+* $Id: sv.asm,v 1.7 1998/12/31 18:29:14 tribby Exp $
 *
 **************************************************************************
 *
@@ -19,6 +19,23 @@
 * Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
 *              |     |                  |       |       |       |
 *	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+*   sv_alloc	subroutine (2:size)
+*	return 4:ptr
+*
+*   sv_add	subroutine (4:vect,4:string,2:allocflag)
+*
+*   sv_dispose	subroutine (4:vect)
+*
+*   sv_colprint subroutine (4:sv)
+*	
+*   sv_sort	subroutine (4:sv)
+*
+*   _qsort	subroutine (4:sv,2:left,2:right)
+*
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/sv.mac
@@ -233,19 +250,26 @@ nextlen	pla
 ; a divide..
 ;
 	ldx	#0
-	txa
-	dex
+	lda	maxlen
 	clc
 colloop	inx
 	adc	maxlen
 	cmp	#80
 	bcc	colloop
-	cpx	#6+1
-	bcc	okcol
-	ldx	#6	;limit of 6 columns
+
+	cpx	#6+1	Make sure there
+	bcc	okcol	 are no more
+	ldx	#6	  than 6 columns.
 okcol	stx	numcol
+	lda	[base]
+	cmp	numcol	Ensure number of columns
+	bcs	okcol2	 <= number of entries
+	tax
+	stx	numcol
+okcol2	anop
+
 ;
-; recalculate the width
+; recalculate the width based upon columns/80
 ;
 	UDivide (#80,@x),(maxlen,@a)
 ;
@@ -261,6 +285,7 @@ foocol	anop
 ;
 ; find the index for each column...
 ;		              
+	lock	offtblmutex
 	lda	#0
 	tax
 	clc
@@ -269,11 +294,12 @@ mkidxloop	sta	offtbl,x
 	adc	numrow
 	cmp	[base]
 	bcc	mkidxloop
-;
-; well....I think we can print now (yay!)
-;
-	asl	numcol	Double numcol since it's compared
+
+	stx	numcol	Double numcol since it's compared
 	ldx	#0	 against X to end the loop.
+;
+; Ready to print...
+;
 printloop	lda	offtbl,x
 	cmp	[base]
 	bcs	nextprint0
@@ -311,13 +337,16 @@ nextprint0	jsr	newline
 	dec	numrow
 	bne	printloop
 
-doneprint	return
+	unlock offtblmutex
+
+	return
 
 ;
 ; Offset table: one entry for each column
 ;
 offtbl	ds	14
 
+offtblmutex	key
 	END
 
 **************************************************************************
@@ -344,6 +373,8 @@ space	equ	0
 	return
 
 	END
+
+**************************************************************************
 
 _qsort	PRIVATE
 

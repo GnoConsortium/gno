@@ -1,4 +1,4 @@
-Last updated: Dec. 18, 1998  By: Dave Tribby
+Last updated: Dec. 27, 1998  By: Dave Tribby
 
 For more bug reports, see http://www.gno.org/~gno/bugs.html
 
@@ -17,10 +17,6 @@ command line cannot expand to > 1024 characters.
 When a background process finishes and there's text in the input buffer,
 the next keypress correctly reprints the edit line but the key itself does
 not get put in the buffer.
-
-Running a process in the background from inside a script (not 'source',
-but executing the script as a command) causes the shell to wait for that
-background process to end - not exactly what we want.
 
 Gsh requires the v2.0.4 ltermcap to link.  A new version of the termcap
 library is proposed for GNO v2.0.6, and gsh may require updates.

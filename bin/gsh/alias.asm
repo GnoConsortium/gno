@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: alias.asm,v 1.7 1998/12/21 23:57:04 tribby Exp $
+* $Id: alias.asm,v 1.8 1998/12/31 18:29:11 tribby Exp $
 *
 **************************************************************************
 *
@@ -69,6 +69,8 @@ VTABSIZE	gequ	17
 
 alias	START
 
+	using	AliasData
+
 arg	equ	1
 space	equ	arg+4
 argc	equ	space+3
@@ -84,6 +86,7 @@ end	equ	argv+4
 	phd
 	tcd
 
+	lock	AliasMutex
 	lda	argc	How many arguments were provided?
 	dec	a
 	beq	showall	None -- show all alias names.
@@ -210,7 +213,8 @@ setit	pei	(arg+2)
 	pei	(arg)
 	jsl	nullfree
 
-exit	lda	space
+exit	unlock AliasMutex
+	lda	space
 	sta	end-3
 	lda	space+1
 	sta	end-2
@@ -240,10 +244,14 @@ spacestr	dc	c' ',h'00'
 
 unalias	START
 
+	using	AliasData
+
 status	equ	0
 space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
+
+	lock	AliasMutex
 
 	stz	status
 
@@ -270,7 +278,8 @@ loop	add2	argv,#4,argv
 
 	bra	loop
 
-done	return 2:status
+done	unlock AliasMutex
+	return 2:status
 
 Usage	dc	c'Usage: unalias name ...',h'0d00'
 
@@ -539,7 +548,7 @@ replace	ldy	#8+2
 	pei	(tmp+2)
 	pei	(tmp)
 	jsr	copycstr
-	bra	done
+	jmp	done
 
 notfound	ph4	#4*3
 	~NEW
@@ -842,6 +851,7 @@ AliasData	DATA
 
 AliasNum	dc	i2'0'
 AliasPtr	dc	i4'0'
+AliasMutex	key
 
 AliasTable	ds	VTABSIZE*4
 

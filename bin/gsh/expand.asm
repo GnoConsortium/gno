@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: expand.asm,v 1.6 1998/09/08 16:53:08 tribby Exp $
+* $Id: expand.asm,v 1.7 1998/12/31 18:29:13 tribby Exp $
 *
 **************************************************************************
 *
@@ -48,37 +48,39 @@ shallweglob	equ	filesep+2
 wordbuf	equ	shallweglob+2
 ptr	equ	wordbuf+4
 buf	equ	ptr+4
-space	equ	buf+4
+globflag	equ	buf+4
+space	equ	globflag+2
 
 	subroutine (4:cmd),space
-;
-; Check for noglob variable and exit if it's set to something.
-;
-	lda	varnoglob
-	beq	doglob
 
-; Allocate a buffer, copy the command line into it, and return.
+; Allocate buffer to hold result
 	jsl	alloc1024
 	sta	buf
 	stx	buf+2
+
+; Check for noglob variable and exit if it's set to something.
+	ldy	varnoglob
+	beq	doglob
+
+; Allocate a buffer, copy the command line into it, and return.
 	pei	(cmd+2)
 	pei	(cmd)
 	pei	(buf+2)
 	pei	(buf)
 	jsr	copycstr
 	jmp	bye
+
 ;
-; noglob isn't set, so now we can actually start.
+; noglob isn't set, so we can start globbing.
 ;
-doglob	jsl	alloc1024	Create an output buffer.
-	sta	buf
-	stx	buf+2
-	sta	ptr	ptr points to next
+doglob	sta	ptr	ptr points to next
 	stx	ptr+2	 position in buf.
 
 	jsl	alloc1024	Create a word buffer.
 	sta	wordbuf
 	stx	wordbuf+2
+
+	stz	globflag	globflag = no globbing done (yet).
 
 ;
 ; Find the beginning of the next word
@@ -358,33 +360,48 @@ nomore	anop
 	lda	exppath
 	jsl	free1024
 
-	lda	count	If somehing was expanded,
-	jne	findword	 go find the next word.
+	lda	count	If something was expanded,
+	beq	nothingfound
+
+	lda	globflag	Set "globbed, something found"
+	ora	#$8000	 bit in globflag.
+	sta	globflag
+	jmp	findword	  Go find the next word.
 
 ; Nothing was expanded from the wildcard.  If we wanted to act like
 ; ksh, we could pass the original text by doing a "jmp skipdeglob".
-; Since passing a bad filename can mess up some programs, we will
-; print an error message for this name and continue processing others.
 
-	ldx	#^nomatch
-	lda	#nomatch
-	jsr	errputs
-
-	ldx	wordbuf+2
-	lda	wordbuf
-	jsr	errputs
-
-	ldx	#^ignored
-	lda	#ignored
-	jsr	errputs
+nothingfound	anop
+	lda	globflag	Set "globbed, nothing found"
+	ora	#$4000	 bit in globflag.
+	sta	globflag
 
 	jmp	findword	Go find the next word.
 
 ;
 ; Goodbye, cruel world, I'm leaving you today, Goodbye, goodbye.
 ;
-alldone	jsr	g_putbyte
-	ldx	wordbuf+2
+alldone	jsr	g_putbyte	Store null byte at end of string.
+
+;
+; Check globflag for no valid matches found in any pattern
+;
+	lda	globflag
+	cmp	#$4000
+	bne	alldone2
+
+	ldx	#^nomatch
+	lda	#nomatch
+	jsr	errputs
+
+	ldx	buf+2
+	lda	buf
+	jsl	free1024
+
+	stz	buf+2
+	stz	buf
+
+alldone2	ldx	wordbuf+2
 	lda	wordbuf
 	jsl	free1024
 
@@ -443,8 +460,7 @@ InitWCPath	ds	4	Path name, with wildcard
 nWCparm	dc	i2'1'	pCount
 nWCname	ds	4	Pointer to returned path name
 
-nomatch	dc	c'No match: ',h'00'
-ignored	dc	c' ignored',h'0d00'
+nomatch	dc	c'No match',h'0d00'
 
 	END
 

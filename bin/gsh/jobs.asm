@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: jobs.asm,v 1.8 1998/12/21 23:57:06 tribby Exp $
+* $Id: jobs.asm,v 1.9 1998/12/31 18:29:13 tribby Exp $
 *
 **************************************************************************
 *
@@ -19,6 +19,40 @@
 * Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
 *              |     |                  |       |       |       |
 *	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+*   pwait	no parameters			wait for forground
+*
+*   jobkiller	no parameters			kill all jobs
+*
+*   palloc	subroutine (2:pid,2:bg,4:cmd)		alloc/fill proc struc
+*
+*   pallocpipe	subroutine (2:pid,2:bg,4:cmd)		palloc+append to pipe
+*
+*   pchild	subroutine (2:code,2:signum)		handle SIGCHLD
+*
+*   removejentry subroutine (2:pid)			Remove a job entry
+*	Return:  A-reg = 1 if found, 0 if not found
+*
+*   mkjobcur	jsr with 1 address parameter
+*
+*   jobs	subroutine (4:argv,2:argc)		built-in command
+*
+*   kill	subroutine (4:argv,2:argc)		built-in command
+*
+*   fg	subroutine (4:argv,2:argc)		built-in command
+*
+*   bg	subroutine (4:argv,2:argc)		built-in command
+*
+*   stop	subroutine (4:argv,2:argc)		built-in command
+*
+*   pprint	subroutine (4:pp,2:idflag,2:signum)	print job entry
+*
+*   parsepid	subroutine (4:str)			parse "%" pid
+*	return 2:pid
+*
 **************************************************************************
 
 	mcopy	/obj/gno/bin/gsh/jobs.mac
@@ -894,7 +928,7 @@ done	lda	space,s
 **************************************************************************
 *
 * JOBS: builtin command
-* syntax: exit
+* syntax: jobs
 *
 * displays jobs
 *
@@ -914,18 +948,16 @@ space	equ	status+2
 
 	stz	pidflag
 	stz	status
-	lda	argc
-	dec	a
-	beq	cont
-	dec	a
-	beq	grab
-shit	ldx	#^Usage
-	lda	#Usage
-	jsr	errputs
-	inc	status	Return status = 1.
-	jmp	done
 
-grab	ldy	#4
+	lda	argc	If no argument,
+	dec	a
+	beq	startcmd	 start processing.
+	dec	a	If > 1 argument,
+	bne	prusage	 print usage string.
+;
+; Argument provided. It had better be "-l\0"
+;
+	ldy	#4
 	lda	[argv],y
 	sta	pp
 	ldy	#4+2
@@ -933,40 +965,62 @@ grab	ldy	#4
 	sta	pp+2
 	lda	[pp]
 	and	#$FF
-	if2	@a,ne,#'-',shit
+	if2	@a,ne,#'-',prusage
 	ldy	#1
 	lda	[pp],y
-	if2	@a,ne,#'l',shit
-	inc	pidflag	
+	if2	@a,eq,#'l',optset
+;
+; Error with command line
+;
+prusage	ldx	#^Usage	Print usage string.
+	lda	#Usage
+	jsr	errputs
+	inc	status	Return status = 1.
+	jmp	done
 
-cont	ld2	1,count
+;
+; "-l" option set
+;
+optset	inc	pidflag	
+
+;
+; Start processing "jobs" command
+;
+startcmd	ld2	1,count	count = 1.
+
+;
+; Outer loop: scan the job list
+;
 loop	lda	pjoblist
 	ldx	pjoblist+2
+;
+; Inner loop: find entry in job list that matches the count number.
+;
 loop2	sta	pp
 	stx	pp+2
-	ora	pp+2
-	beq	next
-	ldy	#p_index
-	lda	[pp],y
-	cmp	count
-	beq	gotit
-	ldy	#p_next+2
-	lda	[pp],y
+	ora	pp+2	If at end of list,
+	beq	next	 there was no entry with this count!
+	ldy	#p_index	If p_index field
+	lda	[pp],y	 in this entry
+	cmp	count	  matches count,
+	beq	gotit	    go print the contents.
+	ldy	#p_next+2	Otherwise,
+	lda	[pp],y	 point to next entry in list.
 	tax
 	ldy	#p_next
 	lda	[pp],y
 	bra	loop2
 
-gotit	pei	(pp+2)
+gotit	pei	(pp+2)	Push address of entry,
 	pei	(pp)
-	pei	(pidflag)
-	pea	0
-	jsl	pprint
+	pei	(pidflag)	 "long" flag,
+	pea	0	  (signum = 0)
+	jsl	pprint	   and print the entry.
 
-next	inc	count
+next	inc	count	Bump count.
 	lda	count
-	cmp	pmaxindex
-	beq	loop
+	cmp	pmaxindex	If more to be printed,
+	beq	loop	 scan list for next entry.
 	bcc	loop
 
 done	return 2:status

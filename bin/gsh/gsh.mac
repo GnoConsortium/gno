@@ -7,38 +7,6 @@
 **************************************************************************
 
 ; ------------------
-; Mutual Exclusion
-; ------------------
-
-********************
-* key
-********************
-	MACRO
-&lab	key
-&lab	dc	i2'0'
-	MEND
-
-********************
-* lock
-********************
-	MACRO
-&lab	lock	&a1
-&lab	lda	#1
-	tsb	&a1
-	beq	*+6
-	cop	$7F
-	bra	*-7
-	MEND
-
-********************
-* unlock
-********************
-	MACRO
-&lab	unlock &a1
-&lab	stz	&a1
-	MEND
-
-; ------------------
 ; GNO/ME subroutine calls
 ; ------------------
 
@@ -1960,7 +1928,14 @@ skip&syscnt	anop
 	MACRO
 &lab	~NEW
 &lab	anop
+* -- Portion needed for debug version
+*	jsl	DB~NEW
+*
+* -- Rest is for non-debug version
+	using	memglobal
+	lock	memmutex
 	jsl	~NEW
+	unlock memmutex
 	MEND
 
 
@@ -1970,5 +1945,44 @@ skip&syscnt	anop
 	MACRO
 &lab	~DISPOSE
 &lab	anop
-	jml   ~DISPOSE
+* -- Portion needed for debug version
+*	jsl   DB~DISPOSE
+*
+* -- Rest is for non-debug version
+	using	memglobal
+	lock	memmutex
+	jsl   ~DISPOSE
+	unlock memmutex
+	MEND
+
+; ------------------
+; Mutual Exclusion
+; ------------------
+
+********************
+* key
+********************
+	MACRO
+&lab	key
+&lab	dc	i2'0'
+	MEND
+
+********************
+* lock
+********************
+	MACRO
+&lab	lock	&a1
+&lab	lda	#1
+	tsb	&a1
+	beq	*+6
+	cop	$7F
+	bra	*-7
+	MEND
+
+********************
+* unlock
+********************
+	MACRO
+&lab	unlock &a1
+&lab	stz	&a1
 	MEND

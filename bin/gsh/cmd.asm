@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: cmd.asm,v 1.8 1998/12/21 23:57:05 tribby Exp $
+* $Id: cmd.asm,v 1.9 1998/12/31 18:29:12 tribby Exp $
 *
 **************************************************************************
 *
@@ -850,7 +850,8 @@ RRec	equ	CRec+4
 NRec	equ	RRec+4
 ORec	equ	NRec+4
 ptr	equ	ORec+4
-status	equ	ptr+4
+sptr	equ	ptr+4
+status	equ	sptr+2
 space	equ	status+2
 jobflag	equ	space+3
 argv	equ	jobflag+2
@@ -879,10 +880,10 @@ parmloop	lda	count	Get index
 	asl2	a	 into address array.
 	tay
 	lda	[argv],y	Copy argument
-	sta	SetValue	 pointer to
-	iny2		  SetValue
+	sta	ptr	 pointer to
+	iny2		  ptr.
 	lda	[argv],y
-	sta	SetValue+2
+	sta	ptr+2
 
 	lda	count	If parameter number
 	cmp	#10
@@ -904,15 +905,31 @@ digits3	ldx	#3		length = 3
 setit	stx	pname
 	Int2Dec (@a,#pname_text,pname,#0)
 
+;
+; Build parameter block on stack and call SetGS (p 427 in ORCA/M manual)
+;
 set_value	anop
-	ph4	SetValue	Convert value string
-	jsr	c2gsstr	 to a GS/OS string
-	stx	SetValue+2	  and save in SetGS
-	sta	SetValue	   parameter block.
+	tsx		Save current stack pointer.
+	stx	sptr
+	pea	0	Export flag
+	ph4	ptr	Convert value string
+	jsr	c2gsstr	 to a GS/OS string.
+	stx	ptr+2	  (Save for later
+	sta	ptr	   deallocation).
+	phx		
+	pha
+	ph4	#pname	Address of variable name.
+	pea	3	Number of parameters
+	tsc		Calculate Param Block addr
+	inc	a	 (stack ptr + 1)
+	pea	0	  and push 32 bits
+	pha		   onto stack
+	pea	$0146	SetGS call number
+	jsl	$E100B0	Call GS/OS
+	lda	sptr	Restore stack pointer.
+	tcs
 
-	SetGS	SetPB	Set $count to the argv string.
-
-	ph4	SetValue	Free the value buffer.
+	ph4	ptr	Free the value buffer.
 	jsl	nullfree
 	inc	count	Bump the parameter counter.
 	lda	count	If more to do,
@@ -980,9 +997,29 @@ vars_set	unlock mutex
 	jsl	$E100B0
 
 	bcc	ok	If there was an error,
-	sta	ErrError	 print a message
-	ErrorGS Err
-	jmp	done
+	cmp	#$46	 and it's not "file not found"
+	bne	openerr	  on glogin or gshrc,
+	ldx	jobflag
+	bmi	godone
+;
+; Error opening source file. Assemble parameter block on stack and call
+; ErrorGS (p 393 in ORCA/M manual)
+;
+openerr	anop
+	tsx		Save current stack pointer.
+	stx	sptr
+	pha		Push error number
+	pea	1	Push number of parameters
+	tsc		Calculate PB addr
+	inc	a	 (stack ptr + 1)
+	pea	0	  and push 32 bits
+	pha		   onto stack
+	pea	$0145	ErrorGS call number
+	jsl	$E100B0	Call GS/OS
+	lda	sptr	Restore stack pointer.
+	tcs
+
+godone	jmp	done
 
 ok	ldy	#2	Copy file ref num
 	lda	[ORec],y	 from OpenGS PB into
@@ -1017,8 +1054,19 @@ ok	ldy	#2	Copy file ref num
 	jsl	$E100B0
 
 	bcc	ok2	If there was an error,
-	sta	ErrError	 print a message
-	ErrorGS Err
+	tsx			Save current stack pointer.
+	stx	sptr
+	pha
+	pea	1
+	tsc
+	inc	a
+	pea	0
+	pha
+	pea	$0145
+	jsl	$E100B0		Call ErrorGS to print a message
+	lda	sptr		Restore stack pointer.
+	tcs
+
 	jmp	close_ex
 
 ;
@@ -1073,7 +1121,9 @@ noecho	lda	[data]	If first character
 *   call execute: subroutine (4:cmdline,2:jobflag)
 	pei	(data+2)
 	pei	(data)
-	pei	(jobflag)
+	lda	jobflag	Remove "startup" flag bit
+	and	#$7FFF	 from jobflag before passing it.
+	pha
 	jsl	execute
 	sta	status
 
@@ -1131,19 +1181,6 @@ exit1a	anop
 
 NLTable	dc	h'0d'	Newline Table
 
-
-; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
-Err	dc	i2'1'	pCount
-ErrError	ds	2	Error number
-
-;
-; Parameter block for shell SetGS calls (p 427 in ORCA/M manual)
-;
-SetPB	anop
-	dc	i2'3'	pCount
-SetName	dc	i4'pname'	Name  (pointer to GS/OS string)
-SetValue	ds	4	Value (pointer to GS/OS string)
-SetExport	ds	2	Export flag
 ;
 ; Name of argv parameter ($1 to $999) to be set; GS/OS string
 ;
@@ -1323,8 +1360,16 @@ expand	anop
 	sta	ptr_glob
 	stx	ptr_glob+2
 
+; Was there a globbing error?
+	ora	ptr_glob+2
+	bne	expalias
+	pha		Put null pointer
+	pha		 on stack
+	jmp	errexit	  and go to error exit.
+
 ; Expand aliases in the modified command line (final expansion)
-	phx	              
+expalias	phx
+	lda	ptr_glob
 	pha
 	jsl	expandalias
 	sta	exebuf
@@ -1405,8 +1450,9 @@ chkpid	lda	pid	Get child process id.
 	cmp	#-1	If -1 (error), all done.
 	jeq	errexit
 
-	lda	jobflag	If jobflag is set,
-	beq	jobwait	 do more complicated wait.
+	if2	term,eq,#T_AMP,jobwait If last token was "&"
+	lda	jobflag	     or jobflag is set,
+	beq	jobwait	      do more complicated wait.
 
 ;
 ; Uncomplicated wait: simply call wait() to get child's termination status
@@ -1492,6 +1538,7 @@ donewait	if2	term,eq,#T_EOF,endcmd If last token was EOF
 ;
 errexit	lda	#-1
 	sta	waitstatus
+	jsr	setstatus	   Set process's $status.
 
 ;
 ; We have completed processing of a command

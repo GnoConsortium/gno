@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: edit.asm,v 1.9 1998/12/21 23:57:06 tribby Exp $
+* $Id: edit.asm,v 1.10 1998/12/31 18:29:12 tribby Exp $
 *
 **************************************************************************
 *
@@ -1356,7 +1356,7 @@ q	equ	4	 locations.
 	beq	eq_endhash
 	mv4	hash_table,p
 	lda	hash_numexe
-	beq	endhash
+	jeq	endhash
 	ldy	#0
 	ldx	t_size
 eq_endhash	beq	endhash
@@ -1644,7 +1644,7 @@ space	equ	len+2
 loop	lda	len
 	jeq	done
 	dec	a
-	beq	putit	;last char in string
+	jeq	putit	;last char in string
 
 	lda	[keystr]
 	and	#$FF
