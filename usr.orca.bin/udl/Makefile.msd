@@ -2,6 +2,7 @@
 # Makefile for udl
 # (c) 1993-1996 Soenke Behrens
 #
+# $Id: Makefile.msd,v 1.2 1996/02/11 20:05:47 gdr Exp $
 
 # DJGPP is a gcc port
 CC	= gcc

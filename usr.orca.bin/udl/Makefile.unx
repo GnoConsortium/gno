@@ -1,8 +1,8 @@
 #
 # Makefile for udl
-# (c) 1993-1996 Soenke Behrens, Devin G. Reade
+# (c) 1993-1996 Soenke Behrens, Devin Reade
 #
-# $Id: Makefile.unx,v 1.8 1996/02/04 01:34:25 gdr Exp $
+# $Id: Makefile.unx,v 1.9 1996/02/11 20:05:48 gdr Exp $
 #
 
 # $(CC) _must_ be an ANSI compiler. Use gcc if your cc is not.
@@ -67,7 +67,7 @@ newudl.1: udl.1
 	sed -f sed.script <udl.1 >newudl.1; \
 	rm -f sed.script
 
-install: newudl.1 udl
+install: newudl.1 build
 	$(INSTALL) $(MODE755) $(OWNER_GROUP) udl   $(BINDIR)
 	$(INSTALL) $(MODE644) $(OWNER_GROUP) newudl.1 $(MANDIR)/udl.1
 	rm -f newudl.1

@@ -1,10 +1,10 @@
 #
 # Makefile for udl
-# Copyright (c) 1993-1996 Soenke Behrens, Devin G. Reade
+# Copyright (c) 1993-1996 Soenke Behrens, Devin Reade
 #
 # This makefile should be used with dmake.
 #
-# $Id: Makefile.gs,v 1.9 1996/02/04 01:34:23 gdr Exp $
+# $Id: Makefile.gs,v 1.10 1996/02/11 20:05:47 gdr Exp $
 #
 
 # Where do we put the binaries and man page?
@@ -19,13 +19,13 @@ DEFINES = -DGNO -D_POSIX_C_SOURCE -D_POSIX_SOURCE -DHAS_ATEXIT \
 
 # Use optimization and a 2k stack.
 
-CFLAGS	= $(DEFINES) -O -w -s2048
+CFLAGS	= $(DEFINES) -O -s2048
 LDFLAGS	= -s2048
 
 # Depending on how you have your libraries set up, you may not need
 # this next line.  In that case, just comment it out.
 
-LDLIBS	= -l/usr/lib/gnulib
+# LDLIBS	= -l/usr/lib/gnulib
 
 #
 # You should not have to modify anything beyond this point
