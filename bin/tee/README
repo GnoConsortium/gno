@@ -1,0 +1,15 @@
+tee v1.1 for Gno
+
+The tee that ships with Gno (and hereforth designated v1.0) seems to have
+buffered output, making it next to useless.  This one has no buffering on
+stdout, so you see the output as it's being read.  This one also allows
+multiple output files, appending, and ignoring of SIGINT.
+
+To install copy tee to /bin and tee.1 to /usr/man/man1, or just type
+"dmake install".
+
+This program contains material from the Orca/C Run-Time Libraries,
+copyright 198701994 by Byte Works, Inc.  Used with Permission.
+
+Devin Reade
+<gdr@myrias.ab.ca>
