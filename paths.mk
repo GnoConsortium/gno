@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: paths.mk,v 1.9 1998/05/30 14:18:04 gdr-ftp Exp $
+# $Id: paths.mk,v 1.10 1998/12/22 16:13:41 gdr-ftp Exp $
 #
 
 # This one isn't really a path, but it affects the creation of path
@@ -15,6 +15,25 @@
 # created object files will follow ProDOS naming conventions.
 
 PRODOS_OBJS	= true
+
+# Define APPLESHARE_CASE_SENSITIVE if your source exists on an Appleshare-
+# served partition where the underlying filesystem is case sensitive.
+# This is necessary due to the rez compiler forcing all filenames to upper
+# case rather than using them as is.
+#
+# This is necessary (for example) for CAP and Netatalk served volumes
+# where the underlying fs is ufs, or e2fs, but is not required for MACOS
+# servers where the underlying fs is HFS.  Defining this macro when it is
+# not needed doesn't break anything, it just makes your compilations a bit
+# slower due to an extra file copy.
+#
+# If you're setting it here and also building any of libc, ORCALib, SysFloat,
+# or SysFPEFloat, you will also want to set it in:
+#	../lib/orcalibs/Source/const.mk
+# 
+# To turn this off, completely comment it out; don't just change the value.
+
+# APPLESHARE_CASE_SENSITIVE = true
 
 # SRC_DIR is the top-level GNO source distribution directory (containing
 # $(SRC_DIR)/gno, $(SRC_DIR)/gno/lib, and so forth).  It also corresponds
