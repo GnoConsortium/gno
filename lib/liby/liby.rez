@@ -1,13 +1,14 @@
 /*
  * Resources for version and comment
  * 
- * $Id: liby.rez,v 1.1 1997/10/03 04:45:43 gdr Exp $
+ * $Id: liby.rez,v 1.2 1998/02/15 19:14:25 gdr-ftp Exp $
  */
 
 #define LIB	"liby for GNO"
-#define PORTED	"Ported from 4.4BSD by Devin Reade."
+#define PORTED	"Ported from 4.4BSD by Devin Reade.\n"
 
 #include "Types.rez"
+#include "/src/gno/build.tools/builddate.rez"
 
 /*
  * Version
@@ -19,6 +20,7 @@ resource rVersion (1, purgeable3) {
 	verUS,	/* Country */
 	LIB,
 	PORTED
+	BUILD_DATE
 };
 
 /*
@@ -27,4 +29,5 @@ resource rVersion (1, purgeable3) {
 resource rComment (1, purgeable3) {
 	LIB "\n"
         PORTED
+	BUILD_DATE
 };
