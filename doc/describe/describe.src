@@ -2,7 +2,7 @@
 # List of shell applications for GNO/ME and ORCA/Shell
 # Last revision: Wed Jun  3 15:35:17 1998
 #
-# $Id: describe.src,v 1.10 1998/06/03 16:09:46 gdr-ftp Exp $
+# $Id: describe.src,v 1.11 1998/06/04 03:41:42 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -946,7 +946,7 @@ Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
-Print names of those who have written.
+Print names of those who have sent mail.
 
 Name:    ftn
 Version: 1.1 (11 Oct 94)
@@ -1188,7 +1188,7 @@ Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
-Laminate files.
+Laminate files (displays files side by side).
 
 Name:    last
 Version: 1.1
