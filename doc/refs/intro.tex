@@ -1,16 +1,43 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.1 1997/11/24 05:07:27 gdr Exp $
+% $Id: intro.tex,v 1.2 1997/11/28 17:11:06 gdr Exp $
 % 
 
-\documentstyle{report}
+\documentclass{report}
+\usepackage{html}
+\usepackage{hthtml}
+\usepackage{makeidx}
+\makeindex
+\bodytext{bgcolor=#ffffff}
+
 \begin{document}
 
-\title{GNO/ME Overview Version 2.0}
+\title{GNO Overview and Installation}
 \author{Jawaid Bazyar \\ Tim Meekins}
-\date{August 1996}
+\date{28 November 1997}
 \maketitle
+
+\bibliographystyle{plain}
+\nocite{*}
+
+%
+% These are various html links used throughout this document.
+%
+\newcommand{\faqhtml}[1]{\htlink{#1}
+	{http://trenco.myrias.com/~gno/FAQ.html}}
+\newcommand{\faqtext}[1]{\htlink{#1}
+	{ftp://trenco.myrias.com/pub/apple2/apple.16bit/gno/doc/faq/CURRENT}}
+\newcommand{\gnodocs}[1]{\htlink{#1}
+	{http://trenco.myrias.com/~gno}}
+\newcommand{\delphi}[1]{\htlink{#1}
+	{http://delphi.com}}
+\newcommand{\overview}[1]{\htlink{#1}
+	{http://trenco.myrias.com/~gno/intro.html}}
+\newcommand{\kernel}[1]{\htlink{#1}
+	{http://trenco.myrias.com/~gno/kern.html}}
+\newcommand{\gsh}[1]{\htlink{#1}
+	{http://trenco.myrias.com/~gno/gsh.html}}
 
 \parindent=0pt
 \parskip=1pc
@@ -18,7 +45,11 @@
 The GNO Multitasking Environment is Copyright 1991-1997 by
 Procyon Enterprises Incorporated.
 
-Documentation, second edition, August 1996.
+\begin{flushleft}
+First Edition, 1991. \\
+Second Edition, August 1996. \\
+Third Edition, November 1997.
+\end{flushleft}
 
 The ORCA/C run-time libraries are Copyright 1987-1997 Byte Works, Inc.,
 and distributed with permission.
@@ -26,7 +57,8 @@ and distributed with permission.
 This product includes software developed by the University of California,
 Berkeley and its contributors.
 
-GNO/ME 2.0 also includes several utilities and libraries produced by
+GNO/ME versions 2.0 and later also include several utilities and
+libraries produced by
 outside authors and in the public domain. This software is included
 solely as a convenience to users of GNO/ME, and is not considered part
 of GNO/ME for copyright purposes.
@@ -45,14 +77,9 @@ Important Notice:
 \rm
 This is a fully 
 copyrighted work and as such is protected under the copyright
-laws of the United States of America. According to these laws,
-consumers of copywritten material may make copies for their
-personal use only. Duplication for any other purpose whatsoever
-would constitute infringement of copyright laws and the offender
-would be liable to civil damages of up to \$50,000 in addition to
-actual damages, plus criminal penalties of up to one year
-imprisonment and/or a \$10,000 fine.
-
+laws of the United States of America.
+While GNO is now freely available, GNO remains copyrighted and
+is not to be considered in the public domain.
 
 Procyon Enterprises Inc.
 MAKES NO
@@ -64,129 +91,104 @@ TO YOU. THIS WARRANTY PROVIDES YOU WITH SPECIFIC LEGAL RIGHTS.
 THERE MAY BE OTHER RIGHTS THAT YOU MAY HAVE WHICH VARY FROM STATE
 TO STATE.
 
-
-This product is sold for use on a
-\em single computer
-\rm at a 
-\em single location .
-\rm For information on obtaining a site license for using multiple copies,
-contact the publisher.
-
-% \begin{verbatim}
-\leftline{Procyon Enterprises, Inc.}
-\leftline{P.O. Box 641}
-\leftline{Englewood, CO 80151-0641 USA}
-\leftline{(303) 781-3273}
-% \end{verbatim}
-\vfill
+Procyon Enterprises, Inc. \\
+P.O. Box 641 \\
+Englewood, CO 80151-0641 USA \\
+(303) 781-3273
 
 \chapter{Credits}
 
 \begin{quote}
+\em
 Always listen to experts. They'll tell you what can't be done, and why.
-Then do it.
-
-\em Lazarus Long \rm
+Then do it.  \bf --- Lazarus Long \rm
 \end{quote}
 
-The {\bf GNO} {\bf M}ultitasking {\bf E}nvironment for the Apple IIgs.
-
+The {\bf GNO} {\bf M}ultitasking {\bf E}nvironment for the Apple IIgs. \\
 Copyright 1991-1997, Procyon Enterprises Inc. and Tim Meekins.
 
-Please direct all inquiries to:
-\tt \begin{verbatim}
-	Procyon, Inc.
-        PO Box 641
-        Englewood, CO 80151-0641 USA
-        (303) 781-3273
-\end{verbatim} \rm 
+The following people and organizations have contributed to the GNO base
+distribution; many other people have contributed stand-alone packages and
+their efforts are also appreciated:
 
-For on-line technical assistance, contact:
-\begin{tabbing}
-America OnLine \=GNOJawaid, GNOTim2 \\
-GEnie \>Procyon.Inc \\
-Internet \>bazyar@hypermall.com \\
-Delphi \>JAWAIDB \\
-\end{tabbing}
+\begin{description}
+% \setlength{\itemindent}{1.5cm}
 
+\item[Kernel]
+Jawaid Bazyar,
+Derek Taubert.
 
+\item[GNO Shell]
+Tim Meekins.
 
-\chapter{Miscellaneous}
+\item[Documentation]
+Jawaid Bazyar,
+Albert Chin,
+Tim Meekins, 
+Devin Reade,
+Andrew Roughan.
 
-\section{Reporting Bugs}
+\item[Utilities]
+Matt Ackeret,
+Leslie Barstow,
+Soenke Behrens,
+James Brookes,
+Evan Day,
+Tilghman Lesher,
+Devin Reade,
+Ian Schmidt,
+Derek Taubert,
+Greg Thompson,
+Dave Tribby,
+Philip Vandry.
 
-In any large piece of computer software
-such as the GNO/ME system, bugs are sure to turn up, no matter
-how much testing is performed on the software before it goes out
-the door. If you discover a bug in GNO/ME, we'd like to hear
-about it. There are several things we require, however, to make
-bug reports useful to us.
+\item[Libraries]
+Jawaid Bazyar,
+Soenke Behrens,
+James Brookes,
+Douglas Gwyn,
+Tilghman Lesher,
+Devin Reade,
+Henry Spencer,
+Derek Taubert,
+Dave Tribby,
+Phillip Vandry,
+Mike Westerfield,
+Procyon, Inc.
+The Byte Works, Inc.
+University of California, Berkeley.
 
-First of all, we need a complete
-description of your computer system; how much RAM, what cards, in
-what slots, what type of disk storage, etc. This information is
-very important in tracking down hardware-dependent bugs. Also, we
-need to know the version numbers of the software involved; the
-GNO Kernel, the GNO Shell, and any utilities.
+% \setlength{\itemindent}{0cm}
+\end{description}
 
-Second, we need a step-by-step description
-of how to duplicate the bug. If this requires writing down
-individual keystrokes, then we need it. Only in this way can we
-decide whether the bug is hardware dependent or global.
+The libraries contain other contributions that are necessarily anonymous,
+as they are derived from code fragments for which no author information
+was available.
 
-You can send bug reports to any of the
-electronic mail addresses listed on the 'Credits' page, or by
-mailing a disk containing a description of the problem and the
-necessary software and files to the Procyon address.
+With many thanks to:
+\begin{itemize}
+\item
+Bill Gulstad, Rob Knauerhase,
+and everyone on the gno-devel and GNOBETA Internet mailing lists.
+\item 
+Dave Lyons, for tolerating my endless
+questions since the beginning of time, for getting me
+started in IIgs programming, and for calling GNO ``cool''.
+\item
+Mike Westerfield, for your
+technical assistance and all your work in making great
+development tools for the IIgs.
+\end{itemize}
 
-\section{User Projects}
-
-If you're working on a project which
-utilizes GNO/ME in some way, we'd like to know about it. Just
-contact us by mail, phone, or whatever is most convenient for
-you, and tell us about your project. If possible, we'll
-coordinate your efforts with those of other programmers. If we
-really like your project and think it may be useful to others, we
-may include it on the next GNO/ME distribution!
-
-\section{Software Piracy}
-
-
-
-
-
-
-
-
-If you have illegally copied computer software from someone
-and are now reading this, take a moment to reflect on what you've done.
-Many computer software applications are huge projects, consuming
-many man-years of effort, huge amounts of money, and a lot of grief on the
-part of the developers.
-For example, the Byte Works' ORCA languages and development 
-environment (as of November 1997) consists of over 220,000 lines
-of source code, \em not \rm including the libraries, tool 
-interface files, test programs, samples, or the 5 800k disks
-of source in the courses for each language.  This work represents
-approximately 17 man-years of development, support, marketing,
-and management.
-
-Is it right that you're now benefiting from
-developers' efforts without any just compensation to the authors?
-
-Many programmers are born, bred, and raised in the spirit of
-computing. They love to write software, and probably always
-will. But if they cannot make enough money to make it
-worthwhile to continue their work, then they won't; because by
-worthwhile, we mean not only food on the table, but resources for
-expansion and continued growth. In short,
-support them and they'll support you.
- 
-Computer software is very inexpensive when you
-consider what it allows you to do.
- 
-To all you who properly pay for the software you use:
-Thank you.
+Special thanks to:
+\begin{itemize}
+\item
+Matt Deatherage, for egging me on to
+complete the project; also, for your most helpful
+technical support through DEVSUPPORT --- you guys made this thing possible!
+\item
+Randy Hyde, for telling me it couldn't be done.
+\end{itemize}
 
 \chapter{Preface}
 
@@ -224,7 +226,7 @@ software developed for the ORCA environment. But GNO/ME also
 provides a wealth of new abilities, lots of new ground for
 developers and users alike.
 
-Before we begin describing, we'd like to
+Before we begin describing GNO, we'd like to
 respond to those who say such a multitasking system isn't
 possible on the Apple IIgs. Obviously it is: you hold it in your
 hands. Some say the Apple IIgs isn't powerful enough to make
@@ -236,11 +238,13 @@ once. These are the same people who asked why we'd ever need more
 than 64K of memory, or more than 140K of storage on disks (end
 soapbox).
 
-\chapter{Introduction}
+\chapter{Overview}
+
+\section{Introduction}
 
 The GNO Multitasking Environment provides
 pre-emptive multitasking. Many programs can be executing at the
-same time; each is called a 'process'. Each process is allowed to
+same time; each is called a ``process''. Each process is allowed to
 run for a short period of time (1/20th of a second on average).
 When its time runs out, the current process is set aside and
 another one chosen to run next. This cycle continues until there
@@ -253,9 +257,9 @@ advantage of the multitasking ability provided. The most
 important feature of the shell is job control (starting,
 terminating, and suspending processes). But the shell also
 provides power never before seen on the Apple IIgs. The ability
-to choose files by 'wildcard' has been around for a while, but
-the GNO Shell takes this to a new level with 'regular
-expressions', a very powerful yet simple programming language.
+to choose files by ``wildcard'' has been around for a while, but
+the GNO Shell takes this to a new level with ``regular
+expressions'', a very powerful yet simple programming language.
 Other benefits of the GNO shell are too numerous to mention. (see
 the \bf GNO Shell User's Manual \rm for details).
 
@@ -288,26 +292,47 @@ the power of a UNIX system to the Apple IIgs. Also, a number of
 programming libraries are included that make it easy to port
 programs from UNIX or MS-DOS systems to the Apple IIgs.
 
-\chapter{The GNO/ME Package}
+\section{The GNO/ME Package}
 
-Included in your GNO/ME Version 2.0 package are:
+GNO is a large and complex system.  There are many pieces to it;
+too many to list in detail here.  However in general, the documentation
+consists of the following parts.  All of these are available 
+at the \gnodocs{GNO Documentation Page} and via anonymous ftp from
+\tt trenco.myrias.com\rm:
+
 \begin{itemize}
-\item	This GNO/ME overview.
-\item	The GNO Shell User's Manual.
-\item	The GNO Kernel Reference Manual.
-\item	A selection of utility and library documentation.
-\item	A reading list containing a wide selection of books 
-	for both the user and the programmer
-\item	Three disks containing the GNO Kernel, GNO Shell, and 
-	loads of utilities.
+\item	GNO Overview and Installation Manual.
+\item	GNO Shell User's Manual.
+\item	GNO Kernel Reference Manual.
+\item	Online Manual Pages.
+\item	GNO Frequently Asked Questions (and Answers) List
 \end{itemize}
 
-\chapter{Hardware Requirements}
+The base distribution of GNO itself is also available via anonymous
+ftp from the same site.  It comes as a three-disk set which makes
+up GNO v2.0.1.  There is a single disk for each of the upgrades
+to versions 2.0.2, 2.0.3, and 2.0.4.  There is also a custom version
+of ORCALib that should be installed if you are using ORCA/C v2.0.x
+with GNO v2.0.4.
+
+Finally, there is an extensive collection of third-party GNO utilities
+available.  A listing of these utilities may be found at
+\hturl{http://www.arrowweb.com/sbehrens/describe.htm}
+or
+\hturl{http://www.servtech.com/public/phoenix/computers/gno/index.html}.
+
+\section{Hardware Requirements}
 
 GNO/ME will work on any Apple IIgs with at least 2 MegaBytes of
 memory and a hard drive.
 
-You should have at least 5 MegaBytes of hard disk space free.
+You should have at least 5 MegaBytes of hard disk space free for GNO
+v2.0.4.
+
+GNO version 2.0.6 is \em much \rm larger than previous versions.
+Even if you are only installing v2.0.4 at this time, it is recommended
+that you reserve at least one 32-megabyte ProDOS partition for
+GNO-specific files.
 
 We recommend 4 MegaBytes of Memory and an 
 accellerator card, especially if you will be using GNO with many
@@ -315,7 +340,607 @@ background processes. A modem and access to an on-line service
 will greatly speed access to technical assistance and new
 utilities as they are made available.
 
+\section{Obtaining Assistance}
+
+Since GNO was reclassified as freeware in the fall of 1997, 
+Procyon no longer provides direct support to users, other than those
+that had paid the full price for GNO prior to the reclassification.
+
+There is, however, a group of programmers and users of GNO who are
+able to render assistance on a volunteer basis.  Some of these programmers
+are also actively involved in upgrading the base GNO distribution.
+
+If you require assistance, the following two methods of contact are
+preferred:
+\begin{itemize}
+\item
+Post a message to the USENET news group, \bf comp.sys.apple2.gno\rm.
+Remember that messages usually take at least a few hours to propagate
+around the world.  Answers also take time to propagate.
+
+\item
+Ask a question on the Delphi Apple II Programmers' Forum.  There
+are subject areas set up for GNO under ``third party technical support''.
+Delphi is accessible via \hturl{http://delphi.com}.  (Delphi is
+recommended for discussion of programming topics in general and
+has, for the most part, taken over from Genie as the centre of 
+online Apple II communication.  Some packages are available free of
+charge.  Visit Delphi for more details.)
+\end{itemize}
+
+As a last resort, you can contact Devin Reade (one of the GNO
+development team) at \htmailto{gdr@eddore.myrias.com}.  Please don't
+use this method unless absolutely necessary, as Devin is not always
+available.  More importantly, asking questions in an open forum 
+provides for peer review; if an answer is wrong, it can be corrected
+by other developers.
+
+Finally, for those who paid for GNO before it was reclassified, 
+Jawaid can still be contacted at
+\htmailto{bazyar@hypermall.com}.
+Written correspondence should be directed to Procyon at:
+
+\tt \begin{verbatim}
+        Procyon, Inc.
+        PO Box 641
+        Englewood, CO 80151-0641 USA
+        (303) 781-3273
+\end{verbatim} \rm 
+
+\section{Reporting Bugs}
+\index{bugs}
+
+In any large piece of computer software
+such as the GNO/ME system, bugs are sure to turn up, no matter
+how much testing is performed on the software before it goes out
+the door. If you discover a bug in GNO/ME, we'd like to hear
+about it. There are several things we require, however, to make
+bug reports useful to us.
+
+First of all, we need a complete
+description of your computer system; how much RAM, what cards, in
+what slots, what type of disk storage, etc. This information is
+very important in tracking down hardware-dependent bugs. Also, we
+need to know the version numbers of the software involved; the
+GNO Kernel, the GNO Shell, and any utilities.
+
+Second, we need a step-by-step description
+of how to duplicate the bug. If this requires writing down
+individual keystrokes, then we need it. Only in this way can we
+decide whether the bug is hardware dependent or global.
+
+Once you have collected this information, you should contact the 
+GNO developers in one of the ways mentioned in the section on
+\bf Obtaining Assistance\rm.
+
+\section{User Projects}
+
+If you're working on a project which
+utilizes GNO/ME in some way, we'd like to know about it. Just
+contact us by mail, phone, or whatever is most convenient for
+you, and tell us about your project. If possible, we'll
+coordinate your efforts with those of other programmers. If we
+really like your project and think it may be useful to others, we
+may include it on the next GNO/ME distribution!
+
+\section{Software Piracy}
+
+If you have illegally copied computer software from someone
+and are now reading this, take a moment to reflect on what you've done.
+Many computer software applications are huge projects, consuming
+many man-years of effort, huge amounts of money, and a lot of grief on the
+part of the developers.
+For example, the Byte Works' ORCA languages and development 
+environment (as of November 1997) consists of over 220,000 lines
+of source code, \em not \rm including the libraries, tool 
+interface files, test programs, samples, or the 5 800k disks
+of source in the courses for each language.  This work represents
+approximately 17 man-years of development, support, marketing,
+and management.
+
+Is it right that you're now benefiting from
+developers' efforts without any just compensation to the authors?
+
+Many programmers are born, bred, and raised in the spirit of
+computing. They love to write software, and probably always
+will. But if they cannot make enough money to make it
+worthwhile to continue their work, then they won't; because by
+worthwhile, we mean not only food on the table, but resources for
+expansion and continued growth. In short,
+support them and they'll support you.
+ 
+Computer software is very inexpensive when you
+consider what it allows you to do.
+ 
+To all you who properly pay for the software you use:
+Thank you.
+
+\section{Suggested Readings}
+
+The following are recommended readings for users:
+\begin{itemize}
+\item Learning UNIX \cite{gardner}
+\item The UNIX Operating System \cite{christian}
+\item Peter Norton's Guide to UNIX \cite{norton}
+\item UNIX in a Nutshell \cite{gilly}
+\item Life with UNIX --- A Guide for Everyone \cite{libes}
+\item UNIX for the Impatient \cite{abrahams}
+\item Learning the vi Editor \cite{lamb}
+\end{itemize}
+
+The following are recommended readings for programmers:
+\begin{itemize}
+\item The Design and Implementation of the 4.3 BSD UNIX Operating System \cite{leffler}
+\item The UNIX Programming Environment \cite{kern_pike}
+\item Advanced Programming in The UNIX Environment \cite{stevens}
+\item Advanced UNIX Programming \cite{rochkind}
+\item Using C on the UNIX System \cite{curry}
+\item POSIX 1003.1 \cite{posix1}.  This would normally be considered
+	required reading except that the POSIX standards (like most
+	standards) are very expensive.  If you can obtain a copy, you
+	should try to do so.
+\end{itemize}
+
+The following should be considered as required readings for programmers:
+\begin{itemize}
+\item The ANSI X3.159-1989 (ANSI/C) Standard \cite{ansic}.  This, however,
+	is an expensive manual and beyond the financial reach of many
+	hobby programmers.  A low-cost alternative is Schildt's
+	Annotated ANSI/C Standard \cite{schildt}, provided that you 
+	ignore Schildt's annotations.
+\item The C Programming Language \cite{kern_ritchie}
+\item Apple IIgs ToolBox Reference, Volume 1 \cite{tbr1}
+\item Apple IIgs ToolBox Reference, Volume 2 \cite{tbr2}
+\item Apple IIgs ToolBox Reference, Volume 3 \cite{tbr3}
+\item GS/OS Reference \cite{gsos}
+\item Apple IIgs Firmware Reference \cite{gsfirm}
+\item Apple Numerics Manual \cite{numerics}
+\item Programmers Reference for System 6.0 \cite{pr600}
+\item Programmers Reference for System 6.0.1 \cite{pr601}
+\end{itemize}
+
+\section{Freeware Status}
+
+The following message was distributed by Jawaid Bazyar by email and
+by USENET news, in the fall of 1997:
+
+\begin{quote}
+
+As the man behind Procyon Enterpsises Inc., a long-time Apple IIGS
+developer and one of the last commercial developers for the platform,
+I regret to announce the end to sales of my first product, the GNO
+Multitasking Environment (GNO/ME).
+
+With my last distributor, EGO Systems, closing its doors, I cannot
+justify the time and expense of continuing to produce the software. I
+also didn't feel it was fair to the customers to continue to charge them
+for the product, when I would be unable to support them in the manner
+I would like, due to my intense involvement in my new ISP business.
+
+However, instead of simply stopping sales of GNO and letting the software
+wander into oblivion, I am placing GNO into ``freeware'' status, and I am
+also making available all source code to the 2.0.4 version to the public
+and the development community.
+
+I will still sell printed manuals to anyone who wants one, for \$20 or
+so, but this is just to cover printing and shipping costs. Purchasing
+a manual will not entitle the buyer to support from me of GNO/ME.
+
+Anyone who paid the normal \$89 price to EGO Systems (or to me directly)
+for GNO will continue to receive support from me, and I will rely partly
+on the help of the ``GNO-Devel'' list for assistance in this support.
+
+Speaking of that, the GNO-Devel list is headed by Devin Reade,
+and its members are programmers who have the time and devotion to
+continuing to develop the GNO system. To their capable hands I leave
+the software. The first task of this group is to put together a GNO
+distribution based on the latest ORCA/C and ORCA/C libraries. Devin will
+post followup info on csa2g and any inquiries should be directed to him
+at <gdr@eddore.myrias.com> for the moment.
+
+Thank you all for your support in the past of my company and myself,
+and best wishes to you all for the future!
+
+\begin{flushleft}
+Regards, \\
+
+Jawaid Bazyar \\
+President, Procyon Enterprises Inc. \\
+President, Interlink Advertising Services Inc. \\
+\end{flushleft}
+
+\end{quote}
+
+\chapter{Installation for GNO v2.0.4}
+
+\em 
+\textbf{Important Note:}
+This chapter is very out-of-date.  It was written for GNO v2.0.1, and
+has had only minor updates since that time.  It very much needs to
+be rewritten (concurrently, of course, with updates to the actual
+installation process).  However, this is unlikely to occur until
+GNO v2.0.6 is released.  This chapter does not apply to installing
+GNO v2.0.6.
+
+Before attempting to install GNO v2.0.4, you are strongly encouraged to 
+read this entire chapter, and then consult the 
+\faqhtml{GNO FAQ} (Frequently Asked Questions list, which is also
+available via \faqtext{ftp}) for those sections related to installation.
+
+Suggestions for updating this document (without making major changes
+to the GNO v2.0.4 distribution itself) are welcome.  Please email
+your suggestions to Devin Reade at \htmailto{gdr@eddore.myrias.com}.
+\rm
+
+GNO/ME is a very large system. Most of the
+system is stored on the three disks in a compressed format. For
+this reason we recommend that you read this section carefully and
+use the included automated installation program to save yourself
+the major headache of arranging everything. You'll need a hard
+drive partition with at least 5 Megabytes free to install GNO/ME.
+The entire installation process should take no longer than 10
+minutes. 
+
+If you are upgrading from GNO 1.0 to GNO
+2.0, we recommend that you install GNO 2.0 on a new area of your
+hard drive. This is because GNO 2.0 provides new versions of
+almost all the utilities and other software provided with GNO
+1.0. You can then move the parts of your old system that aren't a
+part of the standard GNO 2.0 distribution over to the new
+installation. 
+
+The installer program is able to the copy
+the GNO libraries for use with the ORCA languages and tools. If
+you want to use your ORCA languages and tools, you should answer
+the appropriate questions during the install process. ORCA
+installation is covered in more detail below.
+
+\section{Installing GNO v2.0.1}
+
+\begin{description}
+\item[Step 1]
+
+Copy the contents of \texttt{/GNO.Disk1} to the partition where you want
+to install GNO/ME. The easiest way to do this is to run the IIGS
+Finder, insert the \texttt{/GNO.Disk1} disk, and drag the 
+\texttt{/GNO.Disk1} icon onto the icon of the drive you want to install on.
+The Finder will tell you that the disks are of a different size, and
+ask you if you wish to place the contents of \texttt{/GNO.Disk1}
+in a folder on the hard drive partition.
+Answer ``Yes'', and the Finder will copy the data.
+
+\item[Step 2]
+
+Open the newly created \texttt{GNO.Disk1} folder on the partition
+and execute ``Kern'' by double-clicking on the \texttt{Kern} icon.
+\texttt{GNO.Disk1} contains a minimal GNO system which you have
+just started up. You'll see some copyright messages, and after a few
+seconds the desktop will appear.
+
+\item[Step 3]
+
+Install will ask you questions before the installation process begins.
+Questions asked by Install are boldfaced in this section.
+If you're uncertain of how to answer, click on the ``Info'' button
+to get more information on the question. This information is
+reproduced here for ease of reference.
+
+\begin{description}
+
+\item[Do you have existing Byte Works (ORCA) language products?]
+
+If you use Byteworks language products such as ORCA/C, ORCA/M,
+ORCA/Pascal, and so forth and wish to use them from GNO/ME then
+answer ``Yes'' to this question. Otherwise, answer ``No''.
+
+Clicking on the ``Info'' button will display the following text:
+
+	\begin{quote}
+
+	If you currently use products such as ORCA/C, ORCA/Pascal,
+	ORCA/M, etc., and wish to use them from GNO/ME then you should
+	answer ``Yes'' to this dialog.
+        
+
+	Install will then ask you to locate the file ``ORCA.SYS16'' (the
+	ORCA Shell). Usually, it will be in a directory called ``ORCA'' on
+	one of your hard drive partitions. On our system, it is
+	\texttt{:software:orca}.
+	The location of this file determines where Install puts the
+	GNO-specific ORCA/C header files and libraries (in the ORCA
+	LIBRARIES directory).  If you have renamed ORCA.SYS16 to
+	something else, select that instead. 
+
+	Install uses this information to correctly set the ORCA prefixes
+	and add the EXECUTABLES directory to the \$PATH variable in your
+	gshrc file.  See the GNO Shell User's Manual, Appendix B, for
+	more information on the ORCA prefixes.
+
+	\end{quote}
+
+\item[Do you want to install the modified ORCA/C 2.0 ORCALIB library?]
+
+If you have ORCA/C 2.0 installed and you answered ``Yes'' to the
+previous question, then you should answer 'Yes' now.
+If you have ORCA/C 1.3 installed, or you do not have any ORCA languages or
+tools, then you should answer ``No''.
+
+Clicking ``Info'' will display the following text:
+
+	\begin{quote}
+
+	GNO/ME 2.0 comes with a modified version of the ORCA/C ORCALIB
+	standard library. This library adds specific support for some of
+        GNO's special files (pipes, terminals, etc) transparently
+        and corrects other problems the standard ORCALIB has with
+        GNO.
+        
+	This special ORCALIB is only for use with ORCA/C 2.0. It will
+	NOT work with previous versions of ORCA/C.
+        
+
+	Note that all of GNO's other libraries (libgno, libbsd, libc)
+	work fine with ORCA/C 1.3.
+
+	\end{quote}
+
+\item[Do you want to install the Multi-User package?]
+
+If you wish to have the Multi-User package installed, answer ``Yes''.
+It is recommended that new users do not install this package until they are
+familiar with the system. This package is not fully discussed in the
+GNO/ME manuals and may introduce many unfamiliar concepts.
+
+Clicking ``Info'' will display the following text:
+
+	\begin{quote}
+
+	The ``Multi-User'' package consists of a number of
+	cooperating programs, including \bf init\rm(8) and \bf login\rm(8).
+	MU provides for password-protected access to the GNO Shell via the
+        console or serial ports (modems and dedicated terminals).
+        It also handles multiple user accounts, and a certain
+        level of protection between users. 
+
+	If you will be using a terminal with GNO, or want to be able to dial
+        into GNO with a modem, you should install MU.
+        
+	You may wish to hold off setting up the Multi-User package until you
+        learn your way around GNO a little better, as it's simple
+        to set up MU later.
+
+	\end{quote}
+
+\end{description}
+
+\item[Step 4]
+
+The Installer will now proceed to arrange the GNO Multitasking
+Environment on your hard drive. Initially, the contents of
+\texttt{/GNO.Disk1} will be moved into the proper places on the
+volume you have chosen. When asked by the Installer, you should place
+\texttt{/GNO.Disk2} and \texttt{/GNO.Disk3} into the disk drive. The
+contents of these disks will be extracted and decompressed into their
+proper places.
+
+\em
+If the installer cannot finish it's tasks for some reason, it will
+abort to the shell. At this point you should study the error messages
+to determine the cause of the failure, 
+\rm
+
+\item[Step 5]
+
+When the Installer finishes, you will be returned to the GNO prompt.
+At this time you should type ``exit'' to return to Finder and delete
+the \texttt{GNO.Disk1} directory, as it is no longer needed (GNO
+is completely installed in a subdirectory ``\texttt{GNO}'' on the
+same partition \texttt{GNO.Disk1} is on.
+
+\end{description}
+
+\section{Installing GNO v2.0.2 Through v2.0.4}
+
+GNO versions 2.0.2 through 2.0.4 were distributed as sequential
+updates to version 2.0.1, rather than as complete distributions.
+Consequently, you should install each of the version 2.0.2,
+2.0.3, and 2.0.4 distributions, \em in sequence, \rm over top of your
+version 2.0.1 distribution.
+
+You should also obtain and install the Multi-User Update.
+
+\section{What Has Been Installed?}
+
+\em
+\textbf{Note:}  This list of directories is somewhat out of date.
+You should consult the \faqhtml{GNO FAQ} (also available via
+\faqtext{ftp}) for more current information.
+This section will be updated, but likely only after GNO v2.0.6 is 
+released.
+\rm
+
+If you examine the directory that you chose
+for GNO/ME, you will find that the Installer has created several
+directories. Here is a brief rundown of thier contents:
+
+
+\begin{rawhtml}
+<!-- cleantable-start -->
+\end{rawhtml}
+\begin{tabular}{ll}
+
+\bf :gno:bin: \rm	& 
+\begin{minipage}[t]{8cm}
+	This directory contains the executable shell utilities included
+	with the GNO/ME package.
+\end{minipage} \hfill \\
+
+
+\bf :gno:dev: \rm	& 
+\begin{minipage}[t]{8cm}
+	This directory contains device drivers. The GNO/ME package
+	includes serial drivers for the IIgs' built-in modem and
+	printer ports.
+\end{minipage} \hfill \\
+
+\bf :gno:etc: \rm	& 
+\begin{minipage}[t]{8cm}
+	Various system configuration files
+\end{minipage} \hfill \\
+
+\bf :gno:initrc \rm	& 
+\begin{minipage}[t]{8cm}
+	This a startup file for kern and must remain in this directory.
+\end{minipage} \hfill \\
+
+\bf :gno:kern \rm	& 
+\begin{minipage}[t]{8cm}
+	This is the GNO kernel. Launch this to start GNO/ME.
+\end{minipage} \hfill \\
+
+\bf :gno:lib: \rm	& 
+\begin{minipage}[t]{8cm}
+	This directory is provided for programming libraries that are
+	used only occasionally.  Various applications may also keep
+	auxilliary files here.  It is currently empty.
+\end{minipage} \hfill \\
+
+\bf :gno:tmp: \rm	& 
+\begin{minipage}[t]{8cm}
+	This directory is used by various utilities as location for
+	their temporary files.  It is currently empty, and should
+	be cleaned on periodically.
+\end{minipage} \hfill \\
+
+\bf :gno:user: \rm	& 
+\begin{minipage}[t]{8cm}
+	This directory is created if you installed the Multi-User package.
+	It contains a user directories for users of the system.
+	Currently there is only one: ``root''. 
+\end{minipage} \hfill \\
+
+\bf :gno:usr: \rm	& 
+\begin{minipage}[t]{8cm}
+	This directory contains UNIX System Resources (USR).
+\end{minipage} \hfill \\
+
+\bf :gno:usr:bin: \rm	& 
+\begin{minipage}[t]{8cm}
+	Miscellaneous utilities.
+\end{minipage} \hfill \\
+
+\bf :gno:usr:man: \rm	& 
+\begin{minipage}[t]{8cm}
+	This directory contains the manual pages for the 'man' utility.
+	There are eight categories of information as defined by UNIX
+	standards. These eight categories are presented in either
+	source (man) or preformatted (cat) form.
+\end{minipage} \hfill \\
+
+\bf :gno:usr:games: \rm	& 
+\begin{minipage}[t]{8cm}
+	The classic ``Hunt the Wumpus'' game, and perhaps others.
+\end{minipage} \hfill \\
+
+\bf :gno:usr:sbin: \rm	& 
+\begin{minipage}[t]{8cm}
+	System administration utilities.
+\end{minipage} \hfill \\
+
+\end{tabular}
+\begin{rawhtml}
+<!-- cleantable-end -->
+\end{rawhtml}
+
+\chapter{Desk Accessories}
+
+The following is a description of the desk
+accessories that are shipped with GNO/ME.
+
+\section{GSI NDA}
+
+The \textit{Graphical Shell Interface New Desk Accessory}
+allows you to access the shell from a window inside a
+desktop application. Selecting ``GSI'' from the Apple menu opens a
+window and brings up a shell in it. You can use the shell in this
+window just as you would in text mode.
+
+At this time, GSI doesn't support any
+terminal emulations --- it's a ``dumb'' interface. As a result,
+full screen programs like \bf less\rm(1) and \bf vi\rm(1) will not
+work properly in GSI.
+
+\section{Suspend NDA}
+
+The Suspend New Desk Accessory allows you
+to temporarily stop a desktop program and return to the text
+shell. To return to the desktop program, simply type the foreground
+command, ``\texttt{fg}''.
+
+You may put desktop programs in the background
+(through the ``\texttt{bg}'' command) 
+at your own risk. This is not guaranteed to work for all programs,
+and putting a desktop program in the background will not put the
+Apple IIgs in text mode.
+
+Also, do not run another desktop program
+when one is currently suspended. The GNO kernel tries to cleanly
+terminate the second program, but may not always be able to
+accomplish this.
+
+\section{GNO Snooper CDA}
+
+The GNO Snooper CDA is a utility that is
+very helpful in debugging software, and reporting system crashes.
+Snooper has access to information inside the kernel that is not
+generally available to processes.
+
+When you enter the control panel and choose
+``GNO Snooper'' a process list is displayed, which is
+very similar to the \bf ps\rm(1) shell command, and a menu is presented
+with the following options, each of which is invoked by typing it's
+first letter:
+
+\begin{description}
+\item[D)etails]
+
+Get detailed information on a process.
+Snooper asks you for the process ID number of the process you
+want to investigate. Snooper then dumps the state of the 65816
+registers and shows various other information about the process.
+
+\item[K)ill]
+
+This option sends a SIGKILL to a process. Just type in the process ID
+of the process you want to kill.
+
+\item[P)rocess Group Dump]
+
+Dumps the system process group tables,
+which is very useful for debugging code which manipulates process
+groups. The first table, ``pgrp'', is the process group reference
+count table. This table lists how many processes (and TTYs)
+belong to that process group. 
+Process group ids start at 2, so the first pgrp listed is 2.
+
+The second listing is the ttyStruct table.
+This table shows to which process group each TTY belongs. The TTYs start
+with .null (0), then move on to .ttyb, .ttya, .ttyco, etc.
+
+\item[F)ile Table Dump]
+
+Lists all open files known to GNO.
+The information is presented in tuples. The first element is the
+real GS/OS refNum or device driver ID. The second is the type of
+file (GSOS, ttyXX, or PIPE). The third is how many references to
+that file are open. This information is global, so if two
+processes have .NULL opened, the refcount for .tty00 will be 2.
+
+\end{description}
+
+\bibliography{gno}
 
 \parindent=20pt
+
 
 \end{document}
