@@ -2,7 +2,7 @@
 #
 # GNO 2.0.6 gshrc file (for the bootstrap disk)
 #
-# $Id: gshrc,v 1.1 1998/04/22 04:57:32 gdr-ftp Exp $
+# $Id: gshrc,v 1.2 1998/04/24 06:02:18 gdr-ftp Exp $
 #
 ###
 
@@ -56,9 +56,10 @@ echo "====================================================================="
 echo "= GNO v2.0.6 bootstrap disk."
 echo "="
 echo "= Don't worry about the fact that this disk contains a v2.0.4 kernel;"
-echo "= a more recent one will be installed.  See PR#62 for details."
+echo "= a more recent one will be installed.  See Problem Report #62 at"
+echo "= http://www.gno.org/~gno/bugs.html for details."
 echo "="
-echo '= $Id: gshrc,v 1.1 1998/04/22 04:57:32 gdr-ftp Exp $'
+echo '= $Id: gshrc,v 1.2 1998/04/24 06:02:18 gdr-ftp Exp $'
 echo "====================================================================="
 echo " "
 echo " "

@@ -1,4 +1,4 @@
-$Id: README.install,v 1.1 1998/04/22 04:57:31 gdr-ftp Exp $
+$Id: README.install,v 1.2 1998/04/24 06:02:17 gdr-ftp Exp $
 
 The install scripts assumes that your _new_ distribution will be installed
 on to the two volumes /gno (ProDOS) and /gno-hfs (HFS).  It also assumes
@@ -42,5 +42,12 @@ You should now do the following steps:
 	    commands:
 
 	    	cd /gno/usr/man
-	    	mkso -v -H /gno-hfs mkso.data
+	    	mkso -v -H /gno-hfs/man mkso.data
 	    	
+	6.  You should now return to your program launcher (the Finder,
+	    ProSEL-16, or whatever you used to start /gno.boot/kern) by
+	    typing "exit" at the prompt.  To startup up your new version
+	    of GNO, you should then launch /gno/kern.  You will then see
+	    a "login:" prompt.  Enter "root" as the user name; you will
+	    not yet need a password.
+

@@ -1,10 +1,8 @@
 #
 # installboot2
 #
-# $Id: installboot2,v 1.1 1998/04/22 04:57:36 gdr-ftp Exp $
+# $Id: installboot2,v 1.2 1998/04/24 06:02:21 gdr-ftp Exp $
 #
-
-setenv FILE "$DOWNLOAD_DIR/gnohfs.shk"
 
 echo "Before running this script, you should have set your DOWNLOAD_DIR"
 echo "environment variable.  If this was done, then the following line"
@@ -12,13 +10,30 @@ echo "will show the full pathname of the gnohfs.shk file.  If you did"
 echo "not set your environment variable then it will appear as /gnohfs.shk"
 echo "and the extraction will fail.  (Waiting 3 seconds, then starting"
 echo "extraction.)"
-sleep 3
+
 echo " "
+setenv FILE "$DOWNLOAD_DIR/gnohfs.shk"
+echo "        $FILE"
+echo " "
+sleep 3
+
 echo "Now extracting $FILE ..."
 echo " "
 yankit xvf $FILE
 echo " "
 echo "All done extraction."
 echo " "
+
+echo "Creating empty HFS manual page directories (these will be needed later)."
+install -dV man/man1
+install -dV man/man2
+install -dV man/man3
+install -dV man/man4
+install -dV man/man5
+install -dV man/man6
+install -dV man/man7
+install -dV man/man8
+echo " "
+
 echo "You should now finish the installation process as is documented"
 echo "in the README.install file on the /gno.boot disk."

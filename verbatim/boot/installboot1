@@ -1,7 +1,7 @@
 #
 # installboot1
 #
-# $Id: installboot1,v 1.1 1998/04/22 04:57:35 gdr-ftp Exp $
+# $Id: installboot1,v 1.2 1998/04/24 06:02:20 gdr-ftp Exp $
 #
 
 echo "Before running this script, you should have set your DOWNLOAD_DIR"
@@ -11,11 +11,13 @@ echo "not set your environment variable then it will appear as /gno.01.shk"
 echo "and the extraction will fail.  If you see error messages, you can"
 echo "type ^C (control-C) to stop.  (Waiting 3 seconds, then starting"
 echo "extraction.)"
-sleep 3
 
 echo " "
-
 setenv FILE "$DOWNLOAD_DIR/gno.01.shk"
+echo "        $FILE"
+echo " "
+sleep 3
+
 echo "Extracting $FILE ..."
 echo " "
 yankit xvf $FILE
@@ -117,7 +119,7 @@ echo " "
 
 echo "Creating empty directories required by GNO ..."
 install -dV	doc
-install -dV	lang/orca/languages	lang/orca/shell
+install -dV	lang/orca/languages	lang/orca/shell	lang/orca/utilities
 install -dV	lang/orca/libraries/orcacdefs
 install -dV	usr/games		usr/guest/operator
 install -dV	usr/local/bin		usr/local/doc	usr/local/etc
