@@ -1,7 +1,6 @@
-.\" Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
-.\" $Id: udl.1,v 1.8 1996/01/22 01:01:34 gdr Exp $
+.\" Copyright (c) 1993-1996 Soenke Behrens, Devin Reade
 .\"
-.TH UDL 1 "Commands and Applications" "21 January 1996" "Version 1.15"
+.TH UDL 1 "Commands and Applications" "31 January 1996" "Version 1.1.5"
 .SH NAME
 udl - convert text files between different architectures
 .SH SYNOPSIS
@@ -76,7 +75,7 @@ one file). For conversions to or from MS-DOS
 is always pedantic, so this only affects conversions from Unix to Apple
 or vice versa. Being pedantic slows udl down by a factor of 1.5.
 .SH LIMITATIONS
-When running under Gno on the Apple IIgs, there is a limit to the nesting
+When running under GNO on the Apple IIgs, there is a limit to the nesting
 depth when recusing on subdirectories.  This is because the routine that
 is responsible for this behavior is itself recursive.  The default 2k
 stack size will allow about 33 levels of nested directories, so this limit
@@ -92,4 +91,4 @@ Devin Reade <gdr@myrias.ab.ca>.
 .SH VERSION
 This is
 .B udl
-version 1.15.
+version 1.1.5.

@@ -4,7 +4,7 @@
  *
  * Routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.c,v 1.8 1996/01/22 01:01:32 gdr Exp $
+ * $Id: common.c,v 1.9 1996/02/04 01:34:26 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -54,49 +54,43 @@ void convert_gs(FILE *infile, FILE *outfile) {
       in_bufend = in_buffer + my_fread(infile,BUFFERSIZE);
       in_bufpos = in_buffer;
     }
-    /* a = fgetc (infile); */
 
-    if(a == '\n') {
-      *out_bufpos = '\r';
+    if(a == LF) {
+      *out_bufpos = CR;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-        my_fwrite(out_buffer,outfile,BUFFERSIZE);
-        out_bufpos = out_buffer;
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
       }
-      /* fputc('\r',outfile); */
-    } else if(a == '\r') {
-      *out_bufpos = '\r';
+    } else if(a == CR) {
+      *out_bufpos = CR;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-        my_fwrite(out_buffer,outfile,BUFFERSIZE);
-        out_bufpos = out_buffer;
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
       }
-      /* fputc('\r',outfile); */
       
-      if (*in_bufpos == '\n' && file_remain != 0) {
-        in_bufpos++;
-        
-        if (in_bufpos >= in_bufend) {
-          file_remain -= in_bufend - in_buffer;
-          in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-          in_bufpos = in_buffer;
-        }
+      if (*in_bufpos == LF && file_remain != 0) {
+	in_bufpos++;
+	
+	if (in_bufpos >= in_bufend) {
+	  file_remain -= in_bufend - in_buffer;
+	  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+	  in_bufpos = in_buffer;
+	}
       }
-      /* if ((a = fgetc (infile)) != '\n')
-         ungetc (a,infile); */
     } else {
       *out_bufpos = a;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-        my_fwrite(out_buffer,outfile,BUFFERSIZE);
-        out_bufpos = out_buffer;
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
       }
-      /* fputc(a,outfile); */
     }
   }
   /* Check for remainder in output buffer */
   if (out_bufpos != out_buffer)
-    my_fwrite(out_buffer,outfile,out_bufpos - out_buffer);
+    my_fwrite(out_buffer,outfile,(int)(out_bufpos - out_buffer));
 }
 
 /*
@@ -137,65 +131,57 @@ void convert_messy (FILE *infile, FILE *outfile) {
       in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
       in_bufpos = in_buffer;
     }
-    /* a = fgetc (infile); */
     
-    if(a == '\n') {
-      *out_bufpos = '\r';
+    if(a == LF) {
+      *out_bufpos = CR;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-        my_fwrite(out_buffer,outfile,BUFFERSIZE);
-        out_bufpos = out_buffer;
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
       }
-      /* fputc('\r',outfile); */
       
-      *out_bufpos = '\n';
+      *out_bufpos = LF;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-        my_fwrite(out_buffer,outfile,BUFFERSIZE);
-        out_bufpos = out_buffer;
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
       }
-      /* fputc('\n',outfile); */
-    } else if(a == '\r') {
-      *out_bufpos = '\r';
+    } else if(a == CR) {
+      *out_bufpos = CR;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-        my_fwrite(out_buffer,outfile,BUFFERSIZE);
-        out_bufpos = out_buffer;
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
       }
-      /* fputc('\r',outfile); */
 
-      *out_bufpos = '\n';
+      *out_bufpos = LF;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-        my_fwrite(out_buffer,outfile,BUFFERSIZE);
-        out_bufpos = out_buffer;
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
       }
-      /* fputc('\n',outfile); */
 
-      if (*in_bufpos == '\n' && file_remain != 0) {
-        in_bufpos++;
+      if (*in_bufpos == LF && file_remain != 0) {
+	in_bufpos++;
 
-        if (in_bufpos >= in_bufend) {
-          file_remain -= in_bufend - in_buffer;
-          in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-          in_bufpos = in_buffer;
-        }
+	if (in_bufpos >= in_bufend) {
+	  file_remain -= in_bufend - in_buffer;
+	  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+	  in_bufpos = in_buffer;
+	}
       }
-      /* if ((a = fgetc (infile)) != '\n')
-         ungetc (a,infile); */
     } else {
       *out_bufpos = a;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-        my_fwrite(out_buffer,outfile,BUFFERSIZE);
-        out_bufpos = out_buffer;
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
       }
-      /* fputc(a,outfile); */
     }
   }
-  /* Check for remained in output buffer */
+  /* Check for remainder in output buffer */
   if (out_bufpos != out_buffer)
-    my_fwrite(out_buffer,outfile,out_bufpos - out_buffer);
+    my_fwrite(out_buffer,outfile,(int)(out_bufpos - out_buffer));
 }
 
 /*
@@ -236,41 +222,36 @@ void convert_tunix (FILE *infile, FILE *outfile) {
       in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
       in_bufpos = in_buffer;
     }
-    /* a = fgetc (infile); */
     
-    if(a == '\r') {
-      *out_bufpos = '\n';
+    if(a == CR) {
+      *out_bufpos = LF;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-        my_fwrite(out_buffer,outfile,BUFFERSIZE);
-        out_bufpos = out_buffer;
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
       }
-      /* fputc('\n',outfile); */
       
-      if (*in_bufpos == '\n' && file_remain != 0) {
-        in_bufpos++;
+      if (*in_bufpos == LF && file_remain != 0) {
+	in_bufpos++;
 
-        if (in_bufpos >= in_bufend) {
-          file_remain -= in_bufend - in_buffer;
-          in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-          in_bufpos = in_buffer;
-        }
+	if (in_bufpos >= in_bufend) {
+	  file_remain -= in_bufend - in_buffer;
+	  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+	  in_bufpos = in_buffer;
+	}
       }
-      /* if ((a = fgetc (infile)) != '\n')
-         ungetc (a,infile); */
     } else {
       *out_bufpos = a;
       out_bufpos++;
       if (out_bufpos == out_bufend) {
-        my_fwrite(out_buffer,outfile,BUFFERSIZE);
-        out_bufpos = out_buffer;
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
       }
-      /* fputc(a,outfile); */
     }
   }
   /* Check for remainder in output buffer */
   if (out_bufpos != out_buffer)
-    my_fwrite(out_buffer,outfile,out_bufpos - out_buffer);
+    my_fwrite(out_buffer,outfile,(int)(out_bufpos - out_buffer));
 }
 
 /*
@@ -289,21 +270,17 @@ void convert_tunix (FILE *infile, FILE *outfile) {
 int convert_fast_gs(FILE *infile, FILE *outfile) {
   unsigned char a;
   unsigned char *in_bufpos;
-  unsigned char *out_bufpos;
   unsigned char *in_bufend;
-  unsigned char *out_bufend;
   size_t file_remain;
   enum file_format infile_type;
   
   in_bufpos = in_buffer;
-  out_bufpos = out_buffer;
   
   (void) fseek(infile,0L,SEEK_END);
   file_remain = ftell(infile);
   rewind(infile);
   
   in_bufend = in_buffer + my_fread(infile,BUFFERSIZE);
-  out_bufend = out_buffer + BUFFERSIZE;
   *in_bufend = '\0';
   
   infile_type = get_file_format (in_buffer);
@@ -312,7 +289,7 @@ int convert_fast_gs(FILE *infile, FILE *outfile) {
   case apple:
     if (verbose)
       printf("%s: %s is already in Apple format, skipping.\n",
-             program_name,current_file);
+	     program_name,current_file);
     return (FALSE);
     break;
 
@@ -320,18 +297,18 @@ int convert_fast_gs(FILE *infile, FILE *outfile) {
     /* Replace "in-vitro", so out_buffer isn't used */
     while (file_remain != 0) {
       a = *in_bufpos;
-      if (a == '\n')
-        *in_bufpos++ = '\r';
+      if (a == LF)
+	*in_bufpos++ = CR;
       else if (a == '\0') { /* End of buffer reached */
-        
-        /* Write changed buffer out */
-        my_fwrite(in_buffer,outfile,in_bufend - in_buffer);
-        
-        /* And reload it */
-        file_remain -= in_bufend - in_buffer;
-        in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-        *in_bufend = '\0';
-        in_bufpos = in_buffer;
+
+	/* Write changed buffer out */
+	my_fwrite(in_buffer,outfile,(int)(in_bufend - in_buffer));
+
+	/* And reload it */
+	file_remain -= in_bufend - in_buffer;
+	in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+	*in_bufend = '\0';
+	in_bufpos = in_buffer;
       } else in_bufpos++;
     }
     return (TRUE);
@@ -367,22 +344,10 @@ int convert_fast_gs(FILE *infile, FILE *outfile) {
  */
 
 int convert_fast_messy (FILE *infile, FILE *outfile) {
-  unsigned char *in_bufpos;
-  unsigned char *out_bufpos;
   unsigned char *in_bufend;
-  unsigned char *out_bufend;
-  size_t file_remain;
   enum file_format infile_type;
   
-  in_bufpos = in_buffer;
-  out_bufpos = out_buffer;
-  
-  (void) fseek(infile,0L,SEEK_END);
-  file_remain = ftell(infile);
-  rewind(infile);
-  
   in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-  out_bufend = out_buffer + BUFFERSIZE;
   *in_bufend = '\0';
   
   infile_type = get_file_format (in_buffer);
@@ -391,7 +356,7 @@ int convert_fast_messy (FILE *infile, FILE *outfile) {
   case dos:
     if (verbose)
       printf("%s: %s is already in MS-DOS format, skipping.\n",
-             program_name,current_file);
+	     program_name,current_file);
     return (FALSE);
     break;
 
@@ -429,21 +394,17 @@ int convert_fast_messy (FILE *infile, FILE *outfile) {
 int convert_fast_tunix (FILE *infile, FILE *outfile) {
   unsigned char a;
   unsigned char *in_bufpos;
-  unsigned char *out_bufpos;
   unsigned char *in_bufend;
-  unsigned char *out_bufend;
   size_t file_remain;
   enum file_format infile_type;
   
   in_bufpos = in_buffer;
-  out_bufpos = out_buffer;
   
   (void) fseek(infile,0L,SEEK_END);
   file_remain = ftell(infile);
   rewind(infile);
   
   in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-  out_bufend = out_buffer + BUFFERSIZE;
   *in_bufend = '\0';
   
   infile_type = get_file_format (in_buffer);
@@ -452,7 +413,7 @@ int convert_fast_tunix (FILE *infile, FILE *outfile) {
   case tunix:
     if (verbose)
       printf("%s: %s is already in Unix format, skipping.\n",
-             program_name,current_file);
+	     program_name,current_file);
     return (FALSE);
     break;
 
@@ -460,18 +421,18 @@ int convert_fast_tunix (FILE *infile, FILE *outfile) {
     /* Replace "in-vitro", so out_buffer isn't used */
     while (file_remain != 0) {
       a = *in_bufpos;
-      if (a == '\r')
-        *in_bufpos++ = '\n';
+      if (a == CR)
+	*in_bufpos++ = LF;
       else if (a == '\0'){       /* End of buffer reached */
 
-        /* Write changed buffer out */
-        my_fwrite(in_buffer,outfile,in_bufend - in_buffer);
+	/* Write changed buffer out */
+	my_fwrite(in_buffer,outfile,(int)(in_bufend - in_buffer));
 
-        /* And reload */
-        file_remain -= in_bufend - in_buffer;
-        in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
-        *in_bufend = '\0';
-        in_bufpos = in_buffer;
+	/* And reload */
+	file_remain -= in_bufend - in_buffer;
+	in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+	*in_bufend = '\0';
+	in_bufpos = in_buffer;
       } else in_bufpos++;
     }
     return (TRUE);
@@ -509,26 +470,26 @@ int convert_fast_tunix (FILE *infile, FILE *outfile) {
 
 enum file_format get_file_format (unsigned char *buffer) {
   unsigned char c;
-  enum file_format result = 0;
+  enum file_format result = unknown;
   
   while ((c = *buffer++) != '\0') {
-    if (c == '\n') {
+    if (c == LF) {
       result = tunix;
       break;
-    } else if (c == '\r') {
-      if (*buffer == '\n')
-        result = dos;
+    } else if (c == CR) {
+      if (*buffer == LF)
+	result = dos;
       else
-        result = apple;
+	result = apple;
       break;
     }
   }
-        
-  if (result == 0) {
+	
+  if (result == unknown) {
     if (verbose) 
       printf("%s: No EOL found on the first %d bytes "
-             "of %s. Might be a binary file. File skipped\n",
-             program_name,BUFFERSIZE, current_file);
+	     "of %s. Might be a binary file. File skipped\n",
+	     program_name,BUFFERSIZE, current_file);
     result = binary;
   }
 
@@ -570,7 +531,7 @@ FILE *tryopen (char *name, char *mode) {
 int my_fread(FILE *infile, int howmuch) {
   int result;
 
-  result = fread(in_buffer, 1, howmuch, infile);
+  result = (int)fread(in_buffer, 1, howmuch, infile);
   if (ferror(infile)) {
     fprintf(stderr,"%s: Error while reading data\n",program_name);
     exit (EXIT_FAILURE);
@@ -676,12 +637,17 @@ void build_file_list(char *file, short recurse) {
   DIR *dir;
   struct dirent *entry;
 
+#ifdef __DJGPP__ /* chdir() doesn't accept dir names ending in '\\' */
+      if(file[strlen(file)-1] == '\\')
+        file[strlen(file)-1] = '/';   
+#endif
+
   /* check for stack overflow */
   recursionDepth++;
 #ifdef OVERFLOW_CHECK
   if ((recursionDepth * BYTES_PER_DEPTH + BASESIZE) > STACKSIZE) {
     fprintf(stderr,"%s:  Exceeded permitted nesting depth (%d levels)\n"
-            "Aborted.\n",program_name,recursionDepth);
+	    "Aborted.\n",program_name,recursionDepth);
     exit(EXIT_FAILURE);
   }
 #endif
@@ -694,7 +660,7 @@ void build_file_list(char *file, short recurse) {
 
   if (recurse && S_ISDIR(tstat.st_mode)) {
     char tstr[2];
-    
+
     /*
      * It is a directory.  recurse through it.
      */
@@ -721,45 +687,45 @@ void build_file_list(char *file, short recurse) {
     /* recurse */
     if ((dir = opendir(file)) == NULL) {
       fprintf(stderr,"%s: Couldn't open %s.  Directory skipped.\n",
-              program_name,currentDirectory);
+	      program_name,currentDirectory);
     } else {
       if (chdir(file) !=0) {
-        fprintf(stderr,"couldn't cd to %s\n",currentDirectory);
-        exit (EXIT_FAILURE);
+	fprintf(stderr,"couldn't cd to %s\n",currentDirectory);
+	exit (EXIT_FAILURE);
       }
 
 #ifdef READDIR_RETURNS_DOT
       entry = readdir(dir);    /* for "."  */
-      entry = readdir(dir);    /* for ".." */               
-#endif                             
+      entry = readdir(dir);    /* for ".." */
+#endif
 
       while ((entry = readdir(dir))!=NULL) {
-        /* ignore hidden files */
+	/* ignore hidden files */
 #ifdef BROKEN_DIRENT_STRUCT
-        if (*(entry->d_name)!='.') build_file_list((entry->d_name)-2,1);
+	if (*(entry->d_name)!='.') build_file_list((entry->d_name)-2,1);
 #else
-        if (*(entry->d_name)!='.') build_file_list(entry->d_name,1);
+	if (*(entry->d_name)!='.') build_file_list(entry->d_name,1);
 #endif
       }
 
       if (*thisdir) {
-        if ((chdir(rootdir)!=0) || (chdir(thisdir)!=0)) {
-          fprintf(stderr,"couldn't cd to %s\n",thisdir);
-          exit (EXIT_FAILURE);
-        }
+	if ((chdir(rootdir)!=0) || (chdir(thisdir)!=0)) {
+	  fprintf(stderr,"couldn't cd to %s\n",thisdir);
+	  exit (EXIT_FAILURE);
+	}
       } else {
-        if (chdir(rootdir)!=0) {
-          fprintf(stderr,"couldn't cd to calling directory\n");
-          exit (EXIT_FAILURE);
-        }
+	if (chdir(rootdir)!=0) {
+	  fprintf(stderr,"couldn't cd to calling directory\n");
+	  exit (EXIT_FAILURE);
+	}
       }
-      
+
     }
-    
+
     /* restore our state */
     strcpy(currentDirectory,thisdir);
     free(thisdir);
-    
+
   } else if (S_ISREG(tstat.st_mode)) {
 
     /* It is a normal file.  Add it to the pathList */
@@ -778,13 +744,13 @@ void add_to_pathList(char *thisdir, char *file) {
     pathSlots += PATHLIST_QUANTUM;
 #if BROKEN_REALLOC
     if ((pathList==NULL) &&
-        ((pathList = malloc((pathSlots+1) * sizeof(char *)))==NULL)) {
+	((pathList = malloc((pathSlots+1) * sizeof(char *)))==NULL)) {
       fprintf(stderr,"%s: Couldn't expand pathList\n",program_name);
       exit (EXIT_FAILURE);
     } else {
       if ((p = realloc(pathList, (pathSlots+1) * sizeof(char *)))==NULL) {
-        fprintf(stderr,"%s: Couldn't expand pathList\n",program_name);
-        exit (EXIT_FAILURE);
+	fprintf(stderr,"%s: Couldn't expand pathList\n",program_name);
+	exit (EXIT_FAILURE);
       }
       pathList = p;
     }
@@ -800,7 +766,7 @@ void add_to_pathList(char *thisdir, char *file) {
   pathList[pathSlotsUsed] = malloc(strlen(thisdir)+strlen(file)+2);
   if (pathList[pathSlotsUsed] == NULL) {
     fprintf(stderr,"%s: Couldn't duplicate filename %s%c%s\n",program_name,
-            thisdir,dirbrk,file);
+	    thisdir,dirbrk,file);
     exit (EXIT_FAILURE);
   }
   if (*thisdir) {
@@ -845,29 +811,29 @@ char *Mktemp(const char *base)
     
     if (*st == '\0')
     {
-    	free (st);
-    	if ((st = strdup("TXXXXXXX")) == NULL)
-    	{
-          fprintf(stderr,"%s: memory allocation failure\n", program_name);
-          exit (EXIT_FAILURE);
-    	}
+	free (st);
+	if ((st = strdup("TXXXXXXX")) == NULL)
+	{
+	  fprintf(stderr,"%s: memory allocation failure\n", program_name);
+	  exit (EXIT_FAILURE);
+	}
     }
 
     /* Replace all "X" with part of ID string */
     for(p1 = st + strlen(st) - 1,p2 = &id[14];
-        p1 >= st && p2 >= id && *p1 == 'X';
-        p1--,p2--)
-            *p1 = *p2;
+	p1 >= st && p2 >= id && *p1 == 'X';
+	p1--,p2--)
+	    *p1 = *p2;
 
     /* Update ID string to "count" one further */
     for(p1 = &id[14];p1 >= id;)
       if(*p1 == 'Z')
       {
-        *p1 = 'A';
-        p1--;
+	*p1 = 'A';
+	p1--;
       } else {
-        *p1 += 1;
-        break;
+	*p1 += 1;
+	break;
       }
 
     /* Make sure the file name does not already exist */
@@ -876,22 +842,22 @@ char *Mktemp(const char *base)
 #endif
       if (stat(st,&tstat) == 0)
       {
-    	free (st);
-    	st = Mktemp (base);
+	free (st);
+	st = Mktemp (base);
       }
 #ifdef GNO
     } else { /* ORCA/Shell doesn't like stat one little bit */
       FILE *fp;
       if ((fp = fopen(st,"r")) != NULL)
       {
-      	fclose(fp);
-      	free (st);
-      	st = Mktemp (base);
+	fclose(fp);
+	free (st);
+	st = Mktemp (base);
       } else if ((fp = fopen(st,"a")) == NULL) {
-      	free(st);
-      	st = Mktemp (base);
+	free(st);
+	st = Mktemp (base);
       } else {
-      	fclose(fp);
+	fclose(fp);
       }
     }
 #endif
@@ -916,7 +882,7 @@ char *get_path (const char *name)
 
   strcpy(filebuffer, name);
 
-  for (i = strlen(filebuffer) - 1; i > 0 && filebuffer[i] != dirbrk; i--)
+  for (i = (int)strlen(filebuffer) - 1; i > 0 && filebuffer[i] != dirbrk; i--)
     ; /* empty loop to find end of path in name */
 
   if (i != 0)

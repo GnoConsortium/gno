@@ -1,11 +1,11 @@
 #
 # Makefile for udl
-# (c) 1993-1996 Soenke Behrens
+# (c) 1993-1996 Soenke Behrens, Devin G. Reade
 #
-# $Id: Makefile.unx,v 1.7 1996/01/22 01:01:31 gdr Exp $
+# $Id: Makefile.unx,v 1.8 1996/02/04 01:34:25 gdr Exp $
 #
 
-# $(CC) _must_ be an ANSI compiler.
+# $(CC) _must_ be an ANSI compiler. Use gcc if your cc is not.
 CC	= cc
 BINDIR	= /usr/local/bin
 MANDIR	= /usr/local/man/man1
@@ -62,7 +62,7 @@ udl.o: udlunix.c common.h
 newudl.1: udl.1
 	@echo "creating newudl.1"; \
 	echo '/^.TH/ c\' > sed.script; \
-	echo '.TH UDL 1 "15 January 1996" "Version 1.15"\
+	echo '.TH UDL 1 "15 January 1996" "Version 1.1.5"\
 "Commands and Applications"' >>sed.script; \
 	sed -f sed.script <udl.1 >newudl.1; \
 	rm -f sed.script

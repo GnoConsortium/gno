@@ -4,7 +4,7 @@
  *
  * Header file for routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.h,v 1.8 1996/01/22 01:01:33 gdr Exp $
+ * $Id: common.h,v 1.9 1996/02/04 01:34:27 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -23,10 +23,15 @@
 
 #define BUFFERSIZE 0x2000
 #define PATHLIST_QUANTUM 20
-#define UDL_VERSION "Version 1.14"
+#define UDL_VERSION "Version 1.1.5"
 #define STACKSIZE 2048
 #define BYTES_PER_DEPTH 40
 #define BASESIZE 700
+
+/* define the equivalents of LF and CR that your compiler uses */
+/* "Standard" settings should work for most systems */
+#define LF '\n'
+#define CR '\r'
 
 #ifndef   FALSE
 #  define FALSE 0
@@ -44,7 +49,7 @@
 #  define EXIT(a) { cleanup(); exit(a); }
 #endif
 
-enum file_format { tunix = 1, dos, apple, binary };
+enum file_format { unknown = 0, tunix = 1, dos, apple, binary };
 
 /* Since udl is so small, I dare to use some globals :) */
 extern char *program_name;         /* How was udl invoked? */
@@ -83,8 +88,9 @@ extern void cleanup (void);
 extern void usage (void);
 extern void build_file_list(char *file, short recurse);
 extern void add_to_pathList(char *thisdir, char *file);
-extern char *get_path(const char *name);
 extern char *Mktemp(const char *base);
+extern char *get_path(const char *name);
+
 extern int needsgno(void);
 
 /* not strictly necessary, but it cuts down on warnings from gcc */
@@ -92,7 +98,7 @@ extern int needsgno(void);
 extern char *getwd(char *);
 #endif
 
-#ifdef __GNUC__
+#if defined (__GNUC__) && !defined (__DJGPP__)
 extern char getopt(int, char **, char *);
 #endif
 

@@ -1,10 +1,10 @@
 #
 # Makefile for udl
-# Copyright (c) 1993-1996 Soenke Behrens
+# Copyright (c) 1993-1996 Soenke Behrens, Devin G. Reade
 #
 # This makefile should be used with dmake.
 #
-# $Id: Makefile.gs,v 1.8 1996/01/22 01:01:30 gdr Exp $
+# $Id: Makefile.gs,v 1.9 1996/02/04 01:34:23 gdr Exp $
 #
 
 # Where do we put the binaries and man page?
@@ -42,7 +42,7 @@ udl.o: udlgs.c common.h
 
 install:
 	cp -f udl   $(BINDIR)
-	cp -f udl.1 $(MANDIR)
+	cp -f udl.1 $(MANDIR)/man1
 
 help:
 	mkdir $@
@@ -55,9 +55,6 @@ clean:
 
 clobber: clean
 	-$(RM) -rf udl help
-
-dist:
-	@echo "Sorry, automatic packing not supported yet"
 
 common.o:: common.h
 globals.o:: common.h

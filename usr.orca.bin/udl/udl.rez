@@ -1,7 +1,7 @@
 #include "Types.Rez"
 
 resource rVersion (0x1, purgeable1, nocrossbank) {
-	{ 1, 1, 5,		/* version 1.1.4 */
+	{ 1, 1, 5,		/* version 1.1.5 */
 	  release,		/* development|alpha|beta|final|release */
 	  0			/* non-final release number */
 	},

@@ -4,7 +4,7 @@
  *
  * Unix specific routines.
  *
- * $Id: udlunix.c,v 1.8 1996/01/22 01:01:35 gdr Exp $
+ * $Id: udlunix.c,v 1.9 1996/02/04 01:34:30 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -15,7 +15,6 @@ extern char *strdup(const char *);
 
 int main(int argc,char *argv[]) {
   FILE *infile, *outfile;
-  char *p;
   int Tunix = FALSE;
   int Messy = FALSE;
   int GS = FALSE;
@@ -156,16 +155,16 @@ int main(int argc,char *argv[]) {
       fprintf(stderr,"%s: memory allocation failure\n", program_name);
       exit (EXIT_FAILURE);
     }
-    
+
     if (verbose == TRUE) {
       printf("%s: Working on %s\n",program_name,
              current_file);
     }
-   
-    infile = tryopen(current_file,"rwb");
+
+    infile = tryopen(current_file,"r+b");
     tempfile = Mktemp(strcat(get_path(current_file), "udltmpXX"));
     outfile = tryopen(tempfile,"wb");
-    
+
     if (careful) {
       converted = TRUE; /* always */
       

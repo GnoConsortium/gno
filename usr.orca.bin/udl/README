@@ -4,21 +4,39 @@ udl -	Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
 
 	(c) 1993-1996 Soenke Behrens, Devin Reade
 
-	Version 1.15: $Id: README,v 1.8 1996/01/22 01:01:32 gdr Exp $
+	Version 1.1.5: $Id: README,v 1.9 1996/02/04 01:34:25 gdr Exp $
 =============================================================================
 
-Udl converts text files between CR, LF and CR/LF (Apple, Unix and MS-DOS).
-It is a very fast utility that ensures that the integrity of the file
-cannot be compromised during the translation.  It is also much easier
-to use than tr(1).
+Udl converts text files between the various end-of-line conventions, i.e.
+CR, LF, and CR/LF, used by the Apple IIgs, MS-DOS, Amiga, and Unix.
+After conversion, the original file is replaced with the converted file.
+Udl is known to run with ORCA/Shell 2.x, GNO/ME 2.x, and Unix.
+
+Not only is udl faster and simpler than tr(1), but it saves a step in
+the conversion process by automatically replacing the original file
+after the conversion completes.  Thus:
+	udl file
+replaces the longer sequence of
+	tr '\012' '\015' < file > file.temp
+	mv file.temp file
+Because it replaces the original file, udl makes every effort to ensure
+that the conversion process cannot corrupt the original.  The translation
+process uses a temporary file and replaces the original only after the
+translation has completed.  In case of a machine crash or power-down, the
+original file remains intact, unless the machine dies at precisely the
+instant the update occurs.  This problem exists for a manual file
+replacement, as in:
+	mv file.temp file
+so the risk is no greater.
 
 =========
 Compiling:
 =========
 
-There are two makefiles included:
-	Makefile.gs	- for use on the Apple IIgs running GNO
-	Makefile.unx	- for use with Unix systems.
+Three makefiles are included:
+	Makefile.gs	For use on the Apple IIgs running GNO
+	Makefile.unx	For use with Unix systems
+	Makefile.msd	For use with MS-DOS systems (djgpp)
 
 Although udl on the IIgs can be run from either GNO or ORCA shells,
 it cannot be built with the standard ORCA installation due to a lack
@@ -39,11 +57,11 @@ Note that compilation of udl _requires_ an ANSI C compiler.
 If you are compiling to a new system, add in another set of defines
 and let us know about them.
 
-Note that udl.c assumes that getopt() is declared in <unistd.h> and that
-the function strdup() exists in <string.h>. You might have to change
-these includes if that's not the case.  Ensure you use cpp conditional
-compilations to match your platform (and to avoid breaking the code for
-other platforms).
+Note that udlunix.c and udlgs.c assume that getopt() is declared in
+<unistd.h> and that the function strdup() exists in <string.h>. You
+might have to change these includes if that's not the case.  Ensure you
+use cpp conditional compilations to match your platform (and to avoid
+breaking the code for other platforms).
 
 ============
 Installation
@@ -53,7 +71,7 @@ Apple IIgs with GNO
 ^^^^^^^^^^^^^^^^^^^
 Type 'dmake install -f Makefile.gs'.  By default this copies the binary
 into "/usr/local/bin" and the man page into "/usr/local/man/man1".  (You
-_are_ using version 3.x of 'man', are you not?  *blatent plug*)  If you
+_are_ using version 3.x of 'man', are you not?  *blatant plug*)  If you
 don't like these locations, either modify the BINDIR and MANDIR
 macros in the makefile or install the files by hand.
 
@@ -120,6 +138,13 @@ The following are the DEFINES values for tested operating systems:
 		-DGNO -D_POSIX_C_SOURCE -D_POSIX_SOURCE -DHAS_ATEXIT
 		-DOVERFLOW_CHECK
 
+
+        MS-DOS: (use "make -f Makefile.msd")
+        ^^^^^^
+
+        DJGPP: (tested with djgpp v2beta)
+                -DREADDIR_RETURNS_DOT -DHAS_ATEXIT
+
 	TESTED UNIX OS's: (use "make -f Makefile.unx")
 	^^^^^^^^^^^^^^^^
 	SunOS 4.x: (tested with gcc)
@@ -137,94 +162,63 @@ The following are the DEFINES values for tested operating systems:
 		-DREADDIR_RETURNS_DOT -D_POSIX_C_SOURCE -D_POSIX_SOURCE
 		-DHAS_ATEXIT
 
-================
-Revision History:
-================
+=====
+Files
+=====
+ 
+The following files are present in the udl package:
+ 	README			This file
+ 	History			Revision history
+ 	Makefile.gs		make(1) script for GNO
+ 	Makefile.unx		make(1) script for Unix
+	Makefile.msd		make(1) script for MS-DOS
+ 	common.c		Routines common to GNO and Unix versions
+ 	common.h		Header file for common.c
+ 	globals.c		Global variable definitions
+ 	udl.1			Man page for udl command
+ 	describe.udl		short description of udl, FTP info
+ 	udlgs.c			Apple IIgs specific routines
+ 	udl.rez			Apple IIgs REZ source for resource fork
+ 	udlunix.c		Unix specific routines
+ 	udluse.c		Strings for invocation information
 
-v1.01
-	Tabs are left alone now. Also recognizes CR/LF (MeSsy-DOS).
+=====
+Notes
+=====
 
-v1.02
-	Does no longer read in the complete file, instead creates a temp
-	file in prefix 3/.
+If the machine crashes before udl has replaced the original file with
+the converted file, the temporary file needs to be manually deleted.
+The temporary file resides in the same directory as the source file
+and has a name of the form:
+	UDLTMPXX
+where XX is replaced by AA, AB and so on.
 
-v1.03
-	Fixed a bug, allocated not enough mem for strncpy.
+=========
+Copyright
+=========
 
-v1.1
-	Changed to use static GS/OS strings again. Made faster by factor
-	5.8.
+COPYRIGHT 1993-1996 by Soenke Behrens and Devin Reade
+ALL RIGHTS RESERVED
 
-v1.11
-	Cleaned the code up a bit, wrote a Makefile, all output by udl is
-	prefixed with the name it was invoked with.
+This package may be redistributed so long as no fee is charged, the
+authors' names remain, and all modifications are clearly marked as
+such and the unmodified source is included.
 
-v1.12
-	Sped up Apple <-> Unix conversion further (factor 1.5).
-
-v1.12 (Unix)
-	(December 1993)
-	Modified source to produce a Unix version
-
-v1.13
-	(Updated by Devin Reade, November 1994)
-	Added ability to recurse through directories (-R flag).
-	Changed behavior to ignore binary files rather than exiting.
-	Merged Unix and Apple IIgs versions.
-        No message is printed out when a binary file (or, in the IIgs
-           implementation, a non-TXT or non-SRC file) is encountered
-           unless the -v option is specified.
-
-v1.14
-	(Soenke Behrens, Devin Reade, February 1995)
-	udl creates a temporary file in the directory of the
-	   source file, not in /tmp. This reduces the likelihood of
-	   data loss in the event of a system crash or powerdown.
-	udl now accepts something like "udl -R directory/" without
-	   affixing an extra '/' to "directory/".
-	Fixed bug (via the BROKEN_DIRENT_STRUCT macro) that was causing
-	   filename-munging on Solaris.  It seems that the sys/stat.h header
-	   file doesn't agree with the stat implementation.
-	Modified Makefile.gs to properly write the new executable over
-	   the old resource fork for udl.  The resource fork originates with
-	   the file udl.r.
-	Added suggested defines to the README for various Unix platforms.
-	Man page changes, including grammar and the deletion of a bug that
-	   no longer exists.
-	Fixed bug where invoking 'udl -u directory' would attempt to
-	   deref a NULL pointer, causing either memory tromping (IIgs) or
-	   a core dump (Unix).
-	Tested under SunOS 4.x, SunOS 5.x (Solaris), and AIX.
-
-v1.15
-	(Devin Reade, January 1996)
-	Changed Makefile.unx to select what should be the proper
-	   defines automatically, based on the result of `uname -sr`.
-	Added Linux defines.
-	Changed references and definition of "mktemp" to "Mktemp".  There
-	   is a discrepancy between the internal implementation and
-	   other common Unix versions.
-	Added a section to this README on installation, and moved the
-	   description of the DEFINES from the makefiles to here.
-	On the IIgs version, the resource fork is now created from a
-	   resource source file that is compiled, rather than using
-	   an interactive tool to create the resource fork.
-	Changed source filenames to use the 8.3 format in anticipation of
-	   MS-DOS support.  This does not affect the file names upon which
-	   udl operates.
+This program contains material from the Orca/C Run-Time Libraries,
+Copyright 1987-1995 by Byte Works, Inc.  Used with permission.
 
 =======
 Authors
 =======
 
 Original code by Soenke Behrens <sbehrens@contech.demon.co.uk>
-with modifications and version-merging by Devin Reade <gdr@myrias.com>
+with modifications and version-merging by Devin Reade <gdr@myrias.ab.ca>.
 
-==========
-Legalities:
-==========
+Soenke Behrens
+sbehrens@contech.demon.co.uk
 
-This program contains material from the Orca/C Run-Time Libraries,
-copyright 1987-1996 by Byte Works, Inc.  Used with permission.
+Devin Reade
+gdr@myrias.ab.ca
 
-=============================================================================
+January 1996
+Version 1.1.5

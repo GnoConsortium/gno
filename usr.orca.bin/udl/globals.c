@@ -4,7 +4,7 @@
  *
  * Contains definitions of global variables declared in common.h
  *
- * $Id: globals.c,v 1.5 1996/01/22 01:01:34 gdr Exp $
+ * $Id: globals.c,v 1.6 1996/02/04 01:34:28 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
