@@ -2,13 +2,13 @@
 #
 # GNO 2.0.6 gshrc file
 #
-# $Id: gshrc,v 1.2 1997/10/30 04:22:33 gdr Exp $
+# $Id: gshrc,v 1.3 1998/04/22 05:01:15 gdr-ftp Exp $
 #
 ###
 
 #
-# Setup the other prefixes to emulate Orca for the benefit of utilities
-# If you're using Orca 2.0 stuff, be sure to set prefixes 13-17 also
+# Setup the other prefixes to emulate ORCA for the benefit of utilities
+# If you're using ORCA 2.0 stuff, be sure to set prefixes 13-17 also
 #
 
 prefix 31 \*
@@ -17,7 +17,7 @@ prefix	13	/lib
 prefix	14	/tmp          
 prefix	15	/lang/orca/shell
 prefix	16	/lang/orca/languages
-prefix	17	/usr/orca/bin
+prefix	17	/lang/orca/utilities
 
 prefix 2 13
 prefix 3 14
@@ -35,18 +35,19 @@ export path
 rehash
 
 # other shell items
-set prompt="%C> "
-set term=gnocon
-set EDITOR="/lang/orca/shell/editor"
-setenv history=25
-setenv savehist=25
-setenv MANPATH /man:/usr/man:/usr/local/man:/local/man:/usr/X/man:/usr/orca/man
-setenv	PAGER	less
-setenv	LESS	-e
+set	prompt="%C> "
+set	term=gnocon
 set	nonewline=1
-setenv	TMACDIR		/usr/lib/tmac
-setenv	MAKESTARTUP	/usr/lib/startup.mk
-export prompt term EDITOR nonewline TMACDIR MAKESTARTUP
+export	prompt term nonewline
+
+setenv EDITOR	/lang/orca/shell/editor
+setenv history	25
+setenv savehist	25
+setenv MANPATH /man:/usr/man:/usr/local/man:/local/man:/usr/X/man:/usr/orca/man
+setenv PAGER	less
+setenv	LESS	-e
+setenv TMACDIR		/usr/lib/tmac
+setenv MAKESTARTUP	/usr/lib/startup.mk
 
 # Set environment variables for cc
 setenv CCEMULATE 1
