@@ -1,7 +1,7 @@
 #
 # prog.mk    version 1.1.0  (August 31, 1997)
 #
-# $Id: prog.mk,v 1.3 1997/09/26 06:11:07 gdr Exp $
+# $Id: prog.mk,v 1.4 1997/10/30 04:26:58 gdr Exp $
 #
 
 # This makefile is intended for use with dmake(1) and occ(1) on Apple IIGS
@@ -84,10 +84,6 @@ RELMAN	= $(RELEASE_DIR)$(MANDIR)
 
 .INCLUDE:	/src/gno/binrules.mk
 
-# Place files where they will subsequently be archived in a binary
-# distribution.
-release: $(PROG) $(PROG).1 $(DESC)
-	$(INSTALL) -d $(RELBIN) $(RELMAN)/man1 $(DESC_DIR)
-	$(INSTALL) $(PROG) $(RELBIN)
-	$(INSTALL) $(PROG).1 $(RELMAN)/man1
-	$(DESCU) -o $(DESC_SRC) $(DESC_SRC) $(DESC)
+.IF $(CUSTOM_RELEASE) == $(NULL)
+.INCLUDE:	/src/gno/binrelease.mk
+.END
