@@ -1,0 +1,72 @@
+.\"
+.\" $Id: chtyp.1,v 1.1 1997/10/03 05:06:50 gdr Exp $
+.\"
+.TH CHTYP 1 "28 September 1997" GNO "Commands and Applications"
+.SH NAME
+.BR chtyp
+\- change GS/OS file type information
+.SH SYNOPSIS
+.BR chtyp
+[ [
+.IR -t " " ftype 
+] [
+.IR -a " " atype
+] ] | [
+.IR -l " " lang
+]
+.IR file ...
+.SH DESCRIPTION
+Set GS/OS file type information for the specified
+.IR files
+.LP
+File types may be specified either as a number (decimal,
+hexadecimal with a leading 0x, or octal with a leading 0)
+or by a three letter abbreviation.  Abbreviations are from
+the official File Type Notes Index.
+.LP
+Auxilary types may only be specified as a number (decimal,
+hexadecimal, or octal).
+.LP
+If a file type is specified with no aux type, or vice versa,
+only the specified parameter is changed - the other is left
+as is.
+.LP
+The language option sets the file type and aux type appropriate
+for a source file of the specified language.  See below for a
+list of valid languages.
+.SH OPTIONS
+The following options are available:
+.IP "\fB-t\fR \fIftype\fR"
+Set the file type of the indicated files to the specified
+.IR ftype "."
+The file type may be specified as a number (in decimal, as a
+hexadecimal number with a leading 0x, or as an octal number
+with a leading 0) or by one of the official three letter
+abbreviations listed in the File Type Notes Index.  Types set
+by abbreviation may not have their auxilary file types set
+due to the large variety of assigned auxilary types for each
+file type.
+.IP "\fB-a\fR \fIatype\fR"
+Set the auxilary file type of the indicated files to the
+.IR atype
+specified.  The auxilary type may only be specified as a 
+number.
+.IP "\fB-l\fR \fIlang\fR"
+Set the file type and auxilary file type to that of a source
+file of the selected
+.IR lang "."
+The 
+.IR -l
+flag may not be used with the
+.IR -t
+or
+.IR -a
+flags.
+.IP
+Valid language types are: APWTXT, ASM, PASCAL, EXEC, CC, LINKER,
+DESKTOP, REZ, TMLPASCAL, DISASM, SDEASM, SDECMD, PS.
+.SH HISTORY
+.BR chtyp
+was originally written by Greg Thompson.  Jawaid Bazyar rewrote it 
+later for GNO/ME, and it has since been rewritten from scratch for
+GNO/ME v2.0.6 by Evan Day <day@engr.orst.edu>.
