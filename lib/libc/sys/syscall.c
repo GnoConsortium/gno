@@ -9,7 +9,7 @@
  * Unless otherwise specified, see the respective man pages for details
  * about these routines.
  *
- * $Id: syscall.c,v 1.4 1997/09/21 16:21:13 gdr Exp $
+ * $Id: syscall.c,v 1.5 1997/10/30 04:46:53 gdr Exp $
  *
  * This file is formatted with tab stops every 3 columns.
  */
@@ -17,6 +17,8 @@
 #ifdef __ORCAC__
 segment "libc_sys__";
 #endif
+
+#define __USE_DYNAMIC_GSSTRING__
 
 /*
  * Use bits 0, 1, 2, 6 (== decimal 71) for optimization.  In Orca/C v2.1.0,
@@ -90,7 +92,7 @@ _chdir(GSStringPtr pathname) {
 	PrefixRecGS prefx;
   struct {			/* truncated version of GetFileInfoRec */
 	   word pCount;
-     GSString255Ptr pathname;
+     GSStringPtr pathname;
      word access;
      word fileType;
      longword auxType;
@@ -100,7 +102,7 @@ _chdir(GSStringPtr pathname) {
 
   /* make sure it's a directory */
   shortFileInfo.pCount = 5;
-  shortFileInfo.pathname = (GSString255Ptr) pathname;
+  shortFileInfo.pathname = pathname;
   GetFileInfoGS(&shortFileInfo);
   if ((errno = _mapErr(_toolErr)) != 0) {
      return -1;
@@ -145,7 +147,7 @@ _chmod (unsigned short op, GSStringPtr path, mode_t mode, unsigned short type,
 	   return -1;
   }
   infop->pCount = 4;
-  infop->pathname = (GSString255Ptr) path;
+  infop->pathname = path;
 
   /* get the original data */
   GetFileInfoGS(infop);
@@ -290,7 +292,7 @@ _statfs (GSStringPtr gstr, struct statfs *buf) {
 
   /* get the volume number for the file name gstr */
   gd.pCount = 2;
-  gd.devName = (GSString32Ptr) gstr;	/* does this work with a pathname? */
+  gd.devName = gstr;	/* does this work with a pathname? */
   GetDevNumberGS(&gd);
   if (_toolErr) {
   	errno = _mapErr(_toolErr);
@@ -300,7 +302,7 @@ _statfs (GSStringPtr gstr, struct statfs *buf) {
   /* get the other volume info */
   vo.pCount = 6;
   sprintf(printbuf,".d%d", gd.devNum);
-  vo.devName = (GSString32Ptr) __C2GSMALLOC(printbuf);
+  vo.devName = __C2GSMALLOC(printbuf);
   vo.volName = (ResultBuf255Ptr) GOinit(32, NULL);
   VolumeGS(&vo);
   err = _toolErr;
@@ -370,7 +372,7 @@ access (const char *name, int mode) {
      return -1;
   }
   recptr->pCount = 4;
-  recptr->pathname = (GSString255Ptr) gptr;
+  recptr->pathname = gptr;
 
   /* get the info and check for errors */
   GetFileInfoGS(recptr);
@@ -515,7 +517,7 @@ fchdir (int fd)
   }
 
   /* change directory */
-  result = _chdir((GSStringPtr) &inforec.pathname->bufString);
+  result = _chdir(&(inforec.pathname->bufString));
   err = errno;
   GOfree(inforec.pathname);
   errno = err;
@@ -544,8 +546,7 @@ fchmod (int fd, mode_t mode)
   }
 
   /* change the mode */
-  result = _chmod(CHMOD_MODE, (GSStringPtr) &inforec.pathname->bufString,
-                  mode, 0, 0L);
+  result = _chmod(CHMOD_MODE, &(inforec.pathname->bufString), mode, 0, 0L);
   err = errno;
   GOfree(inforec.pathname);
   errno = err;
@@ -574,7 +575,7 @@ fstatfs (int fd, struct statfs *buf)
   }
 
   /* _statfs does the rest */
-	result = _statfs((GSStringPtr) &inforec.pathname->bufString, buf);
+	result = _statfs(&(inforec.pathname->bufString), buf);
   err = errno;
   GOfree(inforec.pathname);
   errno = err;
@@ -710,7 +711,7 @@ mkdir(char *dirname)
   int err;
 
 	cr.pCount = 5;
-  cr.pathname = (GSString255Ptr) __C2GSMALLOC(dirname);
+  cr.pathname = __C2GSMALLOC(dirname);
   if (cr.pathname == NULL) {
 	   errno = ENOMEM;
      return -1;
@@ -853,6 +854,56 @@ rexit (int code) {
 }
 
 /*
+ * rmdir
+ */
+
+int
+rmdir (const char *path) {
+   struct {
+      Word pCount;
+      GSStringPtr pathname;
+      Word access;
+      Word fileType;
+      LongWord auxType;
+      Word storageType;
+   } frec;
+   int result;
+
+   /* make a GSString copy of path */
+   frec.pCount=5;
+   if ((frec.pathname = __C2GSMALLOC(path)) == NULL) {
+      errno = ENOMEM;
+      return -1;
+   }
+
+   /* check to ensure that it's a directory */
+   GetFileInfoGS(&frec);
+   if ((result = _toolErr) != 0) {
+      GIfree(frec.pathname);
+      errno = _mapErr(result);
+      return -1;
+   }
+   if (frec.storageType != 0x0D) {
+      /* not a directory */
+      GIfree(frec.pathname);
+      /* volume directory, or plain file? */
+      errno = (frec.storageType == 0x0F) ? EPERM : ENOTDIR;
+      return -1;
+   }
+
+   /* it's a directory; try to delete it */
+   frec.pCount=1;
+   DestroyGS(&frec);
+   result = _toolErr;
+   GIfree(frec.pathname);
+   if (result != 0) {
+      errno = _mapErr(result);
+      result = -1;
+   }
+   return result;
+}
+
+/*
  * sigprocmask - This would be much more efficient if it was implemented
  *               in the kernel.  Note that in most cases we are doing
  *               two kernel traps (and thus context switches).
@@ -901,7 +952,7 @@ statfs(char *path, struct statfs *buf) {
 
   /* get the full pathname of this file */
   ep.pCount = 3;
-  if ((ep.inputPath = (GSString255Ptr) __C2GSMALLOC(path)) == NULL) {
+  if ((ep.inputPath = __C2GSMALLOC(path)) == NULL) {
 	   return -1;
   }
   ep.outputPath = (ResultBuf255Ptr) GOinit(GSOS_NAME_MAX, NULL);
@@ -917,7 +968,7 @@ statfs(char *path, struct statfs *buf) {
      result = -1;
 	   err = _mapErr(_toolErr);
   } else {
-		result = _statfs((GSStringPtr) &ep.outputPath->bufString, buf);
+		result = _statfs(&(ep.outputPath->bufString), buf);
      err = errno;
   }
   free(ep.inputPath);
@@ -1218,7 +1269,7 @@ open (const char *path, int oflag, ...) {
 
   /* try to open the file */
  	openRec.pCount = 12;
-  openRec.pathname = (GSString255Ptr) __C2GSMALLOC(path);
+  openRec.pathname = __C2GSMALLOC(path);
   if (openRec.pathname == NULL) {
 	   va_end(list);
 	   errno = ENOMEM;
