@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Sat Jul  3 13:50:24 1999
+# Last revision: Sat Jul 03 12:28:09 1999
 #
-# $Id: describe.src,v 1.30 1999/07/03 13:59:26 gdr-ftp Exp $
+# $Id: describe.src,v 1.31 1999/07/04 18:56:52 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -2320,6 +2320,16 @@ Where:   /usr/bin
 FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 Remote login.
+
+Name:    rm
+Version: 1.0 (May 1999)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ftp.gno.org ground.icaen.uiowa.edu apple2.caltech.edu
+
+Remove directory entries
 
 Name:    rmdir
 Version: 1.0 (28 Nov 94)
