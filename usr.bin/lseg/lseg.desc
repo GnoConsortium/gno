@@ -1,0 +1,10 @@
+Name:    lseg
+Version: 1.1 (September 1997)
+Shell:   GNO
+Author:  Jawaid Bazyar (updated for GNO/ME 2.0.6 by Dave Tribby)
+Contact: tribby@cup.hp.com
+Where:   /usr/bin/lseg
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+ List segments in an Object Module Format file.
+  
