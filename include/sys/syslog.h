@@ -31,7 +31,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)syslog.h	8.1 (Berkeley) 6/2/93
- * $Id: syslog.h,v 1.3 1998/10/31 18:48:50 gdr-ftp Exp $
+ * $Id: syslog.h,v 1.4 1999/01/04 05:09:04 gdr-ftp Exp $
  */
 
 #ifndef _SYS_SYSLOG_H_
@@ -98,15 +98,11 @@ CODE prioritynames[] = {
  */
 #ifdef __SYSLOG_INTERNALS
 
-#ifndef _SYS_TYPES_H_
-#include <sys/types.h>
-#endif
-
 /*
- * Identifier used bye the kernel ports interface.  Only the first 32
+ * Identifier used by the kernel ports interface.  Only the first 32
  * characters are significant!
  */
-#define __SYSLOG_PORT_NAME "syslogd_v2"
+#define __SYSLOG_PORT_NAME "syslogd"
 
 /*
  * _SYSLOG_BUFFERLEN is the max number of characters that syslog(3) and
@@ -119,23 +115,49 @@ CODE prioritynames[] = {
 #define _SYSLOG_BUFFERLEN	1024
 #define _SYSLOG_BUFFERLEN_MT	128
 
-/* This is used for consistency checks */
-#define _SYSLOG_MAGIC	0xB38F0E32
-
 /*
  * This _MUST_ be updated any time the SyslogDataBuffer_t definition
- * is changed.
+ * (or the layout of the rest of the allocated handle region) is changed.
  */
-#define _SYSLOG_STRUCT_VERSION	4
+#define _SYSLOG_PROTOCOL_VERSION	0
+
+/*
+ * For communcation between user processes and the syslog daemon, a handle
+ * is passed between processes, and ownership of that handle (and memory)
+ * is transferred to syslogd.
+ *
+ * The memory region referred to by the passed handle looks like this:
+ *
+ * This is a structure approximating the structure passed for version zero
+ * of the syslog daemon (by Phil Vandry).  It remains here for legacy 
+ * purposes.
+ *
+ * The memory region actually looks like this:
+ *	int	version
+ *	int	facility/priority
+ *	int	number of strings
+ *	int	offset of string 1, relative to string 1 (always zero)
+ *	int	offset of string 2, relative to string 1 [optional]
+ *	...
+ *	int	offset of string N, relative to string 1 [optional]
+ *	int	(number of bytes to this point? -- apparently unused)
+ *	int	length of string 1			\_ Class 1 GS String
+ *	char(s)	string 1				/
+ *	int	length of string 2 [optional]		\_ Class 1 GS String
+ *	char(s)	string 2 [optional]			/
+ *	...
+ *	int	length of string N [optional]		\_ Class 1 GS String
+ *	char(s)	string N [optional]			/
+ *
+ * Unfortunately, due to the variable nature of the defined memory region,
+ * we can't define a struct for the whole thing.  Therefore, we only include
+ * the first three words in the structure.
+ */
 
 typedef struct SyslogDataBuffer_t {
-	unsigned long	sdb_magic;	/* magic number for conchecks */
-	int		sdb_version;	/* should be SYSLOG_STRUCT_VERSION */
-	int		sdb_buflen;	/* how long is the sdb_buffer region? */
-	int		sdb_msglen;	/* how many bytes in sdb_buffer do we write? */
-	volatile int	sdb_busywait;	/* non-zero until syslogd got the msg */
-	int		sdb_needtime;	/* non-zero implies insert a date stamp */
-	char *		sdb_buffer;	/* contains the message */
+	int sdb0_version;              /* __SYSLOG_PROTOCOL_VERSION */
+	int sdb0_prio;                 /* priority and facility */
+	int sdb0_numstrings;           /* number of strings sent to syslogd */
 } SyslogDataBuffer_t;
 
 #endif	/* __SYSLOG_INTERNALS */
@@ -240,14 +262,14 @@ CODE facilitynames[] = {
 
 __BEGIN_DECLS
 void	closelog __P((void));
-void	openlog __P((const char *, int, long));
-long	setlogmask __P((long));
-void	syslog __P((long, const char *, ...));
-void	vsyslog __P((long, const char *, _BSD_VA_LIST_));
+void	openlog __P((const char *, int, int));
+int	setlogmask __P((int));
+void	syslog __P((int, const char *, ...));
+void	vsyslog __P((int, const char *, _BSD_VA_LIST_));
 #ifndef _POSIX_SOURCE
 void	old_syslog __P((char **dataHandle));		/* GNO-specific */
-void	syslogmt __P((long, const char *, ...));	/* GNO-specific */
-void	vsyslogmt __P((long, const char *, _BSD_VA_LIST_)); /* GNO-specific */
+void	syslogmt __P((int, const char *, ...));	/* GNO-specific */
+void	vsyslogmt __P((int, const char *, _BSD_VA_LIST_)); /* GNO-specific */
 #endif
 __END_DECLS
 
