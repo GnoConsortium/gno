@@ -2,7 +2,7 @@
 # List of shell applications for GNO/ME and ORCA/Shell
 # Last revision: Fri Mar 26 16:31:15 1999
 #
-# $Id: describe.src,v 1.25 1999/04/05 19:53:45 gdr-ftp Exp $
+# $Id: describe.src,v 1.26 1999/04/05 19:56:01 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -396,6 +396,16 @@ Where:   /usr/local/bin
 FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This utility plays audio compact disks.
+
+Name:    center
+Version: 1.1
+Shell:   GNO
+Author:  Marek Pawlowski.  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /bin
+FTP:     ftp.gno.org
+
+Take text from a file (or stdin), center it, and print it to stdout.
 
 Name:    chat
 Version: 2.0

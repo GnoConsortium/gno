@@ -6,7 +6,7 @@
 #
 # Devin Reade, January 1998
 #
-# $Id: mkindex,v 1.2 1998/01/17 21:26:42 gdr Exp $
+# $Id: mkindex,v 1.3 1999/04/05 19:56:02 gdr-ftp Exp $
 #
 
 $dirroot = "/ftp/pub/apple2/gs.specific";
@@ -28,7 +28,56 @@ $fudgelist{"wrjpgcom"}		= "gno/graphics";	# part of jpeg tools
 $fudgelist{"descc"}		= "gno/doc.utils";	# with describe
 $fudgelist{"descu"}		= "gno/doc.utils";	# with describe
 $fudgelist{"fortune"}		= "gno/games";		# resolve fortuna-[abc]
+$fudgelist{"newuserv"}		= "gno/sysadmin";	# with newuser
 # $fudgelist{""}		= "";
+
+# Actually, another possibility is that the file is not up for ftp in the
+# pre-packaged directories, but is rather part of the GNO base distribution.
+$fudgelist{"aroff"}		= "gno/doc.utils";
+$fudgelist{"asml"}		= "gno/programming";
+$fudgelist{"assemble"}		= "gno/programming";
+$fudgelist{"aw30"}		= "gno/doc.utils";
+$fudgelist{"binprint"}		= "gno/editors";
+$fudgelist{"blist"}		= "gno/editors";
+$fudgelist{"cal"}		= "gno/games";
+$fudgelist{"cat"}		= "gno/editors";
+$fudgelist{"chtyp"}		= "gno/file.manip";
+$fudgelist{"cksum"}		= "gno/archive";
+$fudgelist{"cmp"}		= "gno/text.utils";
+$fudgelist{"cmpl"}		= "gno/programming";
+$fudgelist{"colcrt"}		= "gno/doc.utils";
+$fudgelist{"compile"}		= "gno/programming";
+$fudgelist{"ctags"}		= "gno/programming";
+$fudgelist{"cu"}		= "gno/network";
+$fudgelist{"df"}		= "gno/sys";
+$fudgelist{"dial"}		= "gno/network";
+$fudgelist{"duplex"}		= "gno/network";
+$fudgelist{"eps"}		= "gno/sys";
+$fudgelist{"expr"}		= "gno/scripting";
+$fudgelist{"false"}		= "gno/scripting";
+$fudgelist{"fmt"}		= "gno/editors";
+$fudgelist{"ftp"}		= "gno/network";
+$fudgelist{"gsh"}		= "gno/shells";
+$fudgelist{"head"}		= "gno/editors";
+$fudgelist{"help"}		= "gno/doc.utils";
+$fudgelist{"inetd"}		= "gno/network";
+$fudgelist{"init"}		= "gno/daemons";
+$fudgelist{"kill"}		= "gno/sys";
+$fudgelist{"link"}		= "gno/programming";
+$fudgelist{"list"}		= "gno/doc.utils";
+$fudgelist{"logger"}		= "gno/scripting";
+$fudgelist{"login"}		= "gno/daemons";
+$fudgelist{"lseg"}		= "gno/programming";
+$fudgelist{"mkfs"}		= "gno/sysadmin";
+$fudgelist{"mkso"}		= "gno/sysadmin";
+$fudgelist{"phone"}		= "gno/mail";
+$fudgelist{"pwd"}		= "gno/sys";
+$fudgelist{"rcp"}		= "gno/network";
+$fudgelist{"remote"}		= "gno/network";
+$fudgelist{"removerez"}		= "gno/file.convert";
+$fudgelist{"rlogin"}		= "gno/network";
+$fudgelist{"rsh"}		= "gno/network";
+$fudgelist{"rtf2text"}		= "gno/file.convert";
 
 #
 # Get the list of .index.src files.  We will look in here for references
