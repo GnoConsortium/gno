@@ -13,7 +13,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.9 1998/02/19 01:00:34 gdr-ftp Exp $
+# $Id: Makefile,v 1.10 1998/03/25 06:05:46 gdr-ftp Exp $
 #
 
 LIB	= c
@@ -27,5 +27,5 @@ USE_SLASH_LIB= true
 .INCLUDE: /src/gno/lib/lib.mk
 
 # Use cp(1) rather than install(1) here so that we get a newer timestamp.
-assert.o: $(ORCA_SRC)/ORCALib/obj/assert.a
+assert.o: $(ORCA_SRC:s,/src,/obj,)/ORCALib/assert.o
 	cp $< $@
