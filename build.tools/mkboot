@@ -5,7 +5,7 @@
 # 
 # Devin Reade, April 1998.
 #
-# $Id: mkboot,v 1.3 1999/01/18 03:00:16 gdr-ftp Exp $
+# $Id: mkboot,v 1.4 1999/01/28 06:54:31 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -16,9 +16,16 @@ setenv RELBOOT	/gno.boot
 # Where are the GNO (and other) sources?
 setenv SRC	/src
 
+# Where do we keep the Finder.Data, Finder.Root, and icons files
+# that are created on the GS and copied over to the GNO boot disk?
+# Unfortunately, we can't put these into the repository because of
+# their resource forks (unless we were to binscii them)
+setenv BINSRC	/scratch/gnoboot.bins
+
 #==================================
 
 echo "creating directories ..."
+install -dV	$RELBOOT/Icons
 install -dV	$RELBOOT/bin
 install -dV	$RELBOOT/dev
 install -dV	$RELBOOT/doc
@@ -63,6 +70,9 @@ install -V	$RELDIR/etc/termcap			$RELBOOT/etc
 install -V	$RELDIR/etc/tty.config			$RELBOOT/etc
 install -V	$RELDIR/etc/ttys			$RELBOOT/etc
 install -V	$RELDIR/sbin/mkso			$RELBOOT/sbin
+install -V	$BINSRC/Finder.Root			$RELBOOT
+install -V	$BINSRC/Finder.Data			$RELBOOT
+install -V	$BINSRC/Icons/GNO.Icon			$RELBOOT/Icons
 
 chtyp -lexec $RELBOOT/gshrc $RELBOOT/installboot*
 

@@ -6,7 +6,7 @@
 # 
 # Devin Reade, September 1997.
 #
-# $Id: fudgeinstall,v 1.7 1999/01/26 08:20:04 gdr-ftp Exp $
+# $Id: fudgeinstall,v 1.8 1999/01/28 06:54:31 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -21,11 +21,21 @@ setenv ROOT	/trenco3/v.206
 setenv SRC	/src
 setenv DIST	/dist
 
+# Where do we keep the Finder.Data, Finder.Root, and icons files
+# that are created on the GS and copied over to the GNO boot disk?
+# Unfortunately, we can't put these into the repository because of
+# their resource forks (unless we were to binscii them)
+setenv BINSRC	/scratch/gnoboot.bins
+
 # Create the directories we need.  Unfortunately, gsh is too stupid to
 # even allow us multiline commands by escaping the newline, so we have
 # to call install many times.
 echo "creating directories"
 install -dV $RELDIR2/HFSinclude
+install -dV $RELDIR/Icons
+install -dV $RELDIR/System/Desk.Accs
+install -dV $RELDIR/System/Drivers
+install -dV $RELDIR/System/System.Setup
 install -dV $RELDIR/bin
 install -dV $RELDIR/dev
 install -dV $RELDIR/doc
@@ -84,6 +94,18 @@ echo "installing files in /HFSinclude"
 install -V	/HFSinclude/net/*.h	$RELDIR2/HFSinclude/net
 install -V	/HFSinclude/netinet/*.h	$RELDIR2/HFSinclude/netinet
 install -V	/HFSinclude/sys/*.h	$RELDIR2/HFSinclude/sys
+
+echo "installing files in /Icons"
+install -V	$BINSRC/Icons/GNO.Icon	$RELDIR/Icons
+
+echo "installing files in /System"
+install -V  $BINSRC/System/Desk.Accs/GNOSnooperII $RELDIR/System/Desk.Accs
+install -V  $BINSRC/System/Desk.Accs/SuspDA       $RELDIR/System/Desk.Accs
+install -V  $BINSRC/System/Drivers/FilePort       $RELDIR/System/Drivers
+install -V  $BINSRC/System/Drivers/FilePort.Data  $RELDIR/System/Drivers
+install -V  $BINSRC/System/Drivers/NullPort       $RELDIR/System/Drivers
+install -V  $BINSRC/System/System.Setup/GNOBug    $RELDIR/System/System.Setup
+install -V  $BINSRC/System/System.Setup/SIM       $RELDIR/System/System.Setup
 
 echo "installing files in /bin"
 # aroff		done
