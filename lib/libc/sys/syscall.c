@@ -9,7 +9,7 @@
  * Unless otherwise specified, see the respective man pages for details
  * about these routines.
  *
- * $Id: syscall.c,v 1.6 1997/12/21 20:13:19 gdr Exp $
+ * $Id: syscall.c,v 1.7 1998/06/24 04:22:38 gdr-ftp Exp $
  *
  * This file is formatted with tab stops every 3 columns.
  */
@@ -31,6 +31,7 @@ segment "libc_sys__";
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <sys/uio.h>
 #include <sys/wait.h>
 #include <types.h>
 #include <stdlib.h>
@@ -781,6 +782,46 @@ read (int filds, void *buf, size_t bytecount) {
 }
 
 /*
+ * readv
+ *
+ * HACK ALERT:  This won't work right for packet based sockets.
+ */
+ssize_t
+readv (int fd, const struct iovec *datavec, int count) {
+	IORecGS iorec = { 4, fd, NULL, 0L, 0L };
+	int n, err;
+	size_t i, iov_len;
+	char *p, *iov_base;
+	ssize_t transferCount;
+
+	transferCount = 0;
+	for (n=0; n<count; n++) {
+		iov_base = iorec.dataBuffer   = datavec[n].iov_base;
+		iorec.requestCount = datavec[n].iov_len;
+
+		/* write the file block */
+		ReadGS(&iorec);
+		if (err = _mapErr(_toolErr)) {
+			errno = err;
+			return -1;
+		}
+		iov_len = (ssize_t) iorec.transferCount;
+		transferCount += iov_len;
+
+		/* translate newlines if necessary */
+		if (_getFdTranslation(fd)) {
+			p = iov_base;
+			for (i = 0; i < iov_len; i++, p++) {
+				if (*p == '\r') {
+					*p = '\n';
+				}
+			}
+		}
+	}
+	return transferCount;
+}
+
+/*
  * rename
  */
 
@@ -1250,6 +1291,45 @@ write(int filds, void *buf, size_t bytecount) {
      return -1;
   }
   return (size_t) iorec.transferCount;
+}
+
+/*
+ * writev
+ *
+ * HACK ALERT:  This won't work right for packet based sockets.
+ */
+ssize_t
+writev (int fd, const struct iovec *datavec, int count) {
+	IORecGS iorec = { 4, fd, NULL, 0L, 0L };
+	int n, err;
+	size_t i, iov_len;
+	char *p, *iov_base;
+	ssize_t transferCount;
+
+	transferCount = 0;
+	for (n=0; n<count; n++) {
+		iov_base = iorec.dataBuffer   = datavec[n].iov_base;
+		iov_len  = iorec.requestCount = datavec[n].iov_len;
+
+		/* translate newlines if necessary */
+		if (_getFdTranslation(fd)) {
+			p = iov_base;
+			for (i = 0; i < iov_len; i++, p++) {
+				if (*p == '\n') {
+					*p = '\r';
+				}
+			}
+		}
+
+		/* write the file block */
+		WriteGS(&iorec);
+		if (err = _mapErr(_toolErr)) {
+			errno = err;
+			return -1;
+		}
+		transferCount += (ssize_t) iorec.transferCount;
+	}
+	return transferCount;
 }
 
 #pragma optimize 78
