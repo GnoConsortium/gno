@@ -1,13 +1,14 @@
 #
 # gno/lib/libc/stdlib/Makefile
 #
-# $Id: Makefile,v 1.5 1998/02/09 08:44:55 taubert Exp $
+# $Id: Makefile,v 1.6 1998/02/19 01:07:39 gdr-ftp Exp $
 #
 
-LIB=	c
-LIBPFX=	$(OBJ_DIR)../
-OBJS=	cvt.o environ.o fpspecnum.o getopt.o getsubopt.o
+LIB	= c
+LIBPFX	= $(OBJ_DIR)../
+NO_REZ	= true
+SRCS	= cvt.c environ.c fpspecnum.asm getopt.c getsubopt.c
 
 .INCLUDE: /src/gno/lib/lib.mk
 
-fpspecnum.o::	fpspecnum.mac
+fpspecnum.o:	fpspecnum.mac
