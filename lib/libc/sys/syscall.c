@@ -9,7 +9,7 @@
  * Unless otherwise specified, see the respective man pages for details
  * about these routines.
  *
- * $Id: syscall.c,v 1.1 1997/02/28 05:12:51 gdr Exp $
+ * $Id: syscall.c,v 1.2 1997/07/27 23:33:36 gdr Exp $
  *
  * This file is formatted with tab stops every 3 columns.
  */
@@ -78,6 +78,10 @@ extern pascal void SystemQuitPath (GSStringPtr);
 #define SRC  0xB0      /* SRC + EXEC = shell script */
 #define EXEC 0x0006
 
+#ifdef VERSION_CHECK
+static void _libcPanic (const char *fmt, ...);
+#endif
+
 /*
  * _chdir
  *
@@ -131,6 +135,119 @@ _chdir(GSStringPtr pathname) {
 	SetPrefixGS(&prefx);
   return 0;
 }
+
+#define CHMOD_MODE    1
+#define CHMOD_TYPE    2
+#define CHMOD_AUXTYPE 4
+
+static int
+_chmod (unsigned short op, GSStringPtr path, mode_t mode, unsigned short type,
+        unsigned long auxtype) {
+	FileInfoRecGS *infop;
+  int err;
+
+  if ((infop = malloc(sizeof(FileInfoRecGS))) == NULL) {
+	   return -1;
+  }
+  infop->pCount = 4;
+  infop->pathname = (GSString255Ptr) path;
+
+  /* get the original data */
+  GetFileInfoGS(infop);
+  if (_toolErr) {
+	   err = _toolErr;
+     free(infop);
+  	errno = _mapErr(err);
+     return -1;
+  }
+
+  /*
+   * Special case:  If the type is TXT or SRC, *and* the S_IXUSR bit
+   * is set, *and* this is a "UNIX" mode, *and* no filetype or auxtype
+   * was specified, then change the type to SRC and the AUXTYPE to EXEC.
+   */
+  if (((op & (CHMOD_TYPE | CHMOD_AUXTYPE)) == 0) &&
+      (mode & S_IXUSR) &&
+      _getModeEmulation() &&
+      (infop->fileType == TXT || infop->fileType == SRC))
+  {
+	   infop->fileType = SRC;
+     infop->auxType = EXEC;
+  }
+
+  /* modify it */
+  if (op & CHMOD_MODE) {
+ 		infop->access = _mapMode2GS(mode);
+  }
+  if (op & CHMOD_TYPE) {
+	   infop->fileType = type;
+  }
+  if (op & CHMOD_AUXTYPE) {
+	   infop->auxType = auxtype;
+  }
+
+	/* set the info and return */
+  SetFileInfoGS(infop);
+	err = _toolErr;
+  free(infop);
+  if (err) {
+  	errno = _mapErr(err);
+     return -1;
+  } else {
+	   return 0;
+  }
+}
+
+/*
+ * _kernMinVersion
+ *
+ * This is used as an assert from within trap.asm (unless the global short
+ * _kernDisableVersionCheck is set to a non-zero value.  It's argument is
+ * the kernel version required by the given system call.  Returns on success.
+ * On failure, it aborts the program with a suitable error message.
+ *
+ * It would be more efficient as an inline macro.
+ *
+ * THIS ROUTINE IS CURRENTLY DISABLED DUE TO PERFORMANCE CONCERNS.  SEE 
+ * THE gno-devel MAILING LIST ARCHIVE FOR DETAILS.
+ */
+
+#ifdef VERSION_CHECK
+
+unsigned short _kernDisableVersionCheck;
+
+void
+_kernMinVersion (unsigned int required) {
+	static int gnoActiveKnown = 0;
+  static u_short gnoVersion = 0;
+
+  /* make sure GNO is active */
+  if (! gnoActiveKnown) {
+		kernStatus();
+     if (_toolErr) {
+	      _libcPanic("This program requires GNO.\n");
+        /*NOTREACHED*/
+     }
+     gnoActiveKnown = 1;
+  }
+
+	/* get the current kernel version if we don't already have it */
+  if (gnoVersion == 0) {
+	   gnoVersion = kernVersion();
+  }
+
+  /* make sure our version meets the minimum required */
+  if (required > gnoVersion) {
+	   _libcPanic ("This program requires GNO v%d.%d.%d or later\n",
+                 (required & 0xFF00) >> 8,
+                 (required & 0x00F0) >> 4,
+                 (required & 0x000F));
+  }
+
+	return;
+}
+
+#endif
 
 /*
  * _setFdTranslation, _getFdTranslation
@@ -333,6 +450,28 @@ chdir (const char *pathname) {
 }
 
 /*
+ * chmod
+ */
+
+int
+chmod (const char *pathname, mode_t mode) {
+	GSStringPtr pathnameGS;
+  int result, err;
+
+  if ((pathnameGS = __C2GSMALLOC(pathname)) == NULL) {
+	   errno = ENOMEM;
+     return -1;
+  }
+  result = _chmod(CHMOD_MODE, pathnameGS, mode, 0, 0L);
+  err = errno;
+  free(pathnameGS);
+  if (result != 0) {
+	   errno = err;
+  }
+  return result;
+}
+
+/*  
  * close
  */
 	 
@@ -389,6 +528,36 @@ fchdir (int fd)
 }
 
 /*
+ * fchmod
+ */
+
+int
+fchmod (int fd, mode_t mode)
+{
+	RefInfoRecGS inforec;
+  int err, result;
+
+  /* get the pathname based on the file descriptor */
+  inforec.pCount = 3;
+  inforec.refNum = fd;
+  inforec.pathname = (ResultBuf255Ptr) GOinit(GSOS_NAME_MAX, NULL);
+  GetRefInfoGS (&inforec);
+  if ((err = _mapErr(_toolErr)) != 0) {
+	   GOfree(inforec.pathname);
+     errno = err;
+     return -1;
+  }
+
+  /* change the mode */
+  result = _chmod(CHMOD_MODE, (GSStringPtr) &inforec.pathname->bufString,
+                  mode, 0, 0L);
+  err = errno;
+  GOfree(inforec.pathname);
+  errno = err;
+  return result;
+}
+
+/* 
  * fstatfs
  */
 
@@ -789,7 +958,7 @@ waitpid(pid_t pid, union wait *istat, int options)
 
    for(;;) {
       result = wait(istat);
-      if ((result == -1) ||
+      if ((result == -1) ||                               
           (pid == result) ||
           ((pgid > 1) && (pgid == _getpgrp(result)))) {
     		return result;
@@ -827,13 +996,35 @@ write(int filds, void *buf, size_t bytecount) {
   return (size_t) iorec.transferCount;
 }
 
-/*
- * open -- end of file because of higher optimization required
- */
-
 /* pragma optimize 79 */
 #pragma optimize 8
 #pragma debug 0
+
+#ifdef VERSION_CHECK
+
+/*
+ * _libcPanic
+ *
+ * Get a message out to the user and exit.  This is at the end of the
+ * file because of the higher optimization level required for variadic
+ * functions.
+ */
+
+static void
+_libcPanic (const char *fmt, ...) {
+	va_list list;
+
+  va_start(list, fmt);
+	vfprintf(stderr, fmt, list);
+  va_end(list);
+  exit(EXIT_FAILURE);
+}
+
+#endif	/* VERSION_CHECK */
+
+/*
+ * open -- end of file because of higher optimization required
+ */
 
 int
 open (const char *path, int oflag, ...) {

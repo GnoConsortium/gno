@@ -249,3 +249,17 @@
  phk
  plb
  mend
+ macro
+&lab assertVersion &vers
+&lab anop
+*
+* We currently have this check disabled for performance reasons (as
+* discussed on the gno-devel mailing list).  -- gdr
+*
+* lda >_kernDisableVersionCheck
+* cmp #0
+* bne ~&SYSCNT
+* pea &vers
+*jsl _kernMinVersion
+*~&SYSCNT anop
+* mend

@@ -6,7 +6,7 @@
 *        v2.0.6
 *        Copyright 1991-1997, Procyon Inc.
 *
-*	$Id: trap.asm,v 1.1 1997/02/28 05:12:51 gdr Exp $
+*	$Id: trap.asm,v 1.2 1997/07/27 23:33:36 gdr Exp $
 *
 	case  on
 	mcopy trap.mac
@@ -20,6 +20,7 @@ dummy	start		; ends up in .root
 getpid	START	libc_sys__
 retval	equ	1
 	sub	(0:foo),2
+	assertVersion $0204	; check for minimum version
 	pha		; push result space
 	anop		; doesn't take errno
 	ldx	#$0903
@@ -33,6 +34,7 @@ retval	equ	1
 getppid	START	libc_sys__
 retval	equ	1
 	sub	(0:foo),2
+	assertVersion $0204	; check for minimum version
 	pha		; push result space
 	ph4	#errno
 	ldx	#$4003
@@ -45,6 +47,7 @@ retval	equ	1
 getuid	START	libc_sys__
 retval	equ	1
 	sub	(0:foo),2
+	assertVersion $0204	; check for minimum version
 	pha		; push result space
 	ph4	#errno
 	ldx	#$2A03
@@ -57,6 +60,7 @@ retval	equ	1
 getgid	START	libc_sys__
 retval	equ	1
 	sub	(0:foo),2
+	assertVersion $0204	; check for minimum version
 	pha		; push result space
 	ph4	#errno
 	ldx	#$2B03
@@ -69,9 +73,10 @@ retval	equ	1
 geteuid	START	libc_sys__
 retval	equ	1
 	sub	(0:foo),2
+	assertVersion $0204	; check for minimum version
 	pha		; push result space
 	ph4	#errno
-	ldx	#$2C03
+	ldx	#$2C03       
 	jsl	udispatch
 	pla
 	sta	retval
@@ -81,6 +86,7 @@ retval	equ	1
 getegid	START	libc_sys__
 retval	equ	1
 	sub	(0:foo),2
+	assertVersion $0204	; check for minimum version
 	pha		; push result space
 	ph4	#errno
 	ldx	#$2D03
@@ -93,6 +99,7 @@ retval	equ	1
 setuid	START	libc_sys__
 retval	equ	1
 	sub	(2:uid),2
+	assertVersion $0204	; check for minimum version
 	pha		; push result space
 	ph2	uid
 	ph4	#errno
@@ -106,6 +113,7 @@ retval	equ	1
 setruid	START	libc_sys__
 retval	equ	1
 	sub	(2:ruid),2
+	assertVersion $0206	; check for minimum version
 	pha		; push result space
 	pea	$FFFF
 	ph2	ruid
@@ -120,6 +128,7 @@ retval	equ	1
 seteuid	START	libc_sys__
 retval	equ	1
 	sub	(2:euid),2
+	assertVersion $0206	; check for minimum version
 	pha		; push result space
 	ph2	euid
 	pea	$FFFF
@@ -134,6 +143,7 @@ retval	equ	1
 setreuid	START	libc_sys__
 retval	equ	1
 	sub	(2:euid,2:ruid),2
+	assertVersion $0206	; check for minimum version
 	pha		; push result space
 	ph2	euid
 	ph2	ruid
@@ -148,6 +158,7 @@ retval	equ	1
 setgid	START	libc_sys__
 retval	equ	1
 	sub	(2:gid),2
+	assertVersion $0204	; check for minimum version
 	pha		; push result space
 	ph2	gid	
 	ph4	#errno
@@ -161,6 +172,7 @@ retval	equ	1
 setrgid	START	libc_sys__
 retval	equ	1
 	sub	(2:rgid),2
+	assertVersion $0206	; check for minimum version
 	pha		; push result space
 	pea	$FFFF
 	ph2	rgid
@@ -175,6 +187,7 @@ retval	equ	1
 setegid	START	libc_sys__
 retval	equ	1
 	sub	(2:egid),2
+	assertVersion $0206	; check for minimum version
 	pha		; push result space
 	ph2	egid
 	pea	$FFFF
@@ -189,6 +202,7 @@ retval	equ	1
 setregid	START	libc_sys__
 retval	equ	1
 	sub	(2:egid,2:rgid),2
+	assertVersion $0206	; check for minimum version
 	pha		; push result space
 	ph2	egid
 	ph2	rgid
@@ -204,6 +218,7 @@ retval	equ	1
 kill	START	libc_sys__
 retval	equ	1
 	sub	(2:sig,2:pid),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	pid
 	ph2	sig
@@ -220,6 +235,7 @@ fork	START	libc_sys__
 vfork	ENTRY
 retval	equ	1
 	sub	(4:subr),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph4	subr
 	ph4	#errno
@@ -245,6 +261,8 @@ argc	equ	name+4
 	phd
 	tsc
 	tcd
+
+	assertVersion $0204	; check for minimum version
 
 	pha		; temp space for result
 	pei	(subr+2)
@@ -290,6 +308,9 @@ argc	equ	name+4
 	END
 
 * int   exec(char *filename,char *cmdline) inline(0x0C03, udispatch);
+*
+*	This function is provided in syscall.c
+*
 *exec	START	libc_sys__
 *retval	equ	1
 *	sub	(4:cmdline,4:filename),2
@@ -309,6 +330,7 @@ argc	equ	name+4
 swait	START	libc_sys__
 retval	equ	1
 	sub	(2:sem),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	sem
 	ph4	#errno
@@ -323,6 +345,7 @@ retval	equ	1
 ssignal 	START	libc_sys__
 retval	equ	1
 	sub	(2:sem),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	sem
 	ph4	#errno
@@ -337,6 +360,7 @@ retval	equ	1
 screate	START	libc_sys__
 retval	equ	1
 	sub	(2:sem),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	sem
 	ph4	#errno
@@ -351,6 +375,7 @@ retval	equ	1
 sdelete	START	libc_sys__
 retval	equ	1
 	sub	(2:sem),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	sem
 	ph4	#errno
@@ -365,6 +390,7 @@ retval	equ	1
 signal 	START	libc_sys__
 retval	equ	1
 	sub	(4:func,2:sig),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph2	sig
@@ -383,6 +409,7 @@ retval	equ	1
 wait	START	libc_sys__
 retval	equ	1
 	sub	(4:status),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph4	status
 	ph4	#errno
@@ -397,6 +424,7 @@ retval	equ	1
 tcnewpgrp	START libc_sys__
 retval	equ	1
 	sub	(2:fdtty),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	fdtty
 	ph4	#errno
@@ -411,6 +439,7 @@ retval	equ	1
 settpgrp	START	libc_sys__
 retval	equ	1
 	sub	(2:fdtty),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	fdtty
 	ph4	#errno
@@ -425,6 +454,7 @@ retval	equ	1
 tctpgrp	START	libc_sys__
 retval	equ	1
 	sub	(2:pid,2:fdtty),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	fdtty
 	ph2	pid
@@ -440,6 +470,7 @@ retval	equ	1
 sigsetmask	START libc_sys__
 retval	equ	1
 	sub	(4:mask),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph4	mask
@@ -457,6 +488,7 @@ retval	equ	1
 sigblock	START	libc_sys__
 retval	equ	1
 	sub	(4:mask),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph4	mask
@@ -474,6 +506,7 @@ retval	equ	1
 _execve	START	libc_sys__
 retval	equ	1
 	sub	(4:cmdline,4:filename),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph4	filename
 	ph4	cmdline
@@ -489,6 +522,7 @@ retval	equ	1
 alarm	START	libc_sys__
 retval	equ	1
 	sub	(4:seconds),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph4	seconds
@@ -506,6 +540,7 @@ retval	equ	1
 alarm10	START	libc_sys__
 retval	equ	1
 	sub	(4:seconds),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph4	seconds
@@ -523,6 +558,7 @@ retval	equ	1
 setdebug	START libc_sys__
 retval	equ	1
 	sub	(2:code),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	code
 	anop		; doesn't take errno
@@ -537,6 +573,7 @@ retval	equ	1
 setsystemvector START libc_sys__
 retval	equ	1
 	sub	(4:vect),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph4	vect
@@ -554,6 +591,7 @@ retval	equ	1
 sigpause	START	libc_sys__
 retval	equ	1
 	sub	(4:mask),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph4	mask
 	ph4	#errno
@@ -568,6 +606,7 @@ retval	equ	1
 kvm_open	START	libc_sys__
 retval	equ	1
 	sub	(0:foo),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph4	#errno
@@ -583,6 +622,7 @@ retval	equ	1
 kvm_close	START libc_sys__
 retval	equ	1
 	sub	(4:k),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph4	k
 	ph4	#errno
@@ -598,6 +638,7 @@ kvm_getproc	START libc_sys__
 kvmgetproc	ENTRY
 retval	equ	1
 	sub	(2:pid,4:kd),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph4	kd
@@ -617,6 +658,7 @@ kvm_nextproc	START libc_sys__
 kvmnextproc	ENTRY
 retval	equ	1
 	sub	(4:kd),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph4	kd
@@ -635,6 +677,7 @@ kvm_setproc	START libc_sys__
 kvmsetproc	ENTRY
 retval	equ	1
 	sub	(4:kd),4
+	assertVersion $0204	; check for minimum version
 	pha
 	ph4	kd
 	ph4	#errno
@@ -648,6 +691,7 @@ retval	equ	1
 dup	START	libc_sys__
 retval	equ	1
 	sub	(2:fd),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	fd
 	ph4	#errno
@@ -661,6 +705,7 @@ retval	equ	1
 dup2	START	libc_sys__
 retval	equ	1
 	sub	(2:fd2,2:fd1),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	fd1
 	ph2	fd2
@@ -675,6 +720,7 @@ retval	equ	1
 pipe	START	libc_sys__
 retval	equ	1
 	sub	(4:intptr),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph4	intptr
 	ph4	#errno
@@ -689,6 +735,7 @@ retval	equ	1
 _getpgrp	START	libc_sys__
 retval	equ	1
 	sub	(2:pid),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	pid
 	ph4	#errno
@@ -704,6 +751,7 @@ setpgid	START	libc_sys__
 setpgrp	ENTRY
 retval	equ	1
 	sub	(2:pgrp,2:pid),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	pid
 	ph2	pgrp
@@ -719,6 +767,7 @@ retval	equ	1
 ioctl	START	libc_sys__
 retval	equ	1
 	sub	(4:argp,4:request,2:d),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	d
 	ph4	request
@@ -735,6 +784,7 @@ retval	equ	1
 stat	START	libc_sys__
 retval	equ	1
 	sub	(4:buf,4:name),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph4	name
 	ph4	buf
@@ -750,6 +800,7 @@ retval	equ	1
 fstat	START	libc_sys__
 retval	equ	1
 	sub	(4:buf,2:fd),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	fd
 	ph4	buf
@@ -765,6 +816,7 @@ retval	equ	1
 lstat	START	libc_sys__
 retval	equ	1
 	sub	(4:buf,4:name),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph4	name
 	ph4	buf
@@ -779,6 +831,7 @@ retval	equ	1
 procsend	START	libc_sys__
 retval	equ	1
 	sub	(4:msg,2:pid),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	pid
 	ph4	msg
@@ -793,6 +846,7 @@ retval	equ	1
 procreceive	START libc_sys__
 retval	equ	1
 	sub	(0:foo),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph4	#errno
@@ -808,6 +862,7 @@ retval	equ	1
 procrecvclr	START libc_sys__
 retval	equ	1
 	sub	(0:foo),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph4	#errno
@@ -823,6 +878,7 @@ retval	equ	1
 procrecvtim	START libc_sys__
 retval	equ	1
 	sub	(2:timeout),4
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	ph2	timeout
@@ -839,6 +895,7 @@ retval	equ	1
 times	START	libc_sys__
 retval	equ	1
 	sub	(4:buffer),2
+	assertVersion $0204	; check for minimum version
 	pha
 	ph4	buffer
 	ph4	#errno
@@ -852,6 +909,7 @@ retval	equ	1
 * int pcreate(int count);
 pcreate	START	libc_sys__
 	subroutine (2:count),0
+	assertVersion $0204	; check for minimum version
 	pha
 	pei	(count)
 	ph4	#errno
@@ -864,6 +922,7 @@ pcreate	START	libc_sys__
 * int psend(int portid, long int msg);
 psend	START	libc_sys__
 	subroutine (4:msg,2:portid),0
+	assertVersion $0204	; check for minimum version
 	pha
 	pei	(portid)
 	pei	(msg+2)
@@ -878,6 +937,7 @@ psend	START	libc_sys__
 * long int preceive(int portid);
 preceive	START	libc_sys__
 	subroutine (2:portid),0
+	assertVersion $0204	; check for minimum version
 	pha
 	pha
 	pei	(portid)
@@ -892,6 +952,7 @@ preceive	START	libc_sys__
 * int pdelete(int portid, int (*dispose)());
 pdelete	START	libc_sys__
 	subroutine (4:dispose,2:portid),0
+	assertVersion $0204	; check for minimum version
 	pha
 	pei	(portid)
 	pei	(dispose+2)
@@ -906,6 +967,7 @@ pdelete	START	libc_sys__
 *	int preset(int portid, int (*dispose)());
 preset	START	libc_sys__
 	subroutine (4:dispose,2:portid),0
+	assertVersion $0204	; check for minimum version
 	pha
 	pei	(portid)
 	pei	(dispose+2)
@@ -920,6 +982,7 @@ preset	START	libc_sys__
 * int pbind(int portid, char *name);
 pbind	START	libc_sys__
 	subroutine (4:name,2:portid),0
+	assertVersion $0204	; check for minimum version
 	pha
 	pei	(portid)
 	pei	(name+2)
@@ -934,6 +997,7 @@ pbind	START	libc_sys__
 * int pgetport(char *name);
 pgetport	START	libc_sys__
 	subroutine (4:name),0
+	assertVersion $0204	; check for minimum version
 	pha
 	pei	(name+2)
 	pei	(name)
@@ -947,6 +1011,7 @@ pgetport	START	libc_sys__
 * int pgetcount(int portnum);
 pgetcount	START libc_sys__
 	subroutine (2:portnum),0
+	assertVersion $0204	; check for minimum version
 	pha
 	pei	(portnum)
 	ph4	#errno
@@ -959,6 +1024,7 @@ pgetcount	START libc_sys__
 * int pgetport(char *name);
 scount	START	libc_sys__
 	subroutine (2:sem),0
+	assertVersion $0204	; check for minimum version
 	pha
 	pei	(sem)
 	ph4	#errno
@@ -972,6 +1038,7 @@ scount	START	libc_sys__
 SetGNOQuitRec START libc_sys__
 retval	equ	1
 	sub	(2:flags,4:pathname,2:pCount),0
+	assertVersion $0204	; check for minimum version
 	pha
 	ph2	pCount
 	ph4	pathname
@@ -988,6 +1055,8 @@ retval	equ	1
 select	START	libc_sys__
 res	equ	1
 	sub	(4:toptr,4:exc,4:wr,4:rd,2:nfd),2
+
+	assertVersion $0206	; check for minimum version
 
 	pha
 	pei	(nfd)
@@ -1010,6 +1079,7 @@ res	equ	1
 InstallNetDriver START libc_sys__
 res	equ	1
 	sub	(2:domain,4:netcore),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(netcore+2)
 	pei	(netcore)
@@ -1025,6 +1095,7 @@ res	equ	1
 socket	START	libc_sys__
 res	equ	1
 	sub	(2:protocol,2:type,2:domain),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(domain)
 	pei	(type)
@@ -1040,6 +1111,7 @@ res	equ	1
 bind	START	libc_sys__
 res	equ	1
 	sub	(2:addrlen,4:myaddr,2:fd),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(fd)
 	pei	(myaddr+2)
@@ -1056,6 +1128,7 @@ res	equ	1
 connect	START	libc_sys__
 res	equ	1
 	sub	(2:addrlen,4:servaddr,2:fd),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(fd)
 	pei	(servaddr+2)
@@ -1072,6 +1145,7 @@ res	equ	1
 listen	START	libc_sys__
 res	equ	1
 	sub	(2:backlog,2:fd),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(fd)
 	pei	(backlog)
@@ -1086,6 +1160,7 @@ res	equ	1
 accept	START	libc_sys__
 res	equ	1
 	sub	(4:addrlen,4:remaddr,2:fd),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(fd)
 	pei	(remaddr+2)
@@ -1104,6 +1179,7 @@ recvfrom	START	libc_sys__
 res	equ	1
 	sub	(4:addrlen,4:remaddr,2:flags,4:len,4:buf,2:fd),2
 
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(fd)
 	pei	(buf+2)
@@ -1127,6 +1203,7 @@ sendto	START	libc_sys__
 res	equ	1
 	sub	(2:addrlen,4:remaddr,2:flags,4:len,4:buf,2:fd),2
 
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(fd)
 	pei	(buf+2)
@@ -1149,6 +1226,7 @@ recv	START	libc_sys__
 res	equ	1
 	sub	(2:flags,4:len,4:buf,2:fd),2
 
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(fd)
 	pei	(buf+2)
@@ -1168,6 +1246,7 @@ send	START	libc_sys__
 res	equ	1
 	sub	(2:flags,4:len,4:buf,2:fd),2
 
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(fd)
 	pei	(buf+2)
@@ -1186,6 +1265,7 @@ res	equ	1
 getpeername	START libc_sys__
 res	equ	1
 	sub	(4:addrlen,4:addr,2:s),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(s)
 	pei	(addr+2)
@@ -1203,6 +1283,7 @@ res	equ	1
 getsockname	START libc_sys__
 res	equ	1
 	sub	(4:addrlen,4:addr,2:s),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(s)
 	pei	(addr+2)
@@ -1220,6 +1301,7 @@ res	equ	1
 getsockopt	START libc_sys__
 res	equ	1
 	sub	(4:optlen,4:optval,2:optname,2:level,2:s),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(s)
 	pei	(level)
@@ -1239,6 +1321,7 @@ res	equ	1
 setsockopt	START libc_sys__
 res	equ	1
 	sub	(2:optlen,4:optval,2:optname,2:level,2:s),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(s)
 	pei	(level)
@@ -1257,6 +1340,7 @@ res	equ	1
 shutdown	START	libc_sys__
 res	equ	1
 	sub	(2:how,2:s),2
+	assertVersion $0206	; check for minimum version
 	pha
 	pei	(s)
 	pei	(how)
