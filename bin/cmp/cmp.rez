@@ -1,0 +1,33 @@
+/*
+ * $Id: cmp.rez,v 1.1 1997/10/03 05:13:23 gdr Exp $
+ */
+#include "Types.Rez"
+#include "proginfo.rez"
+
+resource rVersion (0x1, purgeable3, nocrossbank) {
+
+	{ 2, 0, 0,	/* version 1.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+          0		/* non-final release number */
+        },
+        verUS,		/* country code -- only some are avail */
+        "cmp",		/* name */
+			/* _Very_ brief descrition.  Check "file info" */
+			/* shown in the Finder to see if it's too long */
+			/* Note that \n is used to separate lines here. */
+	"Compares two files on disk.\n"
+	"Requires GNO/ME Shell.\n"
+	"Evan Day <day@engr.orst.edu>"
+};
+
+resource rProgramInfo (0x1, purgeable3, nocrossbank) {
+	{ 6, 0, 1,
+	  release,
+	  0
+	},
+	30270,
+	32768,
+	1280,
+	progRequiresGNO+progAppleTalkOK+progAllowsCDAs,
+	piCompatible*ProgShellGSH+piSpecialFeatures*ProgShellGSH
+};

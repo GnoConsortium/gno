@@ -1,0 +1,10 @@
+Name:    cmp
+Version: 2.0 (4 Aug 97)
+Shell:   GNO/ME
+Author:  Evan Day (from FreeBSD source)
+Contact: day@engr.orst.edu
+Where:   /bin
+FTP:     
+
+   cmp compares and reports differences in the dataforks and resource forks
+   of two files.
