@@ -1,4 +1,12 @@
-14 January 1998: (Devin Reade, <gdr@trenco.gno.org>)
+	Reimplemented syslog/syslogd.
+	Cleaned up <gno/kerntool.h>
+	vfprintf(3) wasn't quite right for printing values in the range
+	  0.1<=x<1.0 (absolute).
+	Added routines: _reportStack(3) _printStack(3), syslogmt(3),
+		vsyslogmt(3), sprintmt(3), vsprintmt(3), readv(2), 
+		writev(2),
+
+24 March 1998: (Devin Reade, <gdr@trenco.gno.org>)
 	TAG:  beta_980324
 	Object files are now kept in a different directory hierarchy for
 	  the builds.
