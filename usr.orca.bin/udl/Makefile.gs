@@ -4,7 +4,7 @@
 #
 # This makefile should be used with dmake.
 #
-# $Id: Makefile.gs,v 1.10 1996/02/11 20:05:47 gdr Exp $
+# $Id: Makefile.gs,v 1.11 1997/08/02 21:09:13 gdr Exp $
 #
 
 # Where do we put the binaries and man page?
@@ -20,7 +20,7 @@ DEFINES = -DGNO -D_POSIX_C_SOURCE -D_POSIX_SOURCE -DHAS_ATEXIT \
 # Use optimization and a 2k stack.
 
 CFLAGS	= $(DEFINES) -O -s2048
-LDFLAGS	= -s2048
+LDFLAGS	=
 
 # Depending on how you have your libraries set up, you may not need
 # this next line.  In that case, just comment it out.

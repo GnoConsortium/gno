@@ -4,7 +4,7 @@
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.9 1996/02/04 01:34:29 gdr Exp $
+ * $Id: udlgs.c,v 1.10 1997/08/02 21:09:13 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -89,7 +89,7 @@ int main(int argc,char *argv[]) {
     exit (EXIT_FAILURE);
   }
 
-  if (argc < 3) {
+  if (argc < 2) {
     usage();
     exit (EXIT_FAILURE);
   }
@@ -98,7 +98,7 @@ int main(int argc,char *argv[]) {
   
   optind = 0;
   opterr = 1;
-  while ((c = getopt (argc, argv, "pvugmR")) != EOF) {
+  while ((c = getopt (argc, argv, "pvugmRVh")) != EOF) {
     switch (c) {
     case 'v':
       verbose = TRUE;
@@ -138,8 +138,13 @@ int main(int argc,char *argv[]) {
     case 'R':
       R_flag++;
       break;
-      
-    case '?':              
+
+    case 'V':
+      printf ("%s %s\n",program_name,UDL_VERSION);
+      exit (EXIT_FAILURE);
+
+    case '?':
+    case 'h':
       usage();
       exit (EXIT_FAILURE);
       
@@ -264,7 +269,7 @@ int main(int argc,char *argv[]) {
       printf("%s: Working on %s\n",program_name,current_file);
     }
 
-    infile = tryopen(current_file,"rwb");
+    infile = tryopen(current_file,"r+b");
     tempfile = Mktemp(strcat(get_path(current_file), "udltmpXX"));
     outfile = tryopen(tempfile,"wb");
 

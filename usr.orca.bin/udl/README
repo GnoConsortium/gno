@@ -4,7 +4,7 @@ udl -	Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
 
 	(c) 1993-1996 Soenke Behrens, Devin Reade
 
-	Version 1.1.5: $Id: README,v 1.9 1996/02/04 01:34:25 gdr Exp $
+	Version 1.1.5: $Id: README,v 1.10 1997/08/02 21:09:13 gdr Exp $
 =============================================================================
 
 Udl converts text files between the various end-of-line conventions, i.e.
@@ -76,7 +76,7 @@ don't like these locations, either modify the BINDIR and MANDIR
 macros in the makefile or install the files by hand.
 
 If you have describe(1) installed, you can update the udl(1) entry
-with the file "describe.udl".  See the descu(8) and descc(8) man pages
+with the file "udl.desc".  See the descu(8) and descc(8) man pages
 for details.
 
 Apple IIgs with Orca/Shell
@@ -168,7 +168,7 @@ Files
  
 The following files are present in the udl package:
  	README			This file
- 	History			Revision history
+ 	HISTORY			Revision history
  	Makefile.gs		make(1) script for GNO
  	Makefile.unx		make(1) script for Unix
 	Makefile.msd		make(1) script for MS-DOS
@@ -176,7 +176,7 @@ The following files are present in the udl package:
  	common.h		Header file for common.c
  	globals.c		Global variable definitions
  	udl.1			Man page for udl command
- 	describe.udl		short description of udl, FTP info
+ 	udl.desc		short description of udl, FTP info
  	udlgs.c			Apple IIgs specific routines
  	udl.rez			Apple IIgs REZ source for resource fork
  	udlunix.c		Unix specific routines
@@ -206,6 +206,9 @@ such and the unmodified source is included.
 
 This program contains material from the Orca/C Run-Time Libraries,
 Copyright 1987-1995 by Byte Works, Inc.  Used with permission.
+
+The GS executable of udl contains code CopyLeft by the FSF (Free Software
+Foundation). Source and binaries to GNU getopt are available on request.
 
 =======
 Authors

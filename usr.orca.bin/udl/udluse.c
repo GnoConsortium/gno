@@ -4,7 +4,7 @@
  *
  * Usage strings.
  *
- * $Id: udluse.c,v 1.9 1996/02/04 01:34:31 gdr Exp $
+ * $Id: udluse.c,v 1.10 1997/08/02 21:09:13 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -15,14 +15,16 @@
 
 char use1 [] =
 "udl 1.1.5 by Soenke Behrens, Devin Reade\n"
-"Usage: udl -u|g|m [-Rvp] file1 [file2 ...]\n\n"
+"Usage: udl -u|g|m [-RvpVh] file1 [file2 ...]\n\n"
 "Options:\n"
-"  -u   Convert file to use LF as EOL character.\n"
-"  -g   Convert file to use CR as EOL character.\n"
-"  -m   Convert file to use LF/CR as EOL character.\n"
+"  -u   Convert file to use LF as EOL character (Unix).\n"
+"  -g   Convert file to use CR as EOL character (Apple).\n"
+"  -m   Convert file to use LF/CR as EOL character (MS-DOS).\n"
 "  -R   Recurse through subdirectories.\n"
 "  -p   Be pedantic.\n"
-"  -v   Be verbose about it.\n\n"
+"  -v   Be verbose about it.\n"
+"  -V   Print out version number.\n"
+"  -h   Display this help screen.\n\n"
 "udl creates a temporary file in the directory of the original file.\n"
 "The original file is overwritten after conversion.\n";
 
