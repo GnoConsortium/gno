@@ -1,0 +1,112 @@
+.\" Copyright (c) 1980, 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)last.1	8.1 (Berkeley) 6/6/93
+.\"
+.TH LAST 1 "15 April 1998" GNO "Commands and Applications"
+.SH NAME
+.BR last
+\- indicate last logins of users and ttys
+.SH SYNOPSIS
+.BR last
+.IB [ -n ]
+.RB [ -f
+.IR file ]
+.RB [ -h
+.IR host ]
+.RB [ -t
+.IR tty ]
+.RI [ user " ...]"
+.SH DESCRIPTION
+.BR Last
+will list the sessions of specified
+.BR users ,
+.BR ttys ,
+and
+.BR hosts ,
+in reverse time order.  Each line of output contains
+the user name, the tty from which the session was conducted, any
+hostname, the start and stop times for the session, and the duration
+of the session.  If the session is still continuing or was cut short by
+a crash or shutdown,
+.BR last
+will so indicate.
+.IP "\fB-f\fR \fIfile\fR"
+.BR Last
+reads the file
+.IR file
+instead of the default, 
+.IR /var/log/wtmp .
+.IP "\fB-\fIn\fR"
+Limits the report to
+.IR n
+lines.
+.IP "\fB-t\fR \fItty\fR"
+Specify the
+.IR tty .
+Tty names may be given fully or abbreviated, for example, "last -t 03" is
+equivalent to "last -t tty03".
+.IP "\fB-h\fR \fIhost\fR"
+.IR Host
+names may be names or internet numbers.
+.LP
+If
+multiple arguments are given, the information which applies to any of the
+arguments is printed, e.g., "last root -t console" would list all of
+.BR root 's
+sessions as well as all sessions on the console terminal. If no
+users, hostnames or terminals are specified,
+.BR last
+prints a record of
+all logins and logouts.
+.LP
+The pseudo-user
+.BR reboot
+logs in at reboots of the system, thus "last reboot"
+will give an indication of mean time between reboot.
+.LP
+If
+.BR last
+is interrupted, it indicates to what date the search has
+progressed.  If interrupted with a quit signal
+.BR last
+indicates how
+far the search has progressed and then continues.
+.SH FILES
+.IP \fB/var/log/wtmp\fR
+login data base
+.SH SEE ALSO
+.BR lastcomm (1),
+.BR utmp (5),
+.BR ac (8)
+.SH HISTORY
+.BR Last
+appeared in 3.0BSD.
