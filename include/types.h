@@ -142,6 +142,44 @@ typedef struct ResultBuf32 {
    GSString32 bufString;
    } ResultBuf32, *ResultBuf32Ptr, **ResultBuf32Hndl;
 
+#if defined(__GNO__) && defined(__USE_DYNAMIC_GSSTRING__)
+/*
+ * Now that we've nicely typedef'd all those structs, we throw most
+ * of them away.  Note that this can cause confusion if, for example,
+ * one has a GSString32Ptr to which they try to assign a variable of
+ * type "pointer to GSString32"; it will cause a type mismatch error
+ * that is not exactly obvious as to the cause.
+ *
+ * So why do it at all?  Because this allows code that knows about (and
+ * uses) the dynamic GSStringPtr to have assignments to GS/OS parm blocks
+ * without generating an error and without using casts.  Casts are
+ * otherwise necessary, but can handle *real* type mismatches, such as
+ * that which happens when a GSStringPtr is accidentally cast to a
+ * ResultBufPtr.
+ *
+ * _Don't_ insert a #define for the basic struct here, because that would
+ * change the sizeof() the struct and blow the world to pieces.  Defines
+ * should only be used for pointer types, because all pointers are the
+ * same size.
+ */
+#define	GSString255Ptr		GSStringPtr
+#define	GSString255Hndl		GSStringHndl
+#define	GSString255HndlPtr	GSStringHndlPtr
+
+#define	GSString32Ptr		GSStringPtr
+#define	GSString32Hndl		GSStringHndl
+#define	GSString32HndlPtr	GSStringHndlPtr
+
+#define	ResultBuf255Ptr		ResultBufPtr
+#define	ResultBuf255Hndl	ResultBufHndl
+#define	ResultBuf255HndlPtr	ResultBufHndlPtr
+
+#define	ResultBuf32Ptr		ResultBufPtr
+#define	ResultBuf32Hndl		ResultBufHndl
+#define	ResultBuf32HndlPtr	ResultBufHndlPtr
+
+#endif	/* __GNO__ && __USE_DYNAMIC_GSSTRING__ */
+
 /* Formerly in QuickDraw.h */
 
 typedef unsigned char Pattern[32], *PatternPtr;
