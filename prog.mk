@@ -1,5 +1,7 @@
 #
-# gno.prog.mk    version 1.1.0  (August 31, 1997)
+# prog.mk    version 1.1.0  (August 31, 1997)
+#
+# $Id: prog.mk,v 1.2 1997/09/24 06:43:53 gdr Exp $
 #
 
 # This makefile is intended for use with dmake(1) and occ(1) on Apple IIGS
@@ -35,23 +37,15 @@
 #  stack size to 4096, and to set the "__STACK_CHECK__" macro:
 #         dmake DEBUG=25 STACK=4096 DEFINES=-D__STACK_CHECK__
 
-
 #
 #	Created by Dave Tribby, July 1997
 #
 
-.INCLUDE:	<paths.mk>
-
-.INCLUDE:	<binconst.mk>
-
-# If no source files were defined, use program name
-.IF $(SRCS) == $(NULL)
-	SRCS	=  $(PROG).c
-.END
+.INCLUDE:	/src/gno/paths.mk
+.INCLUDE:	/src/gno/binconst.mk
 
 # Objects are source file names with .c changed to .o
 OBJS=$(SRCS:s/.c/.o/:f)
-
 
 #
 #  Check for user-specified compile/load options
@@ -72,7 +66,6 @@ OBJS=$(SRCS:s/.c/.o/:f)
 	STACK	=  768
 .END
 
-
 # Compile and load flags passed to occ
 #   -r: don't create .root file (used on all but main file)
 CFLAGS	+= -r -O$(OPTIMIZE) $(DEFINES) -s$(STACK)
@@ -89,48 +82,12 @@ CFLAGS	+= -r -O$(OPTIMIZE) $(DEFINES) -s$(STACK)
 RELBIN	= $(RELEASE_DIR)$(BINDIR)
 RELMAN	= $(RELEASE_DIR)$(MANDIR)
 
-### ------------------------------------------------------------
-### The following section could be replaced by <binrules.mk> if
-### a few minor changes were made to <binrules.mk>
-
-CATREZ	= /usr/local/bin/catrez
-
-
-# Default target, "build," generates the program file
-build: $(PROG)
-
-# Create the main program file with a ".root" and set the stack size.
-# Include standard occ options
-#   -a0: use .o suffix for object file
-#   -c:  don't link after compiling
-$(PROG).o: $(PROG).c
-	$(CC) $(CFLAGS:s/ -r / /) -a0 -c $(PROG).c
-
-# Program depends upon all the objects. Add the version resource.
-$(PROG): $(OBJS) $(PROG).r
-	$(CC) -o $@ $(LDFLAGS) $(OBJS) $(LDLIBS)
-	$(CATREZ) -d $@ $(PROG).r
-                  
-# Remove intermediate files
-clean:
-	-$(RM) -f *.o
-	-$(RM) -f *.root
-	-$(RM) -f *.r
-	-$(RM) -f *.rej
-
-# Remove intermediate files and program file
-clobber: clean
-	-$(RM) $(PROG)
-
-### End of section that could be replaced by <binrules.mk>
-### ------------------------------------------------------------
-
+.INCLUDE:	/src/gno/binrules.mk
 
 # Place files where they will subsequently be archived in a binary
 # distribution.
 release:
-	$(INSTALL) -d $(RELBIN) $(RELMAN)/man1
+	$(INSTALL) -d $(RELBIN) $(RELMAN)/man1 $(DESC_DIR)
 	$(INSTALL) $(PROG) $(RELBIN)
 	$(INSTALL) $(PROG).1 $(RELMAN)/man1
-	$(DESCU) $(DESC_SRC) $(DESC) > /tmp/describe.src
-	$(MV) /tmp/describe.src $(DESC_SRC)
+	$(DESCU) -o $(DESC_SRC) $(DESC_SRC) $(DESC)
