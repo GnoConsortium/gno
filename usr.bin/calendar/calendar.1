@@ -1,21 +1,25 @@
 
-CALENDAR(1)                                                        CALENDAR(1)
+.TH    CALENDAR 1 "June 30, 1998"
 
-NAME
-     calendar - reminder service
-
-SYNOPSIS
-     calendar
-
-DESCRIPTION
-     calendar consults the file calendar in the current directory and prints
-     out lines that contain today's or tomorrow's date anywhere in the line.
-     Most reasonable month-day dates such as ``Aug. 24,'' ``august 24,''
-     ``8/24,'' etc., are recognized, but not ``24 August'' or ``24/8''.  On
-     weekends ``tomorrow'' extends through Monday.
-
-BUGS
-     calendar's extended idea of ``tomorrow'' does not account for holidays.
-
-Page 1                          Release 4.0.5                         May 1992
-
+.SH    NAME
+.BR calendar
+\- reminder service
+.SH    SYNOPSIS
+calendar
+.SH    DESCRIPTION
+.BR calendar
+consults the file calendar in the current directory
+and prints out lines that contain today's or tomorrow's date
+anywhere in the line.  Most reasonable month-day dates such as
+Aug. 24, august 24, 8/24, and so on, are recognized, but not
+24 August or 24/8.  On weekends ``tomorrow'' extends through
+Monday.
+.BR calendar
+can be invoked regularly by using the
+crontab(1) or at(1) commands.
+.SH   REFERENCES
+at(1), cron(1M), crontab(1), date(1)
+.SH   NOTICES
+.BR calendar's
+extended idea of ``tomorrow'' does not account for
+holidays.

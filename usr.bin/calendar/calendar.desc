@@ -1,11 +1,11 @@
 Name:    calendar
-Version: 1.0
+Version: 1.1
 Shell:   GNO
-Author:  Christopher Neufeld
-Contact: neufeld@physics.utoronto.ca
-Where:   /usr/local/games
-FTP:     ftp.gno.org, ground.isca.uiowa.edu
+Author:  Christopher Neufeld, Marlin Allred
+Contact: neufeld@physics.utoronto.ca, Marlin.Allred@unisys.com
+Where:   /usr/games
+FTP:     ftp.gno.org
 
- This program consults a calandar database, and prints out entries
+This program consults a calandar database, and prints out entries
 corresponding to today's or tomorrow's entries.  On weekends, "tomorrow"
 extends through Monday.  
