@@ -1,46 +1,30 @@
 #
-# $Id: Makefile,v 1.1 1997/10/30 04:14:21 gdr Exp $
+# $Id: Makefile,v 1.2 1998/03/08 18:18:57 gdr-ftp Exp $
 #
 
 # Don't name this "install"; we change the name later.
 PROG		= inst
-
-.INCLUDE:	/src/gno/paths.mk
-.INCLUDE:	/src/gno/binconst.mk
-
 BINDIR		= /usr/bin
-MANDIR		= /usr/man
-OBJS		= $(SRCS:s/.c/.o/:f)
+CUSTOM_RELEASE	= true
+LDADD		= -lcontrib
 OPTIMIZE	= 78
 STACK		= 1024
 
-# Add -D__STACK_CHECK__ to DEFINES to show stack usage.
-DEFINES		+=
-CFLAGS		+= -I/src/gno/lib/libcontrib
-CFLAGS		+= -r -O$(OPTIMIZE) $(DEFINES) -s$(STACK)
-LDLIBS		+= -l/src/gno/lib/libcontrib/libcontrib
+.INCLUDE:	/src/gno/prog.mk
 
-RELBIN		= $(RELEASE_DIR)$(BINDIR)
-RELMAN		= $(RELEASE_DIR)$(MANDIR)
+INST		= $(OBJ_DIR)$(PROG)
 
-INST		= ./$(PROG)
+# This is and the next target are slightly different from the standard
+# 'release' and 'install' targets because the binary is renamed when
+# it is installed.
 
-.INCLUDE:	/src/gno/binrules.mk
-
-# Place files where they will subsequently be archived in a binary
-# distribution.
-#
-# This is slightly different from the standard 'release' target because
-# the binary is renamed when it is installed.
-#
-release: $(PROG) $(PROG).1 $(DESC)
+release: $(OBJ_DIR)$(PROG) $(PROG).$(MAN1SFX) $(DESC)
 	$(INST) -d $(RELBIN) $(RELMAN)/man1 $(DESC_DIR)
-	$(INST) $(PROG) $(RELBIN)/install
-	$(INST) $(PROG).1 $(RELMAN)/man1/install.1
+	$(INST) $(OBJ_DIR)$(PROG) $(RELBIN)/install
+	$(INST) $(PROG).$(MAN1SFX) $(RELMAN)/man1/install.1
 	$(DESCU) -o $(DESC_SRC) $(DESC_SRC) $(DESC)
-                          
-install: $(PROG) $(PROG).1 $(DESC)
-	$(INST) -d $(BINDIR) $(MANDIR)/man1 $(DESC_DIR)
-	$(INST) $(PROG) $(BINDIR)/install
-	$(INST) $(PROG).1 $(MANDIR)/man1/install.1
-	$(DESCU) -o $(DESC_SRC) $(DESC_SRC) $(DESC)
+
+install: $(OBJ_DIR)$(PROG) $(PROG).$(MAN1SFX)
+	$(INST) -d $(BINDIR) $(MANDIR)/man1
+	$(INST) $(OBJ_DIR)$(PROG) $(BINDIR)/install
+	$(INST) $(PROG).$(MAN1SFX) $(MANDIR)/man1/install.1

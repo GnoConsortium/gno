@@ -5,7 +5,7 @@
  * For copying and distribution information, see the file "COPYING"
  * accompanying this file.
  *
- * $Id: inst.c,v 1.3 1997/10/30 04:14:21 gdr Exp $
+ * $Id: inst.c,v 1.4 1998/03/08 18:18:58 gdr-ftp Exp $
  */
 
 #define	__USE_DYNAMIC_GSSTRING__
@@ -24,8 +24,7 @@
 #include <orca.h>
 #include <gsos.h>
 #include <err.h>
-
-#include "contrib.h"
+#include <gno/contrib.h>
 
 /* actions */
 #define ACTION_CHANGE_MODE	0x0001

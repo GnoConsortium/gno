@@ -5,10 +5,11 @@
  * For copying and distribution information, see the file "COPYING"
  * accompanying this file.
  *
- * $Id: inst.rez,v 1.2 1997/10/30 04:14:21 gdr Exp $
+ * $Id: inst.rez,v 1.3 1998/03/08 18:19:00 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
+#include "/src/gno/build.tools/builddate.rez"
 
 resource rVersion (0x1, purgeable3, nocrossbank) {
 
@@ -20,6 +21,6 @@ resource rVersion (0x1, purgeable3, nocrossbank) {
         "install",
         "Unix-style install program --\n"
         "  copies files and creates directories\n"
-        "Devin Reade <gdr@eddore.myrias.com>\n"
-        "Canada"
+        "Devin Reade\n"
+        BUILD_DATE
 };
