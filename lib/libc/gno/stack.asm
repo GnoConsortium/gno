@@ -2,12 +2,12 @@
 ; Stack checking routines by Phillip Vandry <vandry@cam.org>.  Added
 ; to GNO by Devin Reade <gdr@myrias.com>.  See the man page for details.
 ;
-; $Id: stack.asm,v 1.2 1997/12/21 20:11:17 gdr Exp $
+; $Id: stack.asm,v 1.3 1998/02/19 01:05:17 gdr-ftp Exp $
 ;
 
 	keep	stack
 
-	mcopy	stack.mac
+	mcopy	:obj:gno:lib:libc:gno:stack.mac
 	case	on
 
 * This test function goes into "stack.ROOT", which is not used
