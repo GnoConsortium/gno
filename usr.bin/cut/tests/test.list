@@ -1,0 +1,67 @@
+Script started on: Mon Sep 01 15:09:25 1997
+[61] test=> dotests ; exit 
+Testing command ../cut beginning at Mon Sep  1 15:09:36 1997
+Cutting columns from cut.f1.column 
+ ==> 591 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file cut.f1.colcmp (no differences expected) 
+  Completion status = 0 
+ 
+Cutting columns from cut.f1.column using stdin 
+ ==> 591 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file cut.f1.colcmpA (no differences expected) 
+  Completion status = 0 
+ 
+Cutting tab-delimited fields from cut.f1.tab 
+ ==> 822 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file cut.f1.tabcmp (no differences expected) 
+  Completion status = 0 
+ 
+Cutting semicolon-delimited fields from cut.f1.semi 
+ ==> 822 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file cut.f1.semcmp (no differences expected) 
+  Completion status = 0 
+ 
+Cutting semicolon-delimited fields from cut.f1.semi, supressing extra lines 
+ ==> 626 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file cut.f1.semcmpA (no differences expected) 
+  Completion status = 0 
+ 
+***** Error Messages ***** 
+ 
+Expected error: illegal option 
+cut: illegal option -- x
+usage: cut -c list [file1 ...]
+       cut -f list [-s] [-d delim] [file ...]
+ ==> 1831 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: values may not include zero: 
+cut: [-cf] list: values may not include zero
+ ==> 1881 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: values may not include zero: 
+cut: [-cf] list: values may not include zero
+ ==> 1881 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: <number> too large (max <max_value>) 
+cut: [-cf] list: 32767 too large (max 2048)
+ ==> 1887 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: <number> too large (max <max_value>) 
+cut: [-cf] list: 300000 too large (max 2048)
+ ==> 1887 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: badname: no such file or directory 
+cut: badname: no such file or directory
+ ==> 1850 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+Script done on: Mon Sep 01 15:10:29 1997
