@@ -1,7 +1,11 @@
-This is a quick and dirty program intended to rename /RAM5 at
-boot time.
+This is a quick and dirty program intended to rename /RAM5 at boot time.
+Why do we bother?  Well, many GNO utils make use of '/tmp' (which by
+default resides on the '/' partition via /etc/namespace mappings) for
+scratch files.  This "partition" should therefore be on a fast disk.
+A RAMDisk is a logical choice; not only is it fast, but it also is
+empty after each power-on.
 
-See the man page for details.
+See the man page for usage information.
 
 If you decide to launch this program automatically from ProSel-16
 (as I do), ensure you change the file type to S16, otherwise ProSel

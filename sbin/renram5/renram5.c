@@ -18,7 +18,9 @@
  * Written by Devin Reade <gdr@myrias.com> January 1996.
  * This program is placed in the public domain.
  *
- * $Id: renram5.c,v 1.1 1996/01/29 06:20:12 gdr Exp $
+ * $Id: renram5.c,v 1.2 1997/09/21 22:27:40 gdr Exp $
+ *
+ * This file is formatted with tab tops every 8 columns.
  */
 
 #include <types.h>
@@ -41,115 +43,115 @@ extern GSString255Ptr __C2GSMALLOC(char *);
 extern int _mapErr(int);
 
 void usage(char *progname) {
-	printf("Usage: %s [-d] [oldvolume [newvolume]]\n",progname);
+  printf("Usage: %s [-d] [oldvolume [newvolume]]\n",progname);
   printf("\toldvolume defaults to %s\n",OLD_TMP);
   printf("\tnewvolume defaults to %s\n",NEW_TMP);
   printf("\t-d\tproduce debug information\n\n");
   printf("This program renames volumes.  It was intended to rename\n");
   printf("%s at boot time.  As a side effect, it can also rename files.\n\n",
-	       OLD_TMP);
-	printf("Version 1.0 by Devin Reade <gdr@myrias.com>\n");
+	 OLD_TMP);
+  printf("Version 1.0 by Devin Reade <gdr@myrias.com>\n");
   printf("This program is in the public domain.\n");
   exit(1);
 }
 
 int main (int argc, char **argv) {
-	DevNumRecGS devrec;
+  DevNumRecGS devrec;
   ChangePathRecGS pathrec;
   char *file1, *file2;
   int i, filecount, debug;
-
+  
   filecount=0;
   debug=0;
-
+  
   /* parse the command line, if any */
   if (argc > 1) {
-	   for (i=1; i<argc; i++) {
-	      if (!strcmp(argv[i],"-d")) {
-	         debug++;
-        } else if ((argv[i][0] == '-') || (filecount > 2)) {
-	         usage(argv[0]);
-        } else if (filecount==0) {
-	         file1 = argv[i];
-	         filecount++;
-        } else if (filecount==1) {
-	         file2 = argv[i];
-	         filecount++;
-        } else assert(0);
-     }
+    for (i=1; i<argc; i++) {
+      if (!strcmp(argv[i],"-d")) {
+	debug++;
+      } else if ((argv[i][0] == '-') || (filecount > 2)) {
+	usage(argv[0]);
+      } else if (filecount==0) {
+	file1 = argv[i];
+	filecount++;
+      } else if (filecount==1) {
+	file2 = argv[i];
+	filecount++;
+      } else assert(0);
+    }
   }
   switch (filecount) {
   case 0:
-	   file1 = OLD_TMP;
-     file2 = NEW_TMP;
-     break;
+    file1 = OLD_TMP;
+    file2 = NEW_TMP;
+    break;
   case 1:
-	   file2 = NEW_TMP;
-     break;
+    file2 = NEW_TMP;
+    break;
   case 2:
-	   break;
+    break;
   default:
-	   assert(0);
+    assert(0);
   }
-
+  
   assert(file1);
   assert(file2);
   
   /*
    * see if file2 is already around
    */
-
+  
   devrec.pCount = 2;
   if ((devrec.devName = (GSString32Ptr) __C2GSMALLOC(file2)) == NULL) {
-	   perror("couldn't duplicate destination volume name");
-     exit(1);
+    perror("couldn't duplicate destination volume name");
+    exit(1);
   }
   GetDevNumberGS(&devrec);
-	i=toolerror();
+  i=toolerror();
   switch (i) {
   case 0:
-	   if (debug) {
-     	printf("volume %s already exists on device %d\n",file2,
-               devrec.devNum);
-     }
-     exit(1);
+    if (debug) {
+      printf("volume %s already exists on device %d\n",file2,
+	     devrec.devNum);
+    }
+    exit(1);
   case devNotFound:
   case volNotFound:
-     /* this is what we're normally expecting */
-	   break;
+    /* this is what we're normally expecting */
+    break;
   default:
-	   fprintf(stderr,"couldn't get %s device number: %s\n",file2,
+    fprintf(stderr,"couldn't get %s device number: %s\n",file2,
             strerror(_mapErr(i)));
-		exit(1);
+    exit(1);
   }
 
-	/*
+  /*
    * rename the volume
    */
-
+  
   pathrec.pCount      = 3;
-	pathrec.pathname    = __C2GSMALLOC(file1);
+  pathrec.pathname    = __C2GSMALLOC(file1);
   pathrec.newPathname = __C2GSMALLOC(file2);
   pathrec.flags       = 0;
   if (!pathrec.pathname || !pathrec.newPathname) {
-	   perror("couldn't duplicate volume names");
-	   exit(1);
+    perror("couldn't duplicate volume names");
+    exit(1);
   }
   ChangePathGS(&pathrec);
-	i=toolerror();
+  i=toolerror();
   switch (i) {
   case 0:
-		if (debug) printf("device renamed\n");
-     break;
+    if (debug) printf("device renamed\n");
+    break;
   case pathNotFound:
   case volNotFound:
-	   if (debug) printf("device not renamed: %s\n",strerror(_mapErr(i)));
-     break;
+    if (debug) printf("device not renamed: %s\n",strerror(_mapErr(i)));
+    break;
   default:
-	   fprintf(stderr,"couldn't rename %s to %s: %s\n",file1, file2,
+    fprintf(stderr,"couldn't rename %s to %s: %s\n",file1, file2,
             strerror(_mapErr(i)));
-		exit(1);
-	}
-
+    exit(1);
+  }
+  
   return 0;
 }   
