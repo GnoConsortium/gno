@@ -1,5 +1,5 @@
 .\"
-.\" $Id: sigblock.2,v 1.1 1997/02/27 07:32:16 gdr Exp $
+.\" $Id: sigblock.2,v 1.2 1997/09/15 19:15:26 gdr Exp $
 .\"
 .TH SIGBLOCK 2 "19 January 1997" GNO "System Calls"
 .SH NAME
@@ -15,7 +15,7 @@ long
 #define \fBsigmask\fR(\fIsignum\fR)
 .SH DESCRIPTION
 .BR sigblock
-is used ot temporarily block the reception of signals.  The input parameter
+is used to temporarily block the reception of signals.  The input parameter
 .IR mask
 is a bit vector that specifies which signals are to be blocked; a 1 in bit
 .I n
