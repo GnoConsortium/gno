@@ -7,9 +7,9 @@
  *
  * Usage strings.
  *
- * $Id: udluse.c,v 1.5 1995/02/08 05:47:59 gdr Exp $
+ * $Id: udluse.c,v 1.6 1995/02/08 06:12:49 gdr Exp $
  *
- * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
+ * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
 
 #ifdef GNO
@@ -17,7 +17,7 @@
 #endif
 
 char use1 [] =
-"udl 1.14 by Soenke Behrens, Devin Glyn Reade\n"
+"udl 1.14 by Soenke Behrens, Devin Reade\n"
 "Usage: udl -u|g|m [-Rvp] file1 [file2 ...]\n\n"
 "Options:\n"
 "  -u   Convert file to use LF as EOL character.\n"
@@ -26,8 +26,8 @@ char use1 [] =
 "  -R   Recurse through subdirectories.\n"
 "  -p   Be pedantic.\n"
 "  -v   Be verbose about it.\n\n"
-"udl creates a temporary file in the directory of the original file,\n"
-"the original file is overwritten after conversion.\n";
+"udl creates a temporary file in the directory of the original file.\n"
+"The original file is overwritten after conversion.\n";
 
 char use2 [] =
 "\nFiles may contain ORCA/Shell style wildcards.\n";

@@ -1,6 +1,7 @@
-.\" Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
-.\" $Id: udl.1,v 1.5 1995/02/08 05:47:53 gdr Exp $
-.TH UDL 1 "Commands and Applications" "28 January 1995" "Version 1.14"
+.\" Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
+.\" $Id: udl.1,v 1.6 1995/02/08 06:12:40 gdr Exp $
+.\"
+.TH UDL 1 "Commands and Applications" "7 February 1995" "Version 1.14"
 .SH NAME
 udl - convert text files between different architectures
 .SH SYNOPSIS
@@ -31,14 +32,18 @@ so the user must take care that
 it is not invoked on object files or the like.  On both platforms, if
 .I file
 appears to be a binary file (that is, no EOL is
-found in the first part of the file), the file will be skipped.
+found in the first part of the file) then
+.I file
+will be skipped.
 Again, no notice is given of this unless the
 .B -v
 flag is used.
 .PP
+During file conversion
 .B udl
-creates a temporary file the size of the file it is currently working on
-during conversion.
+creates a temporary file in the same directory as the orginal file.
+The temporary file is close to or exactly the same size as the original
+file.
 .PP
 When running under Byteworks' ORCA shell, the Orca shell wildcards
 .BR =
@@ -65,20 +70,12 @@ switch,
 .B udl
 is pedantic while doing the conversion. This means: The input file may
 contain bytes with a value of zero (0), and the input file may contain
-different EOL characters (i.e., MS-DOS and Unix style might be mixed in
-one file). For conversions to or from MS-DOS,
+different EOL characters (ie: MS-DOS and Unix style might be mixed in
+one file). For conversions to or from MS-DOS
 .B udl
 is always pedantic, so this only affects conversions from Unix to Apple
 or vice versa. Being pedantic slows udl down by a factor of 1.5.
-.SH BUGS
-When compiling on some Solaris installations, files within subdirectories
-do not get their names properly resolved.
-This seems to be due to bad definitions in
-.IR <sys/stat.h> .
-If you have access to SunOS 4.x,
-.BR udl
-can be compiled there and used under Solaris.
-.PP
+.SH LIMITATIONS
 When running under Gno on the Apple IIgs, there is a limit to the nesting
 depth when recusing on subdirectories.  This is because the routine that
 is responsible for this behavior is itself recursive.  The default 2k
@@ -87,12 +84,13 @@ should not normally be a problem.  If the limit is exceeded,
 .BR udl
 will exit with an error message before any files are changed, and before
 the stack actually overflows.
-.LP
-If you find any other bugs, please send a report to the address given below.
+.SH BUGS
+Bug reports should be directed to one of the two addresses below.
 .SH AUTHOR
-Soenke Behrens, sbehrens@contech.demon.co.uk
-.br
-Version 1.13 updated by Devin Reade, gdr@myrias.ab.ca
+Soenke Behrens <sbehrens@contech.demon.co.uk> with contributions by
+Devin Reade <gdr@myrias.ab.ca>.
+.\" .br
+.\" Version 1.13 updated by Devin Reade, gdr@myrias.ab.ca
 .SH VERSION
 This is
 .B udl

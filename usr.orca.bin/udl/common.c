@@ -7,9 +7,9 @@
  *
  * Routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.c,v 1.5 1995/02/08 05:47:48 gdr Exp $
+ * $Id: common.c,v 1.6 1995/02/08 06:12:33 gdr Exp $
  *
- * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
+ * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
 
 #ifdef GNO
@@ -644,7 +644,9 @@ void cleanup (void) {
 
 void usage (void) {
   extern char use1[]; /* from udluse.c */
+#ifdef GNO
   extern char use2[];
+#endif
 
   fprintf(stderr,"%s",use1);
 #ifdef GNO
@@ -672,7 +674,7 @@ void usage (void) {
  */
 
 
-void build_file_list(const char *file, short recurse) {
+void build_file_list(char *file, short recurse) {
   char *thisdir;
   DIR *dir;
   struct dirent *entry;
@@ -736,7 +738,11 @@ void build_file_list(const char *file, short recurse) {
 
       while ((entry = readdir(dir))!=NULL) {
         /* ignore hidden files */
+#ifdef BROKEN_DIRENT_STRUCT
+        if (*(entry->d_name)!='.') build_file_list((entry->d_name)-2,1);
+#else
         if (*(entry->d_name)!='.') build_file_list(entry->d_name,1);
+#endif
       }
 
       if (*thisdir) {

@@ -7,9 +7,9 @@
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.5 1995/02/08 05:47:55 gdr Exp $
+ * $Id: udlgs.c,v 1.6 1995/02/08 06:12:44 gdr Exp $
  *
- * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
+ * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
 
 #include <orca.h>
@@ -247,6 +247,12 @@ int main(int argc,char *argv[]) {
       chdir(rootdir);
       *currentDirectory = '\0';
     }
+  }
+
+  /* files were all directories and no -R flag given */
+  if (!pathList) {
+    if (verbose) printf("%s: no files to process\n",program_name);
+    exit(EXIT_SUCCESS);
   }
 
   p = pathList;

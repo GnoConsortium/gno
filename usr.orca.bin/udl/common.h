@@ -4,9 +4,9 @@
  *
  * Header file for routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.h,v 1.5 1995/02/08 05:47:50 gdr Exp $
+ * $Id: common.h,v 1.6 1995/02/08 06:12:36 gdr Exp $
  *
- * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
+ * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
 
 #include <stdio.h>
@@ -81,7 +81,7 @@ extern int my_fread (FILE *infile, int howmuch);
 extern void my_fwrite (unsigned char *buffer, FILE *outfile, int howmuch);
 extern void cleanup (void);
 extern void usage (void);
-extern void build_file_list(const char *file, short recurse);
+extern void build_file_list(char *file, short recurse);
 extern void add_to_pathList(char *thisdir, char *file);
 extern char *mktemp(const char *base);
 extern char *get_path(const char *name);
@@ -89,7 +89,10 @@ extern char *get_path(const char *name);
 extern int needsgno(void);
 
 /* not strictly necessary, but it cuts down on warnings from gcc */
-#ifdef __GNUC__ 
+#if defined(__GNUC__) || defined(_AIX)
 extern char *getwd(char *);
+#endif
+
+#ifdef __GNUC__
 extern char getopt(int, char **, char *);
 #endif

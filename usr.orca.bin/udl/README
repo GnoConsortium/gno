@@ -2,9 +2,9 @@
 udl -	Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
      	and Apple (CR).
 
-	(c) 1993-1995 Soenke Behrens, Devin Glyn Reade
+	(c) 1993-1995 Soenke Behrens, Devin Reade
 
-	Version 1.14: $Id: README,v 1.5 1995/02/08 05:47:46 gdr Exp $
+	Version 1.14: $Id: README,v 1.6 1995/02/08 06:12:31 gdr Exp $
 =============================================================================
 
 Udl converts text files between CR, LF and CR/LF (Apple, Unix and MS-DOS).
@@ -51,12 +51,25 @@ v1.13
            unless the -v option is specified.
 
 v1.14
-	(Soenke Behrens, January 1995)
+	(Soenke Behrens, Devin Reade, February 1995)
 	udl creates a temporary file in the directory of the
-	source file, not in /tmp. This reduces the likelihood of
-	data loss in the event of a system crash or powerdown.
+	   source file, not in /tmp. This reduces the likelihood of
+	   data loss in the event of a system crash or powerdown.
 	udl now accepts something like "udl -R directory/" without
-	affixing an extra '/' to "directory/".
+	   affixing an extra '/' to "directory/".
+	Fixed bug (via the BROKEN_DIRENT_STRUCT macro) that was causing
+	   filename-munging on Solaris.  It seems that the sys/stat.h header
+	   file doesn't agree with the stat implementation.
+	Modified Makefile.gs to properly write the new executable over
+	   the old resource fork for udl.  The resource fork originates with
+	   the file udl.r.
+	Added suggested defines to the README for various Unix platforms.
+	Man page changes, including grammar and the deletion of a bug that
+	   no longer exists.
+	Fixed bug where invoking 'udl -u directory' would attempt to
+	   deref a NULL pointer, causing either memory tromping (IIgs) or
+	   a core dump (Unix).
+	Tested under SunOS 4.x, SunOS 5.x (Solaris), and AIX.
 
 =========
 Compiling:
@@ -71,7 +84,18 @@ it cannot be built with the standard Orca installation due to a lack
 of additional libraries.
 
 Before you type "make", have a look at the Makefile and edit the defines
-to your liking.
+to your liking.  Proper defines for Unix systems should be as follows:
+
+	SunOS 4.x: (tested with gcc)
+		-DREADDIR_RETURNS_DOT -DBROKEN_REALLOC
+		-D_POSIX_C_SOURCE -D_POSIX_SOURCE
+
+	SunOS 5.x (Solaris): (tested with SUNWspro cc)
+		-DREADDIR_RETURNS_DOT -DBROKEN_DIRENT_STRUCT
+		-D_POSIX_C_SOURCE -D_POSIX_SOURCE
+
+	AIX 3.2: (tested with xlc)
+		-DBROKEN_REALLOC -D_POSIX_C_SOURCE -D_POSIX_SOURCE
 
 Also, udl.c assumes that getopt() is declared in <unistd.h> and that
 the function strdup() exists in <string.h>. You might want to change
@@ -81,14 +105,14 @@ these includes if that's not the case.
 Authors
 =======
 
-Original code by Soenke Behrens, sbehrens@contech.demon.co.uk
-Modifications and version-merging by Devin Reade, gdr@myrias.ab.ca
+Original code by Soenke Behrens <sbehrens@contech.demon.co.uk>
+with modifications and version-merging by Devin Reade <gdr@myrias.ab.ca>
 
 ==========
 Legalities:
 ==========
 
 This program contains material from the Orca/C Run-Time Libraries,
-copyright 1987-1994 by Byte Works, Inc.  Used with permission.
+copyright 1987-1995 by Byte Works, Inc.  Used with permission.
 
 =============================================================================

@@ -3,7 +3,7 @@
 # Copyright (c) 1993-1994 Soenke Behrens
 # For use with dmake
 #
-# $Id: Makefile.gs,v 1.5 1995/02/08 05:47:43 gdr Exp $
+# $Id: Makefile.gs,v 1.6 1995/02/08 06:12:27 gdr Exp $
 #
 # Define the following as necessary:
 #
@@ -37,7 +37,9 @@ LDFLAGS	= -v -l/usr/lib/gnulib -s2048
 #
 
 udl: udl.o udluse.o udl.r common.o globals.o
-#	cp udl.r udl
+	-$(RM) udl
+	cp udl.r udl
+	chtyp -texe udl
 	$(CC) $(LDFLAGS) -o udl udl.o udluse.o common.o globals.o
 
 udl.o: udl.gs.c common.h

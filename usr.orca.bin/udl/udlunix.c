@@ -7,9 +7,9 @@
  *
  * Unix specific routines.
  *
- * $Id: udlunix.c,v 1.5 1995/02/08 05:47:57 gdr Exp $
+ * $Id: udlunix.c,v 1.6 1995/02/08 06:12:47 gdr Exp $
  *
- * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
+ * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
 
 #include "common.h"
@@ -124,7 +124,7 @@ int main(int argc,char *argv[]) {
   }
 
   /* Now process the files I got */
-  
+
   if ((in_buffer = malloc(BUFFERSIZE+1)) == NULL ||
       (out_buffer = malloc(BUFFERSIZE+1)) == NULL) {
     fprintf(stderr,"%s: Unable to buffer files\n",program_name);
@@ -145,6 +145,12 @@ int main(int argc,char *argv[]) {
     build_file_list(argv[optind],R_flag);
     chdir(rootdir);
     *currentDirectory = '\0';
+  }
+
+  /* files were all directories and no -R flag given */
+  if (!pathList) {
+    if (verbose) printf("%s: no files to process\n",program_name);
+    exit(EXIT_SUCCESS);
   }
 
   for (c=0; pathList[c]; c++) {

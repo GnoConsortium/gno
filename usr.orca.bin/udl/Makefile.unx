@@ -2,7 +2,7 @@
 # Makefile for udl
 # (c) 1993-1994 Soenke Behrens
 #
-# $Id: Makefile.unx,v 1.5 1995/02/08 05:47:44 gdr Exp $
+# $Id: Makefile.unx,v 1.6 1995/02/08 06:12:29 gdr Exp $
 #
 # Define the following as necessary:
 #
@@ -11,10 +11,16 @@
 #	_POSIX_C_SOURCE and _POSIX_SOURCE if your compiler is Posix compliant
 #
 #	READDIR_RETURNS_DOT if your direct readdir() function will return
-#	entries for "." and "..".  SunOS4 is known to do this.
+#	entries for "." and "..".  SunOS 4.x and 5.x (Solaris) are known to 
+#	do this.
 #
 #	BROKEN_REALLOC if your realloc() doesn't behave like malloc() when
 #	passed a NULL pointer as the first argument.
+#
+#	BROKEN_DIRENT_STRUCT if you find that the first two letters of 
+#	filenames obtained during directory recursion (as shown when the
+#	"-v" flag is used) seem to be missing.  Some installations of
+#	Solaris are known to do this.
 #
 
 # If you're on SunOS 4.x systems, use gcc instead; this is ANSI code.
@@ -24,18 +30,22 @@ BINDIR	= bin
 MANDIR	= man/man1
 INSTALL	= cp -f
 
-DEFINES = -DREADDIR_RETURNS_DOT=1 -DBROKEN_REALLOC=1 -D_POSIX_C_SOURCE \
-	-D_POSIX_SOURCE
+# These are Solaris defines.  See previous comments.
+DEFINES = -DREADDIR_RETURNS_DOT -D_POSIX_C_SOURCE -D_POSIX_SOURCE \
+	  -DBROKEN_DIRENT_STRUCT
+
 CFLAGS  = $(DEFINES) -O
-# You may need -lucb in LDFLAGS
 LDFLAGS = 
+# You may need -lucb in LDLIBS
+LDLIBS	= -lucb
+OBJS	= udl.o udluse.o common.o globals.o
 
 #
 # You should not have to modify anything beyond this point
 #
 
-udl: udl.o udluse.o common.o globals.o
-	$(CC) $(LDFLAGS) -o udl udl.o udluse.o common.o globals.o
+udl: $(OBJS)
+	$(CC) $(LDFLAGS) -o udl $(OBJS) $(LDLIBS)
 
 udl.o: udl.unix.c common.h
 	$(CC) -c $(CFLAGS) -o udl.o udl.unix.c
@@ -45,13 +55,12 @@ install:
 	$(INSTALL) udl.1 $(DESTDIR)$(MANDIR)
 
 clean:
-	rm *.o
+	-rm *.o *~ core
 
 clobber: clean
-	rm udl
+	-rm udl
 
 dist:
 	@echo 'Sorry, automatic packing not yet supported.'
 
-common.o::common.h
-globals.o::common.h
+udluse.o common.o globals.o:: common.h

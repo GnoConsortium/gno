@@ -7,9 +7,9 @@
  *
  * Contains definitions of global variables declared in common.h
  *
- * $Id: globals.c,v 1.2 1995/02/08 05:47:52 gdr Exp $
+ * $Id: globals.c,v 1.3 1995/02/08 06:12:38 gdr Exp $
  *
- * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
+ * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
 
 #ifdef GNO
