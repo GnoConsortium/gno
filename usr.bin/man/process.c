@@ -1,10 +1,6 @@
-/*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
- * information see the README file that is part of the manpack archive,
- * or contact the author, above.
- */
-
-segment "makewhatis";
+#ifdef __CCFRONT__
+#include <14:pragma.h>
+#endif
 
 #include <stdio.h>
 #include <string.h>
@@ -16,178 +12,118 @@ segment "makewhatis";
 
 #include "makewhatis.h"
 
-/* These are the compression types */
-#define NO_COMPRESS 0
-#define  Z_COMPRESS 1
-#define  F_COMPRESS 2
-#define  G_COMPRESS 3
-
 #ifdef TEST_PROCESS
-   short v_flag    = 1;
-   FILE *output_fp;
-   FILE *error_fp;
-#else
-   extern FILE *output_fp;
-   extern FILE *error_fp;
+short v_flag = 1;
 #endif
 
-extern GSString255Ptr   __C2GSMALLOC (char *s);
+extern GSString255Ptr	__C2GSMALLOC (char *s);
 extern char buffer[];
-extern char titlebuf[];
+extern FILE *output_fp;
+extern FILE *error_fp;
 
 /*
  * void process (char *filename, char *tmp_file, FILE *whatis_fp);
  *
- * Pre:  <filename> is the name of the file to add to the database.
- *       <tmp_file> is the name for the temporary file.  It has not been opened.
- *       <whatis_fp> is a file pointer to the open whatis database file.
- *       (sec> is the section "number".  We really only care if it is
- *           either "l" or "local" (because of aroff "links"), otherwise
- *           it is ignored.
+ * Pre:	<filename> is the name of the file to add to the database.
+ *			<tmp_file> is the name for the temporary file.  It has not been opened.
+ *			<whatis_fp> is a file pointer to the open whatis database file.
  *
  * Post: The name, section number, and description from the man page is
- *       appended to <whatis_fp>.
+ *			appended to <whatis_fp>.
  */
 
-void process (char *filename, char *tmp_file, FILE *whatis_fp, char *sec) {
+void process (char *filename, char *tmp_file, FILE *whatis_fp) {
 
-   FileInfoRecGS info_record;    /* used to get the file type */
+	FileInfoRecGS info_record;		/* used to get the file type */
    char *suffix;                 /* points to the start of the file suffix */
-   static char command_buf[255]; /* used to call system(2) */
-   char *p1;                     /* a scratch pointer */
-   int namelength;               /* length of 'name (section)' */
-   char *name;                   /* points to the file basename */
-   short compression;            /* the compression type (if nec) */
+   static char command_buf[255];	/* used to call system(2) */
+	char *p1;							/* a scratch pointer */
+   int namelength;					/* length of 'name (section)' */
+   char *name;							/* points to the file basename */
+	int sufflen;						/* length of the filename suffix */
 
-   if (v_flag>=2) fprintf(output_fp,"Working on file %s/%s ...\n",sec,filename);
+   if (v_flag) fprintf(output_fp,"Working on file %s ...\n",filename);
 
-   /*
-    * get the file basename
+	/*
+    * get the file basename and suffix
     */
 
    if ((name = malloc (strlen(filename)+1)) == NULL) {
-      if (v_flag)
-         fprintf(error_fp,"malloc failed when processing %s -- file skipped\n",
-            filename);
+	   if (v_flag)
+      	fprintf(error_fp,"malloc failed when processing %s -- file skipped\n",
+	         filename);
       return;
    }
    strcpy(name,filename);
-
-   /*
-    * check for a compression suffix like ".Z" or ".F"
-    */
-
-   p1 = name + strlen(name) -1;        /* p1 points to last char of name */
-   while ((p1>=name) && (*p1!='.')) p1--;
-   if (p1<=name) { /* <= because we don't want a name beginning with '.' */
-      if (v_flag)
-         fprintf(error_fp,"%s has no suffix -- file skipped\n",
-            filename);
+   if ((suffix = strchr(name,'.')) == NULL) {
+	   if (v_flag)
+      	fprintf(error_fp,"%s has no suffix -- file skipped\n",
+	         filename);
       return;
    }
-   if (strcmp(p1,".Z")==0) {
-      compression = Z_COMPRESS;
-   } else if (strcmp(p1,".F")==0) {
-      compression = F_COMPRESS;
-   } else if (strcmp(p1,".gz")==0) {
-      compression = G_COMPRESS;
-   } else compression = NO_COMPRESS;
-   *p1 = '\0';
-
-   /*
-    * define the suffix
-    */
-
-   if (compression == NO_COMPRESS) {
-      suffix = p1 + 1;
-   } else {
-      while ((p1>=name) && (*p1!='.')) --p1;
-      if (p1<=name) { /* <= because we don't want a name beginning with '.' */
-         if (v_flag)
-            fprintf(error_fp,"%s has deformed file name -- file skipped\n",
-               filename);
-         return;
-      }
-      *p1 = '\0';
-      suffix = p1 + 1;
-   }
+   *suffix = '\0';
+   suffix++;
+   sufflen = strlen(suffix);
 
    /*
     * find out the file type
     */
 
-   if (compression == NO_COMPRESS) {
-      info_record.pCount = 5;
-      info_record.pathname = __C2GSMALLOC(filename);
-      GetFileInfoGS(&info_record);
-      if (toolerror()) {
-         if (v_flag)
-            fprintf(error_fp,
-               "malloc failed when processing %s -- file skipped\n", filename);
-         return;
-      }
+   info_record.pCount = 5;
+   info_record.pathname = __C2GSMALLOC(filename);
+	GetFileInfoGS(&info_record);
+   if (toolerror()) {
+	   if (v_flag)
+      	fprintf(error_fp,"malloc failed when processing %s -- file skipped\n",
+         	filename);
+      return;
    }
 
-   /*
+	/*
     * Process the file according to type: nroff, aroff, freeze, and compress.
     * The digested result is placed in buffer.
     */
 
-   if ((compression == NO_COMPRESS) &&
-       (info_record.fileType == 0x50u) &&
-       (info_record.auxType == 0x8010u)
-      ) {
-      
+   if ((info_record.fileType == 0x50u) && (info_record.auxType == 0x8010u)) {
+   	
       /* is it an Appleworks GS word processor document?  Use aroff */
-      sprintf(command_buf,"aroff -b %s > %s",filename,tmp_file);
-      if (v_flag>=3) fprintf(stderr,"%s\n",command_buf);
+      sprintf(command_buf,"aroff -b %s >%s",filename,tmp_file);
       system(command_buf);
-      fillbuffer(tmp_file);
+		fillbuffer(tmp_file);
 
-   } else if (compression == Z_COMPRESS) {
-   
+   } else if ( (toupper(*(suffix+sufflen-1))=='Z') &&
+   				(*(suffix+sufflen-2)=='.')) {
+	
       /* Compressed man page; uncompress it */
-      sprintf(command_buf,"compress -cd %s > %s",filename,tmp_file);
-      if (v_flag>=3) fprintf(stderr,"%s\n",command_buf);
-      system(command_buf);                              
-      fillbuffer(tmp_file);
+      sprintf(command_buf,"compress -dc %s >%s",filename,tmp_file);
+      system(command_buf);
+		fillbuffer(tmp_file);
 
-   } else if (compression == F_COMPRESS) {
-   
+      /* fix suffix for printout */
+      sufflen -= 2;
+      *(suffix + sufflen) = '\0';
+
+   } else if ( (toupper(*(suffix+sufflen-1))=='F') &&
+   				(*(suffix+sufflen-2)=='.')) {
+	
       /* Frozen man page; melt it */
-      sprintf(command_buf,"freeze -cd %s > %s",filename,tmp_file);
-      if (v_flag>=3) fprintf(stderr,"%s\n",command_buf);
-      system(command_buf);                              
-      fillbuffer(tmp_file);
+      sprintf(command_buf,"freeze -dc %s >%s",filename,tmp_file);
+      system(command_buf);
+		fillbuffer(tmp_file);
 
-   } else if (compression == G_COMPRESS) {
-   
-      /* gzipped man page; zcat it */
-      sprintf(command_buf,"gzip -cd %s > %s",filename,tmp_file);
-      if (v_flag>=3) fprintf(stderr,"%s\n",command_buf);
-      system(command_buf);                              
-      fillbuffer(tmp_file);
+      /* fix suffix for printout */
+      sufflen -= 2;
+      *(suffix + sufflen) = '\0';
 
-   } else if ((*suffix=='l') && (*(suffix+1)=='\0') &&
-              strcmp("l",sec) && strcmp("local",sec)) {
-   
-      /* It's a link to another man page; do nothing. */
-      return;
+   } else if ((toupper(*suffix)=='L') && (*(suffix+1)=='\0')) {
+	
+  		/* It's a link to another man page; do nothing. */
+		return;
 
    } else {
 
-      /* Assume that it's a text file */
-      if (v_flag>=3) fprintf(stderr,"assuming text file\n");
-      fillbuffer(filename);                             
-   }
-
-   /*
-    * If there was an error, or it is an .so reference to another man
-    * page, then return without writing anything to the database
-    */
-
-   if ((buffer[0] == '\0') || (titlebuf[0] == '\0')) {
-      return;
+		/* Assume that it's a text file */
+		fillbuffer(filename);
    }
 
    /*
@@ -196,37 +132,33 @@ void process (char *filename, char *tmp_file, FILE *whatis_fp, char *sec) {
     * formatting.
     */
 
-   p1 = buffer;
+  	p1 = buffer;
    while (isspace(*p1)) p1++; 
-   namelength = strlen(titlebuf) + strlen(suffix) + 4;
+	namelength = strlen(name) + strlen(suffix) + 4;
 
-   if (namelength > (TABLENGTH * 3)) {
-      fprintf(whatis_fp,"%s (%s) - %s\n", titlebuf, suffix, p1);
+  	if (namelength > (TABLENGTH * 3)) {
+   	fprintf(whatis_fp,"%s (%s) - %s\n", name, suffix, p1);
    } else if (namelength > (TABLENGTH * 2)) {
-      fprintf(whatis_fp,"%s (%s)\t- %s\n", titlebuf, suffix, p1);
+     	fprintf(whatis_fp,"%s (%s)\t- %s\n", name, suffix, p1);
    } else if (namelength > TABLENGTH ) {
-      fprintf(whatis_fp,"%s (%s)\t\t- %s\n", titlebuf, suffix, p1);
+      fprintf(whatis_fp,"%s (%s)\t\t- %s\n", name, suffix, p1);
    } else {                               
-      fprintf(whatis_fp,"%s (%s)\t\t\t- %s\n", titlebuf, suffix, p1);
+      fprintf(whatis_fp,"%s (%s)\t\t\t- %s\n", name, suffix, p1);
    }
 
-   return;
+	return;
 }
-
 
 #ifdef TEST_PROCESS
 
 int main (int argc, char **argv) {
-   
-   output_fp = stdout;
-   error_fp  = stderr;
 
-   if (argc != 2) {
-      fprintf(stderr,"Usage: %s <man_page_file_name>\n",argv[0]);
+	if (argc != 2) {
+	   printf("Usage: %s <man_page_file_name>\n",argv[0]);
       return -1;
    }
 
-   process (argv[1], ":tmp:garbage", stdout, "2");
+	process (argv[1], ":tmp:garbage", stdout);
 
    return 0;
 }

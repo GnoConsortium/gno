@@ -1,0 +1,31 @@
+About Describe
+~~~~~~~~~~~~~~
+  First off: make sure the directory /usr/local/lib exists!!!
+
+  This is yet another project I've been sitting on for a while, but have
+finally decided to release.  The basic idea of the 'describe' package
+(the descc "compiler" and describe itself) is to provide a quick, easy
+way of accessing information related to the utilities which so many
+different people are releasing these days.  The reason it sat around on
+my harddrive so long is I was having qualms about its designated role in
+life.  I wasn't sure exactly what I wanted it to do.  Well, I've decided
+to KISS for now: descc simply compiles the utility list, which I maintain,
+into a (very) simple "database" located in /usr/local/lib/.  The companion
+utility 'describe' is used to fetch information about a particular utility
+from this "database".
+
+   descc is fairly limited, as is the "database" format itself.  Part of the
+KISS (or it wouldn't be out now) design philosophy ;).  Usage is simple:
+when you get a new listing (I'll provide monthly updates), simply "descc
+<filename>" where <filename> is the name of the newly released update.
+descc will simply write over the old database and replace it with the
+new (note: no appendages allowed).
+
+   As always, coments are appreciated.  And, moreso than on other projects,
+I'd appreciate some comments about the direction I'm going in, suggestions
+as to where to take this, etc.  I have a feeling that some fields in the
+format (eg, FTP:) are rather useless, and I'd like to know what you guys
+out there think.
+
+James Brookes
+jamesb@ecst.csuchico.edu
