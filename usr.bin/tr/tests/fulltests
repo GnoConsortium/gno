@@ -1,6 +1,6 @@
 # gsh script to run tests and collect results
 #   Written by Dave Tribby  *  August 1997
-#   $Id: fulltests,v 1.3 1997/10/03 04:11:06 gdr Exp $
+#   $Id: fulltests,v 1.4 1998/03/08 17:49:45 gdr-ftp Exp $
 
 #  Name of gsh script containing test cases
 set command="dotests"
@@ -12,7 +12,7 @@ set raw_file="/tmp/rawlist"
 set result_file="test.list"
 
 #  Location of tr command that knows how to handle classes
-set trcmd="/src/gno/usr.bin/tr/tr"
+set trcmd="/obj/gno/usr.bin/tr/tr"
 
 # --- Begin the tests ---
 
