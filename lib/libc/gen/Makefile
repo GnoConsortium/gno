@@ -1,7 +1,7 @@
 #
 # Makefile for libc/gen.
 #
-# $Id: Makefile,v 1.5 1997/09/21 06:06:01 gdr Exp $
+# $Id: Makefile,v 1.6 1997/10/03 04:44:14 gdr Exp $
 #
 
 .INCLUDE:	../../../paths.mk
@@ -17,7 +17,7 @@ OBJS	= $(OBJ_ASM) $(OBJ_C)
 
 CFLAGS	+= -O78
 
-build:		../libc
+build .PHONY:	../libc
 obj:		$(OBJS)
 asm:		$(OBJ_ASM)
 c:		$(OBJ_C)

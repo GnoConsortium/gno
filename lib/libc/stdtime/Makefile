@@ -1,7 +1,7 @@
 #
 # Makefile for libc/stdtime.
 #
-# $Id: Makefile,v 1.1 1997/09/21 06:22:10 gdr Exp $
+# $Id: Makefile,v 1.2 1997/10/03 04:44:25 gdr Exp $
 #
 
 .INCLUDE:	../../../paths.mk
@@ -14,7 +14,7 @@ CFLAGS	+= -v
 default:
 	@echo do not use this directory yet
 
-build:	../libc
+build .PHONY:	../libc
 obj:	$(OBJS)
 
 .INCLUDE:	../rules.mk

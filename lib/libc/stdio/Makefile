@@ -3,7 +3,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: Makefile,v 1.5 1997/09/21 06:19:50 gdr Exp $
+# $Id: Makefile,v 1.6 1997/10/03 04:44:25 gdr Exp $
 #
 
 .INCLUDE:	../../../paths.mk
@@ -21,7 +21,7 @@ OBJS	= clrerr.o fclose.o fdopen.o feof.o ferror.o fflush.o fgetc.o \
 
 CFLAGS	+= -O78
 
-build:	../libc
+build .PHONY:	../libc
 obj:	$(OBJS)
 
 #

@@ -3,7 +3,7 @@
 #
 # Devin Reade, 1996
 #
-# $Id: Makefile,v 1.3 1997/09/21 06:08:48 gdr Exp $
+# $Id: Makefile,v 1.4 1997/10/03 04:44:22 gdr Exp $
 #
 
 .INCLUDE:	../../../paths.mk
@@ -18,7 +18,7 @@ CFLAGS	+= -O78
 MACROS_ORCA	= $(ORCA_DIST)/OrcaInclude
 MACRO_FILES	= $(MACROS_ORCA)/m16.tools $(MACROS_ORCA)/m16.orca
 
-build:	../libc
+build .PHONY:	../libc
 
 obj:	$(OBJS)
 
