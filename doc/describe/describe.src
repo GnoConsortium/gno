@@ -2,7 +2,7 @@
 # List of shell applications for GNO/ME and ORCA/Shell
 # Last revision: Thu Mar 26 00:25:41 1998
 #
-# $Id: describe.src,v 1.6 1998/03/26 00:31:55 gdr-ftp Exp $
+# $Id: describe.src,v 1.7 1998/04/11 19:08:25 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -32,7 +32,7 @@
 #
 #  The describe web page may be found at:
 #
-#	http://www.gno.org/gno/describe
+#	http://www.gno.org/~gno/describe
 #
 #  This page has:
 #	- links to the current version of describe, descu, and descc

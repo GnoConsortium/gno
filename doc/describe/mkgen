@@ -5,11 +5,11 @@
 #
 # Devin Reade, January 1998.
 #
-# $Id: mkgen,v 1.2 1998/01/17 21:27:25 gdr Exp $
+# $Id: mkgen,v 1.3 1998/04/11 19:08:30 gdr-ftp Exp $
 #
 
 $gnohome_internal = "/home/gno/public_html";
-$gnohome_external = "http://www.gno.org/gno";
+$gnohome_external = "http://www.gno.org/~gno";
 
 $gendir   = "describe/gen";     # relative to $gnohome_*
 $entrydir = "describe/entry";	# relative to $gnohome_*
