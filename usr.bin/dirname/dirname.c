@@ -44,7 +44,9 @@ static char sccsid[] = "@(#)dirname.c	8.4 (Berkeley) 5/4/95";
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#ifdef __GNO__
 #include <gno/gno.h>
+#endif
 
 void usage __P((void));
 
@@ -54,8 +56,8 @@ main(int argc, char **argv)
 	char *p, delimiter = '/';
 	int ch;
 
-#ifdef STACK_CHECK
-	_beginStackCheck();
+#ifdef __GNO__
+	__REPORT_STACK();
 #endif
 
 	while ((ch = getopt(argc, argv, "")) != -1)
@@ -155,15 +157,8 @@ main(int argc, char **argv)
 	*p = '\0';
 	(void)printf("%s\n", p == *argv ? delimiter : *argv);
 #	else
-	if (!(p = dirname(*argv)))
-		(void)printf(".\n", p, *p);
-	else
-		(void)printf("%s%c\n", p, delimiter);
+	puts(dirname(*argv));
 #	endif
-
-#ifdef STACK_CHECK
-	printf("Stack Usgae: %d\n", _endStackCheck());
-#endif
 
 	exit(0);
 }

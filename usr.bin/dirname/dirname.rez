@@ -2,11 +2,12 @@
  * This is a CVS/RCS identification line -- an excellent tool for maintaining
  * your sources:
  *
- * $Id: dirname.rez,v 1.1 1998/03/25 15:08:28 gdr-ftp Exp $
+ * $Id: dirname.rez,v 1.2 1998/03/29 20:46:17 gdr-ftp Exp $
  */
 
 #include "Types.Rez"
 #include "Proginfo.Rez"
+#include "/src/gno/build.tools/builddate.rez"
 
 resource rVersion (0x1, purgeable3, nocrossbank) {
 
@@ -21,7 +22,8 @@ resource rVersion (0x1, purgeable3, nocrossbank) {
 			/* Note that \n is used to separate lines here. */
 	"Strips the file name from a fully expanded filename path.\n"
 	"Ported from FreeBSD source code.\n"
-	"Scott Moberly <smoberly@s-cwis.unomaha.edu>"
+	"Scott Moberly <smoberly@s-cwis.unomaha.edu>\n"
+	BUILD_DATE
 };
 
 #define ON 1
