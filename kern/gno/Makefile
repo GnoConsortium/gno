@@ -1,4 +1,4 @@
-#	$Id: Makefile,v 1.2 1998/02/09 08:43:55 taubert Exp $
+#	$Id: Makefile,v 1.3 1999/03/19 07:15:03 gdr-ftp Exp $
 
 .INCLUDE: /src/gno/paths.mk
 
@@ -6,18 +6,34 @@ PROG=	kern
 OBJS=	main.o patch.o kern.o sys.o signal.o ctool.o sem.o \
 	queue.o data.o diag.o resource.o tty.o select.o gsos.o \
 	p16.o pipe.o shellcall.o fastfile.o texttool.o driver.o \
-	util.o var.o ep.o err.root regexp.root stat.o ports.o \
+	util.o var.o ep.o err.o regexp.o stat.o ports.o \
 	sleep.o pty.o net.o \
-	inout.o console.o box.root conpatch.o
+	inout.o console.o box.o conpatch.o
 CFLAGS+=-DKERNEL
+
+LDFLAGS += -M
+
 .SOURCE: ../drivers
 
+build:	$(OBJ_DIR) $(OBJ_DIR)$(PROG)
+
+$(OBJ_DIR):
+	install -d $(OBJ_DIR)
+
 $(OBJ_DIR)$(PROG): $(OBJS)
-	gsh -c ${mktmp prefix 13 /lang/orca/libraries; $(LD) $(LDFLAGS) -o $@ $<}
-	compile +w $(PROG).rez keep=$@
+	gsh -c ${mktmp prefix 13 /lang/orca/libraries; $(LD) $(LDFLAGS) -o $@ $< > $(OBJ_DIR)$(PROG).linkmap}
+	install $(PROG).rez $(TMPDIR)
+	compile +w $(TMPDIR)/$(PROG).rez keep=$@
+	$(RM) -f $(TMPDIR)/$(PROG).rez
 	chtyp -t s16 $@
-	$(CP) $@ /ren/gno.new/kern.new
+#	$(CP) $@ /ren/gno.new/kern.new
 $(OBJ_DIR)$(PROG): $(PROG).rez
+
+release:	$(OBJ_DIR)$(PROG)
+	install $(OBJ_DIR)$(PROG) $(OBJ_DIR)$(PROG).linkmap $(RELEASE_DIR)
+
+install:
+	@echo You cannot install the kernel into a live system.  Target ignored.
 
 #%.o : %.c
 #	$(CC) $(CFLAGS) -c $< -o $@

@@ -1,4 +1,4 @@
-*	$Id: err.asm,v 1.1 1998/02/02 08:19:20 taubert Exp $
+*	$Id: err.asm,v 1.2 1999/03/19 07:15:03 gdr-ftp Exp $
 **************************************************************************
 *
 * The GNO Shell Project
@@ -24,6 +24,9 @@
 
 	mcopy m/err.mac
 	case	on
+
+dummyErr start			; ends up in .root and ignored
+	end
 
 printError	START KERN2
 

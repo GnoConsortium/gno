@@ -1,4 +1,4 @@
-*	$Id: regexp.asm,v 1.1 1998/02/02 08:19:42 taubert Exp $
+*	$Id: regexp.asm,v 1.2 1999/03/19 07:15:03 gdr-ftp Exp $
 **************************************************************************
 *
 * The GNO Shell Project
@@ -65,6 +65,9 @@
 
 	mcopy m/regexp.mac
 	case	on
+
+dummyRegExp start		; ends up in .root and ignored
+	end
 
 RegExp	START
 
