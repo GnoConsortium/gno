@@ -1,0 +1,74 @@
+catrez -- concatenate resource forks from files
+
+
+DESCRIPTION
+===========
+
+catrez concatenates resources from multiple files into the resource fork of
+a single file. (The data fork of the destination file is not modified.) This
+is useful to programmers who create resources for a program in several
+different files and need to combine them into the resource fork of the final
+executable file. 
+
+See the man page for details.
+
+NOTE -- version 1.0.1 fixes a problem found in 1.0: resources with the
+        "protected" attribute set were not copied correctly.
+
+
+INSTALLATION
+============
+
+Method 1:
+
+	dmake install
+
+Method 2:
+
+	cp catrez   /usr/local/bin
+	cp catrez.1 /usr/man/man1
+
+
+OTHER FILES
+===========
+
+The ORCA/C source file for catrez is included (catrez.c), as well as the
+REZ source code (version.rez) and the "dmake" file (makefile.mk).
+
+
+AUTHOR
+======
+
+Dave Tribby.  Please send bug reports to <tribby@cup.hp.com>
+
+
+THANKS
+======
+
+To Devin Reade and Soenke Behrens for their many contributions to the
+Apple IIGS programming community that make creating programs easier.
+Among their various tools, Devin's dmake and Soenke's occ have helped
+me on many large and small programming projects.
+
+To Steve Reeves (stever@gate.net) for finding a problem with resources
+that have the protected attribute set, and sending the code to fix
+the problem.
+                                    
+
+LEGAL
+=====
+
+Copyright 1996 by David M. Tribby
+
+This software is provided as freeware (not public domain). You may distribute
+it as long as you don't charge money for it (beyond your media costs), and you
+don't try to claim it for your own. You must also keep this archive intact when
+distributing the software.
+
+For other distribution information, contact Dave Tribby <tribby@cup.hp.com>.
+
+This program contains material from the ORCA/C Run-Time Libraries,
+copyright 1987-1996 by Byte Works, Inc.  Used with permission.
+
+This program contains routines from the GNO/ME libraries, copyright
+Procyon Enterprises, Inc.

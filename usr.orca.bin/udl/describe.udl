@@ -1,9 +1,0 @@
-Name:    udl
-Version: 1.15
-Author:  Soenke Behrens, Devin Reade
-Contact: sbehrens@contech.demon.co.uk, gdr@myrias.ab.ca
-Where:   /usr/local/bin
-FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu
-
-   Converts text between the CR, LF and CR/LF forms. Also available for Unix
-machines, reasonably fast yet secure.
