@@ -414,7 +414,7 @@ DirEntryRecGS *entry;
             if (entry->fileType == 0x0F) dirflag = TRUE;
             /*if (mult && entry->fileType == 0x0f) continue;*/
             afile = TRUE;
-            if (inK) printf("%4ld ",((entry->eof+entry->resourceEOF)/1024)+1);
+            if (inK) printf("%4ld ",(entry->eof+entry->resourceEOF+1023)/1024);
             /* time = 0 means do mod date, = 1 means do create date */
             /*time = (sortRoutine == CompareCreate) ? 1 : 0;*/
             if (fl_longOutput) long_out(d->entry_ptrs[i]);
