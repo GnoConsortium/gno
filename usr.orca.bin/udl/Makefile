@@ -5,7 +5,7 @@
 #
 # Devin Reade, October 1997.
 #
-# $Id: Makefile,v 1.2 1997/12/19 07:48:15 gdr Exp $
+# $Id: Makefile,v 1.3 1998/03/08 17:55:53 gdr-ftp Exp $
 #
 
 PROG	= udl
@@ -19,4 +19,4 @@ BINDIR	= /usr/bin
 
 .INCLUDE:	/src/gno/prog.mk
 
-head.o::	def.h extern.h
+head.o:	def.h extern.h
