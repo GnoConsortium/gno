@@ -4,12 +4,11 @@
  *
  * Unix specific routines.
  *
- * $Id: udlunix.c,v 1.3 1995/02/08 05:15:35 gdr Exp $
+ * $Id: udlunix.c,v 1.4 1995/02/08 05:25:24 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
  */
 
-#define  MAIN 1
 #include "common.h"
 
 extern char *strdup(const char *);

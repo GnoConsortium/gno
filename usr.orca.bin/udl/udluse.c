@@ -4,10 +4,14 @@
  *
  * Usage strings.
  *
- * $Id: udluse.c,v 1.3 1995/02/08 05:15:36 gdr Exp $
+ * $Id: udluse.c,v 1.4 1995/02/08 05:25:26 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
  */
+
+#ifdef GNO
+#pragma noroot
+#endif
 
 char use1 [] =
 "udl 1.14 by Soenke Behrens, Devin Glyn Reade\n"

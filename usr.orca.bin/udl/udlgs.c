@@ -4,7 +4,7 @@
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.3 1995/02/08 05:15:33 gdr Exp $
+ * $Id: udlgs.c,v 1.4 1995/02/08 05:25:22 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
  */
@@ -14,7 +14,6 @@
 #include <gsos.h>
 #include <getopt.h>
 
-#define MAIN 1
 #include "common.h"
 
 #define QUITFLAG 0x4000 /* udl is restartable */

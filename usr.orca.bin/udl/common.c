@@ -4,10 +4,14 @@
  *
  * Routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.c,v 1.3 1995/02/08 05:15:26 gdr Exp $
+ * $Id: common.c,v 1.4 1995/02/08 05:25:15 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
  */
+
+#ifdef GNO
+#pragma noroot
+#endif
 
 #include "common.h"
 extern char *strdup(const char *);
@@ -665,7 +669,7 @@ void usage (void) {
  */
 
 
-void build_file_list(char *file, short recurse) {
+void build_file_list(const char *file, short recurse) {
   char *thisdir;
   DIR *dir;
   struct dirent *entry;
@@ -709,6 +713,8 @@ void build_file_list(char *file, short recurse) {
 
     if (*currentDirectory) strcat(currentDirectory,tstr);
     strcat(currentDirectory,file);
+    if (currentDirectory[strlen(currentDirectory)-1] == dirbrk)
+      currentDirectory[strlen(currentDirectory)-1] = '\0';
 
     /* recurse */
     if ((dir = opendir(file)) == NULL) {

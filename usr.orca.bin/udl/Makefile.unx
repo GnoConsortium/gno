@@ -2,7 +2,7 @@
 # Makefile for udl
 # (c) 1993-1994 Soenke Behrens
 #
-# $Id: Makefile.unx,v 1.3 1995/02/08 05:15:22 gdr Exp $
+# $Id: Makefile.unx,v 1.5 1995/02/08 05:47:44 gdr Exp $
 #
 # Define the following as necessary:
 #
@@ -34,8 +34,8 @@ LDFLAGS =
 # You should not have to modify anything beyond this point
 #
 
-udl: udl.o udluse.o common.o
-	$(CC) $(LDFLAGS) -o udl udl.o udluse.o common.o
+udl: udl.o udluse.o common.o globals.o
+	$(CC) $(LDFLAGS) -o udl udl.o udluse.o common.o globals.o
 
 udl.o: udl.unix.c common.h
 	$(CC) -c $(CFLAGS) -o udl.o udl.unix.c
@@ -54,3 +54,4 @@ dist:
 	@echo 'Sorry, automatic packing not yet supported.'
 
 common.o::common.h
+globals.o::common.h
