@@ -1,10 +1,10 @@
 # Tests for tr command; invoked by command file "fulltests"
 #   Adapted from a test script written by Dave Tribby
 #
-# $Id: dotests,v 1.1 1998/02/17 02:50:35 gdr-ftp Exp $
+# $Id: dotests,v 1.2 1998/03/08 17:24:31 gdr-ftp Exp $
 
 # Location of the command to be tested
-set testcmd="../uname"
+set testcmd="/obj/gno/bin/uname/uname"
 
 # Record starting time
 echo -n "Testing command $testcmd beginning at"
