@@ -5,7 +5,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.5 1997/12/03 06:46:41 gdr Exp $
+# $Id: Makefile,v 1.6 1997/12/06 07:02:52 gdr Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -49,7 +49,7 @@ FTP_ROOT	= ftp://trenco.myrias.com/pub/apple2/gs.specific/gno
 # Where can the FAQ be located?
 #FAQ		= http://web.cs.ualberta.ca/~glyn/FAQ.csa2g
 FAQ		= http://trenco.myrias.com/~gno/FAQ.html
-FAQLOG		= http://trenco.myrias.com/~gno/FAQ-log
+FAQLOG		= http://trenco.myrias.com/~gno/FAQ-log.html
 FAQ_TEXT	= $(FTP_ROOT)/doc/faq/CURRENT
 FAQLOG_TEXT	= $(FTP_ROOT)/doc/faq/LOG
 
