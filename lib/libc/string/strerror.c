@@ -1,7 +1,7 @@
 /*
  * Implementation by Devin Reade.
  *
- * $Id: strerror.c,v 1.1 1997/09/05 06:33:22 gdr Exp $
+ * $Id: strerror.c,v 1.2 1997/09/21 06:23:08 gdr Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
@@ -9,11 +9,6 @@
 #ifdef __ORCAC__
 segment "libc_str__";
 #endif
-
-#pragma databank 1
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #include <sys/errno.h>		/* for ELAST */
 #include <stdio.h>		/* for remainder */

@@ -1,7 +1,7 @@
 /*
  * Implementation by Devin Reade
  *
- * $Id: case.c,v 1.1 1997/02/28 05:12:50 gdr Exp $
+ * $Id: case.c,v 1.2 1997/09/21 06:23:07 gdr Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
@@ -9,10 +9,6 @@
 #ifdef __ORCAC__
 segment "libc_str__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #include <string.h>
 #include <ctype.h>
@@ -67,4 +63,3 @@ short
 strincmp (const char *s1, const char *s2, unsigned n) {
 	return strncasecmp(s1, s2, n);
 }
-

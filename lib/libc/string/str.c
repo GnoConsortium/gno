@@ -4,7 +4,7 @@
  * Various string routines not available in OrcaLib.  For an explanation
  * of these functions, see the appropriate man page.
  *
- * $Id: str.c,v 1.1 1997/02/28 05:12:50 gdr Exp $
+ * $Id: str.c,v 1.2 1997/09/21 06:23:08 gdr Exp $
  *
  * This file is formatted with tabs in every 8 columns.
  */
@@ -12,10 +12,6 @@
 #ifdef __ORCAC__
 segment "libc_str__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #include <stdlib.h>
 #include <string.h>
