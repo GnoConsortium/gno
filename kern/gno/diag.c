@@ -1,4 +1,4 @@
-/*	$Id: diag.c,v 1.1 1998/02/02 08:18:23 taubert Exp $ */
+/*	$Id: diag.c,v 1.2 1998/02/22 05:05:42 taubert Exp $ */
 
 /* kernel diagnostics and error routines */
 #pragma optimize 79
@@ -27,11 +27,14 @@ extern kernelStructPtr kp;
 
 void traceback(word stack)
 {
-    word j;
+    word i, j;
 
-    for (j = stack; (j<stack+256) && (j<0xC000);) {
+    for (j = stack+1; (j<stack+256) && (j<0xC000);) {
 	kern_printf("[%04X]:", j);
-	for (; j < (j&0xfff0)+0x10; j++) {
+	for (i=j&0x000f; i; i--) {
+	    kern_printf(" --");
+	}
+	for (i=(j&0xfff0)+0x10; j < i; j++) {
 	    kern_printf(" %02X", *((byte *)j));
 	}
 	kern_printf("\n\r");
@@ -65,12 +68,16 @@ void PANIC(char *str)
     *((byte *) 0xE0C022l) = 0x1F;
     asm {
 	tsc
-	sta >stack
+	sta stack
 	lda >0xE0C029
 	and #0xFF7F
 	sta >0xE0C029
     }
-    traceback(stack+2);
+    /*
+     * NOTE: When PANIC() is modified, this constant added to stack should
+     * be tuned to point to the caller's return address.
+     */
+    traceback(stack + 0xA);
     kern_printf("SYSTEM PANIC: %s\n\r",str);
 
 noway:

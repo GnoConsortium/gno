@@ -263,11 +263,6 @@ pastName&SYSCNT anop
 .pastName
  MEND
  MACRO
-&lab _PostEvent
-&lab ldx #$1406
- jsl $E10000
- MEND
- MACRO
 &lab _ClampMouse
 &lab ldx #$1C03
  jsl $E10000

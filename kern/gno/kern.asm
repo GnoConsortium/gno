@@ -1,4 +1,4 @@
-*	$Id: kern.asm,v 1.1 1998/02/02 08:19:28 taubert Exp $
+*	$Id: kern.asm,v 1.2 1998/02/22 05:05:45 taubert Exp $
 
 * GNO Multitasking environment
 *  Low-level Kernel code
@@ -668,9 +668,8 @@ SaveAllPatch	START
 	pla
 	plb
 	plp
-	dc    i1'$5C'
 OLDSAVEALL	ENTRY
-	dc    i4'0'
+	jmp	>$000000
 
 RestAllPatch	ENTRY
 	php
@@ -747,14 +746,10 @@ RestAllPatch	ENTRY
 ;              ldy #0
 ;              jmp tool_exit
 
-gooldRest	dc    i1'$5C'
 OLDRESTALL	ENTRY
-	dc    i4'0'
+	jmp	>$000000
 
 savedCDAInfo	ENTRY
-tblockCP	dc    i2'0'	; FIXME - remove this
-tcount	dc    i2'0'	; FIXME - remove this
-tbufState	dc    i2'0'	; FIXME - remove this
 ttruepid	dc    i2'0'
 tcurProcInd	dc    i2'0'
 tgsosDebug	dc    i2'0'

@@ -1,4 +1,4 @@
-*	$Id: ctool.asm,v 1.1 1998/02/02 08:19:14 taubert Exp $
+*	$Id: ctool.asm,v 1.2 1998/02/22 05:05:40 taubert Exp $
 
 	mcopy m/ctool.mac
 
@@ -16,9 +16,8 @@
 ;	jsl	$E10000
 ;always	bra	always
 ;goold	pla
-;	dc	i1'$5C'
 ;OLDDISPHAND	ENTRY
-;	dc	i4'0'
+;	jmp	>$000000
 ;	END
 
 * all processes that end with RTL come here
@@ -174,9 +173,8 @@ badBoy	dc	c'QuickDraw is already started.'
 	END
 
 DoOldQD	START
-	dc    i1'$5C'
 OLDQDSTARTUP	ENTRY
-	dc    i4'0'
+	jmp	>$000000
 	END
 
 * The new Sane Startup only stores the program's chosen SANE DP space
@@ -195,9 +193,8 @@ sanedp	equ 7+1
 	ldx	curProcInd
 	sta	SANEwap,x
 	plb
-	dc    i1'$5C'
 OLDSANESU	ENTRY
-	dc    i4'0'
+	jmp	>$000000
 	END
 
 SANESDPATCH	START

@@ -1,4 +1,4 @@
-/*	$Id: signal.c,v 1.1 1998/02/02 08:18:56 taubert Exp $ */
+/*	$Id: signal.c,v 1.2 1998/02/22 05:05:49 taubert Exp $ */
 
 /*  Signals work like this.
   The following paragraphs only describe calling a handler routine, as
@@ -265,7 +265,6 @@ extern void disposevar(int);
                     tosig->ticks + tosig->childTicks;
        	}
        	if (!(tosig->flags & FL_COMPLIANT)) {
-        int c = 5;
             enableBuf();
        	}
         /* If the process was in a sleep queue, remove it - do not ready */
