@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: invoke.asm,v 1.8 1998/10/26 17:04:50 tribby Exp $
+* $Id: invoke.asm,v 1.9 1998/12/21 23:57:06 tribby Exp $
 *
 **************************************************************************
 *
@@ -29,7 +29,7 @@
 *
 *  invoke	subroutine (2:argc,4:argv,4:sfile,4:dfile,4:efile,2:app,
 *		2:eapp,2:bg,4:cline,2:jobflag,2:pipein,2:pipeout,
-*		2:pipein2,2:pipeout2,4:pipesem)
+*		2:pipein2,2:pipeout2,4:pipesem,4:awaitstatus)
 *	return 2:rtnval
 *
 **************************************************************************
@@ -226,12 +226,15 @@ biflag	equ	p+4
 ptr	equ	biflag+2
 rtnval	equ	ptr+4	Return pid, -1 (error), or 0 (no fork)
 cpath	equ	rtnval+2
-space	equ	cpath+4 
+hpath	equ	cpath+4
+space	equ	hpath+4
 
- subroutine (2:argc,4:argv,4:sfile,4:dfile,4:efile,2:app,2:eapp,2:bg,4:cline,2:jobflag,2:pipein,2:pipeout,2:pipein2,2:pipeout2,4:pipesem),space
+ subroutine (2:argc,4:argv,4:sfile,4:dfile,4:efile,2:app,2:eapp,2:bg,4:cline,2:jobflag,2:pipein,2:pipeout,2:pipein2,2:pipeout2,4:pipesem,4:awaitstatus),space
 
 	ld2	-1,rtnval
-	stz	biflag	Clear built-in flag.
+	stz	biflag	Clear built-in flag
+	stz	hpath	 and address from hash table.
+	stz	hpath+2
 
 	lda	argc	If number of arguments == 0,
 	bne	chknull	 nothing to do. (Shouldn't happen
@@ -275,6 +278,8 @@ chknull	ldy	#2	Move 1st argument
 
 changeit	sta	cpath	Use full path from
 	stx	cpath+2	 hash table.
+	sta	hpath	Save adddress for deallocation.
+	stx	hpath+2
 
 ;
 ; Get information about the command's filename
@@ -437,8 +442,14 @@ doDir	lock	cdmutex
 	mv4	GRecPath,PRecPath
 	SetPrefix PRec
 	unlock cdmutex
-	stz	rtnval	Return value: no fork done.
-	jmp	free
+	pei	(ptr+2)	Free memory used to hold
+	pei	(ptr)	 GS/OS string with path.
+	jsl	nullfree
+	lda	#0	Completion status = 0.
+;
+; Rest of cleanup is shared with non-forked builtin
+;
+	jmp	nfcleanup
 
 *
 * ---------------------------------------------------------------
@@ -470,7 +481,8 @@ doShell	anop
 ; Forked shell starts here...
 ;
 exec0	anop
-	ph2	_argc	;for argfree
+	ph4	_hpath	argfree parameters.
+	ph2	_argc
 	ph4	_argv
 
 	ph4	_cpath	ShellExec parameters
@@ -549,8 +561,18 @@ noforkbuiltin	anop
 	pei	(argv+2)
 	pei	(argv)
 	jsl	builtin
-	stz	rtnval	Return value: no fork done.
-	bra	done
+	and	#$00FF	Make return status look like result of
+	xba		 wait(): high-order byte = status.
+
+nfcleanup	anop
+	sta	[awaitstatus]	
+	stz	rtnval	Return value (pid) = no fork done.
+;
+; There might be a process waiting on a pipe
+;
+	lda	[pipesem]
+	sta	_semaphore
+	bra	chkpipe
 
 *
 * ---------------------------------------------------------------
@@ -569,8 +591,8 @@ notfound	pei	(ptr+2)
 	lda	#err2	 'Command not found.'
 	jsr	errputs
 
-	lda	pipein
-	beq	notfound0
+chkpipe	lda	pipein
+	beq	done
 
 ; Input being piped into a command that was not found.
 
@@ -585,14 +607,15 @@ notfound	pei	(ptr+2)
 	inc	a
 	kill	(@a,#9)	Kill all processes in that group.
 	sigpause #0
-notfound0	anop
 
 
 done	cop	$7F
 	lda	biflag	If built-in flag is clear,
 	bne	skipfrarg
 
-	pei	(argc)	 free arguments.
+	pei	(hpath+2)	Free arguments.
+	pei	(hpath)
+	pei	(argc)
 	pei	(argv+2)
 	pei	(argv)
 	jsl	argfree
@@ -625,6 +648,7 @@ prefork	lock	fork_mutex	Lock the fork mutual exclusion.
 	mv2	eapp,_eapp
 	mv4	cline,_cline
 	mv4	cpath,_cpath
+	mv4	hpath,_hpath
 	mv2	argc,_argc
 	mv4	argv,_argv
 	mv2	pipein,_pipein
@@ -703,7 +727,7 @@ infork	phk		Make sure data bank register
 	lda	_jobflag	If jobflag == 0,
 	bne	infork0b
 
-	Open	ttyopen
+	Open	ttyopen	Open tty.
 	jcs	errinfork
 
 	lda	_pipein
@@ -786,6 +810,7 @@ _app	dc	i2'0'
 _eapp	dc	i2'0'
 _cline	dc	i4'0'
 _cpath	dc	i4'0'
+_hpath	dc	i4'0'
 _pipein	dc	i2'0'
 _pipeout	dc	i2'0'
 _pipein2	dc	i2'0'
@@ -803,7 +828,7 @@ err2	dc	c': Command not found.',h'0d00'
 deadstr	dc	c'Cannot fork (too many processes?)',h'0d00' ;try a spoon
 
 
-; Parameter block for GS/OC call GetFileInfo
+; Parameter block for GS/OS call GetFileInfo
 GRec	dc	i'4'	pCount (# of parameters)
 GRecPath	ds	4	pathname (input; ptr to GS/OS string)
 	ds	2	access (access attributes)

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: edit.asm,v 1.8 1998/11/02 17:40:56 tribby Exp $
+* $Id: edit.asm,v 1.9 1998/12/21 23:57:06 tribby Exp $
 *
 **************************************************************************
 *
@@ -1733,9 +1733,12 @@ bindkey	START
 str	equ	0
 func	equ	str+4
 arg	equ	func+2
-space	equ	arg+4
+status	equ	arg+4
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
+
+	stz	status
 
 	lda	argc
 	dec	a
@@ -1743,7 +1746,8 @@ space	equ	arg+4
 showusage	ldx	#^usage
 	lda	#usage
 	jsr	errputs
-	jmp	exit
+	inc	status
+	bra	goexit
 
 ok	dec	argc
 	add2	argv,#4,argv
@@ -1765,7 +1769,7 @@ ok	dec	argc
 list	ldx	#^liststr	
 	lda	#liststr
 	jsr	puts
-	jmp	exit
+	bra	goexit
 
 startbind	lda	argc
 	dec	a
@@ -1797,8 +1801,8 @@ nofind	pla
 	ldx	#^errstr
 	lda	#errstr
 	jsr	errputs
-	lda	#-1
-	jmp	exit
+	inc	status
+goexit	bra	exit
 
 foundit	pla
 	lsr	a
@@ -1838,7 +1842,7 @@ foundit	pla
 	pei	(str)
 	jsl	nullfree
 
-exit	return
+exit	return 2:status
 	   
 usage	dc	c'Usage: bindkey [-l] function string',h'0d00'
 errstr	dc	c': undefined function',h'0d00'

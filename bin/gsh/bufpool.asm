@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: bufpool.asm,v 1.5 1998/09/08 16:53:05 tribby Exp $
+* $Id: bufpool.asm,v 1.6 1998/12/21 23:57:04 tribby Exp $
 *
 **************************************************************************
 *
@@ -22,9 +22,10 @@
 **************************************************************************
 *
 * Interfaces defined in this file:
-*     The alloc routines are a jsl without any stack params.
+*     The alloc routine is a jsl without any stack params.
 *         Pointer to requested buffer is returned in X/A registers.
 *   alloc1024	
+*     The free routine takes the address from the X/A registers
 *   free1024	
 *
 * bufpool data:
@@ -40,7 +41,7 @@ dummybufpool	start		; ends up in .root
 
 **************************************************************************
 *
-* get a buffer of size 1024
+* Get a buffer of size 1024
 *
 **************************************************************************
 
@@ -50,16 +51,16 @@ alloc1024	START
 
 	lock	pool1024mutex
 
-	lda	pool1024
-	ora	pool1024+2
+	lda	pool1024	If pool pointer
+	ora	pool1024+2	 isn't NULL,
 	beq	allocbuf
 
 	phd
-	ph4	pool1024
+	ph4	pool1024		Push pool pointer on stack.
 	tsc
 	tcd
-	lda	[1]
-	sta	pool1024
+	lda	[1]		Replace pool pointer with
+	sta	pool1024		 the address it points to.
 	ldy	#2
 	lda	[1],y
 	sta	pool1024+2
@@ -67,8 +68,11 @@ alloc1024	START
 	pla
 	plx
 	pld
-	rtl
+	rtl			Return to caller.
 
+;
+; No memory in free pool; must allocate a new block.
+;
 allocbuf	unlock pool1024mutex
 	ph4	#1024
 	~NEW
@@ -78,7 +82,7 @@ allocbuf	unlock pool1024mutex
 
 **************************************************************************
 *
-* free a buffer of size 1024
+* Free a buffer of size 1024, putting it into the free pool
 *
 **************************************************************************
 
@@ -92,32 +96,33 @@ free1024	START
 	tsc
 	tcd
 	lock pool1024mutex
-	lda	pool1024
-	sta	[1]
+	lda	pool1024	Move current head of pool list
+	sta	[1]	 into the buffer being freed.
 	ldy	#2
 	lda	pool1024+2
 	sta	[1],y
-	lda	1
-	sta	pool1024
+	lda	1	Put address of buffer being freed
+	sta	pool1024	 into the pool list head.
 	lda	3
 	sta	pool1024+2
 	unlock pool1024mutex
 	pla
 	plx	
 	pld
-	rtl
+	rtl		Return to caller.
 
 	END
 
 **************************************************************************
 *
-* buffer pool data
+* Buffer pool data
 *
 **************************************************************************
 
 bufpool	DATA
 
-pool1024	dc	i4'0'
-pool1024mutex	key
+pool1024	dc	i4'0'	Head of free pool list.
+
+pool1024mutex	key		Mutual exclusion when modifying list.
 		         
 	END

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shell.asm,v 1.7 1998/10/26 17:04:51 tribby Exp $
+* $Id: shell.asm,v 1.8 1998/12/21 23:57:07 tribby Exp $
 *
 **************************************************************************
 *
@@ -207,7 +207,8 @@ fastskip2	anop
 	bne	didit
 	jsr	readterm
 didit	anop
-	jsl	hashpath	Hash $PATH.
+	jsr	dispose_hash	Remove old table (if set in
+	jsl	hashpath	 login files) and hash $PATH.
 	ld2	1,hash_print	Set hash print flag.
 
 ;

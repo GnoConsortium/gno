@@ -7,7 +7,7 @@
 *   Tim Meekins
 *   Derek Taubert
 *
-* $Id: shellvar.asm,v 1.6 1998/09/08 16:53:13 tribby Exp $
+* $Id: shellvar.asm,v 1.7 1998/12/21 23:57:08 tribby Exp $
 *
 **************************************************************************
 *
@@ -20,6 +20,20 @@
 * Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
 *              |     |                  |       |       |       |
 *	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+* updatevars	subroutine (4:var,2:flag),space	;flag 1: set, 0: unset
+* InitVars	jsr without any parameters
+*
+* Remainder are interfaces to builtin commands with interface
+*	subroutine (4:argv,2:argc)
+*	returns status in accumulator
+* export
+* set	(setenv is alternate entry point)
+* unset
+*
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/shellvar.mac
@@ -46,7 +60,8 @@ arg	equ	1
 valbuf	equ	arg+4
 varbuf	equ	valbuf+4
 exflag	equ	varbuf+4
-space	equ	exflag+2
+status	equ	exflag+2
+space	equ	status+2
 argc	equ	space+3
 argv	equ	argc+2
 end	equ	argv+4
@@ -90,6 +105,8 @@ setenv	ENTRY
 ;
 startcmd	anop
 
+	stz	status
+
 	lda	argc	If no parameter provided,
 	dec	a
 	beq	showvars	 list all variables.
@@ -112,6 +129,7 @@ startcmd	anop
 showusage	ldx	#^Usage
 	lda	#Usage
 	jsr	errputs
+	inc	status	Return status = 1.
 	jmp	exit
 
 ;
@@ -133,7 +151,8 @@ showvars	anop
 	jsl	nullfree
 svwhoops	ld2	$201,ErrError		report memory error
 	ErrorGS Err
-	jmp	exit		 and exit.
+	inc	status	         set return status = 1
+	jmp	exit		  and exit.
 
 startshow	anop
 	lda	#1022	Store buffer len == 1022 in value
@@ -225,6 +244,7 @@ unixstyle	cpy	#0
 	ldx	#^error1
 	lda	#error1		Print error message:
 	jsr	errputs		 'Variable not specified'
+	inc	status	Return status = 1.
 	jmp	doneset
 unix0	short	a	Store '\0' on
 	lda	#0	 on top of '='
@@ -304,6 +324,7 @@ showonevar	anop
 notdef	ldx	#^error2		'Variable not defined'
 	lda	#error2
 	jsr	errputs
+	inc	status	Return status = 1.
 	bra	doneone
 
 def	ldx	RSexport	X = export flag.
@@ -320,7 +341,8 @@ doneone	anop
 
 doneset	unlock setmutex
 
-exit	lda	space
+exit	ldy	status
+	lda	space
 	sta	end-3
 	lda	space+1
 	sta	end-2
@@ -329,7 +351,7 @@ exit	lda	space
 	adc	#end-4
 	tcs
 
-	lda	#0	Return status = 0.
+	tya		Return status
 
 	rtl	  
 
@@ -443,23 +465,19 @@ ErrError	ds	2	Error number
 
 export	START
 
-space	equ	1
-argc	equ	space+3
-argv	equ	argc+2
-end	equ	argv+4
+status	equ	0
+space	equ	status+2
 
-;	 subroutine (4:argv,2:argc),space
+	 subroutine (4:argv,2:argc),space
 
-	tsc
-	phd
-	tcd
-
+	stz	status
 	lda	argc	Get parameter count.
 	dec	a	If < 1
 	bne	loop
 	ldx	#^Usage		Print usage string
 	lda	#Usage
 	jsr	errputs
+	inc	status
 	bra	done		  and terminate.
 
 ;
@@ -490,19 +508,7 @@ loop	anop
 
 	bra	loop
 
-done	lda	space
-	sta	end-3
-	lda	space+1
-	sta	end-2
-	pld
-	tsc
-	clc
-	adc	#end-4
-	tcs
-
-	lda	#0
-
-	rtl	  
+done	return 2:status
 
 expmutex	key
 
@@ -529,16 +535,12 @@ Usage	dc	c'Usage: export var ...',h'0d00'
 
 unset	START
 
-space	equ	1
-argc	equ	space+3
-argv	equ	argc+2
-end	equ	argv+4
+status	equ	0
+space	equ	status+2
 
-;	 subroutine (4:argv,2:argc),space
+	subroutine (4:argv,2:argc),space
 
-	tsc
-	phd
-	tcd
+	stz	status
 
 	lda	argc	Get parameter count.
 	dec	a	If < 1
@@ -546,7 +548,8 @@ end	equ	argv+4
 	ldx	#^Usage		Print usage string
 	lda	#Usage
 	jsr	errputs
-	bra	done		  and terminate.
+	inc	status		  set return status = 1
+	bra	done		   and terminate.
 
 ;
 ; Loop to process all the variables to export
@@ -584,19 +587,7 @@ loop	anop
 
 	bra	loop
 
-done	lda	space
-	sta	end-3
-	lda	space+1
-	sta	end-2
-	pld
-	tsc
-	clc
-	adc	#end-4
-	tcs
-
-	lda	#0
-
-	rtl	  
+done	return 2:status
 
 unsmutex	key
 

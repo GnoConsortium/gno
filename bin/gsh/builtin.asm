@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: builtin.asm,v 1.7 1998/10/26 17:04:49 tribby Exp $
+* $Id: builtin.asm,v 1.8 1998/12/21 23:57:04 tribby Exp $
 *
 **************************************************************************
 *
@@ -129,8 +129,9 @@ foundit	ldy	#4
 	pei	(argv)
 	pei	(argc)
 ourproc	jsl	>$FFFFFF	;might want to mutex this!!!!!!
-	sta	val
+	sta	val	Save return status.
 
+	ph4	#0	(no path)
 	pei	(argc)
 	pei	(argv+2)
 	pei	(argv)
@@ -403,6 +404,7 @@ getinfo	GetFileInfo GRec
 	bcc	ok
 ohshit	sta	ErrError
 	ErrorGS Err
+	inc	status	Return status = 1.
 	bra	done
 
 ok	if2	GRecFT,eq,#$F,ok2
@@ -412,6 +414,7 @@ ok	if2	GRecFT,eq,#$F,ok2
 	ldx	#^direrr
 	lda	#direrr
 	jsr	errputs
+	inc	status	Return status = 1.
 	bra	done
 
 ;
@@ -440,7 +443,7 @@ exit	unlock cdmutex
 	adc	#end-4
 	tcs
 
-	tay		Put return status in Accumulator.
+	tya		Put return status in Accumulator.
 
 	rtl
 
@@ -498,10 +501,12 @@ end	equ	argv+4
 	ldx	#^Usage
 	lda	#Usage
 	jsr	errputs
+	ldy	#1	Return status = 1.
 	bra	exit
 
 clearit	jsr	clearscrn
 	jsr	flush
+	ldy	#0	Return status = 0.
 
 exit	lda	space
 	sta	end-3
@@ -513,7 +518,7 @@ exit	lda	space
 	adc	#end-4
 	tcs
 
-	lda	#0
+	tya
 
 	rtl	  
 
@@ -537,7 +542,8 @@ echo	START
 val	equ	1
 nl	equ	val+2	flag: was -n option set?
 ptr	equ	nl+2
-space	equ	ptr+4
+status	equ	ptr+4
+space	equ	status+2
 argc	equ	space+3
 argv	equ	argc+2
 end	equ	argv+4
@@ -553,6 +559,7 @@ end	equ	argv+4
 	phd
 	tcd
 
+	stz	status	Clear return status.
 	stz	nl	Clear the -n flag.
 	dec	argc	Decrement argument counter.
 	jeq	done	Done if no more arguments.
@@ -578,6 +585,7 @@ end	equ	argv+4
 showusage	ldx	#^Usage	Incorrect parameter usage:
 	lda	#Usage	 display the usage string.
 	jsr	errputs
+	inc	status	Return status = 1.
 	jmp	exit
 
 gotn	iny
@@ -662,7 +670,7 @@ done	lda	nl	If "-n" flag isn't set,
 	jsr	newline	  add a newline.
 
 exit	jsr	flush	Print the buffer.
-
+	ldy	status
 
 * Clear parameters from stack and return from subroutine.
 
@@ -676,7 +684,7 @@ exit	jsr	flush	Print the buffer.
 	adc	#end-4
 	tcs
 
-	lda	#0
+	tya
 
 	rtl	  
 
@@ -716,6 +724,7 @@ end	equ	argv+4
 	ldx	#^Usage	  print the usage string.
 	lda	#Usage
 	jsr	errputs
+	ldy	#1	Return status = 1.
 	bra	exit
 
 wait	lock	pwdmutex	
@@ -744,6 +753,7 @@ freebuf	ph4	ptr	Free the buffer.
 	jsl	nullfree
 
 done	unlock pwdmutex
+	ldy	#0	Return status = 0.
 
 exit	lda	space	Deallocate stack space
 	sta	end-3	 and return to the caller.
@@ -755,7 +765,7 @@ exit	lda	space	Deallocate stack space
 	adc	#end-4
 	tcs
 
-	lda	#0	Return status always 0.
+	tya		Return status.
 
 	rtl	  
 
@@ -779,8 +789,10 @@ which	START
 	using hashdata
 
 ptr	equ	1
-file	equ	ptr+4
-space	equ	file+4
+sptr	equ	ptr+4
+file	equ	sptr+4
+status	equ	file+4
+space	equ	status+2
 argc	equ	space+3
 argv	equ	argc+2
 end	equ	argv+4
@@ -793,13 +805,16 @@ end	equ	argv+4
 	tcs
 	phd
 	tcd
+
+	stz	status	Clear return status.
 ;
-; display usage if no arguments given
+; Display usage if no argument
 ;
 	if2	argc,ge,#2,loop
 	ldx	#^whicherr
 	lda	#whicherr
 	jsr	errputs
+	inc	status	Return status = 1
 	jmp  exit
 ;
 ; loop through each argument
@@ -858,7 +873,12 @@ tryhash	pei	(file+2)
 ;
 ; It was hashed, so say so.
 ;
-foundhash	jsr	puts
+foundhash	sta	sptr
+	stx	sptr+2
+	jsr	puts
+	pei	(sptr+2)	Free memory allocated
+	pei	(sptr)	 by search to hold full path.
+	jsl	nullfree
 	jmp	nextarg
 ;
 ; It must be in the current prefix, so check it out.
@@ -928,7 +948,8 @@ donecwd	unlock pwdmutex
 nextarg	jsr	newline
 	jmp	loop
 
-exit	lda	space
+exit	ldy	status
+	lda	space
 	sta	end-3
 	lda	space+1
 	sta	end-2
@@ -938,7 +959,7 @@ exit	lda	space
 	adc	#end-4
 	tcs
 
-	lda	#0
+	tya
 
 	rtl	  
 
@@ -962,7 +983,7 @@ GRecAuxType	ds	4
 * PREFIX: builtin command
 * syntax: prefix [num [prefix]]
 *
-* sets prefix number num to prefix
+* sets prefix number num to prefix or print list of all prefixes
 *
 **************************************************************************
 
@@ -971,7 +992,8 @@ prefix	START
 dir	equ	1
 numstr	equ	dir+4
 pfxnum	equ	numstr+4
-space	equ	pfxnum+2
+status	equ	pfxnum+2
+space	equ	status+2
 argc	equ	space+3
 argv	equ	argc+2
 end	equ	argv+4
@@ -987,6 +1009,7 @@ end	equ	argv+4
 
 	lock	mutex
 
+	stz	status	Clear return status.
 	lda	argc	Get number of arguments.
 	dec	a
 	beq	showall	If no parameters, show all prefixes.
@@ -998,7 +1021,9 @@ end	equ	argv+4
 	ldx	#^usage
 	lda	#usage
 	jsr	errputs
-	jmp	done
+	jmp	badstat
+
+; -------------------------------------------------------------------
 ;
 ; No parameters provided: show all the prefixes
 ;
@@ -1016,16 +1041,7 @@ showall	anop
 
 	ldx	#^bootstr
 	lda	#bootstr
-	jsr	puts
-	ldx	dir+2
-	lda	dir	X/A = address of
-	clc		 text (four bytes
-	adc	#4	  beyond start).
-	bcc	doputs
-	inx
-doputs	jsr	puts	Print the directory name
-	jsr	newline	 and a newline.
-	bra	nextall	Jump into the all loop.
+	bra	printid	Jump into the loop
 
 allloop	lda	pfxnum
 	pha
@@ -1042,7 +1058,7 @@ allloop	lda	pfxnum
 	Int2Dec (pfxnum,#pfxstr,#2,#0)
 	ldx	#^pfxstr
 	lda	#pfxstr
-	jsr	puts
+printid	jsr	puts
 	ldx	dir+2
 	lda	dir	X/A = address of
 	clc		 text (four bytes
@@ -1056,8 +1072,9 @@ nextall	ph4	dir	Free the GS/OS result buffer
 	jsl	nullfree	 allocated for pathname.
 bumppfx	inc	pfxnum	Bump the prefix number.
 	if2	pfxnum,cc,#32,allloop
-	jmp	finish
+	jmp	done
 
+; -------------------------------------------------------------------
 ;
 ; One parameter provided: show a single prefix
 ;    
@@ -1103,6 +1120,7 @@ donewline	jsr	newline
 	jsl	nullfree	 allocated for pathname.
 	jmp	done
 
+; -------------------------------------------------------------------
 ;
 ; Two parameters provided: set a prefix
 ;
@@ -1149,6 +1167,7 @@ ok	if2	GRecFT,eq,#$F,ok2	If filetype != $F,
 	ldx	#^direrr		print error message
 	lda	#direrr		 'Not a directory'
 	jsr	errputs
+badstat	inc	status	Return status = 1.
 	bra	done
 
 ok2	SetPrefix PRec	Set the prefix.
@@ -1156,12 +1175,21 @@ ok2	SetPrefix PRec	Set the prefix.
 	ldx	#^errorstr		print error message
 	lda	#errorstr		 'could not set prefix,
 	jsr	errputs		   pathname may not exist.'
+	inc	status	Return status = 1.
 
+; -------------------------------------------------------------------
+;
+; All done: cleanup and return
+;
 finish	ph4	PRecPath	Free the name string buffer.
 	jsl	nullfree
 
-
+;
+; Exit through here if PRecPath wasn't used
+;
 done	unlock mutex
+
+	ldy	status
 
 	lda	space
 	sta	end-3
@@ -1173,7 +1201,7 @@ done	unlock mutex
 	adc	#end-4
 	tcs
 
-	lda	#0
+	tya
 
 	rtl	  
 
@@ -1228,14 +1256,12 @@ ErrError	ds	2	Error number
 rehash	START
 unhash	ENTRY
 
-space	equ	1
-argc	equ	space+3
-argv	equ	argc+2
-end	equ	argv+4
+status	equ	0
+space	equ	status+2
 
-	tsc
-	phd
-	tcd
+	subroutine (4:argv,2:argc),space
+
+	stz	status
 
 	lda	argc
 	dec	a
@@ -1251,6 +1277,7 @@ end	equ	argv+4
 	jsr	errputs
 	lda	#13
 	jsr	errputchar
+	inc	status	Return status = 1.
 	bra	exit
 
 doit	jsr	dispose_hash	;remove old table
@@ -1266,19 +1293,7 @@ doit	jsr	dispose_hash	;remove old table
 	if2	@a,eq,#'u',exit	;if 'rehash' do the hashing.
 	jsl	hashpath	;hash the path
 
-exit	lda	space
-	sta	end-3
-	lda	space+1
-	sta	end-2
-	pld
-	tsc
-	clc
-	adc	#end-4
-	tcs
-
-	lda	#0
-
-	rtl	  
+exit	return 2:status
 
 Usage	dc	c'Usage: ',h'00'
 
@@ -1322,9 +1337,12 @@ setdebug	START
 arg	equ	0
 newdebug	equ	arg+4
 mode	equ	newdebug+2
-space	equ	mode+2
+status	equ	mode+2
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
+
+	stz	status
 
 	lda	argc
 	dec	a
@@ -1332,6 +1350,7 @@ space	equ	mode+2
 showusage	ldx	#^usage
 	lda	#usage
 	jsr	errputs
+	inc	status	Return status = 1.
 	jmp	return
 
 ok	stz	mode
@@ -1377,7 +1396,7 @@ turnnext	sta	newdebug
 
 done	setdebug newdebug
 	mv2	newdebug,globaldebug
-return	return 2:#0
+return	return 2:status
 
 findflag	incad	arg
 	ldy	#0
@@ -1472,9 +1491,12 @@ ps2	equ	t+4
 pr2	equ	ps2+4
 pr	equ	pr2+4
 ps	equ	pr+4
-space	equ	ps+4
+status	equ	ps+4
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
+
+	stz	status
 
 	lda	argc
 	dec	a
@@ -1482,6 +1504,7 @@ space	equ	ps+4
 showusage	ldx	#^usage
 	lda	#usage
 	jsr	errputs
+	inc	status	Return status = 1.
 	jmp	return
 
 ok	getuid
@@ -1494,6 +1517,7 @@ ok	getuid
 	ldx	#^kvmerrstr
 	lda	#kvmerrstr
 	jsr	errputs
+	inc	status	Return status = 1.
 	jmp	done
 
 ok2	ldx	#^header
@@ -1679,7 +1703,7 @@ skip	jmp	loop
 
 done	kvm_close ps
 
-return	return 2:#0
+return	return 2:status
 
 usage	dc	c'Usage: ps',h'0d00'
 kvmerrstr	dc	c'ps: error in kvm_open()',h'0d00'
@@ -1723,11 +1747,24 @@ hashbi	START
 sv	equ	0
 q	equ	sv+4
 p	equ	q+4
-space	equ	p+4
+status	equ	p+4
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
-	ph2	t_size	Get size of hash table.
+	stz	status
+
+	lda	argc
+	dec	a
+	beq	dohash
+
+	ldx	#^Usage
+	lda	#Usage
+	jsr	errputs
+	inc	status	Return status = 1.
+	bra	exit
+
+dohash	ph2	t_size	Get size of hash table.
 	jsl	sv_alloc	Allocate a string vector array.
 	sta	sv
 	stx	sv+2
@@ -1791,7 +1828,9 @@ doneadd	anop
 	pei	(sv)
 	jsl	sv_dispose	Dispose of the string vector memory.
 
-exit	return 2:#0
+exit	return 2:status
+
+usage	dc	c'Usage: hash',h'0d00'
 
 	END
 
@@ -1859,11 +1898,24 @@ cmdbi	START
 	using	BuiltinData
 
 sv	equ	0
-space	equ	sv+4
+status	equ	sv+4
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
-	ph2	#50
+	stz	status
+
+	lda	argc
+	dec	a
+	beq	docmds
+
+	ldx	#^Usage
+	lda	#Usage
+	jsr	errputs
+	inc	status	Return status = 1.
+	bra	exit
+
+docmds	ph2	#50
 	jsl	sv_alloc
 
 	sta	sv
@@ -1903,6 +1955,8 @@ doneadd	anop
 	pei	(sv)
 	jsl	sv_dispose
 
-exit	return 2:#0
+exit	return 2:status
+
+usage	dc	c'Usage: commands',h'0d00'
 
 	END

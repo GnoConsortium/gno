@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: alias.asm,v 1.6 1998/09/08 16:53:05 tribby Exp $
+* $Id: alias.asm,v 1.7 1998/12/21 23:57:04 tribby Exp $
 *
 **************************************************************************
 *
@@ -25,7 +25,7 @@
 *	Returns with status=0 in Accumulator
 *
 * unalias	subroutine (4:argv,2:argc)
-*	Returns with status=0 in Accumulator
+*	return 2:status
 *			 
 * initalias	jsr/rts with no parameters
 *
@@ -240,16 +240,12 @@ spacestr	dc	c' ',h'00'
 
 unalias	START
 
-space	equ	1
-argc	equ	space+3
-argv	equ	argc+2
-end	equ	argv+4
+status	equ	0
+space	equ	status+2
 
-;	 subroutine (4:argv,2:argc),space
+	subroutine (4:argv,2:argc),space
 
-	tsc
-	phd
-	tcd
+	stz	status
 
 	lda	argc
 	dec	a
@@ -258,6 +254,7 @@ end	equ	argv+4
 	ldx	#^Usage
 	lda	#USage
 	jsr	errputs
+	inc	status	Return status = 1.
 	bra	done
 
 loop	add2	argv,#4,argv
@@ -273,19 +270,7 @@ loop	add2	argv,#4,argv
 
 	bra	loop
 
-done	lda	space
-	sta	end-3
-	lda	space+1
-	sta	end-2
-	pld
-	tsc
-	clc
-	adc	#end-4
-	tcs
-
-	lda	#0
-
-	rtl	  
+done	return 2:status
 
 Usage	dc	c'Usage: unalias name ...',h'0d00'
 

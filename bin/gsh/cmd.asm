@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: cmd.asm,v 1.7 1998/10/26 17:04:49 tribby Exp $
+* $Id: cmd.asm,v 1.8 1998/12/21 23:57:05 tribby Exp $
 *
 **************************************************************************
 *
@@ -27,11 +27,11 @@
 *	Returns value of token in Accumulator
 *
 *   command	subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,
-*		4:pipesem,4:stream)
+*		4:pipesem,4:stream,4:awaitstatus)
 *	Called by execute to act on a single command
 *	Returns next token in Accumulator
 *
-*   argfree	subroutine (2:argc,4:argv)
+*   argfree	subroutine (4:path,2:argc,4:argv)
 *
 *   ShellExec	subroutine (4:path,2:argc,4:argv,2:jobflag)
 *	Reads and executes commands from an exec file.
@@ -348,7 +348,8 @@ temp	equ	append+2
 argc	equ	temp+4
 token	equ	argc+2
 space	equ	token+2
-stream	equ	space+3
+awaitstatus	equ	space+3
+stream	equ	awaitstatus+4
 pipesem	equ	stream+4
 inpipe2	equ	pipesem+4
 jobflag	equ	inpipe2+2
@@ -356,7 +357,7 @@ inpipe	equ	jobflag+2
 waitpid	equ	inpipe+2
 end	equ	waitpid+4
 
-;	 subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,4:pipesem,4:stream),space
+;	 subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,4:pipesem,4:stream,4:awaitstatus),space
 
 	tsc
 	sec
@@ -612,7 +613,15 @@ tok_eof	anop
 	lda	#spcmdstr	   specify a command before redirecting.
 	jsr	errputs
 
-nulldone	lda	#0	Clear the waitpid
+nulldone	anop
+	pei	(cmdline+2)	Free buffers
+	pei	(cmdline)	 allocated for
+	jsl	nullfree	  command line
+	pei	(argv+2)	   and argv.
+	pei	(argv)
+	jsl	nullfree
+
+	lda	#0	Clear the waitpid
 	sta	[waitpid]	 and return as if
 	lda	#T_NULL	  nothing were parsed.
 	jmp	exit
@@ -639,7 +648,7 @@ bar2	clc		Calculate 32-bit address
 	adc	#pipefds	  pipefds in X and A.
 	ldx	#0
 	pipe	@xa	Allocate 2 file descriptor pipe
-; >> NOTE: what if pipes return errors?
+; >> NOTE: what if pipe returns error?
 
 ;
 ; Call invoke			param size:name
@@ -668,15 +677,23 @@ run2	phx
 	pei	(pipefds)	2: pipeout2 (allocated: write end)
 	pei	(pipesem+2)	4: pipesem  (param passed in)
 	pei	(pipesem)
+	pei	(awaitstatus+2)	4: awaitstatus (address) [New for v2.0]
+	pei	(awaitstatus)
+	lda	#-1	Set waitstatus = -1; it will be set to
+	sta	[awaitstatus]	 0 or 1 iff unforked builtin is called.
 	jsl	invoke
 	sta	pid
-	cmp	#-1
-	beq	exit
+	cmp	#-1	If invoke detected an error,
+	beq	exit	 all done.
 
 
 ; If next token is "|", recursively call command.
 
 	if2	token,ne,#T_BAR,run3
+
+	lda	#-1	Pre-set for error flag.
+	ldx	pid	If no child was forked,
+	beq	exit	 all done.
 
 	pei	(waitpid+2)	4: waitpid
 	pei	(waitpid)
@@ -687,6 +704,8 @@ run2	phx
 	pei	(pipesem)
 	pei	(stream+2)	4: stream
 	pei	(stream)
+	pei	(awaitstatus+2)	4: awaitstatus
+	pei	(awaitstatus)
 	jsl	command
 	bra	exit
 
@@ -694,9 +713,10 @@ run3	lda	pid
 	sta	[waitpid]
 	lda	token
 
-; clean up
-
-exit	pha
+;
+; Free allocated memory and return to caller
+;
+exit	pha		Hold return status on stack.
 
 	lda	dstfile
 	ora	dstfile+2
@@ -726,7 +746,7 @@ ex3	anop
 	lda	word
 	jsl	free1024
 
-	ply
+	ply		Get return value.
 
 	lda	space
 	sta	end-3
@@ -741,14 +761,18 @@ ex3	anop
 	tya
 	rtl
 
-error	ldx	#^err00
+;
+; Print error message, deallocate memory, and return with value -1
+;
+error	ldx	#^err00	(Add high word of error address)
 	jsr	errputs
 
 tok_error	pei	(cmdline+2)
 	pei	(cmdline)
 	jsl	nullfree
 
-exit1a	pei	(argc)
+	ph4	#0	(no path to be freed)
+	pei	(argc)
 	pei	(argv+2)
 	pei	(argv)
 	jsl	argfree
@@ -779,9 +803,13 @@ argfree	START
 
 space	equ	0
 
-	subroutine (2:argc,4:argv),space
+	subroutine (4:path,2:argc,4:argv),space
 
-free1	lda	argc
+	pei	path+2	Free the path.
+	pei	path
+	jsl	nullfree
+
+free1	lda	argc	Free each of the argv elements.
 	beq	free2
 	dec	a
 	asl2	a
@@ -795,7 +823,8 @@ free1	lda	argc
 	jsl	nullfree
 	dec	argc
 	bra	free1
-free2	pei	(argv+2)
+
+free2	pei	(argv+2)	Free the argv array.
 	pei	(argv)
 	jsl	nullfree
 	return
@@ -1135,10 +1164,10 @@ execute	START
 
 exebuf	equ	1
 pipesem	equ	exebuf+4
-ptr2	equ	pipesem+2
-waitstatus	equ	ptr2+4
-ptr	equ	waitstatus+2
-pid	equ	ptr+4
+ptr_glob	equ	pipesem+2
+waitstatus	equ	ptr_glob+4
+ptr_envexp	equ	waitstatus+2
+pid	equ	ptr_envexp+4
 term	equ	pid+2
 cmdstrt	equ	term+2
 cmdend	equ	cmdstrt+4
@@ -1284,48 +1313,48 @@ expand	anop
 	pei	(cmdstrt+2)
 	pei	(cmdstrt)
 	jsl	expandvars
+	sta	ptr_envexp
+	stx	ptr_envexp+2
 
 ; Expand wildcard characters in the modified command line
 	phx
 	pha
-	sta	ptr
-	stx	ptr+2
 	jsl	glob
+	sta	ptr_glob
+	stx	ptr_glob+2
 
-; Expand aliases in the modified command line
+; Expand aliases in the modified command line (final expansion)
 	phx	              
 	pha
-	sta	ptr2
-	stx	ptr2+2
 	jsl	expandalias
-
-	phx	         
-	pha
 	sta	exebuf
 	stx	exebuf+2
 
+	phx		Put exebuf on stack for
+	pha		 nullfree at endcmd.
+
 * >> Temporary debug code: echo expanded command if echo is set.
 	using	vardata
-	lda	varecho
+	ldy	varecho
 	beq	noecho
-	ldx	exebuf+2
-	lda	exebuf
-	jsr	puts
+	jsr	puts	NOTE: x/a = exebuf
 	jsr	newline
 noecho	anop
 
-
-	ldx	ptr+2
-	lda	ptr
+	ldx	ptr_envexp+2	Free memory allocated
+	lda	ptr_envexp	 for env var expansion
 	jsl	free1024
-	ldx	ptr2+2
-	lda	ptr2
+	ldx	ptr_glob+2	  and globbing.
+	lda	ptr_glob
 	jsl	free1024
 		         
+;
+; If exebuf pointer is null, bail out.
+;  >> NOTE: if exebuf is checked for null, shouldn't the other ptrs?
+;
 	lda	exebuf
 	ora	exebuf+2
 	bne	loop
-
 	pla
 	pla
 	stz	term
@@ -1334,7 +1363,7 @@ noecho	anop
 
 
 *   command	subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,
-*		4:pipesem,4:stream)
+*		4:pipesem,4:stream,4:awaitstatus)
 loop	pea	0	;Bank 0		waitpid (hi)
 	tdc
 	clc
@@ -1353,23 +1382,39 @@ loop	pea	0	;Bank 0		waitpid (hi)
 	clc
 	adc	#exebuf
 	pha				stream (low)
+	pea	0	;Bank 0		status (hi) [New: v2.0]
+	tdc
+	clc
+	adc	#waitstatus
+	pha				status (low)
 	jsl	command  
 
-	sta	term
-	jmi	noerrexit
+	sta	term	Save result in term.
+	jmi	errexit	If < 0, all done.
 
-	lda	pid
-	jeq	donewait
+; If waitstatus != -1, executed command was a non-forked builtin,
+; and waitstatus is its completion status.
+	lda	waitstatus
 	cmp	#-1
-	jeq	noerrexit
+	beq	chkpid
+	jsr	setstatus	Set $status.
+	bra	godonewait	No need to wait.
 
-	lda	jobflag
-	jeq	jobwait
+chkpid	lda	pid	Get child process id.
+	beq	godonewait	If 0 (no fork), no need to wait.
+	cmp	#-1	If -1 (error), all done.
+	jeq	errexit
 
-	signal (#SIGINT,#0)
-	phx
-	pha
-	signal (#SIGTSTP,#0)
+	lda	jobflag	If jobflag is set,
+	beq	jobwait	 do more complicated wait.
+
+;
+; Uncomplicated wait: simply call wait() to get child's termination status
+;
+	signal (#SIGINT,#0)	Use default interrupt and
+	phx		 keyboard stop signal handlers,
+	pha		  and put address of current
+	signal (#SIGTSTP,#0)	   handlers on the stack.
 	phx
 	pha
 
@@ -1384,53 +1429,79 @@ otherwait	anop
 	lda	waitstatus
 	and	#$FF
 	cmp	#$7F	Check for WSTOPPED status.
-	beq	otherwait
-	lda	waitstatus 
-	jsr	setstatus
+	beq	otherwait	Something else...wait again.
 
-	pla
-	plx
+	lda	waitstatus 
+	jsr	setstatus	Set process's $status.
+
+	pla		Restore gsh's interrupt and
+	plx		 keyboard stop signal handlers.
 	signal (#SIGTSTP,@xa)
 	pla
 	plx
 	signal (#SIGINT,@xa)
 
-	bra	donewait
+godonewait	bra	donewait
 
+;
+; jobflag = 0: need more complicated wait for child
+;
 jobwait	anop
 	signal (#SIGCHLD,#pchild)  Ensure child sig handler active.
 	phx		  Save address of previous sig handler.
 	pha
-	kill	(pid,#0)	If child no longer exists,
+	kill	(pid,#0)	If child no longer exists
 	beq	wait4job
+
 	pei	pid
-	jsl	removejentry	   Remove it from the list.
-	bra	setwstat
-wait4job	jsl	pwait	Otherwise, wait for it.
-setwstat	stz	waitstatus
-	pla		Restore previous child completion
+	jsl	removejentry	   Remove its pid from the list.
+	beq	restoresigh	   Pid not in list: assume $status set.
+
+	ldx	#0
+	clc
+	tdc
+	adc	#waitstatus
+	wait	@xa	   Get child completion status.
+	lda	waitstatus 
+	jsr	setstatus	   Set process's $status.
+	bra	restoresigh
+;
+; Child is active: wait for it to complete and get its status.
+; NOTE: $status is set by SIGCHLD signal handler, pchild
+;
+wait4job	jsl	pwait	Wait for child using pchild
+
+
+restoresigh	pla		Restore previous child completion
 	plx		 signal handler.
 	signal (#SIGCHLD,@xa)
 
-; If command detected EOF terminator, all done
-donewait	if2	term,eq,#T_EOF,noerrexit
-	lda	[exebuf]	If not at end of line,
+;
+; Done waiting for completion status.  Check the token last parsed
+; from the command line.
+;
+donewait	if2	term,eq,#T_EOF,endcmd If last token was EOF
+	lda	[exebuf]	    or if next character is \0,
 	and	#$FF
-	beq	exit	
-	jmp	loop	  process the next command.
+	beq	endcmd	     all done with this command.
+
+	jmp	loop	  Process the next command.
 
 ;
-; NOTE: non-forked builtins have no mechanism to return command status
+; Underlying routine detected an error. Set waitstatus = -1
 ;
+errexit	lda	#-1
+	sta	waitstatus
 
-noerrexit	stz	waitstatus
-
-exit	jsl	nullfree
-	lda	term	;make sure we return -1 if error
+;
+; We have completed processing of a command
+;
+endcmd	jsl	nullfree	Free exebuf (addr on stack).
+	lda	term	Return -1 if error
 	bmi	chk_cmd
 
-	lda	waitstatus
-	xba
+	lda	waitstatus	Get completion status, and convert
+	xba		 from wait() format to byte value.
 	and	#$FF
 
 ;
@@ -1488,14 +1559,15 @@ space	equ	retval+2
 	lda	str	If user passes a
 	ora	str+2	 null pointer,
 	bne	makecall
-	ina		  return 1 to caller.
+	dec	a	  return -1 to caller.
+	bra	setrtn
 
 ;
 ; Let execute(str,1) do the work
 ;
 makecall	pei	(str+2)
 	pei	(str)
-	ph2	#1	jobflag=1 says we're called by system
+	ph2	#1	jobflag=1
 	jsl	execute
 ;
 ; Set status and go back to the caller

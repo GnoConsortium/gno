@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: jobs.asm,v 1.7 1998/10/26 17:04:50 tribby Exp $
+* $Id: jobs.asm,v 1.8 1998/12/21 23:57:06 tribby Exp $
 *
 **************************************************************************
 *
@@ -81,8 +81,8 @@ pwait	START
 
 	using	pdata
 
-waitpid	equ	1
-oldsig	equ	waitpid+2
+mypid	equ	1
+oldsig	equ	mypid+2
 p	equ	oldsig+4
 space	equ	p+4
 end	equ	space+3
@@ -97,7 +97,7 @@ end	equ	space+3
 	tcd
 
 	getpid	Get process ID.
-	sta	waitpid
+	sta	mypid
 
 ;
 ; Start of loop that waits for child processes to complete
@@ -125,15 +125,15 @@ loop	sta	p	Save job entry pointer in p.
 	ldy	#p_flags	Get entry's job status flags.
 	lda	[p],y
 	and	#PFOREGND+PRUNNING
-	cmp	#PFOREGND+PRUNNING
-	bne	getnext
+	cmp	#PFOREGND+PRUNNING If running in foreground,
+	bne	getnext	 look at the next entry.
 
 	ldy	#p_pid	Get entry's process ID.
 	lda	[p],y
-	cmp	waitpid
-	beq	getnext
+	cmp	mypid	If it's this processes' pid,
+	beq	getnext	 look at the next entry.
 
-; check if the process is actually running..if it is not, report to the
+; Check if the process is actually running..if it is not, report to the
 ; user that a stale process was detected and remove it from job control.
 
 	unlock plistmutex
@@ -510,14 +510,14 @@ end	equ	code+2
 	wait	@xa
 	sta	pid
 ;
-; search for the job that has finished.
+; Search job list for the process that has finished.
 ;
 	lda	pjoblist
 	ldx	pjoblist+2
 lookloop	sta	p
 	stx	p+2
-	ora	p+2
-	jeq	done
+	ora	p+2	If at end of job list,
+	jeq	done	 the process was not found.
 	ldy	#p_jobid
 	lda	[p],y
 	cmp	pid
@@ -528,8 +528,9 @@ lookloop	sta	p
 	ldy	#p_next
 	lda	[p],y
 	bra	lookloop
+
 ;
-; see how wait was signaled.
+; See how wait was signaled.
 ;
 lookfound	anop
 	lda	waitstatus
@@ -660,7 +661,8 @@ valstat_text	dc	c'000'	Text (up to three digits)
 
 ;====================================================================
 ;
-; remove an entry in the job list, based on process number
+; Remove an entry in the job list, based on process number
+; Return with A-reg = 1 if found, 0 if not found
 ;
 ;====================================================================
 
@@ -670,7 +672,8 @@ removejentry	START
 
 p	equ	1
 prev	equ	p+4
-space	equ	prev+4
+found	equ	prev+4
+space	equ	found+2
 pid	equ	space+3	process id
 end	equ	pid+2
 
@@ -683,6 +686,7 @@ end	equ	pid+2
 	phd
 	tcd
 
+	stz	found
 	stz	prev  
 	stz	prev+2
 	lock	plistmutex	Ensure list doesn't change.
@@ -710,7 +714,8 @@ loop	sta	p	Get next entry in job list.
 ;
 ; Entry found: adjust linked list pointers
 ;
-gotit	ora2	prev,prev+2,@a	If prev != NULL,
+gotit	inc	found	found = TRUE
+	ora2	prev,prev+2,@a	If prev != NULL,
 	beq	gotit2
 	ldy	#p_next		prev->next = p->next
 	lda	[p],y
@@ -830,6 +835,7 @@ gotmax	mv2	prev,pmaxindex
 
 done	anop
 	unlock plistmutex
+	ldy	found
 	lda	space+1
 	sta	end-2
 	lda	space
@@ -839,6 +845,7 @@ done	anop
 	clc
 	adc	#end-4
 	tcs
+	tya		Return value = found flag.
 	
 	rtl
 
@@ -900,11 +907,13 @@ jobs	START
 pidflag	equ	0
 pp	equ	pidflag+2
 count	equ	pp+4
-space	equ	count+2
+status	equ	count+2
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
 	stz	pidflag
+	stz	status
 	lda	argc
 	dec	a
 	beq	cont
@@ -913,6 +922,7 @@ space	equ	count+2
 shit	ldx	#^Usage
 	lda	#Usage
 	jsr	errputs
+	inc	status	Return status = 1.
 	jmp	done
 
 grab	ldy	#4
@@ -959,7 +969,7 @@ next	inc	count
 	beq	loop
 	bcc	loop
 
-done	return 2:#0
+done	return 2:status
 
 Usage	dc	c'Usage: jobs [-l]',h'0d00'
 
@@ -980,7 +990,8 @@ ptr	equ	1
 arg	equ	ptr+4
 signum	equ	arg+4
 pid	equ	signum+2
-space	equ	pid+2
+status	equ	pid+2
+space	equ	status+2    
 argc	equ	space+3
 argv	equ	argc+2
 end	equ	argv+4
@@ -994,6 +1005,8 @@ end	equ	argv+4
 	phd
 	tcd
 
+	stz	status
+
 	lda	argc
 	dec	a
 	bne	init
@@ -1001,6 +1014,7 @@ end	equ	argv+4
 	ldx	#^Usage
 	lda	#Usage	
 	jsr	errputs
+	inc	status	Return status = 1.
 	jmp	done
 
 init	stz	pid
@@ -1047,6 +1061,7 @@ init	stz	pid
 ohshitnum	ldx	#^err1
 	lda	#err1
 	jsr	errputs
+	inc	status	Return status = 1.
 	jmp	done
 
 getname	lda	[arg]
@@ -1074,6 +1089,7 @@ nameloop	pei	(arg+2)
 	ldx	#^err3
 	lda	#err3
 	jsr	errputs
+	inc	status	Return status = 1.
 	bra	done
 
 next	dec	argc
@@ -1097,6 +1113,7 @@ getpid	pei	(arg+2)
 	ldx	#^err2
 	lda	#err2
 	jsr	errputs
+	inc	status	Return status = 1.
 	bra	done
 
 lister	ldx	#^liststr
@@ -1107,6 +1124,7 @@ lister	ldx	#^liststr
 killnull	ldx	#^err4
 	lda	#err4
 	jsr	errputs
+	inc	status	Return status = 1.
 	bra	done
 
 dokill	kill	(pid,signum)
@@ -1115,8 +1133,10 @@ dokill	kill	(pid,signum)
 	ldx	#^err2
 	lda	#err2
 	jsr	errputs
+	inc	status	Return status = 1.
 
-done	lda	space
+done	ldy	status
+	lda	space
 	sta	end-3
 	lda	space+1
 	sta	end-2
@@ -1126,7 +1146,7 @@ done	lda	space
 	adc	#end-4
 	tcs
 
-	lda	#0
+	tya
 
 	rtl	  
 
@@ -1188,10 +1208,12 @@ fg	START
 	
 pid	equ	0
 p	equ	pid+2
-space	equ	p+4
+status	equ	p+4
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
+	stz	status
 	lda	argc
 	dec	a
 	bne	getit
@@ -1278,8 +1300,9 @@ whoashit	ldx	#^err01
 nojob	ldx	#^err03
 	lda	#err03
 puterr	jsr	errputs
+	inc	status	Return status = 1.
 
-done	return 2:#0
+done	return 2:status
 
 usage	dc	c'Usage: fg [%job | pid]',h'0d00'
 err01	dc	c'fg: No job to foreground.',h'0d00'
@@ -1301,10 +1324,12 @@ bg	START
 	
 pid	equ	0
 p	equ	pid+2
-space	equ	p+4
+status	equ	p+4
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
+	stz	status
 	lda	argc
 	dec	a
 	bne	getit
@@ -1389,8 +1414,9 @@ whoashit	ldx	#^err01
 nojob	ldx	#^err03
 	lda	#err03
 puterr	jsr	errputs
+	inc	status	Return status = 1
 
-done	return 2:#0
+done	return 2:status
 
 usage	dc	c'Usage: bg [%job | pid]',h'0d00'
 err01	dc	c'bg: No job to background.',h'0d00'
@@ -1412,10 +1438,12 @@ stop	START
 	
 pid	equ	0
 p	equ	pid+2
-space	equ	p+4
+status	equ	p+4
+space	equ	status+4      
 
 	subroutine (4:argv,2:argc),space
 
+	stz	status
 	lda	argc
 	dec	a
 	bne	getit
@@ -1478,8 +1506,9 @@ whoashit	ldx	#^err01
 nojob	ldx	#^err03
 	lda	#err03
 puterr	jsr	errputs
+	inc	status	Return status = 1.
 
-done	return 2:#0
+done	return 2:status
 
 usage	dc	c'Usage: stop [%job | pid]',h'0d00'
 err01	dc	c'stop: No job to stop.',h'0d00'

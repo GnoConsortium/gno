@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: orca.asm,v 1.6 1998/09/08 16:53:12 tribby Exp $
+* $Id: orca.asm,v 1.7 1998/12/21 23:57:07 tribby Exp $
 *
 **************************************************************************
 *
@@ -62,7 +62,8 @@ space	equ	outPath+4
 	lda	#enofile	     no filename specified
 	jsr	errputs
 	lda	#1
-	bra	seterr
+	sta	retval
+	jmp	donedealloc
 
 
 ; Allocate memory for sFile, inPath, and outPath

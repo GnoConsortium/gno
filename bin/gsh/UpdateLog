@@ -1,6 +1,76 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Dec 20 98    [dmt] For calls to system(), if input pointer is null or
+	     lower level routines detect an error, return -1.  This change
+	     caused change to internal routine execute(): return -1 rather
+	     than 0 when an error is detected.
+	     Detect when non-forked builtin or directory name as command
+	     is combined with piped I/O, and ensure that situation is
+	     properly cleaned up. (Formerly, "clear | cat > /tmp/list"
+	     would cause a nasty crash.)
+
+Dec 18 98    [dmt] In execute() (cmd.asm), when child process isn't active
+	     and has no entry in the pid list, assume that pchild() has
+	     already set $status rather than forcing $status to 0.
+
+Dec 17 98    [dmt] argv and argc parameters were reversed in PrintHistory().
+	     This didn't make a difference until argc was checked for != 0.
+
+Dec 16 98    [dmt] Added waitstatus address parameters to command() and
+	     invoke() so completion status can be reported from unforked
+	     builtin commands. Added code in execute() to set status
+	     reported from unforked builtin commands.
+	     Reviewed all built-in commands to ensure they report 0 for
+	     no error and 1 for error.
+	     Fixed memory corruption error when edit command had no
+	     parameters (it called free1024 with random address).
+	     Added usage strings for tset, hash, commands, and history.
+
+Dec 13 98    [dmt] Resolved (or at least closed the window of opportunity
+	     on) defects reported in Oct. 6 and 10 entries. When a process
+	     terminated quickly [kill(pid,0) returned -1], that child's
+	     termination could interfere with detecting the next child's
+	     termination. Solution: Modify removejentry() (jobs.asm) to
+	     return 1 if entry is in list (indicating we expected status
+	     from it) and 0 if it isn't. Modify execute (cmd.asm) to get
+	     status via wait() if and only if removejobentry() returns 1.
+	     Previously, the following exec file often resulted in a hang:
+		  # Create exec file
+		  set tmpcmd=/tmp/testcmds
+		  echo "echo Sourcing $tmpcmd" > $tmpcmd
+		  echo "/bin/ps -l"           >> $tmpcmd
+		  chtyp -l exec $tmpcmd
+		  # Source that file; usually doesn't return
+		  source $tmpcmd
+
+Dec  5 98    [dmt] If either glogin file rehashed (for login shells only),
+	     that hash table's memory pointer was overwritten but not
+	     deallocated in shell (shell.asm). Fixed by adding a call to
+	     dispose_hash before calling hashpath.
+
+Nov 29 98    [dmt] Fix memory leak: deallocate name returned by hash
+	     search in invoke (invoke.asm) and which (builtin.asm).
+	     Deallocate path string in invoke by passing it as a new
+	     parameter to argfree, so that it is deallocated only after
+	     the child process is done with it.
+
+Nov 28 98    [dmt] When allocating memory for return string containing
+	     full path in search (hash.asm), add lengths of path + name + 1
+	     rather than path + 33.
+
+Nov 18 98    [dmt] Fix memory leak: when null command was encountered,
+	     the empty command line and argv array were not deallocated.
+
+Nov 12 98    [dmt] prefix command without parameters should not try to
+	     deallocate PRecPath, since it was not used. Causes corruption
+	     when PRecPath contains a value; fixed by jumping to done
+	     rather than finish.  Also, jump into "allloop" earlier and
+	     avoid 9 lines of duplicate code.
+
+Nov  2 98    [dmt] Changes to this point checked-in to master archive.
+	     Released as version 2.0d6
+
 Oct 29 98    [dmt] Defect introduced into 2.0d5 fixed: when background job
 	     completed, GetCmdLine thought there was an error on stdin. It
 	     printed a bogus error message and then quit.

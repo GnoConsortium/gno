@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: hash.asm,v 1.6 1998/09/08 16:53:09 tribby Exp $
+* $Id: hash.asm,v 1.7 1998/12/21 23:57:06 tribby Exp $
 *
 **************************************************************************
 *
@@ -361,7 +361,8 @@ done	anop
 search	START
 	
 ptr	equ	1
-full_path	equ	ptr+4
+name_len	equ	ptr+4
+full_path	equ	name_len+2
 qh	equ	full_path+4
 space	equ	qh+2
 paths	equ	space+3
@@ -428,6 +429,12 @@ found	lda	[ptr]
 	sta	ptr
 	ldx	paths+2
 	stx	ptr+2
+
+	pei	(file+2)
+	pei	(file)
+	jsr	cstrlen	Get length of prog name.
+	sta	name_len
+
 	ldy	#2
 	lda	[ptr],y
 	pha
@@ -435,8 +442,8 @@ found	lda	[ptr]
 	pha
 	jsr	cstrlen	Get length of path.
 	pha
-	clc
-	adc	#33	Add 33 (max prog name size + 1)
+	sec
+	adc	name_len	Add name length + 1 (carry bit).
 	pea	0
 	pha
 	~NEW		Allocate memory,

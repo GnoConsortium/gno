@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: term.asm,v 1.7 1998/10/26 17:04:51 tribby Exp $
+* $Id: term.asm,v 1.8 1998/12/21 23:57:08 tribby Exp $
 *
 **************************************************************************
 *
@@ -501,13 +501,27 @@ tset	START
 
 	using	global
 
-space	equ	0
+status	equ	0
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
-	jsr	readterm
+	stz	status
+	lda	argc
+	dec	a
+	beq	doterm
 
-	return
+	ldx	#^Usage
+	lda	#Usage
+	jsr	errputs
+	inc	status	Return status = 1.
+	bra	exit
+
+doterm	jsr	readterm
+
+exit	return 2:status
+
+usage	dc	c'Usage: tset',h'0d00'
 
 	END
 

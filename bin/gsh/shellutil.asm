@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shellutil.asm,v 1.6 1998/09/08 16:53:13 tribby Exp $
+* $Id: shellutil.asm,v 1.7 1998/12/21 23:57:08 tribby Exp $
 *
 **************************************************************************
 *
@@ -19,6 +19,57 @@
 * Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
 *              |     |                  |       |       |       |
 *	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+*   tolower	Convert the accumulator to lower case
+*		{accumulator = character}
+*		jsr tolower
+*		{if acc was uppercase it's now lowercase; else no change}
+*
+*   toslash	Convert ':' to '/'
+*		{accumulator = character}
+*		jsr toslash
+*		{if acc was ':', it's now '/'; otherwise no change}
+*
+*   lowercstr	Convert a c string to lower case
+*		{push address of c string on stack}
+*		jsr lowercstr
+*
+*   cstrlen	Get the length of a c string
+*		{push address of c string on stack}
+*		jsr cstrlen
+*		{return with len of string in acc}
+*                                          
+*   copycstr	Copy one string to another. Assumes an alloccstr has been
+*	performed on destination.
+*
+*   cmpcstr	Compare two c strings. Return 0 if equal, -1 if less than,
+*	+1 if greater
+*
+*   cmpdcstr	Compare two downshifted c strings. Return 0 if equal,
+*	-1 if less than, +1 if greater
+*
+*   c2gsstr	Allocate memory, then convert a c string to a GS/OS string
+*	(caller must dispose when done)
+*
+*   catcstr	Takes two strings, concats into a newly created string.
+*
+*   nullfree	Call ~DISPOSE if pointer is not NULL
+*
+*   newlineX	Print a carriage return and a newline, unless "newline" shell
+*	var is set.
+*
+*   getenv	Get value of indicated environment variable; pass in addr of a
+*	GS/OS string, and pass back addr of  allocated GS/OS result
+*	buffer (with null byte added at end).
+*	subroutine (4:var)
+*	return 4:ptr
+*
+*   rmemcpy
+*	subroutine (2:num,4:src,4:dest)
+*
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/shellutil.mac
@@ -479,7 +530,7 @@ newline	ENTRY
 * is written in assembly! :)
 *
 * For gsh 2.0: pass in addr of a GS/OS string, and pass back addr of
-* allocated GS/OS result buffer (with null word added at end), not c-strings.
+* allocated GS/OS result buffer (with null byte added at end), not c-strings.
 *
 **************************************************************************
 
@@ -582,11 +633,17 @@ TempRBlen	ds	2	Value's length returned here.
 
 	END
 
+**************************************************************************
+*
+* Copy src bytes to destination address
+*
+**************************************************************************
+
 rmemcpy	START
 	subroutine (2:num,4:src,4:dest),0
 
-	ldy	num
-	beq	done
+	ldy	num	Get length of src.
+	beq	done	Done if == 0.
 	tya
 	dey
 	bit	#1

@@ -1,18 +1,9 @@
-Last updated: Oct. 25, 1998  By: Dave Tribby
+Last updated: Dec. 18, 1998  By: Dave Tribby
 
 For more bug reports, see http://www.gno.org/~gno/bugs.html
 
 Completed items are reported in file UpdateLog.
 
-
-Executing the following exec file often results in a hang:
-  # Create exec file
-  set tmpcmd=/tmp/testcmds
-  echo "echo Sourcing $tmpcmd" > $tmpcmd
-  echo "/bin/ps -l"           >> $tmpcmd
-  chtyp -l exec $tmpcmd
-  # Source that file; usually doesn't return
-  source $tmpcmd
 
 Allow redirection of built-in commands' I/O even if they aren't forked.
 
@@ -21,7 +12,7 @@ non-forked, check dynamically and only fork when it's really necessary
 (background or piped).
 
 Identify limits built into gsh and how they can be changed; for example,
-size of $PATH <= 256; max programs in hash table = 256.
+command line cannot expand to > 1024 characters.
 
 When a background process finishes and there's text in the input buffer,
 the next keypress correctly reprints the edit line but the key itself does
@@ -30,8 +21,6 @@ not get put in the buffer.
 Running a process in the background from inside a script (not 'source',
 but executing the script as a command) causes the shell to wait for that
 background process to end - not exactly what we want.
-
-Usage for alias and hash
 
 Gsh requires the v2.0.4 ltermcap to link.  A new version of the termcap
 library is proposed for GNO v2.0.6, and gsh may require updates.
@@ -48,7 +37,7 @@ In expandvars (expand.asm):
  Add error checking if out buf gets too big (> 1024)
  Get rid of fixed buffers
 
-[ -- below this line...probably not -- ]
+[ -- below this line...probably never will be done -- ]
 
 write new memory management.
 

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: history.asm,v 1.6 1998/09/08 16:53:10 tribby Exp $
+* $Id: history.asm,v 1.7 1998/12/21 23:57:06 tribby Exp $
 *
 **************************************************************************
 *
@@ -584,11 +584,24 @@ PrintHistory	START
 	using global
 
 ptr	equ	0
-space	equ	ptr+4
+status	equ	ptr+4
+space	equ	status+2
 
-	subroutine (2:argc,4:argv),space
+	subroutine (4:argv,2:argc),space
 
-	lda	historyptr
+	stz	status
+
+	lda	argc
+	dec	a
+	beq	chkptr
+
+	ldx	#^usage
+	lda	#usage
+	jsr	errputs
+	inc	status	Return status = 1.
+	bra	done
+
+chkptr	lda	historyptr
 	ora	historyptr+2
 	beq	done
 
@@ -626,11 +639,13 @@ ok	jsr	puts
 next	dec	num
 	bra	loop1
 
-done	return 2:#0
+done	return 2:status
 
 numbstr	dc	c'0000:  ',h'00'
 num	ds	2
 count	ds	2
+
+usage	dc	c'Usage: history',h'0d00'
 
 	END
 

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: dir.asm,v 1.7 1998/10/26 17:04:50 tribby Exp $
+* $Id: dir.asm,v 1.8 1998/12/21 23:57:05 tribby Exp $
 *
 **************************************************************************
 *
@@ -79,10 +79,12 @@ dirs	START
 	using	DirData
 
 arg	equ	0
-space	equ	arg+4
+status	equ	arg+4
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
+	stz	status
 	lda	argc
 	dec	a
 	beq	showshort
@@ -107,6 +109,7 @@ space	equ	arg+4
 using	ldx	#^usingstr
 	lda	#usingstr
 	jsr	errputs
+	inc	status	Return status = 1.
 	bra	exit
 
 showlong	jsl	dotods	Set top of stack to current directory.
@@ -118,7 +121,7 @@ showshort	jsl	dotods	Set top of stack to current directory.
 	pea	1
 	jsl	showdir
 
-exit	return 2:#0
+exit	return 2:status
 
 usingstr	dc	c'usage: dirs [-l]',h'0d00'
 
@@ -141,10 +144,12 @@ pushd	START
 count	equ	0
 p	equ	count+2
 arg	equ	p+4
-space	equ	arg+4
+status	equ	arg+4
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
+	stz	status
 	lda	argc	Get number of arguments.
 	dec	a	If no parameters,
 	beq	xchange	 exchange top two dirs on stack.
@@ -283,6 +288,7 @@ godir	anop
 	ldx	#^errfull		print error message.
 	lda	#errfull
 prerrmsg	jsr	errputs
+	inc	status		Return status = 1.
 	bra	exit
 stackok	anop
 	jsl	dotods	Set top of stack to current directory.
@@ -306,7 +312,7 @@ done	lda	varpushdsil	If $PUSHDSILENT not defined,
 	pea	1
 	jsl	showdir	  show the directory stack.
 
-exit	return 2:#0
+exit	return 2:status
 
 usagestr	dc	c'usage: pushd [+n | dir]',h'0d00'
 err1	dc	c'pushd: No other directory',h'0d00'
@@ -333,10 +339,12 @@ popd	START
 
 count	equ	0
 arg	equ	count+2
-space	equ	arg+4
+status	equ	arg+4
+space	equ	status+2
 
 	subroutine (4:argv,2:argc),space
 
+	stz	status
 	lda	argc
 	dec	a
 	jeq	noarg
@@ -356,6 +364,7 @@ space	equ	arg+4
 using	ldx	#^usingstr
 	lda	#usingstr
 	jsr	errputs
+	inc	status	Return status = 1.
 	jmp	exit
 
 plus	add4	arg,#1,arg
@@ -377,6 +386,7 @@ plus	add4	arg,#1,arg
 pluserr	ldx	#^err2
 	lda	#err2
 	jsr	errputs
+	inc	status	Return status = 1.
 	bra	exit
 
 doplus	jsl	dotods	Set top of stack to current directory.
@@ -408,6 +418,7 @@ noarg	lda	tods
 	ldx	#^err1
 	lda	#err1
 	jsr	errputs
+	inc	status	Return status = 1.
 	bra	exit
 
 noarg0	lda	tods
@@ -437,7 +448,7 @@ gototop	lda	tods
 	pea	1
 	jsl	showdir
 
-exit	return 2:#0
+exit	return 2:status
 
 usingstr	dc	c'Usage: popd [+n]',h'0d00'
 err1	dc	c'popd: Directory stack empty',h'0d00'
