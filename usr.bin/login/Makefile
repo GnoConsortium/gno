@@ -1,5 +1,5 @@
 # From:	@(#)Makefile	8.1 (Berkeley) 7/19/93
-# $Id: Makefile,v 1.1 1998/02/09 08:19:19 taubert Exp $
+# $Id: Makefile,v 1.2 1998/03/11 03:04:57 gdr-ftp Exp $
 
 PROG=	login
 MAN1=	login.1
@@ -33,5 +33,6 @@ INSTALLFLAGS=-fschg
 DEBUG=	25
 OPTIMIZE=79
 STACK=	768
+BINDIR	= /usr/sbin
 
 .INCLUDE: /src/gno/prog.mk
