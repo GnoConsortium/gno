@@ -1,0 +1,251 @@
+.\" Copyright (c) 1990, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)syslog.conf.5	8.1 (Berkeley) 6/9/93
+.\"
+.TH SYSLOG.CONF 5 "4 October 1997" GNO "File Formats"
+.SH NAME
+.BR syslog.conf \-
+.BR syslogd (8)
+configuration file
+.SH DESCRIPTION
+The
+.BR syslog.conf
+file is the configuration file for the
+.BR syslogd (8)
+program.
+It consists of
+blocks of lines separated by
+.IR program 
+specifications,
+with each line containing two fields: the
+.IR selector 
+field which specifies the types of messages and priorities to which the
+line applies, and an
+.IR action 
+field which specifies the action to be taken if a message
+.BR syslogd 
+receives matches the selection criteria.
+The
+.IR selector 
+field is separated from the
+.IR action 
+field by one or more tab characters.
+.LP
+The
+.IR Selectors 
+function
+are encoded as a
+.IR facility ,
+a period (``.''), and a
+.IR level ,
+with no intervening white-space.
+Both the
+.IR facility 
+and the
+.IR level 
+are case insensitive.
+.LP
+The
+.IR facility 
+describes the part of the system generating the message, and is one of
+the following keywords: auth, authpriv, cron, daemon, kern, lpr, mail,
+mark, news, syslog, user, uucp and local0 through local7.
+These keywords (with the exception of mark) correspond to the
+similar
+.B LOG_
+values specified to the
+.BR openlog (3)
+and
+.BR syslog (3)
+library routines.
+.LP
+The
+.IR level 
+describes the severity of the message, and is a keyword from the
+following ordered list (higher to lower): emerg, alert, crit, err,
+warning, notice and debug.
+These keywords correspond to the
+similar
+.B LOG_
+values specified to the
+.BR syslog 
+library routine.
+.LP
+Each block of lines is separated from the previous block by a tag. The tag
+is a line beginning with
+.IR #!prog 
+or
+.IR !prog 
+(the former is for compatibility with the previous syslogd, if one is sharing
+syslog.conf files, for example)
+and each block will be associated with calls to syslog from that specific
+program.
+.LP
+See
+.BR syslog (3)
+for a further descriptions of both the
+.IR facility 
+and
+.IR level 
+keywords and their significance. It's preferred that selections be made on
+.IR facility 
+rather than
+.IR program ,
+since the latter can easily vary in a networked environment. In some cases,
+though, an appropriate
+.IR facility 
+simply doesn't exist (for example,
+.IR ftpd 
+logs under LOG_DAEMON along with a myriad other programs).
+.LP
+If a received message matches the specified
+.IR facility 
+and is of the specified
+.IR level 
+.IR (or  "a higher level) ,"
+and the first word in the message after the date matches the
+.IR program ,
+the action specified in the
+.IR action 
+field will be taken.
+.LP
+Multiple
+.IR selectors 
+may be specified for a single
+.IR action 
+by separating them with semicolon (``;'') characters.
+It is important to note, however, that each
+.IR selector 
+can modify the ones preceding it.
+.LP
+Multiple
+.IR facilities 
+may be specified for a single
+.IR level 
+by separating them with comma (``,'') characters.
+.LP
+An asterisk (``*'') can be used to specify all
+.IR facilities 
+all
+.IR levels 
+or all
+.IR programs .
+.LP
+The special
+.IR facility 
+``mark'' receives a message at priority ``info'' every 20 minutes
+(see
+.BR syslogd (8)).
+This is not enabled by a
+.IR facility 
+field containing an asterisk.
+.LP
+The special
+.IR level 
+``none'' disables a particular
+.IR facility .
+.LP
+The
+.IR action 
+field of each line specifies the action to be taken when the
+.IR selector 
+field selects a message.
+There are four forms:
+.RS
+A pathname (beginning with a leading slash).
+Selected messages are appended to the file.
+.LP
+A hostname (preceded by an at (``@'') sign).
+Selected messages are forwarded to the
+.BR syslogd 
+program on the named host.
+.LP
+A comma separated list of users.
+Selected messages are written to those users
+if they are logged in.
+.LP
+An asterisk.
+Selected messages are written to all logged-in users.
+.RE
+.LP
+Blank lines and lines whose first non-blank character is a hash (``#'')
+character are ignored.
+.SH EXAMPLES
+.LP
+A configuration file might appear as follows:
+.nf
+# Log all kernel messages, authentication messages of
+# level notice or higher and anything of level err or
+# higher to the console.
+# Don't log private authentication messages!
+*.err;kern.*;auth.notice;authpriv.none	/dev/console
+
+# Log anything (except mail) of level info or higher.
+# Don't log private authentication messages!
+*.info;mail.none;authpriv.none		/var/log/messages
+
+# The authpriv file has restricted access.
+authpriv.*						/var/log/secure
+
+# Log all the mail messages in one place.
+mail.*							/var/log/maillog
+
+# Everybody gets emergency messages, plus log them on another
+# machine.
+*.emerg							*
+*.emerg							@arpa.berkeley.edu
+
+# Root and Eric get alert and higher messages.
+*.alert							root,eric
+
+# Save mail and news errors of level err and higher in a
+# special file.
+uucp,news.crit						/var/log/spoolerr
+
+# Save ftpd transactions along with mail and news
+!ftpd
+*.*							/var/log/spoolerr
+.fi
+.SH FILES
+.RS
+.IP \fB/etc/syslog.conf\fR
+The
+.BR syslogd (8)
+configuration file.
+.RE
+.SH BUGS
+The effects of multiple selectors are sometimes not intuitive.
+For example ``mail.crit,*.err'' will select ``mail'' facility messages at
+the level of ``err'' or higher, not at the level of ``crit'' or higher.
+.SH SEE ALSO
+.BR syslog (3),
+.BR syslogd (8)

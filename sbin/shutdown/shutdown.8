@@ -1,0 +1,148 @@
+.\" Copyright (c) 1988, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)shutdown.8	8.1 (Berkeley) 6/5/93
+.\"
+.TH SHUTDOWN 8 "4 October 1997" GNO "System Administration"
+.SH NAME
+.BR shutdown
+\- close down the system at a given time
+.SH SYNOPSIS
+.BR shutdown
+[
+.B -
+] [
+.BR -hkrn
+]
+.I time
+.I "warning-message ..."
+.SH DESCRIPTION
+.BR Shutdown
+provides an automated shutdown procedure for super-users
+to nicely notify users when the system is shutting down,
+saving them from system administrators, hackers, and gurus, who
+would otherwise not bother with such niceties.
+.LP
+Available friendlinesses:
+.RS
+.IP \fBh\fR
+The system is halted at the specified
+.BR time
+when
+.BR shutdown
+execs
+.BR halt (8).
+.IP \fBk\fR
+Kick every body off.
+The
+.B k
+option
+does not actually halt the system, but leaves the
+system multi-user with logins disabled (for all but super-user).
+.IP \fBn\fR
+Prevent the normal
+.BR sync (2)
+before stopping.
+.IP \fBr\fR
+.BR Shutdown
+execs
+.BR reboot (8)
+at the specified
+.BR time .
+.IP \fItime\fR
+.BR Time
+is the time at which
+.BR shutdown
+will bring the system down and
+may be the word
+.BR now
+(indicating an immediate shutdown) or
+specify a future time in one of two formats:
+.BR +number ,
+or
+.BR yymmddhhmm ,
+where the year, month, and day may be defaulted
+to the current system values.  The first form brings the system down in
+.BR number
+minutes and the second at the absolute time specified.
+.IP \fIwarning-message\fR
+Any other arguments comprise the warning message that is broadcast
+to users currently logged into the system.
+.IP \fB-\fR
+If
+.BR -
+is supplied as an option, the warning message is read from the standard
+input.
+.RE
+.LP
+At intervals, becoming more frequent as apocalypse approaches
+and starting at ten hours before shutdown, warning messages are displayed
+on the terminals of all users logged in.  Five minutes before
+shutdown, or immediately if shutdown is in less than 5 minutes,
+logins are disabled by creating
+.B /etc/nologin
+and copying the
+warning message there.  If this file exists when a user attempts to
+log in,
+.BR login (1)
+prints its contents and exits.  The file is
+removed just before
+.BR shutdown
+exits.
+.LP
+At shutdown time a message is written in the system log, containing the
+time of shutdown, who initiated the shutdown and the reason.
+A terminate
+signal is then sent to
+.BR init 
+to bring the system down to single-user state (depending on above
+options).
+The time of the shutdown and the warning message
+are placed in
+.B /etc/nologin
+and should be used to
+inform the users about when the system will be back up
+and why it is going down (or anything else).
+.SH FILES
+.IP \fB/etc/nologin\fR
+tells login not to let anyone log in
+.SH SEE ALSO
+.BR login (1),
+.BR wall (1),
+.BR halt (8),
+.BR reboot (8)
+.SH BACKWARD COMPATIBILITY
+The hours and minutes in the second time format may be separated by
+a colon (``:'') for backward compatibility.
+.SH HISTORY
+The
+.BR shutdown
+command appeared in 4.0BSD.
