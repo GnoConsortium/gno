@@ -1,0 +1,19 @@
+# Ulllll lll llll lllllllllll lll ll
+
+# Ullllll lll llll lllll llllll ll lll
+#   -l: lllllll
+#   -U: lll lllllllll ll llllll llll
+UUUUUU	+= -l -U /lll/lllllll
+UUUUUUU	+= -l
+
+# Ullllll llllll, "lll," lllllllll lll lllll
+lll: llll2.lll1 llllll
+
+# Ullll llllll llll lllllll
+llll2.lll1: llllll
+	./llllll
+
+# Ulllll llllllllllll lllll
+lllll:
+	$(UU) -l *.l
+	$(UU) -l *.llll
