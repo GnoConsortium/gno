@@ -45,6 +45,7 @@ static char sccsid[] = "@(#)vfscanf.c	8.1 (Berkeley) 6/4/93";
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <assert.h>
 #if __STDC__
 #include <stdarg.h>
 #else
@@ -106,6 +107,24 @@ typedef struct pString_t {
 static u_char *__sccl(register char *tab, register u_char *fmt);
 
 /*
+ * We use the EAT_AND_FAIL macro to do some initial cleanup when necessary,
+ * prior to the final "eating of the extra arguments".  This is necessary
+ * because the number of args eaten is not always consistent when a goto
+ * is done to input_failure or match_failure.
+ *
+ * Regarding the STATIC macro, we want to move large arrays off of the
+ * stack.  At the same time, we don't want to stub our dick doing so, thus
+ * the checks below.  Look for NDEBUG.
+ */
+#ifdef __ORCAC__
+#define EAT_AND_FAIL(label) { (void) va_arg(ap, char *); goto label; }
+#define STATIC static
+#else
+#define EAT_AND_FAIL(label) { goto label; }
+#define STATIC
+#endif
+
+/*
  * vfscanf
  */
 int
@@ -123,25 +142,67 @@ __svfscanf(register FILE *fp, char const *fmt0, va_list ap)
 	int base;		/* base argument to strtol/strtoul */
 	u_long (*ccfn)(const char *, char **, int);
 				/* conversion function (strtol/strtoul) */
-	char ccltab[256];	/* character class table for %[...] */
-	char buf[BUF];		/* buffer for numeric conversions */
+	STATIC char ccltab[256];	/* character class table for %[...] */
+	STATIC char buf[BUF];		/* buffer for numeric conversions */
+#ifdef __ORCAC__
+	/*
+	 * The original BSD code has a hidden assumption; it assumes that
+	 * one can avoid calling va_arg() for all passed arguments if the
+	 * results are not needed.  This idea has _some_ merit.  First it
+	 * is permitted by the ANSI/C standard.  Second, it is a reasonable
+	 * assumption if "caller cleans up" is the convention for stack
+	 * usage, especially if args are passed in registers.  Finally, it's
+	 * efficient if you can get away with it.
+	 *
+	 * Unfortunately, the combination of "callee cleans up" and a stack
+	 * that can not be easily "unwound" is deadly to ORCA/C; failure
+	 * to call va_arg for each passed pointer will result in stack
+	 * trashing.  Therefore, we have a kludge such that if we finish
+	 * prematurely (as defined by how much of the format string we have
+	 * parsed), then we spend extra time parsing the rest of the format
+	 * string, calling va_arg(), and throwing the results away.  The
+	 * code to do this starts at the label "eat_args".
+	 *
+	 * The "result" variable is used to maintain the return code in
+	 * these circumstances.
+	 */
+	int result;
+#endif
 
+#ifndef NDEBUG
+#define RETURN(val) { recursing = 0; return val; }
+	static int recursing = 0;
+#else
+#define RETURN(val) return val;
+#endif
 	/* `basefix' is used to avoid `if' tests in the integer scanner */
 	static short basefix[17] =
 		{ 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 
+	assert(recursing == 0);
+#ifndef NDEBUG
+	recursing = 1;
+#endif
 	nassigned = 0;
 	nread = 0;
 	base = 0;		/* XXX just to keep gcc happy */
 	ccfn = NULL;		/* XXX just to keep gcc happy */
 	for (;;) {
 		c = *fmt++;
+		/* ORCAC:  This is the only "normal" return. */
 		if (c == 0)
-			return (nassigned);
+			RETURN(nassigned)
 		if (isspace(c)) {
 			for (;;) {
 				if (fp->_r <= 0 && __srefill(fp))
+#ifdef __ORCAC__
+				{
+					result = nassigned;
+					goto eat_args;
+				}
+#else
 					return (nassigned);
+#endif
 				if (!isspace(*fp->_p))
 					break;
 				nread++, fp->_r--, fp->_p++;
@@ -286,7 +347,12 @@ literal:
 		 * Disgusting backwards compatibility hacks.	XXX
 		 */
 		case '\0':	/* compat */
+#ifdef __ORCAC__
+			result = EOF;
+			goto eat_args;
+#else
 			return (EOF);
+#endif
 
 		default:	/* compat */
 			if (isupper(c))
@@ -301,7 +367,7 @@ literal:
 		 * We have a conversion that requires input.
 		 */
 		if (fp->_r <= 0 && __srefill(fp))
-			goto input_failure;
+			EAT_AND_FAIL(input_failure)
 
 		/*
 		 * Consume leading white space, except for formats
@@ -313,7 +379,7 @@ literal:
 				if (--fp->_r > 0)
 					fp->_p++;
 				else if (__srefill(fp))
-					goto input_failure;
+					EAT_AND_FAIL(input_failure)
 			}
 			/*
 			 * Note that there is at least one character in
@@ -597,7 +663,7 @@ literal:
 			if (flags & NDIGITS) {
 				if (p > buf)
 					(void) ungetc(*(u_char *)--p, fp);
-				goto match_failure;
+				EAT_AND_FAIL(match_failure)
 			}
 			c = ((u_char *)p)[-1];
 			if (c == 'x' || c == 'X') {
@@ -689,7 +755,7 @@ literal:
 					/* no digits at all */
 					while (p > buf)
 						ungetc(*(u_char *)--p, fp);
-					goto match_failure;
+					EAT_AND_FAIL(match_failure)
 				}
 				/* just a bad exponent (e and maybe sign) */
 				c = *(u_char *)--p;
@@ -717,10 +783,69 @@ literal:
 #endif /* FLOATING_POINT */
 		}
 	}
+#ifdef __ORCAC__
+input_failure:
+	result = (nassigned ? nassigned : -1);
+	goto eat_args;
+match_failure:
+	result = nassigned;
+	/* FALLTHROUGH */
+
+eat_args:
+	/* if we get here, fmt is _never_ already pointing to the '\0' char */
+	while ((c = *fmt++) != 0) {
+		if (c != '%') {
+			continue;
+		}
+		flags = 0;
+	eat_again:
+		c = *fmt++;
+		switch(c) {
+		case 0:
+			/*
+			 * This shouldn't happen; who knows what the stack
+			 * is like if it does.  The "--fmt" is basically a
+			 * "return result".
+			 */
+			--fmt;
+			break;
+		case '%':
+			break;
+		case '*':
+			flags |= SUPPRESS;
+			goto eat_again;
+		case '0': case '1': case '2': case '3': case '4':
+		case '5': case '6': case '7': case '8': case '9':
+		case 'l': case 'L': case 'h':
+			goto eat_again;
+
+		case '[':
+			fmt = __sccl(ccltab, fmt);
+			/*FALLTHROUGH*/
+		case 'D': case 'O': case 'X':
+		case 'd': case 'i': case 'o': case 'u': case 'x':
+		case 's': case 'c': case 'p': case 'n':
+#ifdef FLOATING_POINT
+		case 'e': case 'f': case 'g':
+		case 'E': case 'F':
+#endif
+#ifdef __GNO__
+		case 'b':
+#endif
+			if ((flags & SUPPRESS) == 0) {
+				/* throw the result away */
+				(void) va_arg(ap, char *);
+			}
+			break;
+		}
+	}
+	RETURN(result)
+#else
 input_failure:
 	return (nassigned ? nassigned : -1);
 match_failure:
 	return (nassigned);
+#endif
 }
 
 /*
