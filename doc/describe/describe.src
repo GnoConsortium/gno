@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Thu Mar 26 00:25:41 1998
+# Last revision: Fri Apr 24 17:16:58 1998
 #
-# $Id: describe.src,v 1.7 1998/04/11 19:08:25 gdr-ftp Exp $
+# $Id: describe.src,v 1.8 1998/04/24 17:20:46 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -392,6 +392,16 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 This is an OMF disassembler designed for OMF 1.0 and 2.0 files.  Output is
 similar to the ORCA and APW utility 'dumpobj', although OMF and 65816
 disassemblies are much cleaner and more readable.
+
+Name:    colrm
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Removes specified columns from a text file
 
 Name:    compress
 Version: 4.3
