@@ -1,3 +1,4 @@
+#line 1 ":src:gno:lib:libc:sys:syscall.c"
 /*
  * libc/sys/syscall.c
  *
@@ -9,7 +10,7 @@
  * Unless otherwise specified, see the respective man pages for details
  * about these routines.
  *
- * $Id: syscall.c,v 1.2 1997/07/27 23:33:36 gdr Exp $
+ * $Id: syscall.c,v 1.3 1997/09/05 06:38:06 gdr Exp $
  *
  * This file is formatted with tab stops every 3 columns.
  */
@@ -774,6 +775,72 @@ read (int filds, void *buf, size_t bytecount) {
         }
      }
   }
+  return result;
+}
+
+/*
+ * rename
+ */
+
+int
+rename (const char *from, const char *to) {
+	struct {
+	   word pCount;
+     GSStringPtr from;
+     GSStringPtr to;
+  } renblock;
+  struct stat sfrom, sto;
+  int ret2;
+
+	if (stat(from, &sfrom) < 0) {
+	   return -1;
+  }
+  ret2 = stat(to, &sto);
+  if ((ret2 < 0) && (errno != ENOENT)) {
+	   /* problem stat'ing destination */
+	   return -1;
+  }
+
+  /* make sure the source and destination (if it exists) are of the same type */
+  if (ret2 == 0) {
+	   if (S_ISDIR(sfrom.st_mode) && ! S_ISDIR(sto.st_mode)) {
+	      errno = ENOTDIR;
+        return -1;
+     }
+	   if (S_ISDIR(sto.st_mode) && ! S_ISDIR(sfrom.st_mode)) {
+        errno = EISDIR;
+        return -1;
+     }
+     if (unlink(to) < 0) {
+	      if (errno == EACCES) {
+	         errno = EEXIST;	/* proper POSIX side effect */
+        }
+	      return -1;
+     }
+  }
+
+  /* get GS/OS-style copies of the filenames */
+  renblock.pCount = 2;
+  if ((renblock.from = __C2GSMALLOC(from)) == NULL) {
+	   errno = ENOMEM;
+     return -1;
+  }
+  if ((renblock.to = __C2GSMALLOC(to)) == NULL) {
+	   GIfree(renblock.from);
+     errno = ENOMEM;
+     return -1;
+  }
+
+  ChangePathGS(&renblock);
+  ret2 = _toolErr;
+  GIfree(renblock.from);
+  GIfree(renblock.to);
+  if (ret2) {
+	   errno = _mapErr(ret2);
+     return -1;
+  } else {
+	   return 0;
+  }
 }
 
 /*
@@ -785,6 +852,44 @@ rexit (int code) {
 	SystemQuitFlags (0x4000);
   SystemQuitPath (NULL);
   exit(code);
+}
+
+/*
+ * sigprocmask - This would be much more efficient if it was implemented
+ *               in the kernel.  Note that in most cases we are doing
+ *               two kernel traps (and thus context switches).
+ */
+
+int
+sigprocmask (int how, const sigset_t *set, sigset_t *oset) {
+	sigset_t old;
+
+  if (set != NULL) {
+		switch(how) {
+  	case SIG_BLOCK:
+	   	old = sigblock(*set);
+	   	break;
+  	case SIG_UNBLOCK:
+	      old = sigblock(0);
+        sigblock(old & ~(*set));
+	   	break;
+  	case SIG_SETMASK:
+	      old = sigblock(0);
+        sigblock(*set);
+	   	break;
+  	default:
+	   	errno = EINVAL;
+	   	return -1;
+  	}
+  } else if (oset != NULL) {	/* set == NULL */
+		old = sigblock(0);
+     sigblock(old);
+  }	/* if both set and oset are NULL, this routine is a no-op */
+
+  if (oset != NULL) {
+		*oset = old;
+  }
+  return 0;
 }
 
 /*
@@ -911,13 +1016,28 @@ umask (mode_t mask) {
  * unlink
  */
  
-int unlink(char *fname)
+int
+unlink(char *fname)
 {
-	/*
-   * Orca/C doesn't specify what the "non-zero" return code is, so
-   * force it to be -1.
-   */
- 	return (remove(fname) == 0) ? 0 : -1;
+  struct {
+	   word pCount;
+     GSStringPtr pathname;
+  } drec;
+	int err;
+
+  drec.pCount = 1;
+  drec.pathname = __C2GSMALLOC(fname);
+  if (drec.pathname == NULL) {
+	   return -1;
+  }
+  DestroyGS(&drec);
+  err = _mapErr(_toolErr);
+  GIfree(drec.pathname);
+  if (err) {
+     errno = err;
+     return -1;
+  }
+  return 0;
 }
 
 /*
@@ -969,7 +1089,7 @@ waitpid(pid_t pid, union wait *istat, int options)
 /*
  * write
  */
- 
+
 ssize_t
 write(int filds, void *buf, size_t bytecount) {
 	IORecGS iorec = {4, filds, buf, (long) bytecount, 0L};
@@ -1021,6 +1141,52 @@ _libcPanic (const char *fmt, ...) {
 }
 
 #endif	/* VERSION_CHECK */
+
+/*
+ * fcntl
+ */
+
+int
+fcntl (int fd, int cmd, ...) {
+	struct stat sbuf;
+	va_list list;
+  int result;
+  unsigned short mode;
+  int err = 0;
+
+  va_start(list, cmd);
+  switch(cmd) {
+  case F_DUPFD:
+	   result = va_arg(list, int);
+	   result = dup2(fd, result);
+	   break;
+  case F_GETFL:
+	   if (fstat(fd, &sbuf) == -1) {
+	      err = errno;
+	      result = -1;
+     } else {
+	      mode = sbuf.st_mode & (S_IRUSR | S_IWUSR);
+        if (mode == (S_IRUSR | S_IWUSR)) {
+	         result = O_RDWR;
+        } else if (mode == S_IRUSR) {
+	         result = O_RDONLY;
+        } else if (mode == S_IWUSR) {
+	         result = O_WRONLY;
+        } else {
+	         result = 0;
+        }
+     }
+	   break;
+  default:
+		err = EINVAL;
+	   result = -1;
+  }
+  va_end(list);
+  if (err != 0) {
+	   errno = err;
+  }
+  return result;
+}
 
 /*
  * open -- end of file because of higher optimization required
