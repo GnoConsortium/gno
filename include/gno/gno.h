@@ -2,7 +2,7 @@
  * gno/gno.h	This collection of declarations are for routines that
  *		reside in libc, but are Apple IIgs or GNO specific.
  *
- * $Id: gno.h,v 1.4 1998/03/28 18:36:43 gdr-ftp Exp $
+ * $Id: gno.h,v 1.5 1998/10/31 18:50:44 gdr-ftp Exp $
  */
 
 #ifndef _GNO_GNO_H_
@@ -24,6 +24,18 @@
 #include <stdlib.h>
 #endif
 
+/*
+ * Don't use va_list in these prototypes.   Va_list is typedef'd in two
+ * places (<machine/varargs.h> and <machine/stdarg.h>), so if we include one
+ * of them here we may collide with the utility's includes.  It's unreasonable
+ * for utilities to have to include one of them to include err.h, so we get
+ * _BSD_VA_LIST_ from <machine/ansi.h> and use it.
+ */
+
+#ifndef _MACHINE_ANSI_H_
+#include <machine/ansi.h>
+#endif
+
 #ifndef udispatch
 #define udispatch  0xE10008
 #endif
@@ -37,6 +49,7 @@
 #define dbgPBLOCK	0x0020
 
 /* Environment Information */
+extern char *	__progname;
 char *		__prognameGS __P((void));
 char *		buildCmd __P((char * const *));
 int		buildEnv __P((char * const *));
@@ -89,6 +102,10 @@ mode_t		_mapMode2Unix __P((mode_t));
 int		_getModeEmulation __P((void));
 int		_setModeEmulation __P((int));
 int		_mapErr __P((int));
+
+/* Low-level multithread safe routines */
+char *		sprintmt __P((char *, size_t, const char *, ...));
+char *		vsprintmt __P((char *, size_t, const char *, _BSD_VA_LIST_));
 
 /* Message Passing IPC */
 int		procsend __P((pid_t, unsigned long));
