@@ -31,11 +31,15 @@
  * SUCH DAMAGE.
  *
  *	@(#)uio.h	8.5 (Berkeley) 2/22/94
- * $Id: uio.h,v 1.1 1997/02/28 04:42:17 gdr Exp $
+ * $Id: uio.h,v 1.2 1998/06/24 00:12:32 gdr-ftp Exp $
  */
 
 #ifndef _SYS_UIO_H_
 #define	_SYS_UIO_H_
+
+#ifndef _SYS_TYPES_H_
+#include <sys/types.h>
+#endif
 
 /*
  * XXX
@@ -85,8 +89,8 @@ int	uiomove __P((caddr_t, int, struct uio *));
 #endif
 
 __BEGIN_DECLS
-size_t	readv __P((int, const struct iovec *, int));	/* non-BSD */
-size_t	writev __P((int, const struct iovec *, int));	/* non-BSD */
+ssize_t	readv __P((int, const struct iovec *, int));
+ssize_t	writev __P((int, const struct iovec *, int));
 __END_DECLS
 
 #endif /* KERNEL */

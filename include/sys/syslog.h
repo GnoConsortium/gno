@@ -31,13 +31,17 @@
  * SUCH DAMAGE.
  *
  *	@(#)syslog.h	8.1 (Berkeley) 6/2/93
- * $Id: syslog.h,v 1.1 1997/02/28 04:42:15 gdr Exp $
+ * $Id: syslog.h,v 1.2 1998/06/24 00:12:30 gdr-ftp Exp $
  */
 
 #ifndef _SYS_SYSLOG_H_
 #define _SYS_SYSLOG_H_
 
+#ifdef __appleiigs__
+#define	_PATH_LOG	".syslog"
+#else
 #define	_PATH_LOG	"/dev/log"
+#endif
 
 /*
  * priorities/facilities are encoded into a single 32-bit quantity, where the
@@ -68,7 +72,7 @@
 #define	INTERNAL_MARK	LOG_MAKEPRI(LOG_NFACILITIES, 0)
 typedef struct _code {
 	char	*c_name;
-	int	c_val;
+	long	c_val;
 } CODE;
 
 CODE prioritynames[] = {
@@ -88,29 +92,58 @@ CODE prioritynames[] = {
 };
 #endif
 
+/*
+ * The only code that should ever define __SYSLOG_INTERNALS is syslogd(8) and
+ * the syslog(3) implementation in libc.
+ */
+#ifdef __SYSLOG_INTERNALS
+
+#ifndef _SYS_TYPES_H_
+#include <sys/types.h>
+#endif
+
+/*
+ * Identifier used bye the kernel ports interface.  Only the first 32
+ * characters are significant!
+ */
+#define __SYSLOG_PORT_NAME "syslogd_v2"
+
+/* Max number of characters that syslog(3) will log per call. */
+#define	MSG_BUF_LEN	1024
+#define SYSLOG_MAGIC	0xB38F0E32
+
+typedef struct SyslogDataBuffer_t {
+	unsigned long	magic;
+	int		len;
+	pid_t		sender;
+	char		msg_buffer[MSG_BUF_LEN];
+} SyslogDataBuffer_t;
+
+#endif	/* __SYSLOG_INTERNALS */
+
 /* facility codes */
-#define	LOG_KERN	(0<<3)	/* kernel messages */
-#define	LOG_USER	(1<<3)	/* random user-level messages */
-#define	LOG_MAIL	(2<<3)	/* mail system */
-#define	LOG_DAEMON	(3<<3)	/* system daemons */
-#define	LOG_AUTH	(4<<3)	/* security/authorization messages */
-#define	LOG_SYSLOG	(5<<3)	/* messages generated internally by syslogd */
-#define	LOG_LPR		(6<<3)	/* line printer subsystem */
-#define	LOG_NEWS	(7<<3)	/* network news subsystem */
-#define	LOG_UUCP	(8<<3)	/* UUCP subsystem */
-#define	LOG_CRON	(9<<3)	/* clock daemon */
-#define	LOG_AUTHPRIV	(10<<3)	/* security/authorization messages (private) */
-#define	LOG_FTP		(11<<3)	/* ftp daemon */
+#define	LOG_KERN	0x00	/* (0<<3)	kernel messages */
+#define	LOG_USER	0x08	/* (1<<3)	random user-level messages */
+#define	LOG_MAIL	0x10	/* (2<<3)	mail system */
+#define	LOG_DAEMON	0x18	/* (3<<3)	system daemons */
+#define	LOG_AUTH	0x20	/* (4<<3)	security/authorization messages */
+#define	LOG_SYSLOG	0x28	/* (5<<3)	messages generated internally by syslogd */
+#define	LOG_LPR		0x30	/* (6<<3)	line printer subsystem */
+#define	LOG_NEWS	0x38	/* (7<<3)	network news subsystem */
+#define	LOG_UUCP	0x40	/* (8<<3)	UUCP subsystem */
+#define	LOG_CRON	0x48	/* (9<<3)	clock daemon */
+#define	LOG_AUTHPRIV	0x50	/* (10<<3)	security/authorization messages (private) */
+#define	LOG_FTP		0x58	/* (11<<3)	ftp daemon */
 
 	/* other codes through 15 reserved for system use */
-#define	LOG_LOCAL0	(16<<3)	/* reserved for local use */
-#define	LOG_LOCAL1	(17<<3)	/* reserved for local use */
-#define	LOG_LOCAL2	(18<<3)	/* reserved for local use */
-#define	LOG_LOCAL3	(19<<3)	/* reserved for local use */
-#define	LOG_LOCAL4	(20<<3)	/* reserved for local use */
-#define	LOG_LOCAL5	(21<<3)	/* reserved for local use */
-#define	LOG_LOCAL6	(22<<3)	/* reserved for local use */
-#define	LOG_LOCAL7	(23<<3)	/* reserved for local use */
+#define	LOG_LOCAL0	0x80	/* (16<<3)	reserved for local use */
+#define	LOG_LOCAL1	0x88	/* (17<<3)	reserved for local use */
+#define	LOG_LOCAL2	0x90	/* (18<<3)	reserved for local use */
+#define	LOG_LOCAL3	0x98	/* (19<<3)	reserved for local use */
+#define	LOG_LOCAL4	0xA0	/* (20<<3)	reserved for local use */
+#define	LOG_LOCAL5	0xA8	/* (21<<3)	reserved for local use */
+#define	LOG_LOCAL6	0xB0	/* (22<<3)	reserved for local use */
+#define	LOG_LOCAL7	0xB8	/* (23<<3)	reserved for local use */
 
 #define	LOG_NFACILITIES	24	/* current number of facilities */
 #define	LOG_FACMASK	0x03f8	/* mask to extract facility part */
@@ -188,10 +221,10 @@ CODE facilitynames[] = {
 
 __BEGIN_DECLS
 void	closelog __P((void));
-void	openlog __P((const char *, int, int));
-int	setlogmask __P((int));
-void	syslog __P((int, const char *, ...));
-void	vsyslog __P((int, const char *, _BSD_VA_LIST_));
+void	openlog __P((const char *, int, long));
+long	setlogmask __P((long));
+void	syslog __P((long, const char *, ...));
+void	vsyslog __P((long, const char *, _BSD_VA_LIST_));
 #ifndef _POSIX_SOURCE
 void	old_syslog __P((char **dataHandle));		/* GNO-specific */
 #endif

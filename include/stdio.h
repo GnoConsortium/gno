@@ -332,8 +332,8 @@ FILE	*funopen __P((const void *,
 		fpos_t (*)(void *, fpos_t, int),
 		int (*)(void *)));
 __END_DECLS
-#define	fropen(cookie, fn) funopen(cookie, fn, 0, 0, 0)
-#define	fwopen(cookie, fn) funopen(cookie, 0, fn, 0, 0)
+#define	fropen(cookie, fn) funopen(cookie, fn, 0L, 0L, 0L)
+#define	fwopen(cookie, fn) funopen(cookie, 0L, fn, 0L, 0L)
 #endif /* !_ANSI_SOURCE && !_POSIX_SOURCE */
 
 /*
