@@ -36,7 +36,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)param.h	8.2 (Berkeley) 1/21/94
- * $Id: param.h,v 1.1 1997/02/28 04:42:14 gdr Exp $
+ * $Id: param.h,v 1.2 1997/02/28 04:56:45 gdr Exp $
  */
 
 #ifndef _SYS_PARAM_H_
@@ -218,6 +218,7 @@
 #endif
 
 #ifndef __GNO__
+#error whoops, blew a seam
 /*
  * Constants for setting the parameters of the kernel memory allocator.
  *

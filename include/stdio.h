@@ -72,7 +72,6 @@ typedef struct __file {
 #if defined(__ORCAC_VERSION) && (__ORCAC_VERSION > 210)
    int                  _pbk[2];        /* put back character; changed in v2.1.1b2 */
 #else
-#error bad stuff batman
    int                  _pbk;           /* put back character */
 #endif                        
    unsigned int         _flag,          /* buffer flags */

@@ -31,7 +31,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)wait.h	8.1 (Berkeley) 6/2/93
- * $Id: wait.h,v 1.1 1997/02/28 04:42:17 gdr Exp $
+ * $Id: wait.h,v 1.2 1997/02/28 04:56:45 gdr Exp $
  */
 
 #ifndef _SYS_WAIT_H_
@@ -53,6 +53,7 @@
 #ifdef __GNO__
 #define WCOREFLAG	0000		/* no core dump under GNO */
 #else
+#error arch problems
 #define	WCOREFLAG	0200
 #endif
 #endif	/* ! _POSIX_SOURCE */

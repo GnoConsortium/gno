@@ -36,7 +36,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)signal.h	8.2 (Berkeley) 1/21/94
- * $Id: signal.h,v 1.1 1997/02/28 04:42:15 gdr Exp $
+ * $Id: signal.h,v 1.2 1997/02/28 04:56:45 gdr Exp $
  */
 
 #ifndef	_SYS_SIGNAL_H_
@@ -112,6 +112,7 @@ struct	sigaction {
 #ifdef __GNO__
 	void	(*sa_handler)(int, void (*)(void));	/* signal handler */
 #else
+#error __GNO__ is not defined
 	void	(*sa_handler)();	/* signal handler */
 #endif
 	sigset_t sa_mask;		/* signal mask to apply */

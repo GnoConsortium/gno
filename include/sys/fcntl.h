@@ -36,7 +36,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)fcntl.h	8.3 (Berkeley) 1/21/94
- * $Id: fcntl.h,v 1.1 1997/02/28 04:42:14 gdr Exp $
+ * $Id: fcntl.h,v 1.2 1997/02/28 04:56:45 gdr Exp $
  */
 
 #ifndef _SYS_FCNTL_H_
@@ -80,7 +80,7 @@
 #define	O_NONBLOCK	0x0008		/* no delay */
 #define	O_APPEND	0x0010		/* set append mode */
 #if !defined(_POSIX_SOURCE) && !defined(__GNO__)
-/* not yet implemented in GNO */
+#error not yet implemented in GNO
 #define	O_SHLOCK conflicts with o_binary /* open with shared file lock */
 #define	O_EXLOCK conflicts with o_trans	/* open with exclusive file lock */
 #define	O_ASYNC		0x0400		/* signal pgrp when data ready */
@@ -90,7 +90,7 @@
 #define	O_TRUNC		0x0040		/* truncate to zero length */
 #define	O_EXCL		0x0080		/* error if already exists */
 #if defined(KERNEL) && !defined(__GNO__)
-/* not used in GNO */
+#error not used in GNO
 #define	FMARK		0x1000		/* mark during gc() */
 #define	FDEFER		0x2000		/* defer for next gc pass */
 #define	FHASLOCK	0x4000		/* descriptor holds advisory lock */
@@ -136,6 +136,7 @@
 #ifdef __GNO__
 #define	F_DUPFD		1		/* duplicate file descriptor */
 #else
+#error __GNO__ is not defined
 
 /* command values */
 #define	F_DUPFD		0		/* duplicate file descriptor */
