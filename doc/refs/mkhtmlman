@@ -2,7 +2,7 @@
 #
 # Devin Reade, November 1997.
 #
-# $Id: mkhtmlman,v 1.5 1998/01/27 06:25:34 gdr-ftp Exp $
+# $Id: mkhtmlman,v 1.6 1998/02/04 07:17:13 gdr-ftp Exp $
 
 man2html=/usr/local/bin/man2html
 TMPDIR=${TMPDIR:-/tmp}
@@ -47,6 +47,10 @@ for section in 1 2 3 4 5 6 7 8; do
 	| grep -v bin/gsh/updates1.1 \
 	| grep -v sed/tests` ; do
 	[ "$F" = 00.DUMMY ] && continue;
+	if ! egrep -q -e '^\.TH.*GNO' $F; then
+	    echo "$F:1: This does not appear to be a GNO manual page. Skipped."
+	    continue
+	fi
 	f=`basename $F`
 	f2=`echo $f | perl -pe 's/\.[^\.]+$//;'`
 	echo "$f" >> $listfile
