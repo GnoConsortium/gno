@@ -1,29 +1,14 @@
 #
-# This is the top-level makefile for libutil, GNO v2.0.6
+# This is the makefile for libutil, GNO v2.0.6
 #
-# $Id: Makefile,v 1.3 1997/10/03 04:47:34 gdr Exp $
+# $Id: Makefile,v 1.4 1998/02/08 03:47:34 gdr-ftp Exp $
 #
 
-.INCLUDE: ../../paths.mk
-.INCLUDE: ../const.mk                          
+LIB		= util
+SRCS		= login.o logintty.o logwtmp.o
+OPTIMIZE	= 78
 
-LIB	= libutil
-OBJS	= login.o logintty.o logwtmp.o
-LIBDIR	= /usr/lib
+.INCLUDE: 	/src/gno/lib/lib.mk
 
-CFLAGS	+= -O78
-
-build:	$(LIB)
-
-$(LIB): $(OBJS) libutil.r
-	$(RM) -f $@
-	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(OBJS)
-	$(CATREZ) -d $@ libutil.r
-
-install: $(LIB)
-	$(INSTALL) -d $(LIBDIR)
-	$(INSTALL) $(LIB) $(LIBDIR)
-
-release: $(LIB)
-	$(INSTALL) -d $(RELEASE_DIR)$(LIBDIR)
-	$(INSTALL) $(LIB) $(RELEASE_DIR)$(LIBDIR)
+$(LIBTARGET):: lib$(LIB).r
+	$(CATREZ) -d $@ lib$(LIB).r

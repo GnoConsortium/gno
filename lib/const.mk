@@ -6,7 +6,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: const.mk,v 1.4 1997/12/21 20:04:19 gdr Exp $
+# $Id: const.mk,v 1.5 1998/02/08 03:47:15 gdr-ftp Exp $
 #
 # It is critical that 13/orcacdefs/defaults.h is set up correctly,
 # including #defines for __appleiigs__ and __GNO__.  For the purpose
@@ -22,6 +22,17 @@ LDFLAGS	 +=
 INSTALL   = /usr/bin/install
 CATREZ	  = /usr/bin/catrez
 
+# Where libraries get installed.   Most libraries should go into the
+# USRLIBDIR; only "special" libraries belong in LIBDIR
+LIBDIR		= /lib
+USRLIBDIR	= /usr/lib
+RELLIB		= $(RELEASE_DIR)$(LIBDIR)
+RELUSRLIB	= $(RELEASE_DIR)$(USRLIBDIR)
+
 # Byteworks' makelib pukes ... these object files are too much for it.
 MAKELIB		= 17/makelib.apw
 MAKELIBFLAGS	= -w -r -p
+
+# This is the name of the library we're building.  We define LIBPFX if
+# it's not in the current directory.
+LIBTARGET	= $(LIBPFX)lib$(LIB)

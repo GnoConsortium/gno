@@ -10,16 +10,26 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.6 1997/10/03 04:42:51 gdr Exp $
+# $Id: Makefile,v 1.7 1998/02/08 03:47:22 gdr-ftp Exp $
 #
+
+LIB	= c
 
 .INCLUDE: ../../paths.mk
 .INCLUDE: ../const.mk
 
+USE_SLASH_LIB	= true			# This library goes into /lib.
+
 ORCALIB_OBJ	= \
 	$(ORCA_SRC)/orcalib/obj/assert.a
 
-libc:
-	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(ORCALIB_OBJ)
+libc:	$(ORCALIB_OBJ)
+	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $^
 
-.PHONY:	libc
+$(ORCALIB_OBJ):;	true
+
+.INCLUDE:		../librelease.mk
+
+$(LIBTARGET):: lib$(LIB).r
+	$(CATREZ) -d $@ lib$(LIB).r
+

@@ -1,29 +1,15 @@
 #
-# This is the top-level makefile for libutil, GNO v2.0.6
+# This is the makefile for liby, GNO v2.0.6
 #
-# $Id: Makefile,v 1.2 1997/10/03 04:46:02 gdr Exp $
+# $Id: Makefile,v 1.3 1998/02/08 03:47:40 gdr-ftp Exp $
 #
 
-.INCLUDE: ../../paths.mk
-.INCLUDE: ../const.mk                          
+LIB		= y
+SRCS		= main.c yyerror.c
+OPTIMIZE	= 78
 
-LIB	= liby
-OBJS	= main.o yyerror.o
-LIBDIR	= /usr/lib
+.INCLUDE:	/src/gno/lib/lib.mk
 
-CFLAGS	+= -O78
+$(LIBTARGET):: lib$(LIB).r
+	$(CATREZ) -d $@ lib$(LIB).r
 
-build:	$(LIB)
-
-$(LIB): $(OBJS) liby.r
-	$(RM) -f $@
-	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(OBJS)
-	$(CATREZ) -d $@ liby.r
-
-install: $(LIB)
-	$(INSTALL) -d $(LIBDIR)
-	$(INSTALL) $(LIB) $(LIBDIR)
-
-release: $(LIB)
-	$(INSTALL) -d $(RELEASE_DIR)$(LIBDIR)
-	$(INSTALL) $(LIB) $(RELEASE_DIR)$(LIBDIR)

@@ -1,5 +1,5 @@
 #
-#	$Id: lib.mk,v 1.1 1998/01/26 05:49:01 taubert Exp $
+#	$Id: lib.mk,v 1.2 1998/02/08 03:47:17 gdr-ftp Exp $
 #
 
 .INCLUDE:	/src/gno/paths.mk
@@ -25,6 +25,12 @@ OBJS= $(SRCS:s/.c/.o/:f)
 # Compile and load flags passed to occ
 CFLAGS+= -O$(OPTIMIZE)
 
+# default target
+build:	$(LIBTARGET)
+
 # Update library with out of date object files
-lib$(LIB): $(OBJS)
+$(LIBTARGET): $(OBJS)
 	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $^
+
+.INCLUDE:	/src/gno/lib/librelease.mk
+

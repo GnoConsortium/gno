@@ -1,28 +1,17 @@
 #
-# This is the top-level makefile for libcontrib, GNO v2.0.6
+# This is the makefile for libcontrib, GNO v2.0.6
 #
-# $Id: Makefile,v 1.2 1997/10/30 04:57:24 gdr Exp $
+# $Id: Makefile,v 1.3 1998/02/08 03:47:29 gdr-ftp Exp $
 #
 
-.INCLUDE: ../../paths.mk
-.INCLUDE: ../const.mk                          
+LIB		= contrib
+SRCS		= copyfile.c expandpath.c strarray.c xalloc.c
+OPTIMIZE	= 78
+CFLAGS		+= -I. -Slibcontrib
 
-LIB	= libcontrib
-OBJS	= copyfile.o expandpath.o strarray.o xalloc.o
-HEADER	= contrib.h
-LIBDIR	= $(RELEASE_DIR)/usr/lib
-INCDIR	= $(RELEASE_DIR)/usr/include/gno
+.INCLUDE:	/src/gno/lib/lib.mk
 
-CFLAGS	+= -I. -O78 -Slibcontrib
+$(LIBTARGET):: lib$(LIB).r
+	$(CATREZ) -d $@ lib$(LIB).r
 
-$(LIB): $(OBJS) $(LIB).r
-	$(RM) -f $@
-	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(OBJS)
-	$(CATREZ) -d $(LIB) $(LIB).r
-
-release: $(LIB) $(HEADER)
-	$(INSTALL) -d $(LIBDIR) $(INCDIR)
-	$(INSTALL) $(LIB) $(LIBDIR)
-	$(INSTALL) $(HEADER) $(INCDIR)
-
-$(OBJS):: $(HEADER)
+$(OBJS):: contrib.h
