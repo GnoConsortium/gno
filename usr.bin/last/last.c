@@ -267,10 +267,14 @@ char			*ct, *crmsg;
 			T->logout = bp->ut_time;
 		}
 	}
+#if 0
 printf("ut_time = %lu\n", buf[0].ut_time);
 printf("localtime(ut_time) = %p\n", localtime(&buf[0].ut_time));
+#endif
 	ct = ctime(&buf[0].ut_time);
+#if 0
 printf("ctime completed\n");
+#endif
 	printf("\nwtmp begins %10.10s %5.5s \n", ct, ct + 11);
 }
 
@@ -323,7 +327,9 @@ addarg(int type, char *arg)
 {
 ARG *cur;
 
+#if 0
 printf("addarg(%d, '%s')\n", type, arg);
+#endif
 	if (!(cur = (ARG *)malloc((u_int)sizeof(ARG))))
 		err(1, "malloc failure");
 	cur->next = arglist;
@@ -340,8 +346,9 @@ TTY *
 addtty(char *ttyname)
 {
 TTY *cur;
-
+#if 0
 printf("addtty('%s')\n", ttyname);
+#endif
 	if (!(cur = (TTY *)malloc((u_int)sizeof(TTY))))
 		err(1, "malloc failure");
 	cur->next = ttylist;
