@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Mon Jan  4 15:49:15 1999
+# Last revision: Thu Jan  7 08:23:17 1999
 #
-# $Id: describe.src,v 1.18 1999/01/04 15:50:26 gdr-ftp Exp $
+# $Id: describe.src,v 1.19 1999/01/07 08:36:33 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -101,15 +101,14 @@ AmaTerm is a GNO-specific terminal emulation program with job control (it
 may be suspended), a simple macro language, and a scrollback buffer.
 
 Name:    apropos
-Version: 3.0 (24 Jul 95)
-Shell:   GNO/ME
-Author:  Devin Reade
-Contact: gdr@myrias.com
+Version: 3.1 (28 March 1998)
+Author:  Devin Reade.
+Contact: gdr@trenco.gno.org
 Where:   /usr/bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+FTP:	 ftp.gno.org
 
-Locate commands by keyword.  Bundled with catman, makewhatis, man,
-and whatis in the manpack30.shk archive.
+Locate commands by keyword.
+Bundled with catman, makewhatis, man, and whatis in the manpack archive.
 
 Name:    ar
 Version: 1.0
@@ -132,6 +131,19 @@ FTP:     -
 Emulates UNIX argv0 (manipulate argv array passed to programs). Runs
 shell scripts with #!/... syntax.  Runs s16 programs with arguments.
 
+Name:    asml
+Version: 1.1 (13 Feb 98)
+Shell:   GNO
+Author:  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+This is the GNO version of the ORCA/Shell "asml" command.  It is
+provided for compatibility reasons; occ is the recommended command for
+compiling or assembling source code under GNO.  For GNO, the "compile",
+"cmpl", "assemble", and "asml" commands are all the program.
+
 Name:    aspdisp
 Version: 1.0
 Shell:   GNO
@@ -142,6 +154,19 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 aspdisp prints out AppleWorks v3.0 Spreadsheet files.  The output is
 formatted as near as possible to what it would look like in Appleworks.
+
+Name:    assemble
+Version: 1.1 (13 Feb 98)
+Shell:   GNO
+Author:  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+This is the GNO version of the ORCA/Shell "assemble" command.  It is
+provided for compatibility reasons; occ is the recommended command for
+compiling or assembling source code under GNO.  For GNO, the "compile",
+"cmpl", "assemble", and "asml" commands are all the program.
 
 Name:    aw30
 Version: 1.0
@@ -156,14 +181,14 @@ most options--including underline, boldface, margins, centering--on all
 terminal types.
 
 Name:    awk
-Version: 1.0
-Shell:   GNO/ME
-Author:  Ported by Jawaid Bazyar
-Contact: bazyar@netcom.com
-Where:   /usr/local/bin
-FTP:     ground.isca.uiowa.edu
+Version: 2.0 (March 1998)
+Shell:   GNO
+Author:  Jawaid Bazyar (from Bell Labs code; updated by Dave Tribby)
+Contact: tribby@cup.hp.com
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-A port of AT&T's AWK string processing language.
+Pattern-directed scanning and processing language.
 
 Name:    bang
 Version: 1.0
@@ -178,13 +203,13 @@ similar functionality to the "!" built-in command for csh(1) or bash(1).
 
 Name:    basename
 Version: 1.0
-Shell:   GNO
+Shell:   GNO/ME
 Author:  Scott Moberly (FreeBSD port)
 Contact: smoberly@s-cwis.unomaha.edu
-Where:   /usr/bin/
+Where:   /usr/bin
 FTP:     ftp.gno.org
 
-Displays the basename portion of a fully expanded pathname.
+Shows only the basename of a given fully expanded filename.
 
 Name:    bc
 Version: 1.01
@@ -296,24 +321,33 @@ A call chart generator, to show the sequence and calling dependancies of
 functions within a program.  It's more flexible than Orca shell version. 
 Requires cpp.
 
-Name:    catman
-Version: 1.0 (24 Jul 95)
-Shell:   GNO/ME
-Author:  Devin Reade
-Contact: gdr@myrias.com
-Where:   /usr/sbin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+Name:    cat
+Version: 2.0 (August 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-Preformat manual reference pages.  Bundled with apropos,
-makewhatis, man, and whatis in the manpack30.shk archive.
+Concatenate and list files.
+
+Name:    catman
+Version: 3.1 (28 March 1998)
+Author:  Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/sbin
+FTP:	 ftp.gno.org
+
+Preformat manual reference pages.
+Bundled with apropos, makewhatis, man, and whatis in the manpack archive.
 
 Name:    catrez
-Version: 1.0
+Version: 1.0.2 (September 1997)
 Shell:   GNO
 Author:  Dave Tribby
 Contact: tribby@cup.hp.com
 Where:   /usr/bin
-FTP:     ground.isca.uiowa.edu apple2.caltech.edu ftp.gno.org
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 Concatenate resource forks.
 
@@ -383,6 +417,16 @@ enhanced version which allows you to change options ala UNIX or using
 the Apple specific flags (UNIX values are translated into Apple
 equivalents).
 
+Name:    chtyp
+Version: 2.0.0 (28 Sep 97)
+Shell:   GNO/ME
+Author:  Evan Day
+Contact: day@engr.orst.edu
+Where:   /bin
+FTP:     ftp.gno.org
+
+Set GS/OS file types.
+
 Name:    cjpeg
 Version: 6
 Shell:   GNO, ORCA
@@ -392,6 +436,40 @@ Where:   /usr/local/bin
 FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Compress an image file to a JPEG file.  Part of the jpeg tools archive.
+
+Name:    cksum
+Version: 2.0 (December 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Display file checksums and block counts
+
+Name:    cmp
+Version: 2.0 (4 Aug 97)
+Shell:   GNO/ME
+Author:  Evan Day (from FreeBSD source)
+Contact: day@engr.orst.edu
+Where:   /bin
+FTP:     ftp.gno.org
+
+cmp compares and reports differences in the dataforks and resource forks
+of two files.
+
+Name:    cmpl
+Version: 1.1 (13 Feb 98)
+Shell:   GNO
+Author:  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+This is the GNO version of the ORCA/Shell "cmpl" command.  It is
+provided for compatibility reasons; occ is the recommended command for
+compiling or assembling source code under GNO.  For GNO, the "compile",
+"cmpl", "assemble", and "asml" commands are all the program.
 
 Name:    coff
 Version: 1.1
@@ -414,6 +492,16 @@ Where:   /usr/local/bin
 FTP:     ftp.gno.org
 
 Filter reverse line feeds from input.
+
+Name:    colcrt
+Version: 1.0 (January 22, 1998)
+Shell:   GNO
+Author:  Steve Reeves (from FreeBSD code)
+Contact: stever@gate.net
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Filter nroff output for CRT previewing.
 
 Name:    colrm
 Version: 1.0
@@ -443,6 +531,19 @@ Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/local/bin
 FTP:     ftp.gno.org
 Select or reject lines common to two files.
+
+Name:    compile
+Version: 1.1 (13 Feb 98)
+Shell:   GNO
+Author:  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+This is the GNO version of the ORCA/Shell "compile" command.  It is
+provided for compatibility reasons; occ is the recommended command for
+compiling or assembling source code under GNO.  For GNO, the "compile",
+"cmpl", "assemble", and "asml" commands are all the program.
 
 Name:    compress
 Version: 4.3
@@ -500,16 +601,15 @@ cp does file copy operations.  Suitably invoked, it also moves files (mv)
 and deletes files (rm).
 
 Name:    cpp
-Version: 0.1b (16 Aug 92)
-Shell:   GNO, ORCA
-Author:  Doug McIntyre
-Contact: dougm@lakesys.lakesys.com
-Where:   /usr/lib
-FTP:     ftp.gno.org, ground.isca.uiowa.edu
+Version: 2.0 (29 Oct 97)
+Shell:   GNO
+Author:  Ported by Devin Reade.
+Contact: gdr@eddore.myrias.com
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-This is a stand-alone C preprocessor based on code from the old
-Decus C compiler.  Two versions may be found in the cppDecus.shk archive,
-an older one with source code, and a newer one without source code.
+The C Preprocessor.  This is not invoked by ORCA/C but is rather provided
+as a stand-alone preprocessor.
 
 Name:    cron
 Version: 1.1
@@ -520,6 +620,16 @@ Where:   /usr/sbin
 FTP:     -
 
 Runs certain processes at certain times. cron is started by init.
+
+Name:    ctags
+Version: 1.0 (October 1997)
+Shell:   GNO
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Generate tag file for Emacs, vi.
 
 Name:    cu
 Version: 1.0
@@ -532,14 +642,14 @@ FTP:     -
 A simple dialup utility.
 
 Name:    cut
-Version: 1.0
-Shell:   GNO/ME
-Author:  Jason Perez
-Contact: jperez@ee.tamu.edu
-Where:   /usr/local/bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+Version: 2.0 (August 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-Cuts out selected fields of each line of a file.
+Select portions of each line of a file.
 
 Name:    date
 Version: 1.2
@@ -597,11 +707,21 @@ Name:    descu
 Version: 1.0.6
 Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
-Contact: gdr@myrias.ab.ca
+Contact: gdr@trenco.gno.org
 Where:   /usr/sbin
 FTP:     ftp.gno.org
 
 Update a 'describe' source file.
+
+Name:    df
+Version: 1.0 (28 Sep 97)
+Shell:   GNO/ME
+Author:  Evan Day (from FreeBSD source)
+Contact: day@engr.orst.edu
+Where:   /bin
+FTP:     ftp.gno.org
+
+Displays free disk space and disk usage statistics for GS/OS block devices.
 
 Name:    dial
 Version: 1.0
@@ -637,13 +757,13 @@ less-used features have been temporarily disabled for v1.0.
 
 Name:    dirname
 Version: 1.0
-Shell:   GNO
+Shell:   GNO/ME
 Author:  Scott Moberly (FreeBSD port)
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
 FTP:     ftp.gno.org
 
-Diplays the directory of a given fully expanded pathname.
+Shows only the directory name of a given fully expanded filename.
 
 Name:    djpeg
 Version: 6
@@ -838,6 +958,16 @@ FTP:     -
 Evaluates matehmatical expressions; prints result in normal and
 scientific notation. Uses C like syntax.
 
+Name:    false
+Version: 1.0 (7 Aug 97)
+Shell:   GNO, ORCA/Shell
+Author:  Devin Reade.
+Contact: gdr@eddore.myrias.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Returns a 'false' status to the shell.  Intended for use in shell scripts.
+
 Name:    fgrep
 Version: 2.1
 Shell:   GNO/ORCA
@@ -925,6 +1055,16 @@ FTP:     -
 fmake is a Unixish make utility. It only understands a small subset of make
 commands, though, barely enough to maintain small projects. Written originally
 by Felix Blank. The need for this utility vanished with the advent of dmake.
+
+Name:    fmt
+Version: 1.0 (19 Oct 97)
+Shell:   GNO
+Author:  Ported by Devin Reade.
+Contact: gdr@eddore.myrias.com
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Simple text formatter.
 
 Name:    foreach
 Version: 1.0
@@ -1017,6 +1157,16 @@ FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
 
 A utility to display Apple's DTS File Type Notes.
 
+Name:    ftp
+Version: 1.0 (October 1997)
+Shell:   GNO & GS/TCP
+Author:  Derek Taubert (from BSDi code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+File transfer program.
+
 Name:    getshk
 Version: 2.0
 Shell:   GNO/ORCA
@@ -1029,26 +1179,25 @@ This is a front end to yankit(1), which adds more options when extracting
 NuFX files.
 
 Name:    getty
-Version: 2.0.3
-Shell:   GNO
-Author:  Phillip Vandry
-Contact: -
-Where:   /usr/sbin/getty
-FTP:     ftp.gno.org, ground.isca.uiowa.edu
+Version: 2.1
+Author:  Maintained by Devin Reade
+Contact: gdr@trenco.gno.org
+Where:   /usr/sbin
+FTP:     ftp.gno.org
 
-Getty sets the terminal mode, speed, and line discipline.  It is usually 
-started by initd(8), and is used in the login process.
+Getty monitors serial lines and waits for users to log in, subsequently
+passing control to login(1).  It is not intended to be called by the
+user.
 
 Name:    getvers
-Version: 1.2
-Shell:   GNO/ME
-Author:  Ian Schmidt
-Contact: irsman@iastate.edu
+Version: 2.0 (April 1998)
+Shell:   GNO or ORCA
+Author:  Dave Tribby (original by Ian Schmidt)
+Contact: tribby@cup.hp.com
 Where:   /usr/bin
-FTP:     pindarus.cs.uiuc.edu
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-Gets the rVersion information on a EXE, including name, version, and any
-other information the author wishes to include, printing it to standard out.
+Print information from rVersion and rComment resources
 
 Name:    gmail
 Version: 1.1
@@ -1094,6 +1243,26 @@ GNU zip -- compress or expand files.  Ported from the Free Software
 Foundation's gzip, version 1.2.4.  Also has functionality of gunzip
 and gzcat.
 
+Name:    head
+Version: 2.0 (August 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Print the first part of a file.
+
+Name:    help
+Version: 1.1 (19 Oct 97)
+Shell:   GNO
+Author:  Devin Reade.
+Contact: gdr@eddore.myrias.com
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Prints out the help file for an ORCA utility, with pagination.
+
 Name:    hplist
 Version: 1.0 (18 Nov 91)
 Shell:   GNO, ORCA
@@ -1115,6 +1284,16 @@ Where:   /usr/local/bin
 FTP:     ftp.gno.org
 
 Format C programs in a variety of styles.
+
+Name:    inetd
+Version: 1.0 (October 1997)
+Shell:   GNO & GS/TCP
+Author:  Derek Taubert (from BSDi code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Internet services daemon
 
 Name:    info
 Version: 1.1
@@ -1174,17 +1353,18 @@ Starts and kills processes, maintains the system run level, and runs
 syslogd (log daemon)
 
 Name:    install
-Version: 1.0 (31 Mar 96)
-Shell:   GNO/ME
+Version: 1.2 (23 Apr 98)
+Shell:   GNO
 Author:  Devin Reade
-Contact: gdr@myrias.com
+Contact: gdr@trenco.gno.org
 Where:   /usr/bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+FTP:     ftp.gno.org
 
-Install is similar to cp(1) in that it copies files.  It will
-also create directory hierarchies, and modify some access bits.
-It is intended for use with Makefiles or other scripts to install
-files into their destination directories.
+Install is similar to cp(1) in that it copies files.  It will also create
+directory hierarchies, modify certain access bits, and convert TXT or SRC
+files into shell shell scripts (by changing the file and aux types).  It
+is intended for use with Makefiles or other scripts to install files into
+their destination directories.
 
 Name:    javap
 Version: 0.9b
@@ -1239,6 +1419,16 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Lossless transcoding of JPEG files.  Part of the jpeg tools archive.
 
+Name:    kill
+Version: 1.0 (January 1998)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Send signal to (or kill) a process
+
 Name:    lam
 Version: 1.0
 Shell:   GNO/ME
@@ -1250,16 +1440,14 @@ FTP:     ftp.gno.org
 Laminate files (displays files side by side).
 
 Name:    last
-Version: 1.1
-Shell:   GNO/ME
-Author:  Steve Reeves
-Contact: Internet: reevess@cse.fau.edu, GEnie: S.REEVES2
+Version: 1.0 (February 1998)
+Shell:   GNO
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
 Where:   /usr/bin
-FTP:     ground.isca.uiowa.edu
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-Displays last logins for specified users or terminals.  It searches
-through the login accounting file "/var/adm/wtmp" for this information.
-It is only useful with GNO's Multi-User package.
+Indicate last logins of users.
 
 Name:    lc
 Version: 1.0
@@ -1294,6 +1482,18 @@ FTP:     ftp.gno.org
 Standard unix utility to read a line from standard input
 and display it to standard output.
 
+Name:    link
+Version: 1.1 (30 Mar 98)
+Shell:   GNO
+Author:  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+This is the GNO version of the ORCA/Shell "link" command.  It is provided
+for compatibility reasons; occ is the recommended command for linking
+object files under GNO.
+
 Name:    list
 Version: 1.1.2
 Shell:   GNO/ME ORCA/Shell
@@ -1315,6 +1515,26 @@ FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
 Creates an object library listing of symbols, indexed by object
 file name.  Requires Byteworks' makelib v2.0 (may work with other
 versions with only slight modifications).
+
+Name:    logger
+Version: 1.0 (23 Jun 98)
+Shell:   GNO
+Author:  Ported by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Log messages to system log files via syslog(3) interface.
+
+Name:    login
+Version: 1.0 (February 1998)
+Shell:   GNO
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Sign on to the system.
 
 Name:    lpc
 Version: 1.0
@@ -1365,7 +1585,7 @@ Shell:   GNO
 Author:  Jawaid Bazyar (updated for GNO/ME 2.0.6 by Dave Tribby)
 Contact: tribby@cup.hp.com
 Where:   /usr/bin
-FTP:     ground.isca.uiowa.edu apple2.caltech.edu ftp.gno.org
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 List segments in an Object Module Format file.
 
@@ -1413,26 +1633,24 @@ This is a particularily brain-dead port that will likely be superceded.
 (By mkmf?)  Suitable for simple dependancies.
 
 Name:    makewhatis
-Version: 1.2 (24 Jul 95)
-Shell:   GNO/ME
+Version: 3.1 (28 March 1998)
 Author:  Devin Reade.
-Contact: gdr@myrias.com
+Contact: gdr@trenco.gno.org
 Where:   /usr/sbin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+FTP:	 ftp.gno.org
 
-Generates the whatis database used by man(1), apropos(1) and whatis(1).
-Bundled with apropos, catman, man, and whatis in the manpack30.shk archive.
+Create the whatis database used by man(1), apropos(1), and whatis(1).
+Bundled with apropos, catman, man, and whatis in the manpack archive.
 
 Name:    man
-Version: 3.0 (24 Jul 95)
-Shell:   GNO/ME
-Author:  Devin Reade
-Contact: gdr@myrias.com
+Version: 3.1 (28 March 1998)
+Author:  Devin Reade.
+Contact: gdr@trenco.gno.org
 Where:   /usr/bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+FTP:	 ftp.gno.org
 
-Display manual reference pages.  Bundled with apropos, catman,
-makewhatis, and whatis in the manpack30.shk archive.
+Display manual reference pages.
+Bundled with apropos, catman, makewhatis, and whatis in the manpack archive.
 
 Name:    martian
 Version: 1.0
@@ -1541,6 +1759,16 @@ This program reads in a GS/OS file and places it into an OMF file which can
 be directly linked into a program. For example, mkobj can be used for adding
 pictures, compressed data, sounds, and other binary-like images into your
 programs.
+
+Name:    mkso
+Version: 1.0 (21 Dec 97)
+Shell:   GNO
+Author:  Devin Reade
+Contact: gdr@eddore.myrias.com
+Where:   /sbin
+FTP:     ftp.gno.org
+
+Maintains manual page source (.so) links.
 
 Name:    mktmp
 Version: 1.0 (April 1993)
@@ -1697,18 +1925,14 @@ Prints out various random phrases.  The output of this program may be
 considered to be obscene by some people.
 
 Name:    nroff
-Version: 1.2 (18 Mar 97)
-Shell:   GNO/ME
+Version: 1.2.1 (19 Oct 97)
+Shell:   GNO
 Author:  Various.  Maintained by Devin Reade.
-Contact: gdr@myrias.com
+Contact: gdr@eddore.myrias.com
 Where:   /usr/bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+FTP:     ftp.gno.org apple2.caltech.edu ground.icaen.uiowa.edu
 
 Text Processing Typesetter
-
-This is a bug fix release to fix many memory trashing problems.  It
-also includes the -man package used by the GNO v2.0.6 man pages.
-There are no other added features.
 
 Name:    occ
 Version: 1.13
@@ -1802,6 +2026,16 @@ Where:   /usr/bin
 FTP:     ftp.gno.org
 Formatted output at shell command level.
 
+Name:    pwd
+Version: 1.0 (September 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Print working directory name
+
 Name:    quiz
 Version: 1.0
 Shell:   GNO
@@ -1841,6 +2075,16 @@ Where:   /usr/local/bin
 FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Copy individual resources from one file or another.
+
+Name:    rcp
+Version: 1.0 (November 1997)
+Shell:   GNO & GS/TCP
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Remote file copy.
 
 Name:    rdial
 Version: 1.2 (16 Aug 95)
@@ -1884,13 +2128,23 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is part of the "seq" remote login package.  (See "seq".)
 
-Name:    renram5
-Version: 1.0 (28 Jan 96)
-Shell:   ORCA/Shell, GNO/ME
+Name:    removerez
+Version: 1.0 (29 Mar 98)
+Shell:   GNO, ORCA/Shell
 Author:  Devin Reade.
-Contact: gdr@myrias.com
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Removes resource forks from extended files.
+
+Name:    renram5
+Version: 1.0.1 (3 Aug 97)
+Shell:   ORCA/Shell, GNO/ME
+Author:  Devin Reade
+Contact: gdr@trenco.gno.org
 Where:   /usr/sbin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+FTP:     ftp.gno.org apple2.caltech.edu ground.icaen.uiowa.edu
 
 Renames /RAM5 to /tmp on boot.
 
@@ -1923,13 +2177,22 @@ FTP:     ftp.gno.org
 
 List resources in a GS or Macintosh resource fork
 
+Name:    rlogin
+Version: 1.0 (November 1997)
+Shell:   GNO & GS/TCP
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Remote login.
+
 Name:    rmdir
 Version: 1.0 (28 Nov 94)
-Shell:   GNO/ME
 Author:  Devin Reade.
-Contact: gdr@myrias.ab.ca
+Contact: <gdr@myrias.ab.ca>
 Where:   /bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+FTP:     ftp.gno.org apple2.caltech.edu ground.icaen.uiowa.edu
 
 Remove empty directories.
 
@@ -1976,6 +2239,16 @@ Where:   /usr/local/bin
 FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Remove one or more resources.
+
+Name:    rsh
+Version: 1.0 (November 1997)
+Shell:   GNO & GS/TCP
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Remote shell.
 
 Name:    rsound
 Version: 1.1a
@@ -2042,6 +2315,17 @@ FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, ftp.gno.org
 
 Copy or paste text to or from the system clipboard.
 
+Name:    sed
+Version: 2.0 (October 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+This is a stream editor with a regular expression command set.  It is
+intended for doing batch changes rather than for interactive use.
+
 Name:    sendmail
 Version: 1.1
 Shell:   GNO/ME
@@ -2075,6 +2359,16 @@ FTP:     pindarus.cs.uiuc.edu
 Sets the rVersion information on a EXE, including name, version, and any
 other information the author wishes to include.
 
+Name:    sleep
+Version: 2.0 (September 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Suspend execution for an interval of time.
+
 Name:    soelim
 Version: 1.0
 Shell:   GNO/ME
@@ -2095,15 +2389,14 @@ FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
 Prepare a C source file for the Splat! debugger.
 
 Name:    split
-Version: 1.0
-Shell:   GNO, ORCA
-Author:  Jawaid Bazyar
-Contact: bazyar@hypermall.com
-Where:   /usr/bin
-FTP:     ftp.gno.org, ground.isca.uiowa.edu
+Version: 2.0 (November 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-The split program splits one file into many smaller pieces, based either
-on a number of lines or a number of bytes per piece.
+Split a file into pieces.
 
 Name:    ssalarm
 Version: 1.0
@@ -2179,16 +2472,14 @@ FTP:     -
 Launch a new shell as another user.
 
 Name:    sum
-Version: 1.0
-Shell:   GNO/ORCA
-Author:  Ported by Marek Pawlowski
-Contact: -
+Version: 2.0 (December 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
 Where:   /usr/bin
-FTP:     ftp.gno.org, ground.isca.uiowa.edu
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-Sum calculates and prints a 16-bit checksum for the named file, and also
-prints the number of blocks in the file.  It is typically used to look for
-bad spots, or to validate a file communicated over some transmission line.
+Display file checksums and block counts (same as cksum)
 
 Name:    swi
 Version: 1.2
@@ -2222,6 +2513,18 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 Synthfile is a program that prints the contents of (and plays) MIDI Synth
 files.
 
+Name:    syslogd
+Version: 2.0 (Alpha-1: 31 Oct 98)
+Shell:   GNO
+Author:  Devin Reade
+Contact: gdr@trenco.gno.org
+Where:   /usr/sbin
+FTP:     ftp.gno.org
+
+System logging daemon.  Syslogd responds to logging requests from various
+programs and writes them to a file or files based on the facility and priority
+level.
+
 Name:    sz
 Version: 3.34
 Shell:   GNO
@@ -2234,14 +2537,14 @@ Zmodem file transfer program.  This is the sender, and is bundled with
 rz(1), the receiver.
 
 Name:    tail
-Version: 1.1
-Shell:   GNO, ORCA
-Author:  Sameer Parekh
-Contact: -
-Where:   /usr/bin
-FTP:     ftp.gno.org, ground.isca.uiowa.edu
+Version: 2.0 (August 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-Show the last few lines of a file.
+Print the last part of a file.
 
 Name:    tar
 Version: 2.0.1
@@ -2255,16 +2558,16 @@ Tape ARchive utility.  This extracts files from a tar archive.  Tar archives
 do not use file compression.
 
 Name:    tee
-Version: 1.2 (8 Sep 96)
-Shell:   GNO/ME
+Version: 1.3 (5 Oct 97)
+Shell:   GNO
 Author:  Devin Reade
-Contact: <gdr@myrias.ab.ca>
-Where:   /bin/
-FTP:     apple2.caltech.edu, grind.isca.uiowa.edu.
+Contact: <gdr@trenco.gno.org>
+Where:   /bin
+FTP:     ftp.gno.org
 
-Tee copies stdin to stdout, by default without buffering.  It
-also makes a copy of the data to a specified file(s).  It is useful
-when you want to watch the output of a process, but also save it.
+Tee copies stdin to stdout, by default without buffering.  It also makes
+a copy of the data to a specified file(s).  It is useful when you want to
+watch the output of a process, but also save it.
 
 Name:    test
 Version: 1.0 (9 Feb 96)
@@ -2272,7 +2575,7 @@ Shell:   GNO/ME
 Author:  Devin Reade
 Contact: gdr@myrias.com
 Where:   /bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+FTP:     ftp.gno.org ground.icaen.uiowa.edu
 
 The test utility evaluates string and integer expressions and, if
 it evaluates to true, returns a zero (true) exit status; otherwise it
@@ -2342,12 +2645,12 @@ FTP:     ftp.gno.org
 Terminal capability interface.
 
 Name:    tr
-Version: 1.0
-Shell:   GNO, ORCA
-Author:  Tom Wyant
-Contact: -
+Version: 2.0 (August 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
 Where:   /bin
-FTP:     ftp.gno.org, ground.isca.uiowa.edu
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 Translate characters in a file.
 
@@ -2373,6 +2676,16 @@ FTP:     ftp.gno.org
 "Trek is a game of space glory and war." This is a port of the BSD
 text-based Star Trek game.
 
+Name:    true
+Version: 1.0 (7 Aug 97)
+Shell:   GNO, ORCA/Shell
+Author:  Devin Reade.
+Contact: gdr@eddore.myrias.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Returns a 'true' status to the shell.  Intended for use in shell scripts.
+
 Name:    tty
 Version: 1.0
 Shell:   GNO/ME
@@ -2383,26 +2696,25 @@ FTP:     ftp.gno.org
 Return user's terminal name.
 
 Name:    udl
-Version: 1.1.5
+Version: 1.1.6
 Shell:   GNO/ME, ORCA/Shell
 Author:  Soenke Behrens, Devin Reade
-Contact: sbehrens@bigfoot.com, gdr@myrias.ab.ca
-Where:   /usr/local/bin
-FTP:     apple2.caltech.edu, grind.isca.uiowa.edu
+Contact: sbehrens@bigfoot.com, gdr@myrias.com
+Where:   /usr/bin
+FTP:     ftp.gno.org apple2.caltech.edu ground.icaen.uiowa.edu
 
-Converts text between the CR, LF and CR/LF forms. Also available for Unix
-machines, reasonably fast yet secure.
+Converts text between the CR, LF and CR/LF forms. Also available for UNIX
+machines, reasonably fast yet robust.
 
 Name:    uname
-Version: 2.0.2
-Shell:   GNO/ME
-Author:  Ian Schmidt
-Contact: irsman@drift.winternet.com
-Where:   /bin/
-FTP:     ground.isca.uiowa.edu
+Version: 3.0 (January 23, 1998)
+Shell:   GNO
+Author:  Steve Reeves (from FreeBSD code)
+Contact: stever@gate.net
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-Prints the name of the UNIX system (in this case GNO/ME) plus various
-other information such as your hostname if you are running the MU package.
+Display information about the system.
 
 Name:    unarj
 Version: 2.42
@@ -2432,6 +2744,16 @@ Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/local/bin
 FTP:     ftp.gno.org
 Remove ifdef'd lines.
+
+Name:    uniq
+Version: 2.0 (November 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+report or filter out repeated lines in a file
 
 Name:    units
 Version: 1.0
@@ -2587,14 +2909,24 @@ Virtual Shape Compiler.  This program compiles sprites into assembly code
 for use with ORCA/M.
 
 Name:    wall
-Version: 1.0
-Shell:   GNO/ME
-Author:  Phil Vandry
-Contact: vandry@CAM.ORG
+Version: 1.0 (January 1998)
+Shell:   GNO
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
 Where:   /usr/bin
-FTP:     -
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
-Sends a message to the terminal of every logged on user.
+Write to all users.
+
+Name:    wc
+Version: 2.0 (August 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Count words, lines, and bytes in files.
 
 Name:    what
 Version: 1.0
@@ -2607,26 +2939,45 @@ FTP:     ftp.gno.org
 Show what versions of object modules were used to construct a file.
 
 Name:    whatis
-Version: 3.0 (24 Jul 95)
-Shell:   GNO/ME
-Author:  Devin Reade
-Contact: gdr@myrias.com
+Version: 3.1 (28 March 1998)
+Author:  Devin Reade.
+Contact: gdr@trenco.gno.org
 Where:   /usr/bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+FTP:	 ftp.gno.org
 
-Locate commands by name.  Bundled with apropos, catman, makewhatis,
-and man in the manpack30.shk archive.
+Locate commands by name.
+Bundled with apropos, catman, makewhatis, and man in the manpack archive.
 
 Name:    whereis
-Version: v1.2
-Shell:   GNO/ME
-Author:  Devin Reade
-Contact: gdr@myrias.ab.ca
+Version: v1.3 (25 Sep 97)
+Shell:   GNO
+Author:  Modified from BSD code by Devin Reade
+Contact: gdr@eddore.myrias.com
 Where:   /usr/bin
-FTP:     apple2.caltech.edu,ground.isca.uiowa.edu.
+FTP:     apple2.caltech.edu ground.icaen.uiowa.edu ftp.gno.org
 
-whereis searches certain directories (/bin, /usr/bin, /usr/man, et cetera) and
-reports the location of source, executables, and man pages.
+whereis searches certain directories (/bin, /usr/bin, /usr/man, et cetera)
+and reports the location of source, executables, and man pages.
+
+Name:    who
+Version: 1.0 (October 1997)
+Shell:   GNO
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Display users on the system.
+
+Name:    whois
+Version: 1.0 (November 1997)
+Shell:   GNO & GS/TCP
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Internet user name directory service.
 
 Name:    wrap
 Version: 1.1
@@ -2737,6 +3088,16 @@ This is a simple program that runs Andy McFadden's yankit(1) utility
 for each filename argument on its command line.  This allows
 multiple NuFX (ShrinkIt) archives to be listed or extracted (individual files
 cannot be extracted from archives, only the whole archive).
+
+Name:    yes
+Version: 2.0 (September 1997)
+Shell:   GNO
+Author:  Dave Tribby
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
+
+Repetitively echo "y" or command-line argument
 
 Name:    yow
 Version: 1.0
