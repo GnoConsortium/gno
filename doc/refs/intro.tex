@@ -1,7 +1,7 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.6 1998/09/24 06:49:58 gdr-ftp Exp $
+% $Id: intro.tex,v 1.7 1998/10/14 03:14:01 gdr-ftp Exp $
 % 
 
 \documentclass{report}
@@ -15,7 +15,7 @@
 
 \title{GNO Overview and Installation}
 \author{Jawaid Bazyar \\ Tim Meekins \\ Devin Reade}
-\date{24 September 1998}
+\date{13 October 1998}
 \maketitle
 
 \bibliographystyle{plain}
@@ -38,11 +38,12 @@
 	{http://www.gno.org/~gno/kern.html}}
 \newcommand{\gsh}[1]{\htlink{#1}
 	{http://www.gno.org/~gno/gsh.html}}
-
+\newcommand{\manpages}[1]{\htlink{#1}
+	{http://www.gno.org/~gno/manindex.html}}
 \parindent=0pt
 \parskip=1pc
 
-The GNO Multitasking Environment is Copyright 1991-1997 by
+The GNO Multitasking Environment is Copyright 1991-1998 by
 Procyon Enterprises Incorporated.
 
 \begin{flushleft}
@@ -51,7 +52,7 @@ Second Edition, August 1996. \\
 Third Edition, November 1997.
 \end{flushleft}
 
-The ORCA/C run-time libraries are Copyright 1987-1997 Byte Works, Inc.,
+The ORCA/C run-time libraries are Copyright 1987-1998 Byte Works, Inc.,
 and distributed with permission.
 
 This product includes software developed by the University of California,
@@ -106,7 +107,7 @@ Then do it.  \bf --- Lazarus Long \rm
 \end{quote}
 
 The {\bf GNO} {\bf M}ultitasking {\bf E}nvironment for the Apple IIgs. \\
-Copyright 1991-1997, Procyon Enterprises Inc. and Tim Meekins.
+Copyright 1991-1998, Procyon Enterprises Inc. and Tim Meekins.
 
 The following people and organizations have contributed to the GNO base
 distribution; many other people have contributed stand-alone packages and
@@ -304,37 +305,49 @@ programs from UNIX or MS-DOS systems to the Apple IIgs.
 %
 
 
-\section{The GNO/ME Package}
+\section{Documentation Roadmap}
 
-GNO is a large and complex system.  There are many pieces to it;
-too many to list in detail here.  However in general, the documentation
-consists of the following parts.  All of these are available 
+There are many pieces to the GNO documentation.  The primary ones are
+listed below.  They are available
 at the \gnodocs{GNO Documentation Page} and via anonymous ftp from
-\tt ftp.gno.org\rm:
+\tt ftp.gno.org\rm.
 
 \begin{itemize}
-\item	GNO Overview and Installation Manual.
-\item	GNO Shell User's Manual.
-\item	GNO Kernel Reference Manual.
+\item	\overview{GNO Overview and Installation Manual}.
+\item	\gsh{GNO Shell User's Manual}.
+\item	\kernel{GNO Kernel Reference Manual}.
 \item	Online Manual Pages.
-\item	GNO Frequently Asked Questions (and Answers) List
+\item	\faqhtml{GNO Frequently Asked Questions (and Answers) List}.
 \end{itemize}
 
-The base distribution of GNO itself is also available via anonymous
-ftp from the same site.  It comes as a three-disk set which makes
-up GNO v2.0.1.  There is a single disk for each of the upgrades
-to versions 2.0.2, 2.0.3, and 2.0.4.  There is also a custom version
-of ORCALib that should be installed if you are using ORCA/C v2.0.x
-with GNO v2.0.4.
+If you are new to GNO, you should start with the Overview and Installation
+Manual (this document).
 
-\em A developmental release of GNO v2.0.6 is pending.  This page will 
-be updated as more information becomes available. \rm
+The \gsh{GNO Shell User's Manual} provides information on using \bf gsh\rm, 
+which is an ORCA-compatible shell.  It is the primary user interface
+to GNO.
 
-Finally, there is an extensive collection of third-party GNO utilities
-available.  A listing of these utilities may be found at
-\hturl{http://www.gno.org/~gno/describe/}
-or
-\hturl{http://www.servtech.com/public/phoenix/computers/gno/index.html}.
+The \kernel{Kernel Reference Manual} gives detailed information about
+the kernel, which is the heart of GNO.  It is intended mainly for programmers.
+
+The ``Manual Pages'' are the traditional form of UNIX documentation.
+They are normally viewed on your GS by typing ``man \it subject\rm'',
+where \it subject \rm is the name of the command, library routine, file
+(and so forth) for which you are trying to obtain information.
+Man pages are provided for the \manpages{base distribution}, and are
+usually provided by authors of third-party programs.  Type ``man man''
+from within GNO for detailed instructions on how to use the man pages.
+
+The \faqhtml{FAQ} is a list of questions and answers that have come 
+up many times; you should read the FAQ before posting any GNO questions
+to \delphi{Delphi} or \bf comp.sys.apple2.gno\rm.  Your question may
+already be answered.
+
+More information, including an online GNO bugs database, status charts
+for ongoing development, and GNO-related links are available online
+at \gnodocs{http://www.gno.org/~gno'}.  Because of the nature of this
+information, much of it is available only via the WWW, and not 
+anonymous ftp.
 
 \section{Hardware Requirements}
 
@@ -354,6 +367,45 @@ accellerator card, especially if you will be using GNO with many
 background processes. A modem and access to an on-line service
 will greatly speed access to technical assistance and new
 utilities as they are made available.
+
+\section{Obtaining GNO}
+
+GNO is a large and complex system.  There are many pieces to it;
+too many to list in detail here.  There are, however, two major
+catogories of pieces.  The first is the base distribution, the
+second are all the third-party ``add-ons''.  
+(Some of the second category sometimes get moved into the base distribution).
+Normally, one would install the base distribution, then install 
+whichever third-party applications are desired.
+
+Currently, there are available two versions of the base GNO distribution.
+The first is version 2.0.4, which is the one last version released by Jawaid.
+It is relatively stable and easy to install,
+but has no TCP/IP support, a few known bugs, and is not getting
+any kernel updates.  (Recent library updates can, to some extent, be used
+with this version.)
+
+The second available version is 2.0.6.  It is undergoing active development
+and therefore includes bug fixes to v2.0.4, as well as TCP/IP support
+in the kernel (it does not currently take advantage of Marinetti).
+On the other hand, it is still of alpha quality;  it is difficult to 
+install, has some incompatibilities with 2.0.4, and new bugs have been
+introduced.  Once it has stabalized more, it will completely supercede
+version 2.0.4.
+
+Both base distributions are available via anonymous ftp.
+Version 2.0.6 is also available in source form, including via anonymous cvs.
+See the respective Installation chapters on downloading these files.
+
+Third party applications are available (among other places) from 
+\hturl{ftp://ftp.gno.org/pub/apple2/gs.specific/gno}.  Because this
+collection has grown so large, James Brookes developed the \bf describe\rm
+database (later maintained by Soenke Behrens and Devin Reade), which
+provides a description and other information on the various GNO utilities.
+Online interfaces to the database may be found at
+\hturl{http://www.gno.org/~gno/describe/}
+or
+\hturl{http://www.servtech.com/public/phoenix/computers/gno/index.html}.
 
 \section{Obtaining Assistance}
 
@@ -641,6 +693,24 @@ you want to use your ORCA languages and tools, you should answer
 the appropriate questions during the install process. ORCA
 installation is covered in more detail below.
 
+\section{Obtaining GNO v2.0.4}
+
+The base distribution for GNO v2.0.4 is not actually available as a 
+self-contained package.  Instead, it is necessary to install GNO
+v2.0.1, then incrementally upgrade it to v2.0.2, v2.0.3, and finally
+v2.0.4.
+
+These packages are available via anonymous ftp from 
+\tt ftp://ftp.gno.org/pub/apple2/gs.specific/gno/base204\rm.
+There is a three-disk set for GNO v2.0.1, and a 
+single disk for each of the upgrades to versions 2.0.2, 2.0.3, and 2.0.4.
+You should download all of these files.
+
+There is also a custom version of ORCALib that should be installed if you
+are using ORCA/C v2.0.x with GNO v2.0.4.
+
+Remember to download these disk archives in binary mode.
+
 \section{Installing GNO v2.0.1}
 
 \begin{description}
@@ -912,7 +982,7 @@ them to Devin Reade.\rm
 This chapter contains information on how to install the newest version
 of GNO, which is version 2.0.6 or later.  It explains how to install
 the base \em binary\rm distribution.  Installation of GNO sources such that
-you are able to \em build\rm the base distribution itself are at this
+you are able to \em build \rm the base distribution itself are at this
 time beyond the scope of this document.
 
 At this time, unfortunately, installing GNO is fairly cumbersome.
@@ -942,7 +1012,7 @@ complete GNO source			& 15.0 MB \\
 \end{tabular}
 
 
-\section{Downloading and Extracting the Archive Files}
+\section{Downloading and Extracting the Binary Distribution}
 
 Your first step is of course to download the distribution.  You should
 have the following NuFX archives:
@@ -1058,7 +1128,52 @@ not yet need a password.
 
 \section{Custom Configuration}
 
+\it Sorry, this information has not yet been written.\rm
 
+\section{Obtaining Source}
+
+Source for the base distribution is available in one of two ways:
+Anonymous FTP and anonymous CVS.
+
+You can obtain the GNO source via anonymous FTP from 
+\hturl{ftp://ftp.gno.org/pub/apple2/gs.specific/gno/base206/src}.
+The files in that directory hierarchy are updated daily from the
+master repository.  Files that have been recently added or modified
+will be listed in one or more of the 
+\tt NEW.today\rm ,
+\tt NEW.this.week\rm , or
+\tt NEW.this.month \rm
+files.
+
+\em Please download only what you need.  Sites that attempt to download
+all or large portions of the sources on a regular and frequent basis
+without first requesting mirror status will be disabled. This is done
+to keep a reasonable load level on Trenco.\rm
+
+For those sites which are able to make use of CVS (Concurrent Versions
+System), the GNO sources can also be obtained by anonymous CVS in 
+pserver mode.  As there is as yet no CVS port to the GS, this implies
+that you have another (probably UNIX) machine to which you are downloading
+the sources.  Because of the size of the archive, you should also have
+a reasonable speed of interconnect between your machine and \tt ftp.gno.org\rm.
+
+The first time you obtain GNO sources via CVS, you must log in to the
+repository, then check it out:
+
+\begin{verbatim}
+	cvs -d :pserver:cvs@ftp.gno.org:/usr/local/repository login
+	Password: cvs
+	cd /your/source/tree
+	cvs -d :pserver:cvs@ftp.gno.org:/usr/local/repository checkout gno
+\end{verbatim}
+
+After this is done, you can update your sources to match the most recent
+version by doing the following:
+
+\begin{verbatim}
+	cd /your/source/tree/gno
+	cvs update -PAd
+\end{verbatim}
 
 \chapter{Desk Accessories}
 

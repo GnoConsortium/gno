@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.9 1998/03/15 00:36:33 gdr-ftp Exp $
+# $Id: Makefile,v 1.10 1998/10/14 03:14:01 gdr-ftp Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -77,7 +77,8 @@ GETDATE		= ./getdate -date
 GETVERS		= ./getdate -version
 DVIPS_FLAGS	=
 LATEX_FLAGS	=
-TEX2HTML_FLAGS	= -info "" -local_icons -dir $(HTMLD) -up_url refs.html
+TEX2HTML_FLAGS	= -info "" -local_icons -dir $(HTMLD) -up_url refs.html \
+		  -up_title "GNO Reference Manuals"
 TEXINPUTS	= ':/usr/local/lib/latex2html'
 
 DVI	= intro.dvi    kern.dvi
