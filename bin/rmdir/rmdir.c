@@ -17,8 +17,7 @@
 #include <unistd.h>
 #include <err.h>
 #include <gno/gno.h>
-
-#include "contrib.h"
+#include <gno/contrib.h>
 
 #ifdef __STACK_CHECK__
 static void
