@@ -1,0 +1,51 @@
+.\"
+.\" Devin Reade, March 1998
+.\"
+.\" $Id: removerez.1,v 1.1 1998/03/31 03:32:57 gdr-ftp Exp $
+.\"
+.TH REMOVEREZ 1 "29 March 1998" GNO "Commands and Applications"
+.SH NAME
+removerez \- remove resource fork
+.SH SYNOPSIS
+.BR removerez
+[
+.BR -qv
+]
+.IR file " ..."
+.SH DESCRIPTION
+.BR removerez
+will remove the resource fork for any of the extended
+.IR file s
+specified on it's command line; it will not touch standard files, directories,
+or partitions.
+.SH OPTIONS
+.IP \fB-q\fR
+.BR removerez
+will normally print warnings for any
+.IR file s
+that are not extended files.  Using the
+.BR -q
+(quiet) flag inhibits this warning.  The
+.BR -q
+flag will override any previously specified
+.BR -v
+flag.
+.IP \fB-v\fR
+If the
+.BR -v
+(verbose) flag is specified, the name of each
+.I file
+will be printed as its resource fork is removed.  The
+.BR -v
+flag will override any previously specified
+.BR -q
+flag.
+.SH AUTHOR
+Devin Reade
+.SH HISTORY
+A
+.BR removerez
+script first appeared in the ORCA v2.1 distribution.  This version
+first appeared in GNO v2.0.6.
+.SH SEE ALSO
+.BR catrez (1)

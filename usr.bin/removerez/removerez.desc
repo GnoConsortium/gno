@@ -1,0 +1,9 @@
+Name:    removerez
+Version: 1.0 (29 Mar 98)
+Shell:   GNO, ORCA/Shell
+Author:  Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Removes resource forks from extended files.

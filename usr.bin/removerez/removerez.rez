@@ -1,0 +1,19 @@
+/*
+ * $Id: removerez.rez,v 1.1 1998/03/31 03:33:03 gdr-ftp Exp $
+ */
+
+#include "Types.Rez"
+#include "/src/gno/build.tools/builddate.rez"
+
+resource rVersion (0x1, purgeable3, nocrossbank) {
+
+	{ 1, 1, 0,	/* version 1.1.0 */
+	  release,	/* development|alpha|beta|final|release */
+          0		/* non-final release number */
+        },
+        verUS,
+        "removerez",
+        "Strip resource fork.\n"
+        "Patterned off the ORCA/Shell script of the same name.\n"
+        BUILD_DATE
+};

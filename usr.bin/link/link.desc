@@ -1,0 +1,11 @@
+Name:    link
+Version: 1.1 (30 Mar 98)
+Shell:   GNO
+Author:  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+This is the GNO version of the ORCA/Shell "link" command.  It is provided
+for compatibility reasons; occ is the recommended command for linking
+object files under GNO.
