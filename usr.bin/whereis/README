@@ -1,0 +1,62 @@
+whereis v1.1 (Gno)
+
+============
+INSTALLATION
+============
+
+If you have Gno and dmake, type "dmake install".  Otherwise:
+
+                FILE:                   COPY TO:
+
+        Gno:    Orca/whereis            17/whereis              [if desired]
+                Gno/whereis             /usr/bin/whereis
+                whereis.1               $(USRMAN)/man1/whereis.1
+
+        Orca:   Orca/whereis            17/whereis
+                whereis.cat             17/help/whereis
+
+=====
+NOTES
+=====
+
+Whereis is VERY dependant on pathnames.
+
+This archive consist of both Orca shell and Gno versions.  Both versions
+will work with both shells, the difference being that in the Gno version
+the leading "31" has been stripped from pathnames.  (It is no longer needed
+because of namespace.)
+
+I strongly recommend _not_ using the Gno version with the Orca shell unless
+you have actual partitions named "/usr", "/bin", "/etc", and so on, as you
+will get _many_ accesses to all online devices in this case.
+
+A -V flag and rVersion resource have been added to show version information.
+
+A -c flag has been added to provide case-insensitive searches.
+
+The source is released because it is small, and you can change the pathnames
+if you wish.
+
+=======
+HISTORY
+=======
+
+v1.1:   Rewritten to take advantage of Gno 2.x's namespace feature.
+        Separate Gno and Orca versions created.
+        Prototyped.
+        Disabled references to the /man volume (both versions).
+        Fixed up man page.
+        Added -V flag to show version information.
+        Added -c flag to force case-insensitive searches.
+        Added "17" to list of directories to search for binaries.
+        Added "17/help" to list of directories to search for man pages.
+
+v1.0:   Initial release.
+
+=======
+AUTHORS
+=======
+
+Author of the original original port from BSD to Gno is unknown.  (Jawaid?)
+
+v1.1 updated by G. Devin Reade <glyn@cs.ualberta.ca>

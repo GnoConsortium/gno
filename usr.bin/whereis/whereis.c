@@ -1,0 +1,507 @@
+#ifdef __CCFRONT__
+#include <14:pragma.h>
+#endif
+/*-
+ * Copyright (c) 1980 The Regents of the University of California.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+#ifndef lint
+char copyright[] =
+"@(#) Copyright (c) 1980 The Regents of the University of California.\n\
+ All rights reserved.\n";
+#endif /* not lint */
+
+#ifndef lint
+static char sccsid[] = "@(#)whereis.c	5.5 (Berkeley) 4/18/91";
+#endif /* not lint */
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/param.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <ctype.h>
+
+#ifdef __GNO__    /* define this to use pathnames _without_ the leading 31/ */
+static char *bindirs[] = {
+	"/bin",
+	"/usr/bin",
+	"/usr/sbin",
+	"/usr/games",
+	"/usr/include",
+	"/usr/hosts",
+   "/usr/local",
+   "/usr/local/bin",
+   "17", 
+	"/etc",
+	0
+};
+/* This needs to be redone - man pages live with sources */
+static char *mandirs[] = {
+
+/*
+   These are disabled since /man is not usually present; this eliminates
+   a long series of accesses to the 3.5" drive.
+
+        "/man/man1",   
+        "/man/man2",
+        "/man/man3",
+        "/man/man4",
+        "/man/man5",
+        "/man/man6",
+        "/man/man7",
+        "/man/man8",
+        "/man/cat1",
+        "/man/cat2",
+        "/man/cat3",
+        "/man/cat4",
+        "/man/cat5",
+        "/man/cat6",
+        "/man/cat7",
+        "/man/cat8",
+*/
+
+		  "/usr/man/cat1",
+	     "/usr/man/cat2",
+	     "/usr/man/cat3",
+	     "/usr/man/cat4",
+	     "/usr/man/cat5",
+	     "/usr/man/cat6",
+	     "/usr/man/cat7",
+	     "/usr/man/cat8",
+	     "/usr/man/man1",
+	     "/usr/man/man2",
+	     "/usr/man/man3",
+	     "/usr/man/man4",
+	     "/usr/man/man5",
+	     "/usr/man/man6",
+	     "/usr/man/man7",
+	     "/usr/man/man8",
+        "17/help",
+        0           
+};
+static char *srcdirs[]  = {
+	"/usr/src/bin",
+	"/usr/src/etc",
+	/* still need libs */
+	0
+};
+
+#else /* not __GNO__ */
+
+static char *bindirs[] = {
+	"31/bin",
+	"31/usr/bin",
+	"31/usr/sbin",
+	"31/usr/games",
+	"31/usr/include",
+	"31/usr/hosts",
+   "31/usr/local",
+   "31/usr/local/bin",
+   "17", 
+	"31/etc",
+	0
+};
+/* This needs to be redone - man pages live with sources */
+static char *mandirs[] = {
+
+/*
+   These are disabled since /man is not usually present; this eliminates
+   a long series of accesses to the 3.5" drive.
+
+        "31/man/man1",   
+        "31/man/man2",
+        "31/man/man3",
+        "31/man/man4",
+        "31/man/man5",
+        "31/man/man6",
+        "31/man/man7",
+        "31/man/man8",
+        "31/man/cat1",
+        "31/man/cat2",
+        "31/man/cat3",
+        "31/man/cat4",
+        "31/man/cat5",
+        "31/man/cat6",
+        "31/man/cat7",
+        "31/man/cat8",
+*/
+
+		  "31/usr/man/cat1",
+	     "31/usr/man/cat2",
+	     "31/usr/man/cat3",
+	     "31/usr/man/cat4",
+	     "31/usr/man/cat5",
+	     "31/usr/man/cat6",
+	     "31/usr/man/cat7",
+	     "31/usr/man/cat8",
+	     "31/usr/man/man1",
+	     "31/usr/man/man2",
+	     "31/usr/man/man3",
+	     "31/usr/man/man4",
+	     "31/usr/man/man5",
+	     "31/usr/man/man6",
+	     "31/usr/man/man7",
+	     "31/usr/man/man8",
+        "17/help",
+        0           
+};
+static char *srcdirs[]  = {
+	"31/usr/src/bin",
+	"31/usr/src/etc",
+	/* still need libs */
+	0
+};
+
+#endif /* not __GNO__ */
+
+#ifdef CASEFLAG
+int   cflag = 0;
+#endif
+
+char	sflag = 1;
+char	bflag = 1;
+char	mflag = 1;
+char	**Sflag;
+int	Scnt;
+char	**Bflag;
+int	Bcnt;
+char	**Mflag;
+int	Mcnt;
+char	uflag;
+
+#ifdef __GNO__
+char  *verstring = "whereis -- Gno/ME Version 1.1";
+#else 
+char  *verstring = "whereis -- Orca Version 1.1";
+#endif
+
+void getlist (int *argcp, char ***argvp, char ***flagp, int *cntp);
+void zerof(void);
+void lookup (register char *cp);
+void looksrc (char *cp);
+void lookbin (char *cp);
+void lookman (char *cp);
+void findv (char **dirv, int dirc, char *cp);
+void find (char **dirs, char *cp);
+void findin (char *dir, char *cp);
+int  itsit (register char *cp, register char *dp);
+
+#ifdef DEBUG
+void begin_stack_check(void);
+int  end_stack_check(void);
+#endif
+
+/*
+ * whereis name
+ * look for source, documentation and binaries
+ */
+int main(int argc, char **argv)
+{
+
+#ifdef DEBUG
+   begin_stack_check();
+#endif
+
+	argc--, argv++;
+	if (argc == 0) {
+usage:
+
+#ifdef CASEFLAG
+		fprintf(stderr, "whereis [ -sbmucV ] [ -SBM dir ... -f ] name...\n");
+#else /* not CASEFLAG */
+		fprintf(stderr, "whereis [ -sbmuV ] [ -SBM dir ... -f ] name...\n");
+#endif
+
+#ifdef DEBUG
+      if (getenv("CHECKSTACK"))
+   		printf("Stack Usage: %d\n",end_stack_check());
+#endif
+
+		exit(1);
+	}
+	do
+		if (argv[0][0] == '-') {
+			register char *cp = argv[0] + 1;
+			while (*cp) switch (*cp++) {
+
+			case 'f':
+				break;
+
+			case 'S':
+				getlist(&argc, &argv, &Sflag, &Scnt);
+				break;
+
+			case 'B':
+				getlist(&argc, &argv, &Bflag, &Bcnt);
+				break;
+
+			case 'M':
+				getlist(&argc, &argv, &Mflag, &Mcnt);
+				break;
+
+			case 's':
+				zerof();
+				sflag++;
+				continue;
+
+			case 'u':
+				uflag++;
+				continue;
+
+			case 'b':
+				zerof();
+				bflag++;
+				continue;
+
+			case 'm':
+				zerof();
+				mflag++;
+				continue;
+
+#ifdef CASEFLAG
+			case 'c':
+	         cflag++;
+	         continue;
+#endif /* not CASEFLAG */
+
+			case 'V':
+	         printf("%s\n",verstring);
+            continue;
+
+			default:
+				goto usage;
+			}
+			argv++;
+		} else
+			lookup(*argv++);
+	while (--argc > 0);
+
+#ifdef DEBUG
+   if (getenv("CHECKSTACK"))
+   	printf("Stack Usage: %d\n",end_stack_check());
+#endif
+	
+   exit(0);
+}
+
+void getlist (int *argcp, char ***argvp, char ***flagp, int *cntp) {
+	(*argvp)++;
+	*flagp = *argvp;
+	*cntp = 0;
+	for ((*argcp)--; *argcp > 0 && (*argvp)[0][0] != '-'; (*argcp)--)
+		(*cntp)++, (*argvp)++;
+	(*argcp)++;
+	(*argvp)--;
+}
+
+
+void zerof (void) {
+
+	if (sflag && bflag && mflag)
+		sflag = bflag = mflag = 0;
+}
+
+int	count;
+int	print;
+
+
+void lookup (register char *cp) {
+	register char *dp;
+
+	for (dp = cp; *dp; dp++)
+		continue;
+	for (; dp > cp; dp--) {
+		if (*dp == '.') {
+			*dp = 0;
+			break;
+		}
+	}
+	for (dp = cp; *dp; dp++)
+		if (*dp == '/')
+			cp = dp + 1;
+	if (uflag) {
+		print = 0;
+		count = 0;
+	} else
+		print = 1;
+again:
+	if (print)
+		printf("%s:", cp);
+	if (sflag) {
+		looksrc(cp);
+		if (uflag && print == 0 && count != 1) {
+			print = 1;
+			goto again;
+		}
+	}
+	count = 0;
+	if (bflag) {
+		lookbin(cp);
+		if (uflag && print == 0 && count != 1) {
+			print = 1;
+			goto again;
+		}
+	}
+	count = 0;
+	if (mflag) {
+		lookman(cp);
+		if (uflag && print == 0 && count != 1) {
+			print = 1;
+			goto again;
+		}
+	}
+	if (print)
+		printf("\n");
+}
+
+void looksrc (char *cp) {
+	if (Sflag == 0) {
+		find(srcdirs, cp);
+	} else
+		findv(Sflag, Scnt, cp);
+}
+
+void lookbin (char *cp) {
+	if (Bflag == 0)
+		find(bindirs, cp);
+	else
+		findv(Bflag, Bcnt, cp);
+}
+
+void lookman (char *cp) {
+	if (Mflag == 0) {
+		find(mandirs, cp);
+	} else
+		findv(Mflag, Mcnt, cp);
+}
+
+void findv (char **dirv, int dirc, char *cp) {
+	while (dirc > 0)
+		findin(*dirv++, cp), dirc--;
+}
+
+void find (char **dirs, char *cp) {
+	while (*dirs)
+		findin(*dirs++, cp);
+}
+
+void findin (char *dir, char *cp) {
+	DIR *dirp;
+	struct dirent *dp;
+
+	dirp = opendir(dir);
+	if (dirp == NULL)
+		return;
+	while ((dp = readdir(dirp)) != NULL) {
+		if (itsit(cp, dp->d_name)) {
+			count++;
+			if (print)
+				printf(" %s/%s", dir, dp->d_name);
+		}
+	}
+	closedir(dirp);
+}
+
+
+#ifdef CASEFLAG
+
+int itsit (register char *cp, register char *dp) {
+	register int i = strlen(dp);
+
+   if (cflag) {
+		if ( (dp[0] == 's' || dp[0] == 'S') && dp[1] == '.' && itsit(cp, dp+2))
+			return (1);
+		while (*cp && *dp && (tolower(*cp) == tolower(*dp)))
+			cp++, dp++, i--;
+		if (*cp == 0 && *dp == 0)
+			return (1);
+		while (isdigit(*dp))
+			dp++;
+		if (*cp == 0 && *dp++ == '.') {
+			--i;
+/* removed for GNO/ME, cause we want to look up compressed files also. */
+/*			while (i > 0 && *dp)
+				if (--i, *dp++ == '.')
+					return (*dp++ == 'C' && *dp++ == 0);
+ */
+			return (1);
+		}
+   } else {
+		if (dp[0] == 's' && dp[1] == '.' && itsit(cp, dp+2))
+			return (1);
+		while (*cp && *dp && *cp == *dp)
+			cp++, dp++, i--;
+		if (*cp == 0 && *dp == 0)
+			return (1);
+		while (isdigit(*dp))
+			dp++;
+		if (*cp == 0 && *dp++ == '.') {
+			--i;
+/* removed for GNO/ME, cause we want to look up compressed files also. */
+/*			while (i > 0 && *dp)
+				if (--i, *dp++ == '.')
+					return (*dp++ == 'C' && *dp++ == 0);
+ */
+			return (1);
+		}
+   }
+	return (0);
+}
+
+#else  /* not CASEFLAG */
+
+int itsit (register char *cp, register char *dp) {
+	register int i = strlen(dp);
+
+	if (dp[0] == 's' && dp[1] == '.' && itsit(cp, dp+2))
+		return (1);
+	while (*cp && *dp && *cp == *dp)
+		cp++, dp++, i--;
+	if (*cp == 0 && *dp == 0)
+		return (1);
+	while (isdigit(*dp))
+		dp++;
+	if (*cp == 0 && *dp++ == '.') {
+		--i;
+/* removed for GNO/ME, cause we want to look up compressed files also. */
+/*		while (i > 0 && *dp)
+			if (--i, *dp++ == '.')
+				return (*dp++ == 'C' && *dp++ == 0);*/
+		return (1);
+	}
+	return (0);
+}
+
+#endif
