@@ -1,0 +1,2 @@
+C 2.0.1 doesn't optimize anywhere near as well as C 2.0.1a3.  There
+is a noticeable speed difference in one particular test file.

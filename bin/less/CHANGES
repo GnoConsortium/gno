@@ -1,0 +1,71 @@
+Well, first off:
+
+we are:  Mike Horwath
+         James Brookes
+         Dave Huang
+
+5/12/92
+Jawaid bitched about some stack overflowing, so, between us both, we searched
+diligently for the error.  Inside one of the functions, there was a stack
+allocated variable over 2K in size.  So, the fix was to make it a static
+variable, so that it is gloabally allocated from normal memory, instead of the
+stack.  That error is now fixed.
+
+Jawaid also has fixed the getenv() library call, and that was the problem with
+using a $editor variable in LESS.  That is now fixed.
+
+Less now also works with either files terminated with lf's (unix normal) or
+cr's (Apple IIgs normal).  Works GREAT.
+
+Fixed a bug where pipes would cause a problem if you shelled out '!' (alone),
+added GS/OS specific code to take care of which stdin to use, either the pipe
+or normal stuff...
+
+5/11/92
+Well, with big help from Jawaid "The God" Bazyar, piping and redirection are
+now working correctly.  Problems stemmed from file descriptors being set to
+numbers that were not correct, meaning that, it was trying to write to the
+input of a pipe or stdin.
+
+JB put assembly into the putchr() and putstr() calls, noticable speed increase
+and some savings on disk.
+
+It prints the control codes by default, so that when you use man, it will do
+things like inverse and the like correctly.
+
+did a #pragma noroot so that it cuts off about 1K of exec file.  Kind of nice
+of jawaid to tell me this.  Nice little savings I must say.
+
+Reset the stacksize from 4.5K to 1K, as I was wrong about the stack usage.
+Thanks go to jawaid for this bit of news also.
+
+5/5/92
+Well, another change this time to prchr(), so that you can pass terrible
+command lines, and have them done right.  Problem came from not outputing the
+right escape type character for end of line stuff.  So, that now works.  NOW, I
+only wish I had a terminal to test all this on, hope everythign is fine, if not
+we are screwed for alot of work here.
+
+Made the default as -e (let you hit space or return to quit when at eof) and
+-m (medium prompt line, shows you the file you are viewing, nothing more).
+
+5/4/92
+changed most of the open()'s to use the correct modes of the file.  solves
+errors with coming back from vi and such.
+
+changed the stacksize from default of 8K to 4.5K, seems to work like a dream.
+
+put in an optimize -1 into the code.
+
+Worked on the lsystem() call, as it is really messed in the head.  Hopefully,
+by the time you have read this, it will be written from scratch, and working
+as it should.
+
+5/3/92-5/4/92
+Dave fixed all the problems with \n and \r's being wrong in places.
+
+Dave also fixed the gno termcap entry, as sr and sl (am I right?) were not
+correct for less to work right.
+
+5/2/92-5/4/92
+James and Dave did all the prototyping into the sourcecode.

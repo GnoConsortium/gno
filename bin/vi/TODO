@@ -1,0 +1,38 @@
+To Do
+-----
+
+- Fix the update routines to not redisplay the whole bloody screen every
+  time a line is inserted or a character is typed.  This may require 
+  adding IIgs support for InsertLine and DeleteLine.
+
+- Change the static buffers for insert/undo/redo/undoundo/etc to dynamic
+  buffers.
+
+- Add #'d and named buffers.
+  IE. "xp = pull text from buffer x
+
+- Add 'U'.
+
+- Add { and } (move paragraph back and forward).
+
+- In cmdline.c make get_range() give the appropriate error messages when it
+  gets a bad line range.
+
+- Add & (do last search and replace on current line) and :[range]&
+  (do last search and replace on the range of lines).
+
+- add :set wrapmargin command
+- add :set shiftwidth command
+- add :set autowrite command
+- add :set showmode command
+
+- should be able to d/pat
+- should be able to ^d (backspace over entire indent (for :set ai))
+- should be able to ^X and ^W in input mode
+
+- should support '!' filters
+- should support mode lines
+
+- add checks for out of memory when strsave() is used
+
+- after a screen resize, make sure cmdline stuff is re-displayed

@@ -1,0 +1,8 @@
+ctags -t    alloc.c charset.c cmdline.c dec.c edit.c
+ctags -t -a fileio.c help.c inc.c linefunc.c main.c mark.c
+ctags -t -a misccmds.c normal.c param.c screen.c
+ctags -t -a search.c format_l.c
+ctags -t -a s_io.c ascii.h keymap.h
+ctags -t -a macros.h param.h stevie.h term.h mk.c
+
+ctags -t -a amiga.h amiga.c

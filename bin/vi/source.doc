@@ -1,0 +1,114 @@
+
+		 Release Notes for STEVIE - Version 3.10a
+
+			      Source Notes
+
+		      Tony Andrews - March 6, 1988
+
+Overview
+--------
+
+	This file provides a brief description of the source code for
+Stevie. The data structures are described later as well. For information
+specific to porting the editor, see the file 'porting.doc'. This document
+is more relevant to people who want to hack on the editor apart from doing
+a simple port.
+
+	Most of this document was written some time ago so a lot of the
+discussion centers on problems related to the Atari ST environment and
+compilers. Most of this can be ignored for other systems.
+
+Things You Need - ATARI
+-----------------------
+
+	Stevie has been compiled with both the Alcyon (4.14A) and the
+Megamax C compilers. For the posted binary, Megamax was used because
+it's less buggy and provides a reasonable malloc(). Ports to other
+compilers should be pretty simple. The current ifdef's for ALCYON and
+MEGAMAX should point to the potential trouble areas. (See 'porting.doc'
+for more information.)
+
+	The search code depends on Henry Spencer's regular expression
+code. I used a version I got from the net recently (as part of a 'grep'
+posting) and had absolutely no trouble compiling it on the ST. Thanks,
+Henry!
+
+	The file 'getenv.c' contains a getenv routine that may or may
+not be needed with your compiler. My version works with Alcyon and
+Megamax, under either the Beckemeyer or Gulam shells.
+
+	Lastly, you need a decent malloc. Lots of stuff in stevie is
+allocated dynamically. The malloc with Alcyon is problematic because
+it allocates from the heap between the end of data and the top of stack.
+If you make the stack big enough to edit large files, you wind up
+wasting space when working with small files. Mallocs that get their memory
+from GEMDOS (in fairly large chunks) are much better.
+
+Things You Need - AMIGA
+-----------------------
+
+	Lattice C version 5.0 or later.
+
+Data Structures
+---------------
+
+	A brief discussion of the evolution of the data structures will
+do much to clarify the code, and explain some of the strangeness you may
+see.
+
+	In the original version, the file was maintained in memory as a
+simple contiguous buffer. References to positions in the file were simply
+character pointers. Due to the obvious performance problems inherent in
+this approach, the following changes were made.
+
+	The file is now represented by a doubly linked list of 'line'
+structures defined as follows:
+
+struct	line {
+	struct	line   *next;	/* next line */
+	struct	line   *prev;	/* previous line */
+	char	       *s;	/* text for this line */
+	int	        size;	/* actual size of space at 's' */
+	unsigned long   num;	/* line "number" */
+};
+
+The members of the line structure are described more completely here:
+
+prev	- pointer to the structure for the prior line, or NULL for the
+	  first line of the file
+
+next	- like 'prev' but points to the next line
+
+s	- points to the contents of the line (null terminated)
+
+size	- contains the size of the chunk of space pointed to by s. This
+	  is used so we know when we can add text to a line without getting
+	  more space. When we DO need more space, we always get a little
+	  extra so we don't make so many calls to malloc.
+
+num	- This is a pseudo line number that makes it easy to compare
+	  positions within the file. Otherwise, we'd have to traverse
+	  all the links to tell which line came first.
+
+	Since character pointers served to mark file positions in the
+original, a similar data object was needed for the new data structures.
+This purpose is served by the 'lptr' structure which is defined as:
+
+struct	lptr {
+	struct	line   *linep;	/* line we're referencing */
+	int         	index;	/* position within that line */
+};
+
+The member 'linep' points to the 'line' structure for the line containing
+the location of interest. The integer 'index' is the offset into the line
+data (member 's') of the character to be referenced.
+
+The following typedef's are more commonly used:
+
+typedef	struct line	LINE;
+typedef	struct lptr	LPtr;
+
+Many operations that were trivial with character pointers had to be
+implemented by functions or macros to manipulate LPtr's. Most of these are in
+the files 'ptrfunc.c' and 'macros.h'. There you'll find functions to increment,
+decrement, and compare LPtr's.

@@ -1,0 +1,46 @@
+.TH EPS 1
+.SH NAME
+.LP
+.B eps
+\- display extensive process status information.
+.SH SYNOPSIS
+.LP
+.BR eps " -anlwt <" tty "> u < " user " >"
+.SH DESCRIPTION
+.LP
+.BR eps " is an extended " ps " command which displays more"
+information than the gsh builtin
+.BR ps ".  "
+.SH USAGE
+.LP
+.nf
+.BR \-a " : Show all processes; normally " eps " limits the processes"
+displayed to those that are owned by the current user.
+.sp
+.BR \-n " : Show username instead of userID, which is default."
+.sp
+.BR \-l " : Long list.  This includes PPID (parent's PID), MMID"
+(Memory Manager ID) and a longer time field.
+.sp
+.BR \-w " : Wider list.  A single w results in a 132 column wide"
+listing, and two results in the whole command line being
+displayed.  Normally the command line will be truncated
+to either 80 (default) or 132 (-w) columns.
+.sp
+.BR \-t " <" tty "> : Display only those processes that are owned by " tty "."
+.sp
+.BR \-u " <" user "> : Display only those processes that are owned by " user "."
+.fi
+.SH SEE ALSO
+.LP
+.nf
+.BR ps "(1)"
+.BR parent "(1)"
+.fi
+.SH AUTHOR
+.LP
+.nf
+James Brookes
+bb252@cleveland.freenet.edu
+jamesb@cscihp.ecst.csuchico.edu
+.fi

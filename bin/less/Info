@@ -1,0 +1,16 @@
+Okay, less, for GNO:
+
+if you use the newest version of MAN (v1.6), then set pager=less will let you
+use less as your pager.
+
+copy less.hlp to 31:bin so that less can find its help file.
+
+copy less to 31:bin and type rehash to get it updated in your path.
+
+Thats all there is to it, enjoy.
+
+many thanks go to Jawaid Bazyar for his assembly added to 2 routines for screen
+updating, as it was a major speed increase.
+
+the termcap file included is fixed for less and alot of other utilities.
+please, copy this to your 31:etc directory or there will be problems.

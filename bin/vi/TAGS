@@ -1,0 +1,161 @@
+ISSPECIAL	edit.c	/^#define ISSPECIAL(c)    ((c) == BS || (c) == NL ||/
+alloc	alloc.c	/^alloc(size)$/
+badcmd	cmdline.c	/^badcmd()$/
+beginline	edit.c	/^beginline(flag)$/
+canincrease	alloc.c	/^canincrease(n)$/
+dec	dec.c	/^dec(lp)$/
+doecmd	cmdline.c	/^doecmd(arg)$/
+doshell	cmdline.c	/^doshell()$/
+dotag	cmdline.c	/^dotag(tag, force)$/
+edit	edit.c	/^edit()$/
+emsg	cmdline.c	/^emsg(s)$/
+filealloc	alloc.c	/^filealloc()$/
+freeall	alloc.c	/^freeall()$/
+get_line	cmdline.c	/^get_line(cp)$/
+get_range	cmdline.c	/^get_range(cp)$/
+getout	edit.c	/^getout(r)$/
+gotocmdline	cmdline.c	/^gotocmdline(clr, firstc)$/
+insertchar	edit.c	/^insertchar(c)$/
+msg	cmdline.c	/^msg(s)$/
+newline	alloc.c	/^newline(nchars)$/
+onedown	edit.c	/^onedown(n)$/
+oneleft	edit.c	/^oneleft()$/
+oneright	edit.c	/^oneright()$/
+oneup	edit.c	/^oneup(n)$/
+readcmdline	cmdline.c	/^readcmdline(firstc, cmdline)$/
+screenalloc	alloc.c	/^screenalloc()$/
+scrolldown	edit.c	/^scrolldown(nlines)$/
+scrollup	edit.c	/^scrollup(nlines)$/
+smsg	cmdline.c	/^smsg(s, a1, a2, a3, a4, a5, a6, a7, a8, a9)$/
+strsave	alloc.c	/^strsave(string)$/
+wait_return	cmdline.c	/^wait_return()$/
+Mmain	main.c	/^main(argc, argv)$/
+clrall	mark.c	/^clrall()$/
+clrmark	mark.c	/^clrmark(line)$/
+coladvance	linefunc.c	/^coladvance(p, want_col)$/
+filemess	fileio.c	/^filemess(s)$/
+getmark	mark.c	/^getmark(c)$/
+help	help.c	/^help()$/
+inc	inc.c	/^inc(lp)$/
+longline	help.c	/^longline(p)$/
+nextline	linefunc.c	/^nextline(curr)$/
+prevline	linefunc.c	/^prevline(curr)$/
+readfile	fileio.c	/^readfile(fname, fromp, nochangename)$/
+renum	fileio.c	/^renum()$/
+setmark	mark.c	/^setmark(c)$/
+setpcmark	mark.c	/^setpcmark()$/
+stuffReadbuff	main.c	/^stuffReadbuff(s)$/
+stuffnumReadbuff	main.c	/^stuffnumReadbuff(n)$/
+usage	main.c	/^usage()$/
+vgetc	main.c	/^vgetc()$/
+vpeekc	main.c	/^vpeekc()$/
+writeit	fileio.c	/^writeit(fname, start, end)$/
+AppendNumberToRedobuff	normal.c	/^AppendNumberToRedobuff(n)$/
+AppendNumberToUndoUndobuff	normal.c	/^AppendNumberToUndoUndobuff(n)$/
+AppendNumberToUndobuff	normal.c	/^AppendNumberToUndobuff(n)$/
+AppendPositionToUndoUndobuff	normal.c	/^AppendPositionToUndoUndobuff(column, row)$/
+AppendPositionToUndobuff	normal.c	/^AppendPositionToUndobuff(column, row)$/
+AppendToInsbuff	normal.c	/^AppendToInsbuff(s)$/
+AppendToRedobuff	normal.c	/^AppendToRedobuff(s)$/
+AppendToUndoUndobuff	normal.c	/^AppendToUndoUndobuff(s)$/
+AppendToUndobuff	normal.c	/^AppendToUndobuff(s)$/
+DEFAULT1	normal.c	/^#define DEFAULT1(x)     (((x) == 0) ? 1 : (x))$/
+IDCHAR	normal.c	/^#define IDCHAR(c)       (isalpha(c) || isdigit(c) /
+OpenBackward	misccmds.c	/^OpenBackward(can_ai)$/
+OpenForward	misccmds.c	/^OpenForward(can_ai)$/
+ResetBuffers	normal.c	/^ResetBuffers()$/
+cntllines	misccmds.c	/^cntllines(pbegin, pend)$/
+cursupdate	screen.c	/^cursupdate(type)$/
+delchar	misccmds.c	/^delchar(fixpos, undo)$/
+delline	misccmds.c	/^delline(nlines)$/
+dochange	normal.c	/^dochange()$/
+dodelete	normal.c	/^dodelete(redraw, setup_for_undo, try_to_yank)$/
+dojoin	normal.c	/^dojoin(leading_space, strip_leading_spaces)$/
+doput	normal.c	/^doput(dir)$/
+doset	param.c	/^doset(arg, inter)$/
+doshift	normal.c	/^doshift(op)$/
+doyank	normal.c	/^doyank()$/
+fileinfo	misccmds.c	/^fileinfo()$/
+gotoline	misccmds.c	/^gotoline(n)$/
+inschar	misccmds.c	/^inschar(c)$/
+insstr	misccmds.c	/^insstr(s)$/
+linewhite	normal.c	/^linewhite(p)$/
+normal	normal.c	/^normal(c)$/
+plines	misccmds.c	/^plines(s)$/
+showparms	param.c	/^showparms(all)$/
+startinsert	normal.c	/^startinsert(startln)$/
+tabinout	normal.c	/^tabinout(shift_type, num)$/
+updateline	screen.c	/^updateline()$/
+C0	search.c	/^#define C0(c)   (((c) == ' ') || ((c) == '\\t') || /
+C1	search.c	/^#define C1(c)   (isalpha(c) || isdigit(c) || ((c) /
+OTHERDIR	search.c	/^#define OTHERDIR(x)     (((x) == FORWARD) ? BACKWA/
+bck_word	search.c	/^bck_word(p, type)$/
+bcksearch	search.c	/^bcksearch(str)$/
+cls	search.c	/^cls(c)$/
+crepsearch	search.c	/^crepsearch(flag)$/
+doglob	search.c	/^doglob(lp, up, cmd)$/
+dosearch	search.c	/^dosearch(dir, str)$/
+dosub	search.c	/^dosub(lp, up, cmd)$/
+end_word	search.c	/^end_word(p, type)$/
+findfunc	search.c	/^findfunc(dir)$/
+format_line	format_l.c	/^format_line(ptr, len)$/
+fwd_word	search.c	/^fwd_word(p, type)$/
+fwdsearch	search.c	/^fwdsearch(str)$/
+mapstring	search.c	/^mapstring(s)$/
+regerror	search.c	/^regerror(s)$/
+repsearch	search.c	/^repsearch(flag)$/
+searchagain	search.c	/^searchagain(dir)$/
+searchc	search.c	/^searchc(c, dir, type)$/
+showmatch	search.c	/^showmatch()$/
+ssearch	search.c	/^ssearch(dir, str)$/
+CTRL	ascii.h	/^#define	CTRL(x)	((x) & 0x1f)$/
+NotValidFromCurschar	s_io.c	/^NotValidFromCurschar()$/
+Update_Botchar	s_io.c	/^Update_Botchar()$/
+s_clear	s_io.c	/^s_clear()$/
+s_cursor_off	s_io.c	/^s_cursor_off()$/
+s_cursor_on	s_io.c	/^s_cursor_on()$/
+s_refresh	s_io.c	/^s_refresh(type)$/
+screen_del	s_io.c	/^screen_del(row, nlines, total_rows)$/
+screen_ins	s_io.c	/^screen_ins(row, nlines, total_rows)$/
+screen_refresh	s_io.c	/^screen_refresh(type)$/
+LINE	stevie.h	134
+LINEOF	stevie.h	/^#define	LINEOF(x)	((x)->linep->num)$/
+LPtr	stevie.h	135
+P	param.h	/^#define	P(n)	(params[n].value)$/
+RowNumber	macros.h	/^#define RowNumber(p) (UndoInProgress ? 0 : cntllin/
+anyinput	macros.h	/^#define anyinput() (Readbuffptr != NULL)$/
+bool_t	stevie.h	55
+buf1line	macros.h	/^#define buf1line() (Filemem->linep->next == Fileen/
+bufempty	macros.h	/^#define bufempty() (buf1line() && Filemem->linep->/
+endofline	macros.h	/^#define endofline(p) \\$/
+equal	macros.h	/^#define equal(a, b) (((a)->linep == (b)->linep) &&/
+gchar	macros.h	/^#define gchar(lp) ((lp)->linep->s[(lp)->index])$/
+gt	macros.h	/^#define gt(a, b) ((LINEOF(a) != LINEOF(b)) \\$/
+gtoreq	macros.h	/^#define gtoreq(a, b) ((LINEOF(a) != LINEOF(b)) \\$/
+lineempty	macros.h	/^#define lineempty(p) ((p)->linep->s[0] == NUL)$/
+lt	macros.h	/^#define lt(a, b) ((LINEOF(a) != LINEOF(b)) \\$/
+ltoreq	macros.h	/^#define ltoreq(a, b) ((LINEOF(a) != LINEOF(b)) \\$/
+mkline	mk.c	/^mkline(n)$/
+mkstr	mk.c	/^mkstr(c)$/
+pchar	macros.h	/^#define pchar(lp, c) ((lp)->linep->s[(lp)->index] /
+pswap	macros.h	/^#define pswap(a, b) { LPtr pswaptmp; pswaptmp = a;/
+startofline	macros.h	/^#define startofline(p) ((p)->index == 0)$/
+ExpandWildCards	amiga.c	/^ExpandWildCards(num_pat, pat, num_file, file)$/
+GetCharacter	amiga.c	/^GetCharacter()$/
+beep	amiga.c	/^beep()$/
+cooked	amiga.c	/^cooked(afh)$/
+delay	amiga.c	/^delay()$/
+flushbuf	amiga.c	/^flushbuf()$/
+fopenb	amiga.c	/^fopenb(fname, mode)$/
+getCSIsequence	amiga.c	/^getCSIsequence()$/
+get_ConUnit	amiga.c	/^get_ConUnit(afh)$/
+get_Rows_and_Columns	amiga.c	/^get_Rows_and_Columns()$/
+inchar	amiga.c	/^inchar()$/
+outchar	amiga.c	/^outchar(c)$/
+outstr	amiga.c	/^outstr(s)$/
+raw	amiga.c	/^raw(afh)$/
+send_packet	amiga.c	/^send_packet(pid, action, args, nargs)$/
+sleep	amiga.c	/^sleep(n)$/
+windexit	amiga.c	/^windexit(r)$/
+windgoto	amiga.c	/^windgoto(r, c)$/
+windinit	amiga.c	/^windinit()$/

@@ -1,0 +1,532 @@
+
+	    STEVIE - Simply Try this Editor for VI Enthusiasts
+
+			 Quick Reference Card
+
+				  by
+
+	          Tony Andrews And G. R. (Fred) Walter
+
+STEVIE may be freely distributed. The source isn't copyrighted or
+restricted in any way. If you pass the program along, please include all
+the documentation and, if practical, the source as well.
+
+STEVIE used to stand for 'ST Editor for VI Enthusiasts', however since this
+editor is used on more machines than just ST's the acronym was changed.
+
+Starting the Editor
+-------------------
+
+The following command line forms are supported:
+
+	vi [file ...]		Edit the specified file(s)
+
+	vi -t tag		Start at location of the given tag
+
+	vi + file		Edit file starting at end
+
+	vi +n file		Edit file starting a line number 'n'
+
+	vi +/pat file		Edit file starting at pattern 'pat'
+
+If multiple files are given on the command line (using the first form),
+the ":n" command goes to the next file, ":p" goes backward in the list,
+and ":rew" can be used to rewind back to the start of the file list.
+
+Set Command Options
+-------------------
+
+The ":set" command works as usual to set parameters. Each parameter has
+a long and an abbreviated name, either of which may be used. Boolean
+parameters are set as in:
+
+	set showmatch
+
+or cleared by:
+
+	set noshowmatch
+
+Numeric parameters are set as in:
+
+	set scroll=5
+
+Several parameters may be set with a single command:
+
+	set novb sm report=1
+
+To see the status of all parameters use ":set all". Typing ":set" with
+no arguments will show only those parameters that have been changed.
+The supported parameters, their names, defaults, and descriptions are
+shown below:
+
+Full Name	Short	Default		Description
+------------------------------------------------------------------------------
+vbell		vb	vb		Use visual bell (novb for audible bell)
+showmatch	sm	nosm		Showmatch mode
+wrapscan	ws	ws		Wrapscan (searches cross file start/end)
+errorbells	eb	noeb		Ring bell when error messages are shown
+showmode	mo	nomo		Show on status line when in insert mode
+backup		bk	nobk		Leave backup in *.bak on file writes
+return		cr	cr		End lines with cr-lf when writing
+list		list	nolist		Show tabs and newlines graphically
+autoindent      ai      noai            Start new line at same col as prior line
+ignorecase      ic      noic            Ignore case in search strings
+number          nu      nonu            Display lines with their line numbers
+
+scroll		scroll	12		Number of lines to scroll for ^D and ^U
+tabstop		ts	8		Number of spaces in a tab
+report		report	5		Min # of lines to report operations on
+lines		lines	25		Number of lines on the screen
+
+The EXINIT environment variable can be used to modify the default values
+on startup as in:
+
+		setenv EXINIT="set sm ts=4"
+
+The 'backup' parameter, if set, causes the editor to retain a backup of any
+files that are written. During file writes, a backup is always kept for
+safety until the write is completed. At that point, the 'backup' parameter
+determines whether the backup file is deleted.
+
+In environments (e.g. OS/2 or TOS) where lines are normally terminated by
+CR-LF, the 'return' parameter allows files to be written with only a LF
+terminator (if the parameter is cleared).
+
+The 'lines' parameter tells the editor how many lines there are on the screen.
+This is useful on systems like the ST where various screen resolutions may be
+used. By using the 'lines' parameter, different screen sizes can be easily
+handled. On the Amiga system window resizes are atomatically detected and
+acted upon. It is suggested that one's window be larger than 2 rows and 5
+columns.
+
+Colon Commands
+--------------
+
+Several of the normal 'vi' colon commands are supported by STEVIE. Some commands
+may be preceded by a line range specification. For commands that accept a range
+of lines, the following address forms are supported:
+
+addr
+addr + number
+addr - number
+
+where 'addr' may be one of the following:
+    a line number
+    a mark (as in 'a or 'b)
+    % (entire file)
+    . (the current line)
+    $ (the last line)
+
+The Global Command
+------------------
+
+A limited form of the global command is supported, accepting the following
+command form:
+
+g/pattern/X
+
+where X may be either 'd' or 'p' to delete or print lines that match the given
+pattern. If a line range is given, only those lines are checked for a match
+with the pattern. If no range is given, all lines are checked.
+
+If the trailing command character is omitted, 'p' is assumed. In this case, the
+trailing slash is also optional. The current version of the editor does not
+support the undo operation following the deletion of lines with the global
+command.
+
+The Substitute Command
+----------------------
+
+The substitute command provides a powerful mechanism for making more complex
+substitutions than can be done directly from visual mode. The general form of
+the command is:
+
+s/pattern/replacement/g
+
+Each line in the given range (or the current line, if no range was given) is
+scanned for the given regular expression. When found, the string that matched
+the pattern is replaced with the given replacement string. If the replacement
+string is null, each matching pattern string is deleted.
+
+The trailing 'g' is optional and, if present, indicates that multiple
+occurrences of 'pattern' on a line should all be replaced.
+
+Some special sequences are recognized in the replacement string. The
+ampersand character is replaced by the entire pattern that was matched.
+For example, the following command could be used to put all occurrences
+of 'foo' or 'bar' within double quotes:
+
+1,$s/foo|bar/&/g
+
+The special sequence "\n" where 'n' is a digit from 1 to 9, is replaced
+by the string the matched the corresponding parenthesized expression in
+the pattern. The following command could be used to swap the first two
+parameters in calls to the C function "foo":
+
+1,$s/foo\\(([^,]*),([^,]*),/foo(\\2,\\1,/g
+
+Like the global command, substitutions can't be undone with this version of
+the editor.
+
+The Delete Command
+------------------
+
+:[range]d will delete the range of lines.
+
+File Manipulation Commands
+--------------------------
+
+:w		write the current file
+:wq		write and quit
+:x		write (if necessary) and quit
+ZZ		same as ":x"
+
+:e file		edit the named file
+:e!		re-edit the current file, discarding any changes
+:e #		edit the alternate file
+
+:w file		write the buffer to the named file
+:x,y w file	write lines x through y to the named file
+:r file		read the named file into the buffer
+
+:n		edit the next file
+:p		edit the previous file
+:rew		rewind the file list
+
+:f		show the current file name
+:f name		change the current file name
+
+:ta tag		go to the named tag
+^]		like ":ta" using the current word as the tag
+
+:help		display a command summary
+
+:!cmd           execute the 'cmd' via a system() call
+
+The ":help" command can also be invoke with the <HELP> key on the Atari ST
+or the Amiga. This actually displays a pretty complete summary of the real vi
+with unsupported features indicated appropriately.
+
+The commands above work pretty much like they do in 'vi'. Most of the
+commands support a '!' suffix (if appropriate) to discard any pending
+changes.
+
+String Searches
+---------------
+
+String searches are supported, as in vi, accepting the usual regular
+expression syntax. This was done using Henry Spencer's regular expression
+library without modification. Tony Andrews added code outside the library to
+support the '\<' and '\>' extensions and code inside the library to support
+the ignorecase option.
+
+Operators
+---------
+
+The vi operators (d, c, y, <, and >) work as true operators.
+
+Tags
+----
+
+Tags are implemented.
+
+System-Specific Comments
+------------------------
+
+The following sections provide additional relevant information for the
+systems to which STEVIE has been ported.
+
+Atari ST
+--------
+
+The editor has been tested in all three resolutions, although low and
+high res. are less tested than medium. The 50-line high res. mode can
+be used by setting the 'lines' parameter to 50. Alternatively, the
+environment variable 'LINES' can be set. The editor doesn't actively
+set the number of lines on the screen. It just operates using the number
+of lines it was told.
+
+The arrow keys, as well as the <INSERT>, <HELP>, and <UNDO> keys are
+all mapped appropriately.
+
+UNIX
+----
+
+The editor has been ported to UNIX System V release 3. It's hard-coded for
+ansi-style escape sequences and doesn't use the termcap/terminfo routines at
+all.
+
+OS9
+---
+
+The editor has been ported to OS9 version 2.2.
+
+OS/2
+----
+
+Make sure 'ansi' mode is on (using the 'ansi' command).
+The OS/2 console driver doesn't support insert/delete line, so STEVIE
+bypasses the driver and makes the appropriate system calls directly.
+This is all done in the system-specific part of the editor so the kludge
+is at least localized.
+
+The arrow keys, page up/down and home/end all do what you'd expect. The function
+keys are hard-coded to some useful macros until I can get true support for
+macros into the editor. The current mappings are:
+
+F1	:p <RETURN>
+F2	:n <RETURN>
+F3	:e # <RETURN>
+F4	:rew <RETURN>
+F5	[[
+F6	]]
+F7	<<
+F8	>>
+F9	:x <RETURN>
+F10	:help <RETURN>
+
+S-F1	:p! <RETURN>
+S-F2	:n! <RETURN>
+
+MSDOS
+-----
+
+STEVIE has been ported to MSDOS 3.3 on an AT using the Microsoft C compiler,
+version 5.10.  The keyboard mappings are the same as for OS/2.
+The only problem with the PC version is that the inefficiency of
+the screen update code becomes painfully apparent on slower machines.
+
+BSD 4.3
+-------
+
+This port was done so it could be worked on in a main-frame enviroment.
+
+Amiga
+-----
+
+The arrow keys and the help key are supported, as is window re-sizing.
+It is strongly suggested that you not try to type in console commands
+(alt-esc in some keymaps, plus the appropriate other keys) since STEVIE
+captures all console input. If you do type alt-esc then typing '|' will
+return you to STEVIE.
+If you have ARP installed, then you can use wildcards on the command line,
+in the :e command and in the :r command.
+If you 'run stevie' it will first attempt to open a window that is 640x200;
+if this doesn't work then it tries to open a window that is 480x200;
+if this fails it gives up.
+NOTE: that you can't use :!cmd on BCPL programs.
+
+Missing Features
+----------------
+
+1. Macros with support for function keys.
+
+2. More "set" options.
+
+3. Many others...
+
+Known Bugs and Problems
+-----------------------
+
+1. The yank buffer uses statically allocated memory, so yanks of more than
+   5K of text will fail. If a delete spans more than 5K, the program asks
+   for confirmation before proceeding. That way, if you were moving text,
+   you don't get screwed by the limited yank buffer. You just have to move
+   smaller chunks at a time. All the internal buffers (yank, redo, etc.)
+   need to be reworked to allocate memory dynamically.
+
+2. If you stay in insert mode for a long time (around 5K's worth of
+   characters, including newlines) the insert buffer can overflow.
+   When this happens you lose your ability to automatically undo the text just
+   inserted and the redo/undo/(undo of undo) buffers are reset to the
+   current position.
+
+3. Several other less bothersome glitches...
+
+Character Function Summary
+--------------------------
+
+The following list describes the meaning of each character that's used
+by the editor. In some cases characters have meaning in both command and
+insert mode; these are all described.
+
+^@	The null character. Not used in any mode. This character may not
+	be present in the file, as is the case with vi.
+
+^B	Backward one screen.
+
+^D	Scroll the window down one half screen.
+
+^E	Scroll the screen up one line.
+
+^F	Forward one screen.
+
+^G	Same as ":f" command. Displays file information.
+
+^H (BS)	Moves cursor left one space in command mode. In insert mode, erases
+	the last character typed.
+
+^J	Move the cursor down one line.
+
+^L	Clear and redraw the screen.
+
+^M (CR)	Move to the first non-white character in the next line. In insert
+	mode, a carriage return opens a new line for input.
+
+^N	Move the cursor down a line.
+
+^P	Move the cursor up a line.
+
+^U	Scroll the window up one half screen.
+
+^V	Indicates that the next character is should be treated as entered
+	and not modified (used to enter control characters, etc.).
+
+^Y	Scroll the screen down one line.
+
+^[	Escape cancels a pending command in command mode, and is used to
+	terminate insert mode.
+
+^]	Moves to the tag whose name is given by the word in which the cursor
+	resides.
+
+^`	Same as ":e #" if supported (system-dependent).
+
+SPACE	Move the cursor right on column.
+
+$	Move to the end of the current line.
+
+%	If the cursor rests on a paren '()', brace '{}', or bracket '[]',
+	move to the matching one.
+
+'	Used to move the cursor to a previously marked position, as in
+	'a or 'b. The cursor moves to the start of the marked line. The
+	special mark '' refers to the "previous context".
+
++	Same as carriage return, in command mode.
+
+,	Reverse of the last t, T, f, or F command.
+
+-	Move to the first non-white character in the previous line.
+
+.	Repeat the last edit command.
+
+/	Start of a forward string search command. String searches may be
+	optionally terminated with a closing slash. To search for a slash
+	use '\/' in the search string.
+
+0	Move to the start of the current line. Also used within counts.
+
+1-9	Used to add 'count' prefixes to commands.
+
+:	Prefix character for "ex" commands.
+
+;	Repeat last t, T, f, or F command.
+
+<	The 'left shift' operator.
+
+>	The 'right shift' operator.
+
+?	Same as '/', but search backward.
+
+A	Append at the end of the current line.
+
+B	Backward one blank-delimited word.
+
+C	Change the rest of the current line.
+
+D	Delete the rest of the current line.
+
+E	End of the end of a blank-delimited word.
+
+F	Find a character backward on the current line.
+
+G	Go to the given line number (end of file, by default).
+
+H	Move to the first non-white char. on the top screen line.
+
+I	Insert before the first non-white char. on the current line.
+
+J	Join two lines.
+
+L	Move to the first non-white char. on the bottom screen line.
+
+M	Move to the first non-white char. on the middle screen line.
+
+N	Reverse the last string search.
+
+O	Open a new line above the current line, and start inserting.
+
+P	Put the yank/delete buffer before the current cursor position.
+
+T	Reverse search 'upto' the given character.
+
+W	Move forward one blank-delimited word.
+
+X	Delete one character before the cursor.
+
+Y	Yank the current line. Same as 'yy'.
+
+ZZ	Exit from the editor, saving changes if necessary.
+
+[[	Move backward one C function.
+
+]]	Move forward one C function.
+
+^	Move to the first non-white on the current line.
+
+`	Move to the given mark, as with '. The distinction between the two
+	commands is important when used with operators. I support the
+	difference correctly. If you don't know what I'm talking about,
+	don't worry, it won't matter to you.
+
+~       Switch case of character under cursor.
+
+a	Append text after the cursor.
+
+b	Back one word.
+
+c	The change operator.
+
+d	The delete operator.
+
+e	Move to the end of a word.
+
+f	Find a character on the current line.
+
+h	Move left one column.
+
+i	Insert text before the cursor.
+
+j	Move down one line.
+
+k	Move up one line.
+
+l	Move right one column.
+
+m	Set a mark at the current position (e.g. ma or mb).
+
+n	Repeat the last string search.
+
+o	Open a new line and start inserting text.
+
+p	Put the yank/delete buffer after the cursor.
+
+r	Replace a character.
+
+s	Replace characters.
+
+t	Move forward 'upto' the given character on the current line.
+
+u	Undo the last edit.
+
+w	Move forward one word.
+
+x	Delete the character under the cursor.
+
+y	The yank operator.
+
+z	Redraw the screen with the current line at the top (zRETURN),
+	the middle (z.), or the bottom (z-).
+
+|	Move to the column given by the preceding count.

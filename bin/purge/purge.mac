@@ -1,0 +1,361 @@
+ MACRO
+&lab LGetPathname &a1,&a2
+&lab pha
+ pha
+ ph2 &a1(1)
+ ph2 &a1(2)
+ Tool $1111
+ pl4 &a2
+ mend
+ MACRO
+&lab WriteChar &a1
+&lab ph2 &a1
+ Tool $180c
+ mend
+ MACRO
+&lab WriteLine &a1
+&lab ph4 &a1
+ Tool $1a0c
+ mend
+ MACRO
+&lab WriteString &a1
+&lab ph4 &a1
+ Tool $1c0c
+ mend
+ MACRO
+&lab Int2Hex &a1
+&lab ph2 &a1(1)
+ ph4 &a1(2)
+ ph2 &a1(3)
+ Tool $220b
+ mend
+ MACRO
+&lab tool &a1
+&lab ldx #&a1
+ jsl $e10000
+ mend
+ MACRO
+&lab ph2 &parm
+ lclc &char
+&lab anop
+ aif c:&parm=0,.done
+&char amid &parm,1,1
+ aif "&char"="#",.immediate
+ aif "&char"="@",.at
+ aif s:longa=1,.chk
+ rep #%00100000
+.chk
+ aif "&char"<>"{",.absolute
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ lda (&parm)
+ pha
+ ago .shorten
+.absolute
+ lda &parm
+ pha
+ ago .shorten
+.immediate
+&parm amid &parm,2,l:&parm-1
+ pea &parm
+ ago .done
+.at
+&char amid &parm,2,1
+ ph&char
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab ph4 &parm
+ lclc &char
+ lclc &char1
+ lclc &char2
+&lab anop
+&char amid &parm,1,1
+ aif "&char"="#",.immediate
+ aif "&char"="@",.at
+ aif s:longa=1,.chk1
+ rep #%00100000
+.chk1
+ aif "&char"<>"{",.chk2
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ ldy #2
+ lda (&parm),y
+ pha
+ lda (&parm)
+ pha
+ ago .shorten
+.chk2
+ aif "&char"<>"[",.absolute
+ ldy #2
+ lda &parm,y
+ pha
+ lda &parm
+ pha
+ ago .shorten
+.absolute
+ lda &parm+2
+ pha
+ lda &parm
+ pha
+ ago .shorten
+.at
+&char1 amid &parm,2,1
+&char2 setc &char1
+ ph&char1
+ aif l:&parm<3,.chk2a
+&char2 amid &parm,3,1
+.chk2a
+ ph&char2
+ ago .shorten
+.immediate
+&parm amid &parm,2,l:&parm-1
+ pea +(&parm)|-16
+ pea &parm
+ ago .done
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab pl4 &parm
+ lclc &char
+ lclc &char1
+ lclc &char2
+&lab anop
+ aif s:longa=1,.start
+ rep #%00100000
+.start
+&char amid &parm,1,1
+ aif "&char"<>"{",.chk
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ pla
+ sta (&parm)
+ ldy #2
+ pla
+ sta (&parm),y
+ ago .shorten
+.chk
+ aif "&char"<>"[",.chk2
+ pla
+ sta &parm
+ ldy #2
+ pla
+ sta &parm,y
+ ago .shorten
+.chk2
+ aif "&char"<>"@",.absolute
+&char1 amid &parm,2,1
+&char2 setc &char1
+ pl&char1
+ aif l:&parm<3,.chk2a
+&char2 amid &parm,3,1
+.chk2a
+ pl&char2
+ ago .shorten
+.absolute
+ pla
+ sta &parm
+ pla
+ sta &parm+2
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab Str &string
+&lab dc i1'L:&string'
+ dc c"&string"
+ mend
+ MACRO
+&lab MV4 &src,&adr
+&lab lcla &count
+ lda &src
+&count seta 1
+.loop1
+ sta &adr(&count)
+&count seta &count+1
+ aif &count>c:&adr,.part2
+ ago ^loop1
+.part2
+ lda &src+2
+&count seta 1
+.loop2
+ sta &adr(&count)+2
+&count seta &count+1
+ aif &count>c:&adr,.done
+ ago ^loop2
+.done
+ mend
+ MACRO
+&lab iny2
+&lab iny
+ iny
+ mend
+ MACRO
+&lab dey2
+&lab dey
+ dey
+ mend
+ MACRO
+&lab PurgeHandle &a1
+&lab ph4 &a1
+ tool $1202
+ mend
+ MACRO
+&lab FindHandle &a1,&a2
+&lab pha
+ pha
+ ph4 &a1
+ tool $1a02
+ pl4 &a2
+ mend
+ MACRO
+&lab CompactMem
+&lab tool $1f02
+ mend
+ MACRO
+&lab if2 &var,&rel,&val,&label
+&lab ago .skip
+ ble
+ bgt
+.skip
+ lclc &char1
+ lclc &char2
+&char1 amid &var,1,1
+&char2 amid &var,2,1
+ aif "&char1"="@",.index
+ lda &var
+.cmp
+ cmp &val
+ ago .branch
+.index
+ aif "&char2"="x",.x1
+ aif "&char2"="X",.x1
+ aif "&char2"="y",.y1
+ aif "&char2"="Y",.y1
+ ago ^cmp
+.x1
+ cpx &val
+ ago .branch
+.y1
+ cpy &val
+.branch
+&char1 amid &rel,1,1
+ aif "&char1"="@",.done
+ b&rel &label
+.done
+ mend
+ MACRO
+&lab bgt &loc
+&lab beq *+4
+ bcs &loc
+ mend
+ MACRO
+&lab ble &loc
+&lab bcc &loc
+ beq &loc
+ mend
+ MACRO
+&lab WriteCString &a1
+&lab ph4 &a1
+ Tool $200c
+ mend
+ MACRO
+&lab jeq &loc
+&lab bne *+5
+ jmp &loc
+ mend
+ MACRO
+&lab jmi &loc
+&lab bpl *+5
+ jmp &loc
+ mend
+ MACRO
+&lab ora2 &arg1,&arg2,&dest
+&lab anop
+ lclc &char
+&char amid &arg1,1,1
+ aif "&char"="@",.at1
+ lda &arg1
+ ago .add
+.at1
+&char amid &arg1,2,1
+ aif "&char"="x",.x1
+ aif "&char"="X",.x1
+ aif "&char"="y",.y1
+ aif "&char"="Y",.y1
+ ago .add
+.x1
+ txa
+ ago .add
+.y1
+ tya
+.add
+ ora &arg2
+&char amid &dest,1,1
+ aif "&char"="@",.at2
+ sta &dest
+ ago .b
+.at2
+&char amid &dest,2,1
+ aif "&char"="x",.x2
+ aif "&char"="X",.x2
+ aif "&char"="y",.y2
+ aif "&char"="Y",.y2
+ ago .b
+.x2
+ tax
+ ago .b
+.y2
+ tay
+.b
+ mend
+ macro
+&lab NewHandle &a1,&a2
+&lab pha
+ pha
+ ph4 &a1(1)
+ ph2 &a1(2)
+ ph2 &a1(3)
+ ph4 &a1(4)
+ tool $0902
+ pl4 &a2
+ mend
+ macro
+&lab DisposeHandle &a1
+&lab ph4 &a1
+ tool $1002
+ mend
+ macro
+&lab TotalMem &a1
+&lab pha
+ pha
+ tool $1d02
+ pl4 &a1
+ mend
+ macro
+&lab FreeMem &a1
+&lab pha
+ pha
+ tool $1b02
+ pl4 &a1
+ mend

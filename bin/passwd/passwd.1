@@ -1,0 +1,51 @@
+.\" @(#)passwd.1 1.00 93/07/01 EDS;
+.TH PASSWD 1 "01 July 1993"
+.SH NAME
+passwd \- set a user's login password
+.SH SYNOPSIS
+.B passwd
+[
+.BI \-?
+|
+.BI \-v
+] [
+.BI username
+]
+.SH DESCRIPTION
+.B passwd
+changes the specified user's password.  Only root is allowed to alter
+passwords other than his own.  If the
+.IR username
+is not given, the user's own login name is assumed.  Users other than root
+must then enter the old password to verify permission to change the password.
+Finally, the user must type the desired new password twice to insure that no
+mistakes are made.
+.LP
+To cancel
+.B passwd
+, type
+.IR CTRL-@
+when asked to enter the new password.
+The
+.B \-?
+flag causes
+.B passwd
+to display a brief usage message, and the
+.B \-v
+flag causes
+.B passwd
+to display version information.
+.SH SEE ALSO
+.LP
+.BR login "(1)"
+.SH FILES
+.B /etc/passwd
+\- contains the password information
+.SH AUTHOR
+.LP
+.nf
+Eric Shepherd
+
+Internet    uerics@mcl.mcl.ucsb
+AOL         Sheppy
+.fi

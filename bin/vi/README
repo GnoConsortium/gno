@@ -1,0 +1,72 @@
+STEVIE Source Release
+
+This is a source release of the STEVIE editor, a public domain clone
+of the UNIX editor 'vi'. The program was originally developed for the
+Atari ST, but has been ported to UNIX, OS/2, BSD 4.3 and the Amiga as well.
+
+There are currently two divergent versions of STEVIE. This version is the one
+that was ported to the Amiga and then worked on by me (G. R. Walter). The other
+one Tony Andrews continued to work on. My version is faster in some respects
+then his version, and his version does a couple of things mine doesn't. 
+
+The files included in this release are:
+
+README
+	This file.
+
+stevie.doc
+	Reference manual for STEVIE. Assumes familiarity with vi.
+
+source.doc
+	Quick overview of the major data structures used.
+
+porting.doc
+	Tips for porting STEVIE to other systems.
+
+makefile.dos
+makefile.os2
+makefile.usg
+makefile.tos
+makefile.bsd
+makefile.amiga.lattice
+	Makefiles for MS DOS, OS/2, UNIX System V, Atari ST, BSD 4.3 UNIX and
+the Amiga respectively.
+
+amiga.c
+amiga.h
+bsd.c
+bsd.h
+dos.c
+dos.h
+os2.c
+os2.h
+unix.c
+unix.h
+tos.c
+tos.h
+	System-dependent routines for the same.
+
+alloc.c ascii.h cmdline.c edit.c fileio.c help.c charset.c
+keymap.h linefunc.c main.c mark.c misccmds.c normal.c param.c
+regexp.c regsub.c version.c regexp.h regmagic.h
+param.h ptrfunc.c screen.c search.c stevie.h term.h macros.h
+
+	C source and header files for STEVIE.
+
+To compile STEVIE for one of the provided systems:
+
+	1. Compile the regular expression library and install as
+	   appropriate for your system.
+
+	2. Edit the file 'env.h' to set the system defines as needed.
+
+	3. Check the makefile for your system, and modify as needed.
+
+	4. Compile.
+
+NOTE: implicit in the design is the assumption that char's are unsigned. Thus
+      if your compiler assumes different by default, change the default or
+      you may have to change the source.
+
+Tony Andrews            March  12, 1988
+G. R. (Fred) Walter     August 14, 1988
