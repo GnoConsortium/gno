@@ -1,0 +1,325 @@
+#! /usr/bin/perl
+#
+# This script is used to create a web version of the file
+# gno/NOTES/status.bin.
+#
+# Usage:   mkstatus infile outfile.html
+#
+# $Id: mkstatus,v 1.1 1998/04/11 03:23:23 gdr-ftp Exp $
+#
+
+# check usage and open files
+if (scalar(@ARGV) != 2) {
+    printf(stderr "usage: mkstatus infile outfile");
+    exit(1);
+}
+$infile = shift;
+$outfile = shift;
+open(infp, "< $infile") || &Fatal("couldn't open $infile for input: $?");
+open(outfp, "> $outfile") || &Fatal("couldn't open $outfile for output: $?");
+
+# Initialize the months strings.
+push(@month,
+     "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+     "Oct", "Nov", "Dec" );
+
+# print out the html header
+printf(outfp
+       "<html>\n" .
+       "<head>\n" .
+       "<title>GNO Status: Programs</title>\n" .
+       '<base HREF="http://www.gno.org/">' . "\n" .
+       "</head>\n" .
+       "<body bgcolor=#ffffff textcolour=#000000 " .
+       "linkcolour=#0000FF vlinkcolour=#001177 alinkcolour=#001177>\n" .
+       '<A HREF="gno"><IMG src="/icons/back.gif"' .
+       'alt="Back to the GNO Documentation Page"' .
+       'align="right" width="24" height="24" border="0"></A>' . "\n" .
+       "<BR CLEAR=RIGHT>\n");
+
+# look for the rcs ident string.
+while(<infp>) {
+    if (/\$Id([^\$]*)\$/) {
+	$_ = $1;
+	if (/^:\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+/) {
+	    $file=$1;
+	    $version=$2;
+	    $rawdate=$3;
+	    $time=$4;
+	    if ($rawdate =~ m,(\d+)/(\d+)/(\d+),) {
+		$year = $1;
+		$m = $2;
+		$day = $3;
+		$mon = @month[int($2) - 1];
+		$date = "$day $mon $year";
+	    }
+	} else {
+	    $date = "(unspecified date)";
+	}
+	last;
+    }
+}
+
+# initial information
+printf(outfp
+       "<h2>GNO Program Status List</h2>\n".
+       "Last Updated: <b>%s</b><p>\n" .
+       "This page shows the current status of various program components.<p>".
+       "Unfortunately, this page does not show it's tables very well\n".
+       "when viewing with lynx, so you're better off using a graphical\n".
+       "browser.  My apologies to those who do not have this option.<p>\n",
+       $date);
+
+printf(outfp
+       "<h3>Field Descriptions</h3>\n".
+       "Each program listed below has associated with it a number of\n".
+       "columns.  The meaning of each column is listed below.  Empty\n".
+       "entries indicate incomplete programs or unavailable information.\n".
+       "Hyphens (-) indicate that the field is not relevent.<p>\n".
+       "<ul>\n".
+       "<li><b>Program Name</b>\n".
+       "This is the pathname of the program or component.  Where it is part\n".
+       "of a package, the name of the package appears on parenthesis.\n".
+       "<li><b>204</b>\n".
+       "This column indicates whether or not the component was part of\n".
+       "GNO v2.0.4.\n".
+       "<li><b>Req</b>\n".
+       "This column indicates whether or not the component is initially\n".
+       "deemed necessary in GNO v2.0.6\n".
+       "<li><b>Owner</b>\n".
+       "This lists who is responsible for updating the component.\n".
+       "A an explanation of the identifiers follows this table.\n".
+       "<li><b>Src</b>\n".
+       "Has the source been located or written?  A <b>dir</b> indicates\n".
+       "that the file is a directory.\n".
+       "<li><b>Doc</b>\n".
+       "Is the documentation complete?  This includes the manual page in\n".
+       "nroff format, the describe entry, the rVersion source, and any\n".
+       "required auxillary documentation.\n".
+       "A <b>P</b> indicates that the documentation is present.\n".
+       "A <b>T</b> indicates that it's been tested (reviewed).\n".
+       "A <b>[G]</b> indicates that the BSD manual page is present, but\n".
+       "that a GNO-formatted manual page is still missing.\n".
+       "<li><b>Cmpl</b>\n".
+       "Does the program compile cleanly with the new headers/libraries?\n".
+       "<li><b>Test</b>\n".
+       "Has the program passed at least rudimentary testing?\n".
+       "<li><b>Arc</b>\n".
+       "(Archived.)  Have the sources been entered into the cvs repository?\n".
+       "<li><b>Install</b>\n".
+       "Are the release (<b>R</b>) and install (<b>I</b>) targets complete?\n".
+       "The release target places the finished program, its documentation\n".
+       "and associated files into the /dist hierarchy (which is present on\n".
+       "developmental systems).  The install target places the files into\n".
+       "the currently running system.  The /dist hierarchy later becomes\n".
+       "the basis for the distribution.\n".
+       "<li><b>Comments</b>\n".
+       "This is any extra information.\n".
+       "</ul><p>\n");
+
+printf(outfp
+       "If you would like to work on a given utility, make sure you pick\n".
+       "one that has not already been claimed.  Before starting, you should\n".
+       "then contact ".'<A HREF="mailto:gdr@trenco.gno.org">Devin Reade</A> '.
+       "to ensure your name gets on the list.  This should eliminate\n".
+       "duplicated work<p>\n");
+
+# search for the start of the participants list
+$found = 0;
+while (<infp>) {
+    if (/^\s*%%%NAMES-START%%%\s*$/) {
+	$found = 1;
+	last;
+    }
+}
+($found) || &Fatal("start of names table not found");
+
+while(<infp>) {
+    (/^\s*%%%NAMES-END%%%\s*$/) && last;
+    s/\(.*//;   # dump comments
+    if (/\s*(\S+)\s*([^<]+)\s*<([^>]+)/) {
+	$names{$1} = $2;
+	$email{$1} = $3;
+    }
+}
+
+
+
+
+# start the table
+printf(outfp 
+       '<table border="5"><tr>' ."\n" .
+       "<td>Program Name\n" .
+       "<td>204\n" .
+       "<td>Req\n" .
+       "<td>Owner\n" .
+       "<td>Src\n" .
+       "<td>Man\n" .
+       "<td>Cmpl\n" .
+       "<td>Test\n" .
+       "<td>Arc\n" .
+       "<td>Install\n" .
+       "<td>Comments\n");
+
+# debug
+# printf(outfp "<pre>\n");
+
+# search for the start of the status table
+$found = 0;
+while (<infp>) {
+    if (/^\s*%%%STATUS-TABLE-START%%%\s*$/) {
+	$found = 1;
+	last;
+    }
+}
+($found) || &Fatal("start of status table not found");
+
+
+# extract the status info
+while (<infp>) {
+    (/^\s*%%%STATUS-TABLE-END%%%\s*$/) && last;  # end of table
+    if (/\#\s*(.*)/) {
+	$comment = $1;
+	$_ = $`;
+    } else {
+	$comment = '';
+    }
+    ($prog, $in204, $req, $owner, $source, $man, $compile, $test, 
+     $archive, $install, $pkgNote) = split;
+
+    # leave out the package.  Merge notes in with name.
+    if ($pkgNote =~ /\[([^\]]+)\]/) {
+	$note = $1;
+    } else {
+	$note = '';
+    }
+    if ($pkgNote =~ /\(([^\)]+)\)/) {
+	$prog .= " ($1)";
+    }
+
+    $prog = &htmlconv($prog);
+    $in204 = &htmlconv($in204);
+    $req = &htmlconv($req);
+    $owner = &htmlconv($owner);
+    $source = &htmlconv($source);
+    $man = &htmlconv($man);
+    $compile = &htmlconv($compile);
+    $test = &htmlconv($test);
+    $archive = &htmlconv($archive);
+    $install = &htmlconv($install);
+#    $pkgNote = &htmlconv($pkgNote);
+    $comment = &htmlconv($comment);
+
+    if ($note ne '') {
+	$prog .= ' [<A HREF="'.$outfile.'#note_'.$note.'">Note '.$note.'</A>]';
+    }
+
+    printf(outfp
+	   "<tr>\n" .
+	   "<td>%s" .
+	   "<td>%s" .
+	   "<td>%s" .
+	   "<td>%s" .
+	   "<td>%s" .
+	   "<td>%s" .
+	   "<td>%s" .
+	   "<td>%s" .
+	   "<td>%s" .
+	   "<td>%s" .
+	   "<td>%s" .
+	   "<td>%s\n",
+	   $prog, $in204, $req, $owner, $source, $man, $compile, $test, 
+	   $archive, $install, $comment);
+}
+
+# end the table
+printf(outfp "</table><p>\n");
+
+# search for any notes
+$printed = 0;
+while(<infp>) {
+    if (/%%%NOTE-START-([^%]+)%%%/) {
+	if ($printed == 0) {
+	    $printed = 1;
+	    printf(outfp "<H3>Notes</H3>\n");
+	}
+	printf(outfp
+	       '<dt><A NAME="note_'.$1.'">Note '.$1.":</A>\n<dd>");
+	while(<infp>) {
+	    (/%%%NOTE-END-([^%]+)%%%/) && last;
+	    print outfp &htmlconv($_)
+	}
+	printf(outfp "\n");
+    }
+}
+
+
+# print out the list of participants
+printf(outfp
+       "<H3>Contributers</H3>\n".
+       "The following table shows the names for the &quot;Owner&quot;\n".
+       "column of the status table, above:\n" .
+       '<table border=5>' ."\n".
+       "<tr><td>ID<td>Name<td>&nbsp;<td>ID<td>Name<td>&nbsp;<td>ID<td>Name\n");
+@keylist = keys(%names);
+@keylist = sort(@keylist);
+$column = 0;
+$columns = 3;
+foreach $k (@keylist) {
+    if (($column % $columns) == 0) {
+	printf(outfp "<tr>");
+    } else {
+	printf(outfp "<td>&nbsp;");
+    }
+    $column++;
+    if ($email{$k} eq 'none') {
+	printf(outfp "<td>%s<td>%s\n", $k, $names{$k});
+    } else {
+	printf(outfp
+	       "<td>%s".
+	       '<td><A HREF="mailto:%s">%s</A>'."\n",
+	       $k, $email{$k}, $names{$k});
+    }
+}
+# pad the last of the table
+while (($column % $columns) != 0) {
+    printf(outfp "<td>&nbsp;<td>&nbsp;<td>&nbsp;\n");
+    $column++;
+}
+printf(outfp "</table>");
+
+# print out the html footer
+printf(outfp
+       "<hr>\n" .
+       "Devin Reade\n" .
+       "<br>\n" .
+       '<A HREF="mailto:gdr@trenco.gno.org">gdr@trenco.gno.org</A>' ."\n".
+       "<p></body></html>\n");
+
+
+# clean up and exit
+close(infp);
+close(outfp);
+
+sub htmlconv {
+    local($text);
+
+    $text = @_[0];
+    if (($text eq '.') || ($text eq '')) {
+	$text = '&nbsp;';
+    } else {
+	$text =~ s/</&lt\;/g;
+	$text =~ s/>/&gt\;/g;
+	$text =~ s/"/&quot\;/g;
+    }
+    return $text;
+}
+
+sub Fatal {
+    print stderr "Fatal Error: ";
+    print stderr @_;
+    print stderr "\nAborted\n";
+    exit(1);
+}
+
+
