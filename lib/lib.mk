@@ -1,13 +1,18 @@
 #
-#	$Id: lib.mk,v 1.4 1998/02/15 19:18:20 gdr-ftp Exp $
+#	$Id: lib.mk,v 1.5 1998/02/17 00:33:08 gdr-ftp Exp $
 #
 
 .INCLUDE:	/src/gno/paths.mk
 .INCLUDE:	/src/gno/lib/const.mk
 
-# Objects are source file names with [.c|.asm] changed to .o, and placed
-# in the /obj hierarchy.
-OBJS	*= $(OBJ_DIR){$(SRCS:b)}.o
+# Objects are source file names with [.c|.asm] changed to .o
+# If we're keeping object files on a ProDOS partition, change the
+# '_' characters in file names to '.'
+.IF $(PRODOS_OBJS) == true
+	OBJS	+= {$(SRCS:b:s/_/./g)}.o
+.ELSE
+	OBJS	+= {$(SRCS:b)}.o
+.END
 
 #
 #  Check for user-specified compile/load options
@@ -35,18 +40,19 @@ $(OBJ_DIR):
 $(LIBTARGET) .PRECIOUS: $(OBJS)
 	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $^
 
+.IF $(NO_REZ) == $(NULL)
+$(LIBTARGET):: lib$(LIB).r
+	$(CATREZ) -d $@ $(OBJ_DIR)lib$(LIB).r
+.END
+
 # Use "dmake force; dmake build" to update all the object files in a library
 force: $(OBJS)
 	touch $<
 
-.IF $(NO_REZ) == $(NULL)
-$(LIBTARGET):: $(OBJ_DIR)lib$(LIB).r
-	$(CATREZ) -d $@ $(OBJ_DIR)lib$(LIB).r
-.END
-
 .INCLUDE:	/src/gno/lib/librelease.mk
 
-# Default target for object files
-$(OBJ_DIR)%.o: %.c ;	$(CC) -o $@ $(CFLAGS) -a0 -c $<
-$(OBJ_DIR)%.o: %.asm ;	$(AS) -o $@ $(ASFLAGS) -a0 -c $<
-$(OBJ_DIR)%.r: %.rez ;	$(REZ) -o $@ $(REZFLAGS) $<
+# Implicit rule to handle ProDOS-renamed object files
+%.o: %.O;
+%.O .PRECIOUS : $$(@:b:s/./_/g).c
+	$(CC) -o $(OBJ_DIR)$*.o $(CFLAGS) -c $<
+
