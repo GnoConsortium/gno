@@ -1,19 +1,36 @@
-.TH DESCU 8 "System Administration" "7 May 1995" "Version 1.0.3"
+.\"
+.\" $Id: descu.8,v 1.4 1997/09/24 06:34:58 gdr Exp $
+.\"
+.TH DESCU 8 "22 September 1997" GNO "System Administration"
 .SH NAME
 descu \- the describe(1) source updater
 .SH SYNOPSIS
-.BR descu " [" -hV ]
+.BR descu
+[
+.B -hV
+] [
+.B -o
+.I outfile
+]
 .I sourcefile
 .I patchfile1
 [
 .IR patchfile2 " ..."
 ]
 .SH DESCRIPTION
+This manual page documents
+.BR descu
+version 1.0.4.
+.LP
 .BR descu
 updates the describe source file
 .I sourcefile
 by applying the new and updated records from the \fIpatchfile\fRs
-and prints the result to standard output.
+and prints the result to standard output (or to
+.IR outfile ,
+if the
+.BR -o
+flag was specified).
 .LP
 .IR Patchfile s
 are just one or more describe source entries as defined in
@@ -26,7 +43,7 @@ are assumed to contain at most one entry (in all listed
 .IR patchfile s)
 for a given program, keyed on the
 .BR Name:
-field.  If an entry in
+field.  (They may otherwise contain any number of entries.) If an entry in
 .IR patchfile
 is already in
 .IR sourcefile ,
@@ -43,13 +60,19 @@ in the current directory.  This contains all records that were removed
 from 
 .IR sourcefile .
 .SH OPTIONS
-.nf
-\fB-h\fR	Show usage information.
-
-\fB-V\fR	Show version information.
-.fi
+.IP \fB-h\fR
+Show usage information.
+.IP "\fB-o\fR \fIoutfile\fR"
+Send output to
+.IR outfile
+rather than stdout.
+.IP \fB-v\fR
+Show version information.
 .SH AUTHOR
 Devin Reade <gdr@myrias.ab.ca>
+.SH HISTORY
+.BR descu
+was incorporated into the GNO base distribution as of version 1.0.4
 .SH "SEE ALSO"
 .BR apropos (1),
 .BR describe (1),

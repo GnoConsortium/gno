@@ -1,14 +1,14 @@
-$Id: README,v 1.3 1996/01/28 17:39:22 gdr Exp $
+$Id: README,v 1.4 1997/09/24 06:34:57 gdr Exp $
 
 This is the README file for the describe package.  This package is
-designated as version 1.0.3, and consists of the following utilities:
+designated as version 1.0.4, and consists of the following utilities:
 
-	describe v1.0.3  - show database entries describing the current
+	describe v1.0.4  - show database entries describing the current
                            status of programs
 
-	descc    v1.0.3  - the describe source compiler
+	descc    v1.0.4  - the describe source compiler
 
-	descu    v1.0.3  - the describe source updater
+	descu    v1.0.4  - the describe source updater
 
 ABOUT DESCRIBE AND DESCC
 ========================
@@ -21,8 +21,9 @@ different people are releasing these days.  The reason it sat around on
 my harddrive so long is I was having qualms about its designated role in
 life.  I wasn't sure exactly what I wanted it to do.  Well, I've decided
 to KISS for now: descc simply compiles the utility list, which I maintain,
-into a (very) simple "database" located in /usr/local/lib/
-[alternatively, the full path given in the environment variable DESCDB will be
+into a (very) simple "database" located in /usr/local/lib.
+[As of v1.0.4, this database is now in /usr/lib.  gdr]  [Alternatively,
+the full path given in the environment variable DESCDB will be
 used, if it is set. sb].  The companion utility 'describe' is used to
 fetch information about a particular utility from this "database".
 
@@ -46,7 +47,7 @@ ABOUT DESCU
 ===========
 
 I think describe and descc were really good ideas; they sure beat the
-text file list of Gno utilities that James used to keep.  The one major
+text file list of GNO utilities that James used to keep.  The one major
 shortfall I found was having to manually update the describe database
 source every time I wanted to include a new entry.
 
@@ -81,6 +82,15 @@ CHANGES
 =======
 
 This details changes to the entire distribution.
+
+v1.0.4  September 1997
+	This package is now part of the base GNO distribution.
+	Version numbers are now in lockstep.
+	Some bugs were fixed in descu that cropped up when the
+		describe database source file didn't already exist.
+	Location of the system database has been changed to
+		/usr/lib/describe from /usr/local/lib/describe.
+	Descc will now set the file type of the database to BIN vice TXT.
 
 v1.03   January 1996
         descu now sorts entries correctly (longer entries

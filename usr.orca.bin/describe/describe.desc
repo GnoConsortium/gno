@@ -1,10 +1,10 @@
 Name:    describe
-Version: 1.0.3
+Version: 1.0.4
 Shell:   ORCA/Shell, GNO/ME
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
-Where:   /usr/local/bin
-FTP:     ftp.cco.caltech.edu
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
 
    Print a multi-line description obtained from the compiled 'describe'
 database; giving utility name, version, intended shell, author, author's

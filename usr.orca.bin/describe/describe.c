@@ -2,21 +2,20 @@
  * describe(1) -- Copyright 1993-1995 James Brookes.  See the README and
  *                man page for details.
  *
- * We have to have this pragma in here; Orca/C's bit 5 optimization
- * (loop invariant removal) kills code somewhere in this file, resulting
- * in a system panic.
+ * Don't use ORCA/C's bit 5 (loop invariant removal) optimization; it
+ * kills code somewhere in this file, resulting in a system panic.
+ *
+ * $Id: describe.c,v 1.5 1997/09/24 06:34:58 gdr Exp $
  */
-
-#pragma optimize 31
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <getopt.h>
+#ifdef __GNO__
+#include <gno/gno.h>
+#endif
 #include "desc.h"
-
-#define _VERSION_ "v1.0.3"
 
 /* prototypes */
 
@@ -101,8 +100,8 @@ void print_entry(FILE *FInPtr, long int index) {
   myprintf(buffer,75);
   
   free(buffer);
-#ifdef STACK_CHECK
-  printf("Stack: %d\n",end_stack_check());
+#ifdef __STACK_CHECK__
+  printf("Stack: %d\n", _endStackCheck());
 #endif
   exit(0);
 }
@@ -116,8 +115,8 @@ int main (int argc, char **argv) {
   char *p, *tmp;
   char *db_path;
 
-#ifdef STACK_CHECK
-  begin_stack_check();
+#ifdef __STACK_CHECK__
+  _beginStackCheck();
 #endif
    
   verbose = FALSE;
@@ -211,8 +210,8 @@ int main (int argc, char **argv) {
     } else {
       if (verbose) {
         printf("Found entry %s!\n",tmp);
-#ifdef STACK_CHECK
-        printf("Stack: %d\n",end_stack_check());
+#ifdef __STACK_CHECK__
+        printf("Stack: %d\n", _endStackCheck());
 #endif
         free (db_path);
         free (tmp);
@@ -227,8 +226,8 @@ int main (int argc, char **argv) {
 
     if (offset1 > offset2) {
       printf("Entry '%s' not found in describe database.\n",searchName);
-#ifdef STACK_CHECK
-      printf("Stack: %d\n",end_stack_check());
+#ifdef __STACK_CHECK__
+      printf("Stack: %d\n", _endStackCheck());
 #endif
       free (db_path);
       free (tmp);

@@ -1,19 +1,18 @@
 /*
  * descu - describe(1) update utility for maintaining describe source files
  *
- * Usage:  descu [-hV] sourcefile patchfile1 [patchfile2 ...]
+ * Usage:  descu [-hV] [-o outfile] sourcefile patchfile1 [patchfile2 ...]
  *
  * Options:
- *         -h    show usage information and exit.
- *         -V    show version information
+ *         -h         show usage information and exit.
+ *         -o file    send output to <file> rather than stdout
+ *         -V         show version information
  *
- * Copyright 1995 by Devin Reade for James Brookes' describe(1) utility.
+ * Copyright 1995-1997 by Devin Reade for James Brookes' describe(1) utility.
  * See the included README file and man page for details.
  *
- * $Id: descu.c,v 1.3 1996/01/28 17:39:29 gdr Exp $
+ * $Id: descu.c,v 1.4 1997/09/24 06:34:58 gdr Exp $
  */
-
-#pragma optimize -1
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -25,12 +24,13 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-#include <getopt.h>
+#ifdef __GNO__
+#include <gno/gno.h>
+#endif
 #include "desc.h"
 
-#define _VERSION_     "v1.0.3"
 #define MAX_BUFFER    65534
-#define SLOTS_QUANTUM 20
+#define SLOTS_QUANTUM 64
 #define REJECT_FILE   "descu.rej"
 
 #ifndef __ORCAC__
@@ -67,7 +67,8 @@ int array2SlotsUsed=0;
  *       On the Apple IIgs, CR's are also converted to LF's
  */
 
-char *inhale (char *pathname) {
+char *
+inhale (char *pathname) {
   char *buffer;
   long bytecount, bytes_read;
   ssize_t i;
@@ -75,7 +76,7 @@ char *inhale (char *pathname) {
 
   /* open the file */
   if ((fd = open(pathname,O_RDONLY))==-1) {
-    fprintf(stderr,"inhale: open of %s failed: %s\n",
+    fprintf(stderr,"Warning: open of %s failed: %s\n",
             pathname,strerror(errno));
     return NULL;
   }
@@ -83,14 +84,14 @@ char *inhale (char *pathname) {
   /* create the buffer */
   bytecount = lseek(fd,(off_t) 0,SEEK_END);
   if (bytecount > MAX_BUFFER) {
-    fprintf(stderr,"descu internal error: cannot handle files greater"
+    fprintf(stderr,"descu internal error: cannot handle files greater "
                    "than %d bytes\n due to a compiler bug.  Sorry.\n",
                    MAX_BUFFER);
     exit(-1);
   }
   lseek(fd,(off_t) 0, SEEK_SET);
   if ((buffer = malloc(bytecount+1))==NULL) {
-    fprintf(stderr,"inhale: malloc of %ld-byte buffer failed for file %s:%s\n",
+    fprintf(stderr,"error: malloc of %ld-byte buffer failed for file %s:%s\n",
             bytecount+1,pathname,strerror(errno));
     close(fd);
     return NULL;
@@ -101,7 +102,7 @@ char *inhale (char *pathname) {
   while (bytes_read < bytecount) {
     i = read(fd,&buffer[bytes_read],(size_t)bytecount-bytes_read);
     if (i==-1) {
-      fprintf(stderr,"inhale: read failed on file %s:%s\n",
+      fprintf(stderr,"error: read failed on file %s:%s\n",
               pathname,strerror(errno));
       free(buffer);
       close(fd);
@@ -137,7 +138,8 @@ char *inhale (char *pathname) {
  *                 between the parts.
  */
 
-descEntry *extract_info(char *source) {
+descEntry *
+extract_info(char *source) {
 
   char *p;
   descEntry *entry;
@@ -172,7 +174,8 @@ descEntry *extract_info(char *source) {
  * add_entry -- add entry to the descTable, even if it already exists.
  */
 
-void add_entry(descEntry *entry, int initial_buffer) {
+void
+add_entry(descEntry *entry, int initial_buffer) {
   descEntry **e, ***array;
   int *slotsAlloced, *slotsUsed;
   
@@ -220,12 +223,22 @@ void add_entry(descEntry *entry, int initial_buffer) {
 void insert(char *buffer, int initial_buffer) {
   char *p, *q;
   descEntry *entry;
+  static char *emptyString = "";	/* we may return this, so keep it static */
 
   /* pull out the header (if nec) and init p */
   if (initial_buffer) header = buffer;
   p = strstr(buffer,NAME_SHORT);
-  if(!p) return;   /* buffer doesn't have any describe entries! */
-  *(p-1)='\0';
+  if (p == NULL) {
+    return;   /* buffer doesn't have any describe entries! */
+  }
+  if (initial_buffer) {
+    if (p == buffer) {
+	    /* there is no header */
+      header = NULL;
+    } else {
+      *(p-1)='\0';
+    }
+  }
 
   /* add all but the last entry */
   while ((q=strstr(p+1,NAME_SHORT))!=NULL) {
@@ -237,7 +250,7 @@ void insert(char *buffer, int initial_buffer) {
 
   /* extract out the trailer and add the last entry */
   if ((q = strstr(p,"\n#"))==NULL) {
-    if (initial_buffer) trailer="";
+    if (initial_buffer) trailer=emptyString;
   } else {
     if (initial_buffer) trailer=q+1;
     *q = '\0';
@@ -260,9 +273,9 @@ void sortArray(descEntry **array, int slotsUsed) {
   int l, j, ir, i;
   descEntry *rra;
 
-  if (slotsUsed==1) return; /* no need to sort one element */
-  --array;                  /* fudge since the algorithm was designed */
-                            /* for a unit-indexing */
+  if (slotsUsed <= 1) return; /* no need to sort one element */
+  --array;                    /* fudge since the algorithm was designed */
+                              /* for a unit-indexing */
   
   l = (slotsUsed>>1) + 1;
   ir = slotsUsed;
@@ -373,7 +386,7 @@ int ns_stricmp (char *a, char *b) {
 
 void version (char *progName) {
   fprintf(stderr,
-          "%s version %s Copyright 1995 Devin Reade\n"
+          "%s version %s Copyright 1995-1997 Devin Reade\n"
           "Freeware.  See the manual page for copying restrictions.\n",
           progName,versionStr);
   return;
@@ -390,9 +403,10 @@ void usage(char *progName) {
   if (!Vflag || errflag) {
      fprintf(stderr,
              "%s -- describe(1) source update utility\n"
-             "Usage:  %s [-hV] sourcefile patchfile1 [patchfile2 ...]\n"
-             "\t-h\tshow usage information\n"
-             "\t-V\tshow version information\n\n",
+             "Usage:  %s [-hV] [-o outfile] sourcefile patchfile1 [patchfile2 ...]\n"
+             "\t-h\t\tshow usage information\n"
+             "\t-o outfile\tsend output to <outfile> rather than stdout\n"
+             "\t-V\t\tshow version information\n\n",
              progName,progName);
   }
   version(progName);
@@ -406,13 +420,13 @@ void usage(char *progName) {
 int main(int argc, char **argv) {
   char *buffer;
   int i, j;
-  FILE *outfp, *rejfp;
+  FILE *outfp, *rejfp, *temp = NULL;
   int c;
   char *outputfile=NULL;
   int compare;
 
-#ifdef STACK_CHECK
-  begin_stack_check();
+#ifdef __STACK_CHECK__
+  _beginStackCheck();
 #endif
 
   /* initialize */
@@ -443,28 +457,43 @@ int main(int argc, char **argv) {
   /* show version info */
   if (Vflag) version(basename(argv[0]));
 
-  /* open output (if nec) and reject file */
+  /*
+   * open output file if necessary.  If the output filename matches
+   * that of the first input file, then dump stuff to a temporary file.
+   */
   if (oflag) {
-    if ((outfp = fopen(outputfile,"w+"))==NULL) {
-      perror("main: couldn't open output file");
-      exit(1);
+    if (!strcmp(outputfile, argv[optind])) {
+	    if ((outfp = tmpfile()) == NULL) {
+	      perror("unable to open temporary file");
+        exit(1);
+      }
+      temp = outfp;
+    } else {
+      if ((outfp = fopen(outputfile,"w+")) == NULL) {
+        perror("couldn't open output file");
+        exit(1);
+      }
     }
   } else {
     outfp = stdout;
   }
+
+  /* open the rejects file */
   if ((rejfp = fopen(REJECT_FILE,"w+"))==NULL) {
-    perror("main: couldn't open rejects file");
+    perror("couldn't open rejects file");
     exit(1);
   }
 
   /* read in original describe source file */
-  buffer = inhale(argv[optind]);
-  insert(buffer,1);
+  if ((buffer = inhale(argv[optind])) != NULL) {
+    insert(buffer,1);
+  }
 
   /* insert describe patch files */
   for (optind++; optind<argc; optind++) {
-    buffer = inhale(argv[optind]);           
-    insert(buffer,0);
+    if ((buffer = inhale(argv[optind])) != NULL) {
+      insert(buffer,0);
+    }
   }
 
   /* sort the two arrays */
@@ -476,8 +505,10 @@ int main(int argc, char **argv) {
    */
   i=0; j=0;
 
-  /* print the header */
-  fprintf(outfp,"%s\n",header);
+  /* print the header, if it exists */
+  if (header != NULL) {
+    fprintf(outfp,"%s\n",header);
+  }
 
   /* first stage; merge while we have two arrays */
   while ((i<array1SlotsUsed) && (j<array2SlotsUsed)) {
@@ -505,15 +536,39 @@ int main(int argc, char **argv) {
     j++;
   }
 
-  /* print the trailer */
-  fprintf(outfp,"%s",trailer);
+  /* print the trailer, if it exists */
+  if (trailer != NULL) {
+    fprintf(outfp,"%s",trailer);
+  }
 
   /* close the files and exit */
   fclose(rejfp);
-  if (oflag) fclose(outfp);
+  if (oflag) {
+    if (temp != NULL) {
+      /* temp and outfp refer to the same FILE struct at this point */
+#define BUFFERSIZE 4096
+      char *buf;
+      size_t count;
 
-#ifdef STACK_CHECK
-  fprintf(stderr,"stack usage: %d bytes\n",end_stack_check());
+      if ((outfp = fopen(outputfile,"w+")) == NULL) {
+        perror("couldn't open output file");
+        exit(1);
+      }
+      rewind(temp);
+      if ((buf = malloc(BUFFERSIZE)) == NULL) {
+	      perror("couldn't allocate buffer for file copy");
+        exit(1);
+      }
+      while ((count = fread(buf, 1, BUFFERSIZE, temp)) > 0) {
+      	fwrite(buf, 1, count, outfp);
+      }
+      fclose(temp);
+    }
+    fclose(outfp);
+  }
+
+#ifdef __STACK_CHECK__
+  fprintf(stderr,"stack usage: %d bytes\n", _endStackCheck());
 #endif
 
   return 0;

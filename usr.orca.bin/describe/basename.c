@@ -1,4 +1,6 @@
-#pragma optimize -1
+/*
+ * $Id: basename.c,v 1.2 1997/09/24 06:34:57 gdr Exp $
+ */
 
 #include <string.h>
 #include <stdio.h>

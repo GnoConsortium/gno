@@ -1,10 +1,20 @@
-.TH DESCRIBE 1 "Commands and Applications" "7 May 1995" "Version 1.0.3"
+.\"
+.\" $Id: describe.1,v 1.4 1997/09/24 06:34:58 gdr Exp $
+.\"
+.TH DESCRIBE 1 "22 September 1997" GNO "Commands and Applications"
 .SH NAME
 describe \- show information about a program
 .SH SYNOPSIS
-.BR describe " [" -hvV ]
+.BR describe
+[
+.BR -hvV
+]
 .I program
 .SH DESCRIPTION
+This manual page documents
+.BR describe
+version 1.0.4.
+.LP
 .BR describe
 will show current information about
 .IR program .
@@ -34,7 +44,8 @@ uses a database compiled by
 \fB-V\fR	Show version information.
 .fi
 .SH FILES
-/usr/local/lib/describe \- the system
+.IP \fB/usr/lib/describe\fR
+The system
 .B describe
 database. If the environment variable
 .B DESCDB
@@ -44,8 +55,7 @@ is set, its value will be used instead.
 Full path to the system describe database. If
 .B DESCDB
 is set, its value is used instead of the default location
-/usr/local/lib/describe.
-
+.BR /usr/lib/describe .
 .SH AUTHOR
 James Brookes <jamesb@ecst.csuchico.edu>.
 .SH "SEE ALSO"

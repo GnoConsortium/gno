@@ -1,6 +1,13 @@
 /*                                                                        */
 /* descc - compile info file into describe database file                  */
 /*                                                                        */
+/* $Id: descc.c,v 1.5 1997/09/24 06:34:58 gdr Exp $ */
+/*                                                                        */
+/*      v1.0.4  -  Changed location of database.  Describe is now         */
+/*                 part of the base GNO distribution.  Version numbers    */
+/*                 now in lockstep.                                       */
+/*                 Devin Reade [Mon 22 Sep 1997]                          */
+/*                                                                        */
 /*	v1.0.3  -  No changes, but changed version number to keep         */
 /*                 in line with descu.                                    */
 /*                 Soenke Behrens [Sun Jan 28 1996]                       */
@@ -37,16 +44,16 @@
 /*         8 variable-length Null-terminated strings.                     */
 /*                                                                        */
 
-#pragma optimize 15
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <getopt.h>
 #include <assert.h>
+#ifdef __GNO__
+#include <types.h>
+#include <gsos.h>
+#include <gno/gno.h>
+#endif
 #include "desc.h"
-
-#define _VERSION_ "v1.0.3"
 
 /* prototypes */
 
@@ -54,7 +61,6 @@ void usage(char *callname);
 void version(char *callname);
 void puke(int error,int lines);
 int  mygets(char *buffer, int2 *lines, FILE *FInPtr);
-char *strdup (const char *str);
 
 int Vflag;
 
@@ -112,6 +118,34 @@ int mygets (char *buffer, int2 *lines, FILE *FInPtr) {
   return(0);
 }
 
+#ifdef __GNO__
+#define	BIN	0x06
+
+/*
+ * Change the file type of <path> to BINary
+ */
+void
+changeToBin(const char *path) {
+
+	FileInfoRecGS	pblock;
+	pblock.pCount = 4;
+	if ((pblock.pathname = (GSString255Ptr) __C2GSMALLOC(path)) == NULL) {
+		/* silent failure */
+		return;
+	}
+	GetFileInfoGS(&pblock);
+	if (_toolErr == 0) {
+		if (pblock.fileType != BIN) {
+			pblock.fileType = BIN;
+			pblock.auxType = 0L;
+			SetFileInfoGS(&pblock);
+		}
+	}
+	GIfree((GSStringPtr) pblock.pathname);
+	return;
+}
+#endif	/* __GNO__ */
+
 /*              */
 /*   Mainline   */
 /*              */
@@ -128,8 +162,8 @@ int main (int argc, char **argv) {
   /* initialize globals */
   Vflag=0;
   errflag=0;
-#ifdef STACK_CHECK
-  begin_stack_check();
+#ifdef __STACK_CHECK__
+  _beginStackCheck();
 #endif
 
   assert(sizeof(int2)==2);
@@ -271,12 +305,18 @@ int main (int argc, char **argv) {
 
   fseek(FOutPtr,endOfFile,SEEK_SET);
   fclose(FOutPtr);
+
+#ifdef __GNO__
+  /* change the filetype of the database to BIN */
+  changeToBin(db_path);
+#endif
+
   free(db_path);
   free(record_locs);
   free(buffer);
 
-#ifdef STACK_CHECK
-  fprintf(stderr,"stack usage:  %d bytes\n",end_stack_check());
+#ifdef __STACK_CHECK__
+  fprintf(stderr,"stack usage:  %d bytes\n", _endStackCheck());
 #endif
   return 0;
 }
