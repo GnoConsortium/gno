@@ -3,42 +3,36 @@
 
     Revision history:
 
-    v1.4  - Termcap support has been added and tested.  Look for a soon to be
-                    faster version coming soon to a ~/bin directory near you!
-
-    v1.32 - uses isatty(x) instead of fstat.  more portable (opinion).
-                    soon to be added, TERMCAP support, won't that be nice?
-
+    v2.0  - now sets tty to cbreak mode, since TTY's cooked mode has
+    	    changed.
     v1.31 - uses fstat to check whether output is a tty, instead of
 		    _Direction
     v1.3  - now prints name of file in block if multiple files specified
 */
 
-#pragma optimize 8
-#pragma stacksize 3072
+#pragma optimize -1
+#pragma stacksize 1024
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <types.h>
-#include <signal.h>
+#include <sys/signal.h>
 #include <gno/gno.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <ioctl.h>
+#include <sys/ioctl.h>
 #include <shell.h>
 #include <gsos.h>
 #include <string.h>
 #include <ctype.h>
+#include <fcntl.h>
 #include <texttool.h>
 #include <orca.h>
-#include <termcap.h>
 
 #pragma lint -1
 
 #define MAX_LINE 23
 #define MAX_COL 80
-
-int tprchar(char c);
 
 void PrintFileName(char *s)
 {
@@ -48,20 +42,15 @@ char *r;
 
     if ((r = strrchr(s,'/')) != NULL)
         printf("%s\n",r+1);
-    else
-        printf("%s\n",s);
+    else printf("%s\n",s);
 }
 
 char getcharacter(int fd)
 {
 char c;
-IORecGS r = {4, fd, (void *)&c, 1l};
 
-   if (fd == -1)
-       c = ReadChar(0);
-   else
-       ReadGS(&r);
-
+   if (fd == -1) c = ReadChar(0);
+   else read(fd,&c,1);
    return c;
 }
 
@@ -76,14 +65,70 @@ void inthndl(int sig, int code)
     exit(sig);
 }
 
-char inv[20], nor[20];
-char *pterm, *pcap, *ps;
-char termcap[1030], capability[100];
+char i_buf[1024];
+word b_ind = 0;
+word b_size = 0;
+int b_ref;
+int b_pushback = EOF;
+word b_eof;
+longword b_mark;
+
+int buf_open(char *name)
+{
+int fd;
+    fd = open(name,O_RDONLY);
+    b_ind = 0;
+    b_size = 0;
+    b_mark = 0l;
+    b_eof = 0;
+    return (b_ref = fd);
+}
+
+void buf_fd_open(int fd)
+{
+    b_ind = 0;
+    b_size = 0;
+    b_mark = 0l;
+    b_ref = fd;
+    b_eof = 0;
+}
+
+int buf_getc(void)
+{
+char c;
+
+    if (b_pushback != EOF) { c = b_pushback; b_pushback = EOF; return c; }
+    if (b_ind >= b_size) {
+        if (b_eof) return EOF;
+        b_size = read(b_ref,i_buf,1024);
+        if (!b_size) b_eof = 1;
+        b_ind = 0;
+        return buf_getc();
+    }
+    else {
+        c = i_buf[b_ind++];
+        b_mark = b_mark + 1l;
+        return c;
+    }
+}
+
+#define OBUFSIZE 1024
+char o_buf[OBUFSIZE];
+word b_oind = 0;
+
+void buf_flush(void)
+{ write(STDOUT_FILENO,o_buf,b_oind); b_oind = 0; }
+
+void buf_putc(char c)
+{
+    if (b_oind == OBUFSIZE) buf_flush();
+    o_buf[b_oind++] = c;
+}
 
 int main(int argc,char *argv[])
 {
-FILE *file;
-int line,col;
+int file;
+word line,col;
 int i;
 int c,quit,abort;
 int pipeFlag; /* 1 means input is piped in or redirected */
@@ -94,126 +139,104 @@ char *truncated;
 static struct stat sb;
 extern int _INITGNOSTDIO(void);
 
-    if (!_INITGNOSTDIO())
-    {
+    /*if (!_INITGNOSTDIO()) {
     	fprintf(stderr,"'more' requires GNO/ME.\n");
 	    exit(1);
-    }
-    if ((pterm = getenv ("TERM"))
-    && (tgetent (termcap, pterm) == 1))
-    {
-	pcap = capability;
-	if (ps = tgetstr ("so", &pcap))
-	{
-		/*
-		 *   sun has padding in here. this is NOT portable.
-		 *   better to use tputs() to strip it...
-		 */
-		strcpy (inv, ps);
-	}
-               else { fprintf(stderr,"couldn't get standout mode\n");
-                      exit(1); }
-	if (ps = tgetstr ("se", &pcap))
-	{
-		strcpy (nor, ps);
-	}
-    }
-
-
+    }*/
     setvbuf(stdout,NULL,_IOLBF,256);
     tty = fopen(".tty","r");
-	/* turn off echo mode */
+    /* turn off echo mode */
     ioctl(tty->_file, TIOCGETP, &sg);
     signal(SIGINT, inthndl);
-    /*putchar(6);*/
+    buf_putc(6);
 
-    if (!isatty(2))
-	standardOut = 0;
-    else
-	standardOut = 1;
+    fstat(STDOUT_FILENO,&sb);
+    if (sb.st_mode & S_IFCHR) standardOut = 1;
+    else standardOut = 0;
 
     pipeFlag = (argc == 1) ? 1 : 0;
-    if (argc == 1)
-        argc = 2;
+    if (argc == 1) argc = 2;
     quit = 0;
     abort = 0;
 
     oldsg_flags = sg.sg_flags;
     sg.sg_flags &= ~ECHO;
+    sg.sg_flags |= CBREAK;
     ioctl(tty->_file, TIOCSETP, &sg);
        
     for (i = 1; (i < argc && !abort); i++)
     {
        quit = 0;
-       if (pipeFlag)
-       {
-           file = stdin;
+       if (pipeFlag) {
+           file = STDIN_FILENO;
+           buf_fd_open(file);
        }
-       else
-       {
+       else {
            truncated = strrchr(argv[i],'/');
            if (truncated == NULL) truncated = argv[i];
                else truncated++;
-           file = fopen(argv[i],"rb");
-           if (file == NULL)
-           {
+    	   stat(argv[i],&sb);
+           if (sb.st_mode & S_IFDIR) {
+               fprintf(stderr,"more: %s is a directory\n",argv[i]);
+               fflush(stderr);
+               continue;
+           }
+           file = buf_open(argv[i]);
+           if (file < 0) {
                perror(argv[i]);
-               /*putchar(5);*/ exit(1);
+               buf_putc(5); buf_flush(); exit(1);
            }
            eofs.pCount = 2;
-           eofs.refNum = file->_file;
+           eofs.refNum = file;
            GetEOFGS(&eofs);
-           if (toolerror())
-           {
+           if (toolerror()) {
                printf("GS/OS Error $%X\n",toolerror());
-               /*putchar(5);*/ exit(-1);
+               buf_putc(5); buf_flush(); exit(-1);
            }
        }
-       if (argc > 2)
-       {
+       if (argc > 2) {
             printf("::::::::::::::::\n");
             PrintFileName(argv[i]);
             printf("::::::::::::::::\n");
             line = 3; col = 1;
        }
-       else
-       {
-            line = 1; col = 1;
-       }
+       else {line = 1; col = 1;}
 
-       c = getc(file); /* wierdness fix */
+       c = buf_getc(); /* wierdness fix */
        if (c == EOF) quit = 1;
-       c &= 0xFF;
-       if (c == 0x04) quit = 1;
+    /*   c &= 0xFF; */
+       if (c == 0x04) quit = 1; 
        while (!quit && !abort)
 
        {
        int k;
 
-           if (c == 0x0c)
-           {
-                printf("^L\n");
-                line = MAX_LINE; col = 1;
-           }
-           else if (c == '\r')
-           {
-               if ((k = getc(file)) == '\n') /*  IBM silly CR & LF EOL */
-                   putchar('\n');
-               else
-               {
-                   ungetc(k,file); putchar('\n');
+           if (c == 0x0c) { buf_flush(); printf("^L\n");
+                            line = MAX_LINE; col = 1; }
+           else if (c == '\n') {
+           	buf_putc('\r');
+	        col = 1; line++;
+	   }
+           else if (c == '\r') {
+               if ((k = buf_getc()) == '\n') /*  IBM silly CR & LF EOL */
+                   buf_putc('\r');
+               else {
+                   b_pushback = k;
+                   b_mark = b_mark-1;
+                   buf_putc('\r');
                }
                col = 1; line++;
            }
            else if (c == '\n')
            {
-               putchar('\n');
+               buf_putc('\n');
                col = 1; line++;
            }
            else
            {
-               putchar(c);
-               col++;
+               buf_putc(c);
+               if (c == 8) col--;
+               else if (c > 32) col++;
                if (col > MAX_COL)
                {
                    col = 1; line++;
@@ -221,15 +244,16 @@ extern int _INITGNOSTDIO(void);
            }
            if ((line == MAX_LINE) && standardOut)
            {   long percent;
-               tputs(inv,1,tprchar);
+               buf_flush();
+               putchar(15);
                if (!pipeFlag)
                {
-                   percent = (ftell(file) * 100) / eofs.eof;
+                   percent = (b_mark * 100) / eofs.eof;
                    printf(" - %s (%2ld%%) - ",truncated,percent);
                }
                else
                    printf(" - (more) - ");
-               tputs(nor,1,tprchar);
+               putchar(14);
                fflush(stdout);
                c = getcharacter(tty->_file);
                c = c & 0x7f;
@@ -245,22 +269,21 @@ extern int _INITGNOSTDIO(void);
                    putchar(' ');
                    putchar(8);
                }
+               fflush(stdout);
            }
-           c = getc(file);
+           c = buf_getc();
            if (c == EOF) quit = 1;
-           c &= 0xFF;
+           /*c &= 0xFF; */
            if (c == 0x04) quit = 1;
        }
-       if (!pipeFlag)
-           fclose(file);
-       else
-           abort = 1; /* we are DONE if this was a pipe */
+       if (!pipeFlag) close(file);
+       else abort = 1; /* we are DONE if this was a pipe */
        if (!abort && (argc > 2) && (i != argc) && (line < MAX_LINE)
            && standardOut)
        {
-           tputs(inv,1,tprchar);
+           putchar(15);
            printf("hit a key for next file");
-           tputs(nor,1,tprchar);
+           putchar(14);
            fflush(stdout);
            c = getcharacter(tty->_file);
            for (c = 0; c < 23; c++)
@@ -273,13 +296,9 @@ extern int _INITGNOSTDIO(void);
            if (c == 27) abort = 1;
        }
     }
-    /*putchar(5);*/
+    buf_flush();
+    putchar(5);
     sg.sg_flags = oldsg_flags;
     ioctl(tty->_file,TIOCSETP,&sg);
     exit(0);
-}
-
-int tprchar(char c)
-{
-    putchar( c );
 }
