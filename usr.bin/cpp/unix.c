@@ -1,4 +1,4 @@
-#ifdef __ORCAC__
+#if defined(__ORCAC__) && defined(DO_SEGMENTS)
 segment "cpp_3_____";
 #endif
 #include <stdio.h>
@@ -23,7 +23,6 @@ setup(int argc, char **argv)
 	int c, fd, i;
 	char *fp, *dp;
 	Tokenrow tr;
-	extern void setup_kwtab(void);
 
 	setup_kwtab();
 	while ((c = getopt(argc, argv, "MNOVv+I:D:U:F:lg")) != -1)

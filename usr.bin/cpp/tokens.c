@@ -1,4 +1,4 @@
-#ifdef __ORCAC__
+#if defined(__ORCAC__) && defined(DO_SEGMENTS)
 segment "cpp_3_____";
 #endif
 #include <stdio.h>
@@ -159,14 +159,15 @@ makespace(Tokenrow *trp)
 		return;
 	if (tp->wslen) {
 		if (tp->flag&XPWS
-		 && (wstab[tp->type] || trp->tp>trp->bp && wstab[(tp-1)->type])) {
+		 && (wstab[tp->type] || 
+		     (trp->tp>trp->bp && wstab[(tp-1)->type]))) {
 			tp->wslen = 0;
 			return;
 		}
 		tp->t[-1] = ' ';
 		return;
 	}
-	if (wstab[tp->type] || trp->tp>trp->bp && wstab[(tp-1)->type])
+	if (wstab[tp->type] || (trp->tp>trp->bp && wstab[(tp-1)->type]))
 		return;
 	tt = newstring(tp->t, tp->len, 1);
 	*tt++ = ' ';

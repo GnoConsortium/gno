@@ -1,4 +1,4 @@
-/* $Id: cpp.h,v 1.2 1997/12/02 08:05:52 gdr Exp $ */
+/* $Id: cpp.h,v 1.3 1997/12/08 03:40:11 gdr Exp $ */
 #define	INS	32768		/* input buffer */
 #define	OBS	4096		/* outbut buffer */
 #define	NARG	32		/* Max number arguments to a macro */
@@ -139,6 +139,7 @@ int	newhideset(int, Nlist *);
 int	unionhideset(int, int);
 void	iniths(void);
 void	setobjname(char *);
+void	setup_kwtab(void);
 #define	rowlen(tokrow)	((tokrow)->lp - (tokrow)->bp)
 
 extern	char *outp;
@@ -155,15 +156,6 @@ extern	int Cplusplus;
 extern	Nlist *kwdefined;
 extern	Includelist includelist[NINCLUDE];
 extern	char wd[];
-
-#ifndef __ORCAC__	/* make sure we get our own decls */
-extern int creat(char *, int);
-extern int open(char *, int);
-extern int close(int);
-extern int dup2(int, int);
-extern int write(int, char *, size_t);
-extern int read(int, char *, size_t);
-#endif
 
 #ifdef __ORCAC__
 #  define STATIC static

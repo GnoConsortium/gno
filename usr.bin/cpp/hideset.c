@@ -1,4 +1,4 @@
-#ifdef __ORCAC__
+#if defined(__ORCAC__) && defined(DO_SEGMENTS)
 segment "cpp_3_____";
 #endif
 #include <stdio.h>

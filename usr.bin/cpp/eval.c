@@ -1,4 +1,4 @@
-#ifdef __ORCAC__
+#if defined(__ORCAC__) && defined(DO_SEGMENTS)
 segment "cpp_3_____";
 #endif
 #include <stdlib.h>
@@ -148,7 +148,7 @@ eval(Tokenrow *trp, int kw)
 		case NOT:
 			if (rand)
 				goto syntax;
-			*op++ = tp->type;
+			*op++ = (enum toktype) tp->type;
 			continue;
 
 		/* unary-binary */
@@ -173,7 +173,7 @@ eval(Tokenrow *trp, int kw)
 				goto syntax;
 			if (evalop(priority[tp->type])!=0)
 				return 0;
-			*op++ = tp->type;
+			*op++ = (enum toktype) tp->type;
 			rand = 0;
 			continue;
 

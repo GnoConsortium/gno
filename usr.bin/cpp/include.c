@@ -1,4 +1,4 @@
-#ifdef __ORCAC__
+#if defined(__ORCAC__) && defined(DO_SEGMENTS)
 segment "cpp_3_____";
 #endif
 #include <stdlib.h>
@@ -65,7 +65,7 @@ doinclude(Tokenrow *trp)
 		if ((fd = open(iname, 0)) >= 0)
 			break;
 	}
-	if ( Mflag>1 || !angled&&Mflag==1 ) {
+	if ( Mflag>1 || ( !angled && Mflag==1 )) {
 		write(STDOUT_FILENO,objname,strlen(objname));
 		write(STDOUT_FILENO,iname,strlen(iname));
 		write(STDOUT_FILENO,"\n",1);
@@ -94,8 +94,18 @@ void
 genline(void)
 {
 	static Token ta = { UNCLASS };
-	static Tokenrow tr = { &ta, &ta, &ta+1, 1 };
 	uchar *p;
+#ifndef __INSIGHT__
+	static Tokenrow tr = { &ta, &ta, &ta+1, 1 };
+#else
+	static Tokenrow tr;
+	static int been_here = 0;
+
+	if (! been_here) {
+	    tr = { &ta, &ta, &ta+1, 1 };
+	    been_here = 1;
+	}
+#endif
 
 	ta.t = p = (uchar*)outp;
 	strcpy((char*)p, "#line ");

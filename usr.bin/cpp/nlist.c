@@ -1,4 +1,4 @@
-#ifdef __ORCAC__
+#if defined(__ORCAC__) && defined(DO_SEGMENTS)
 segment "cpp_3_____";
 #endif
 #include <stdio.h>
@@ -23,26 +23,26 @@ struct	kwtab {
 	int	val;
 	int	flag;
 } kwtab[] = {
-	"if",		KIF,		ISKW,
-	"ifdef",	KIFDEF,		ISKW,
-	"ifndef",	KIFNDEF,	ISKW,
-	"elif",		KELIF,		ISKW,
-	"else",		KELSE,		ISKW,
-	"endif",	KENDIF,		ISKW,
-	"include",	KINCLUDE,	ISKW,
-	"define",	KDEFINE,	ISKW,
-	"undef",	KUNDEF,		ISKW,
-	"line",		KLINE,		ISKW,
-	"error",	KERROR,		ISKW,
-	"pragma",	KPRAGMA,	ISKW,
-	"eval",		KEVAL,		ISKW,
-	"defined",	KDEFINED,	ISDEFINED+ISUNCHANGE,
-	"__LINE__",	KLINENO,	ISMAC+ISUNCHANGE,
-	"__FILE__",	KFILE,		ISMAC+ISUNCHANGE,
-	"__DATE__",	KDATE,		ISMAC+ISUNCHANGE,
-	"__TIME__",	KTIME,		ISMAC+ISUNCHANGE,
-	"__STDC__",	KSTDC,		ISUNCHANGE,
-	NULL
+	{ "if",		KIF,		ISKW },
+	{ "ifdef",	KIFDEF,		ISKW },
+	{ "ifndef",	KIFNDEF,	ISKW },
+	{ "elif",	KELIF,		ISKW },
+	{ "else",	KELSE,		ISKW },
+	{ "endif",	KENDIF,		ISKW },
+	{ "include",	KINCLUDE,	ISKW },
+	{ "define",	KDEFINE,	ISKW },
+	{ "undef",	KUNDEF,		ISKW },
+	{ "line",	KLINE,		ISKW },
+	{ "error",	KERROR,		ISKW },
+	{ "pragma",	KPRAGMA,	ISKW },
+	{ "eval",	KEVAL,		ISKW },
+	{ "defined",	KDEFINED,	ISDEFINED+ISUNCHANGE },
+	{ "__LINE__",	KLINENO,	ISMAC+ISUNCHANGE },
+	{ "__FILE__",	KFILE,		ISMAC+ISUNCHANGE },
+	{ "__DATE__",	KDATE,		ISMAC+ISUNCHANGE },
+	{ "__TIME__",	KTIME,		ISMAC+ISUNCHANGE },
+	{ "__STDC__",	KSTDC,		ISUNCHANGE },
+	{ NULL, 0, 0 }
 };
 
 unsigned long	namebit[077+1];
