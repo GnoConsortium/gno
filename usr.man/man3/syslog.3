@@ -31,7 +31,7 @@
 .\"
 .\"     @(#)syslog.3	8.1 (Berkeley) 6/4/93
 .\"
-.TH SYSLOG 3 "28 January 1997" GNO "Library Routines"
+.TH SYSLOG 3 "4 January 1999" GNO "Library Routines"
 .SH NAME
 .BR syslog ,
 .BR vsyslog ,
@@ -113,6 +113,22 @@ or
 The full list of format specifiers is given in the
 .BR sprintmt (3)
 manual page.
+Note that
+.BR syslogmt
+and
+.BR vsyslogmt
+will
+.I not
+log to 
+.BR syslogd (8)
+unless 
+.BR openlog
+has been called.  Since
+.BR openlog
+is not itself thread safe, the call to
+.BR openlog
+must be made before the process forks if any children will be using these 
+routines.
 These two routines are GNO-specific and therefore non-portable.
 .LP
 The message is tagged with
@@ -299,6 +315,16 @@ are thread safe; the remainder are not.
 should be called in the parent thread before creating the child threads.
 This will ensure that any generated messages are properly tagged with
 .IR ident .
+.SH BUGS
+The current implementation does not take into account the possibility that 
+.BR syslogd (8) 
+may be killed and restarted.  If this happens, all logging from the current
+process will stop until a call is made to 
+.BR closelog
+followed by
+.BR openlog ,
+which is of course not thread safe.
+This could be handled better.
 .SH SEE ALSO
 .BR logger (1),
 .BR sprintmt (3),
