@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Thu Dec 10 19:08:13 1998
+# Last revision: Thu Dec 31 09:42:23 1998
 #
-# $Id: describe.src,v 1.16 1998/12/10 19:12:27 gdr-ftp Exp $
+# $Id: describe.src,v 1.17 1998/12/31 09:45:00 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -540,6 +540,15 @@ Where:   /usr/bin
 FTP:     -
 
 Shows the date and time (optionally, continuously).
+
+Name:    dd
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /bin
+FTP:     ftp.gno.org
+Convert and copy a file.
 
 Name:    descc
 Version: 1.0.6
@@ -1774,6 +1783,15 @@ FTP:     -
 Based on talk, phone allows two users to interactively chat in a
 split-screen format.
 
+Name:    printf
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (comp.unix.sources port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+Formatted output at shell command level.
+
 Name:    quiz
 Version: 1.0
 Shell:   GNO
@@ -2046,6 +2064,15 @@ FTP:     pindarus.cs.uiuc.edu
 
 Sets the rVersion information on a EXE, including name, version, and any
 other information the author wishes to include.
+
+Name:    soelim
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+Eliminate .so's from nroff file.
 
 Name:    splatprep
 Version: 1.0 (1 Dec 95)
@@ -2336,6 +2363,15 @@ FTP:     ftp.gno.org
 "Trek is a game of space glory and war." This is a port of the BSD
 text-based Star Trek game.
 
+Name:    tty
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+Return user's terminal name.
+
 Name:    udl
 Version: 1.1.5
 Shell:   GNO/ME, ORCA/Shell
@@ -2480,6 +2516,24 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 This is another newline converter.  It works for UNIX<-->Apple translation.
 See also udl.
+
+Name:    uudecode
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+Create a binary file from a text transmittable file.
+
+Name:    uuencode
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+Create a text transmittable file from a binary file.
 
 Name:    valspeak
 Version: 1.0
