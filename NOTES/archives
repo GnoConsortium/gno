@@ -1,0 +1,24 @@
+$Id: archives,v 1.1 1999/01/09 21:28:35 gdr-ftp Exp $
+
+A GNO "release" is shipped (so to speak) as a set of NuFX (*.shk) archives.
+This is the breakdown of each NuFX archive:
+
+	gnoboot.shk	/gno.boot			(entire volume)
+	gno.01.shk	/kern
+			/initrc
+			/lib
+	gno.02.shk	/bin 				(utils a-f)
+	gno.03.shk	/bin 				(utils g-m)
+	gno.04.shk	/bin 				(utils n-s)
+	gno.05.shk	/bin				(utils t-z)
+	gno.06.shk	/usr/bin			(utils a-f)
+	gno.07.shk	/usr/bin			(utils g-m)
+	gno.08.shk	/usr/bin			(utils n-s)
+	gno.09.shk	/usr/bin			(utils t-z)
+	gno.10.shk	/usr/include
+	gno.11.shk	/usr/man/man1
+	gno.12.shk	/usr/man/man2
+	gno.13.shk	/usr/man/man3
+	gno.14.shk	/usr/man/man[45678]
+	gno.15.shk	/usr				(remaining files)
+	gno.16.shk	/				(remaining files)

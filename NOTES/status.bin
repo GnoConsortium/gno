@@ -11,7 +11,7 @@
 *									*
 * Devin Reade, 10 April 1998.						*
 *									*
-* $Id: status.bin,v 1.17 1998/10/31 19:14:49 gdr-ftp Exp $		*
+* $Id: status.bin,v 1.18 1999/01/09 21:28:35 gdr-ftp Exp $		*
 *									*
 *************************************************************************
 
@@ -100,7 +100,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /bin/domainname
 /bin/du				Y	Y	evan	Y
 /bin/echo			N	Y	dt
-/bin/ed
+/bin/ed				N	.	mober	.	.	.	.	.	.	# avail separately (trenco)
 /bin/edit			Y	Y		Y
 /bin/egrep			Y	Y	evan
 /bin/expr
@@ -213,8 +213,8 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/apply			N	N
 /usr/bin/apropos		N	Y	gdr	Y	T	Y	Y	Y	RI	(man)
 /usr/bin/ar			N	N
-/usr/bin/asml			N	Y	gdr	Y	T	Y	Y	Y	RI
-/usr/bin/assemble		N	Y	gdr	Y	T	Y	Y	Y	RI
+/usr/bin/asml			N	Y	gdr	Y	T	Y	Y	Y	RI	(compile)
+/usr/bin/assemble		N	Y	gdr	Y	T	Y	Y	Y	RI	(compile)
 /usr/bin/at			.	.	sr
 /usr/bin/aw30			Y	.	.	Y	.	.	.	Y
 /usr/bin/awk			N	Y	dave	Y	T	T	T	Y	RI
@@ -227,9 +227,9 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/catrez			N	Y	dave	Y	T	Y	Y	Y	RI
 /usr/bin/cclean			N	Y	sonk
 /usr/bin/cksum			N	Y	dave	Y	Y	Y	Y	Y	RI
-/usr/bin/cmpl			Y	Y	gdr	Y	T	Y	Y	Y	RI
+/usr/bin/cmpl			Y	Y	gdr	Y	T	Y	Y	Y	RI	(compile)
 /usr/bin/coff			N	Y
-/usr/bin/col
+/usr/bin/col			N	.	mober	.	.	.	.	.	.	# avail separately (trenco)
 /usr/bin/colcrt			N	Y	sr	Y	T	Y	Y	Y	RI
 /usr/bin/column			N	.	mober
 /usr/bin/compile		Y	Y	gdr	Y	T	Y	Y	Y	RI
@@ -328,7 +328,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/yankit			Y	Y
 /usr/bin/zsh			N	Y	lb								# renamed to nosh
 /usr/games			Y	Y	gdr	dir	-	-	-	-	Y
-/usr/games/calendar		N	Y	ma	Y	T	Y	Y	Y	
+/usr/games/calendar		N	Y	ma	Y	T	Y	Y	Y	RI
 /usr/games/wump			Y
 /usr/include			Y	Y	gdr	dir	-	-	-	-	Y
 /usr/lib			Y	Y	gdr	dir	-	-	-	-	Y

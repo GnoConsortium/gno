@@ -1,4 +1,4 @@
-$Id: status.lib,v 1.7 1998/10/31 19:14:49 gdr-ftp Exp $
+$Id: status.lib,v 1.8 1999/01/09 21:28:35 gdr-ftp Exp $
 
 Key for Code Status column:
 	R == reviewed
@@ -81,7 +81,7 @@ syslogmt		libc/gen/syslog.c	T	3	sys/syslog.h
 tcnewpgrp		libc/sys/trap.asm	C	2	gno/gno.h
 tctpgrp			libc/sys/trap.asm	C	2	gno/gno.h
 vsprintmt		libc/gno/sprintmt.c	T	3	gno/gno.h
-vyslogmt		libc/gen/syslog.c	T	3	sys/syslog.h
+vsyslogmt		libc/gen/syslog.c	T	3	sys/syslog.h
 ~GNO_COMMAND		libc/gno/gnocmd.asm	C	3	na
 ~GNO_FREEARG		libc/gno/parsearg.asm	C	3	na
 ~GNO_PARSEARG		libc/gno/parsearg.asm	C	3	na
@@ -370,6 +370,7 @@ umask			libc/sys/syscall.c	C	2	sys/stat.h
 ungetc			libc/stdio/ungetc.c	C	3	stdio.h
 unlink			libc/sys/syscall.c	T	2	unistd.h
 unsetenv		libc/gen/environ.c	T	3	stdlib.h
+unvis			libc/gen/unvis.c	C	3	vis.h
 user_from_uid		libc/gen/pwcache.c	C	3	na
 utime			libc/gen/utime.c	T	3	sys/time.h
 utimes			libc/gen/utime.c	T	2	utime.h
@@ -378,6 +379,7 @@ verrx			libc/gen/err.c		T	3	err.h
 vfork			libc/sys/trap.asm	C	2	unistd.h
 vfprintf		libc/stdio/vfprintf.c	C	3	stdio.h
 vfscanf			libc/stdio/vfscanf.c	C	3	stdio.h
+vis			libc/gen/vis.c		C	3	vis.h
 vprintf			libc/stdio/vprintf.c	C	3	stdio.h
 vscanf			libc/stdio/fscanf.c	C	3	stdio.h
 vsnprintf		libc/stdio/vsnprintf.c	C	3	stdio.h
@@ -439,10 +441,11 @@ BANK			MODEL		COMPLETE
 	na	na		N	N	libc/gen/setjmp.asm
 	78	0	0	Y	N	libc/gen/siglist.c
 	78	0	0	Y	Y	libc/gen/sleep.c
-	na	na		Y	N	libc/gen/syslog.c
+	78	0	0	Y	N	libc/gen/syslog.c
 	na	na		Y	N	libc/gen/syslog2.asm	[superceded by syslog.c]
 	78	0	0	Y	N	libc/gen/tty.c
 	78	0	0	Y	Y	libc/gen/utime.c
+	-1	0	0	Y	N	libc/gen/vis.c
 
 	na	na		N	N	libc/gno/gnocmd.asm
 	78	0	0 (1)	Y	Y	libc/gno/gnomisc.c

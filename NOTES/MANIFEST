@@ -1,0 +1,21 @@
+INSTALL		Explains how to install the binary distribution. (Obsolete.)
+MANIFEST	This file.
+README.beta	Out of date notes. (Obsolete.)
+README.src	Out of date notes. (Obsolete.)
+archives	Shows the breakdown of how the GNO binary distribution
+		is currently shipped.
+devel		Directory containing notes intended for developers working
+		on the base distribution.
+deviations	Lists the ways in which GNO is known to deviate from 
+		the POSIX specification and/or the BSD implementations
+		on which components of GNO are based.
+headers		These are some notes on how headers have changed from
+		v2.0.4 to v2.0.6
+notes.960227	Notes to Derek.  Should be moved/updated. (Obsolete.)
+status.bin	This lists the status of the various programs in the base
+		distribution.
+status.lib	This lists the status of the routines in the libraries of
+		the base distribution.
+status.usrman	This lists the status of the files in the src/gno/usr.man
+		directory hierarchy.
+update.usrman	This is a script to help keep status.usrman current.

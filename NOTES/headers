@@ -1,9 +1,10 @@
-$Id: headers,v 1.1 1997/02/28 05:42:26 gdr Exp $
+$Id: headers,v 1.2 1999/01/09 21:28:35 gdr-ftp Exp $
 
 A hash prefix indicates that it has passed the compile test.  An "[Orca]"
 indicates that the file is modified from an Orca/C header rather than 
 from either BSD or custom sources.
 
+This file is probably out of date; feel free to submit corrections.
 
 # curses.h		changed hash type from u_int to u_long
 # db.h			various macros have changed.
@@ -17,7 +18,7 @@ from either BSD or custom sources.
 # glob.h
 # gno/conf.h
 # gno/gno.h
-  gno/kerntool.h	INCOMPLETE CHANGES -- OBSOLETE?
+  gno/kerntool.h	INCOMPLETE CHANGES
 # gno/kvm.h
 # gno/proc.h
 # gno/sim.h
@@ -44,7 +45,7 @@ from either BSD or custom sources.
 # sgtty.h
 # signal.h
 # stddef.h
-# stdio.h	[Orca]	*** critical that __ORCAC_VERSION is correct
+# stdio.h		*** upgraded to BSD 4.4 (incompatible downward)
 # stdlib.h
 # string.h		* check need for "const" in non-BSD, non-ORCA routines
 # sys/cdefs.h

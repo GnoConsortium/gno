@@ -1,0 +1,194 @@
+#
+# $Id: status.usrman,v 1.1 1999/01/09 21:28:35 gdr-ftp Exp $
+#
+# This file shows a listing of all the man pages in /src/gno/usr.man
+# and what their status is.  The formatting should be checked on both
+# a linux machine (that being what creates the online version of the
+# documentation, and under GNO on the GS using nroff.
+#
+# In each of the fields, the following characters have the following
+# meanings:
+#	'y'	means that the condition has been checked and found to
+#		be satisfactory.  
+#	'n'	means that something is known to be wrong with meeting 
+#		the condition, and it has not yet been fixed.  There
+#		shouldn't be many if any of these; problems should be
+#		fixed as they are located.
+#	'.'	is a space holder to ease in the translation of this file
+#		to HTML format, and indicates a condition that has not yet
+#		been checked.
+#	'-'	in the mkso column indicates that no mkso entries are
+#		needed for this particular man page (ie: that the column
+#		is irrelevent).
+#
+# Verifying the man page can be done on both machines using the following
+# command:
+#	nroff -man filename | more
+#
+# This file can be checked for consistency with the update.usrman script
+# in the /src/gno/NOTES directory.
+#
+# Devin Reade, April 1998.
+#
+### Do not remove this line. ###
+#
+#			formatting	formatting	mkso entries
+#  man page		checked (linux)	checked	(IIgs)	exist
+#  ----------------------------------------------------------------
+man1/intro.1		.		y		-
+man2/accept.2		.		y		-
+man2/access.2		.		y		-
+man2/alarm.2		.		y		y
+man2/bind.2		.		y		-
+man2/chdir.2		.		y		y
+man2/chmod.2		.		y		y
+man2/close.2		.		y		-
+man2/connect.2		.		y		-
+man2/creat.2		.		y		-
+man2/dup.2		.		y		y
+man2/execve.2		.		y		y
+man2/fcntl.2		.		.		.
+man2/fork.2		.		y		y
+man2/fsync.2		.		y		-
+man2/getdtablesize.2	.		y		-
+man2/getgid.2		.		y		y
+man2/getlogin.2		.		.		.
+man2/getpeername.2	.		y		-
+man2/getpgrp.2		.		y		y
+man2/getpid.2		.		y		y
+man2/getsockname.2	.		.		.
+man2/getsockopt.2	.		.		.
+man2/gettimeofday.2	.		.		.
+man2/getuid.2		.		.		.
+man2/intro.2		.		.		-
+man2/ioctl.2		.		.		.
+man2/jobcontrol.2	.		.		.
+man2/kernStatus.2	.		.		.
+man2/kill.2		.		.		.
+man2/listen.2		.		.		.
+man2/lseek.2		.		.		.
+man2/mkdir.2		.		.		.
+man2/open.2		.		.		.
+man2/pipe.2		.		.		.
+man2/ports.2		.		.		.
+man2/procsend.2		.		.		.
+man2/read.2		.		.		.
+man2/recv.2		.		.		.
+man2/rename.2		.		.		.
+man2/rmdir.2		.		.		.
+man2/select.2		.		.		.
+man2/semaphore.2	.		.		.
+man2/send.2		.		.		.
+man2/setdebug.2		.		.		.
+man2/setpgid.2		.		.		.
+man2/setregid.2		.		.		.
+man2/setreuid.2		.		.		.
+man2/setruid.2		.		.		.
+man2/setuid.2		.		.		.
+man2/shutdown.2		.		.		.
+man2/sigblock.2		.		.		.
+man2/signal.2		.		.		.
+man2/sigpause.2		.		.		.
+man2/sigsetmask.2	.		.		.
+man2/socket.2		.		.		.
+man2/stat.2		.		.		.
+man2/statfs.2		.		.		.
+man2/times.2		.		.		.
+man2/truncate.2		.		.		.
+man2/umask.2		.		.		.
+man2/undocumented.2	.		.		.
+man2/unlink.2		.		.		.
+man2/utimes.2		.		.		.
+man2/wait.2		.		.		.
+man2/write.2		.		.		.
+man3/GSString.3		.		.		.
+man3/basename.3		.		.		.
+man3/bcopy.3		.		.		.
+man3/buildCmd.3		.		.		.
+man3/buildEnv.3		.		.		.
+man3/buildPath.3	.		.		.
+man3/bzero.3		.		.		.
+man3/clearerr.3		.		.		.
+man3/crypt.3		.		.		.
+man3/directory.3	.		.		.
+man3/ecvt.3		.		.		.
+man3/err.3		.		.		.
+man3/exec.3		.		.		.
+man3/execl.3		.		.		.
+man3/exit.3		.		.		.
+man3/fclose.3		.		.		.
+man3/fflush.3		.		.		.
+man3/fgetln.3		.		.		.
+man3/fgets.3		.		.		.
+man3/fnmatch.3		.		.		.
+man3/fopen.3		.		y		.
+man3/fputs.3		.		.		.
+man3/fread.3		.		.		.
+man3/fseek.3		.		.		.
+man3/fsettext.3		.		.		.
+man3/fts.3		.		.		.
+man3/funopen.3		.		.		.
+man3/getc.3		.		.		.
+man3/getcwd.3		.		.		.
+man3/getenv.3		.		.		.
+man3/getgrent.3		.		.		.
+man3/gethostname.3	.		.		.
+man3/getopt.3		.		.		.
+man3/getpass.3		.		.		.
+man3/getpwent.3		.		.		.
+man3/getsubopt.3	.		.		.
+man3/getttyent.3	.		.		.
+man3/index.3		.		.		.
+man3/intro.3		.		.		-
+man3/isRootPath.3	.		.		.
+man3/isblank.3		.		.		.
+man3/isinf.3		.		.		.
+man3/mapErr.3		.		.		.
+man3/mapMode.3		.		.		.
+man3/mapPath.3		.		.		.
+man3/mktemp.3		.		.		.
+man3/needsgno.3		.		.		.
+man3/parsearg.3		.		.		.
+man3/pause.3		.		.		.
+man3/popen.3		.		.		.
+man3/printf.3		.		.		.
+man3/progname.3		.		.		.
+man3/psignal.3		.		.		.
+man3/putc.3		.		.		.
+man3/pwcache.3		.		.		.
+man3/queue.3		.		.		.
+man3/raise.3		.		.		.
+man3/regex.3		.		.		.
+man3/remove.3		.		.		.
+man3/scandir.3		.		.		.
+man3/scanf.3		.		.		.
+man3/setbuf.3		.		.		.
+man3/setjmp.3		.		.		.
+man3/sleep.3		.		.		.
+man3/sprintmt.3		.		.		.
+man3/stack.3		.		.		.
+man3/stdio.3		.		.		.
+man3/strcasecmp.3	.		.		.
+man3/strdup.3		.		.		.
+man3/strerror.3		.		.		.
+man3/strsep.3		.		.		.
+man3/stty.3		.		.		.
+man3/syslog.3		.		.		.
+man3/tmpnam.3		.		.		.
+man3/ttyname.3		.		.		.
+man3/uname.3		.		.		.
+man3/ungetc.3		.		.		.
+man3/unvis.3		.		.		.
+man3/utime.3		.		.		.
+man3/vis.3		.		.		.
+man4/intro.4		.		.		-
+man4/tty.4		.		.		.
+man5/intro.5		.		.		-
+man5/utmp.5		.		.		.
+man6/intro.6		.		.		-
+man7/environ.7		.		.		.
+man7/intro.7		.		.		-
+man7/re.format.7	.		.		.
+man8/init.8		.		.		.
+man8/intro.8		.		.		-
+man8/syslogd.8		.		.		.

@@ -1,0 +1,72 @@
+#! /usr/bin/perl
+#
+# This script is used to verify that the status.usrman file is current,
+# at least with respect to which manpages are checked into the src/gno/usr.man
+# directory hierarchy.
+#
+# Usage:	update.usrman < status.usrman > output
+#
+# In other words, it doesn't update the status.usrman file directly; the
+# output file would then have to be copied back to the original name, assuming
+# that it is satisfactory.
+
+#
+# Read the input file for existing entries.  Don't modify these.
+#
+while (<>) {
+    chomp;
+    if (m,^(man\S+)(.*),) {
+	$entries{$1} = $2;
+    } else {
+	$header .= $_ . "\n";
+    }
+}
+
+#
+# Now get the list of checked in files.  We do this by parsing the CVS/Entries
+# files directly.
+#
+
+@chapters = ( '1', '2', '3', '4', '5', '6', '7', '8' );
+foreach $c (@chapters) {
+
+    $file = "../usr.man/man$c/CVS/Entries";
+    open(fp, "< $file") || die("couldn't open $file: $!");
+    while (<fp>) {
+	if (m,^/([^/]+\.$c)/,) {
+	    $page = "man$c/$1";
+	    $cvs{$page} = '';
+	}
+    }
+    close(fp);
+}
+
+#
+# Do some conchecks
+#
+@keylist_old = sort(keys(%entries));
+for $k (@keylist_old) {
+    defined($cvs{$k}) || 
+	printf(stderr "Warning: page in input file but not checked in: %s\n",
+	       $k);
+}
+
+#
+# Do some updates
+#
+@keylist_new = sort(keys(%cvs));
+for $k (@keylist_new) {
+    defined($entries{$k}) || ($entries{$k} = "\t\t.\t\t.\t\t.");
+}
+
+#
+# Now print out the result.
+#
+print $header;
+@keylist = sort(keys(%entries));
+foreach $k (@keylist) {
+    if ($entries{$k} =~ m,^\s*$,) {
+	$entries{$k} = "\t\t.\t\t.\t\t.";
+    }
+    printf("%s%s\n", $k, $entries{$k});
+}
