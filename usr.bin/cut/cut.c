@@ -43,7 +43,7 @@
  *
  * Added prototyped headers, surrounded by #ifndef __STDC__
  *
- * $Id: cut.c,v 1.2 1997/09/26 06:34:37 gdr Exp $
+ * $Id: cut.c,v 1.3 1997/10/03 04:07:20 gdr Exp $
  */
 
 
@@ -81,10 +81,9 @@ static void	usage __P((void));
 
 /* Interface to check on how much stack space a C program uses. */
 #if defined(__GNO__)  &&  defined(__STACK_CHECK__)
-#ifndef _STDLIB_H_
-#include <stdlib.h>
-#endif
+#ifndef _GNO_GNO_H_
 #include <gno/gno.h>
+#endif
 static void report_stack(void)
 {
 	fprintf(stderr,"\n ==> %d stack bytes used <== \n", _endStackCheck());
