@@ -5,7 +5,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: rules.mk,v 1.2 1997/09/05 06:48:12 gdr Exp $
+# $Id: rules.mk,v 1.3 1997/09/21 16:22:23 gdr Exp $
 #
 
 %.o: %.c
@@ -15,6 +15,6 @@
 	$(AS) -o $@ -c $(__OFLAG) $(ASFLAGS) $<
 	@$(RM) $*.root
 
-#../libc: $(OBJS)
-#	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(OBJS)
+../libc .PHONY: $(OBJS)
+	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(OBJS)
               
