@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.1 1997/02/28 05:12:51 gdr Exp $
+# $Id: Makefile,v 1.2 1997/07/27 23:44:39 gdr Exp $
 #
 
 .INCLUDE:	../../../const.mk
@@ -9,7 +9,30 @@ LIBC	:= ../../libc
 LDLIBS	 = -l$(LIBC)
 CFLAGS	:= -v -w -G25 $(STACK) $(DEFINES) $(INCLUDES)
 
-default: basename dirent envtest err getcwd getgrent scandir sleep
+default: \
+	basename \
+	dirent \
+	err \
+	fnmatch \
+	getcwd \
+	getgrent \
+	getpwent \
+	multiopen \
+	popen \
+	scandir \
+	sleep \
+	utime
 
-.PRECIOUS: basename dirent.o envtest.o err.o getcwd.o getgrent.o scandir.o \
-	sleep.o
+.PRECIOUS: \
+	basename.o \
+	dirent.o \
+	err.o \
+	fnmatch.o \
+	getcwd.o \
+	getgrent.o \
+	getpwent.o \
+	multiopen.o \
+	popen.o \
+	scandir.o \
+	sleep.o \
+	utime.o
