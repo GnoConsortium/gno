@@ -1,0 +1,35 @@
+#
+# GNO uses the System V, not BSD, init(8) program, which uses /etc/inittab
+# for getty configuration. Only the 'name', 'type' (default terminal type),
+# and 'status' fields are used.
+#
+# $Id: ttys,v 1.1 1998/04/10 17:08:36 gdr-ftp Exp $
+#
+# name	getty			type		status		comments
+#
+.ttyco	"/usr/etc/none" 	gno		on secure
+
+# The secure option allows 'root' to log in on the specified port.
+# Generally, you only want to allow 'root' logins on the local port.
+
+# Direct serial connection
+.ttya	"/usr/etc/none"		vt100		on secure
+.ttyb	"/usr/etc/none"		vt100		on
+
+# Pseudo-terminal list.
+.ttyq0	"/usr/etc/none"		vt100		on secure
+.ttyq1	"/usr/etc/none"		vt100           on secure
+.ttyq2	"/usr/etc/none"		vt100           on secure
+.ttyq3	"/usr/etc/none"		vt100           on secure
+.ttyq4	"/usr/etc/none"		vt100           on secure
+.ttyq5	"/usr/etc/none"		vt100           on secure
+.ttyq6	"/usr/etc/none"		vt100           on secure
+.ttyq7	"/usr/etc/none"		vt100           on secure
+.ttyq8	"/usr/etc/none"		vt100           on secure
+.ttyq9	"/usr/etc/none"		vt100           on secure
+.ttyqa	"/usr/etc/none"		vt100           on secure
+.ttyqb	"/usr/etc/none"		vt100           on secure
+.ttyqc	"/usr/etc/none"		vt100           on secure
+.ttyqd	"/usr/etc/none"		vt100           on secure
+.ttyqe	"/usr/etc/none"		vt100           on secure
+.ttyqf	"/usr/etc/none"		vt100           on secure

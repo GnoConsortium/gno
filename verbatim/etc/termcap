@@ -1,0 +1,101 @@
+#
+# $Id: termcap,v 1.1 1998/04/10 17:08:32 gdr-ftp Exp $
+#
+# GNO console
+#
+gno|gnocon|gno-console|GNO Console Driver:\
+	:ae=^N:am:bl=^G:bs:bw:cl=^L:cm=^^%r%+ %+ :co#80:ce=^]:\
+	:cd=^K:do=^J:eo:eA=^O^[:ho=^Y:il=^N:i3=^L:vi=^F:vs=^A^E:ve=^B^E:\
+	:is=^A^E^X^N:kd=^J:kl=^H:kr=^U:ku=^K:le=^H:li#24:ll=^^ 8:mb=^O:md=^O:\
+	:me=^N:mh=^O:mr=^O:nd=^U:nl=^J:pt:rs=^N:se=^N:so=^O:ta=^I:\
+	:ue=^N:up=^_:us=^O:xn:as=^O^[:bc=^H:r1=^N:r2=^N:r3=^N:\
+	:ms:mi:sf=^W:sr=^V:i1=^N:NP:dn=^J:al=^Q:dl=^R:kD=^?:cs=^C[ o%+ %+ :
+#
+# GS/OS Console (.console)
+#
+CONSOLE|gsoscon|gsos-console|GSOS Console Driver:\
+	:cl=^L:cd=^K:cb=^C:co#80:cr=^M:cv=^F%+ :bl=^G:do=^J:ho=^Y:\
+	:nd=^\:nl=^J:sr=^V:sf=^W:ae=^N:am:bs:bw:cm=^^%r%+ %+ :li#24:\
+	:ce=^]:eA=^O^[:eo:il=^N:i3=^L:is=^L^N:kd=^J:kl=^H:kr=^U:ku=^K:\
+	:le=^H:ll=^^ 8:mb=^O:md=^O:me=^N:mh=^O:mr=^O:rs=^N:se=^N:so=^O:\
+	:ue=^N:up=^_:us=^O:as=^O^[:bc=^H:r1=^N:r2=^N:r3=^N:\
+	:ms:mi:sf=^J:sr=^_:i1=^N:NP:dn=^J:
+#
+# ProTerm Special
+#
+pt|pse|proterm-special|Proterm Special Emulation:\
+	:ae=^N:am:al=^V:bl=^T^A^E@:bs:bw:cl=^L:cm=^^%r%+ %+ :co#80:ce=^Y:\
+	:cd=^W:dc=^D:dl=^Z:do=^J:eo:eA=^P:ho=^X:ic=^F:il=^N:i3=^L:\
+	:is=^L^N:kd=^J:kl=^H:kr=^U:ku=^K:le=^H:li#24:ll=^^ 8:mb=^O:md=^O:\
+	:me=^N:mh=^O:mr=^O:nd=^U:nl=\n+^A:pt:rs=^N:se=^N:so=^O:ta=^I:\
+	:ue=^N:up=^K:us=^O:xn:ns:as=^P:bc=^H:r1=^N:r2=^N:r3=^N:\
+	:ms:mi:sf=^J:sr=^K:as=^P:i1=^N:i3=^N:NP:dn=^J:
+#
+# DEC VT-100
+# 
+d0|vt100|vt100-am|vt100am|dec-vt100|dec vt100:\
+	:do=^J:co#80:li#24:cl=50\E[;H\E[2J:sf=2*\ED:dl=\E[M\
+	:le=^H:bs:am:cm=5\E[%i%d;%dH:nd=2\E[C:up=2\E[A:\
+	:ce=3\E[K:cd=50\E[J:so=2\E[7m:se=2\E[m:us=2\E[4m:ue=2\E[m:\
+	:md=2\E[1m:mr=2\E[7m:mb=2\E[5m:me=2\E[m:is=\E[1;24r\E[24;1H:\
+	:rs=\E>\E[?3l\E[?4l\E[?5l\E[?7h\E[?8h:ks=\E[?1h\E=:ke=\E[?1l\E>:\
+	:ho=\E[H:k1=\EOP:k2=\EOQ:k3=\EOR:k4=\EOS:pt:sr=2*\EM:vt#3:xn:\
+	:ku=\EOA:kd=\EOB:kr=\EOC:kl=\EOD:kb=^H:al=\E[L:\
+	:sc=\E7:rc=\E8:cs=\E[%i%d;%dr:bl=^G:
+#
+# MS-DOS ANSI.SYS
+#
+P1|ansi.sys|ansisys|PC-DOS 3.1 ANSI.SYS:\
+	:am:bs:ce=\E[K:cl=\E[m\E[7h\E[2J:cm=\E[%i%d;%dH:co#80:\
+	:ku=^K:kd=^J:kl=^H:kr=^L:kh=^^:ma=^Hh\012j^Kk^Ll^^H:\
+	:ho=\E[H:li#25:nd=\E[C:up=\E[A:\
+	:ms:md=\E[1m:me=\E[m:mr=\E[7m:se=\E[m:so=\E[1m:ue=\E[m:us=\E[4m:\
+	:is=U1 PC-DOS 3.1 ANSI.SYS 9-23-86\n\E[m\E[7h:
+#
+# Xerox 820-II, termcap by T Meekins
+#
+xerox820:\
+	:am:bl=^G:bs:bw:cl=6^Z:cm=\E=%+ %+ :co#80:ce=^X:\
+	:cd=^Q:do=^J:eo:ho=^^:\
+	:kd=^B:kl=^D:kr=^C:ku=^A:is=\E0:le=^H:li#24:ll=5\E=8 :\
+	:nd=^L:nl=^J:pt:se=\E(:so=\E7\E):ta=^I:\
+	:up=^K:vi=^E :vs=^E^B:ve=^E^S:xn:bc=^H:\
+	:ms:mi:dn=^J:
+#
+# Apple ImageWriter I printer
+#
+iw1|ImageWriter1:\
+	:is=\EL005\E(009,017,025,033,041,049,057,065,073:\
+	:ul:os:hc:NL:pt:us=\EX:ue=\EY:so=\E!:se=\E":me=\E"\EY:\
+	:co#96:li#66:md=\E!:rs=\Ec:ta=^I:ct=\E0:do=\n:dn=^J:le=^H:
+#
+# Apple ImageWriter I printer, alternate
+#
+iw-alt|ImageWriter-Alt:\
+	:is=\E(009,017,025,033,041,049,057,065,073,081:\
+	:ul:os:hc:NL:pt:us=\EX:ue=\EY:so=\E!:se=\E":me=\E"\EY:\
+	:co#96:li#66:md=\E!:rs=\Ec:ta=^I:ct=\E0:do=\n:
+#
+# HP DeskJet 500 Underline (10 cpi)
+#
+dj10u|dj10u|deskjet-10u|DeskJet 500 10 Underline:\
+ co#80:li#60:ff=\E&/0H:us=\E&d1D:ue=\E&d@:so=\E(s1S\E(s3B:se=\E(s0S\E(s0B:\
+ do=^J:cr=^M:nl=^J:is=\E(s0P\E(s10H:md=\E(s3B:me=\E(s0B\E&k1G:
+#
+# HP DeskJet 500 Underline (12 cpi)
+#
+dj12u|dj12u|deskjet-12u|DeskJet 500 12 Underline:\
+ co#96:li#60:ff=\E&/0H:us=\E&d1D:ue=\E&d@:md=\E(s3B:me=\E(s0B:\
+ do=^J:cr=^M:nl=^J:so=\E(s3B:se=\E(s0B:is=\E(s0P\E(s12H\E&k1G:
+#
+# HP DeskJet 500 Underline (15 cpi)
+#
+dj15u|dj15u|deskjet-15u|DeskJet 500 15 Underline:\
+ co#120:li#60:ff=\E&/0H:us=\E&d1D:ue=\E&d@:md=\E(s3B:me=\E(s0B:\
+ do=^J:cr=^M:nl=^J:so=\E(s3B:se=\E(s0B:is=\E(s0P\E(s15H\E&k1G:
+#     
+# HP DeskJet 500 Underline (20 cpi)
+#
+dj20u|dj20u|deskjet-20u|DeskJet 500 20 Underline:\
+ co#160:li#60:ff=\E&/0H:us=\E&d1D:ue=\E&d@:md=\E(s3B:me=\E(s0B:\
+ do=^J:cr=^M:nl=^J:so=\E(s3B:se=\E(s0B:is=\E(s0P\E(s20H\E&k1G:

@@ -1,0 +1,43 @@
+# See file how.to for an explanation of entries found in this
+# default inittab file
+#
+# $Id: inittab,v 1.1 1998/04/10 17:08:29 gdr-ftp Exp $
+#
+# kill, idle, crash, panic defaults, respectively
+kd:s0123456789:runl::k55n6
+#
+# mktmp creates /tmp from the ramdisk when GNO starts up.  See also renram5,
+# which allows you to create /tmp when your GS boots.
+#14:b:once:i:/usr/sbin/mktmp
+#
+# You should replace "NameMe2".  This is a kludge; initd should be setting
+# the host name from the file /etc/HOSTNAME.
+hn:b:once:i:/bin/hostname NameMe2
+#
+# default run level 7=Local 8=Network
+db:b:runl::8
+# db:01923456789bs:runl::di
+#
+# Just run gsh directly when in single user mode.
+su:s:rest::/usr/sbin/runover .ttyco /bin/gsh
+#
+co:12378:rest::/usr/sbin/getty std.19200 .ttyco
+#
+# start TCP/IP processes (GS-TCP)
+# ip:2348:once::/usr/sbin/tcpip
+# id:234:once::/usr/sbin/inetd
+#
+# Uncomment this to run the Line Printer Daemon
+#lp:23478:once::/usr/sbin/lpd
+#
+# Serial line (modem port)
+#
+#t2:237:rest::/usr/sbin/getty 8bit.9600 .ttyb
+#
+# Uncomment this to run cron
+#cr:23478:once::/usr/sbin/cron
+#
+# Uncomment these lines if you want to use mctrl. (no documentation yet).
+#
+#mu:234:once::/usr/sbin/mctrl -a1 .ttya
+#nm:s0156789:once::/usr/sbin/mctrl -a0 .ttya
