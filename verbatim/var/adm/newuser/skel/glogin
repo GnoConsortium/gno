@@ -1,0 +1,15 @@
+#! /bin/gsh
+
+###
+#
+# GNO 2.0.6 $HOME/glogin file
+#
+# This file is parsed when the user first logs in.
+# See also /etc/glogin and $HOME/gshrc.
+#
+# $Id: glogin,v 1.1 1999/02/15 01:00:45 gdr-ftp Exp $
+#
+###
+
+setenv history	25
+setenv savehist	25

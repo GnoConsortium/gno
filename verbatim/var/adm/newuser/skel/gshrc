@@ -1,0 +1,54 @@
+#! /bin/gsh
+
+###
+#
+# GNO 2.0.6 $HOME/gshrc file
+#
+# This file is parsed whenever a gsh shell is started.
+# See also /etc/glogin and $HOME/glogin.
+#
+# $Id: gshrc,v 1.1 1999/02/15 01:00:45 gdr-ftp Exp $
+#
+###
+
+#
+# Initializes our environment
+#
+
+# path is parsed backwards due to setting OLDPATHMODE in /etc/glogin
+set path=". /usr/orca/utilities /usr/bin /bin /usr/local/bin"
+export path
+
+# other shell items
+set	prompt="%C> "
+set	term=gnocon
+set	nonewline=1
+export	prompt term nonewline
+
+# Set environment variables for cc
+setenv CCEMULATE 1
+# setenv CCOPTS "-i"
+# setenv	CCOLD 1
+
+# Set environment variables for lpr
+setenv	lprPrinterCode	iwii
+setenv	iwiiPageSaver	on
+setenv	iwiiTypeFace	condensed
+
+# Setup necessary aliases
+alias /bin/rm	"cp -p rm"
+alias /bin/mv   "cp -p mv"
+alias cp 	"cp -i"
+alias fcat	"melt -c"
+alias gunzip	\'gzip -d\'
+# these aliases are broken
+# alias gzcat	\'gzip -cdfq \<filename\> \|cat\'
+# alias gzmore	\'gzip -cdfq \<filename\> \|more\'
+alias logout    "/bin/init 5"
+alias ls 	"ls -CF"
+alias make	dmake
+alias mv 	"cp -p mv -i"
+alias rm 	"cp -p rm"
+alias uncompress	"compress -d"
+alias view 	"vi -R"
+alias zcat 	"compress -cd"
