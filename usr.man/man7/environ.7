@@ -26,8 +26,8 @@ has been provided to properly initialize
 .BR environ .
 .LP
 The following names are used by various commands:
-.TP 10
-.B PATH
+.RS
+.IP \fBPATH\fR
 The sequence of directory prefixes that
 .BR gsh (1),
 .BR sh (1),
@@ -45,16 +45,14 @@ has been compiled to match this behavior, but can be easily recompiled
 to conform to the more usual parsing method, front to back.  See the
 .B lenviron
 distribution README file for more information.
-.TP
-.B HOME
+.IP \fBHOME\fR
 The name of the user's login directory, set by
 .BR login (1)
 from the password file
 .B /etc/passwd
 (see
 .BR passwd (5)).
-.TP
-.B TERM
+.IP \fBTERM\fR
 The type of terminal on which the user is logged in.
 This information is used by commands, such as
 .BR nroff (1)
@@ -64,11 +62,9 @@ which may exploit special terminal capabilities.  See
 .B /etc/termcap
 .RB ( termcap (5))
 for a list of terminal types.
-.TP
-.B SHELL
+.IP \fBSHELL\fR
 The path name of the user's login shell.
-.TP
-.B TERMCAP
+.IP \fBTERMCAP\fR
 The string describing the terminal in
 .SM TERM,
 or the name of the
@@ -76,22 +72,20 @@ or the name of the
 file, see
 .BR termcap (3),
 .BR termcap (5).
-.TP
-.B EXINIT
+.IP \fBEXINIT\fR
 A startup list of commands read by
 .BR ex (1),
 .BR edit ,
 and
 .BR vi (1).
-.TP
-.BR USER " or " LOGNAME
+.IP "\fBUSER\fR or \fBLOGNAME\fR"
 The user's login name.
-.TP
-.B TZ
+.IP \fBTZ\fR
 The name of the time zone that the user is located in.  If
 .B TZ
 is not present in the environment, the system's default time zone,
 normally the time zone that the computer is located in, is used.
+.RE
 .LP
 Further names may be placed in the environment by the
 .IR set " and " setenv
@@ -192,12 +186,9 @@ internal shell variables. Also, since environ entries are dynamically
 allocated and freed, modifying those entries without using the library
 routines may result in memory trashing and unpredicable behavior.
 .SH FILES                                 
-.nf
-.LP
-.B /lib/lenviron
-.B /etc/passwd
-.B etc/termcap
-.fi
+/etc/passwd
+.br
+/etc/termcap
 .SH HISTORY
 This
 .BR environ
