@@ -1,5 +1,5 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
  */
@@ -17,8 +17,10 @@ segment "utilgs____";
 extern GSString255Ptr __C2GSMALLOC(char *);
 extern int _mapErr(int);
 
+#if 0	/* we should be able to use the GNO v2.0.6 libraries for this */
+
 /*
- * access -- a replacement for the standard Gno one; this one will actually
+ * access -- a replacement for the standard GNO one; this one will actually
  *           return 0 when testing X_OK on a directory.
  *
  * This one still has a bug in it:  If the file is a shell command or sys
@@ -52,7 +54,7 @@ int access(char *name, int mode) {
 
 
 /*
- * chdir -- Replacement for the one normally shipping with Gno.
+ * chdir -- Replacement for the one normally shipping with GNO.
  *          Returns -1 and sets errno on failure, instead of always
  *          returning zero.
  */
@@ -92,6 +94,7 @@ int chdir (const char *pathname) {
    return 0;
 }
 
+#endif	/* 0 */
 
 /*
  * getFileType -- Get the file type and auxillary file type of a file.

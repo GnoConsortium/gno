@@ -1,37 +1,34 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
+ *
+ * $Id: catman.c,v 1.2 1998/03/29 07:15:48 gdr-ftp Exp $
  */
 
+#ifdef __ORCAC__
 segment "catman____";
+#endif
 
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <stdio.h>
-#include <getopt.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <libc.h>
 #include <dirent.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <sys/stat.h>
 #include <errno.h>
-#include "util.h"
+#include <err.h>
+#include <gno/gno.h>
 #include "man.h"
 
-#define OVERFLOW_ABORT(line,file) { \
-   fprintf(stderr,overflowMsg,line,file); \
-   exit(1); \
-}
+#define OVERFLOW_ABORT(line,file) errx(1, overflowMsg, line, file)
 
 short v_flag, V_flag, M_flag, m_flag, p_flag, err_flag;
 
-extern int  optind;
-extern char *optarg;
-
-static char *versionstr = "1.0";
+static const char *versionstr = VERSION_STR;
 
 /* This is of the form "man<section>" */
 char mandir[FILENAME_MAX];
@@ -47,9 +44,6 @@ char catfile2[FILENAME_MAX];
 char base[FILENAME_MAX];
 
 static char *overflowMsg = "internal buffer overflow at line %d of %s\n";
-
-extern void begin_stack_check(void);
-extern int  end_stack_check(void);
 
 /*
  * catman
@@ -83,9 +77,11 @@ int catman(int argc, char **argv) {
    fileType *ftype;        /* the file type of the man page */
    struct stat statbuf1, statbuf2;
    char dirbrk;
+   LC_StringArray_t sarray;
 
    /* create array of paths to search */
-   if ((manpath_array = makePathArray(manpath)) == NULL) return 1;
+   sarray = MakePathArray(manpath);
+   manpath_array = sarray->lc_vec;
 
    /* loop over paths in MANPATH */
    pathIndex=0;
@@ -271,20 +267,16 @@ int catman(int argc, char **argv) {
    }
 }
 
-
 int main (int argc, char **argv) {
    char *path;
    int i, result1, result2;
 
-   /* make sure Gno is running */
+   /* make sure GNO is running */
    if (needsgno()==0) {
-      fprintf(stderr,"Requires Gno/ME\n");
-      return 1;
+      errx(1, "Requires GNO\n");
    }
 
-#ifdef STACK_CHECK
-   begin_stack_check();
-#endif
+   __REPORT_STACK();
 
    /* initialization */
    v_flag = V_flag = M_flag = m_flag = p_flag = err_flag = 0;
@@ -347,10 +339,6 @@ int main (int argc, char **argv) {
       manpath = path;
       result2 = catman(argc-optind, &argv[optind]);
    }
-
-#ifdef STACK_CHECK
-   fprintf(stderr,"stack usage: %d bytes\n",end_stack_check());
-#endif
 
    return (result1 || result2);
 }

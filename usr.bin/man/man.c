@@ -1,30 +1,28 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
+ *
+ * $Id: man.c,v 1.2 1998/03/29 07:16:07 gdr-ftp Exp $
  */
 
+#ifdef __ORCAC__
 segment "man_______";
+#endif
 
 #include <stdio.h>
-#include <getopt.h>
 #include <string.h>
 #include <stdlib.h>
-#include <libc.h>
 #include <ctype.h>
 #include <assert.h>
 #include <sgtty.h>
 #include <unistd.h>
-#include "util.h"
+#include <err.h>
+#include <gno/gno.h>
 #include "man.h"
 
-#ifdef DEBUG
-   extern void begin_stack_check(void);
-   extern int  end_stack_check(void);
-#endif                               
-
 char *macroPackage   = "an";              /* default /usr/lib/tmac/tmac.an */
-char *versionStr     = "Version 3.0 by Devin Reade";
+char *versionStr     = VERSION_STR;
 char *pager;
 char *troff;
 char *tcat;
@@ -53,15 +51,12 @@ int main (int argc, char **argv) {
    extern int optind;
    extern char *optarg;
 
-   /* make sure Gno is running */
+   /* make sure GNO is running */
    if (needsgno()==0) {
-      fprintf(stderr,"Requires Gno/ME\n");
-      return 1;
+	err(1, "Requires GNO");
    }
 
-#ifdef STACK_CHECK
-   begin_stack_check();
-#endif
+   __REPORT_STACK();
 
    /*
     * initialization
@@ -86,7 +81,7 @@ int main (int argc, char **argv) {
          break;                            
       case 'M':
          M_flag++;
-         manpath = Xstrdup(optarg,__LINE__,__FILE__);
+         manpath = LC_xstrdup(optarg);
          break;
       case 'n':
          n_flag++;
@@ -145,10 +140,5 @@ int main (int argc, char **argv) {
    }
    free(manpath);
    result = ((result == 0) && (i == 0)) ? 0 : 1;
-
-#ifdef STACK_CHECK
-   fprintf(stderr,"stack usage: %d bytes\n",end_stack_check());
-#endif
-
    return result;
 }

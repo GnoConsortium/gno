@@ -1,0 +1,10 @@
+/*
+ * $Id: man.rez,v 1.1 1998/03/29 07:16:10 gdr-ftp Exp $
+ */
+
+#include "Types.Rez"
+
+#define	PROG	"man"
+#define DESC	"Display manual reference pages"
+
+#include "common.rez"

@@ -1,10 +1,15 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
+ *
+ * $Id: apropos2.c,v 1.2 1998/03/29 07:15:45 gdr-ftp Exp $
  */
 
+#ifdef __ORCAC__
 segment "apropos2__";
+#pragma noroot
+#endif 
 
 #include <stdio.h>
 #include <unistd.h>
@@ -13,7 +18,7 @@ segment "apropos2__";
 #include <assert.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "util.h"
+#include <err.h>
 #include "man.h"
 
 /*
@@ -21,7 +26,8 @@ segment "apropos2__";
  *                length of the command
  */
 
-static char *orcapadding (char *command) {
+static char *
+orcapadding (char *command) {
    int i;
    static char *two   ="\t\t";
    static char *one   ="\t";
@@ -40,9 +46,10 @@ static char *orcapadding (char *command) {
  *                orcacommand() modifies the buffer.
  */
 
-static char *orcacomment (char *buffer) {
+static char *
+orcacomment (char *buffer) {
    char *p;
-   static char *bad_line="malformed SYSCMND line\n";
+   static char *bad_line = "malformed SYSCMND line\n";
 
    p = buffer;
 
@@ -91,7 +98,8 @@ static char *orcacomment (char *buffer) {
  *                modifies the buffer.
  */
 
-static char *orcacommand(char *buffer) {
+static char *
+orcacommand(char *buffer) {
    char *p;
 
    p = buffer;
@@ -136,12 +144,14 @@ static char *orcacommand(char *buffer) {
  * WARNING:  Use of the MAN_F_MODE may alter the contents of argv[].
  */
 
-int  apropos(int argc, char **argv, int apropos_mode) {
+int
+apropos(int argc, char **argv, int apropos_mode) {
    char **manpath_array;
    char *current_path, *p, *q, *r, *keyword;
    FILE *fp;
    char dirbrk;
    int i, j, matches;
+   LC_StringArray_t sarray;
    
 #ifdef DEBUG
    assert ((apropos_mode == WHATIS_MODE) ||
@@ -193,8 +203,10 @@ int  apropos(int argc, char **argv, int apropos_mode) {
          /* loop over keywords */
          for(i=0; i<argc; i++) {
             keyword = argv[i];
-            if ((apropos_mode == ORCA_K_MODE && ncstrstr(linebuf,keyword)) ||
-                (apropos_mode == ORCA_F_MODE && strstr(linebuf,keyword)) ||
+
+            if (((apropos_mode == ORCA_K_MODE ||
+		  apropos_mode == ORCA_F_MODE) &&
+		 strcasestr(linebuf,keyword)) ||
                 (apropos_mode == ORCA_W_MODE &&
                  !strncmp(linebuf,keyword,strlen(keyword)))) {
                r = orcacomment(linebuf);
@@ -208,8 +220,9 @@ int  apropos(int argc, char **argv, int apropos_mode) {
       fclose(fp);
       return matches;
    }
-      
-   if ((manpath_array = makePathArray(manpath)) == NULL) return -1;
+
+   sarray = MakePathArray(manpath);	/* can't fail */
+   manpath_array = sarray->lc_vec;
 
    /*
     * loop over all the paths in MANPATH
@@ -240,31 +253,24 @@ int  apropos(int argc, char **argv, int apropos_mode) {
                   keyword = argv[j];
                   switch (apropos_mode) {
                   case MAN_F_MODE:
-                     if (strstr(linebuf,keyword)) {
-                        printf("%s",linebuf);
-                        matches++;
-                     }
-                     break;
                   case MAN_K_MODE:
-                     if (ncstrstr(linebuf,keyword)) {
+                     if (strcasestr(linebuf,keyword)) {
                         printf("%s",linebuf);
                         matches++;
                      }            
                      break;
                   case WHATIS_MODE:
                      /* avoid unnecessary strcpy's */
-                     if (strstr(linebuf,keyword)==NULL) break;
+                     if (strcasestr(linebuf,keyword)==NULL) break;
                      strcpy(linebuf2,linebuf);
                      if ((p = strchr(linebuf2,'(')) != NULL) *p = '\0';
-                     if (strstr(linebuf2,keyword)) {
+                     if (strcasestr(linebuf2,keyword)) {
                         printf("%s",linebuf);
                         matches++;
                      }            
                      break;                        
                   default:
-                     fprintf(stderr,"internal error line %d of %s\n",
-                             __LINE__,__FILE__);
-                     exit(1);
+		     errx(1, "internal error at %s:%d", __FILE__, __LINE__);
                   }
                }
             } else if (ferror(fp)) {
@@ -280,5 +286,6 @@ int  apropos(int argc, char **argv, int apropos_mode) {
       current_path = manpath_array[i];
    } /* endwhile loop over directories */
 
+   LC_StringArrayDestroy(sarray);
    return matches;
 }

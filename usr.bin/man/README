@@ -1,7 +1,7 @@
 --------------------------------------------
 Name:     manpack
-Version:  3.0
-Author:   Devin Reade <gdr@myrias.com>
+Version:  3.1
+Author:   Devin Reade <gdr@trenco.gno.org>
 Computer: Apple IIgs
 Requires: GNO v2.x
 --------------------------------------------
@@ -10,13 +10,14 @@ Requires: GNO v2.x
 Description:
 ===========
 
-Various programs for working with manual pages.  This archive includes:
+Various programs for working with manual pages.  This archive includes
+the following utilities.  All utilities have their versions lockstepped:
 
-        apropos		v3.0	locate commands by keyword
-	catman		v1.0	format cat pages from man pages
-	makewhatis	v1.2	create the whatis database
-	man		v3.0	display reference manual pages
-	whatis		v3.0	locate commands by name
+        apropos		locate commands by keyword
+	catman		format cat pages from man pages
+	makewhatis	create the whatis database
+	man		display reference manual pages
+	whatis		locate commands by name
 
 ============
 Installation:
@@ -26,23 +27,26 @@ Type at the command line `dmake install`.  You may wish to first
 verify the destination directories in "Makefile.mk".  By default
 these are:
 
-	BINDIR  = /usr/bin	(apropos, catman, man, and whatis)
-	SBINDIR = /usr/sbin	(makewhatis)
+	BINDIR  = /usr/bin	(apropos, man, and whatis)
+	SBINDIR = /usr/sbin	(catman, and makewhatis)
 	MANDIR  = /usr/man	(all manual pages)
 
 Ensure that all older versions of these programs are deleted.
 They may or may not be in the above directories.
 
+If you're building a GNO release in the base builds, then use the
+command `dmake release`.
+
 ==========
 Legalities:
 ==========
 
-These utilities are copyright 1995 by Devin Reade <gdr@myrias.com>.
+These utilities are copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>.
 
 They are provided as freeware, and may be distributed by Internet
-archive sites, online services such as GEnie, or BBSes provided that
+archive sites, online services such as Delphi, or BBSes provided that
 the archive remains intact.  Permission is granted for distribution
-with GNO/ME and Orca provided credit for this work is given along
+with GNO and ORCA provided credit for this work is given along
 with any other attributions.
 
 Inclusion of these utilities in collections on disk, CD-ROM, or
@@ -52,20 +56,27 @@ author regarding other commercial distributions.
 
 Updates to these utilities may be distributed provided that the source
 and this README file are included.  Please follow the coding style
-already in use and document your changes in this file.
+already in use and document your changes in this file.  Better yet,
+email me with your suggested changes and I'll consider incorporating
+them into the base distribution.
 
 =======
 CHANGES:
 =======
 
 apropos, whatis
+	v3.1 (28 Mar 98)
+		Incorporated all utilities into the GNO base build.  All
+		versions are now lockstepped.
+
+		Searches are no longer case sensitive.
 
 	v3.0 (24 Jul 95)
 		Complete rewrite from scratch by Devin Reade.
 
 		This version makes use of MANPATH in the same way
 		as man(1) v3.0.  Similarily, it will also search
-		the 17/syscmnd Orca database.
+		the 17/syscmnd ORCA database.
 
 		In the previous version, the behavior of apropos was
 		identical to that of whatis.  This version has been
@@ -81,11 +92,21 @@ apropos, whatis
 		because it shipped with man(1) v2.1.
                          
 catman
+	v3.1 (28 Mar 98)
+		Incorporated all utilities into the GNO base build.  All
+		versions are now lockstepped.
 
 	v1.0 (24 Jul 95)
 		Initial release.  Written from scratch by Devin Reade.
 
 makewhatis
+	v3.1 (28 Mar 98)
+		Incorporated all utilities into the GNO base build.  All
+		versions are now lockstepped.
+
+		Don't use binary mode to read the files; this doesn't
+		give the right results with the GNO v2.0.6 stdio package
+		since we're doing calls to fgets() at times.
 
 	v1.2 (24 Jul 95)
 		Fixed bug where pages in "manl" ending in ".l" (that's
@@ -149,6 +170,12 @@ makewhatis
 		Initial release.  Written from scratch by Devin Reade.
 
 man
+	v3.1 (28 Mar 98)
+		Incorporated all utilities into the GNO base build.  All
+		versions are now lockstepped.
+
+		Searches are no longer case sensitive.
+
 	v3.0 (24 Jul 95)
 		Complete rewrite from scratch by Devin Reade.
 

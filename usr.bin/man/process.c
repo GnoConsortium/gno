@@ -1,10 +1,15 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
+ *
+ * $Id: process.c,v 1.4 1998/03/29 07:16:17 gdr-ftp Exp $
  */
 
+#ifdef __ORCAC__
 segment "makewhatis";
+#pragma noroot
+#endif
 
 #include <stdio.h>
 #include <string.h>
@@ -13,8 +18,8 @@ segment "makewhatis";
 #include <stdlib.h>
 #include <gsos.h>
 #include <orca.h>
-
-#include "makewhatis.h"
+#include <gno/contrib.h>
+#include "man.h"
 
 /* These are the compression types */
 #define NO_COMPRESS 0
@@ -59,7 +64,9 @@ void process (char *filename, char *tmp_file, FILE *whatis_fp, char *sec) {
    char *name;                   /* points to the file basename */
    short compression;            /* the compression type (if nec) */
 
-   if (v_flag>=2) fprintf(output_fp,"Working on file %s/%s ...\n",sec,filename);
+   if (v_flag>=2) {
+      fprintf(output_fp,"Working on sec %s file %s ...\n", sec, filename);
+   }
 
    /*
     * get the file basename

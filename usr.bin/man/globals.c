@@ -1,11 +1,16 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
+ *
+ * $Id: globals.c,v 1.2 1998/03/29 07:15:58 gdr-ftp Exp $
  */
 
-#include <types.h>
 #include "man.h"
+
+#ifndef NULL
+#define	NULL	0x0L
+#endif
 
 /*
  * The compression suffixes and how to uncompress the files.

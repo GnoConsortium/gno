@@ -1,10 +1,15 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
+ *
+ * $Id: man2.c,v 1.2 1998/03/29 07:16:12 gdr-ftp Exp $
  */
 
+#ifdef __ORCAC__
 segment "man2______";
+#pragma noroot
+#endif
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -17,15 +22,16 @@ segment "man2______";
 #include <errno.h>
 #include <fcntl.h>
 #include <sgtty.h>
-#include "util.h"
+#include <err.h>
+#include <gno/contrib.h>
 #include "man.h"
 
 #define MAX(a,b) ((a) > (b)) ? (a) : (b)
 
-static char **buildManList(char *suffix, char *name);
-static void display(char *list);
-static char *getBaseName (char *out, char *in);
-static void cleanManList(char **list);
+static LC_StringArray_t	buildManList(char *suffix, char *name);
+static LC_StringArray_t makePathArray(const char *manpath);
+static void		display(char *list);
+static char *		getBaseName (char *out, char *in);
 
 /*
  * Pre:  argc is the number of strings in argv.  It should either be 1 or 2.
@@ -49,7 +55,7 @@ static void cleanManList(char **list);
  */
 
 int man(int argc, char *argv[]) {
-   char **manpath_array, **manpagelist;
+   LC_StringArray_t manpath_array, manpagelist;
    char *sec, *name, *current_path;
    Section *section;
    int i, j, k, abort;
@@ -66,10 +72,10 @@ int man(int argc, char *argv[]) {
    if (t_flag) {
       if ((tcat = getenv("TCAT")) == NULL) {
          tcat = TCAT;
-      } else tcat = Xstrdup(tcat,__LINE__,__FILE__);
+      } else tcat = LC_xstrdup(tcat);
       if ((troff = getenv("TROFF")) == NULL) {
          troff = TROFF;
-      } else troff = Xstrdup(troff,__LINE__,__FILE__);
+      } else troff = LC_xstrdup(troff);
    }
    if (hyphen_flag) {
       pager = CAT;
@@ -86,13 +92,13 @@ int man(int argc, char *argv[]) {
    case 2:
       sec = argv[0];
       /* special case some section abbreviations */
-      if (!strcmp(sec,"l")) {
+      if (!strcasecmp(sec,"l")) {
          sec = "local";
-      } else if (!strcmp(sec,"n")) {
+      } else if (!strcasecmp(sec,"n")) {
          sec = "new";
-      } else if (!strcmp(sec,"o")) {
+      } else if (!strcasecmp(sec,"o")) {
          sec = "old";
-      } else if (!strcmp(sec,"p")) {
+      } else if (!strcasecmp(sec,"p")) {
          sec = "public";
       }
       name = argv[1];
@@ -104,13 +110,15 @@ int man(int argc, char *argv[]) {
    }
 
    /* create array of paths to search */
-   if ((manpath_array = makePathArray(manpath)) == NULL) return 1;
+   if ((manpath_array = makePathArray(manpath)) == NULL) {
+	return 1;
+   }
 
    /*
     * loop over all the paths in MANPATH
     */
    i=0;
-   current_path = manpath_array[i];
+   current_path = (manpath_array->lc_vec)[i];
    while (!abort && current_path) {
 
       dirbrk = (strchr(current_path,':')!=NULL) ? ':' : '/';
@@ -118,7 +126,7 @@ int man(int argc, char *argv[]) {
       /* go to the current path in MANPATH */
       if (chdir(current_path) == -1) {
          i++;
-         current_path = manpath_array[i];
+         current_path = (manpath_array->lc_vec)[i];
          continue;
       }
 
@@ -129,9 +137,9 @@ int man(int argc, char *argv[]) {
           * if section number was specified and this isn't it, do
           * the next loop
           */
-         if (sec && (strcmp(sec,sections[j].name) ||
+         if (sec && (strcasecmp(sec,sections[j].name) ||
                      (!isdigit(*sec) &&
-                      strncmp(sec,sections[j].name,strlen(sec))))) continue;
+                      strncasecmp(sec,sections[j].name,strlen(sec))))) continue;
          section_found++;
 
          /*
@@ -140,11 +148,11 @@ int man(int argc, char *argv[]) {
           */
 
          manpagelist = buildManList(sections[j].suffix,name);
-         if (!manpagelist) continue;
+         if (manpagelist->lc_used == 0) continue;
          page_found++;
 
-         for (k=0; !abort && manpagelist[k]; k++) {
-            display(manpagelist[k]);
+         for (k=0; !abort && k < manpagelist->lc_used; k++) {
+            display((manpagelist->lc_vec)[k]);
             if (!hyphen_flag && !t_flag) {
                fprintf(stderr,
                   "type q to quit, or any other key for next man page: ");
@@ -160,11 +168,11 @@ int man(int argc, char *argv[]) {
             }
          }
 
-         cleanManList(manpagelist);
+         LC_StringArrayDestroy(manpagelist);
 
       }   /* done looping over sections */
       i++;
-      current_path = manpath_array[i];
+      current_path = (manpath_array->lc_vec)[i];
 
    }  /* done looping over paths */
 
@@ -189,19 +197,20 @@ int man(int argc, char *argv[]) {
 static const char *manstr="man";
 static const char *catstr="cat";
 
-static char **buildManList(char *suffix, char *name) {
+static LC_StringArray_t
+buildManList(char *suffix, char *name) {
    static char buffer1[FILENAME_MAX];
    static char buffer2[FILENAME_MAX];
    DIR *directory;
    struct dirent *entry;
-   char **list1, **list2, **list3;
+   LC_StringArray_t list1, list2;
    size_t len;
-   int total1, total2, i, j, k;
-   char *p, *fn;
+   int i, j, k;
+   char *p, *fn, *L1, *L2;
 
    /* initialization */
-   list1 = list2 = list3 = NULL;
-   total1 = total2 = 0;
+   list1 = LC_StringArrayNew();
+   list2 = LC_StringArrayNew();
 
 #ifdef DEBUG
    /* sanity check on arguments */
@@ -221,19 +230,19 @@ static char **buildManList(char *suffix, char *name) {
 
          /* skip if no match */
          len = strlen(name);
-         if (strncmp(entry->d_name,name,len) ||
+         if (strncasecmp(entry->d_name,name,len) ||
              (entry->d_name[len] != '.')) continue;
 
          if (strlen(manstr) + strlen(suffix) + strlen(entry->d_name) +
              strlen(suffix) + 1 >= FILENAME_MAX) {
-            fprintf(stderr,"internal error: buffer overflow at line %d of %s\n",
-                    __LINE__,__FILE__);
+       		errx(1, "internal error: buffer overflow at line %s:%d\n",
+                     __FILE__, __LINE__);
          }
          sprintf(buffer1,"%s%s:%s",manstr,suffix,entry->d_name);
 
          /* look for "links" to aroff files. (what a kludge) */
          if ((buffer1[3] != 'l') &&
-             (strcmp(".l",&buffer1[strlen(buffer1)-2])==0)) {
+             (strcasecmp(".l",&buffer1[strlen(buffer1)-2])==0)) {
             FILE *linkptr;
             char *tp;
 
@@ -253,14 +262,12 @@ static char **buildManList(char *suffix, char *name) {
                fclose(linkptr);
 
                if (access(buffer2,R_OK) == 0) {
-                  list1 = addToStringArray(list1, buffer2);
-                  total1++;
+		  LC_StringArrayAdd(list1, buffer2);
                }
             }                                   
          } else {
             /* not a .l "link"; a normal file */
-            list1 = addToStringArray(list1, buffer1);
-            total1++;
+	    LC_StringArrayAdd(list1, buffer1);
          }
       }              
       closedir(directory);
@@ -277,7 +284,7 @@ static char **buildManList(char *suffix, char *name) {
 
             /* skip if no match */
             len = strlen(name);
-            if (strncmp(entry->d_name,name,len) ||
+            if (strncasecmp(entry->d_name,name,len) ||
                 (entry->d_name[len] != '.')) continue;
 
             if (strlen(catstr) + strlen(suffix) + strlen(entry->d_name) +
@@ -286,8 +293,7 @@ static char **buildManList(char *suffix, char *name) {
                        __LINE__,__FILE__);
             }
             sprintf(buffer1,"%s%s:%s",catstr,suffix,entry->d_name);
-            list2 = addToStringArray(list2, buffer1);
-            total2++;
+	    LC_StringArrayAdd(list2, buffer1);
          }              
          closedir(directory);
       }
@@ -297,40 +303,34 @@ static char **buildManList(char *suffix, char *name) {
     * eliminate files common to both lists
     */
    len = strlen(suffix);
-   for(i=0; i<total1; i++) {
-      if (list1[i] == NULL) continue;
-      for (j=0; j<total2; j++) {
-         if (list2[j] == NULL) continue;
+   for(i=0; i< list1->lc_used; i++) {
+      L1 = (list1->lc_vec)[i];
+      for (j=0; j< list2->lc_used; j++) {
+         L2 = (list2->lc_vec)[j];
 
-         getBaseName(buffer1,list1[i]);
-         getBaseName(buffer2,list2[j]);
+         getBaseName(buffer1, L1);
+         getBaseName(buffer2, L2);
 
 #ifdef DEBUG
          if ((strlen(buffer1) < len + 5) ||
              (strlen(buffer2) < len + 5)) {
-            fprintf(stderr,"internal error at line %d of %s\n",__LINE__,
-                    __FILE__);
-            exit(1);
+		err(1, "internal error at line %d of %s\n", __LINE__, __FILE__);
          }
 #endif
          /* match after the respective "manXX/" and "catXX/" */
-         if ( strcmp(&buffer1[len+4],&buffer2[len+4]) == 0 ) {
+         if (strcasecmp(&buffer1[len+4],&buffer2[len+4]) == 0 ) {
          
-            p = newerFile(list1[i],list2[j]);
-            if (p == list1[i]) {
-               free(list2[j]);
-               list2[j] = NULL;
-            } else if (p == list2[j]) {
-               free(list1[i]);
-               list1[i] = NULL;
-               break;
+            p = newerFile(L1,L2);
+            if (p == L1) {
+		LC_StringArrayDelete(list2, L2);
+		--j;
+            } else if (p == (list2->lc_vec)[j]) {
+		LC_StringArrayDelete(list1, L1);
+		--i;
+		break;
             } else {
-               fprintf(stderr,"internal error at line %d of %s\n\t%s\n\t%s\n",
-                       __LINE__,__FILE__,
-                       (list1[i]) ? list1[i] : "(NULL)",
-                       (list2[j]) ? list2[j] : "(NULL)");
-               perror("newerFile failed");
-               exit(1);
+	       err(1, "internal error at %s:%d (newerFile failed)",
+		   __FILE__, __LINE__);
             }
          }  /* endif */
       }     /* endfor */
@@ -339,41 +339,12 @@ static char **buildManList(char *suffix, char *name) {
    /*
     * combine the two lists
     */
-   for (i=0;i<total1;i++) {
-      if (list1[i] != NULL) {
-         list3 = addToStringArray(list3, list1[i]);
-         free(list1[i]);
-      }
+   j = list2->lc_used;
+   for (i=0; i<j; i++) {
+	LC_StringArrayAdd(list1, (list2->lc_vec)[i]);
    }
-   for (j=0;j<total2;j++) {
-      if (list2[j] != NULL) {
-         list3 = addToStringArray(list3, list2[j]);
-         free(list2[j]);
-      }
-   }
-   free(list1);
-   free(list2);
-   return list3;
-}
-
-
-/*
- * cleanManList
- *
- * Pre:  list is a NULL-terminated array of strings, where the array
- *       and each string in the array was allocated by malloc.
- *
- * Post: all malloc'd memory in list is free'd.
- */
-
-static void cleanManList(char **list) {
-   int i;
-
-   for (i=0; list[i]; i++) {
-      free(list[i]);
-   }
-   free (list);
-   return;
+   LC_StringArrayDestroy(list2);
+   return list1;
 }
 
 /*
@@ -409,7 +380,7 @@ static void display(char *file) {
    /*
     * determine which subdirectory this file is in
     */
-   if (strncmp(file,"cat",3) == 0) {
+   if (strncasecmp(file,"cat",3) == 0) {
       isubdir = CATSUBDIR;
    } else {
       isubdir = MANSUBDIR;
@@ -587,7 +558,7 @@ static void display(char *file) {
  *                that may be on the base name.  The set of compression
  *                suffixes is defined by the NULL-terminated compressArray[].
  *
- *                It is the user's responsibility to ensure that the
+ *                It is the caller's responsibility to ensure that the
  *                buffer *out has been allocated with sufficient space
  *                for the result.
  *
@@ -601,11 +572,35 @@ static char *getBaseName (char *out, char *in) {
    strcpy(out,in);
    if ((p = strrchr(out,'.')) != NULL) {
       for (i=0; compressArray[i].suffix; i++) {
-         if (strcmp(p,compressArray[i].suffix)==0) {
+         if (strcasecmp(p,compressArray[i].suffix)==0) {
             *p = '\0';
             break;
          }
       }
    }
    return out;
+}
+
+/*
+ * makePathArray
+ *
+ * Pre:		<manpath> is a list of colon-delimited path names
+ * Post:	returns a StringArray pointer where each string is an
+ *		element of <manpath>
+ */
+
+static LC_StringArray_t
+makePathArray(const char *manpath) {
+	LC_StringArray_t result;
+	char *pathcopy, *p;
+
+	result = LC_StringArrayNew();
+	pathcopy = LC_xstrdup(manpath);
+	p = strtok(pathcopy, ":");
+	while (p != NULL) {
+		LC_StringArrayAdd(result, p);
+		p = strtok(NULL, ":");
+	}
+	free(pathcopy);
+	return result;
 }

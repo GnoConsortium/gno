@@ -1,15 +1,21 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
+ *
+ * $Id: fillbuffer.c,v 1.4 1998/03/29 07:15:55 gdr-ftp Exp $
  */
 
+#ifdef __ORCAC__
 segment "makewhatis";
+#pragma noroot
+#endif
 
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "makewhatis.h"
+#include <err.h>
+#include "man.h"
 
 #define NAME1 "NAME"
 #define NAME2 "N\bNA\bAM\bME\bE"
@@ -86,7 +92,7 @@ void fillbuffer (char *filename) {
     * open the file
     */
 
-   if ((fp = fopen(filename,"rb")) == NULL) {
+   if ((fp = fopen(filename,"r")) == NULL) {
       buffer[0] = '\0';
       if (v_flag) fprintf (error_fp,"Open failed for file \"%s\"\n",filename);
       return;
@@ -141,7 +147,7 @@ void fillbuffer (char *filename) {
 
 
    /* we need the previous newline for the next algorithm to work */
-   fseek(fp,-1L,SEEK_CUR);
+   ungetc('\n', fp);
 
    /*
     * Make p1 point to spot in buffer2 where there occurs the first
@@ -188,7 +194,7 @@ void fillbuffer (char *filename) {
        */
 
       if (in_comment) {
-         while((p1<p2) && (*p1 != '\r')) p1++;
+         while((p1<p2) && (*p1 != '\n')) p1++;
          in_comment = 0;
       }
 
@@ -215,14 +221,14 @@ void fillbuffer (char *filename) {
       for (; p1<p2; p1++) {
 
          /* skip .\" comments */
-         if (strncmp(p1,"\r.\\\"",4) == 0) {
-            while ((p1<p2) && (*p1!='\r')) p1++;
+         if (strncmp(p1,"\n.\\\"",4) == 0) {
+            while ((p1<p2) && (*p1!='\n')) p1++;
             if (p1==p2) in_comment = 1;
             continue;
          }
 
          /* skip .BR-type formatting */
-         if ((p1<p2) && (*p1=='\r') && (*(p1+1)=='.')) {
+         if ((p1<p2) && (*p1=='\n') && (*(p1+1)=='.')) {
             p1++;
             while ((p1<p2) && !isspace(*p1)) p1++;
             if (p1==p2) in_format_BR = 1;
@@ -250,7 +256,7 @@ void fillbuffer (char *filename) {
          if (isgraph(*p1) && (*p1!=' ')) foo=1;
          if (!foo) {
             while ((p1<p2) && !(isgraph(*p1) && (*p1!=' '))) p1++;
-            if ((*p1=='.') && (*(p1-1)=='\r')) p1 -=2;
+            if ((*p1=='.') && (*(p1-1)=='\n')) p1 -=2;
             else --p1;
             continue;
          }
@@ -258,7 +264,7 @@ void fillbuffer (char *filename) {
          if (isgraph(*p1)) foo=1;
          if (!foo) {
             while ((p1<p2) && !isgraph(*p1)) p1++;
-            if ((*p1=='.') && (*(p1-1)=='\r')) p1 -=2;
+            if ((*p1=='.') && (*(p1-1)=='\n')) p1 -=2;
             else --p1;
             continue;
          }
@@ -357,7 +363,7 @@ void fillbuffer (char *filename) {
        */
 
       if (in_comment) {
-         while((p1<p2) && (*p1 != '\r')) p1++;
+         while((p1<p2) && (*p1 != '\n')) p1++;
          in_comment = 0;
       }
 
@@ -384,13 +390,13 @@ void fillbuffer (char *filename) {
       for (; p1<p2; p1++) {
 
          /* skip .\" comments */
-         if (strncmp(p1,"\r.\\\"",4) == 0) {
-            while ((p1<p2) && (*p1!='\r')) p1++;
+         if (strncmp(p1,"\n.\\\"",4) == 0) {
+            while ((p1<p2) && (*p1!='\n')) p1++;
             if (p1==p2) in_comment = 1;
          }
       
          /* skip .BR-type formatting */
-         if ((p1<p2) && (*p1=='\r') && (*(p1+1)=='.')) {
+         if ((p1<p2) && (*p1=='\n') && (*(p1+1)=='.')) {
             p1++;
             while ((p1<p2) && !isspace(*p1)) p1++;
             if (p1==p2) in_format_BR = 1;
@@ -450,10 +456,18 @@ void fillbuffer (char *filename) {
       if (count == 0) {
          /* eof or error; terminate buffer and return */
          *p3 = '\0';
+         if (v_flag) {
+#define NO_DESCRIPTION "description not found"
+           if (feof(fp)) {
+             warnx("EOF on %s, %s", filename, NO_DESCRIPTION);
+           } else if (ferror(fp)) {
+             warn("error on %s, %s", filename, NO_DESCRIPTION);
+           } else {
+             errx(1, "fread above line %d returned zero", __LINE__);
+           }
+         }
          fclose(fp);
-         if (v_flag) fprintf (error_fp,
-               "EOF or error on %s, description not found.\n",filename);
-         return;                              
+         return;
       }
       buffer2[count] = '\0';
       p1 = buffer2;

@@ -1,41 +1,36 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
+ *
+ * $Id: apropos.c,v 1.2 1998/03/29 07:15:42 gdr-ftp Exp $
  */
 
+#ifdef __ORCAC__
 segment "apropos___";
+#endif
 
 #include <stdio.h>
-#include <getopt.h>
 #include <stdlib.h>
-#include <libc.h>
-#include "util.h"
+#include <unistd.h>
+#include <err.h>
+#include <gno/gno.h>
 #include "man.h"
 
-extern int  optind;
-extern char *optarg;
-
-static char *versionstr = "3.0";
+static char *versionstr = VERSION_STR;
 static char *nothing    = "nothing appropriate";
-
-extern void begin_stack_check(void);
-extern int  end_stack_check(void);
 
 int main (int argc, char **argv) {
    char *path;
    int i, matches1, matches2, matches3;
    short V_flag, M_flag, m_flag, n_flag, err_flag;
 
-   /* make sure Gno is running */
+   /* make sure GNO is running */
    if (needsgno()==0) {
-      fprintf(stderr,"Requires Gno/ME\n");
-      return 1;
+      errx(1, "Requires GNO\n");
    }
 
-#ifdef STACK_CHECK
-   begin_stack_check();
-#endif
+   __REPORT_STACK();
 
    /* initialization */
    V_flag = M_flag = m_flag = n_flag = err_flag = 0;
@@ -100,10 +95,6 @@ int main (int argc, char **argv) {
    if (i==0) {
       fprintf(stderr,"%s: %s\n",basename(argv[0]),nothing);
    }
-
-#ifdef STACK_CHECK
-      fprintf(stderr,"stack usage: %d bytes\n",end_stack_check());
-#endif
 
    if ((matches1>=0) && (matches2>=0) && (matches3>=0) && i>0) return 0;
    return 1;

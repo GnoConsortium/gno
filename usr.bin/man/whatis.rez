@@ -1,0 +1,10 @@
+/*
+ * $Id: whatis.rez,v 1.1 1998/03/29 07:16:25 gdr-ftp Exp $
+ */
+
+#include "Types.Rez"
+
+#define	PROG	"whatis"
+#define DESC	"Locate commands by name."
+
+#include "common.rez"

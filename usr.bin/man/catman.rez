@@ -1,0 +1,10 @@
+/*
+ * $Id: catman.rez,v 1.1 1998/03/29 07:15:50 gdr-ftp Exp $
+ */
+
+#include "Types.Rez"
+
+#define	PROG	"catman"
+#define DESC	"Preformat manual pages"
+
+#include "common.rez"

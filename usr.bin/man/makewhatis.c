@@ -1,10 +1,14 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
+ *
+ * $Id: makewhatis.c,v 1.4 1998/03/29 07:16:01 gdr-ftp Exp $
  */
 
+#ifdef __ORCAC__
 segment "makewhatis";
+#endif
 
 #include <sys/types.h>
 #include <stdio.h>
@@ -13,15 +17,8 @@ segment "makewhatis";
 #include <string.h>
 #include <dirent.h>
 #include <unistd.h>
-#include "getopt.h"
-#include <libc.h>
-
-#include "makewhatis.h"
-
-#ifdef STACK_CHECK
-   extern void begin_stack_check(void);
-   extern int  end_stack_check(void);
-#endif                               
+#include <gno/gno.h>
+#include "man.h"
 
 /*
  * Options:
@@ -55,7 +52,7 @@ char *man_subdir[] = {
 };
 
 /*
- * we include cat* since some Gno utility man pages aren't written in
+ * we include cat* since some GNO utility man pages aren't written in
  * either nroff or aroff source ... go figure.
  */
 
@@ -90,14 +87,12 @@ static char progdir[FILENAME_MAX];  /* the directory where makewhatis started */
 FILE *output_fp;
 FILE *error_fp;
 
-
 int main (int argc, char **argv) {
-
+   static char tmp_file[L_tmpnam];   /* a scratch file */
    char *manpath;       /* the location of the man pages */
    char *path;          /* the current path; taken from manpath */
    char *p=NULL;        /* a temporary pointer */
    struct dirent *file; /* the current file we have open */
-   char tmp_file[L_tmpnam];   /* a scratch file */
    FILE *tmp_fp;              /* pointer to tmp_file */
    FILE *whatis_fp;     /* pointer to the current whatis database */
    DIR  *subdir;        /* the current man subdirectory -- eg: /usr/man/man3 */
@@ -107,15 +102,13 @@ int main (int argc, char **argv) {
    extern int optind;
    extern char *optarg;
 
-   /* make sure Gno is running */
+   /* make sure GNO is running */
    if (needsgno()==0) {
-      fprintf(stderr,"Requires Gno/ME\n");
+      fprintf(stderr,"Requires GNO\n");
       return 1;
    }
 
-#ifdef STACK_CHECK
-   begin_stack_check();
-#endif
+   __REPORT_STACK();
 
    /*
     * set the defaults
@@ -173,7 +166,7 @@ int main (int argc, char **argv) {
       case 'V':
          fprintf(stderr,
             "%s --\n\tCreate the %s database.\n\tVersion %s by Devin Reade\n\n",
-            argv[0],WHATIS,VERSIONSTRING);
+            argv[0],WHATIS,VERSION_STR);
          errflag++;
          break;
       default:
@@ -326,9 +319,5 @@ Aborted.\n",
    if (output_fp != stdout) fclose(output_fp);
    if (error_fp != stderr)  fclose(error_fp);
 
-#ifdef STACK_CHECK
-   fprintf(stderr,"Makewhatis stack usage:  %d bytes\n",end_stack_check());
-#endif
-   
    return 0;
 }

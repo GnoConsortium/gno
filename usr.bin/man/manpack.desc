@@ -1,0 +1,49 @@
+Name:    apropos
+Version: 3.1 (28 March 1998)
+Author:  Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:	 ftp.gno.org
+
+Locate commands by keyword.
+Bundled with catman, makewhatis, man, and whatis in the manpack archive.
+
+Name:    catman
+Version: 3.1 (28 March 1998)
+Author:  Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/sbin
+FTP:	 ftp.gno.org
+
+Preformat manual reference pages.
+Bundled with apropos, makewhatis, man, and whatis in the manpack archive.
+
+Name:    makewhatis
+Version: 3.1 (28 March 1998)
+Author:  Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/sbin
+FTP:	 ftp.gno.org
+
+Create the whatis database used by man(1), apropos(1), and whatis(1).
+Bundled with apropos, catman, man, and whatis in the manpack archive.
+
+Name:    man
+Version: 3.1 (28 March 1998)
+Author:  Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:	 ftp.gno.org
+
+Display manual reference pages.
+Bundled with apropos, catman, makewhatis, and whatis in the manpack archive.
+
+Name:    whatis
+Version: 3.1 (28 March 1998)
+Author:  Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:	 ftp.gno.org
+
+Locate commands by name.
+Bundled with apropos, catman, makewhatis, and man in the manpack archive.

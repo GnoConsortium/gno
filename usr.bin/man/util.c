@@ -1,22 +1,31 @@
 /*
- * Copyright 1995 by Devin Reade <gdr@myrias.com>. For distribution
+ * Copyright 1995-1998 by Devin Reade <gdr@trenco.gno.org>. For distribution
  * information see the README file that is part of the manpack archive,
  * or contact the author, above.
+ *
+ * $Id: util.c,v 1.2 1998/03/29 07:16:19 gdr-ftp Exp $
  */
 
+#ifdef __ORCAC__
 segment "util______";
+#pragma noroot
+#endif
 
+#define __USE_DYNAMIC_GSSTRING__
+
+#include <sys/types.h>
 #include <sys/stat.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <errno.h>
-#include <assert.h>
-#include <unistd.h>
+#include <types.h>
+#include <gsos.h>
 #include <ctype.h>
+#include <string.h>
 #include <sgtty.h>
-#include <fcntl.h>
-#include "util.h"
+#include <unistd.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <gno/gno.h>
+#include "man.h"
 
 /*
  * getManpath -- return a malloc'd copy of the MANPATH.  If MANPATH
@@ -33,147 +42,14 @@ char *getManpath(void) {
    if (manpath == NULL) manpath = getenv("MANDIR");
    if (manpath == NULL) manpath = DEFAULT_MANPATH;
 
-   return Xstrdup(manpath,__LINE__,__FILE__);
-}
-
-/*
- * Xstrdup - a safe strdup; it will handle error conditions and exit
- *           one occurs
- *
- *           line and file are arbitrary, but are expected to be the
- *           values of __LINE__ and __FILE__ respectively.
- */                                  
-
-char *Xstrdup(char *oldstr, int line, char *file) {
-   char *newstr;
-
-   if ((newstr = malloc(strlen(oldstr)+1)) == NULL) {
-      fprintf(stderr,"Xstrdup failed at line %d in file %s: %s\n",line,
-         file,strerror(errno));
-      exit(1);
-   }
-   strcpy(newstr,oldstr);
-   return newstr;
-}
-
-/*
- * Xmalloc - a safe malloc; it will handle error conditions and exit
- *           if one occurs.
- *
- *           line and file are arbitrary, but are expected to be the
- *           values of __LINE__ and __FILE__ respectively.
- */
-
-void *Xmalloc(size_t size, int line, char *file) {
-   char *p;
-
-   if ((p = malloc(size)) == NULL) {
-      fprintf(stderr,"Xmalloc failed at line %d in file %s: %s\n",line,
-         file,strerror(errno));
-      exit(1);
-   }
-   return ((void *) p);
+   return LC_xstrdup(manpath);
 }
 
 
-/*
- * Xrealloc - a safe realloc; it will handle error conditions and exit
- *            if one occurs.
- *
- *            line and file are arbitrary, but are expected to be the
- *            values of __LINE__ and __FILE__ respectively.
- */
-
-void *Xrealloc(void *oldptr, size_t size, int line, char *file) {
-   char *p;
-
-   if ((p = realloc(oldptr, size)) == NULL) {
-      fprintf(stderr,"Xrealloc failed at line %d in file %s: %s\n",line,
-         file,strerror(errno));
-      exit(1);
-   }
-   return ((void *) p);
-}
-
 
 /*
- * addToStringArray -- add a string to a NULL-terminated array of strings.
- *                     If oldArray is NULL, then a new array is created,
- *                     otherwise oldArray is expanded.
- *
- *          WARNING: | Because of the allocation scheme used, any oldArray
- *                   | passed to this routine _must_ be the return value
- *                   | of a previous call to this routine.  This does not
- *                   | imply that only one array can be expanded by this
- *                   | routine (any number may be expanded).
- *
- *                     The value of macro SLOTS_QUANTUM defined below is
- *                     the number of array slots allocated at one time.  The
- *                     size of the string array is always a multiple of this
- *                     value.
- *
- *                     Returns a pointer to an array that contains the old
- *                     strings with the new one appended.  The array is
- *                     NULL-terminated.
- */
-
-#define SLOTS_QUANTUM 10
-
-char **addToStringArray(char **oldArray, char *string) {
-
-   char **result;
-   int slotsAlloced, slotsUsed;
-
-   if (oldArray == NULL) {
-
-      /*
-       *  This is a new array; do the brute force approach
-       */
-      
-      result = Xmalloc(SLOTS_QUANTUM * sizeof(char *), __LINE__, __FILE__);
-      result[0] = Xstrdup(string,__LINE__,__FILE__);
-      result[1] = NULL;
-
-   } else {
-
-      /*
-       * adding to and, if necessary, expanding an old array
-       */
-
-      /* determine slotsUsed and slotsAlloced */
-      for (slotsUsed=0; oldArray[slotsUsed]; slotsUsed++);
-
-      if (slotsUsed % SLOTS_QUANTUM == SLOTS_QUANTUM-1) { /* space for NULL */
-         slotsAlloced = slotsUsed+1;
-      } else {
-         slotsAlloced = ((slotsUsed / SLOTS_QUANTUM) + 1) * SLOTS_QUANTUM;
-      }
-
-#ifdef DEBUG
-      assert(slotsUsed < slotsAlloced);
-#endif
-
-      /* expand number of slots if necessary */
-      if (slotsUsed+1 < slotsAlloced) {
-         /* there are enough slots; add it to this array */
-         result = oldArray;
-      } else {
-         /* we need more slots; expand the array */
-         slotsAlloced += SLOTS_QUANTUM;
-         result = Xrealloc(oldArray, slotsAlloced * sizeof(char *),
-                           __LINE__, __FILE__);
-      }
-
-      /* add the string to the array */
-      result[slotsUsed++] = Xstrdup(string, __LINE__, __FILE__);
-      result[slotsUsed] = NULL;
-   }
-   return result;
-}
-   
-/*
- * makePathArray -- parse a path list and break it into a NULL-terminated
- *                  array of paths.  The original path is left unchanged.
+ * MakePathArray -- parse a path list and break it into a StringArray_t.
+ *                  The original path is left unchanged.
  *
  *                  The delimiter between paths may either be a ' ' or a ':'.
  *                  The delimiter is assumed to be a ':' if <path> contains
@@ -181,70 +57,42 @@ char **addToStringArray(char **oldArray, char *string) {
  *                  otherwise the delimiter is assumed to be a ' '.
  */
 
-char **makePathArray(char *path) {
+LC_StringArray_t
+MakePathArray(char *path) {
+	LC_StringArray_t	result;
+	char		*delim, *p, *q;
 
-   char *delim, *p, *q, **result;
+	/* set the delimiter */
+	if ((strchr(path,' ')==NULL) &&
+	     strchr(path,':') &&
+	     strchr(path,'/')) {
+		delim = ":";
+	} else {
+		delim = " ";
+	}
 
-   /* set the delimiter */
-   if ( strchr(path,' ')==NULL &&
-        strchr(path,':') &&
-        strchr(path,'/')) {
-      delim = ":";
-   } else {
-      delim = " ";
-   }
+	/* build the array */
+#ifndef __ORCAC__
+	/* ORCA/C's strtok implementation doesn't modify the provided buffer */
+	p = LC_xstrdup(path);
+#else
+	p = path;
+#endif
+	result = LC_StringArrayNew();
+	q = strtok(p,delim);
+	while (q != NULL) {
+		LC_StringArrayAdd(result, q);
+		q = strtok(NULL,delim);
+	}
 
-   /* build the array */
-   p = Xstrdup(path, __LINE__, __FILE__);
-   q = strtok(p,delim);
-   result = NULL;
-   while (q) {
-      result = addToStringArray(result, q);
-      q = strtok(NULL,delim);
-   }
-   
-   free(p);
-   return result;
-}
-
-
-/*
- * ncstrcmp -- A case insensitive ("no-case") strcmp
- */
-
-int ncstrcmp(char *a, char *b) {
-
-   while (*a && *b) {
-      if (*a == *b) {
-         a++; b++;
-         continue;
-      }
-      return ((int) *b - *a);
-   }
-   if (!*a && !*b) return 0;
-   return ((int) *b - *a);
+#ifndef __ORCAC__
+	free(p);
+#endif
+	return result;
 }
 
 /*
- * ncstrncmp -- A case insensitive ("no-case") strncmp
- */
-
-int ncstrncmp (char *a, char *b, unsigned int count) {
-   unsigned int i=0;
-
-   for (i=0; i<count; i++) {
-      if (a[i] == b[i]) {
-         if (!a[i]) break;
-         else continue;
-      }
-      return ((int) b[i]-a[i]);
-   }
-   return 0;
-}
-
-
-/*
- * ncstrstr -- A case insensitive ("no-case") strstr
+ * strcasestr -- A case insensitive ("no-case") strstr
  *
  *             This is implemented using a convert-copy-to-single-case-
  *             then-strstr hack.
@@ -253,12 +101,13 @@ int ncstrncmp (char *a, char *b, unsigned int count) {
  *             and using a straight-forward search for strlen(substr) <= 5.
  */
 
-char *ncstrstr(char *str, char *substr) {
+char *
+strcasestr(char *str, char *substr) {
 
    char *strCopy, *substrCopy, *p;
 
-   strCopy = Xstrdup(str,__LINE__,__FILE__);
-   substrCopy = Xstrdup(substr,__LINE__,__FILE__);
+   strCopy = LC_xstrdup(str);
+   substrCopy = LC_xstrdup(substr);
 
    /* convert the strings */
    p = strCopy;
@@ -288,35 +137,48 @@ char *ncstrstr(char *str, char *substr) {
  *                      is an error.
  */
 
-char *newerFile(char *path1, char *path2) {
-   static struct stat record1, record2;
-   int i,j;
+char *
+newerFile(char *path1, char *path2) {
 
-   /*
-    * see if both, only one, or neither files exist
-    */
+	static struct stat sbuf1, sbuf2;
+	int e1, e2;
 
-   i = access(path1, F_OK);
-   j = access(path2, F_OK);
-   if (i==-1 && j==-1) {
-      errno = ENOENT;
-      return NULL;
-   } else if (i==-1) {
-      return path2;
-   } else if (j==-1) {
-      return path1;
-   }
+	/* stat the first file */
+	if (stat(path1, &sbuf1) < 0) {
+		if (errno == ENOENT) {
+			e1 = ENOENT;
+		} else {
+			return NULL;
+		}
+	} else {
+		e1 = 0;
+	}
 
-   /*
-    * both files exist; stat them
-    */
+	/* stat the second file */
+	if (stat(path2, &sbuf2) < 0) {
+		if (errno == ENOENT) {
+			e2 = ENOENT;
+		} else {
+			return NULL;
+		}
+	} else {
+		e2 = 0;
+	}
 
-   if (stat(path1,&record1) != 0) return NULL;
-   if (stat(path2,&record2) != 0) return NULL;
+	/* one or both don't exist? */
+	if (e1 && e2) {
+		return NULL;
+	}
+	if (e1) {
+		return path2;
+	}
+	if (e2) {
+		return path1;
+	}
 
-   return (record1.st_mtime > record2.st_mtime) ? path1 : path2;
-}
-
+	/* both exist */
+   	return (sbuf1.st_mtime > sbuf2.st_mtime) ? path1 : path2;
+}                        
 
 /*
  * getcharraw() - return the next character from stdin without waiting
@@ -326,7 +188,8 @@ char *newerFile(char *path1, char *path2) {
 
 #define FAILED_CHAR '\0';
 
-char getcharraw(void) {
+char
+getcharraw(void) {
    short oldmode;
    struct sgttyb s;
    int count;
@@ -348,39 +211,37 @@ char getcharraw(void) {
 }
 
 /*
- * basename -- return a pointer to the base filename (all leading
- *             pathname components removed) of <path>.  <path> _must_
- *             point to a NULL-terminated string.
+ * getFileType -- Get the file type and auxillary file type of a file.
+ *                On success it returns a pointer to an internal buffer
+ *                containing the file type and aux type.  On failure
+ *                it returns NULL and sets errno.
  */
 
-char *basename (char *path) {
-   char *p, dirsep;
+fileType *getFileType (char *file) {
 
-   dirsep = (strchr(path,':')) ? ':' : '/';
-   if ((p = strrchr(path,dirsep)) != NULL) {
-      return p+1;
-   } else {
-      return path;
+   static FileInfoRecGS record;
+   static fileType result;
+   int i;
+
+   /* set the parameters */
+   record.pCount = 4;
+   if ((record.pathname = __C2GSMALLOC(file)) == NULL) {
+      return NULL;
    }
-}
 
-/*
- * dirname -- return a pointer to a string consisting of the directory
- *            component of <path>.  This returns a pointer to an internal
- *            buffer, so the next call to dirname() will overwrite this
- *            buffer.  <path> must be a NULL-terminated string.
- */
-
-char *dirname (const char *path) {
-   static char buffer[FILENAME_MAX];
-   char *p, dirsep;
-
-   strcpy(buffer,path);
-   
-   dirsep = (strchr(buffer,':')) ? ':' : '/';
-   if ((p = strrchr(buffer,dirsep)) != NULL) {
-      *p = '\0';
+   /* get the info */
+   GetFileInfoGS(&record);
+   i = _toolErr;
+   GIfree(record.pathname);
+   if (i) {
+      errno = _mapErr(i);
+      return NULL;
    }
-   return buffer;
+
+   /* set the return value */
+   result.type = record.fileType;
+   result.auxtype = record.auxType;
+
+   return &result;
 }
-                   
+ 

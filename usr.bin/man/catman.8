@@ -1,6 +1,9 @@
-.\" Copyright (c) 1995 Devin Reade <gdr@myrias.com>.  All rights reserved.
+.\" Copyright (c) 1995-1997 Devin Reade <gdr@trenco.gno.org>.
+.\" All rights reserved.
 .\"
-.TH CATMAN 8 "System Administration" "24 July 95" "Version 1.0"
+.\" $Id: catman.8,v 1.2 1998/03/29 07:15:47 gdr-ftp Exp $
+.\"
+.TH CATMAN 8 "28 March 1998" GNO "System Administration"
 .SH NAME
 catman \- format cat pages from man pages
 .SH SYNOPSIS
@@ -74,16 +77,6 @@ on to the list of paths for which manual pages will be updated.
 Display version information and exit.
 .IP \fB-v\fR
 Verbose.  Show processing information.
-.SH BUGS
-Please report any bugs to Devin Reade, <gdr@myrias.ab.ca>.
-.SH SEE ALSO
-.BR apropos (1),
-.BR man (1),
-.BR whatis (1),
-.BR gzip (1),
-.BR compress (1),
-.BR freeze (1),
-.BR makewhatis (8).
 .SH WARNING
 .BR catman
 will unlink any out-of-date files in the
@@ -93,3 +86,15 @@ subdirectories.  The files that would be unlinked are listed when
 is invoked with the 
 .BR -p
 option.
+.SH VERSION
+This manual page documents
+.BR catman
+version 3.1.
+.SH SEE ALSO
+.BR apropos (1),
+.BR man (1),
+.BR whatis (1),
+.BR gzip (1),
+.BR compress (1),
+.BR freeze (1),
+.BR makewhatis (8).

@@ -4,10 +4,10 @@
 .\" specifies the terms and conditions for redistribution.
 .\"
 .\" While this manual page is based on one from UCB, the included
-.\" C source, makefile, and executables are copyright (c) 1995
-.\" by Devin Reade <gdr@myrias.com>.  All rights reserved.
+.\" C source, makefile, and executables are copyright (c) 1995-1998
+.\" by Devin Reade <gdr@trenco.gno.org>.  All rights reserved.
 .\"
-.TH WHATIS 1 "Commands and Applications" "24 July 95" "Version 3.0"
+.TH WHATIS 1 "28 March 1998" GNO "Commands and Applications"
 .SH NAME
 whatis, apropos \- locate commands by name or keyword lookup
 .SH SYNOPSIS
@@ -39,8 +39,7 @@ while
 shows which manual pages contain instances of any of the given
 .IR keyword (s)
 in their title line.
-Each word is considered separately and, for
-.BR apropos ,
+Each word is considered separately and, for the GNO implementation,
 the case of letters is ignored.
 Words which are part of other words are considered; when looking for
 .IR compile ,
@@ -55,6 +54,8 @@ If a line output by either of these commands starts with
 
 .fi
 you can enter
+.BI man name
+or
 .BI man " section name"
 to get its documentation.
 .SH OPTIONS
@@ -167,14 +168,18 @@ flag, in turn, overrides this value.)
 See the description of the
 .B \-M
 flag for syntax details.
+.SH VERSION
+This manual page documents
+.BR apropos
+and
+.BR whatis
+versions 3.1.
 .SH FILES
 .\" .IP \fB/usr/\fR[\fBshare/\fR]\fBman/whatis\fR
 .BR /usr/ [ share/ ] man/whatis " \-"
 The
 .BR whatis (1)
 database.
-.SH BUGS
-Please report any bugs to Devin Reade, <gdr@myrias.ab.ca>.
 .SH SEE ALSO
 .BR man (1),
 .BR whereis (1),

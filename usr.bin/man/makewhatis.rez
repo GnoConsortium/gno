@@ -1,0 +1,10 @@
+/*
+ * $Id: makewhatis.rez,v 1.1 1998/03/29 07:16:04 gdr-ftp Exp $
+ */
+
+#include "Types.Rez"
+
+#define	PROG	"makewhatis"
+#define DESC	"Create the whatis(1) database."
+
+#include "common.rez"
