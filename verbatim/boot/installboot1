@@ -1,7 +1,7 @@
 #
 # installboot1
 #
-# $Id: installboot1,v 1.3 1999/01/18 01:59:52 gdr-ftp Exp $
+# $Id: installboot1,v 1.4 1999/01/28 06:55:24 gdr-ftp Exp $
 #
 
 echo "Before running this script, you should have set your DOWNLOAD_DIR"
@@ -135,7 +135,7 @@ install -dV	usr/man/cat1 usr/man/cat2 usr/man/cat3
 install -dV	usr/man/cat4 usr/man/cat5 usr/man/cat6
 install -dV	usr/man/cat7 usr/man/cat8
 install -dV	usr/sbin
-install -dV	var/adm var/run var/spool
+install -dV	var/adm var/run var/spool/lpq
 
 echo "creating log files"
 touch		var/adm/messages
