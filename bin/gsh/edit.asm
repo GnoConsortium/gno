@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: edit.asm,v 1.7 1998/10/26 17:04:50 tribby Exp $
+* $Id: edit.asm,v 1.8 1998/11/02 17:40:56 tribby Exp $
 *
 **************************************************************************
 *
@@ -123,7 +123,8 @@ nextchar	jsr	cursoron
 	sta	4
 	ldx	signalled	If signal was received,
 	beq	nextchar2
-	jsr	cmdsig	 acknowledge it.
+	jsr	cmdsig	 acknowledge it
+	bra	cmdloop	  and continue reading.
 
 nextchar2	jsr	cursoroff
 	lda	4	Get results of getchar.

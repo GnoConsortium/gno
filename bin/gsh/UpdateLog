@@ -1,6 +1,13 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Oct 29 98    [dmt] Defect introduced into 2.0d5 fixed: when background job
+	     completed, GetCmdLine thought there was an error on stdin. It
+	     printed a bogus error message and then quit.
+
+Oct 26 98    [dmt] Changes to this point checked-in to master archive.
+	     Released as version 2.0d5
+
 Oct 10 98    [dmt] Found race condition: when forked process completes
 	     quickly, the parent process may not ever receive its completion
 	     signal. Fix: ensure process exists by calling kill(pid,0)
