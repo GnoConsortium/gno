@@ -53,7 +53,7 @@ static const char copyright[] =
 static char sccsid[] = "@(#)head.c	8.2 (Berkeley) 5/4/95";
 #endif
 static const char rcsid[] =
-	"$Id: head.c,v 1.1 1997/09/17 05:43:50 gdr Exp $";
+	"$Id: head.c,v 1.2 1997/09/26 06:20:06 gdr Exp $";
 #endif /* not lint */
 #endif
 
@@ -84,11 +84,10 @@ int eval;
 #ifndef _STDLIB_H_
 #include <stdlib.h>
 #endif
-extern void begin_stack_check(void);
-extern int end_stack_check(void);
+#include <gno/gno.h>
 static void report_stack(void)
 {
-	fprintf(stderr,"\n ==> %d stack bytes used <== \n", end_stack_check());
+	fprintf(stderr,"\n ==> %d stack bytes used <== \n", _endStackCheck());
 }
 #endif
 
@@ -108,7 +107,7 @@ main(int argc, char *argv[])
 	char *ep;
 
 #if defined(__GNO__)  &&  defined(__STACK_CHECK__)
-	begin_stack_check();
+	_beginStackCheck();
 	atexit(report_stack);
 #endif
 	obsolete(argv);
