@@ -2,7 +2,7 @@
 #
 # Devin Reade, November 1997.
 #
-# $Id: mkhtmlman,v 1.6 1998/02/04 07:17:13 gdr-ftp Exp $
+# $Id: mkhtmlman,v 1.7 1998/02/19 03:04:05 gdr-ftp Exp $
 
 man2html=/usr/local/bin/man2html
 TMPDIR=${TMPDIR:-/tmp}
@@ -47,19 +47,31 @@ for section in 1 2 3 4 5 6 7 8; do
 	| grep -v bin/gsh/updates1.1 \
 	| grep -v sed/tests` ; do
 	[ "$F" = 00.DUMMY ] && continue;
-	if ! egrep -q -e '^\.TH.*GNO' $F; then
-	    echo "$F:1: This does not appear to be a GNO manual page. Skipped."
+	if egrep -q -e '^'"$F"'$' ignored.pages; then
+	    echo "$F: ignored"
 	    continue
 	fi
-	f=`basename $F`
-	f2=`echo $f | perl -pe 's/\.[^\.]+$//;'`
-	echo "$f" >> $listfile
+	F_noG="$F"
 	if [ -f $F'G' ]; then
 	    F="$F"G
 	fi
+	macro=''
+	if ! egrep -q -e '^\.TH.*GNO' $F; then
+	    if egrep -q -e '^\.Sh NAME' $F; then
+		echo "$F: Using the BSD-formatted man page."
+		macro=doc
+	    else
+		echo "$F: This does not appear to be a GNO manual page." \
+		    "Skipped."
+		continue
+	    fi
+	fi
+	f=`basename $F_noG`
+	f2=`echo $f | perl -pe 's/\.[^\.]+$//;'`
+	echo "$f" >> $listfile
 	if ! ./newer $dest/$f.html $F; then
 	    echo "creating $dest/$f.html"
-	    nroff -man $F | $man2html -nodepage | \
+	    nroff -man$macro $F | $man2html -nodepage | \
 	    perl -p -e \
     's/<BODY>/<title>GNO: '"$f2($section)"'<\/title><body bgcolor=\#ffffff>/;'\
 		> $dest/$f.html

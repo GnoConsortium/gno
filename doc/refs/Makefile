@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.7 1998/01/26 07:13:04 gdr-ftp Exp $
+# $Id: Makefile,v 1.8 1998/02/19 03:03:48 gdr-ftp Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -31,9 +31,6 @@ MAKEINDEX	= makeindex
 DVID		= dvid
 HTMLD		= htmld
 PSD		= psd
-
-# The name of the manually-maintained index page in this directory
-MINDEX		= index.html
 
 .IF $(DRAFT) == true
 	# This is the root of the html tree used in the generated sources.
@@ -80,7 +77,7 @@ GETDATE		= ./getdate -date
 GETVERS		= ./getdate -version
 DVIPS_FLAGS	=
 LATEX_FLAGS	=
-TEX2HTML_FLAGS	= -info "" -local_icons -dir $(HTMLD) -up_url $(MINDEX)
+TEX2HTML_FLAGS	= -info "" -local_icons -dir $(HTMLD) -up_url refs.html
 TEXINPUTS	= ':/usr/local/lib/latex2html'
 
 DVI	= intro.dvi    kern.dvi
@@ -114,7 +111,14 @@ dvi:	$(DVI)
 ps:	ps_ltr ps_a4
 ps_ltr:	$(PS_LTR)
 ps_a4:	$(PS_A4)
-h:	$(HTML) $(HTMLD)/index.html $(HTMLD)/unaval.html top.html cleanhtml
+h:	$(HTML) \
+	$(HTMLD)/index.html \
+	$(HTMLD)/faqindex.html \
+	$(HTMLD)/refs.html \
+	$(HTMLD)/manindex.html \
+	$(HTMLD)/related.html \
+	$(HTMLD)/oldrefs.html \
+	$(HTMLD)/unaval.html top.html cleanhtml
 bib:	intro.bbl
 
 intro.bbl: gno.bib
@@ -137,10 +141,7 @@ gsh.dvi.Z:	gsh.dvi;	compress -c $< > $@
 gsh.ltr.ps.Z:	gsh.ltr.ps;	compress -c $< > $@
 gsh.a4.ps.Z:	gsh.a4.ps;	compress -c $< > $@
 
-$(HTMLD)/index.html: $(MINDEX)
-	@echo "making $@"; \
-	[ -d $(HTMLD) ] || mkdir -p $(HTMLD); \
-	perl -p -e 's,%%HTML_ROOT%%,$(HTML_ROOT),g;' \
+REPLACE=	perl -p -e 's,%%HTML_ROOT%%,$(HTML_ROOT),g;' \
 		-e 's,%%FTP_ROOT%%,$(FTP_ROOT),g;' \
 		-e 's,%%FTP_INTRO%%,$(FTP_INTRO),g;' \
 		-e 's,%%FTP_KERN%%,$(FTP_KERN),g;' \
@@ -150,11 +151,52 @@ $(HTMLD)/index.html: $(MINDEX)
 		-e 's,%%FAQ_TEXT%%,$(FAQ_TEXT),g;' \
 		-e 's,%%FAQLOG_TEXT%%,$(FAQLOG_TEXT),g;' \
 		-e 's,%%OLD_HTML%%,$(OLD_HTML),g;' \
-		-e 's,%%GIFDIR%%,$(GIFDIR),g;' \
-		< $< > $@
+		-e 's,%%GIFDIR%%,$(GIFDIR),g;'
 
-$(HTMLD)/unaval.html: unaval.html
-	cp $< $@
+$(HTMLD)/index.html: index.html tail.html
+	@echo "making $@"; \
+	[ -d $(HTMLD) ] || mkdir -p $(HTMLD); \
+		cat index.html tail.html | $(REPLACE) > $@
+
+$(HTMLD)/faqindex.html: faqindex.html 
+	@echo "making $@"; \
+	[ -d $(HTMLD) ] || mkdir -p $(HTMLD); \
+		cat head.html $< tail.html | $(REPLACE) \
+		-e 's,%%TITLE%%,GNO Frequently Asked Questions (Index),;' > $@
+$(HTMLD)/faqindex.html: head.html tail.html
+
+$(HTMLD)/refs.html: refs.html
+	@echo "making $@"; \
+	[ -d $(HTMLD) ] || mkdir -p $(HTMLD); \
+		cat head.html $< tail.html | $(REPLACE) \
+		-e 's,%%TITLE%%,GNO Reference Manuals,;' > $@
+$(HTMLD)/refs.html: head.html tail.html
+
+$(HTMLD)/manindex.html: manindex.html
+	@echo "making $@"; \
+	[ -d $(HTMLD) ] || mkdir -p $(HTMLD); \
+		cat head.html $< tail.html | $(REPLACE) \
+		-e 's,%%TITLE%%,GNO Manual Pages Index,;' > $@
+$(HTMLD)/manindex.html: head.html tail.html
+
+$(HTMLD)/related.html: related.html
+	@echo "making $@"; \
+	[ -d $(HTMLD) ] || mkdir -p $(HTMLD); \
+		cat head.html $< tail.html | $(REPLACE) \
+		-e 's,%%TITLE%%,GNO-Related Web Pages,;' > $@
+$(HTMLD)/related.html: head.html tail.html
+
+$(HTMLD)/oldrefs.html: oldrefs.html
+	@echo "making $@"; \
+	[ -d $(HTMLD) ] || mkdir -p $(HTMLD); \
+		cat head.html $< tail.html | $(REPLACE) \
+		-e 's,%%TITLE%%,Old GNO Documentation,;' > $@
+$(HTMLD)/oldrefs.html: head.html tail.html
+
+$(HTMLD)/unaval.html: head.html unaval.html tail.html
+	@echo "making $@"; \
+	cat head.html unaval.html tail.html | $(REPLACE) \
+		-e 's,%%TITLE%%,Unpublished Document,;' > $@
 
 cleanhtml:
 	@echo "cleaning guano from html files"; \
@@ -198,7 +240,7 @@ $(HTMLD)/%.html: %.tex
 	-address $(CONTACT1)"`$(GETDATE) <$<`"$(CONTACT2)"`$(GETVERS) <$<`" \
 	-up_title \
 	"`perl -n -e '(m,<title>(.*)</title>,) && printf("%s\n",$$1);'\
-	< $(MINDEX) `" \
+	< $(HTMLD)/refs.html `" \
 	$(TEX2HTML_FLAGS) $<
 
 $(HTMLD)/%.gif: GIF/%.gif

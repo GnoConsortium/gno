@@ -19,7 +19,7 @@ points above.
 	Devin Reade
 	December 1997.
 
-$Id: README,v 1.2 1998/01/26 07:13:05 gdr-ftp Exp $
+$Id: README,v 1.3 1998/02/19 03:03:49 gdr-ftp Exp $
 
 
 WHAT THE FILES ARE
@@ -27,20 +27,26 @@ WHAT THE FILES ARE
 
 	Makefile	Configuration file for use with dmake.
 	README		This file.
+	faqindex.html	This shows links to the html and text versions
+			of the GNO FAQ.
 	getdate		A perl script which extracts the date or version
 			from an RCS "Id" tag, and prints it in a more
 			"normal" fashion.  Usage: "getdate <infile >outfile"
 	gno.bib		The bibliography used in the Overview.  This
 			is processed using BibTeX.
+	gsh.tex		This is the LaTeX source to the "GNO Shell Reference
+			Manual".
+	head.html	This is information common to the beginning of most
+			of the other html files.
 	index.html	This is the top-level page for the html version.
 			It contains links to the three books, the generated
 			man pages, the FAQ, et al.
 	intro.tex	This is the LaTeX source to the "Overview and
 			Installation Manual".
-	gsh.tex		This is the LaTeX source to the "GNO Shell Reference
-			Manual".
 	kern.tex	This is the LaTeX source to the "Kernel Reference
 			Manual".
+	manindex.html	This is an index of the various manual page
+			chapters.
 	mkhtmlman	This is a custom script which drives the man2html
 			program.  It basically searches for the man pages
 			in the GNO search tree to convert, and adds in some
@@ -50,6 +56,11 @@ WHAT THE FILES ARE
 	newer.c		A source file which compiles to a program that
 			compares the modification date of two files.  Used
 			by mkhtmlman to avoid unnecessary processing.
+	oldrefs.html	This is an index of old (v2.0.4) documenatation.
+	refs.html	This is an index of the current reference manuals.
+	related.html	This is an index of GNO-related web pages.
+	tail.html	This is information common to the end of most of
+			the other html files.
 	unaval.html	A generic web page that says "the page you requested
 			is not ready yet".
 
@@ -137,9 +148,6 @@ primary GNO site, the following should not need to be changed:
 		the GNO source tree, and the directory from which it
 		is invoked.  On the other hand, there shouldn't be any
 		need to change this.
-
-	unaval.html:
-		The maintainer's name and address is hard-coded here.
 
 Once the above dependancies have been addressed, you can use dmake(1)
 to build the sources.  The primary targets are:

@@ -1,0 +1,14 @@
+# These are files for which we will _not_ generate html man pages.
+# It is critical that there be no whitespace either preceeding nor
+# following these file names.
+#
+# $Id: ignored.pages,v 1.1 1998/02/19 03:03:53 gdr-ftp Exp $
+#
+00.DUMMY
+../../usr.man/man4/tty.4
+../../bin/gsh/updates1.1
+../../sbin/reboot/boot.hp300.8
+../../sbin/reboot/boot.i386.8
+../../sbin/reboot/boot.sparc.8
+../../sbin/reboot/boot.tahoe.8
+../../sbin/reboot/boot.vax.8
