@@ -1,0 +1,105 @@
+DELIM	iso_addr.c	/^#define DELIM	(4\*2)$/
+DIGIT	iso_addr.c	/^#define	DIGIT	(4\*0)$/
+END	iso_addr.c	/^#define	END	(4\*1)$/
+Field	ns_addr.c	/^Field(buf, out, len)$/
+GOTONE	iso_addr.c	/^#define GOTONE	1$/
+GOTTWO	iso_addr.c	/^#define GOTTWO	2$/
+HOST_NOT_FOUND	2/orcacdefs/netdb.h	/^#define	HOST_NOT_FOUND	1 \/\* Authoritive Answer H/
+LETTER	linkaddr.c	/^#define LETTER	(4\*3)$/
+MAXADDRS	gethostnamadr.c	/^#define	MAXADDRS	35$/
+MAXALIASES	gethostnamadr.c	/^#define	MAXALIASES	35$/
+MAXPACKET	gethostnamadr.c	/^#define	MAXPACKET	PACKETSZ$/
+NAMING	linkaddr.c	/^#define NAMING	0$/
+NO_ADDRESS	2/orcacdefs/netdb.h	/^#define NO_ADDRESS	NO_DATA 	\/\* no address, look /
+NO_DATA	2/orcacdefs/netdb.h	/^#define NO_DATA		4 \/\* Valid host name, no data r/
+NO_RECOVERY	2/orcacdefs/netdb.h	/^#define	NO_RECOVERY	3 \/\* Non recoverable errors,/
+PLURALIZE	res_debug.c	/^#define	PLURALIZE(x)	x, (x == 1) ? "" : "s"$/
+RESET	linkaddr.c	/^#define RESET	3$/
+TRY_AGAIN	2/orcacdefs/netdb.h	/^#define	TRY_AGAIN	2 \/\* Non-Authoritive Host not /
+UC	inet_ntoa.c	/^#define	UC(b)	(((int)b)&0xff)$/
+VIRGIN	iso_addr.c	/^#define VIRGIN	0$/
+_PATH_HEQUIV	2/orcacdefs/netdb.h	/^#define	_PATH_HEQUIV	"\/etc\/hosts\.equiv"$/
+_PATH_HOSTS	2/orcacdefs/netdb.h	/^#define	_PATH_HOSTS	"\/etc\/hosts"$/
+_PATH_NETWORKS	2/orcacdefs/netdb.h	/^#define	_PATH_NETWORKS	"\/etc\/networks"$/
+_PATH_PROTOCOLS	2/orcacdefs/netdb.h	/^#define	_PATH_PROTOCOLS	"\/etc\/protocols"$/
+_PATH_SERVICES	2/orcacdefs/netdb.h	/^#define	_PATH_SERVICES	"\/etc\/services"$/
+__dn_skipname	res_comp.c	/^int __dn_skipname(const u_char \*comp_dn, const u_/
+__fp_query	res_debug.c	/^__fp_query(char \*msg, FILE \*file)$/
+__hostalias	res_query.c	/^__hostalias(register const char \*name)$/
+__p_class	res_debug.c	/^__p_class(int class)$/
+__p_query	res_debug.c	/^void __p_query(char \*msg)$/
+__p_time	res_debug.c	/^__p_time(u_long value)$/
+__p_type	res_debug.c	/^__p_type(int type)$/
+__putlong	res_comp.c	/^__putlong(register u_long l, register u_char \*msg/
+__putshort	res_comp.c	/^__putshort(s, msgp)$/
+_checkhost	rcmd.c	/^_checkhost(char \*rhost, char \*lhost, int len)$/
+_endhtent	gethostnamadr.c	/^void _endhtent(void)$/
+_gethtbyaddr	gethostnamadr.c	/^_gethtbyaddr(const char \*addr, int len, int type)/
+_gethtbyname	gethostnamadr.c	/^_gethtbyname(char \*name)$/
+_gethtent	gethostnamadr.c	/^_gethtent(void)$/
+_getlong	res_comp.c	/^_getlong(u_char \*msgp)$/
+_getshort	res_comp.c	/^_getshort(u_char \*msgp)$/
+_res_close	res_send.c	/^void _res_close(void)$/
+_sethtent	gethostnamadr.c	/^void _sethtent(int f)$/
+_validuser	rcmd.c	/^int _validuser(FILE \*hostf, char \*rhost, char \*/
+align	gethostnamadr.c	/^} align;$/
+cvtbase	ns_addr.c	/^cvtbase(oldbase,newbase,input,inlen,result,reslen)/
+dn_comp	res_comp.c	/^int dn_comp(const u_char \*exp_dn, u_char \*comp_d/
+dn_expand	res_comp.c	/^int dn_expand(const u_char \*msg, const u_char \*e/
+dn_find	res_comp.c	/^dn_find(u_char \*exp_dn, u_char \*msg, u_char \*\*/
+endhostent	sethostent.c	/^endhostent(void)$/
+endnetent	getnetent.c	/^endnetent(void)$/
+endprotoent	getprotoent.c	/^endprotoent(void)$/
+endservent	getservent.c	/^endservent(void)$/
+getanswer	gethostnamadr.c	/^getanswer(querybuf \*answer, int anslen, int iquer/
+gethostbyaddr	gethostnamadr.c	/^gethostbyaddr(const char \*addr, int len, int type/
+gethostbyname	gethostnamadr.c	/^gethostbyname(const char \*name)$/
+getnetbyaddr	getnetbyaddr.c	/^getnetbyaddr(long net, int type)$/
+getnetbyname	getnetbyname.c	/^getnetbyname(const char \*name)$/
+getnetent	getnetent.c	/^getnetent(void)$/
+getprotobyname	getprotoname.c	/^getprotobyname(const char \*name)$/
+getprotobynumber	getproto.c	/^getprotobynumber(int proto)$/
+getprotoent	getprotoent.c	/^getprotoent(void)$/
+getservbyname	getservbyname.c	/^getservbyname(const char \*name, const char \*prot/
+getservbyport	getservbyport.c	/^getservbyport(int port, const char \*proto)$/
+getservent	getservent.c	/^getservent(void)$/
+h_addr	2/orcacdefs/netdb.h	/^#define	h_addr	h_addr_list\[0\]	\/\* address, for /
+herror	herror.c	/^herror(const char \*s)$/
+hostent	2/orcacdefs/netdb.h	/^struct	hostent {$/
+inet_addr	inet_addr.c	/^inet_addr(const char \*cp)$/
+inet_aton	inet_addr.c	/^inet_aton(const char \*cp, struct in_addr \*addr)$/
+inet_lnaof	inet_lnaof.c	/^inet_lnaof(struct in_addr in)$/
+inet_makeaddr	inet_makeaddr.c	/^inet_makeaddr(u_long net, u_long host)$/
+inet_netof	inet_netof.c	/^inet_netof(struct in_addr in)$/
+inet_network	inet_network.c	/^inet_network(const char \*cp)$/
+inet_ntoa	inet_ntoa.c	/^inet_ntoa(struct in_addr in)$/
+iso_addr	iso_addr.c	/^iso_addr(addr)$/
+iso_ntoa	iso_addr.c	/^iso_ntoa(isoa)$/
+link_addr	linkaddr.c	/^link_addr(addr, sdl)$/
+link_ntoa	linkaddr.c	/^link_ntoa(sdl)$/
+netent	2/orcacdefs/netdb.h	/^struct	netent {$/
+ns_addr	ns_addr.c	/^struct ns_addr $/
+ns_ntoa	ns_ntoa.c	/^ns_ntoa(addr)$/
+p_cdname	res_debug.c	/^p_cdname(char \*cp, char \*msg, FILE \*file)$/
+p_rr	res_debug.c	/^p_rr(char \*cp, char \*msg, FILE \*file)$/
+protoent	2/orcacdefs/netdb.h	/^struct	protoent {$/
+querybuf	gethostnamadr.c	/^} querybuf;$/
+rcmd	rcmd.c	/^int rcmd(char \*\*ahost, u_short rport, const char/
+recv	recv.c	/^recv(s, buf, len, flags)$/
+res_init	res_init.c	/^int res_init(void)$/
+res_mkquery	res_mkquery.c	/^int res_mkquery(int op, const char \*dname, int cl/
+res_query	res_query.c	/^int res_query(char \*name, int class, int type, u_/
+res_querydomain	res_query.c	/^int res_querydomain(char \*name, char \*domain, in/
+res_search	res_query.c	/^int res_search(char \*name, int class, int type, u/
+res_send	res_send.c	/^int res_send(const char \*buf, int buflen, char \*/
+rpcent	2/orcacdefs/netdb.h	/^struct rpcent {$/
+rresvport	rcmd.c	/^int rresvport(int \*alport)$/
+ruserok	rcmd.c	/^int ruserok(const char \*rhost, int superuser, con/
+send	send.c	/^send(s, msg, len, flags)$/
+servent	2/orcacdefs/netdb.h	/^struct	servent {$/
+sethostent	sethostent.c	/^sethostent(int stayopen)$/
+setnetent	getnetent.c	/^setnetent(int f)$/
+setprotoent	getprotoent.c	/^setprotoent(int f)$/
+setservent	getservent.c	/^setservent(int f)$/
+spectHex	ns_ntoa.c	/^spectHex(p0)$/
+writev	writev.c	/^size_t writev(int fd, struct iovec \*iov, int iovc/
