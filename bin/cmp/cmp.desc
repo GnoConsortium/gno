@@ -4,7 +4,7 @@ Shell:   GNO/ME
 Author:  Evan Day (from FreeBSD source)
 Contact: day@engr.orst.edu
 Where:   /bin
-FTP:     
+FTP:     ftp.gno.org
 
    cmp compares and reports differences in the dataforks and resource forks
    of two files.

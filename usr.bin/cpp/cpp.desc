@@ -4,7 +4,7 @@ Shell:   GNO
 Author:  Ported by Devin Reade.
 Contact: gdr@eddore.myrias.com
 Where:   /usr/bin
-FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
 The C Preprocessor.  This is not invoked by ORCA/C but is rather provided
 as a stand-alone preprocessor.

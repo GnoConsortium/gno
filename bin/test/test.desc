@@ -4,7 +4,7 @@ Shell:   GNO/ME
 Author:  Devin Reade
 Contact: gdr@myrias.com
 Where:   /bin
-FTP:     grind.isca.uiowa.edu
+FTP:     ftp.gno.org ground.icaen.uiowa.edu
 
   The test utility evaluates string and integer expressions and, if
 it evaluates to true, returns a zero (true) exit status; otherwise it

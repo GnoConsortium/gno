@@ -4,6 +4,6 @@ Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
 Contact: gdr@trenco.gno.org
 Where:   /usr/sbin
-FTP:     ftp.gno.org, ftp.cco.caltech.edu, grind.isca.uiowa.edu
+FTP:     ftp.gno.org apple2.caltech.edu ground.icaen.uiowa.edu
 
 Renames /RAM5 to /tmp on boot.

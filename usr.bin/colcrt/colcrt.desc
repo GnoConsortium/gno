@@ -4,6 +4,6 @@ Shell:   GNO
 Author:  Steve Reeves (from FreeBSD code)
 Contact: stever@gate.net
 Where:   /usr/bin
-FTP:     ground.isca.uiowa.edu apple2.caltech.edu ftp.gno.org
+FTP:     ground.icaen.uiowa.edu apple2.caltech.edu ftp.gno.org
 
    Filter nroff output for CRT previewing.

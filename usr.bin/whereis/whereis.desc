@@ -4,7 +4,7 @@ Shell:   GNO
 Author:  Modified from BSD code by Devin Reade
 Contact: gdr@eddore.myrias.com
 Where:   /usr/bin
-FTP:     apple2.caltech.edu ground.isca.uiowa.edu trenco.myrias.com
+FTP:     apple2.caltech.edu ground.icaen.uiowa.edu ftp.gno.org
 
  whereis searches certain directories (/bin, /usr/bin, /usr/man, et cetera)
 and reports the location of source, executables, and man pages.  
