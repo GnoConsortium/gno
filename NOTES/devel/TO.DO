@@ -1,7 +1,7 @@
 *******
 * soon
 *
-* $Id: TO.DO,v 1.6 1997/12/02 05:31:57 gdr Exp $
+* $Id: TO.DO,v 1.7 1997/12/22 01:20:23 gdr Exp $
 *
 *******
 
@@ -26,7 +26,8 @@ Update funopen, fropen, fwopen, fsettext man pages:
 
 Create a src/gno/build.tools/dupfile script for duplicating binary
 files at user install time.  Current packages that need this:
-	compress
+	compress/zcat
+	sum/cksum
 
 Complete mkso util
 
@@ -56,7 +57,8 @@ Use result of _setModeEmulation(3) in appropriate calls.  These include
 	fstat	- unnecessary
 	lstat	- unnecessary
 
-clean up <gno/kerntool.h> -- some require errno args, some don't
+clean up <gno/kerntool.h> -- some require errno args, some don't.  Some
+	can't be specified here, but most traps can.
 
 check up on the type of nlink_t, used in stat(2)
 
@@ -99,7 +101,7 @@ NEED TO WRITE OR DUPLICATE MAN PAGES FOR
 	ms		7
 	man		7
 	cron		8
-	runover		8			(obsolete?)  No, needed for single user mode.
+	runover		8	(obsolete?)  No, needed for single user mode.
 	dialup		8
 
 
