@@ -11,7 +11,7 @@
 *									*
 * Devin Reade, 10 April 1998.						*
 *									*
-* $Id: status.bin,v 1.12 1998/04/11 03:20:13 gdr-ftp Exp $		*
+* $Id: status.bin,v 1.13 1998/04/23 16:02:07 gdr-ftp Exp $		*
 *									*
 *************************************************************************
 
@@ -79,9 +79,9 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 */system/Drivers/nullport 	Y	Y	dt
 */system/System.Setup		Y	Y	-	dir	-	-	-	-	-
 */system/System.Setup/sim	Y	Y	dt
-/				Y	Y	gdr	dir	-	-	-	-	Y
-/HFSinclude			N	Y	gdr	dir	-	-	-	-	Y
-/bin				Y	Y	gdr	dir	-	-	-	-	Y
+/				Y	Y	gdr	dir	-	-	-	-	-
+/HFSinclude			N	Y	gdr	dir	-	-	-	-	-
+/bin				Y	Y	gdr	dir	-	-	-	-	-
 /bin/aroff			Y	Y	.	Y	.	.	.	Y
 /bin/binprint			Y	.	.	Y	.	.	.	Y
 /bin/cat			Y	Y	dave	Y	T	Y	Y	Y	RI
@@ -215,7 +215,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/assemble		N	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/at
 /usr/bin/aw30			Y	.	.	Y	.	.	.	Y
-/usr/bin/awk			N	Y	dave	Y
+/usr/bin/awk			N	Y	dave	Y	T	T	T	Y	RI
 /usr/bin/bang			N	Y
 /usr/bin/banner			Y	.	.	Y	.	.	.	Y
 /usr/bin/basename		N	Y	mober	Y	T	Y	Y	Y	RI
@@ -261,7 +261,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/hexdump
 /usr/bin/install		N	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/join
-/usr/bin/last			N	Y	dt	Y	[G]	Y	Y	Y	RI
+/usr/bin/last			N	Y	dt	Y	T	Y	Y	Y	RI
 /usr/bin/launch			Y	Y	tl	Y
 /usr/bin/link	(ie: ld)	Y	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/locate			N	.	gdr
@@ -316,12 +316,12 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/uptime			Y	Y
 /usr/bin/uudecode
 /usr/bin/uuencode
-/usr/bin/wall			N	Y	dt	Y	[G]	Y	Y	Y	RI
+/usr/bin/wall			N	Y	dt	Y	T	Y	Y	Y	RI
 /usr/bin/whatis			N	Y	gdr	Y	T	Y	Y	Y	RI	(man)
 /usr/bin/whereis		N	Y	gdr	Y	T	Y	Y	Y	R
 /usr/bin/which
 /usr/bin/who			Y	Y	dt	Y	T	Y	Y	Y	RI
-/usr/bin/whois			N	Y	dt	Y	[G]	Y	.	Y	RI
+/usr/bin/whois			N	Y	dt	Y	T	Y	.	Y	RI
 /usr/bin/write			N	Y	lb	Y
 /usr/bin/xargs
 /usr/bin/yankit			Y	Y
@@ -375,9 +375,9 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/sbin/cron			Y	Y		Y				Y
 /usr/sbin/descc			N	Y	gdr	Y	T	Y	Y	Y	RI	(describe)
 /usr/sbin/descu			N	Y	gdr	Y	T	Y	Y	Y	RI	(describe)
-/usr/sbin/getty			Y	Y	gdr	Y	[G]	Y	Y	Y	RI
+/usr/sbin/getty			Y	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/sbin/inetd			N	Y	dt	Y	[G]
-/usr/sbin/login			Y	Y	dt	Y	[G]	Y	Y	Y	RI
+/usr/sbin/login			Y	Y	dt	Y	T	Y	Y	Y	RI
 /usr/sbin/lpc			Y	Y	dt	.	.	.	.	.	.	(lpr)
 /usr/sbin/lpd			Y	Y	dt	.	.	.	.	.	.	(lpr)
 /usr/sbin/lptest		N	Y	dt	.	.	.	.	.	.	(lpr)
