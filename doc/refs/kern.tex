@@ -1,7 +1,7 @@
 %
 % GNO Kernel Reference Manual
 %
-% $Id: kern.tex,v 1.2 1997/11/28 17:10:14 gdr Exp $
+% $Id: kern.tex,v 1.3 1997/11/30 06:49:42 gdr Exp $
 % 
 
 \documentclass{report}
@@ -380,8 +380,6 @@ The common pathname operator '\~' (meaning the home
 directory) is handled by the shell; if the character appears in a
 GS/OS call it is not treated specially.
 
-\begin{tabular}{ll}
-
 \index{ChangePath}
 \index{ClearBackupBit}
 \index{Create}
@@ -393,6 +391,7 @@ GS/OS call it is not treated specially.
 \index{SetFileInfo}
 \index{SetPrefix}
 
+\begin{tabular}{ll}
 \$2004 & ChangePath \\
 \$200B & ClearBackupBit \\
 \$2001 & Create \\
@@ -403,7 +402,6 @@ GS/OS call it is not treated specially.
 \$2010 & Open \\
 \$2005 & SetFileInfo \\
 \$2009 & SetPrefix \\
-
 \end{tabular}
 
 
