@@ -1,4 +1,4 @@
-Version: $Id: status.bin,v 1.1 1997/08/08 05:11:14 gdr Exp $
+Version: $Id: status.bin,v 1.2 1997/09/05 05:07:37 gdr Exp $
 
 Person Working on Component ("Owner")
 -------------------------------------
@@ -186,6 +186,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/bison			Y	N
 /usr/bin/cal			Y
 /usr/bin/calendar
+/usr/bin/catrez				Y
 /usr/bin/cclean				Y	gdr
 /usr/bin/cjpeg				N		(add on)
 /usr/bin/cksum				Y
@@ -230,7 +231,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/lpq		(lpr)		Y	dt
 /usr/bin/lpr		(lpr)	Y	Y	dt
 /usr/bin/lprm		(lpr)		Y	dt
-/usr/bin/lseg			Y	Y
+/usr/bin/lseg			Y	Y	dave
 /usr/bin/mkdep
 /usr/bin/makedmake				gdr
 /usr/bin/man			Y	Y	gdr	Y
