@@ -33,7 +33,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	$Id: cat.c,v 1.2 1997/09/26 06:13:46 gdr Exp $
+ *	$Id: cat.c,v 1.3 1997/10/03 03:59:41 gdr Exp $
  */
 
 /*
@@ -73,9 +73,6 @@ static char const sccsid[] = "@(#)cat.c	8.2 (Berkeley) 4/27/95";
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#if defined(__GNO__) && defined(__STACK_CHECK__)
-#include <gno/gno.h>
-#endif
 
 int bflag, eflag, nflag, sflag, tflag, vflag;
 int rval;
@@ -88,8 +85,8 @@ void raw_cat __P((int));
 
 /* Interface to check on how much stack space a C program uses. */
 #if defined(__GNO__)  &&  defined(__STACK_CHECK__)
-#ifndef _STDLIB_H_
-#include <stdlib.h>
+#ifndef _GNO_GNO_H_
+#include <gno/gno.h>
 #endif
 static void report_stack(void)
 {
