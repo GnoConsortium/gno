@@ -145,7 +145,7 @@ extern	Cell	*jump(Node **, int);
 extern	Cell	*getline(Node **, int);
 extern	Cell	*getnf(Node **, int);
 extern	Cell	*array(Node **, int);
-extern	Cell	*adelete(Node **, int);
+extern	Cell	*awkdelete(Node **, int);
 extern	Cell	*intest(Node **, int);
 extern	Cell	*matchop(Node **, int);
 extern	Cell	*boolop(Node **, int);

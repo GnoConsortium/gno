@@ -471,7 +471,7 @@ Cell *array(Node **a, int n)	/* a[0] is symtab, a[1] is list of subscripts */
 	return(z);
 }
 
-Cell *adelete(Node **a, int n)	/* a[0] is symtab, a[1] is list of subscripts */
+Cell *awkdelete(Node **a, int n)	/* a[0] is symtab, a[1] is list of subscripts */
 {
 	Cell *x, *y;
 	Node *np;

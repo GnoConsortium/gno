@@ -544,3 +544,14 @@ Aug 21, 1997:
 	the behavior is the same as gawk and the intended posix standard.
 	thanks to arnold robbins for advice here.
 
+Aug 31, 1997:
+	s/adelete/awkdelete/: SGI uses this in malloc.h.
+	thanks to nelson beebe for pointing this one out.
+
+Feb 11, 1998:
+	subtle silent bug in lex.c: if the program ended with a number
+	longer than 1 digit, part of the input would be pushed back and
+	parsed again because token buffer wasn't terminated right.
+	example:  awk 'length($0) > 10'.  blush.  at least i found it
+	myself.
+

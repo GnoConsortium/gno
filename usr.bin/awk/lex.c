@@ -143,11 +143,11 @@ int gettok(char **pbuf, int *psz)	/* get next input token */
 			  || c == '.' || c == '+' || c == '-')
 				*bp++ = c;
 			else {
-				*bp = 0;
 				unput(c);
 				break;
 			}
 		}
+		*bp = 0;
 		strtod(buf, &rem);	/* parse the number */
 		unputstr(rem);		/* put rest back for later */
 		rem[0] = 0;

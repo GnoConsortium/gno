@@ -77,7 +77,7 @@ struct xx
 	{ PRINTF, "awkprintf", "printf" },
 	{ PRINT, "printstat", "print" },
 	{ CLOSE, "closefile", "closefile" },
-	{ DELETE, "adelete", "adelete" },
+	{ DELETE, "awkdelete", "awkdelete" },
 	{ SPLIT, "split", "split" },
 	{ ASSIGN, "assign", " = " },
 	{ ADDEQ, "assign", " += " },
