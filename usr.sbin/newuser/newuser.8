@@ -1,52 +1,88 @@
-.TH NEWUSER 8
+.TH NEWUSER 8 "14 February 1999" GNO "System Administration"
 .SH NAME
-.nf
-newuser  - add a new user to the system
-newuserv - add a new user to the system, subject to validation
-.fi
-.LP
+.BR newuser ,
+.BR newuserv
+\- add a new user to the system
+.SH SYNOPSIS
+.BR newuser 
+[
+.BR -v
+] [
+.B -g
+.I gid
+]
+.br
+.BR newuserv
+[
+.BR -v
+] [
+.B -g
+.I gid
+]
 .SH DESCRIPTION
-This is
+This manual page documents
 .B newuser
-for GNO/ME.  Its basic intent is
+and
+.B newuserv
+version 1.2 for GNO.  Its basic intent is
 to let people add themselves to the system without requiring the system
 administrator to do it all manually.
 .LP
 .B newuser
-will ask for real name, account name, terminal type and password (verifying
-the password once) and then create the directory /user/(account name) and
-copy a template
-.B gshrc
-into that directory.  Then it will add the user to
+will ask for a real name, account name, terminal type and password (verifying
+the password once) and then create the directory \fB/home/\fIaccount_name\fR.
+.BR newuser
+will also copy all the regular files from the
+.BR /var/adm/newuser/skel
+directory into the \fB/home/\fIaccount_name\fR directory.
+It will not recurse.
+Finally, it will add the appropriate entry to 
 .B /etc/passwd
-and exit.
+and then exit.
 .PP
 If the
 .B -v
-(verify) flag is selected, everything is done as normal, except
-that the new entry is appended to
-.B /var/adm/newuser/newusers
+(verify) flag is selected, or if invoked as
+.BR newuserv ,
+everything is done as normal, except that the new entry is appended to
+.B /var/adm/newuser/pending
 instead of being appended to
-.BR /etc/passwd ". "
+.BR /etc/passwd .
 .LP
-.SH FILES
-.nf
-.BR /var/adm/newuser/newid " -- This file holds the next available"
-userID. newuser will increment it as necessary.
-.BR /var/adm/newuser/gshrc " -- This is the 'template' gshrc file"
-that all new users will get.  In addition to this, newuser will append
-'set' commands to set $home and $user.
-.BR /etc/passwd " -- Not required if you use -v.  But what's the point"
-in newuser if you don't have it? :)
-.BR /user/ " -- Has to exist.  This is where the user's home directories"
-go.
-.fi
+Accounts are normally created with group ID 100.  The
+.B -g
+flag overrides this group ID.
+.LP
+Both
+.BR newuser
+and
+.BR newuserv
+will log created accounts via
+.BR syslogd (8)
+using the auth.info facility.
 .LP
 .B newuser
 will time out after 60 seconds of operation.
-.LP
+.SH FILES
+.IP \fB/home\fR
+The directory where new user home directories will be placed.
+.IP \fB/var/adm/newuser/newid\fR
+The text file containing the next available user ID.  It must consist
+of exactly one line, containing only a decimal number.
+.BR newuser 
+will update this file as required.
+.IP \fB/var/adm/newuser/pending\fR
+This file contains all of the 
+.BR /etc/passwd 
+entries that are waiting for approval before activation.
+.IP \fB/var/adm/newuser/skel\fR
+All regular files in this directory will be copied to the newly created
+home directory.
+.SH BUGS
+.BR newuser
+should create a lock file in 
+.BR /var/locks
+to ensure that a race condition with multiple instantiations is avoided.
+They are currently possible.
 .SH AUTHOR
-.nf
-James Brookes
-jamesb@cscihp.ecst.csuchico.edu
-.fi
+James Brookes.  Maintained by Devin Reade.

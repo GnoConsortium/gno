@@ -1,7 +1,17 @@
-After running the 'install' program, you need to create the files
-/var/adm/newuser/newid and /var/adm/newuser/gshrc.  The latter is simply
-a template gshrc file that all new users will be given.  The former is
-a file with a single integer (1-5 digits) and *nothing else*.  New users
-will be assigned the userid found in this file each time newuser is run,
-and the userid will be automatically incremented by newuser.  So you only
-have to set it up once.
+$Id: README,v 1.2 1999/02/15 00:22:10 gdr-ftp Exp $
+
+In order to run newuser/newuserv, the following files must exist.  They
+are installed as part of the GNO base distribution, but you may have to
+install them manually if you received newuser/newuserv as a standalone
+archive:
+
+/home
+	A directory.  All user home directories will be created in this
+	directory.
+/var/adm/newuser/newid:
+	A text file containing the next UID that newuser/newuserv
+	should assign.
+/var/adm/newuser/skel:
+	A directory.  All plain files in this directory will be copied
+	into a user's $HOME directory, when $HOME is created.  It is normal
+	to have a skelton glogin and gshrc in here.

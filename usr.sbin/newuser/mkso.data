@@ -1,0 +1,8 @@
+# 0
+# 1 The first column is the "real" man page; the second is the .so link.
+# 2 All paths should be relative to the /usr/man directory.  This list
+# 3 should be kept sorted.
+# 4
+# 5 $Id: mkso.data,v 1.1 1999/02/15 00:22:10 gdr-ftp Exp $
+# 6
+man8/newuser.8		man8/newuserv.8

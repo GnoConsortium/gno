@@ -1,0 +1,18 @@
+/*
+ * $Id: newuser.rez,v 1.1 1999/02/15 00:22:11 gdr-ftp Exp $
+ */
+
+#include "Types.Rez"
+#include "builddate.rez"
+
+resource rVersion (0x1, purgeable3, nocrossbank) {
+
+	{ 1, 2, 0,	/* version */
+	  release,	/* development|alpha|beta|final|release */
+          0		/* non-final release number */
+        },
+        verUS,
+        "newuser/newuserv",
+        "create new accounts\n"
+	BUILD_DATE
+};

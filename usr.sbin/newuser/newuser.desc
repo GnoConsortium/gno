@@ -1,0 +1,23 @@
+Name:    newuser
+Version: 1.2
+Shell:   GNO
+Author:  James Brookes.  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/sbin
+FTP:     ftp.gno.org
+
+Create a home directory in /home with a template $HOME/gshrc and $HOME/glogin
+for a new user, and add the user's entry into the /etc/passwd file for
+immediate access.  See also newuserv.
+
+Name:    newuserv
+Version: 1.2
+Shell:   GNO
+Author:  James Brookes.  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/sbin
+FTP:     ftp.gno.org
+
+Create a home directory in /home with a template $HOME/gshrc and $HOME/glogin
+for a new user, and add the user's entry into the /var/adm/newuser/newusers
+file for validation by the system operator.  See also newuserv.
