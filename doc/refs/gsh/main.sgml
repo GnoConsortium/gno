@@ -1,0 +1,90 @@
+<!--
+;; $Id: main.sgml,v 1.1 1999/02/21 18:46:50 gdr-ftp Exp $
+-->
+
+<!DOCTYPE book PUBLIC "-//Davenport//DTD DocBook V3.0//EN" [
+
+<!entity gsh-start    system "start.sgml">
+<!entity gsh-interact system "interact.sgml">
+<!entity gsh-product  system "product.sgml">
+<!entity gsh-commands system "commands.sgml">
+<!entity gsh-vars     system "vars.sgml">
+<!entity gsh-prefix   system "prefix.sgml">
+<!entity gsh-errors   system "errors.sgml">
+<!entity gsh-comply   system "comply.sgml">
+<!entity gsh-termcap  system "termcap.sgml">
+<!entity gsh-glossary system "glossary.sgml">
+]>
+
+<book>
+
+<bookinfo>
+
+<title>GNO Shell Users' Manual</title>
+
+<!--
+;; This form of listing the authors is the best we can get with the standard
+;; sgmltools installation.  Unfortunately, it looks mediocre in html, and
+;; downright ugly in postscript (both the title and the authors appear in
+;; a large block font).  The style sheets should probably be modified for
+;; this.
+-->
+
+<authorgroup><author>
+<firstname>Tim</firstname>
+<surname>Meekins</surname>
+</author></authorgroup>
+
+<authorgroup><author>
+<firstname>Albert</firstname>
+<surname>Chin</surname>
+</author></authorgroup>
+
+<authorgroup><author>
+<firstname>Jawaid</firstname>
+<surname>Bazyar</surname>
+</author></authorgroup>
+
+<authorgroup><author>
+<firstname>Andrew</firstname>
+<surname>Roughan</surname>
+</author></authorgroup>
+
+<authorgroup><author>
+<firstname>Devin</firstname>
+<surname>Reade</surname>
+</author></authorgroup>
+
+<authorgroup><author>
+<firstname></firstname>
+<surname></surname>
+</author></authorgroup>
+
+<copyright>
+<year>1991-1999</year>
+<holder>Procyon Enterprises</holder>
+</copyright>
+
+<pubdate>%%%date%%%</pubdate>
+
+</bookinfo>
+
+<toc>
+</toc>
+
+<!--
+;; Now list the chapters in the order in which you want them to appear.
+-->
+
+&gsh-start;
+&gsh-interact;
+&gsh-product;
+&gsh-commands;
+&gsh-vars;
+&gsh-prefix;
+&gsh-errors;
+&gsh-comply;
+&gsh-termcap;
+&gsh-glossary;
+
+</book>
