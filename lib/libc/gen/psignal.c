@@ -30,7 +30,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: psignal.c,v 1.1 1997/07/28 03:12:37 gdr Exp $
+ * $Id: psignal.c,v 1.2 1997/09/05 06:09:50 gdr Exp $
  *
  * This file is formatted for tab stops every 8 columns.
  */
@@ -71,5 +71,5 @@ psignal(unsigned int sig, const char *s)
 		(void)write(STDERR_FILENO, ": ", 2);
 	}
 	(void)write(STDERR_FILENO, c, strlen(c));
-	(void)write(STDERR_FILENO, "\n", 1);
+	(void)write(STDERR_FILENO, "\r", 1);
 }

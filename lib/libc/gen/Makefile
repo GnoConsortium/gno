@@ -1,9 +1,10 @@
 #
 # Makefile for libc/gen.
 #
-# $Id: Makefile,v 1.3 1997/07/28 03:15:55 gdr Exp $
+# $Id: Makefile,v 1.4 1997/09/05 06:09:50 gdr Exp $
 #
 
+.INCLUDE:	../../../paths.mk
 .INCLUDE: 	../../const.mk
 
 OBJ_ASM	= crypta.o setjmp.o syslog.o

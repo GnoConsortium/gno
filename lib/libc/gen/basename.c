@@ -1,7 +1,7 @@
 /*
  * These routines were written by Devin Reade for GNO v2.0.4.
  *
- * $Id: basename.c,v 1.1 1997/02/28 05:12:43 gdr Exp $
+ * $Id: basename.c,v 1.2 1997/09/05 06:09:50 gdr Exp $
  *
  * This file is formatted for tabs every 8 columns.
  */
@@ -14,6 +14,7 @@ segment "libc_gen__";
 #pragma debug 0
 #pragma memorymodel 0
 
+#include <sys/syslimits.h>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
