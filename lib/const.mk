@@ -6,7 +6,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: const.mk,v 1.2 1997/09/21 06:01:12 gdr Exp $
+# $Id: const.mk,v 1.3 1997/10/03 04:39:58 gdr Exp $
 #
 # It is critical that 13/orcacdefs/defaults.h is set up correctly,
 # including #defines for __appleiigs__ and __GNO__.  For the purpose
@@ -14,11 +14,13 @@
 # empty.
 #
 
-DEFINES  =
-INCLUDES = -I$(INCLUDE_GNO) -I$(INCLUDE_ORCA) -I$(INCLUDE_GNO_ALT)
-ASFLAGS	 = -r -c
-CFLAGS   = -r -w $(DEFINES) $(INCLUDES)
-LDFLAGS	 =
+DEFINES  +=
+INCLUDES += -I$(INCLUDE_GNO) -I$(INCLUDE_ORCA) -I$(INCLUDE_GNO_ALT)
+ASFLAGS	 += -r -c
+CFLAGS   += -r -w $(DEFINES) $(INCLUDES)
+LDFLAGS	 +=
+INSTALL   = /usr/bin/install
+CATREZ	  = /usr/bin/catrez
 
 # Byteworks' makelib pukes ... these object files are too much for it.
 MAKELIB		= 17/makelib.apw
