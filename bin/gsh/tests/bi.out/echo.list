@@ -1,0 +1,4 @@
+- - - - - - - - - -  E C H O  T E S T S  - - - - - - - - - -
+
+Testing whether the echo command inserts an extra space:
+There should be no space between -><- the '->' and '<-'

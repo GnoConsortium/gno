@@ -1,0 +1,11 @@
+Command line: echoparams '{ print "Hello, world" }' filename
+ parameter  0: 'echoparams'
+ parameter  1: ''{'
+ parameter  2: 'print'
+ parameter  3: 'Hello, world'
+ parameter  4: '}''
+ parameter  5: 'filename'
+Reparsing...
+ parameter  0: 'echoparams'
+ parameter  1: '{ print "Hello, world" }'
+ parameter  2: 'filename'

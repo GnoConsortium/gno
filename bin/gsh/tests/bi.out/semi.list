@@ -1,0 +1,8 @@
+Command line: echoparams "This ; will" "see if ; are confusing"
+ parameter  0: 'echoparams'
+ parameter  1: 'This ; will'
+ parameter  2: 'see if ; are confusing'
+Reparsing...
+ parameter  0: 'echoparams'
+ parameter  1: 'This ; will'
+ parameter  2: 'see if ; are confusing'

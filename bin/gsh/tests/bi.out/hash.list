@@ -1,0 +1,25 @@
+apropos         cp              gsh.debug       pwd             testfork        
+aroff           cpp             gsh.nodebug     rcp             testjobs        
+asml            ctags           gsh.r           releasemem      testjobs2       
+assemble        cut             gsh0            removerez       time            
+aw30            date            head            rlogin          touch           
+awk             day             help            rm              tr              
+basename        describe        hostname        rmdir           true            
+binprint        df              init            rsh             udl             
+callsystem      diff            install         script          uname           
+cat             dirname         kill            sed             uncompress      
+catrez          dmake           last            setvers         uniq            
+center          dotests         launch          shellenv        unshar          
+chmod           du              less            singletc        uptime          
+chtyp           echo            link            sleep           vi              
+cksum           echoparams      logger          smallbi         wall            
+cmdtest         egrep           ls              split           wc              
+cmdtest4fr      false           lseg            strings         whatis          
+cmdtestmul      fgrep           man             stty            whereis         
+cmp             fmt             mkdir           su              who             
+cmpl            freeze          more            sum             whois           
+coff            ftp             nroff           tail            yankit          
+colcrt          fulltests.mul   passwd          tar             yes             
+compile         getvers         print10params   tee             
+compress        grep            ps              test            
+copycat         gsh             purge           testedit        
