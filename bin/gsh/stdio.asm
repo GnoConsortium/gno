@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: stdio.asm,v 1.5 1998/09/08 16:53:14 tribby Exp $
+* $Id: stdio.asm,v 1.6 1998/10/26 17:04:51 tribby Exp $
 *
 **************************************************************************
 *
@@ -300,8 +300,12 @@ getchar	START
 
 readloop	Read	inReadParm
 	bcc	okread
-	ldy	#-1	;return EOF on ALL errors
-	jmp	done2
+	ldy	#-1	Return EOF if error code
+	cmp	#$4C	 is "EOF encountered".
+	beq	go_done2
+	ora	#$FF00	For all other errors,
+	tay		 hi-byte is $FF, low-byte is error.
+go_done2	jmp	done2
 
 okread	stz	inindex
 	lda	insize

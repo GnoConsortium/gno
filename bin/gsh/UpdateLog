@@ -1,7 +1,51 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Oct 10 98    [dmt] Found race condition: when forked process completes
+	     quickly, the parent process may not ever receive its completion
+	     signal. Fix: ensure process exists by calling kill(pid,0)
+	     and checking status before calling pwait (cmd.asm).
+	     Change calls to set and reset handler for signal 17 (SIGSTOP)
+	     to do it for signal 18 (SIGTSTP) (17 can't be caught; 18 is).
+
+Oct  7 98    [dmt] Check for directory stack full in pushd, and report
+	     new error message: 'pushd: Directory stack full'.  (Previously,
+	     50 pushds would cause a crash.)
+	     Check for parameter in pushd "+n" <=0, and report a new error
+	     message: 'pushd: Invalid number'. (Previously, tried to chdir
+	     to the parameter.)
+
+Oct  6 98    [dmt] Before calling pwait (to wait for child process) in
+	     cmd.asm, enable the child status signal handler; change it
+	     back to its previous state after the pwait call. This partially
+	     fixes the problem of the shell waiting forever when a shell
+	     exec file sources another exec file that contains a command
+	     that causes a fork.
+	     command() checked for argv==0 before calling invoke(), but
+	     invoke() also checks. Move invoke()'s error message ("specify
+	     a command before redirecting.") into command().
+
+Sep 27 98    [dmt] Add quotes around null parameters on the command line
+	     so they are parsed by the target command (PR#84)
+
+Sep 25 98    [dmt] If a command appends to stdout (echo test >>&/tmp/err),
+	     then stdin gets closed. This was due to errappend being
+	     defined as pipefds+2 rather than pipefds+4 in cmd.asm.
+
+Sep 23 98    [dmt] If there is an error reading stdin, gsh would go into
+	     an infinite loop of beeping and requesting more input. Changed
+	     getchar (in stdio.asm) and GetCmdLine (in edit.asm) to report
+	     the error and terminate.
+
+Sep  9 98    [dmt] Output piped to an unfound command caused gsh to
+	     terminate.  This was due to an interface change to getpgrp(2):
+	     it now returns the process group of the caller.  To get the
+	     process group number of the parameter pid, the call has to
+	     be made to _getpgrp(2).  This change was made in invoke.asm to
+	     fix the bug.  Additional updates were made in jobs.asm.
+
 Sep  7 98    [dmt] Changes to this point checked-in to master archive.
+	     Released as version 2.0d4
 
 Sep  7 98    [dmt] In "gettoken" (cmd.asm), decrement buf (pointer to
 	     command line) when EOL is reached; otherwise if the character
@@ -37,6 +81,7 @@ Aug  4 98    [dmt] Fixed defects in wordmatch (edit.asm) related to
 Aug  3 98    [dmt] Entabbed all the asm files (saved >36,000 bytes).
 
 Aug  3 98    [dmt] Changes to this point checked-in to master archive.
+	     Released as version 2.0d3
 
 Aug  2 98    [dmt] Remove alloc256/free256 and associated data. Replace
 	     with fixed 64-byte buffer for command filename (hash.asm)
@@ -74,6 +119,7 @@ Jul 20 98    [dmt] Changed expand.asm to use InitWildcardGS and
 	     NextWildcardGS instead of their obsolete counterparts.
 
 Jul 20 98    [dmt] Changes up to this point checked-in to master archive.
+	     Released as version 2.0d3
 
 Jul 19 98    [dmt] Changed edit.asm to use ReadIndexedGS, InitWildcardGS,
 	     NextWildcardGS, instead of their obsolete counterparts.
@@ -133,6 +179,7 @@ Jul  5 98    [dmt] Changed default order for copying files in $PATH dirs
 	     pathname to ExpandPathGS.
 
 Jun 29 98    [dmt] Changes up to this point checked-in to master archive.
+	     Released as version 2.0d2
 
 Jun 28 98    [dmt] Added InitVar routine to shellvar.asm to read values
 	     of all environment variables tracked in vardata.

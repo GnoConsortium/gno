@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: invoke.asm,v 1.7 1998/09/08 16:53:10 tribby Exp $
+* $Id: invoke.asm,v 1.8 1998/10/26 17:04:50 tribby Exp $
 *
 **************************************************************************
 *
@@ -28,7 +28,7 @@
 *	returns with carry set/clear to indicate failure/success
 *
 *  invoke	subroutine (2:argc,4:argv,4:sfile,4:dfile,4:efile,2:app,
-*		2:eapp,2:bg,4:cmd,2:jobflag,2:pipein,2:pipeout,
+*		2:eapp,2:bg,4:cline,2:jobflag,2:pipein,2:pipeout,
 *		2:pipein2,2:pipeout2,4:pipesem)
 *	return 2:rtnval
 *
@@ -225,117 +225,111 @@ p	equ	0
 biflag	equ	p+4
 ptr	equ	biflag+2
 rtnval	equ	ptr+4	Return pid, -1 (error), or 0 (no fork)
-dir	equ	rtnval+2
-space	equ	dir+4 
+cpath	equ	rtnval+2
+space	equ	cpath+4 
 
- subroutine (2:argc,4:argv,4:sfile,4:dfile,4:efile,2:app,2:eapp,2:bg,4:cmd,2:jobflag,2:pipein,2:pipeout,2:pipein2,2:pipeout2,4:pipesem),space
+ subroutine (2:argc,4:argv,4:sfile,4:dfile,4:efile,2:app,2:eapp,2:bg,4:cline,2:jobflag,2:pipein,2:pipeout,2:pipein2,2:pipeout2,4:pipesem),space
 
 	ld2	-1,rtnval
-	stz	biflag	;not a built-in
+	stz	biflag	Clear built-in flag.
 
-	lda	argc	Get number of arguments.
-	bne	chknull	If != 0 continue with processing.
-
-	lda	sfile	If any of the file pointers
-	ora	sfile+2	 are != NULL,
-	ora	dfile
-	ora	dfile+2
-	ora	efile
-	ora	efile+2
-	beq	nulldone
-
-	ldx	#^spcmdstr	print error message:
-	lda	#spcmdstr	' specify a command before redirecting.'
-	jsr	errputs
-
-nulldone	jmp	done
+	lda	argc	If number of arguments == 0,
+	bne	chknull	 nothing to do. (Shouldn't happen
+nulldone	jmp	done	  because invoke checks argc==0).
 
 ;
 ; Check for null command
 ;
-chknull	ldy	#2	Move command line
+chknull	ldy	#2	Move 1st argument
 	lda	[argv]	 pointer to
-	sta	dir	  dir (4 bytes).
+	sta	cpath	  cpath (4 bytes).
 	lda	[argv],y
-	sta	dir+2	If pointer == NULL
-	ora	dir
+	sta	cpath+2	If pointer == NULL
+	ora	cpath
 	beq	nulldone	  all done.
-	lda	[dir]	If first character == '\0',
+	lda	[cpath]	If first character == '\0',
 	and	#$FF
 	beq	nulldone	  all done.
 
 ;
-; check for file
+; Check command: is it builtin, in hash table, etc?
 ;
-checkfile	anop
-
-	pei	(dir+2)
-	pei	(dir)
-	jsl	IsBuiltin	;check builtin first
-	cmp	#-1
+	pei	(cpath+2)	IsBuiltin returns
+	pei	(cpath)	 0 if forked built-in
+	jsl	IsBuiltin	 1 if non-forked built-in
+	cmp	#-1	 -1 if not a built-in
 	jne	trybuiltin
 
+;
 ; Command is not listed in the built-in table. See if it was hashed
-
-	pei	(dir+2)
-	pei	(dir)
+;
+	pei	(cpath+2)
+	pei	(cpath)
 	ph4	hash_table
 	ph4	#hash_paths
 	jsl	search
 	cmp	#0
 	bne	changeit
 	cpx	#0
-	beq	skip
+	beq	noentry
 
-changeit	sta	dir
-	stx	dir+2
+changeit	sta	cpath	Use full path from
+	stx	cpath+2	 hash table.
 
-skip	lock	mutex2
-	pei	(dir+2)
-	pei	(dir)
+;
+; Get information about the command's filename
+;
+noentry	lock	info_mutex
+
+	pei	(cpath+2)
+	pei	(cpath)
 	jsr	c2gsstr
 	sta	GRecPath
 	sta	ptr
 	stx	GRecPath+2
 	stx	ptr+2
-
 	GetFileInfo GRec
-	unlock mutex2
-	jcs	notfound
 
-; File type $B5 is a GS/OS Shell application (EXE)
+	unlock info_mutex
+	jcs	notfound	If error getting info, print error.
+
+; Is file type $B5: GS/OS Shell application (EXE)?
 	if2	GRecFileType,eq,#$B5,doExec
 
-; File type $B3 is a GS/OS application (S16)
+; Is file type $B3: GS/OS application (S16)?
 	if2	@a,eq,#$B3,doExec
 
-	ldx	vardirexec
+	ldx	vardirexec	If $NODIREXEC isn't set, and
 	bne	ft02
 	cmp	#$0F
-	jeq	doDir	Target is a directory; change to it.
+	jeq	doDir	 file is a directory: change to it.
 
-; File type $B0 is a source code file (SRC)
+; Is file type $B0: source code file (SRC)?
 ft02	if2	@a,ne,#$B0,badfile
 ; Type $B0, Aux $00000006 is a shell command file (EXEC)
 	if2	GRecAuxType,ne,#6,badfile
 	if2	GRecAuxType+2,ne,#0,badfile
 	jmp	doShell
 
-
-badfile	ldx	dir+2
-	lda	dir
+;
+; Command file is not an appropriate type
+;
+badfile	ldx	cpath+2
+	lda	cpath
 	jsr	errputs
 	ldx	#^err1	Print error message:
 	lda	#err1	 'Not executable.'
 	jsr	errputs
-free	pei	(ptr+2)
-	pei	(ptr)
+free	pei	(ptr+2)	Free memory used to hold
+	pei	(ptr)	 GS/OS string with path.
 	jsl	nullfree
 	jmp	done
 
-;
-; launch an executable
-;
+*
+* ---------------------------------------------------------------
+*
+* Launch an executable (EXE or S16 file)
+
 doExec	pei	(ptr+2)
 	pei	(ptr)
 	jsl	nullfree
@@ -344,45 +338,13 @@ doExec	pei	(ptr+2)
 	jsr	postfork
 	jmp	done
 
-
-invoke0	phk
-	plb
 ;
-; make a copy of cmd
+; Forked shell starts here...
 ;
-	pha
-	pha
-	tsc
-	phd
-	tcd
-	ldx	#0
-	tsc	
-	FindHandle @xa,1
-	ldy	#6
-	lda	[1],y	;This is the UserID!
-	and	#$F0FF
-	pha
-	ph4	_cmd
-	jsr	cstrlen
-	inc	a
-	ply
-	pha
-	ldx	#0
-	NewHandle (@xa,@y,#$4018,#0),1
-	ply
-	ldx	#0
-	PtrToHand (_cmd,1,@xy)
-	ldy	#2
-	lda	[1],y
-	tax
-	lda	[1]
-	pld
-	ply
-	ply
-	phx		;_cmd
-	pha
+invoke0	phk		Make sure data bank register
+	plb		 is the same as program bank.
 ;
-; make a copy of dir
+; Make copies of command line (cline) and path (cpath) for child
 ;
 	pha
 	pha
@@ -396,7 +358,7 @@ invoke0	phk
 	lda	[1],y	;This is the UserID!
 	and	#$F0FF
 	pha
-	ph4	_dir
+	ph4	_cline
 	jsr	cstrlen
 	inc	a
 	ply
@@ -405,7 +367,7 @@ invoke0	phk
 	NewHandle (@xa,@y,#$4018,#0),1
 	ply
 	ldx	#0
-	PtrToHand (_dir,1,@xy)
+	PtrToHand (_cline,1,@xy)
 	ldy	#2
 	lda	[1],y
 	tax
@@ -413,24 +375,64 @@ invoke0	phk
 	pld
 	ply
 	ply
-	phx		;_dir
+	phx		;_cline
+	pha
+;
+	pha
+	pha
+	tsc
+	phd
+	tcd
+	ldx	#0
+	tsc	
+	FindHandle @xa,1
+	ldy	#6
+	lda	[1],y	;This is the UserID!
+	and	#$F0FF
+	pha
+	ph4	_cpath
+	jsr	cstrlen
+	inc	a
+	ply
+	pha
+	ldx	#0
+	NewHandle (@xa,@y,#$4018,#0),1
+	ply
+	ldx	#0
+	PtrToHand (_cpath,1,@xy)
+	ldy	#2
+	lda	[1],y
+	tax
+	lda	[1]
+	pld
+	ply
+	ply
+	phx		;_cpath
 	pha
 
 	jsl	infork
 	bcs	invoke1
+;
+; Call _execve(_cpath,_cline) to replace forked shell with executable file
+;
 	case	on
 	jsl	_execve	For 2.0.6: call _execve, not execve
 	case	off
 	rtl
+;
+; Error reported by infork; clean up stack and return to caller
+;
 invoke1	pla
 	pla
 	pla
 	pla
 	rtl
 
-;
-; Next command is a directory name, so change to that directory
-;
+*
+* ---------------------------------------------------------------
+*
+* Next command is a directory name, so change to that directory
+
 doDir	lock	cdmutex
 	mv4	GRecPath,PRecPath
 	SetPrefix PRec
@@ -438,10 +440,13 @@ doDir	lock	cdmutex
 	stz	rtnval	Return value: no fork done.
 	jmp	free
 
-;
-; Next command is a shell command file: fork a shell script
-;
-doShell	inc	biflag	;don't free argv...
+*
+* ---------------------------------------------------------------
+*
+* Next command is a shell command file: fork a shell script
+
+doShell	anop
+	inc	biflag	;don't free argv...
 	jsr	prefork
 
 * int fork2(void *subr, int stack, int prio, char *name, word argc, ...)
@@ -458,26 +463,32 @@ doShell	inc	biflag	;don't free argv...
 	jsl	fork2
 	case	off
 
-*	fork	#exec0
 	jsr	postfork
 	jmp	free
 
-exec0	ph2	_argc	;for argfree
+;
+; Forked shell starts here...
+;
+exec0	anop
+	ph2	_argc	;for argfree
 	ph4	_argv
 
-	ph4	_dir	;for shellexec
+	ph4	_cpath	ShellExec parameters
 	ph2	_argc
 	ph4	_argv
 	jsl	infork
 	bcs	exec0c
 	signal (#SIGCHLD,#0)
 	PushVariablesGS NullPB
-	pea	1
+	pea	1	jobflag = 1
 	jsl	ShellExec
 	jsl	argfree
 	PopVariablesGS NullPB
 	rtl
 
+;
+; Error reported by infork; clean up stack and return to caller
+;
 exec0c	pla
 	pla
 	pla
@@ -511,8 +522,8 @@ trybuiltin	inc	biflag	It's a built-in. Which type?
 ;
 ; Control transfers here for a forked built-in command
 ;
-forkbuiltin	cop	$7F	Give palloc a chance
-
+forkbuiltin	anop
+	cop	$7F	Give palloc a chance
 	ph2	_argc
 	ph4	_argv
 	jsl	infork
@@ -520,12 +531,15 @@ forkbuiltin	cop	$7F	Give palloc a chance
 	jsl	builtin
 	rtl
 
+;
 ; Error reported by infork; clean up stack and return to caller
+;
 fork0c	pla
 	pla
 	pla
 	rtl
 
+* ---------------------------------------------------------------
 
 ;
 ; It's a non-forked builtin
@@ -558,46 +572,59 @@ notfound	pei	(ptr+2)
 	lda	pipein
 	beq	notfound0
 
+; Input being piped into a command that was not found.
+
 	ssignal _semaphore
 	sdelete _semaphore
+
 	mv4	pjoblist,p
 	ldy	#16	;p_jobid
-	lda	[p],y
-	getpgrp @a
+	lda	[p],y	Get forked process's pid.
+	_getpgrp @a	Get forked process's group number.
 	eor	#$FFFF
 	inc	a
-	kill	(@a,#9)
+	kill	(@a,#9)	Kill all processes in that group.
 	sigpause #0
 notfound0	anop
 
 
 done	cop	$7F
-	lda	biflag
+	lda	biflag	If built-in flag is clear,
 	bne	skipfrarg
 
-	pei	(argc)
+	pei	(argc)	 free arguments.
 	pei	(argv+2)
 	pei	(argv)
 	jsl	argfree
 
-skipfrarg	pei	(cmd+2)
-	pei	(cmd)
+skipfrarg	pei	(cline+2)	Free command-line.
+	pei	(cline)
 	jsl	nullfree
 
 	return 2:rtnval
+
+
+* ---------------------------------------------------------------
+*
+* Support routines
+*
+* ---------------------------------------------------------------
+
 ;
+; Tasks to do just before forking
 ;
-; stuff to do just before forking
-;
-prefork	lock	mutex	
+prefork	lock	fork_mutex	Lock the fork mutual exclusion.
 	SetInGlobals (#$FF,#00)
+;
+; Move essential parameters from stack to mutual-exclusion protected memory
+;
 	mv4	sfile,_sfile
 	mv4	dfile,_dfile
 	mv4	efile,_efile
 	mv2	app,_app
 	mv2	eapp,_eapp
-	mv4	cmd,_cmd
-	mv4	dir,_dir
+	mv4	cline,_cline
+	mv4	cpath,_cpath
 	mv2	argc,_argc
 	mv4	argv,_argv
 	mv2	pipein,_pipein
@@ -608,73 +635,87 @@ prefork	lock	mutex
 	mv2	jobflag,_jobflag
 	lda	[pipesem]
 	sta	_semaphore
-	lda	pipesem
-	sta	putsem+1
-	lda	pipesem+1
+
+	lda	pipesem	Set address of
+	sta	putsem+1	 semaphone in
+	lda	pipesem+1	  LDA instruction.
 	sta	putsem+2
+
 	rts
 
+* ---------------------------------------------------------------
+
 ;
-; stuff to do right after forking
+; Tasks the parent process does right after forking
 ;
 postfork	sta	rtnval
-	lda	pipein
+	lda	pipein	If pipein != 0,
 	beq	postfork2
 	sta	CloseRef
-	Close CloseParm
-postfork2	lda	pipeout
+	Close CloseParm		close pipein.
+
+postfork2	lda	pipeout	If pipeout != 0,
 	beq	postfork3
 	sta	CloseRef
-	Close CloseParm
-postfork3	lda	rtnval
+	Close CloseParm		close pipeout.
+
+postfork3	lda	rtnval	If return value == -1,
 	cmp	#-1
 	bne	postfork4	
-	ldx	#^deadstr	Print error message:
-	lda	#deadstr	 'Cannot fork (too many processes?)'
+	ldx	#^deadstr	  Print error message:
+	lda	#deadstr	   'Cannot fork (too many processes?)'
 	jsr	errputs
-	unlock mutex
-	jmp	done
+	unlock fork_mutex	  Unlock the fork mutual exclusion.
+	jmp	postfork6	  Return to caller.
 
 postfork4	ldx	jobflag
 	dex
-	beq	postfork5
-	pha
+	beq	postfork5	If jobflag == 1,
+	pha		
 	pei	(bg)
-	pei	(cmd+2)
-	pei	(cmd)
-	lda	pipein
+	pei	(cline+2)
+	pei	(cline)
+	lda	pipein	  if pipein == 0,
 	bne	postfork4a
-	jsl	palloc
-	bra	postfork5
-postfork4a	jsl	pallocpipe
-postfork5	lda	>mutex	;DANGER!!!!! Assumes knowledge of
+	jsl	palloc		palloc(0,cline)
+	bra	postfork5	  else
+postfork4a	jsl	pallocpipe		pallocpipe(0,cline)
+
+postfork5	anop
+;
+; Wait for fork mutual exclusion lock to clear (cleared by infork)
+;
+	lda	>fork_mutex	;DANGER!!!!! Assumes knowledge of
 	beq	postfork6	;lock/unlock structure!!!!!!!!
 	cop	$7F
 	bra	postfork5
+
 postfork6	rts
 
-;
-; stuff to do in fork
-;
-infork	phk
-	plb
+* ---------------------------------------------------------------
 
-	lda	_jobflag
-	bne	invoke0b
+;
+; Startup tasks by forked process
+;
+infork	phk		Make sure data bank register
+	plb		 is the same as program bank.
+
+	lda	_jobflag	If jobflag == 0,
+	bne	infork0b
 
 	Open	ttyopen
-	jcs	doneinfork
+	jcs	errinfork
 
 	lda	_pipein
-	bne	invoke0a
-	tcnewpgrp ttyref
-invoke0a	settpgrp ttyref
-	lda	_bg	;if in background then reset tty to
+	bne	infork0a	If not in pipeline,
+	tcnewpgrp ttyref	 allocate new process group.
+infork0a	settpgrp ttyref	Set current process to have proc group.
+	lda	_bg	If in background,
 	and	#$FF
-	beq	invoke0b	;to the shell process group
-	tctpgrp (gshtty,gshpid)
+	beq	infork0b
+	tctpgrp (gshtty,gshpid)	  reset tty to the shell process group.
 
-invoke0b	ph4	_sfile
+infork0b	ph4	_sfile	Redirect I/O
 	ph4	_dfile
 	ph4	_efile
 	ph2	_app
@@ -684,40 +725,58 @@ invoke0b	ph4	_sfile
 	ph2	_pipein2
 	ph2	_pipeout2
 	jsl	redirect
-	jcs	doneinfork
+	jcs	errinfork
 
-	unlock mutex
+	unlock fork_mutex
 
+;
+; Wait on appropriate pipe semaphores
+;
 	lda	_pipein
-	bne	invoke0c
+	bne	infork0c
 	lda	_pipeout
-	beq	invoke0d
-	screate #0
-putsem	sta	>$FFFFFF
-	swait @a
-	bra	invoke0d
-invoke0c	lda	_pipeout
-	bne	invoke0d
-waitsemy	lda	_semaphore
+	beq	clean_exit
+
+;
+; _pipein == 0  &&  _pipeout != 0
+;
+	screate #0	Create a semaphore with count=0.
+putsem	sta	>$FFFFFF	Store semaphore number in pipesem.
+	swait @a	Block on semaphore until ssignal.
+	bra	clean_exit
+
+infork0c	lda	_pipeout
+	bne	clean_exit
+;
+; _pipein != 0  &&  _pipeout != 0
+;
+waitsemy	lda	_semaphore	While _semaphore == 0,
 	bne	goodsemy
-	cop	$7F
+	cop	$7F		allow other processes to run.
 	bra	waitsemy
-goodsemy	ssignal _semaphore
-	sdelete _semaphore
+goodsemy	ssignal _semaphore	Release _semaphore
+	sdelete _semaphore	 and delete it.
 
-invoke0d	anop
-
+clean_exit	anop
 	clc
 	bra	indone
+;
+; Arrive at "errinfork" if ttyopen or redirect didn't work.
+;
+errinfork	unlock fork_mutex
+;	sec		Note: carry already set
 
-doneinfork	unlock mutex
-	sec
-indone	rtl
+indone	rtl		Return to caller; status in carry.
 	   
-mutex	key
-mutex2	key
-cdmutex	key
 
+
+fork_mutex	key		Mutual exclusion for forking
+info_mutex	key		Mutual exclusion for GetFileInfo
+cdmutex	key		Mutual exclusion for SetPrefix
+
+;
+; Variables protected by fork_mutex (set by parent, used by child process)
+;
 _argc	dc	i2'0'
 _argv	dc	i4'0'
 _sfile	dc	i4'0'
@@ -725,8 +784,8 @@ _dfile	dc	i4'0'
 _efile	dc	i4'0'
 _app	dc	i2'0'
 _eapp	dc	i2'0'
-_cmd	dc	i4'0'
-_dir	dc	i4'0'
+_cline	dc	i4'0'
+_cpath	dc	i4'0'
 _pipein	dc	i2'0'
 _pipeout	dc	i2'0'
 _pipein2	dc	i2'0'
@@ -735,10 +794,12 @@ _bg	dc	i2'0'
 _jobflag	dc	i2'0'
 _semaphore	dc	i2'0'
 
+;
+; String constants
+;
 str	dc	c'[0]',h'0d00'
 err1	dc	c': Not executable.',h'0d00'
 err2	dc	c': Command not found.',h'0d00'
-spcmdstr	dc	c'Specify a command before redirecting.',h'0d00'
 deadstr	dc	c'Cannot fork (too many processes?)',h'0d00' ;try a spoon
 
 
@@ -759,6 +820,7 @@ CloseRef	dc	i2'0'
 
 Err	dc	i2'0'
 
+; Parameter block for opening tty
 ttyopen	dc	i2'2'
 ttyref	dc	i2'0'
 	dc	i4'ttyname'

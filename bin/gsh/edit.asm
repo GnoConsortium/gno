@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: edit.asm,v 1.6 1998/09/08 16:53:08 tribby Exp $
+* $Id: edit.asm,v 1.7 1998/10/26 17:04:50 tribby Exp $
 *
 **************************************************************************
 *
@@ -121,23 +121,33 @@ nextchar	jsr	cursoron
 	jsr	flush
 	jsr	getchar
 	sta	4
-	ldx	signalled
+	ldx	signalled	If signal was received,
 	beq	nextchar2
-	jsr	cmdsig
-;	bra	cmdloop
+	jsr	cmdsig	 acknowledge it.
 
 nextchar2	jsr	cursoroff
-	lda	4
-	cmp	#-1
+	lda	4	Get results of getchar.
+	cmp	#-1	EOF?
 	beq	eof
-	cmp	#4	;CTL-D
-	bne	findcmd
+	cmp	#4	CTL-D? (treated same as EOF)
+	beq	eof
+	cmp	#$FF00	Error?
+	bcc	findcmd
+	and	#$00FF
+	sta	ErrError
+	ErrorGS Err	  yes--print error code.
+	bra	reterr
+;
+; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
+;
+Err	dc	i2'1'	pCount
+ErrError	ds	2	Error number
 
 eof	ldx	cmdlen
 	bne	findcmd
 	lda	varignore
 	bne	findcmd
-	jsr	cursoron
+reterr	jsr	cursoron
 	ioctl	(#1,#TIOCSETP,#oldsgtty)
 	ioctl (#1,#TIOCSETK,#oldttyk)
 	ioctl (#1,#TIOCSLTC,#oldltc)
@@ -243,6 +253,7 @@ cmdov2	lda	insertflag
 	cmp	#0
 	bne	cmdov2a
 	rts
+
 cmdov2a	ldx	#0
 cmdov3	if2	@y,eq,cmdlen,cmdov4
 	lda	cmdline,y

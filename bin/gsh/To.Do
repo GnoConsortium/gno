@@ -1,27 +1,40 @@
-Last updated: July 5, 1998  By: Dave Tribby
+Last updated: Oct. 25, 1998  By: Dave Tribby
 
-For more bug reports, see also http://www.gno.org/~gno/bugs.html
+For more bug reports, see http://www.gno.org/~gno/bugs.html
 
 Completed items are reported in file UpdateLog.
 
 
-Gsh requires the v2.0.4 ltermcap to link.  Termcap has changed in v2.0.6,
-and gsh should be updated to reflect this.
+Executing the following exec file often results in a hang:
+  # Create exec file
+  set tmpcmd=/tmp/testcmds
+  echo "echo Sourcing $tmpcmd" > $tmpcmd
+  echo "/bin/ps -l"           >> $tmpcmd
+  chtyp -l exec $tmpcmd
+  # Source that file; usually doesn't return
+  source $tmpcmd
+
+Allow redirection of built-in commands' I/O even if they aren't forked.
+
+Rather than have each built-in command always be either forked or
+non-forked, check dynamically and only fork when it's really necessary
+(background or piped).
 
 Identify limits built into gsh and how they can be changed; for example,
 size of $PATH <= 256; max programs in hash table = 256.
-
-Allow redirection of built-in commands' I/O even if they aren't forked.
 
 When a background process finishes and there's text in the input buffer,
 the next keypress correctly reprints the edit line but the key itself does
 not get put in the buffer.
 
-running a process in the background from inside a script (not 'source',
+Running a process in the background from inside a script (not 'source',
 but executing the script as a command) causes the shell to wait for that
 background process to end - not exactly what we want.
 
-usage for alias and hash
+Usage for alias and hash
+
+Gsh requires the v2.0.4 ltermcap to link.  A new version of the termcap
+library is proposed for GNO v2.0.6, and gsh may require updates.
 
 job control monitor for defunct processes when waiting.
 

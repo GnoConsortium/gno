@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: dir.asm,v 1.6 1998/09/08 16:53:07 tribby Exp $
+* $Id: dir.asm,v 1.7 1998/10/26 17:04:50 tribby Exp $
 *
 **************************************************************************
 *
@@ -25,11 +25,11 @@
 *
 * InitDStack	
 *
-* dirs	
+* dirs	built-in command
 *
-* pushd	
+* pushd	built-in command
 *
-* popd	
+* popd	built-in command
 *
 * path2tilde	
 *
@@ -88,6 +88,7 @@ space	equ	arg+4
 	beq	showshort
 	dec	a
 	bne	using
+
 	ldy	#4
 	lda	[argv],y
 	sta	arg
@@ -108,12 +109,12 @@ using	ldx	#^usingstr
 	jsr	errputs
 	bra	exit
 
-showlong	jsl	dotods
+showlong	jsl	dotods	Set top of stack to current directory.
 	pea	0
 	jsl	showdir
 	bra	exit
 
-showshort	jsl	dotods
+showshort	jsl	dotods	Set top of stack to current directory.
 	pea	1
 	jsl	showdir
 
@@ -144,46 +145,52 @@ space	equ	arg+4
 
 	subroutine (4:argv,2:argc),space
 
-	lda	argc
-	dec	a
-	beq	xchange
-	dec	a
-	bne	usage
+	lda	argc	Get number of arguments.
+	dec	a	If no parameters,
+	beq	xchange	 exchange top two dirs on stack.
+	dec	a	If > 1 parameter,
+	bne	usage	 print usage string.
 	
-	ldy	#4
-	lda	[argv],y
-	sta	arg
+	ldy	#4	Move parameter pointer from
+	lda	[argv],y	 argv array to direct
+	sta	arg	  page variable "arg".
 	ldy	#6
 	lda	[argv],y
 	sta	arg+2
-	lda	[arg]
-	and	#$FF
-	cmp	#'+'
-	beq	rotate
-	jmp	godir
 
+	lda	[arg]	If first character
+	and	#$FF	 of parameter is
+	cmp	#'+'	  "+",
+	beq	rotate		do the rotate;
+	jmp	godir		else push the directory.
+
+;
+; More than one parameter provided; print usage string and exit.
+;
 usage	ldx	#^usagestr
 	lda	#usagestr
-	jsr	errputs
-	jmp	exit
+	jmp	prerrmsg
 
-xchange	lda	tods	
-	bne	xgoodie
-	ldx	#^err1
-	lda	#err1
-	jsr	errputs
-	jmp	exit
-xgoodie	jsl	dotods
+;
+; Either no parameter or "+" provided; exchange directory stack entries.
+;
+xchange	lda	tods	Get index to top of dir stack.
+	bne	xgoodie	If 0,
+	ldx	#^err1		print error message
+	lda	#err1		"No other directory"
+	jmp	prerrmsg
+
+xgoodie	jsl	dotods	Set top of stack to current directory.
 	lda	tods
 	dec	a
 	asl	a
 	asl	a
-	tax
+	tax		X = offset to tos-1.
 	lda	tods
 	asl	a
 	asl	a
-	tay
-	lda	dirstack,x
+	tay		Y = offset to tos.
+	lda	dirstack,x	Swap tos-1 and tos.
 	pha
 	lda	dirstack,y
 	sta	dirstack,x
@@ -195,29 +202,36 @@ xgoodie	jsl	dotods
 	sta	dirstack+2,x
 	pla
 	sta	dirstack+2,y
-	jmp	gototop
-		          
+	jmp	gototop	chdir to the new tos.
+
+;
+; Parameter = +n; do the rotate
+;
 rotate	add4	arg,#1,p
 	pei	(p+2)
 	pei	(p)
 	jsr	cstrlen
 	tax
-	Dec2Int (p,@x,#0),@a
-	sta	count
-	cmp	#0
-	beq	godir
-	lda	tods
-	beq	roterr
-	lda	count
-	cmp	tods
+	Dec2Int (p,@x,#0),@a	Convert parameter to decimal
+	sta	count	 and store in count.
+	cmp	#0	If parameter is 0
+	beq	badnum	 or negative,
+	bmi	badnum	  report "invalid number".
+	cmp	tods	If count >= tos,
 	beq	rotloop
 	bcc	rotloop
 
-roterr	ldx	#^err2
-	lda	#err2
-	jsr	errputs
-	jmp	exit
+roterr	ldx	#^err2	   Print error message:
+	lda	#err2	    Directory stack not that deep
+	jmp	prerrmsg
 
+badnum	ldx	#^errbadnum	Print error message:
+	lda	#errbadnum	  Invalid number
+	jmp	prerrmsg
+
+;
+; Loop to rotate entries in directory stack
+;
 rotloop	lda	tods
 	dec	a
 	asl	a
@@ -244,25 +258,9 @@ nextrot	pla
 	sta	dirstack+2
 	dec	count
 	bne	rotloop
-	bra	gototop
-
-godir	jsl	dotods
-	pei	(arg+2)
-	pei	(arg)
-	jsl	gotodir
-	bne	exit
-
-	inc	tods
-	lda	tods
-	asl	a
-	asl	a
-	tay
-	lda	#0
-	sta	dirstack,y
-	sta	dirstack+2,y
-	jsl	dotods
-	bra	done
-
+;
+; chdir to the top-of-stack directory
+;
 gototop	lda	tods
 	asl	a
 	asl	a
@@ -272,17 +270,50 @@ gototop	lda	tods
 	lda	dirstack,y
 	pha
 	jsl	gotodir
+	bra	done	All done.
 
-done	lda	varpushdsil
+
+;
+; Parameter = directory name; add it to the stack
+;
+godir	anop
+	lda	tods
+	cmp	#MAXD-1	If index >= maximum,
+	bcc	stackok
+	ldx	#^errfull		print error message.
+	lda	#errfull
+prerrmsg	jsr	errputs
+	bra	exit
+stackok	anop
+	jsl	dotods	Set top of stack to current directory.
+	pei	(arg+2)
+	pei	(arg)
+	jsl	gotodir	chdir to the parameter directory.
+	bne	exit
+
+	inc	tods	Bump the top of stack pointer.
+	lda	tods
+	asl	a
+	asl	a
+	tay
+	lda	#0
+	sta	dirstack,y
+	sta	dirstack+2,y
+	jsl	dotods	Set top of stack to current directory.
+
+done	lda	varpushdsil	If $PUSHDSILENT not defined,
 	bne	exit
 	pea	1
-	jsl	showdir
+	jsl	showdir	  show the directory stack.
 
 exit	return 2:#0
 
 usagestr	dc	c'usage: pushd [+n | dir]',h'0d00'
 err1	dc	c'pushd: No other directory',h'0d00'
 err2	dc	c'pushd: Directory stack not that deep',h'0d00'
+errfull	dc	c'pushd: Directory stack full',h'0d00'
+errbadnum	dc	c'pushd: Invalid number',h'0d00'
+
 
 	END
 
@@ -348,7 +379,7 @@ pluserr	ldx	#^err2
 	jsr	errputs
 	bra	exit
 
-doplus	jsl	dotods
+doplus	jsl	dotods	Set top of stack to current directory.
 	sub2	tods,count,@a
 	asl	a
 	asl	a
@@ -502,35 +533,39 @@ space	equ	idx+2
 
 	subroutine (2:flag),space
 
-	lda	tods
-	asl	a
-	asl	a
+	lda	tods	Get directory stack index.
+	asl	a	Multiply by four to
+	asl	a	 get byte offset (idx).
 	sta	idx
 
-loop	lda	flag
+loop	lda	flag	If parameter == 1,
 	beq	long
+
 	ldy	idx
-	lda	dirstack+2,y
+	lda	dirstack+2,y		print entry
 	pha
 	lda	dirstack,y
 	pha
-	jsl	path2tilde
-	phx
+	jsl	path2tilde		 but first substitute "~"
+	phx			  for home directory.
 	pha
 	jsr	puts
 	jsl	nullfree
 	bra	next
-long	ldy	idx
-	lda	dirstack+2,y
+
+long	ldy	idx	else,
+	lda	dirstack+2,y		print full entry.
 	tax
 	lda	dirstack,y
 	jsr	puts
-next	lda	#' '
+
+next	lda	#' '	Print a space.
 	jsr	putchar
-	lda	idx
+
+	lda	idx	If idx != 0,
 	beq	done
-	sub2	idx,#4,idx
-	bra	loop
+	sub2	idx,#4,idx		idx = idx -4
+	bra	loop		handle next entry.
 
 done	jsr	newline
 
@@ -555,7 +590,7 @@ space	equ	idx+2
 	subroutine (0:dummy),space
 
 	lda	tods	Get index number.
-	asl	a	Multiply by four
+	asl	a	Multiply index by four
 	asl	a	 to get byte offset.
 	sta	idx	Store in idx
 	tay		 and Y-register.

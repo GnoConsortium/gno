@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: cmd.asm,v 1.6 1998/09/08 16:53:07 tribby Exp $
+* $Id: cmd.asm,v 1.7 1998/10/26 17:04:49 tribby Exp $
 *
 **************************************************************************
 *
@@ -28,17 +28,21 @@
 *
 *   command	subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,
 *		4:pipesem,4:stream)
+*	Called by execute to act on a single command
 *	Returns next token in Accumulator
 *
 *   argfree	subroutine (2:argc,4:argv)
 *
 *   ShellExec	subroutine (4:path,2:argc,4:argv,2:jobflag)
+*	Reads and executes commands from an exec file.
 *	Returns completion status in Accumulator
 *				       
 *   execute	subroutine (4:cmdline,2:jobflag)
+*	Interpret a command line.
 *	Returns completion status in Accumulator
 *
 *   system	Defined for libc; interface in <stdlib.h>
+*	User interface to execute commands via shell
 *	int system (char *command)
 *
 **************************************************************************
@@ -52,6 +56,8 @@ dummycmd	start		; ends up in .root
 
 SIGINT	gequ	 2
 SIGSTOP	gequ	17
+SIGTSTP	gequ	18
+SIGCHLD	gequ	20
 ;
 ; TOKENS used by the parser
 ;
@@ -328,12 +334,12 @@ errstr2	dc	c"gsh: Missing ending '.",h'0d00'
 command	START
 	
 pipefds	equ	1
-errappend	equ	pipefds+2
+errappend	equ	pipefds+4
 errfile	equ	errappend+2
 srcfile	equ	errfile+4
 dstfile	equ	srcfile+4
-count	equ	dstfile+4
-argv	equ	count+2
+needq	equ	dstfile+4
+argv	equ	needq+2
 word	equ	argv+4
 cmdline	equ	word+4
 pid	equ	cmdline+4
@@ -366,33 +372,35 @@ end	equ	waitpid+4
 	lda	#0	Initialize to null C string.
 	sta	[cmdline]
 
-	jsl	alloc1024
+	jsl	alloc1024	Allocate memory for token.
 	sta	word
 	stx	word+2
 
-	ph4	#MAXARG*4
+	ph4	#MAXARG*4	Allocate argv parameter pointer array
 	~NEW
 	sta	argv
 	stx	argv+2
 
-	stz	srcfile
+	stz	argc	Argument count = 0
+
+	stz	srcfile	Clear I/O redirection pointers
 	stz	srcfile+2
 	stz	dstfile
 	stz	dstfile+2
 	stz	errfile
 	stz	errfile+2
-	stz	argc
 	stz	pipefds
 	stz	pipefds+2
+
 	lda	#-3
 	sta	[waitpid]
 
-loop	pei	(word+2)
+loop	pei	(word+2)	Get next token from input stream.
 	pei	(word)
 	pei	(stream+2)
 	pei	(stream)
 	jsl	gettoken
-	sta	token
+	sta	token	Jump to appropriate token handler.
 	asl	a
 	tax
 	jmp	(toktbl,x)
@@ -443,23 +451,33 @@ word2	lda	argc	;Copy word to argv[argc]
 	pei	(temp)
 	jsr	copycstr
 
-	stz	count	;count illegal characters in word
-	ldy	#0
-illword	lda	[word],y
+;
+; Determine whether parameter needs surrounding quotes
+;
+	stz	needq
+	lda	[word]	If this is a null parameter,
 	and	#$FF
-	beq	appword
-	if2	@a,eq,#' ',incword
-	if2	@a,eq,#'&',incword
-	if2	@a,eq,#'|',incword
-	if2	@a,eq,#'<',incword
-	if2	@a,eq,#'>',incword
-	if2	@a,eq,#';',incword
-	bra	nextword
-incword	inc	count
-nextword	iny
-	bra	illword
+	beq	qneeded	  it needs to be quoted.
+	ldy	#0
+chkchar	if2	@a,eq,#' ',qneeded
+	if2	@a,eq,#'&',qneeded
+	if2	@a,eq,#'|',qneeded
+	if2	@a,eq,#'<',qneeded
+	if2	@a,eq,#'>',qneeded
+	if2	@a,eq,#';',qneeded
+	iny		Not special character.
+	lda	[word],y	Get next character in parameter.
+	and	#$FF
+	beq	appword	Done if null character.
+	bra	chkchar
 
-appword	pei	(word+2)	;append word to current command line
+qneeded	inc	needq	Quotes needed.
+
+;
+; Append word to command line (optionally, with quotes)
+;
+appword	anop
+	pei	(word+2)
 	pei	(word)
 	pei	(cmdline+2)
 	pei	(cmdline)
@@ -470,35 +488,35 @@ appword	pei	(word+2)	;append word to current command line
 	lda	#' '
 	sta	[cmdline],y
 	iny
-nospace	lda	count
+nospace	lda	needq	If special char is in parameter,
 	beq	noquote
 	lda	[word]
 	and	#$FF
-	cmp	#'"'
+	cmp	#'"'	 and it doesn't start with '"',
 	bne	doquote
-	stz	count
+	stz	needq
 	bra	noquote
-doquote	lda	#'"'
+doquote	lda	#'"'	  add a '"' at start.
 	sta	[cmdline],y
 	iny
-	inc	count
 noquote	pei	(cmdline+2)
 	add2	@y,cmdline,@a
 	pha
-	jsr	copycstr
-	lda	count
+	jsr	copycstr	Copy the parameter.
+	lda	needq	If quote was added at start,
 	beq	noquote2
 	pei	(cmdline+2)
 	pei	(cmdline)
 	jsr	cstrlen
 	tay
-	lda	#'"'
+	lda	#'"'	   add another at end.
 	sta	[cmdline],y
 	iny
 	lda	#0
 	sta	[cmdline],y
 noquote2	inc	argc	;increment argument count
 goloop	jmp	loop
+
 ;
 ; Parse a '<' token
 ;
@@ -579,76 +597,95 @@ tok_semi	anop
 tok_nl	anop
 tok_eof	anop
 
-	lda	argc
+	lda	argc	If number of arguments == 0,
 	bne	nonnull
-	lda	#0
-	sta	[waitpid]
-	lda	#T_NULL
+
+	lda	srcfile	  If any of the file pointers
+	ora	srcfile+2	   are != NULL,
+	ora	dstfile
+	ora	dstfile+2
+	ora	errfile
+	ora	errfile+2
+	beq	nulldone
+
+	ldx	#^spcmdstr	  print error message:
+	lda	#spcmdstr	   specify a command before redirecting.
+	jsr	errputs
+
+nulldone	lda	#0	Clear the waitpid
+	sta	[waitpid]	 and return as if
+	lda	#T_NULL	  nothing were parsed.
 	jmp	exit
 
-nonnull	asl2	a	;terminate the argv list
-	tay
+nonnull	asl2	a	Terminate the argv list
+	tay		 with a null poiner.
 	lda	#0
 	sta	[argv],y
 	iny2
 	sta	[argv],y
 ;
-; see if there is a conflict between >,>> with |
+; See if there is a conflict between > or >> and |
 ;
 	lda	token
 	if2	@a,ne,#T_BAR,runit
 	lda	dstfile
 	ora	dstfile+2
 	beq	bar2
-	lda	#err08	;> or >> conflicts with |
+	lda	#err08	Yes: there is a conflict!
 	jmp	error
 
-bar2	clc
-	tdc
-	adc	#pipefds
+bar2	clc		Calculate 32-bit address
+	tdc		 of direct page variable
+	adc	#pipefds	  pipefds in X and A.
 	ldx	#0
-	pipe	@xa
-;what if pipes return errors?
+	pipe	@xa	Allocate 2 file descriptor pipe
+; >> NOTE: what if pipes return errors?
 
-runit	pei	(argc)
-	pei	(argv+2)
+;
+; Call invoke			param size:name
+;
+runit	pei	(argc)	2: argc
+	pei	(argv+2)	4: argv
 	pei	(argv)
-	pei	(srcfile+2)
+	pei	(srcfile+2)	4: sfile
 	pei	(srcfile)
-	pei	(dstfile+2)
+	pei	(dstfile+2)	4: dfile
 	pei	(dstfile)
-	pei	(errfile+2)
+	pei	(errfile+2)	4: efile
 	pei	(errfile)
-	pei	(append)
-	pei	(errappend) 
+	pei	(append)	2: app
+	pei	(errappend) 	2: eapp
 	ldx	#0
 	if2	token,ne,#T_AMP,run2
-	inx
+	inx		2: bg
 run2	phx
-	pei	(cmdline+2)
+	pei	(cmdline+2)	4: cline
 	pei	(cmdline)
-	pei	(jobflag)
-	pei	(inpipe)
-	pei	(pipefds+2)
-	pei	(inpipe2)
-	pei	(pipefds)
-	pei	(pipesem+2)
+	pei	(jobflag)	2: jobflag
+	pei	(inpipe)	2: pipein   (param passed in)
+	pei	(pipefds+2)	2: pipeout  (allocated: read end)
+	pei	(inpipe2)	2: pipein2  (param passed in)
+	pei	(pipefds)	2: pipeout2 (allocated: write end)
+	pei	(pipesem+2)	4: pipesem  (param passed in)
 	pei	(pipesem)
 	jsl	invoke
 	sta	pid
 	cmp	#-1
 	beq	exit
 
-	if2	token,ne,#T_BAR,run3	If next token is "|",
 
-	pei	(waitpid+2)		  recursively call command.
+; If next token is "|", recursively call command.
+
+	if2	token,ne,#T_BAR,run3
+
+	pei	(waitpid+2)	4: waitpid
 	pei	(waitpid)
-	pei	(pipefds)
-	pei	(jobflag)
-	pei	(pipefds+2)
-	pei	(pipesem+2)
+	pei	(pipefds)	2: inpipe
+	pei	(jobflag)	2: jobflag
+	pei	(pipefds+2)	2: inpipe2
+	pei	(pipesem+2)	4: pipesem
 	pei	(pipesem)
-	pei	(stream+2)
+	pei	(stream+2)	4: stream
 	pei	(stream)
 	jsl	command
 	bra	exit
@@ -728,6 +765,7 @@ err06	dc	c'gsh: Extra ''>&'' or ''>>&'' encountered.',h'0d00'
 err07	dc	c'gsh: No file specified for ''>&'' or ''>>&''.',h'0d00'
 err08	dc	c'gsh: ''|'' conflicts with ''>'' or ''>>''.',h'0d00'
 err09	dc	c'gsh: ''|'' conflicts with ''<''.',h'0d00'
+spcmdstr	dc	c'gsh: Specify a command before redirecting.',h'0d00'
 		    
 	END
 
@@ -766,7 +804,7 @@ free2	pei	(argv+2)
 
 **************************************************************************
 *
-* Interpret a shell script
+* Read and execute commands from an exec file (shell script)
 * This is overly complicated so that it can be run concurrently.
 *
 **************************************************************************
@@ -802,7 +840,7 @@ end	equ	path+4
 
 	lock	mutex
 ;
-; Set the variables 0..argc
+; Set the environment variables $0 ... argc
 ;
 	lda	argc	Get number of variables.
 	jeq	vars_set	If 0, there are none to set.
@@ -853,39 +891,49 @@ set_value	anop
 	jcc	parmloop	   stay in loop.
 
 ;
-; Variables have all been set
+; $0 ... $n environment variables have all been set
 ;
 vars_set	unlock mutex
 
-	ph4	#4	;Close parms
+;
+; Allocate memory for GS/OS calls
+;
+
+	ph4	#4	CloseGS parms
 	~NEW
 	sta	CRec
 	stx	CRec+2
 
-	ph4	#10	;Open parms
+	ph4	#10	OpenGS parameter block
 	~NEW
 	sta	ORec
 	stx	ORec+2
 
-	ph4	#12	;NewLine parms
+	ph4	#12	NewLineGS parameter block
 	~NEW
 	sta	NRec
 	stx	NRec+2
 
-	ph4	#16	;Read parms
+	ph4	#16	ReadGS parameter block
 	~NEW
 	sta	RRec
 	stx	RRec+2
 
-	ph4	#1000	;data buffer
+	ph4	#1000	Data buffer (1000 bytes)
 	~NEW
 	sta	data
 	stx	data+2
 
-	pei	(path+2)	;Convert filename to GS/OS string
-	pei	(path)
+;
+; Set parameters in OpenGS parameter block
+;
+	lda	#3	Number of parameters = 3.
+	sta	[ORec]
+
+	pei	(path+2)	Convert exec file
+	pei	(path)	 pathname to GS/OS string
 	jsr	c2gsstr
-	ldy	#4
+	ldy	#4	Store in PB, offset bytes 4-7.
 	sta	[ORec],y
 	sta	ptr
 	iny2
@@ -893,86 +941,105 @@ vars_set	unlock mutex
 	sta	[ORec],y
 	sta	ptr+2
 
-	ldy	#8
-	lda	#1	;Read access only
+	lda	#1	Read access only
+	ldy	#8	Store in PB, offset bytes 8-9.
 	sta	[ORec],y
 
-	lda	#3	;Open the file
-	sta	[ORec]
-	pei	(ORec+2)
+	pei	(ORec+2)	OpenGS(ORec)
 	pei	(ORec)
-	ph2	#$2010	;OPEN
+	ph2	#$2010
 	jsl	$E100B0
-	bcc	ok
-	sta	ErrError
+
+	bcc	ok	If there was an error,
+	sta	ErrError	 print a message
 	ErrorGS Err
 	jmp	done
 
-awshit	sta	ErrError
-	ErrorGS Err
-	jmp	almostdone
+ok	ldy	#2	Copy file ref num
+	lda	[ORec],y	 from OpenGS PB into
+	sta	[NRec],y	  NewLineGS PB,
+	sta	[RRec],y	   ReadGS PB,
+	sta	[CRec],y	    and CloseGS PB.
 
-ok	ldy	#2	;Copy file ref num
-	lda	[ORec],y
-	sta	[NRec],y
-	sta	[RRec],y
-	sta	[CRec],y
-
-	lda	#4	;Do NewLine
+;
+; Set parameters in NewLineGS parameter block
+;
+	lda	#4	Number of parameters = 4.
 	sta	[NRec]
-	ldy	#4
-	lda	#$7F
-	sta	[NRec],y
-	iny2
-	lda	#1
-	sta	[NRec],y
-	iny2
-	lda	#NLTable
+
+	ldy	#4	enableMask
+	lda	#$7F	 = $7F (each input character
+	sta	[NRec],y	  is ANDed with this mask)
+
+	iny2		numChars
+	lda	#1	 = 1 (number of newline chars
+	sta	[NRec],y	  contained in newline char table)
+
+	iny2		newlineTable pointer
+	lda	#NLTable	 = NLTable
 	sta	[NRec],y
 	iny2
 	lda	#^NLTable
 	sta	[NRec],y
-	pei	(NRec+2)
-	pei	(NRec)
-	ph2	#$2011	;NEWLINE
-	jsl	$E100B0
-	bcs	awshit
 
-	lda	#4	;Set up read parm
+	pei	(NRec+2)	NewLineGS(NRec)
+	pei	(NRec)
+	ph2	#$2011
+	jsl	$E100B0
+
+	bcc	ok2	If there was an error,
+	sta	ErrError	 print a message
+	ErrorGS Err
+	jmp	close_ex
+
+;
+; Set up ReadGS parameter block
+;
+ok2	lda	#4	Number of parameters = 4
 	sta	[RRec]
-	tay
-	lda	data
+
+	tay		dataBuffer (offset 4)
+	lda	data	 = data
 	sta	[RRec],y
 	iny2
 	lda	data+2
 	sta	[RRec],y
-	iny2
-	lda	#1000
+
+	iny2		requestCount (offset 4)
+	lda	#999	 = 999 (save 1 byte for \0)
 	sta	[RRec],y
 	iny2
 	lda	#0
 	sta	[RRec],y
 
+;
+; Read lines from the exec file
+;
 ReadLoop	anop
-	pei	(RRec+2)
+	pei	(RRec+2)	ReadGS(RRec)
 	pei	(RRec)
-	ph2	#$2012	;READ
+	ph2	#$2012
 	jsl	$E100B0
-	bcs	almostdone
-	ldy	#12
+
+	bcs	close_ex	Check for error
+
+	ldy	#12	Get transferCount
 	lda	[RRec],y
-	tay
-	lda	#0
+
+	tay		Store null byte
+	lda	#0	 at end of buffer.
 	sta	[data],y
-	lda	varecho
-	beq	noecho
+
+	lda	varecho	If $ECHO environment
+	beq	noecho	 variable is set,
 	ldx	data+2
 	lda	data
-	jsr	puts
-	jsr	newline
-noecho	lda	[data]
-	and	#$FF
-	if2	@a,eq,#'#',ReadLoop
+	jsr	puts		print the line
+	jsr	newline		and a newline.
+
+noecho	lda	[data]	If first character
+	and	#$FF	 in data buffer is
+	if2	@a,eq,#'#',ReadLoop  "#", read next line.
 
 *   call execute: subroutine (4:cmdline,2:jobflag)
 	pei	(data+2)
@@ -981,20 +1048,23 @@ noecho	lda	[data]
 	jsl	execute
 	sta	status
 
-	lda	exit_requested
-	bne	almostdone
-	bra	ReadLoop
+	lda	exit_requested	If exit not requested,
+	bne	close_ex
+	bra	ReadLoop	  stay in read loop.
 
-almostdone	anop
-	stz	exit_requested
-	lda	#1
+;
+; Close the exec file
+;
+close_ex	anop
+	lda	#1	Number of parameters = 1.
 	sta	[CRec]
-	pei	(CRec+2)
+	pei	(CRec+2)	CloseGS(CRec)
 	pei	(CRec)
-	ph2	#$2014	;CLOSE
+	ph2	#$2014
 	jsl	$E100B0
+	stz	exit_requested	Clear the "exit gsh" flag.
 
-done	pei	(CRec+2)
+done	pei	(CRec+2)	Free the parameter blocks,
 	pei	(CRec)
 	jsl	nullfree
 	pei	(NRec+2)
@@ -1006,15 +1076,17 @@ done	pei	(CRec+2)
 	pei	(ORec+2)
 	pei	(ORec)
 	jsl	nullfree
-	pei	(data+2)
+	pei	(data+2)	 data buffer,
 	pei	(data)
 	jsl	nullfree
-	pei	(ptr+2)
+	pei	(ptr+2)	  and path name.
 	pei	(ptr)
 	jsl	nullfree
 
+;
+; Restore stack and return to caller
+;
 exit1a	anop
-
 	lda	space+1
 	sta	end-2
 	lda	space
@@ -1028,7 +1100,8 @@ exit1a	anop
 	lda	status	Pass back status value.
 	rtl
 
-NLTable	dc	h'0d'
+NLTable	dc	h'0d'	Newline Table
+
 
 ; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
 Err	dc	i2'1'	pCount
@@ -1135,7 +1208,7 @@ find_end	anop
 	lda	[cmdstrt],y	Get next character.
 	and	#$FF	If at end of string,
 	beq	found_end	 all done looking.
-; Check for special characters
+; Check for special quote characters
 	cmp	#"'"
 	beq	s_quote
 	cmp	#'"'
@@ -1267,9 +1340,9 @@ loop	pea	0	;Bank 0		waitpid (hi)
 	clc
 	adc	#pid
 	pha				waitpid (low)
-	pea	0			inpipe
+	pea	0			inpipe = 0
 	pei	(jobflag)			jobflag
-	pea	0			inpipe2
+	pea	0			inpipe2 = 0
 	pea	0	;Bank 0		pipesem (hi)
 	tdc
 	clc
@@ -1283,51 +1356,64 @@ loop	pea	0	;Bank 0		waitpid (hi)
 	jsl	command  
 
 	sta	term
-	bmi	noerrexit
+	jmi	noerrexit
 
 	lda	pid
-	beq	nowait
+	jeq	donewait
 	cmp	#-1
-	beq	noerrexit
+	jeq	noerrexit
 
 	lda	jobflag
-	beq	jobwait
+	jeq	jobwait
 
 	signal (#SIGINT,#0)
 	phx
 	pha
-	signal (#SIGSTOP,#0)
+	signal (#SIGTSTP,#0)
 	phx
 	pha
 
-otherwait	ldx	#0
+otherwait	anop
+	ldx	#0
 	clc
 	tdc
 	adc	#waitstatus
-	wait	@xa
+	wait	@xa	Wait for child completion.
 	cmp	pid
 	bne	otherwait
 	lda	waitstatus
 	and	#$FF
-	cmp	#$7F
+	cmp	#$7F	Check for WSTOPPED status.
 	beq	otherwait
 	lda	waitstatus 
 	jsr	setstatus
 
 	pla
 	plx
-	signal (#SIGSTOP,@xa)
+	signal (#SIGTSTP,@xa)
 	pla
 	plx
 	signal (#SIGINT,@xa)
 
-	bra	nowait
+	bra	donewait
 
-jobwait	jsl	pwait
-	sta	waitstatus
+jobwait	anop
+	signal (#SIGCHLD,#pchild)  Ensure child sig handler active.
+	phx		  Save address of previous sig handler.
+	pha
+	kill	(pid,#0)	If child no longer exists,
+	beq	wait4job
+	pei	pid
+	jsl	removejentry	   Remove it from the list.
+	bra	setwstat
+wait4job	jsl	pwait	Otherwise, wait for it.
+setwstat	stz	waitstatus
+	pla		Restore previous child completion
+	plx		 signal handler.
+	signal (#SIGCHLD,@xa)
 
 ; If command detected EOF terminator, all done
-nowait	if2	term,eq,#T_EOF,noerrexit
+donewait	if2	term,eq,#T_EOF,noerrexit
 	lda	[exebuf]	If not at end of line,
 	and	#$FF
 	beq	exit	
@@ -1405,11 +1491,11 @@ space	equ	retval+2
 	ina		  return 1 to caller.
 
 ;
-; Let execute(str) do the work
+; Let execute(str,1) do the work
 ;
 makecall	pei	(str+2)
 	pei	(str)
-	ph2	#1	;tells execute we're called by system
+	ph2	#1	jobflag=1 says we're called by system
 	jsl	execute
 ;
 ; Set status and go back to the caller

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shell.asm,v 1.6 1998/09/08 16:53:13 tribby Exp $
+* $Id: shell.asm,v 1.7 1998/10/26 17:04:51 tribby Exp $
 *
 **************************************************************************
 *
@@ -225,10 +225,10 @@ didit	anop
 	pha
 	lda	[p]
 	pha
-	ph2	CmdArgc
-	pei	(p+2)
+	ph2	CmdArgc	argc
+	pei	(p+2)	argv
 	pei	(p)
-	pea	0
+	pea	0	jobflag = 0
 	jsl	ShellExec
 	jmp	done1
 
@@ -238,9 +238,9 @@ cmdskip	lda	ExecFlag
 ;
 ; The -e flag is set: execute remaining arguments as a command and exit.
 ;
-	ph4	ExecCmd
-	ph2	#0
-	jsl	Execute
+	ph4	ExecCmd	cmdline
+	ph2	#0	jobflag = 0
+	jsl	execute
 	jmp	done1
 
 ;
@@ -289,8 +289,8 @@ gnoloop	entry
 	jsr	newlineX
 	jsr	flush
 
-	ph4	#cmdline
-	ph2	#0
+	ph4	#cmdline	execute(cmdline,0)
+	ph2	#0	jobflag = 0
 	jsl	execute
 
 	lda	exit_requested

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: jobs.asm,v 1.6 1998/09/08 16:53:10 tribby Exp $
+* $Id: jobs.asm,v 1.7 1998/10/26 17:04:50 tribby Exp $
 *
 **************************************************************************
 *
@@ -96,55 +96,73 @@ end	equ	space+3
 	phd
 	tcd
 
-	getpid
+	getpid	Get process ID.
 	sta	waitpid
 
-waitloop	ldx	#%0000000000001010
+;
+; Start of loop that waits for child processes to complete
+;
+waitloop	anop
+; Block signals 15 (SIGTERM), 18 (SIGTSTP), and 20 (SIGCHLD):
+;  Bit  3 3 3 2 2 2 2 2 2 2 2 2 2 1 1 1   1 1 1 1 1 1 1
+;  Num  2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7   6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1
+;  X/A  0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0   0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+	ldx	#%0000000000001010
 	lda	#%0100000000000000
 	sigblock @xa
-	sta	oldsig
+	sta	oldsig	Save the previous signal mask.
 	stx	oldsig+2
 
-	lda	pjoblist
+	lock	plistmutex	Ensure list doesn't change.
+
+	lda	pjoblist	Start pointer at head of job list.
 	ldx	pjoblist+2
 
-loop	sta	p
+loop	sta	p	Save job entry pointer in p.
 	stx	p+2
-
-	ora	p+2
-	beq	done
-	ldy	#p_flags
+	ora	p+2	If pointer is 0,
+	beq	done	 all done.
+	ldy	#p_flags	Get entry's job status flags.
 	lda	[p],y
 	and	#PFOREGND+PRUNNING
 	cmp	#PFOREGND+PRUNNING
-	bne	loop2
-	ldy	#p_pid
+	bne	getnext
+
+	ldy	#p_pid	Get entry's process ID.
 	lda	[p],y
 	cmp	waitpid
-	beq	loop2
+	beq	getnext
 
 ; check if the process is actually running..if it is not, report to the
 ; user that a stale process was detected and remove it from job control.
 
-	sigsetmask oldsig
-	sigpause #0
-	bra	waitloop	
-loop2	ldy	#p_next+2
+	unlock plistmutex
+
+	sigsetmask oldsig	Restore previous signal mask.
+	sigpause #0	Wait for a signal to arrive.
+	bra	waitloop	Start searching the entire list.
+
+
+getnext	ldy	#p_next+2	Get pointer to next entry
 	lda	[p],y
 	tax
 	ldy	#p_next
 	lda	[p],y
-	bra	loop
+	bra	loop	 and stay in loop.
 
-done	sigsetmask oldsig
+;
+; Arrive here when p == 0
+;
+done	unlock plistmutex
+	sigsetmask oldsig	Restore previous signal mask.
 
-	pld
-	tsc
+	pld		Reset direct page and
+	tsc		 stack pointers.
 	clc
 	adc	#end-4
 	tcs
 
-	rtl
+	rtl		Return to caller.
 
 	END
 
@@ -205,7 +223,9 @@ end	equ	pid+2
 	phd
 	tcd
 
-	ldx	#%0000000000001000
+	lock	plistmutex	Ensure list doesn't change.
+
+	ldx	#%0000000000001000		Block SIGCHILD signals.
 	lda	#%0000000000000000
 	sigblock @xa
 	phx
@@ -284,6 +304,8 @@ in02	anop
 	sta	[pp],y
 	jsr	copycstr
 
+	unlock plistmutex
+
 	lda	bg
 	beq	noprint
 	pei	(pp+2)
@@ -294,7 +316,7 @@ in02	anop
 noprint	anop
 
 	case	on
-	jsl	sigsetmask
+	jsl	sigsetmask	Restore signal mask.
 	case	off
 
 	lda	space
@@ -339,6 +361,8 @@ end	equ	pid+2
 	tcs
 	phd
 	tcd
+
+	lock	plistmutex	Ensure list doesn't change.
 
 	ldx	#%0000000000001000
 	lda	#%0000000000000000
@@ -423,6 +447,8 @@ addit	ldy	#p_friends
 	lda	pp+2
 	sta	[p],y
 
+	unlock plistmutex
+
 	case	on
 	jsl	sigsetmask	
 	case	off
@@ -486,7 +512,7 @@ end	equ	code+2
 ;
 ; search for the job that has finished.
 ;
-search	lda	pjoblist
+	lda	pjoblist
 	ldx	pjoblist+2
 lookloop	sta	p
 	stx	p+2
@@ -554,10 +580,11 @@ kill	ldy	#p_flags
 	jsr	setstatus
 	bra	zap
 zap0	inc	signalled
-zap	ldy	#p_index
-	lda	[p],y
+zap	ldy	#p_pid	Remove the job entry
+	lda	[p],y	 by referring to its pid.
 	pha
-	jsl	removejob
+	jsl	removejentry
+
 	ldy	#p_flags
 	lda	[p],y
 	bit	#PFOREGND
@@ -578,9 +605,11 @@ done	anop
 	
 	rtl
 
+;--------------------------------------------------------------------
 ;		 
 ; Set $status return variable
 ;
+
 setstatus	ENTRY
 
 	xba		Isolate status
@@ -631,21 +660,21 @@ valstat_text	dc	c'000'	Text (up to three digits)
 
 ;====================================================================
 ;
-; remove a job
+; remove an entry in the job list, based on process number
 ;
 ;====================================================================
 
-removejob	START
+removejentry	START
 
 	using	pdata
 
 p	equ	1
 prev	equ	p+4
 space	equ	prev+4
-jobnum	equ	space+3
-end	equ	jobnum+2
+pid	equ	space+3	process id
+end	equ	pid+2
 
-;	subroutine (2:jobnum),space
+;	subroutine (2:pid),space
 
 	tsc
 	sec
@@ -656,40 +685,43 @@ end	equ	jobnum+2
 
 	stz	prev  
 	stz	prev+2
+	lock	plistmutex	Ensure list doesn't change.
 	lda	pjoblist
 	ldx	pjoblist+2
 
-loop	sta	p
+loop	sta	p	Get next entry in job list.
 	stx	p+2
-	ora	p+2
-	jeq	done
-	ldy	#p_index
+	ora	p+2	If null pointer,
+	jeq	done	 all done.
+	ldy	#p_pid	Get job/pid number in entry.
 	lda	[p],y
-	cmp	jobnum
+	cmp	pid	If it's not the one we're looking for,
 	beq	gotit
-	lda	p
+	lda	p		Set prev to this entry.
 	sta	prev
 	stx	prev+2
 	ldy	#p_next+2
-	lda	[p],y
+	lda	[p],y		Set X/A to next entry.
 	tax
 	ldy	#p_next
 	lda	[p],y
-	bra	loop
+	bra	loop		Check next entry.
+
 ;
-; adjust linked list pointers
+; Entry found: adjust linked list pointers
 ;
-gotit	ora2	prev,prev+2,@a
+gotit	ora2	prev,prev+2,@a	If prev != NULL,
 	beq	gotit2
-	ldy	#p_next
+	ldy	#p_next		prev->next = p->next
 	lda	[p],y
 	sta	[prev],y
 	ldy	#p_next+2
 	lda	[p],y
 	sta	[prev],y
 	bra	gotit3
-gotit2	ldy	#p_next
-	lda	[p],y
+
+gotit2	ldy	#p_next	else
+	lda	[p],y		pjoblist = p->next
 	sta	pjoblist
 	ldy	#p_next+2
 	lda	[p],y
@@ -698,12 +730,11 @@ gotit2	ldy	#p_next
 ; free the node (may want to check currjob and prevjob pointers)
 ;
 gotit3	anop
-
-	ldy	#p_flags
+	ldy	#p_flags	If PFOREGND status bit is set,
 	lda	[p],y
 	and	#PFOREGND
 	bne	gotit3c
-	jsr	newline
+	jsr	newline		Print the job entry
 	ldy	#p_flags
 	lda	#0
 	sta	[p],y
@@ -712,36 +743,37 @@ gotit3	anop
 	pea	0
 	pea	0
 	jsl	pprint
-gotit3c	anop
 
-	ldy	#p_command+2
-	lda	[p],y
+gotit3c	anop
+	ldy	#p_command+2	Free memory used to hold
+	lda	[p],y	 command string.
 	pha
 	dey2
 	lda	[p],y
 	pha
 	jsl	nullfree
 
-	lda	pcurrent
+	lda	pcurrent	If pcurrent != p
 	eor	pcurrent+2
 	eor	p
 	eor	p+2
 	bne	gotit3a
-	mv4	pprevious,pcurrent
-	stz	pprevious
+	mv4	pprevious,pcurrent		pcurrent = pprevious
+	stz	pprevious		pprevious = NULL
 	stz	pprevious+2
-	lda	prev
+	lda	prev		If prev != pcurrent,
 	eor	prev+2
 	eor	pcurrent
 	eor	pcurrent+2
 	beq	gotit3a
-	mv4	prev,pprevious
-gotit3a	lda	pprevious
+	mv4	prev,pprevious			pprevious = prev
+
+gotit3a	lda	pprevious	If pprevious != p,
 	eor	pprevious+2
 	eor	p
 	eor	p+2
 	bne	gotit3b
-	stz	pprevious
+	stz	pprevious		pprevious == NULL
 	stz	pprevious+2
 gotit3b	anop
 
@@ -751,18 +783,19 @@ gotit4	ldy	#p_friends
 	ldy	#p_friends+2
 	lda	[p],y
 	pha
-	pei	(p+2)
+
+	pei	(p+2)	Free memory used to hold entry.
 	pei	(p)
 	jsl	nullfree
-	pla
-	sta	P+2
+
+	pla		p = p->p_friends
+	sta	p+2
 	pla
 	sta	p
 	ora	p+2
-	beq	gotit5	
-
-	ldy	#p_command+2
-	lda	[p],y
+	beq	gotit5	If p != NULL,
+	ldy	#p_command+2		Free memory used to
+	lda	[p],y		 hold text of command
 	pha
 	ldy	#p_command
 	lda	[p],y
@@ -772,7 +805,7 @@ gotit4	ldy	#p_friends
 
 gotit5	anop
 ;
-; find maximum job number
+; find maximum job number and set pmaxindex
 ;	
 	stz	prev
 	lda	pjoblist
@@ -792,9 +825,11 @@ skipmax	ldy	#p_next+2
 	ldy	#p_next
 	lda	[p],y
 	bra	fmaxloop
+
 gotmax	mv2	prev,pmaxindex	
 
 done	anop
+	unlock plistmutex
 	lda	space+1
 	sta	end-2
 	lda	space
@@ -1215,7 +1250,6 @@ dofg1	lda	[p],y
 	lda	[p],y
 	bit	#PSTOPPED
 	beq	dofg2
-;	lda	[p],y
 	eor	#PSTOPPED
 	sta	[p],y
 	pei	(p+2)
@@ -1225,7 +1259,7 @@ dofg1	lda	[p],y
 	jsl	pprint
 	ldy	#p_jobid
 	lda	[p],y
-	getpgrp @a
+	_getpgrp @a
 	eor	#$FFFF
 	inc	a
 	kill	(@a,#SIGCONT)
@@ -1313,26 +1347,20 @@ loop	ora2	p,p+2,@a
 dofg	ldy	#p_flags
 	lda	[p],y
 	bit	#PRUNNING
-;	cmp	#PRUNNING
-;	bne	dofg1
 	beq	dofg1
 	ldx	#^err02
 	lda	#err02
 	bra	puterr
-dofg1	anop
-;	lda	[p],y
+dofg1	anop		note: Y = #p_flags, A = [p],y
 	ora	#PRUNNING
 	sta	[p],y
 	bit	#PFOREGND
 	beq	dobg0
-;	lda	[p],y
 	eor	#PFOREGND	
 	sta	[p],y
 dobg0	anop
-;	lda	[p],y
 	bit	#PSTOPPED
 	beq	dofg2
-;	lda	[p],y
 	eor	#PSTOPPED
 	sta	[p],y
 	tctpgrp (gshtty,gshpid)
@@ -1343,7 +1371,7 @@ dobg0	anop
 	jsl	pprint
 	ldy	#p_jobid
 	lda	[p],y
-	getpgrp @a
+	_getpgrp @a
 	eor	#$FFFF
 	inc	a
 	kill	(@a,#SIGCONT)
@@ -1411,6 +1439,7 @@ getit2	ldy	#4+2
 	sta	pid
 	cmp	#-1
 	jeq	nojob
+
 	mv4	pjoblist,p
 loop	ora2	p,p+2,@a
 	jeq	nojob
@@ -1437,7 +1466,7 @@ dofg	ldy	#p_flags
 dofg1	tctpgrp (gshtty,gshpid)
 	ldy	#p_jobid
 	lda	[p],y
-	getpgrp @a
+	_getpgrp @a
 	eor	#$FFFF
 	inc	a
 	kill	(@a,#SIGSTOP)
@@ -1730,6 +1759,8 @@ done	return 2:pid
 ;====================================================================
 
 pdata	DATA
+
+plistmutex	key		Mutual exclusion for job list
 
 pwaitsem	dc	i2'0'
 

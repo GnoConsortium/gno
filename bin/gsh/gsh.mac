@@ -66,13 +66,13 @@
 	MEND
 
 ********************
-* getpgrp
+* _getpgrp
 ********************
 	MACRO
-&lab	getpgrp &a1
+&lab	_getpgrp &a1
 &lab	ph2	&a1
 	case	on
-	jsl	getpgrp
+	jsl	_getpgrp
 	case	off
 	MEND
 

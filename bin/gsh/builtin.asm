@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: builtin.asm,v 1.6 1998/09/08 16:53:05 tribby Exp $
+* $Id: builtin.asm,v 1.7 1998/10/26 17:04:49 tribby Exp $
 *
 **************************************************************************
 *
@@ -1284,32 +1284,6 @@ Usage	dc	c'Usage: ',h'00'
 
 	END
 
-**************************************************************************
-*
-* FST descriptions
-*
-**************************************************************************
-
-FSTData	DATA
-
-FSTtable	dc	a4'fst0,fst1,fst2,fst3,fst4,fst5,fst6,fst7,fst8'
-	dc	a4'fst0,fsta,fstb,fstc,fstd'
-
-fst0	dc	c'[Unknown]',h'00'
-fst1	dc	c'ProDOS',h'00'
-fst2	dc	c'DOS 3.3',h'00'
-fst3	dc	c'DOS 3.2',h'00'
-fst4	dc	c'Pascal',h'00'
-fst5	dc	c'MFS',h'00'
-fst6	dc	c'HFS',h'00'
-fst7	dc	c'Lisa (get real)',h'00'
-fst8	dc	c'CP/M',h'00'
-fsta	dc	c'MS-DOS',h'00'
-fstb	dc	c'High Sierra',h'00'
-fstc	dc	c'ISO 9660',h'00'
-fstd	dc	c'AppleShare',h'00'
-
-	END
 
 **************************************************************************
 *

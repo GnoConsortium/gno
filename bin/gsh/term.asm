@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: term.asm,v 1.6 1998/09/08 16:53:14 tribby Exp $
+* $Id: term.asm,v 1.7 1998/10/26 17:04:51 tribby Exp $
 *
 **************************************************************************
 *
@@ -149,8 +149,11 @@ ok	jsl	nullfree	Free buffer allocated by getenv.
 	sta	termok
 	mv4	areabuf,area	   
 
+;
+; Get addresses of termcap strings
+;
 	tgetstr (#isid,#area)
-	jsr	puts
+	jsr	puts	Send initialization string to term.
 	tgetstr (#leid,#area)
 	sta	lecap
 	stx	lecap+2
@@ -187,7 +190,10 @@ ok	jsl	nullfree	Free buffer allocated by getenv.
 	tgetstr (#usid,#area)
 	sta	uscap
 	stx	uscap+2
-		           
+
+;
+; Bind keyboard characters
+;           
 	tgetstr (#klid,#area)
 	phx
 	pha
@@ -223,23 +229,27 @@ ok	jsl	nullfree	Free buffer allocated by getenv.
 termname	gsstr	'term'
 error1	dc	c'Error reading termcap file!',h'0d0d00'
 error2	dc	c'Termcap entry not found for ',h'00'
-isid	dc	c'is',h'00'
-leid	dc	c'le',h'00'
-ndid	dc	c'nd',h'00'
-veid	dc	c've',h'00'
-viid	dc	c'vi',h'00'
-vsid	dc	c'vs',h'00'
-blid	dc	c'bl',h'00'
-clid	dc	c'cl',h'00'
-soid	dc	c'so',h'00'
-seid	dc	c'se',h'00'
-klid	dc	c'kl',h'00'
-krid	dc	c'kr',h'00'
-kuid	dc	c'ku',h'00'
-kdid	dc	c'kd',h'00'
-cdid	dc	c'cd',h'00'
-ueid	dc	c'ue',h'00'
-usid	dc	c'us',h'00'
+
+;
+; Termcap identification strings
+;
+isid	dc	c'is',h'00'	Initialization
+leid	dc	c'le',h'00'	Out of keypad transmit mode
+ndid	dc	c'nd',h'00'	Non-destructive space
+veid	dc	c've',h'00'	Normal cursor visible
+viid	dc	c'vi',h'00'	Cursor unvisible
+vsid	dc	c'vs',h'00'	Standout cursor
+blid	dc	c'bl',h'00'	Bell
+clid	dc	c'cl',h'00'	Clear screen and home cursor
+soid	dc	c'so',h'00'	Begin standout mode
+seid	dc	c'se',h'00'	End standout mode
+cdid	dc	c'cd',h'00'	Clear to end of display
+ueid	dc	c'ue',h'00'	End underscore mode
+usid	dc	c'us',h'00'	Begin underscore mode
+klid	dc	c'kl',h'00'	Left arrow key
+krid	dc	c'kr',h'00'	Right arrow key
+kuid	dc	c'ku',h'00'	Up key
+kdid	dc	c'kd',h'00'	Down key
 
 sgtty	anop
 	dc	i1'0'
