@@ -86,3 +86,10 @@ install:
 	$(INSTALL) $(OBJ_DIR)descc $(OBJ_DIR)descu $(SBINDIR)
 	$(INSTALL) describe.1      $(MANDIR)/man1
 	$(INSTALL) descc.8 descu.8 $(MANDIR)/man8
+
+.IF $(APPLESHARE_CASE_SENSITIVE) != $(NULL)
+%.r : %.rez
+	$(INSTALL) $< $(TMPDIR)
+	cd $(TMPDIR); $(REZ) -o $@ -c $(REZFLAGS) $(TMPDIR)/$<
+	$(RM) -f $(TMPDIR)/$<
+.END
