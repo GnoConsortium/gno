@@ -1,7 +1,7 @@
 /*
  * utime, utimes.  Implementation by Devin Reade.
  *
- * $Id: utime.c,v 1.2 1997/09/21 06:05:01 gdr Exp $
+ * $Id: utime.c,v 1.3 1998/01/25 21:01:55 gdr-ftp Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
@@ -66,9 +66,9 @@ utime(const char *path, const struct utimbuf *buf)
 	infoPtr->createDateTime.minute  = tmptr->tm_min;
 	infoPtr->createDateTime.hour    = tmptr->tm_hour;
 	infoPtr->createDateTime.year    = tmptr->tm_year;
-	infoPtr->createDateTime.day     = tmptr->tm_mday;
+	infoPtr->createDateTime.day     = tmptr->tm_mday - 1;
 	infoPtr->createDateTime.month   = tmptr->tm_mon;
-	infoPtr->createDateTime.weekDay = tmptr->tm_wday;
+	infoPtr->createDateTime.weekDay = tmptr->tm_wday + 1;
 
 	/* change the file modification time */
 	if (buf == NULL) {
@@ -79,9 +79,9 @@ utime(const char *path, const struct utimbuf *buf)
 		infoPtr->modDateTime.minute  = tmptr->tm_min;
 		infoPtr->modDateTime.hour    = tmptr->tm_hour;
 		infoPtr->modDateTime.year    = tmptr->tm_year;
-		infoPtr->modDateTime.day     = tmptr->tm_mday;
+		infoPtr->modDateTime.day     = tmptr->tm_mday - 1;
 		infoPtr->modDateTime.month   = tmptr->tm_mon;
-		infoPtr->modDateTime.weekDay = tmptr->tm_wday;
+		infoPtr->modDateTime.weekDay = tmptr->tm_wday + 1;
 	}
 
 	/* write the info to the filesystem */
