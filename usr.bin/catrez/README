@@ -1,5 +1,6 @@
 catrez -- concatenate resource forks from files
 
+$Id: README,v 1.2 1997/09/26 06:31:15 gdr Exp $
 
 DESCRIPTION
 ===========
@@ -11,10 +12,6 @@ different files and need to combine them into the resource fork of the final
 executable file. 
 
 See the man page for details.
-
-NOTE -- version 1.0.1 fixes a problem found in 1.0: resources with the
-        "protected" attribute set were not copied correctly.
-
 
 INSTALLATION
 ============
@@ -35,6 +32,21 @@ OTHER FILES
 The ORCA/C source file for catrez is included (catrez.c), as well as the
 REZ source code (version.rez) and the "dmake" file (makefile.mk).
 
+CHANGES
+=======
+
+v1.0.2	catrez was incorporated into the GNO base distribution.  Changes
+	were:
+		modified version number;
+		new Makefile;
+		renamed the rVersion resource file;
+		minor formatting differences to the man page; and
+		addition of a describe entry.
+	(Devin Reade <gdr@eddore.myrias.com>)
+
+v1.0.1	Resources with the "protected" attribute set were not copied correctly.
+
+v1.0	Initial version.
 
 AUTHOR
 ======
