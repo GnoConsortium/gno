@@ -2,7 +2,7 @@
 #
 # GNO 2.0.6 gshrc file
 #
-# $Id: gshrc,v 1.3 1998/04/22 05:01:15 gdr-ftp Exp $
+# $Id: gshrc,v 1.4 1998/04/24 04:15:29 gdr-ftp Exp $
 #
 ###
 
@@ -30,7 +30,7 @@ prefix 6 17
 #
 
 # gsh reads its path backward!
-set path=". /usr/games /usr/orca/bin /usr/X/bin /usr/bin /bin /usr/local/bin"
+set path=". /usr/orca/utilities /usr/bin /bin /usr/local/bin"
 export path
 rehash
 
@@ -43,7 +43,7 @@ export	prompt term nonewline
 setenv EDITOR	/lang/orca/shell/editor
 setenv history	25
 setenv savehist	25
-setenv MANPATH /man:/usr/man:/usr/local/man:/local/man:/usr/X/man:/usr/orca/man
+setenv MANPATH /man:/usr/man:/usr/local/man:/usr/orca/man
 setenv PAGER	less
 setenv	LESS	-e
 setenv TMACDIR		/usr/lib/tmac
