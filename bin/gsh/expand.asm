@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: expand.asm,v 1.7 1998/12/31 18:29:13 tribby Exp $
+* $Id: expand.asm,v 1.8 1999/02/08 17:26:50 tribby Exp $
 *
 **************************************************************************
 *
@@ -46,15 +46,16 @@ exppath	equ	eptr+4
 filesep	equ	exppath+4
 shallweglob	equ	filesep+2
 wordbuf	equ	shallweglob+2
-ptr	equ	wordbuf+4
-buf	equ	ptr+4
+index	equ	wordbuf+4
+buf	equ	index+2
 globflag	equ	buf+4
-space	equ	globflag+2
+overflag	equ	globflag+2
+space	equ	overflag+2
 
 	subroutine (4:cmd),space
 
 ; Allocate buffer to hold result
-	jsl	alloc1024
+	jsl	allocmaxline
 	sta	buf
 	stx	buf+2
 
@@ -73,14 +74,24 @@ space	equ	globflag+2
 ;
 ; noglob isn't set, so we can start globbing.
 ;
-doglob	sta	ptr	ptr points to next
-	stx	ptr+2	 position in buf.
+doglob	lda	#$FFFF	Start output index at -1.
+	sta	index
 
-	jsl	alloc1024	Create a word buffer.
+	jsl	allocmaxline	Create a word buffer.
 	sta	wordbuf
 	stx	wordbuf+2
 
+	jsl	allocmaxline	Alloc buffer for wildcard pattern.
+	sta	exppath
+	stx	exppath+2
+
+	ph4	#65	Allocate memory for
+	~NEW		expanded name.
+	sta	gname	Store in direct
+	stx	gname+2	 page pointer
+
 	stz	globflag	globflag = no globbing done (yet).
+	stz	overflag	Clear output buffer overflow flag.
 
 ;
 ; Find the beginning of the next word
@@ -107,7 +118,6 @@ findword	jsr	g_getbyte	Get character from command line.
 
 passthru	jsr	g_putbyte
 	bra	findword
-
 
 ;
 ; single out the next word [y is initialized above]
@@ -190,7 +200,10 @@ flushloop	lda	[wordbuf],y
 	jsr	g_putbyte
 	iny
 	bra	flushloop
-doneflush	jmp	findword
+doneflush	anop
+	lda	overflag	If buffer overflowed,
+	jne	errexit	 clean up and return null pointer.
+	jmp	findword
 
 ;
 ; Hello, boys and goils, velcome to Tim's Magik Shoppe
@@ -216,10 +229,9 @@ doneflush	jmp	findword
 ; filename separator... then we can isolate him!
 ;
 globword	stz	filesep	
-	jsl	alloc1024	Alloc buffer for wildcard pattern.
-	sta	exppath
-	stx	exppath+2
 
+	lda	exppath	Get addr of wildcard
+	ldx	exppath+2	 pattern buffer.
 	incad	@xa	Leave room for length word
 	incad	@xa
 	sta	eptr
@@ -296,18 +308,19 @@ copyback	lda	[wordbuf],y
 	mv4	exppath,initWCpath
 	InitWildcardGS initWCparm
 
-	ph4	#65	Allocate memory for
-	~NEW		expanded name.
-	sta	gname	Store in direct
-	stx	gname+2	 page pointer
-	sta	nWCname	  and in NextWildcardGS
+	lda	gname	Store expanded
+	ldx	gname+2	 name addr
+	sta	nWCname	  in NextWildcardGS
 	stx	nWCname+2	   parameter block.
 	lda	#65	Store maximum length at
 	sta	[gname]	 beginning of result buf.
 ;
 ; Call shell routine NextWildcardGS to get the next name that matches.
 ;
-WCloop	NextWildcardGS nWCparm
+WCloop	anop
+	lda	overflag	If buffer overflowed,
+	bne	nomore	 quit expanding.
+	NextWildcardGS nWCparm
 	ldy	#2
 	lda	[gname],y
 	beq	nomore
@@ -350,15 +363,9 @@ globoutta	lda	[gname],y	Copy next character
 nomore	anop
 
 	unlock glob_mutex
-;
-; Deallocate path buffers (we should probably alloc once, not each word... )
-;
-	pei	(gname+2)
-	pei	(gname)
-	jsl	nullfree
-	ldx	exppath+2
-	lda	exppath
-	jsl	free1024
+
+	lda	overflag	If buffer overflowed,
+	bne	errexit	 clean up and return null pointer.
 
 	lda	count	If something was expanded,
 	beq	nothingfound
@@ -381,8 +388,10 @@ nothingfound	anop
 ;
 ; Goodbye, cruel world, I'm leaving you today, Goodbye, goodbye.
 ;
-alldone	jsr	g_putbyte	Store null byte at end of string.
-
+alldone	anop
+	jsr	g_putbyte	Store null byte at end of string.
+	lda	overflag	If buffer overflowed,
+	bne	errexit	 clean up and return null ptr.
 ;
 ; Check globflag for no valid matches found in any pattern
 ;
@@ -394,16 +403,24 @@ alldone	jsr	g_putbyte	Store null byte at end of string.
 	lda	#nomatch
 	jsr	errputs
 
-	ldx	buf+2
+errexit	ldx	buf+2
 	lda	buf
-	jsl	free1024
+	jsl	freemaxline
 
-	stz	buf+2
-	stz	buf
+	stz	buf+2	Return NULL
+	stz	buf	 value from routine.
 
 alldone2	ldx	wordbuf+2
 	lda	wordbuf
-	jsl	free1024
+	jsl	freemaxline
+
+	pei	(gname+2)
+	pei	(gname)
+	jsl	nullfree
+
+	ldx	exppath+2
+	lda	exppath
+	jsl	freemaxline
 
 bye	return 4:buf
 
@@ -422,7 +439,7 @@ g_getbyte	lda	[cmd]
 ;
 g_putspecial	and	#$7F
 	if2	@a,eq,#' ',special
-	if2	@a,eq,#'.',special
+;	if2	@a,eq,#'.',special	>> NOTE: '.' isn't special!
 	if2	@a,eq,#013,special
 	if2	@a,eq,#009,special
 	if2	@a,eq,#';',special
@@ -438,12 +455,29 @@ special	pha
 ;
 ; Subroutine of glob: store a byte into the new command-line
 ;
-g_putbyte	short	a
-	sta	[ptr]
+g_putbyte	anop
+	phx		Hold X-reg on stack.
+	inc	index	Bump the buffer index.
+	ldx	index
+	cpx	maxline_size
+	bcc	nooverflow	If more chars than will fit in buffer:
+	lda	overflag		If already reported,
+	bne	ovflwreturn		  return to caller.
+	inc	overflag		Set overflow flag.
+	ldx	#^ovferr		Report overflow error.
+	lda	#ovferr
+	jsr	errputs
+	bra	ovflwreturn		Return to caller.
+nooverflow	phy		Hold Y-reg on stack.
+	txy
+	short	a
+	sta	[buf],y	Store character in output buffer.
 	long	a
-	incad	ptr
+	ply		Restore Y-reg.
+ovflwreturn	plx		Restore X-reg.
 	rts
 
+ovferr	dc	c'gsh: Globbing overflowed line limit',h'0d00'
 
 glob_mutex	key
 
@@ -476,10 +510,11 @@ expandvars	START
 MAXVAL	equ	512
 
 
-ptr	equ	1
-buf	equ	ptr+4
+index	equ	1
+buf	equ	index+2
 dflag	equ	buf+4
-space	equ	dflag+2
+overflag	equ	dflag+2
+space	equ	overflag+2
 cmd	equ	space+3
 end	equ	cmd+4
 
@@ -493,12 +528,13 @@ end	equ	cmd+4
 	tcd
 
 	stz	dflag	Delimiter flag = FALSE.
+	stz	overflag	Clear output buffer overflow flag.
+	lda	#$FFFF	Start output index at -1.
+	sta	index
 
-	jsl	alloc1024
+	jsl	allocmaxline
 	sta	buf
-	sta	ptr
 	stx	buf+2
-	stx	ptr+2
 
 loop	jsr	e_getbyte
 	jeq	done
@@ -665,14 +701,20 @@ putval	lda	value,x
 
 expanded	unlock exp_mutex
 	stz	dflag	Delimiter flag = FALSE.
-	jmp	loop
+	lda	overflag	If no buffer overflow,
+	jeq	loop	 stay in loop.
 
-done	jsr	e_putbyte
+done	jsr	e_putbyte	Store terminating null char.
+	ldx	buf+2	Set return value
+	ldy	buf	 to buffer pointer.
+	lda	overflag	If buffer overflowed,
+	beq	return
+	tya
+	jsl	freemaxline		Free the output buffer
+	ldx	#0		 and set return pointer
+	ldy	#0		  to NULL.
 
-	ldx	buf+2
-	ldy	buf
-
-	lda	space
+return	lda	space
 	sta	end-3
 	lda	space+1
 	sta	end-2
@@ -685,16 +727,38 @@ done	jsr	e_putbyte
 	tya
 	rtl
 
+;
+; expandvars internal subroutines to get and put bytes in buffers
+;
+
 e_getbyte	lda	[cmd]
 	incad	cmd
 	and	#$FF
 	rts
 
-e_putbyte	short	a
-	sta	[ptr]
+e_putbyte	anop
+	phx		Hold X-reg on stack.
+	inc	index	Bump the buffer index.
+	ldx	index
+	cpx	maxline_size
+	bcc	nooverflow	If more chars than will fit in buffer:
+	lda	overflag		If already reported,
+	bne	ovflwreturn		  return to caller.
+	inc	overflag		Set overflow flag.
+	ldx	#^ovferr		Report overflow error.
+	lda	#ovferr
+	jsr	errputs
+	bra	ovflwreturn		Return to caller.
+nooverflow	phy		Hold Y-reg on stack.
+	txy
+	short	a
+	sta	[buf],y	Store character in output buffer.
 	long	a
-	incad	ptr
+	ply		Restore Y-reg.
+ovflwreturn	plx		Restore X-reg.
 	rts
+
+ovferr	dc	c'gsh: Variable expansion overflowed line limit',h'0d00'
 
 exp_mutex	key
 

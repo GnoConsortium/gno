@@ -1,6 +1,34 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Feb  2 99  [dmt] Changed maxline_size from 1024 to 4096.
+	   Recode copy loop in expandalias to be more efficient.
+
+Feb  1 99  [dmt] Change names of alloc1024 and free1024 to allocmaxline
+	   and freemaxline (many .asm files) in anticipation of changing
+	   the maximum line size from 1024. Reviewed all uses of 1024
+	   constants, and changed appropriately to use new bufpool.asm
+	   location maxline_size.
+	   While reviewing 1024 constants, determined that shell.asm was
+	   using "buffer" for reads with max len of 1024, when it really
+	   had a size of 256.  Changed "buffer" to "cmdline" and "1024"
+	   to "cmdbuflen".  Removed definitions of buffer and wordbuf
+	   (each ds 256) from global data area, since they were unused.
+
+Jan 30 99  [dmt] Add check for output buffer overflow when globbing, and
+	   print error message (PR#110). Code restructured to use
+	   base address and offset, so that offset could easily be checked
+	   against limit. Also moved allocation/deallocation of two buffers
+	   outside a loop. (expand.asm)
+	   Add check for overflow when expanding variables (expand.asm)
+	   and allow command processor to recognize error (cmd.asm).
+	   Modify alias expansion not to treat "." as escaped character,
+	   to truly eat leading blanks (per comments), and to check for
+	   buffer overflow (alias.cmd). (Also tightened up the code.)
+
+Jan 13 98  [dmt] Changes to this point checked-in to master archive.
+	   Released as version 2.0d9
+
 Jan 12 99  [dmt] Add debug routine DB~CHKBNK, which causes BRK B0 if
 	   program bank is not the same as data bank (mmdebug.asm).
 	   Modify lock and unlock macros to call DB~CHKBNK (gsh.mac).

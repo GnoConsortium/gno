@@ -7,7 +7,7 @@
 *   Tim Meekins
 *   Derek Taubert
 *
-* $Id: shellvar.asm,v 1.7 1998/12/21 23:57:08 tribby Exp $
+* $Id: shellvar.asm,v 1.8 1999/02/08 17:26:51 tribby Exp $
 *
 **************************************************************************
 *
@@ -142,8 +142,8 @@ showvars	anop
 	stx	varbuf+2
 	ora	varbuf+2
 	beq	svwhoops
-	jsl	alloc1024	Allocate 1024 bytes
-	sta	valbuf	 for result buffer.
+	jsl	allocmaxline	Allocate
+	sta	valbuf	 result buffer.
 	stx	valbuf+2
 	ora	valbuf+2	If memory was not allocated,
 	bne	startshow
@@ -155,8 +155,10 @@ svwhoops	ld2	$201,ErrError		report memory error
 	jmp	exit		  and exit.
 
 startshow	anop
-	lda	#1022	Store buffer len == 1022 in value
-	sta	[valbuf]	 buffer (save 2 bytes at end for 0).
+	lda	maxline_size	Store maxline_size - 2
+	dec	a                   in result buffer
+	dec	a                     (save 2 bytes
+	sta	[valbuf]	    at end for 0).
 	lda	#260	Store buffer len == 260 in name
 	sta	[varbuf]	 buffer.
 	lock	setmutex
@@ -194,7 +196,7 @@ showdone	anop
 	jsl	nullfree	Free the name buffer.
 	ldx	valbuf+2
 	lda	valbuf
-	jsl	free1024	Free the value buffer.
+	jsl	freemaxline	Free the value buffer.
 	jmp	exit	Exit.
 
 
@@ -291,15 +293,17 @@ skipvar	add2	argv,#4,argv
 ;
 showonevar	anop
 
-	jsl	alloc1024	Allocate 1024 bytes
-	sta	valbuf	 for result buffer.
+	jsl	allocmaxline	Allocate
+	sta	valbuf	 result buffer.
 	sta	RSvalue
 	stx	valbuf+2
 	stx	RSvalue+2
 	ora	valbuf+2	Check for memory error.
 	jeq	nextvar
-	lda	#1022	Store max len == 1022 in result
-	sta	[valbuf]	 buffer (save 2 bytes at end for 0).
+	lda	maxline_size	Store maxline_size - 2
+	dec	a                   in result buffer
+	dec	a                     (save 2 bytes
+	sta	[valbuf]	    at end for 0).
 
 	pei	(arg+2)	Create GS/OS string that
 	pei	(arg)	 contains the variable name.
@@ -334,7 +338,7 @@ def	ldx	RSexport	X = export flag.
 doneone	anop
 	ldx	valbuf+2
 	lda	valbuf
-	jsl	free1024	Free valbuf.
+	jsl	freemaxline	Free valbuf.
 	ph4	varbuf
 	jsl	nullfree	Free varbuf.
 

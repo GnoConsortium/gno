@@ -1945,7 +1945,7 @@ skip&syscnt	anop
 	using	memglobal
 	lock	memmutex
 *	jsl   DB~DISPOSE	; DEBUG VERSION
- 	jsl   ~DISPOSE	; NON-DEBUG VERSION
+	jsl   ~DISPOSE	; NON-DEBUG VERSION
 	unlock memmutex
 	MEND
 

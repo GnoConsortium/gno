@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: cmd.asm,v 1.10 1999/01/14 17:44:22 tribby Exp $
+* $Id: cmd.asm,v 1.11 1999/02/08 17:26:50 tribby Exp $
 *
 **************************************************************************
 *
@@ -367,14 +367,14 @@ end	equ	waitpid+4
 	phd
 	tcd
 
-	ph4	#1024	Allocate 1024 bytes
+	ph4	maxline_size	Allocate maxline_size bytes
 	~NEW		 and pointer in cmdline.
 	sta	cmdline
 	stx	cmdline+2
 	lda	#0	Initialize to null C string.
 	sta	[cmdline]
 
-	jsl	alloc1024	Allocate memory for token.
+	jsl	allocmaxline	Allocate memory for token.
 	sta	word
 	stx	word+2
 
@@ -531,7 +531,7 @@ lt1	lda	inpipe
 	beq	lt2
 	lda	#err09	;< conflicts with |
 	jmp	error
-lt2	jsl	alloc1024
+lt2	jsl	allocmaxline
 	stx	srcfile+2
 	sta	srcfile
 	phx
@@ -551,7 +551,7 @@ tok_gtgt	lda	dstfile
 	beq	gt1
 	lda	#err04	;Extra > or >> encountered
 	jmp	error
-gt1	jsl	alloc1024
+gt1	jsl	allocmaxline
 	stx	dstfile+2
 	sta	dstfile
 	phx
@@ -575,7 +575,7 @@ tok_gtgtamp	lda	errfile
 	beq	ga1
 	lda	#err06	;Extra >& or >>& encountered
 	jmp	error
-ga1	jsl	alloc1024
+ga1	jsl	allocmaxline
 	stx	errfile+2
 	sta	errfile
 	phx
@@ -724,7 +724,7 @@ exit	pha		Hold return status on stack.
 	beq	ex1
 	ldx	dstfile+2
 	lda	dstfile
-	jsl	free1024
+	jsl	freemaxline
 ex1	anop
 
 	lda	srcfile
@@ -732,7 +732,7 @@ ex1	anop
 	beq	ex2
 	ldx	srcfile+2
 	lda	srcfile
-	jsl	free1024
+	jsl	freemaxline
 ex2	anop
 
 	lda	errfile
@@ -740,12 +740,12 @@ ex2	anop
 	beq	ex3
 	ldx	errfile+2
 	lda	errfile
-	jsl	free1024
+	jsl	freemaxline
 ex3	anop
 		   
 	ldx	word+2
 	lda	word
-	jsl	free1024
+	jsl	freemaxline
 
 	ply		Get return value.
 
@@ -1354,22 +1354,36 @@ expand	anop
 	sta	ptr_envexp
 	stx	ptr_envexp+2
 
+; Was there a variable error?
+	ora	ptr_envexp+2
+	bne	expglob
+	pha		Put null pointer
+	pha		 on stack
+	jmp	errexit	  and go to error exit.
+
 ; Expand wildcard characters in the modified command line
-	phx
+expglob	phx
+	lda	ptr_envexp
 	pha
 	jsl	glob
 	sta	ptr_glob
 	stx	ptr_glob+2
 
+	ldx	ptr_envexp+2	Free memory allocated
+	lda	ptr_envexp	 for env var expansion
+	jsl	freemaxline
+
 ; Was there a globbing error?
+	lda	ptr_glob
 	ora	ptr_glob+2
 	bne	expalias
 	pha		Put null pointer
 	pha		 on stack
-	jmp	errexit	  and go to error exit.
+	jmp	errexit	Go to error exit.
 
 ; Expand aliases in the modified command line (final expansion)
-expalias	phx
+expalias	ldx	ptr_glob+2
+	phx
 	lda	ptr_glob
 	pha
 	jsl	expandalias
@@ -1379,34 +1393,24 @@ expalias	phx
 	phx		Put exebuf on stack for
 	pha		 nullfree at endcmd.
 
+	ldx	ptr_glob+2	Free memory allocated
+	lda	ptr_glob            for globbing expansion.
+	jsl	freemaxline
+
+; Was there a alias error?
+	lda	exebuf
+	ora	exebuf+2
+	jeq	errexit
+
 * >> Temporary debug code: echo expanded command if echo is set.
 	using	vardata
 	ldy	varecho
 	beq	noecho
-	jsr	puts	NOTE: x/a = exebuf
+	ldx	exebuf+2
+	lda	exebuf
+	jsr	puts
 	jsr	newline
 noecho	anop
-
-	ldx	ptr_envexp+2	Free memory allocated
-	lda	ptr_envexp	 for env var expansion
-	jsl	free1024
-	ldx	ptr_glob+2	  and globbing.
-	lda	ptr_glob
-	jsl	free1024
-		         
-;
-; If exebuf pointer is null, bail out.
-;  >> NOTE: if exebuf is checked for null, shouldn't the other ptrs?
-;
-	lda	exebuf
-	ora	exebuf+2
-	bne	loop
-	pla
-	pla
-	stz	term
-	lda	#0
-	jmp	chk_cmd
-
 
 *   command	subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,
 *		4:pipesem,4:stream,4:awaitstatus)

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shell.asm,v 1.9 1998/12/31 18:29:14 tribby Exp $
+* $Id: shell.asm,v 1.10 1999/02/08 17:26:51 tribby Exp $
 *
 **************************************************************************
 *
@@ -577,9 +577,7 @@ GSOSDP	ds	2
 cmdloc	ds	2
 cmdlen	ds	2
 cmdline	ds	cmdbuflen
-buffer	ds	256
 wordlen	ds	2
-wordbuf	ds	256
 nummatch	ds	2
 matchbuf	ds	512*4
 cmdcontext	ds	2

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: history.asm,v 1.7 1998/12/21 23:57:06 tribby Exp $
+* $Id: history.asm,v 1.8 1999/02/08 17:26:50 tribby Exp $
 *
 **************************************************************************
 *
@@ -57,6 +57,8 @@ dummyhistory	start		; ends up in .root
 
 histNext	gequ	0
 histCmd	gequ	4
+
+cmdbuflen	gequ	1024
 
 ;=========================================================================
 ;
@@ -472,7 +474,7 @@ OpenRef	ds	2
 
 WriteParm	dc	i2'4'
 WriteRef	ds	2
-WriteBuf	dc	a4'buffer'
+WriteBuf	dc	a4'cmdline'
 WriteReq	ds	4
 	ds	4
 
@@ -524,8 +526,8 @@ loop	anop
 	beq	doneclose
 	dey
 	lda	#0
-	sta	buffer,y
-	ph4	#buffer
+	sta	cmdline,y
+	ph4	#cmdline
 	jsl	InsertHistory
 	bra	loop
 
@@ -546,8 +548,8 @@ NLTable	dc	i1'13'
 
 ReadParm	dc	i2'4'
 ReadRef	ds	2
-	dc	a4'buffer'
-	dc	i4'1024'
+	dc	a4'cmdline'
+	dc	i4'cmdbuflen'
 ReadTrans	ds	4
 
 CloseParm	dc	i2'1'

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: alias.asm,v 1.8 1998/12/31 18:29:11 tribby Exp $
+* $Id: alias.asm,v 1.9 1999/02/08 17:26:49 tribby Exp $
 *
 **************************************************************************
 *
@@ -323,140 +323,167 @@ outbuf	equ	0
 sub	equ	outbuf+4
 word	equ	sub+4
 buf	equ	word+4
-space	equ	buf+4
+bufend	equ	buf+4
+inquote	equ	bufend+2
+bsflag	equ	inquote+2
+space	equ	bsflag+2
 	
 	subroutine (4:cmd),space
 
-	ph4	#1024
+	ph4	maxline_size	Allocate result buffer.
 	~NEW
 	stx	buf+2
 	sta	buf
-	stx	outbuf+2
-	sta	outbuf
-	jsl	alloc1024
-	stx	word+2
+	stx	outbuf+2	Initialize "next
+	sta	outbuf	 output char" pointer.
+	clc		Calculate end of buffer-1;
+	adc	maxline_size	 note: it's allocated to be in one
+	dec	a	  bank, so only need low-order word.
+	sta	bufend
+
+	jsl	allocmaxline	Allocate buffer for word that
+	stx	word+2	 might be an alias.
 	sta	word
+
 	lda	#0
-	sta	[buf]	In case we're called with empty string
+	sta	[buf]	In case we're called with empty string.
 	sta	[word]
 ;
-; eat leading spaces
+; Eat leading space and tabs (just in case expanding a variable added them!)
 ;
+	bra	eatleader
+bump_cmd	inc	cmd
 eatleader	lda	[cmd]
 	and	#$FF
-	jeq	done
+	jeq	stringend
 	cmp	#' '
-	bne	getword
-	inc	cmd
-	sta	[outbuf]
-	inc	outbuf
-	bra	eatleader
+	beq	bump_cmd
+	cmp	#9
+	beq	bump_cmd
 ;
-; find the leading word
+; Parse the leading word
 ;
-getword	short	a
+	short	a
 	ldy	#0
+	bra	makeword1	First time, already checked 0, ' ', 9
 makeword	lda	[cmd],y
 	if2	@a,eq,#0,gotword
 	if2	@a,eq,#' ',gotword
-	if2	@a,eq,#';',gotword
+	if2	@a,eq,#9,gotword
+makeword1	if2	@a,eq,#';',gotword
 	if2	@a,eq,#'&',gotword
 	if2	@a,eq,#'|',gotword
 	if2	@a,eq,#'>',gotword
 	if2	@a,eq,#'<',gotword
 	if2	@a,eq,#13,gotword
-	if2	@a,eq,#9,gotword
 	if2	@a,eq,#10,gotword
 	sta	[word],y
 	iny
 	bra	makeword
 ;
-; we got a word, now check if it's an alias
+; We have a word. See if it's an alias.
 ;
 gotword	lda	#0
 	sta	[word],y	
 	long	a
-	add2	@y,cmd,cmd
+	cpy	#0	Check for 0 length.
+	beq	copyrest
 	phy
 	pei	(word+2)
 	pei	(word)
 	jsl	findalias
 	sta	sub
 	stx	sub+2
+	ply
 	ora	sub+2
-	beq	noalias
+	beq	copyrest
 ;
-; expand it, if you hadn't figured it out for yourself by now.
+; Yes, this is an alias. Copy it into the output buffer.
 ;
-	pla
+	add2	@y,cmd,cmd	Add length to cmd pointer.
+
+	pei	(sub+2)	Make sure that
+	pei	(sub)	 substituted string
+	jsr	cstrlen	  will fit into buffer.
+	sec
+	adc	outbuf
+	jge	overflow
+	cmp	bufend
+	jge	overflow
+
 	ldy	#0
-putalias	lda	[sub],y
-	and	#$FF
-	beq	next
-	sta	[outbuf]
+	short	a
+	lda	[sub]
+putalias	sta	[outbuf]
 	inc	outbuf
 	iny
-	bra	putalias
+	lda	[sub],y
+	bne	putalias
+	long	a
 ;
-; no alias, so just copy the original string
+; That alias is expanded. Copy until we reach the next command.
 ;
-noalias	plx
-	beq	next
-	ldy	#0
-noalias2	lda	[word],y
+copyrest	stz	inquote	Clear the "in quotes" flag
+	stz	bsflag	 and "backslashed" flag.
+
+next	anop
+	lda	outbuf	Check for output overflow.
+	cmp	bufend
+	jcs	overflow
+	lda	[cmd]	Transfer the character.
+	and	#$00FF
+	cmp	#13	If carriage-return,
+	bne	go8bits
+	lda	#0	 treat like end-of-string.
+go8bits	short	a
 	sta	[outbuf]
+	long	a
+	inc	cmd	Bump pointers.
 	inc	outbuf
-	iny
-	dex
-	bne	noalias2
+
+	if2	@a,eq,#0,done
 ;
-; the alias is expanded, now copy until we reach the next command
+; If that was a backslashed character, don't check for special chars.
 ;
-next	lda	[cmd]
-	inc	cmd
-	sta	[outbuf]
-	inc	outbuf
-	and	#$FF
-	beq	done
-	if2	@a,eq,#13,nextalias
+	ldx	bsflag
+	beq	testq
+	stz	bsflag
+	bra	next
+
+testq	if2	@a,eq,#"'",singquoter
+	if2	@a,eq,#'"',doubquoter
+;
+; Remaining characters aren't special if we are in a quoted string
+;
+	ldx	inquote
+	bne	next
 	if2	@a,eq,#';',nextalias
 	if2	@a,eq,#'&',nextalias
 	if2	@a,eq,#'|',nextalias
-	if2	@a,eq,#'\',backstabber
-	if2	@a,eq,#"'",singquoter
-	if2	@a,eq,#'"',doubquoter
-	bra	next
+	if2	@a,ne,#'\',next
 ;
 ; "\" found
 ;
-backstabber	lda	[cmd]
-	inc	cmd
-	sta	[outbuf]
-	inc	outbuf
-	and	#$FF
-	beq	done
+backstabber	sta	bsflag
 	bra	next
+
 ;
 ; "'" found
 ;
-singquoter	lda	[cmd]
-	inc	cmd
-	sta	[outbuf]
-	inc	outbuf
-	and	#$FF
-	beq	done
-	if2	@a,ne,#"'",singquoter
+singquoter	bit	inquote	Check "in quotes" flag.
+	bvs	next	In double quotes. Keep looking.
+	lda	inquote	Toggle single quote
+	eor	#$8000
+	sta	inquote
 	bra	next
 ;
 ; '"' found
 ;
-doubquoter	lda	[cmd]
-	inc	cmd
-	sta	[outbuf]
-	inc	outbuf
-	and	#$FF
-	beq	done
-	if2	@a,ne,#'"',doubquoter
+doubquoter	bit	inquote	Check "in quotes" flag.
+	bmi	next	In single quotes. Keep looking.
+	lda	inquote	Toggle single quote
+	eor	#$4000
+	sta	inquote
 	bra	next
 
 ;
@@ -464,11 +491,39 @@ doubquoter	lda	[cmd]
 ;
 nextalias	jmp	eatleader
 
+;
+; Terminate string and exit
+;
+stringend	short	a
+	sta	[outbuf]
+	long	a
+;
+; All done: clean up and return to caller
+;
 done	ldx	word+2
 	lda	word
-	jsl	free1024
+	jsl	freemaxline
 
 	return 4:buf
+
+
+;
+; Report overflow error
+;
+overflow	anop
+	pei	(buf+2)	Free the output buffer.
+	pei	(buf)
+	jsl	nullfree
+	stz	buf
+	stz	buf+2
+
+	ldx	#^ovferr	Report overflow error.
+	lda	#ovferr
+	jsr	errputs
+
+	bra	done
+
+ovferr	dc	c'gsh: Alias overflowed line limit',h'0d00'
 
 	END
 

@@ -6,13 +6,13 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: bufpool.asm,v 1.6 1998/12/21 23:57:04 tribby Exp $
+* $Id: bufpool.asm,v 1.7 1999/02/08 17:26:50 tribby Exp $
 *
 **************************************************************************
 *
 * BUFPOOL
 *   By Tim Meekins
-*   Modified by Dave Tribby for GNO 2.0.6 (256-byte buffer code removed)
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * This is the buffer pool
 *
@@ -24,13 +24,13 @@
 * Interfaces defined in this file:
 *     The alloc routine is a jsl without any stack params.
 *         Pointer to requested buffer is returned in X/A registers.
-*   alloc1024	
+*   allocmaxline	
 *     The free routine takes the address from the X/A registers
-*   free1024	
+*   freemaxline	
 *
 * bufpool data:
-*    pool1024		dc   i4'0'
-*    pool1024mutex	key
+*    pmaxline		dc   i4'0'
+*    pmaxlinemutex	key
 *		          
 **************************************************************************
 
@@ -39,32 +39,34 @@
 dummybufpool	start		; ends up in .root
 	end
 
+	setcom 60
+
 **************************************************************************
 *
-* Get a buffer of size 1024
+* Get a buffer of size maxline_size
 *
 **************************************************************************
 
-alloc1024	START
+allocmaxline	START
 	
 	using	bufpool
 
-	lock	pool1024mutex
+	lock	pmaxlinemutex
 
-	lda	pool1024	If pool pointer
-	ora	pool1024+2	 isn't NULL,
+	lda	pmaxline	If pool pointer
+	ora	pmaxline+2	 isn't NULL,
 	beq	allocbuf
 
 	phd
-	ph4	pool1024		Push pool pointer on stack.
+	ph4	pmaxline		Push pool pointer on stack.
 	tsc
 	tcd
 	lda	[1]		Replace pool pointer with
-	sta	pool1024		 the address it points to.
+	sta	pmaxline		 the address it points to.
 	ldy	#2
 	lda	[1],y
-	sta	pool1024+2
-	unlock pool1024mutex
+	sta	pmaxline+2
+	unlock pmaxlinemutex
 	pla
 	plx
 	pld
@@ -73,20 +75,26 @@ alloc1024	START
 ;
 ; No memory in free pool; must allocate a new block.
 ;
-allocbuf	unlock pool1024mutex
-	ph4	#1024
+allocbuf	unlock pmaxlinemutex
+	ph4	maxline_size
 	~NEW
 	rtl
+
+;
+; Constant indicating # of bytes in a maxline buffer
+;
+maxline_size	entry		Make this easily seen.
+	dc	i4'4096'
 
 	END
 
 **************************************************************************
 *
-* Free a buffer of size 1024, putting it into the free pool
+* Free a buffer of size maxline_size, putting it into the free pool
 *
 **************************************************************************
 
-free1024	START
+freemaxline	START
 
 	using bufpool
 
@@ -95,17 +103,17 @@ free1024	START
 	pha
 	tsc
 	tcd
-	lock pool1024mutex
-	lda	pool1024	Move current head of pool list
+	lock	pmaxlinemutex
+	lda	pmaxline	Move current head of pool list
 	sta	[1]	 into the buffer being freed.
 	ldy	#2
-	lda	pool1024+2
+	lda	pmaxline+2
 	sta	[1],y
 	lda	1	Put address of buffer being freed
-	sta	pool1024	 into the pool list head.
+	sta	pmaxline	 into the pool list head.
 	lda	3
-	sta	pool1024+2
-	unlock pool1024mutex
+	sta	pmaxline+2
+	unlock pmaxlinemutex
 	pla
 	plx	
 	pld
@@ -121,8 +129,8 @@ free1024	START
 
 bufpool	DATA
 
-pool1024	dc	i4'0'	Head of free pool list.
+pmaxline	dc	i4'0'	Head of free pool list.
 
-pool1024mutex	key		Mutual exclusion when modifying list.
+pmaxlinemutex	key		Mutual exclusion when modifying list.
 		         
 	END

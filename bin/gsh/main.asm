@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: main.asm,v 1.8 1999/01/14 17:44:25 tribby Exp $
+* $Id: main.asm,v 1.9 1999/02/08 17:26:51 tribby Exp $
 *
 **************************************************************************
 *
@@ -102,7 +102,7 @@ argloop	dec	argc	Decrement argument count.
 
 	inc	ExecFlag
 	inc	FastFlag
-	ph4	#1024
+	ph4	maxline_size
 	~NEW
 	sta	ExecCmd
 	sta	p

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: orca.asm,v 1.8 1998/12/31 18:29:14 tribby Exp $
+* $Id: orca.asm,v 1.9 1999/02/08 17:26:51 tribby Exp $
 *
 **************************************************************************
 *
@@ -75,19 +75,19 @@ space	equ	outPath+4
 ; Allocate memory for sFile, inPath, and outPath
 
 enoughparms	anop
-	jsl	alloc1024
+	jsl	allocmaxline
 	sta	sFile
 	stx	sFile+2
 	ora	sFile+2
 	beq	memerr1
 
-	jsl	alloc1024
+	jsl	allocmaxline
 	sta	inPath
 	stx	inPath+2
 	ora	inPath+2
 	beq	memerr1
 
-	jsl	alloc1024
+	jsl	allocmaxline
 	sta	outPath
 	stx	outPath+2
 	ora	outPath+2
@@ -264,21 +264,21 @@ goaway	lda	sFile
 	beq	donedealloc
 	ldx	sFile+2
 	lda	sFile
-	jsl	free1024
+	jsl	freemaxline
 
 	lda	inPath
 	ora	inPath+2
 	beq	donedealloc
 	ldx	inPath+2
 	lda	inPath
-	jsl	free1024
+	jsl	freemaxline
 
 	lda	outPath
 	ora	outPath+2
 	beq	donedealloc
 	ldx	outPath+2
 	lda	outPath
-	jsl	free1024
+	jsl	freemaxline
 
 
 ; Return to caller with status set to value in retval
