@@ -2,7 +2,7 @@
 # List of shell applications for GNO/ME and ORCA/Shell
 # Last revision: Fri Mar 26 16:31:15 1999
 #
-# $Id: describe.src,v 1.24 1999/03/26 16:32:14 gdr-ftp Exp $
+# $Id: describe.src,v 1.25 1999/04/05 19:53:45 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -544,6 +544,7 @@ Author:  Scott Moberly
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/local/bin
 FTP:     ftp.gno.org
+
 Select or reject lines common to two files.
 
 Name:    compile
@@ -682,6 +683,7 @@ Author:  Scott Moberly (FreeBSD port)
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /bin
 FTP:     ftp.gno.org
+
 Convert and copy a file.
 
 Name:    descc
@@ -2009,6 +2011,7 @@ Author:  Scott Moberly
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/local/bin
 FTP:     Diskettes
+
 Merge corresponding or subsequent lines of files.
 
 Name:    patch
@@ -2060,6 +2063,7 @@ Author:  Scott Moberly (comp.unix.sources port)
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
 FTP:     ftp.gno.org
+
 Formatted output at shell command level.
 
 Name:    pwd
@@ -2191,6 +2195,7 @@ Author:  Scott Moberly (FreeBSD port)
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/local/bin
 FTP:     ftp.gno.org
+
 Reverse lines of a file.
 
 Name:    rimport
@@ -2412,6 +2417,7 @@ Author:  Scott Moberly (FreeBSD port)
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/local/bin
 FTP:     ftp.gno.org
+
 Eliminate .so's from nroff file.
 
 Name:    splatprep
@@ -2678,6 +2684,7 @@ Author:  Scott Moberly (FreeBSD port)
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/local/bin
 FTP:     ftp.gno.org
+
 Terminal capability interface.
 
 Name:    tr
@@ -2729,6 +2736,7 @@ Author:  Scott Moberly (FreeBSD port)
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
 FTP:     ftp.gno.org
+
 Return user's terminal name.
 
 Name:    udl
@@ -2779,6 +2787,7 @@ Author:  Scott Moberly (FreeBSD port)
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/local/bin
 FTP:     ftp.gno.org
+
 Remove ifdef'd lines.
 
 Name:    uniq
@@ -2892,6 +2901,7 @@ Author:  Scott Moberly (FreeBSD port)
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
 FTP:     ftp.gno.org
+
 Create a binary file from a text transmittable file.
 
 Name:    uuencode
@@ -2901,6 +2911,7 @@ Author:  Scott Moberly (FreeBSD port)
 Contact: smoberly@s-cwis.unomaha.edu
 Where:   /usr/bin
 FTP:     ftp.gno.org
+
 Create a text transmittable file from a binary file.
 
 Name:    valspeak
