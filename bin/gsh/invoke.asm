@@ -5,8 +5,9 @@
 * Developed by:
 *   Jawaid Bazyar
 *   Tim Meekins
+* Modified by Dave Tribby for GNO/ME 2.0.6
 *
-* $Id: invoke.asm,v 1.2 1998/04/24 15:38:25 gdr-ftp Exp $
+* $Id: invoke.asm,v 1.3 1998/05/11 19:18:43 tribby Exp $
 *
 **************************************************************************
 *
@@ -402,8 +403,9 @@ invoke0	phk
 
 	jsl	infork
 	bcs	invoke1
+* Change for GNO 2.0.6: call _execve instead of execve
                case  on
-               jsl   execve
+               jsl   _execve
                case  off
 	rtl
 invoke1	pla
