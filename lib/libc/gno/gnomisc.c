@@ -1,5 +1,5 @@
 /*
- * $Id: gnomisc.c,v 1.2 1997/09/21 06:07:24 gdr Exp $
+ * $Id: gnomisc.c,v 1.3 1998/10/31 17:22:05 gdr-ftp Exp $
  *
  * This file is formatted with tabs every 8 characters.
  */
@@ -25,7 +25,7 @@ needsgno(void) {
 	}
 }
 
-static char *unknown = "(unknown)";
+char *	__progname = "(unknown)";
 static GetNameRecGS namerec = { 1, NULL };
 
 char *
@@ -35,19 +35,22 @@ __prognameGS (void) {
 		namerec.dataBuffer =
 			(ResultBuf255Ptr) GOchange (NULL, NAME_MAX, NULL);
 		if (namerec.dataBuffer == NULL) {
-			return unknown;
+			/* we can't get it now, we likely can't get it later */
+			namerec.dataBuffer = NULL;
+			return __progname;
 		}
 		GetNameGS(&namerec);
 		if (_toolErr) {
 			GOfree(namerec.dataBuffer);
 			namerec.dataBuffer = NULL;
-			return unknown;
+			return __progname;
 		}
 		/* NULL-terminate it */
 		namerec.dataBuffer->bufString.text
 			[namerec.dataBuffer->bufString.length] = '\0';
+		__progname = namerec.dataBuffer->bufString.text;
 	}
-	return namerec.dataBuffer->bufString.text;
+	return __progname;
 }
 
 void

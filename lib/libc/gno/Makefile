@@ -1,14 +1,14 @@
 #
 # gno/libc/gno/Makefile
 #
-# $Id: Makefile,v 1.7 1998/02/19 01:05:16 gdr-ftp Exp $
+# $Id: Makefile,v 1.8 1998/10/31 17:22:05 gdr-ftp Exp $
 #
 
 LIB	= c
 LIBPFX	= $(OBJ_DIR)../
 NO_REZ	= true
 SRC_ASM	= gnocmd.asm parsearg.asm stack.asm
-SRC_C	= gnomisc.c gsstring.c map.c stack2.c
+SRC_C	= gnomisc.c gsstring.c map.c stack2.c vsprintmt.c
 SRCS	= $(SRC_ASM) $(SRC_C)
 
 .INCLUDE: /src/gno/lib/lib.mk
