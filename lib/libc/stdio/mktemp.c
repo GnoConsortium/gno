@@ -33,7 +33,7 @@
  */
 
 #ifdef __ORCAC__
-segment "gno_stdio_";
+segment "libc_stdio";
 #endif
 
 #if defined(LIBC_SCCS) && !defined(lint)
