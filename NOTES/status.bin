@@ -1,6 +1,6 @@
 This file lists the status of the various files in the GNO base distribution.
 
-Version: $Id: status.bin,v 1.4 1997/09/24 06:59:57 gdr Exp $
+Version: $Id: status.bin,v 1.5 1997/09/29 05:36:00 gdr Exp $
 
 Person Working on Component ("Owner")
 -------------------------------------
@@ -52,7 +52,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin				Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /bin/aroff			Y	Y
 /bin/binprint			Y
-/bin/cat			Y	Y	dave	Y	P			Y
+/bin/cat			Y	Y	dave	Y	T	Y	Y	Y	R
 /bin/center			Y
 /bin/chmod				Y	lb
 /bin/chtyp			Y	Y	evan
@@ -70,12 +70,12 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/ed
 /bin/egrep			Y	Y	evan
 /bin/expr
-/bin/false				Y	gdr
+/bin/false				Y	gdr	Y	T	Y	Y	Y	R
 /bin/fgrep			Y	Y	evan
 /bin/freeze			Y	Y
 /bin/grep			Y	Y	evan
 /bin/gsh			Y	Y		prop
-/bin/head			Y	Y	dave	Y	P			Y
+/bin/head			Y	Y	dave	Y	T	Y	Y	Y	R
 /bin/hostname				Y	dt
 /bin/info			Y		lb	(rename to something else)
 /bin/kill				Y
@@ -87,7 +87,6 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/mkdir			Y	Y	dt
 /bin/more			Y	Y	matt
 /bin/mv					Y	dt
-/bin/nroff			Y	Y	gdr	Y
 /bin/passwd			Y	Y
 /bin/pax				N
 /bin/ps					Y		(replace functionality of /usr/bin/eps)
@@ -105,19 +104,20 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/stty			Y	Y
 /bin/su				Y	Y
 /bin/sync				Y
-/bin/tail			Y	Y	dave	Y	P			Y
-/bin/tar			Y	Y
+/bin/tail			Y	Y	dave	Y	T	Y	Y	Y	R
+/bin/tar			Y	Y	tl
 /bin/tee			Y	Y	gdr	Y
 /bin/test				Y	gdr	Y
 /bin/time			Y	Y
 /bin/touch			Y	Y	dt
 /bin/tr				Y	Y	dave	Y	T	Y	Y	Y	R
-/bin/true				Y	gdr
+/bin/true				Y	gdr	Y	T	Y	Y	Y	R
 /bin/uncompress			Y	Y
+/bin/uname				Y
 /bin/uniq			Y	Y
 /bin/upper			Y
 /bin/vi				Y	Y
-/bin/wc				Y	Y	dave	Y	P			Y
+/bin/wc				Y	Y	dave	Y	T	Y	Y	Y	R
 /bin/who			Y	Y	dt
 /dev				Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /dev/modem			Y	Y	dt	prop					Y	/gno.disk2/dev.shk
@@ -135,27 +135,26 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /etc/namespace			Y	Y	gdr	gen					Y	/gno.disk1/installbin
 /etc/passwd			Y	Y	gdr	Y		-				/gno.disk2/etc.shk
 /etc/rchost		(mu)
-/etc/syslog		(syslog)
-/etc/termcap			Y	Y
+/etc/syslog.conf	(syslog)
+/etc/termcap			Y	Y	evan
 /etc/tmtermrc		(tmterm)
 /etc/tty.config			Y	Y	gdr	Y		-				/gno.disk2/etc.shk
 /etc/ttys			Y	Y		Y		-	
 /etc/utmp		(mu)
 /gshrc				Y	Y
+/home/root				Y	gdr	dir	-	-	-	-
 /initrc	(single-user)		Y	Y	gdr	Y		-				/gno.disk1/initrc
 /installbin			Y	Y	gdr			-				/gno.disk1/installbin
 /kern				Y	Y	dt	prop
 /lib				Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /lib/lbsd			Y	N	-
-/lib/lcrypt			Y	Y	gdr	Y
+/lib/lcrypt			Y	N	(now in libc)
 /lib/libc			Y	Y	gdr	Y
-/lib/libcurses				Y
 /lib/libgno			Y	N	-
-/lib/libutil				Y	gdr	Y
-/lib/lregexp			Y	Y
+/lib/lsaneglue				Y	sonk	Y	T	Y	Y	Y
 /lib/lstring			Y			(replaced by libc?)
-/lib/ltermcap			Y	Y
-/lib/orcalib			Y	Y	gdr
+/lib/orcalib			Y	Y	gdr	Y	T	Y	Y	Y
+/lib/sysfloat				Y	gdr	Y	T	Y	Y	Y
 /libexec/atrun
 /libexec/fingerd
 /libexec/ftpd				Y	dt
@@ -168,7 +167,8 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /sbin/dump				Y	dt
 /sbin/dumpfs
 /sbin/fsck
-/sbin/init			Y	Y
+/sbin/init		(initd)	Y	Y
+/sbin/initd		(initd)	Y	Y
 /sbin/newfs
 /sbin/ping
 /sbin/renram5				Y	gdr
@@ -192,7 +192,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/bison			Y	N
 /usr/bin/cal			Y
 /usr/bin/calendar
-/usr/bin/catrez				Y	dave	Y	missing desc entry	Y
+/usr/bin/catrez				Y	dave	Y	T	Y	Y	Y	R
 /usr/bin/cclean				Y	gdr
 /usr/bin/cjpeg				N		(add on)
 /usr/bin/cksum				Y
@@ -201,10 +201,11 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/col
 /usr/bin/column
 /usr/bin/compile		Y	Y
-/usr/bin/copycat		Y	Y
+/usr/bin/copycat		Y	Y	tl
 /usr/bin/cpp					gdr
 /usr/bin/ctags				Y	dt
-/usr/bin/cut				Y	dave	Y	P			Y
+/usr/bin/cut				Y	dave	Y	T	Y	Y	Y	R
+/usr/bin/describe	(describe)	Y	gdr	Y	T	Y	Y	Y	R
 /usr/bin/dhrystone		Y	N
 /usr/bin/diff				Y	gdr
 /usr/bin/dirname			Y	gdr
@@ -229,21 +230,22 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/install			Y	gdr	Y
 /usr/bin/join
 /usr/bin/last				Y	dt
-/usr/bin/launch			Y	Y
-/usr/bin/link			Y
+/usr/bin/launch			Y	Y	tl
+/usr/bin/link	(ie: ld)	Y	Y
 /usr/bin/locate					gdr
 /usr/bin/logger				Y
 /usr/bin/logname
 /usr/bin/lpq		(lpr)		Y	dt
 /usr/bin/lpr		(lpr)	Y	Y	dt
 /usr/bin/lprm		(lpr)		Y	dt
-/usr/bin/lseg			Y	Y	dave	Y	P			Y
+/usr/bin/lseg			Y	Y	dave	Y	T	Y	Y	Y	R
 /usr/bin/mkdep
 /usr/bin/makedmake				gdr
 /usr/bin/man			Y	Y	gdr	Y
 /usr/bin/news			Y	N		(waiting on NNTP/UUCP)
 /usr/bin/nm
 /usr/bin/nosh	(formerly zsh)		Y	lb
+/usr/bin/nroff			Y	Y	gdr	Y
 /usr/bin/patch				Y	gdr
 /usr/bin/pman			Y
 /usr/bin/pr
@@ -274,7 +276,6 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/tset
 /usr/bin/tsort			Y
 /usr/bin/tty
-/usr/bin/uname
 /usr/bin/unshar			Y	Y
 /usr/bin/unzip			Y
 /usr/bin/uptime			Y	Y
@@ -282,7 +283,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/uuencode
 /usr/bin/wall				Y	dt
 /usr/bin/whatis		(man)		Y	gdr	Y
-/usr/bin/whereis			Y	gdr	Y
+/usr/bin/whereis			Y	gdr	Y	T	Y	Y	Y	R
 /usr/bin/which
 /usr/bin/whois				Y	dt
 /usr/bin/write				Y	lb
@@ -294,13 +295,14 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/games/wump			Y
 /usr/include			Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /usr/lib			Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
-/usr/lib/lflex			Y
+/usr/lib/libflex		Y
+/usr/lib/libcurses		Y	Y	evan
+/usr/lib/libregexp		Y	Y
+/usr/lib/libtermcap		Y	Y	evan
+/usr/lib/libutil		Y	gdr	Y
 /usr/lib/tmac			Y		gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /usr/lib/tmac/tmac.an	(nroff)	Y
 /usr/lib/tmac/tmac.s	(nroff)	Y
-/usr/orca/bin/describe	(describe)	Y	gdr	Y	T	Y	Y	Y	R
-/usr/orca/bin/descc	(describe)	Y	gdr	Y	T	Y	Y	Y	R
-/usr/orca/bin/descu	(describe)	Y	gdr	Y	T	Y	Y	Y	R
 /usr/orca/bin/occ			Y	sonk
 /usr/orca/bin/rc			Y	sonk
 /usr/orca/bin/udl			Y	gdr	Y
@@ -332,21 +334,29 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/sbin			Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk3/usr.man.shk
 /usr/sbin/catman	(man)		Y	gdr	Y
 /usr/sbin/cron			Y	Y
+/usr/sbin/descc		(describe)	Y	gdr	Y	T	Y	Y	Y	R
+/usr/sbin/descu		(describe)	Y	gdr	Y	T	Y	Y	Y	R
 /usr/sbin/getty			Y	Y
 /usr/sbin/inetd				Y	dt
-/usr/sbin/initd			Y
 /usr/sbin/login			Y	Y	dt
 /usr/sbin/lpc		(lpr)		Y	dt
 /usr/sbin/lpd		(lpr)	Y	Y	dt
 /usr/sbin/lptest	(lpr)		Y	dt
 /usr/sbin/makewhatis	(man)		Y	gdr	Y
 /usr/sbin/mctrl			Y
+/usr/sbin/mktmp
+/usr/sbin/newuser				(maybe replace with adduser?) (update to use /home vice /user, or maybe a conf file)
+/usr/sbin/newuserv				(maybe replace with adduser?) (update to use /home vice /user, or maybe a conf file)
 /usr/sbin/nogetty		Y
-/usr/sbin/runover		Y
+/usr/sbin/runover		Y	Y
 /usr/sbin/uptimed		Y
 /usr/spool			Y	N	-	dir	-	-	-	-	-	/gno.disk1/installbin
 /var/adm				Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
+/var/adm/utmp	(initd)
+/var/adm/wtmp	(initd)
+/var/run						dir	-	-	-	-
 /var/spool				Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
+/var/spool/uucppublic			Y	gdr	dir	-	-	-	-
 
 
 NOTES:
