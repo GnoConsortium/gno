@@ -1,10 +1,11 @@
 #	@(#)Makefile	8.1 (Berkeley) 7/19/93
-#	$Id: Makefile,v 1.1 1998/01/24 08:30:54 taubert Exp $
+#	$Id: Makefile,v 1.2 1998/03/11 03:08:15 gdr-ftp Exp $
 
 PROG=	rlogin
 SRCS=	rlogin.c
 LDADD=	-lnetdb
 OPTIMIZE=79
+BINDIR	= /usr/bin
 
 #.if exists(${DESTDIR}/usr/lib/libkrb.a) && (defined(MAKE_KERBEROS) \
 #	|| defined(MAKE_EBONES))
