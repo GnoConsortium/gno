@@ -1,5 +1,6 @@
 # Tests for cat command; invoked by command file "fulltests"
 #   Written by Dave Tribby (August 1997)
+#   $Id: dotests,v 1.2 1997/10/03 03:58:54 gdr Exp $
 
 # Location of the cat command to be tested
 set testcmd="../cat"
