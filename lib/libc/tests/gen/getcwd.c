@@ -1,8 +1,7 @@
-#line 1 ":trenco4:gno.src:lib:libc:tests:gen:getcwd.c"
 /*
  * Test written by Devin Reade.
  *
- * $Id: getcwd.c,v 1.1 1997/02/28 05:12:52 gdr Exp $
+ * $Id: getcwd.c,v 1.2 1997/02/28 05:43:47 gdr Exp $
  */
 
 #include <limits.h>
