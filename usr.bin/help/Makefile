@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.1 1997/10/30 03:51:55 gdr Exp $
+# $Id: Makefile,v 1.2 1998/03/08 17:40:53 gdr-ftp Exp $
 #
 
 PROG	= help
@@ -12,10 +12,12 @@ MANDIR	= /usr/man
 RELBIN	= $(RELEASE_DIR)$(BINDIR)
 RELMAN	= $(RELEASE_DIR)$(MANDIR)
 
-build:	$(PROG)
+build:	$(OBJ_DIR) $(OBJ_DIR)$(PROG)
 
-$(PROG): help.gsh $(PROG).r
+$(OBJ_DIR)$(PROG): help.gsh $(PROG).r
 	$(INSTALL) -m755 help.gsh $@
-	$(CATREZ) -d $@ $(PROG).r
+	$(CATREZ) -d $@ $(OBJ_DIR)$(PROG).r
+
+$(OBJ_DIR):;	$(INSTALL) -d $(OBJ_DIR)
 
 .INCLUDE:	/src/gno/binrelease.mk
