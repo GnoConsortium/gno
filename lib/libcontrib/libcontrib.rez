@@ -1,13 +1,14 @@
 /*
  * Resources for version and comment
  *
- * $Id: libcontrib.rez,v 1.1 1997/10/03 04:49:40 gdr Exp $
+ * $Id: libcontrib.rez,v 1.2 1998/03/08 18:11:50 gdr-ftp Exp $
  */
 #define LIB     "lcontrib"
 #define DESC    "A library of non-standard but still useful subroutines.\n"
-#define GNO_VER "GNO v2.0.6"
+#define GNO_VER "GNO v2.0.6\n"
 
 #include "Types.rez"
+#include "/src/gno/build.tools/builddate.rez"
 
 /*
  * Version
@@ -19,6 +20,7 @@ resource rVersion (1, purgeable3) {
 	verUS,	/* Country */
 	LIB,	/* Program name */
         DESC GNO_VER
+        BUILD_DATE
 };
 
 
@@ -28,4 +30,5 @@ resource rVersion (1, purgeable3) {
 resource rComment (1, purgeable3) {
 	LIB " v1.0 (September 1997)\n"
 	DESC GNO_VER
+	BUILD_DATE
 };

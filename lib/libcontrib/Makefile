@@ -1,7 +1,7 @@
 #
 # This is the makefile for libcontrib, GNO v2.0.6
 #
-# $Id: Makefile,v 1.3 1998/02/08 03:47:29 gdr-ftp Exp $
+# $Id: Makefile,v 1.4 1998/03/08 18:11:49 gdr-ftp Exp $
 #
 
 LIB		= contrib
@@ -11,7 +11,10 @@ CFLAGS		+= -I. -Slibcontrib
 
 .INCLUDE:	/src/gno/lib/lib.mk
 
-$(LIBTARGET):: lib$(LIB).r
-	$(CATREZ) -d $@ lib$(LIB).r
+HDIR		= $(RELEASE_DIR)/usr/include/gno
+
+release::
+	$(INSTALL) -d $(HDIR)
+	$(INSTALL) contrib.h $(HDIR)
 
 $(OBJS):: contrib.h
