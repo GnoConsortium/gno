@@ -1,0 +1,40 @@
+.TH VERSION 1
+.SH NAME
+.LP
+.B getvers
+\- get version number and information stored in rVersion format from
+specified executable file
+.SH SYNOPSIS
+.LP
+.BR getvers " <  file1 file2 ...filen  >"
+.SH DESCRIPTION
+.LP
+.B getvers
+is a program which accepts as input the name(s) of file(s)
+and print the version information stored in the rVersion resource of
+the file(s).  If no rVersion resource is present it will print with the error
+`This file has no version resource' and continue processing other filenames
+provided as input.
+.LP
+To add information to the rVersion resource, you can use the companion
+shell utility
+.BR setvers "."
+.LP
+You can use the companion shell utility
+.BR gv " to list versions in a more compact form."
+.SH BUGS
+.LP
+Little crawly things, also known as insects.
+.SH SEE ALSO
+.LP
+.BR setvers "(1)"
+.BR gv "(1)"
+.SH AUTHOR
+.LP
+.nf
+Ian Schmidt, Two Meg Software
+
+internet  irsman@iastate.edu
+BITNET    twbv4@isuvax
+AOL       IRSMan
+.fi

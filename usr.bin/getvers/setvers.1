@@ -1,0 +1,129 @@
+.TH SETVERS 1
+.SH NAME
+.LP
+.B setvers
+\- store version number and strings in rVersion format in the specified
+executable file.
+.SH SYNOPSIS
+.LP
+.B setvers
+.B file
+.RB "'" string1 "~" string2 "'"
+.RB "[" country "]"
+.RB "v" majrev "." minrev "." bugrev
+.SH DESCRIPTION
+.LP
+.B setvers 
+is a program which adds an rVersion resource to the specified
+.BR file "."
+The rVersion format allows for two strings of up to 255 characters, although
+it is suggested that for this use you keep each field shorter than 80
+characters.
+.B string1
+is seperated from 
+.B string2
+by a 
+.B ^
+character, and the both strings should be enclosed in single quotes.
+.B string1
+is required to be the name of the program.  Any `_'
+character in string2 will be interpreted as a carriage return.  When
+using GNO, make sure to quote the single quotes with backslashes.  
+.LP
+The optional field
+.B country
+(no spaces allowed) allows you to set the country field of the rVersion
+resource.  The last parameter is the current revision number of the
+program in the format
+.BR majrev "." minrev "." bugrev ","
+where
+.B majrev
+is a single or double digit number from 00 to 99, and
+.B minrev
+and
+.B bugrev
+are single digit numbers from zero to nine.
+.LP
+To print the version information stored by 
+.B setvers
+you can use the companion shell utilities
+.BR getvers " or"
+.BR gv "."
+.SH COUNTRIES
+.LP
+.nf
+Valid Countries/Regions:
+(case IS sensitive)
+
+          UnitedStates
+          France
+          Britian
+          Germany
+          Italy
+          Netherlands
+          Belgium/Luxembourg
+          Sweden
+          Spain
+          Denmark
+          Portugal
+          FrenchCanadian
+          Norway
+          Isreal
+          Japan
+          Australia
+          Arabia
+          Finland
+          FrenchSwiss
+          GermanSwiss
+          Greece
+          Iceland
+          Malta
+          Cyprus
+          Turkey
+          Bosnia/Herzegovena
+          Ireland
+          Korea
+          China
+          Taiwan
+          Thailand
+.SH EXAMPLES
+.LP
+.nf
+o Set the version of program `chmod' to read:
+
+   chmod v01.0.0
+   James Brookes
+   jamesb@cscihp.ecst.csuchico.edu
+   Country: United States
+
+in Orca:
+
+# setvers chmod 'chmod^James Brookes_jamesb@cscihp.ecst.csuchico.edu'
+  v01.0.0
+
+in GNO:
+
+% setvers chmod \\'chmod^James Brookes_jamesb@cscihp.ecst.csuchico.edu\\'
+  v01.0.0
+.fi
+.SH CAVEATS
+.LP
+If an rVersion resource already exists, it will be overwritten and replaced
+with the new one.  Other resources will be unaffected.
+.SH BUGS
+.LP
+See
+.B getvers.1
+.SH SEE ALSO
+.LP
+.BR getvers "(1)"
+.BR gv "(1)"
+.SH AUTHOR
+.LP
+.nf
+Ian Schmidt, Two Meg Software
+
+internet  irsman@iastate.edu
+BITNET    twbv4@isuvax
+AOL       IRSMan
+.fi
