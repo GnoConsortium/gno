@@ -1,6 +1,5 @@
-#line 1 ":trenco4:custom.src:test:test.c"
 /*
- * $Id: test.c,v 1.1 1996/02/10 08:27:32 gdr Exp $
+ * $Id: test.c,v 1.2 1996/02/11 05:47:04 gdr Exp $
  */
 
 /*-

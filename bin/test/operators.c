@@ -1,8 +1,7 @@
-#line 1 ":trenco4:custom.src:test:operators.c"
 /*
  * Operators used in the test command.
  *
- * $Id: operators.c,v 1.1 1996/02/10 08:27:31 gdr Exp $
+ * $Id: operators.c,v 1.2 1996/02/11 05:47:04 gdr Exp $
  */
 
 #include <stdio.h>

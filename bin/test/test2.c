@@ -1,6 +1,5 @@
-#line 1 ":trenco4:custom.src:test:test2.c"
 /*
- * $Id: test2.c,v 1.1 1996/02/10 08:27:33 gdr Exp $
+ * $Id: test2.c,v 1.2 1996/02/11 05:47:05 gdr Exp $
  */
 
 #include <stdio.h>
