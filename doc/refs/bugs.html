@@ -1,0 +1,105 @@
+<H1>GNO Bug Reports</H1>
+<hr>
+
+A critical part of GNO development is user feedback.  What works
+well?  What needs improvement?  What is broken?
+By telling GNO developers this information, you are <em>much</em>
+more likely to see improvements.
+<p>
+
+The traditional method of sending in bug reports is to email the
+developer.  While this mechanism is simple, it has a few drawbacks:
+<ul>
+<li>Sometimes the original author has moved or is otherwise no longer around,
+	making it impossible (or at least difficult) to submit bug reports.
+<li>Only the author sees the report.  Consequently nobody else knows of
+	the problem, which can result in unnecessary frusteration and
+	wasted time for other users.
+</ul>
+
+The GNO Consortium now provides a common bug reporting and tracking system.
+While it is primarily intended for bug reports on the GNO base distribution,
+reports are also welcome on programs that are not part of the base
+distribution (but that still run under GNO).  This system is accessible
+both though the web and through email.
+
+<hr>
+<H3>Bug Reports -- Web Access</H3>
+
+The recommended way to submit GNO bug reports is to use the web-based
+bug reporting package.  There are two ways to access this system:
+<ul>
+<li><A HREF="http://www.gno.org/cgi-bin/gnobugs">Guest Access</A>.
+	This will allow you to submit, update, and view problem
+	reports, but not perform any other operations.
+<li><A HREF="http://www.gno.org/cgi-bin/secure/gnobugs">Developer Access</A>.
+	This allows full access to the problem report system, but
+	is restricted to a small number of &quot;core&quot; developers.
+	If you feel you should have developer access, you should send
+	email to
+	<A HREF="mailto:gno-bugs-admin@trenco.gno.org">
+	gno-bugs-admin@trenco.gno.org</A>.
+	Please do not feel insulted if you are not granted access.
+</ul>
+Note that this reporting system is accessible from Lynx, but is more
+readable using a graphical browser.  This is unfortunate, but fixing
+this problem will require modifications to the bug tracking software
+itself.  This will be addressed when time permits.
+
+<hr>
+<H3>Bug Reports -- Email Access</H3>
+
+If you prefer to send your bug reports via regular email, you can 
+send them to 
+<A HREF="mailto:gno-bugs@trenco.gno.org">gno-bugs@trenco.gno.org</A>.
+If you do this method, please ensure that your subject line contains
+a concise description of the problem, such as
+<pre>
+	open(2) doesn't set errno
+or
+	rm broken for HFS volumes
+</pre>
+<p>
+
+When sending your bug reports in email, please also include the following
+information, in addition to your informative subject line:
+<ul>
+<li>With which distribution did you observe the problem?  It should be
+	one of the following:
+	<ul>
+	<li> the base 2.0.4 distribution
+	<li> the v2.0.4 kernel with v2.0.6 libraries
+	<li> beta 2.0.6
+	</ul>
+<li>Which component is affected?  It should be one of the following:
+	<ul>
+	<li>Documentation
+	<li>Utilities
+	<li>The GNO Shell
+	<li>The Kernel
+	<li>Libraries and Header Files
+	<li>other
+	</ul>
+<li>If you are reporting a problem with a utility or library routine,
+	include the name of the utility (or routine).  If it's available,
+	also quote the version.  This is often given as an rVersion 
+	resource on programs and libraries.
+<li>Give a clear description of the problem.  If possible, include
+	precise instructions on how to reproduce the problem.
+<li>If your problem is with a library routine, give a <em>short</em>
+	program which exhibits the problem.
+<li>If your program is longer
+	than one hundred or so, then you can upload the program to
+	<b>ftp://ftp.gno.org/incoming</b>, preferably as a NuFX (Shrinkit)
+	archive.  Please include a brief description with your upload.
+	The description can either be included in the NuFX archive or
+	uploaded as a separate text file.
+</ul>
+<p>
+
+Note that bug reports to the above address will go straight into 
+the reporting system.  If your bug report contains proprietary information,
+you should send it to
+<A HREF="mailto:gno-bugs-admin@trenco.gno.org">
+gno-bugs-admin@trenco.gno.org</A>
+<p>

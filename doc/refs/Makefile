@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.8 1998/02/19 03:03:48 gdr-ftp Exp $
+# $Id: Makefile,v 1.9 1998/03/15 00:36:33 gdr-ftp Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -118,6 +118,7 @@ h:	$(HTML) \
 	$(HTMLD)/manindex.html \
 	$(HTMLD)/related.html \
 	$(HTMLD)/oldrefs.html \
+	$(HTMLD)/bugs.html \
 	$(HTMLD)/unaval.html top.html cleanhtml
 bib:	intro.bbl
 
@@ -185,6 +186,13 @@ $(HTMLD)/related.html: related.html
 		cat head.html $< tail.html | $(REPLACE) \
 		-e 's,%%TITLE%%,GNO-Related Web Pages,;' > $@
 $(HTMLD)/related.html: head.html tail.html
+
+$(HTMLD)/bugs.html: bugs.html
+	@echo "making $@"; \
+	[ -d $(HTMLD) ] || mkdir -p $(HTMLD); \
+		cat head.html $< tail.html | $(REPLACE) \
+		-e 's,%%TITLE%%,GNO Bug Reports,;' > $@
+$(HTMLD)/bugs.html: head.html tail.html
 
 $(HTMLD)/oldrefs.html: oldrefs.html
 	@echo "making $@"; \
