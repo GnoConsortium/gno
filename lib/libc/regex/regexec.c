@@ -36,7 +36,7 @@
  *
  *	@(#)regexec.c	8.3 (Berkeley) 3/20/94
  *
- * $Id: regexec.c,v 1.2 1997/10/08 07:07:50 gdr Exp $
+ * $Id: regexec.c,v 1.3 1997/11/17 04:13:08 gdr Exp $
  */
 
 #ifdef __ORCAC__
@@ -71,24 +71,41 @@ static int nope = 0;		/* for use in asserts; shuts lint up */
 #define	states	long
 #define	states1	states		/* for later use in regexec() decision */
 #define	CLEAR(v)	((v) = 0)
+#ifndef __ORCAC__
 #define	SET0(v, n)	((v) &= ~(1 << (n)))
 #define	SET1(v, n)	((v) |= 1 << (n))
 #define	ISSET(v, n)	((v) & (1 << (n)))
+#else		/* ORCA/C doesn't use 32 bits by default */
+#define	SET0(v, n)	((v) &= ~((unsigned long)1 << (n)))
+#define	SET1(v, n)	((v) |= (unsigned long)1 << (n))
+#define	ISSET(v, n)	((v) & ((unsigned long)1 << (n)))
+#endif
 #define	ASSIGN(d, s)	((d) = (s))
 #define	EQ(a, b)	((a) == (b))
 #define	STATEVARS	int dummy	/* dummy version */
 #define	STATESETUP(m, n)	/* nothing */
 #define	STATETEARDOWN(m)	/* nothing */
 #define	SETUP(v)	((v) = 0)
+#ifndef __ORCAC__
 #define	onestate	int
 #define	INIT(o, n)	((o) = (unsigned)1 << (n))
+#else		/* ORCA/C doesn't use 32 bits by default */
+#define	onestate	long
+#define	INIT(o, n)	((o) = (unsigned long)1 << (n))
+#endif
 #define	INC(o)	((o) <<= 1)
 #define	ISSTATEIN(v, o)	((v) & (o))
 /* some abbreviations; note that some of these know variable names! */
 /* do "if I'm here, I can also be there" etc without branches */
+#ifndef __ORCAC__
 #define	FWD(dst, src, n)	((dst) |= ((unsigned)(src)&(here)) << (n))
 #define	BACK(dst, src, n)	((dst) |= ((unsigned)(src)&(here)) >> (n))
 #define	ISSETBACK(v, n)	((v) & ((unsigned)here >> (n)))
+#else		/* ORCA/C doesn't use 32 bits by default */
+#define	FWD(dst, src, n)	((dst) |= ((unsigned long)(src)&(here)) << (n))
+#define	BACK(dst, src, n)	((dst) |= ((unsigned long)(src)&(here)) >> (n))
+#define	ISSETBACK(v, n)	((v) & ((unsigned long)(here) >> (n)))
+#endif
 /* function names */
 #define SNAMES			/* engine.c looks after details */
 
@@ -129,7 +146,11 @@ static int nope = 0;		/* for use in asserts; shuts lint up */
 				(m)->vn = 0; }
 #define	STATETEARDOWN(m)	{ free((m)->space); }
 #define	SETUP(v)	((v) = &m->space[m->vn++ * m->g->nstates])
+#ifndef __ORCAC__
 #define	onestate	int
+#else		/* ORCA/C doesn't use 32 bits by default */
+#define	onestate	long
+#endif
 #define	INIT(o, n)	((o) = (n))
 #define	INC(o)	((o)++)
 #define	ISSTATEIN(v, o)	((v)[o])
@@ -172,12 +193,19 @@ regexec(const regex_t *preg,
 #	define	GOODFLAGS(f)	((f)&(REG_NOTBOL|REG_NOTEOL|REG_STARTEND))
 #endif
 
+#ifdef REDEBUG
+	fprintf(stdout, "regexec: string \"%s\"\n", string);
+#endif
+
 	if (preg->re_magic != MAGIC1 || g->magic != MAGIC2)
 		return(REG_BADPAT);
 	assert(!(g->iflags&BAD));
 	if (g->iflags&BAD)		/* backstop for no-debug case */
 		return(REG_BADPAT);
 	eflags = GOODFLAGS(eflags);
+
+        /* Special...for debugging turn on register tracing */
+        eflags |= REG_TRACE;
 
 	if (g->nstates <= CHAR_BIT*sizeof(states1) && !(eflags&REG_LARGE))
 		return(smatcher(g, (char *)string, nmatch, pmatch, eflags));

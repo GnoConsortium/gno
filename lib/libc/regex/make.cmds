@@ -1,0 +1,28 @@
+#  Commands to create regex.lib, since normal Makefile
+#  assumes that it will be part of libc.
+
+# Name of library
+set libname=/lib/regex.lib
+
+# Optimization compile option
+set optimize=-O72
+
+# Any debug needed?
+set debug=""
+
+# Macro definitions
+# set macros="-DPOSIX_MISTAKE -DREDEBUG -D__NOASM__"
+set macros="-DPOSIX_MISTAKE"
+
+# Places to look for libraries
+set inc="-I/usr/include -I/lang/orca/libraries/orcacdefs"
+
+# Compile the source files
+17/occ $optimize $debug -o regcomp.o  -c -a0 -i -r -w $inc -v -r $macros regcomp.c
+17/occ $optimize $debug -o regerror.o -c -a0 -i -r -w $inc -v -r $macros regerror.c
+17/occ $optimize $debug -o regexec.o  -c -a0 -i -r -w $inc -v -r $macros regexec.c
+17/occ $optimize $debug -o regfree.o  -c -a0 -i -r -w $inc -v -r $macros regfree.c
+
+# Create library
+rm $libname
+17/makelib -p $libname +regcomp.o +regerror.o +regexec.o +regfree.o

@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.1 1997/10/08 07:07:49 gdr Exp $
+# $Id: Makefile,v 1.2 1997/11/17 04:13:07 gdr Exp $
 #
 # Devin Reade, October 1997.
 #
@@ -11,7 +11,7 @@ OBJS	= regcomp.o regerror.o regexec.o regfree.o
 
 # I've not bothered to determine what POSIX_MISTAKE means, but 4.4BSD
 # uses it.
-CFLAGS	+= -DPOSIX_MISTAKE
+CFLAGS	+= -v -r -DPOSIX_MISTAKE
 
 build .PHONY:	../libc
 obj:	$(OBJS)

@@ -36,7 +36,7 @@
  *
  *	@(#)regcomp.c	8.5 (Berkeley) 3/20/94
  *
- * $Id: regcomp.c,v 1.2 1997/10/08 07:07:50 gdr Exp $
+ * $Id: regcomp.c,v 1.3 1997/11/17 04:13:07 gdr Exp $
  */
 
 #ifdef __ORCAC__
@@ -56,6 +56,10 @@ static char sccsid[] = "@(#)regcomp.c	8.5 (Berkeley) 3/20/94";
 #include <regex.h>
 
 #include "utils.h"
+#ifdef __ORCAC__
+/* For some reason this macro definition causes a problem after regex2.h */
+#define	ASTERN(sop, pos)	EMIT(sop, HERE()-pos)
+#endif
 #include "regex2.h"
 
 #include "cclass.h"
@@ -157,7 +161,9 @@ static char nuls[10];		/* place to point scanner in event of error */
 #define	EMIT(op, sopnd)	doemit(p, (sop)(op), (size_t)(sopnd))
 #define	INSERT(op, pos)	doinsert(p, (sop)(op), HERE()-(pos)+1, pos)
 #define	AHEAD(pos)		dofwd(p, pos, HERE()-(pos))
+#ifndef __ORCAC__
 #define	ASTERN(sop, pos)	EMIT(sop, HERE()-pos)
+#endif
 #define	HERE()		(p->slen)
 #define	THERE()		(p->slen - 1)
 #define	THERETHERE()	(p->slen - 2)
@@ -197,6 +203,10 @@ regcomp(regex_t *preg,
 #	define	GOODFLAGS(f)	((f)&~REG_DUMP)
 #endif
 
+#ifdef REDEBUG
+	fprintf(stdout, "regcomp: pattern \"%s\"\n", pattern);
+#endif
+
 	cflags = GOODFLAGS(cflags);
 	if ((cflags&REG_EXTENDED) && (cflags&REG_NOSPEC))
 		return(REG_INVARG);
@@ -227,6 +237,7 @@ regcomp(regex_t *preg,
 	p->end = p->next + len;
 	p->error = 0;
 	p->ncsalloc = 0;
+#ifndef __ORCAC__
 	for (i = 0; i < NPAREN; i++) {
 		p->pbegin[i] = 0;
 		p->pend[i] = 0;
@@ -246,6 +257,20 @@ regcomp(regex_t *preg,
 	g->categories = &g->catspace[-(CHAR_MIN)];
 	(void) memset((char *)g->catspace, 0, NC*sizeof(cat_t));
 	g->backrefs = 0;
+#else
+	/* Performance tune-up for Apple IIGS: set all 0-valued fields in */
+        /* record via memset() and then set only non-0 values.            */
+	(void) memset((char *)g, 0,
+				sizeof(struct re_guts)+(NC-1)*sizeof(cat_t));
+	p->g = g;
+	p->next = (char *)pattern;	/* convenience; we do not modify it */
+	p->end = p->next + len;
+	(void) memset((char *)p->pbegin, 0, sizeof(sopno)*NPAREN*2);
+	g->csetsize = NC;
+	g->cflags = cflags;
+	g->ncategories = 1;	/* category 0 is "everything else" */
+	g->categories = &g->catspace[-(CHAR_MIN)];
+#endif
 
 	/* do it */
 	EMIT(OEND, 0);
@@ -1342,6 +1367,7 @@ isinsets(register struct re_guts *g,
 {
 	register uch *col;
 	register int i;
+#if defined(__NOASM__) || !defined(__ORCAC__)
 	register int ncols = (g->ncsets+(CHAR_BIT-1)) / CHAR_BIT;
 	register unsigned uc = (unsigned char)c;
 
@@ -1349,6 +1375,56 @@ isinsets(register struct re_guts *g,
 		if (col[uc] != 0)
 			return(1);
 	return(0);
+#else
+	/* Hand-optimized code for Apple IIGS */
+	int ncols;
+        int setsize;
+        int rtnval;
+
+	col = g->setbits;
+	setsize = g->csetsize;
+	ncols = g->ncsets+(CHAR_BIT-1);
+#if CHAR_BIT == 8
+	asm{
+		lda ncols
+		lsr A
+		lsr A
+		lsr A
+		sta ncols
+	}
+#else
+	ncols = ncols / CHAR_BIT;
+#endif
+        asm{
+		stz rtnval		; Assume return = 0.
+		lda ncols		; Count i down from ncols
+		beq done
+		sta i			;  to 0 to see when done.
+		lda c			; Y-reg = offset from col
+		and #0x00FF
+		tay
+
+	;  Loop through cols
+	nextcol:
+		lda [col],y		; Get the byte value.
+		and #0x00FF
+		bne nonzero		; Done if != 0.
+		dec i			; Decrement loop counter.
+		beq done		; If 0, return 0.
+		lda col			; Increment base pointer
+		clc
+		adc setsize
+		sta col
+		bcc nextcol
+		inc col+2
+		bra nextcol		;   and stay in loop.
+
+	nonzero:			; Non-zero value found:
+		inc rtnval		;   Set return value to 1
+        }
+	done:
+	return(rtnval);
+#endif
 }
 
 /*
@@ -1362,6 +1438,7 @@ samesets(register struct re_guts *g,
 {
 	register uch *col;
 	register int i;
+#if defined(__NOASM__) || !defined(__ORCAC__)
 	register int ncols = (g->ncsets+(CHAR_BIT-1)) / CHAR_BIT;
 	register unsigned uc1 = (unsigned char)c1;
 	register unsigned uc2 = (unsigned char)c2;
@@ -1370,6 +1447,57 @@ samesets(register struct re_guts *g,
 		if (col[uc1] != col[uc2])
 			return(0);
 	return(1);
+#else
+	/* Hand-optimized code for Apple IIGS */
+	int ncols;
+        int setsize;
+        int rtnval;
+        int c1val;
+
+	col = g->setbits;
+	setsize = g->csetsize;
+#if CHAR_BIT == 8
+	ncols = (g->ncsets+(CHAR_BIT-1)) >> 3;
+#else
+	ncols = (g->ncsets+(CHAR_BIT-1)) / CHAR_BIT;
+#endif
+        asm{
+		stz rtnval		; Assume return = 0
+		lda ncols		; Count i down from ncols
+		beq notfound
+		sta i			;  to 0 to check when done.
+
+	;  Loop through cols
+	nextcol:
+		lda c1
+		and #0x00FF
+                tay
+		lda [col],y		; Get the 1st value
+		and #0x00FF
+		sta c1val
+		lda c2
+		and #0x00FF
+                tay
+		lda [col],y		; Get the 2nd value
+		and #0x00FF
+		cmp c1val
+		bne done		; Done if != (return 0)
+		dec i			; Decrement loop counter
+		beq notfound		; If done, return 1
+		lda col			; Increment base pointer
+		clc
+		adc setsize
+		sta col
+		bcc nextcol
+		inc col+2
+		bra nextcol		;   and stay in loop.
+
+	notfound:
+		inc rtnval		; rtnval = 1
+        }
+	done:
+	return(rtnval);
+#endif
 }
 
 /*
@@ -1435,6 +1563,10 @@ doemit(register struct parse *p,
 	sop op,
 	size_t opnd)
 {
+#ifdef REDEBUG
+	/* Debug code added by DMT for GNO implementation */
+        char *opname;
+#endif
 	/* avoid making error situations worse */
 	if (p->error != 0)
 		return;
@@ -1449,6 +1581,81 @@ doemit(register struct parse *p,
 
 	/* finally, it's all reduced to the easy case */
 	p->strip[p->slen++] = SOP(op, opnd);
+
+#ifdef REDEBUG
+	/* Debug code added by DMT for GNO implementation */
+	switch (op) {
+	case OEND:
+		opname = "OEND";
+		break;
+	case OCHAR:
+		opname = "OCHAR";
+		break;
+	case OBOL:
+		opname = "OBOL";
+		break;
+	case OEOL:
+		opname = "OEOL";
+		break;
+	case OANY:
+		opname = "OANY";
+		break;
+	case OANYOF:
+		opname = "OANYOF";
+		break;
+	case OBACK_:
+		opname = "OBACK_";
+		break;
+	case O_BACK:
+		opname = "O_BACK";
+		break;
+	case OPLUS_:
+		opname = "OPLUS_";
+		break;
+	case O_PLUS:
+		opname = "O_PLUS";
+		break;
+	case OQUEST_:
+		opname = "OQUEST_";
+		break;
+	case O_QUEST:
+		opname = "O_QUEST";
+		break;
+	case OLPAREN:
+		opname = "OLPAREN";
+		break;
+	case ORPAREN:
+		opname = "ORPAREN";
+		break;
+	case OCH_:
+		opname = "OCH_";
+		break;
+	case OOR1:
+		opname = "OOR1";
+		break;
+	case OOR2:
+		opname = "OOR2";
+		break;
+	case O_CH:
+		opname = "O_CH";
+		break;
+	case OBOW:
+		opname = "OBOW";
+		break;
+	case OEOW:
+		opname = "OEOW";
+		break;
+	default:		/* uh oh */
+		opname = "unknown";
+		break;
+	}
+
+	fprintf(stdout, "emit %2ld: %s %lu", p->slen-1,opname,opnd);
+	if (op == OCHAR  &&  opnd>=32  &&  opnd<=126)   {
+		fprintf(stdout, " \"%c\"", (char)opnd);
+		}
+	fprintf(stdout, "\n");
+#endif
 }
 
 /*

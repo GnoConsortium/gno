@@ -1,3 +1,6 @@
+#ifdef __ORCAC__   /* For debugger since engine.c in included by regexec.c */
+#line 2 "engine.c"
+#endif
 /*-
  * Copyright (c) 1992, 1993, 1994 Henry Spencer.
  * Copyright (c) 1992, 1993, 1994
@@ -36,7 +39,7 @@
  *
  *	@(#)engine.c	8.5 (Berkeley) 3/20/94
  *
- * $Id: engine.c,v 1.2 1997/10/08 07:07:50 gdr Exp $
+ * $Id: engine.c,v 1.3 1997/11/17 04:13:07 gdr Exp $
  */
 
 #ifdef __ORCAC__
@@ -898,7 +901,11 @@ step(register struct re_guts *g,
 	register sopno pc;
 	register onestate here;		/* note, macros know this name */
 	register sopno look;
+#ifndef __ORCAC__
 	register int i;
+#else
+	unsigned long i;
+#endif
 
 	for (pc = start, INIT(here, pc); pc != stop; pc++, INC(here)) {
 		s = g->strip[pc];
