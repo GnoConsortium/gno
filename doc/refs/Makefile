@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.13 1999/01/28 05:22:16 gdr-ftp Exp $
+# $Id: Makefile,v 1.14 1999/02/21 23:37:11 gdr-ftp Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -37,7 +37,7 @@ PSD		= psd
 	HTML_ROOT	= file:/home/gdr/src/gno/doc/refs/$(HTMLD)
 
 	# This is the directory where the remaining gifs may be found
-	GIFDIR		= file:/home/gdr/graphics/
+	GIFDIR		= file:/home/gdr/graphics
 .ELSE
 	HTML_ROOT	= http://www.gno.org/~gno
 	GIFDIR		= http://www.gno.org/icons
@@ -80,9 +80,9 @@ TEX2HTML_FLAGS	= -info "" -local_icons -dir $(HTMLD) -up_url refs.html \
 TEXINPUTS	= ':/usr/local/lib/latex2html'
 
 DVI	= intro.dvi    kern.dvi
-PS_LTR	= intro.ltr.ps kern.ltr.ps
+PS_LTR	= intro.ltr.ps kern.ltr.ps gsh-ltr-ps
 PS_A4	= intro.a4.ps  kern.a4.ps
-HTML	= $(HTMLD)/intro.html $(HTMLD)/kern.html
+HTML	= $(HTMLD)/intro.html $(HTMLD)/kern.html gsh-h
 
 .PRECIOUS: $(DVI)
 
@@ -92,20 +92,27 @@ MKSO	= $(MANORG)/mkso.data
 
 
 # Scratch files to clean up
-MANUAL_GARBAGE	= top.html
+MANUAL_GARBAGE	= 
 TEX_GARBAGE	= *.err *.aux *.log *.dvi *.toc *.idx *.ilg *.ind
 DVIPS_GARBAGE	= *.ps *.djc
 BIB_GARBAGE	= *.blg *.bbl
 
+UPLOADDIR = uploads
+
 UPLOADS	= \
-	intro.dvi.Z intro.ltr.ps.Z intro.a4.ps.Z \
-	kern.dvi.Z  kern.ltr.ps.Z  kern.a4.ps.Z \
-	htmld.tar.gz
+	$(UPLOADDIR)/intro.dvi.Z \
+	$(UPLOADDIR)/intro.ltr.ps.Z \
+	$(UPLOADDIR)/intro.a4.ps.Z \
+	$(UPLOADDIR)/kern.dvi.Z \
+	$(UPLOADDIR)/kern.ltr.ps.Z \
+	$(UPLOADDIR)/kern.a4.ps.Z \
+	$(UPLOADDIR)/gsh.ltr.ps.Z \
+	$(UPLOADDIR)/htmld.tar.gz
 
 #
 # targets
 #
-upload:	all $(UPLOADS)
+upload:	all setup $(UPLOADS)
 all:	dvi ps h man notes
 dvi:	$(DVI)
 ps:	ps_ltr ps_a4
@@ -119,7 +126,7 @@ h:	$(HTML) \
 	$(HTMLD)/related.html \
 	$(HTMLD)/oldrefs.html \
 	$(HTMLD)/bugs.html \
-	$(HTMLD)/unaval.html top.html cleanhtml
+	$(HTMLD)/unaval.html cleanhtml
 bib:	intro.bbl
 
 intro.bbl: gno.bib
@@ -128,20 +135,28 @@ intro.bbl: gno.bib
 # keeps intro.tex in sync with ../../verbatim/boot/README.install
 notes:;	./mknotes
 
-htmld.tar.gz:	h
+$(UPLOADDIR)/htmld.tar.gz:	h
+	rm -rf $(HTMLD)/gsh
+	(cd gsh; tar -cf - gsh) | (cd $(HTMLD); tar -xpBf -)
 	tar -cf - $(HTMLD) | gzip --best > $@
 
-intro.dvi.Z:	intro.dvi;	compress -c $< > $@
-intro.ltr.ps.Z:	intro.ltr.ps;	compress -c $< > $@
-intro.a4.ps.Z:	intro.a4.ps;	compress -c $< > $@
+$(UPLOADDIR)/intro.dvi.Z:	intro.dvi;	compress -c $< > $@
+$(UPLOADDIR)/intro.ltr.ps.Z:	intro.ltr.ps;	compress -c $< > $@
+$(UPLOADDIR)/intro.a4.ps.Z:	intro.a4.ps;	compress -c $< > $@
 
-kern.dvi.Z:	kern.dvi;	compress -c $< > $@
-kern.ltr.ps.Z:	kern.ltr.ps;	compress -c $< > $@
-kern.a4.ps.Z:	kern.a4.ps;	compress -c $< > $@
+$(UPLOADDIR)/kern.dvi.Z:	kern.dvi;	compress -c $< > $@
+$(UPLOADDIR)/kern.ltr.ps.Z:	kern.ltr.ps;	compress -c $< > $@
+$(UPLOADDIR)/kern.a4.ps.Z:	kern.a4.ps;	compress -c $< > $@
 
-gsh.dvi.Z:	gsh.dvi;	compress -c $< > $@
-gsh.ltr.ps.Z:	gsh.ltr.ps;	compress -c $< > $@
-gsh.a4.ps.Z:	gsh.a4.ps;	compress -c $< > $@
+$(UPLOADDIR)/gsh.ltr.ps.Z:	gsh/gsh.ltr.ps.Z;	cp $< $@
+$(UPLOADDIR)/gsh/gsh.ltr.ps.Z:	gsh-ltr-ps
+
+gsh-h:;		cd gsh; $(MAKE) h
+gsh-ltr-ps:;	cd gsh; $(MAKE) ps
+
+# gsh.dvi.Z:	gsh.dvi;	compress -c $< > $@
+# gsh.ltr.ps.Z:	gsh.ltr.ps;	compress -c $< > $@
+# gsh.a4.ps.Z:	gsh.a4.ps;	compress -c $< > $@
 
 REPLACE=	perl -p -e 's,%%HTML_ROOT%%,$(HTML_ROOT),g;' \
 		-e 's,%%FTP_ROOT%%,$(FTP_ROOT),g;' \
@@ -218,9 +233,6 @@ cleanhtml:
 
 #		-e '($$cts == 1) && (s/^\s*<BR><HR>\s*$$//);'
 
-top.html:
-	ln -s $(HTMLD)/index.html top.html
-
 
 # This target creates the html versions of all the current man pages,
 # plus the chapter index pages.  Unfortunately, this target rebuilds
@@ -232,11 +244,17 @@ man:	mansetup
 
 mansetup: newer
 
+setup:
+	@/bin/true; \
+	[ -d $(UPLOADDIR) ] || mkdir -p $(UPLOADDIR)
+
 clean:
-	-rm -rf *~ $(TEX_GARBAGE) $(BIB_GARBAGE) $(DVIPS_GARBAGE) $(UPLOADS)
+	-rm -rf *~ $(TEX_GARBAGE) $(BIB_GARBAGE) $(DVIPS_GARBAGE) $(UPLOADDIR)
+	cd gsh; $(MAKE) $@
 
 clobber: clean
 	-rm -rf $(MANUAL_GARBAGE) $(HTMLD) $(PSD) $(DVID) newer
+	cd gsh; $(MAKE) $@
 
 #
 # default rules
@@ -251,9 +269,6 @@ $(HTMLD)/%.html: %.tex
 	"`perl -n -e '(m,<title>(.*)</title>,) && printf("%s\n",$$1);'\
 	< $(HTMLD)/refs.html `" \
 	$(TEX2HTML_FLAGS) $<
-
-$(HTMLD)/%.gif: GIF/%.gif
-	ln $< $@
 
 %.ltr.ps: %.dvi
 	$(DVIPS) -tletter $(DVIPS_FLAGS) -o $@ $<

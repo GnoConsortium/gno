@@ -5,7 +5,7 @@
 #
 # Usage:   mkstatus infile outfile.html
 #
-# $Id: mkstatus,v 1.1 1998/04/11 03:23:23 gdr-ftp Exp $
+# $Id: mkstatus,v 1.2 1999/02/21 23:37:13 gdr-ftp Exp $
 #
 
 # check usage and open files
@@ -32,7 +32,7 @@ printf(outfp
        "</head>\n" .
        "<body bgcolor=#ffffff textcolour=#000000 " .
        "linkcolour=#0000FF vlinkcolour=#001177 alinkcolour=#001177>\n" .
-       '<A HREF="gno"><IMG src="/icons/back.gif"' .
+       '<A HREF="gno"><IMG src="http://www.gno.org/icons/back.gif"' .
        'alt="Back to the GNO Documentation Page"' .
        'align="right" width="24" height="24" border="0"></A>' . "\n" .
        "<BR CLEAR=RIGHT>\n");

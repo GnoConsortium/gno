@@ -19,7 +19,7 @@ points above.
 	Devin Reade
 	December 1997.
 
-$Id: README,v 1.3 1998/02/19 03:03:49 gdr-ftp Exp $
+$Id: README,v 1.4 1999/02/21 23:37:12 gdr-ftp Exp $
 
 
 WHAT THE FILES ARE
@@ -82,6 +82,11 @@ documentation.  They are:
 	LaTeX2e
 		LaTeX is responsible for creating the DVI and Postscript
 		versions of the documentation.
+
+		Building the sgml source requires teTeX, version 0.9 or 
+		higher.  It can be obtained from:
+		    ftp://ftp.rrzn.uni-hannover.de/pub/local/misc/teTeX-beta
+
 	bibtex, makeidx
 		These two utilities are required for making the bibliography
 		and index, respectively.  They are likely part of your
@@ -104,6 +109,10 @@ documentation.  They are:
 		This is a program which converts preformatted nroff 
 		source to html.  It is available at
 			http://www.oac.uci.edu/indiv/ehood/man2html.html
+
+	sgmltools
+		The sgml sources are built using sgmltools v2.x.  See
+			http://www.sgmltools.org
 
 WHERE TO BUILD IT
 ^^^^^^^^^^^^^^^^^

@@ -1,0 +1,25 @@
+#! /usr/bin/perl
+
+$months[0] = '';
+$months[1] = 'January';
+$months[2] = 'February';
+$months[3] = 'March';
+$months[4] = 'April';
+$months[5] = 'May';
+$months[6] = 'June';
+$months[7] = 'July';
+$months[8] = 'August';
+$months[9] = 'September';
+$months[10] = 'October';
+$months[11] = 'November';
+$months[12] = 'December';
+
+while (<>) {
+    if (m,\$Date: 1999/02/21 23:37:13 $,) {
+	$year = $1;
+	$month = $2;
+	$day = $3;
+	$_ = $` . $day . ' ' . $months[int($month)] . ' ' . $year . $';
+    }
+    print;
+}

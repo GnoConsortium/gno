@@ -1,0 +1,8 @@
+#! /usr/bin/perl5 -i
+
+while(<>) {
+    chomp;
+    s,><BODY\s*,><BODY bgcolor=\#ffffff textcolor=\#000000 linkcolor=\#0000FF vlinkcolor=\#001177 alinkcolor=\#001177 ,;
+    s,></BODY\s*,><hr>Back to the <A HREF="../index.html">GNO Home</A> page or the <A HREF="../refs.html">Reference Manuals</A> page.<p></BODY ,;
+    print $_ . "\n";
+}

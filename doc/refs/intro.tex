@@ -1,7 +1,7 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.14 1999/02/15 18:54:37 gdr-ftp Exp $
+% $Id: intro.tex,v 1.15 1999/02/21 23:37:12 gdr-ftp Exp $
 % 
 
 \documentclass{report}
@@ -9,7 +9,13 @@
 \usepackage{hthtml}
 \usepackage{makeidx}
 \makeindex
-\bodytext{bgcolor=#ffffff}
+\bodytext{
+	bgcolor=#ffffff 
+	textcolor=#000000
+	linkcolor=#0000FF
+	vlinkcolor=#001177
+	alinkcolor=#001177
+	}
 
 \begin{document}
 
@@ -36,7 +42,7 @@
 \newcommand{\kernel}[1]{\htlink{#1}
 	{http://www.gno.org/~gno/kern.html}}
 \newcommand{\gsh}[1]{\htlink{#1}
-	{http://www.gno.org/~gno/gsh.html}}
+	{http://www.gno.org/~gno/gsh/index.html}}
 \newcommand{\manpages}[1]{\htlink{#1}
 	{http://www.gno.org/~gno/manindex.html}}
 \parindent=0pt
@@ -975,7 +981,7 @@ directories. Here is a brief rundown of thier contents:
 
 \em 
 \textbf{Important Note:}
-Before attempting to install GNO v2.0.4, you are strongly encouraged to 
+Before attempting to install GNO v2.0.6, you are strongly encouraged to 
 read this entire chapter, and then consult the 
 \faqhtml{GNO FAQ} (Frequently Asked Questions list, which is also
 available via \faqtext{ftp}) for those sections related to installation.
