@@ -1,0 +1,19 @@
+# Create the test environment for tr
+
+# Compile and load flags passed to occ
+#   -v: verbose
+#   -I: add directory to header path
+CFLAGS^I+= -v -I /usr/include
+LDFLAGS^I+= -v
+
+# Default target, "all," generates the files
+all: file2.bin1 genbin
+
+# Files depend upon program
+file2.bin1: genbin
+^I./genbin
+
+# Remove intermediate files
+clean:
+^I$(RM) -f *.o
+^I$(RM) -f *.root

@@ -1,0 +1,149 @@
+# Tests for cat command; invoked by command file "fulltests"
+#   Written by Dave Tribby (August 1997)
+
+# Location of the cat command to be tested
+set testcmd="../cat"
+
+# Record starting time
+echo -n "Testing command $testcmd beginning at"
+date
+
+set src="file1.mixed"
+set cmp="file1.mixed"
+set dest="/tmp/$cmp"
+echo "Copying a single text file ($src) using filename input"
+$testcmd $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set dest="/tmp/${cmp}A"
+echo "Copying a single text file ($src) using stdin"
+$testcmd < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="file1.bopt"
+set dest="/tmp/${cmp}"
+echo "Display a single text file ($src) with -b option"
+$testcmd -b $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="file1.nopt"
+set dest="/tmp/${cmp}"
+echo "Display a single text file ($src) with -n option"
+$testcmd -n $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="file1.topt"
+set dest="/tmp/${cmp}"
+echo "Display a single text file ($src) with -t option"
+$testcmd -t $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="file1.eopt"
+set dest="/tmp/${cmp}"
+echo "Display a single text file ($src) with -e option"
+$testcmd -e $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set src2=file1.nopt
+set cmp="file1.combo"
+set dest="/tmp/${cmp}"
+echo "Combine two files ($src, $src2) with stdin in the middle"
+set msg="===== stdin in between file1.mixed and $file1.nopt ====="
+echo $msg | $testcmd $src - $src2 > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+
+set src="file2.bin1"
+set cmp="file2.bin1"
+set dest="/tmp/$cmp"
+echo "Copying a single binary file ($src) using filename input"
+$testcmd $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set dest="/tmp/${cmp}A"
+echo "Copying a single binary file ($src) using stdin"
+$testcmd < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="file2.vopt"
+set dest="/tmp/${cmp}"
+echo "Display a single binary file ($src) with -v option"
+$testcmd -v $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="file2.topt"
+set dest="/tmp/${cmp}"
+echo "Display a single binary file ($src) with -t option"
+$testcmd -t $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set src="$testcmd"
+set cmp="$testcmd"
+set dest="/tmp/cat"
+echo "Copying a single binary file ($src) through a pipe"
+$testcmd $src | $testcmd > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+
+echo "***** Error Messages *****"
+
+set dest="/tmp/err.cond"
+
+echo ""
+echo "Expected error: illegal option"
+$testcmd -x $src > $dest
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+set src="badname"
+echo "Expected error: $src: no such file or directory"
+$testcmd $src > $dest
+echo "  Error completion status = $status (expected: 1)"
