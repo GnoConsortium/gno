@@ -1,7 +1,7 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.13 1999/01/29 07:07:26 gdr-ftp Exp $
+% $Id: intro.tex,v 1.14 1999/02/15 18:54:37 gdr-ftp Exp $
 % 
 
 \documentclass{report}
@@ -650,23 +650,27 @@ President, Interlink Advertising Services Inc. \\
 
 \chapter{Installation for GNO v2.0.4}
 
+\em
+\textbf{Important Note:}
+GNO v2.0.4 is no longer supported.  New installations should be using
+v2.0.6 or later.
+\rm
+
 \em 
 \textbf{Important Note:}
 This chapter is very out-of-date.  It was written for GNO v2.0.1, and
 has had only minor updates since that time.  It very much needs to
 be rewritten (concurrently, of course, with updates to the actual
-installation process).  However, this is unlikely to occur until
-GNO v2.0.6 is released.  This chapter does not apply to installing
-GNO v2.0.6.
+installation process).  However, this is unlikely to occur since v2.0.4
+has been superceded.  That notwithstanding, if you have suggestions
+for updating this document (without making major changes
+to the GNO v2.0.4 distribution itself), please email
+your suggestions to Devin Reade.
 
 Before attempting to install GNO v2.0.4, you are strongly encouraged to 
 read this entire chapter, and then consult the 
 \faqhtml{GNO FAQ} (Frequently Asked Questions list, which is also
 available via \faqtext{ftp}) for those sections related to installation.
-
-Suggestions for updating this document (without making major changes
-to the GNO v2.0.4 distribution itself) are welcome.  Please email
-your suggestions to Devin Reade at \htmailto{gdr@trenco.gno.org}.
 \rm
 
 GNO/ME is a very large system. Most of the
@@ -969,10 +973,13 @@ directories. Here is a brief rundown of thier contents:
 
 \chapter{Installation for GNO v2.0.6}
 
-\em GNO v2.0.6 is not yet available.  These installation instructions
-have been included both for the benefit of the development team and as
-draft instructions for when the update is released.  Please don't ask
-when v2.0.6 will be ready; we'll get it to you as soon as possible.\rm
+\em 
+\textbf{Important Note:}
+Before attempting to install GNO v2.0.4, you are strongly encouraged to 
+read this entire chapter, and then consult the 
+\faqhtml{GNO FAQ} (Frequently Asked Questions list, which is also
+available via \faqtext{ftp}) for those sections related to installation.
+\rm
 
 \em These instructions should be considered as draft quality.  If you
 have suggestions on or corrections to these instructions, please forward
@@ -980,7 +987,7 @@ them to Devin Reade.\rm
 
 This chapter contains information on how to install the newest version
 of GNO, which is version 2.0.6 or later.  It explains how to install
-the base \em binary\rm  distribution.  Installation of GNO sources such that
+the base \em binary \rm  distribution.  Installation of GNO sources such that
 you are able to \em build \rm  the base distribution itself are at this
 time beyond the scope of this document.
 
@@ -1003,7 +1010,10 @@ It also assumes these volumes already exist and are \em empty\rm.
 You may use other volume names,
 but you will have to edit certain files before you run your distribution.
 
-You will need \it at least\rm  the following amount of disk space.  
+If you installing over an existing v2.0.6 or later distribution, ensure
+that you read the section on \bf Planning for Future Upgrades\rm.
+
+You will need \it at least \rm  the following amount of disk space.  
 It is recommended that you dedicate an entire 32Meg ProDOS partition to
 GNO.
 
@@ -1027,6 +1037,27 @@ GNO boot disk ships with \bf vi\rm  installed;
 if you do not know how to use \bf vi\rm  (or you need a refresher), see 
 \hturl{http://www.jaws.umn.edu/~tobkin/vi}
 for a good tutorial and quick reference guide.
+
+\section{Upgrading from GNO v2.0.4 or Earlier}
+
+If you already have an existing GNO installation running v2.0.4 or 
+earlier, then there is no automated upgrade mechanism.  Instead, upgrades
+must be done manually.
+
+Before doing such an upgrade, ensure that you have a backup of your 
+existing system.
+
+Although it is more disk space intensive, you should upgrade from your
+existing v2.0.4 system by first installing the current distribution into
+an otherwise unused directory hierarchy (a ``from scratch'' install).
+You should then review each component of your old distribution and move
+any necessary files into the new hierarchy.  It is \em strongly \rm 
+recommended that you make maximal use of the \bf /usr/local \rm hierarchy
+so that future upgrades are easier.  See the section in this Guide on
+\bf Planning for Future Upgrades \rm for details.
+
+This method of upgrade is tedious, but in the end it makes for a cleaner
+GNO distribution and easier future upgrades.
 
 \section{Downloading and Extracting the Binary Distribution}
 
@@ -1191,9 +1222,10 @@ If you have a RAM disk, you should consider having it renamed
 to /tmp using renram5(8) or mktmp(8), in which case its entry
 should be removed from the namespace file.
 
-\end{comment}	    
-See the kernel reference manual for a description of the
-namespace file.
+\end{comment}
+For a description of the namespace file, see the kernel
+reference manual, or the namespace(5) manual page at
+\hturl{http://www.gno.org/~gno/man/man5/namespace.5.html}
 
 \item
 During the extraction process, the following files were placed
@@ -1202,6 +1234,7 @@ into the /gno/System directory:
 \begin{verbatim}
 	/gno/System/Desk.Accs/GNOSnooperII
 	/gno/System/Desk.Accs/SuspDA
+	/gno/System/Desk.Accs/TMTerm
 	/gno/System/Drivers/FilePort
 	/gno/System/Drivers/FilePort.Data
 	/gno/System/Drivers/NullPort
@@ -1249,9 +1282,169 @@ not yet need a password.
 
 \end{enumerate}
 
+\section{Planning for Future Upgrades}
+
+\it The information in this section is currently under review; please
+forward any additions, deletions, or corrections to Devin Reade.\rm
+
+One of the concerns for a system that is as large and as complex as GNO
+is how to keep it updated without losing any custom configuration that
+been added locally since the last installation.  This section attempts to
+document how to minimize such conflicts and, where the conflicts can't
+be avoided, where they are likely to occur.
+
+In the context of updating GNO, there are three main sets of files.  The
+first one is anything that is in the \bf /usr/local \rm hierarchy.  The
+subdirectories and files under \bf /usr/local \rm are intended strictly
+for site-specific customization.  The GNO base distribution does not,
+and never will, add or modify files within \bf /usr/local\rm.  (It may,
+however, ensure that certain subdirectories exist.)  For this reason,
+it is recommended that any files (such as programs, configuration files,
+or manual pages) that you wish to have on your system but are not part
+of the GNO base distribution are placed within the \bf /usr/local \rm
+hierarchy.  If you wish to have this customation available to another
+GNO installation, it would then be sufficient to copy the \bf /usr/local \rm
+hierarchy in its entirety.
+
+\em
+NOTE:  There is a single (temporary) exception to the comments above.  The
+current GNO base distribution will copy in the file 
+\textbf{/usr/local/lib/startup.mk}
+which is used by the program dmake, and which is a duplicate of 
+\textbf{/usr/lib/startup.mk}.
+When dmake gets updated to properly use 
+\textbf{/usr/lib/startup.mk}
+as it's configuration file, then 
+\textbf{/usr/local/lib/startup.mk}
+will no longer be created by the GNO base install scripts.  If you have 
+customized 
+\textbf{/usr/local/lib/startup.mk}
+for your site, you first save your startup.mk file elsewhere, then merge
+those customizations into the new startup.mk.
+\rm
+
+The second set of files are those which have been written such that they
+(or their configuration files) have pathnames which are hardcoded, and 
+therefore must reside outside of the \bf /usr/local \rm hierarchy.  Some
+of these programs can be forced into the first set described above by
+setting appropriate environment variables; see the program's documentation
+for details.  For the remainder, you should keep track of which programs
+you have installed, and where they (or their configuration or data files) 
+reside.  Unless there is a name conflict with files in the GNO base 
+distribution, these files won't be overwritten or deleted during a GNO
+update, but they obviously will not be copied in when doing a ``from scratch''
+installation.
+
+The third set of files are those are created while installing the GNO
+base distribution, but which almost certainly have been modified in 
+any existing GNO site.
+These are all configuration files of one sort or another.
+(If you are doing a fresh install, you can ignore
+this set.)  If you are using the GNO ``from scratch'' installation scripts
+rather than the update scripts
+(\em not yet available\rm)
+then you \em must \rm ensure that you have backups of these files so
+that you can restore them after the install scripts have completed.  You
+should not merely copy your old versions over the new ones; instead
+compare the old files to the new to verify if there have been features
+added which should be propagated to your old customized files.
+
+The files which are known to be in the third set are listed here:
+
+\begin{verbatim}
+	/etc/glogin
+	/etc/group
+	/etc/hosts
+	/etc/inittab
+	/etc/motd
+	/etc/networks
+	/etc/namespace
+	/etc/passwd
+	/etc/rchost
+	/etc/syslog.conf
+	/etc/whereis.conf
+	/home/root/gshrc
+	/lib/orcacdefs/defaults.h
+	/var/adm/newuser/newid
+	/var/adm/newuser/skel/glogin
+	/var/adm/newuser/skel/gshrc
+\end{verbatim}
+
+If you find that you have to modify any files outside of the \bf /usr/local \rm
+(or \bf /home\rm ) hierarchy, you should record which files have been so
+modified, together with a brief description of the necessary changes.
+
 \section{Custom Configuration}
 
-\it Sorry, this information has not yet been written.\rm
+\it The information in this section is currently under review; please
+forward any additions, deletions, or corrections to Devin Reade.\rm
+
+This section describes the configuration changes that are commonly done
+on newly installed systems.
+
+If you have not already read the section on \bf Planning for Future 
+Upgrades \rm, you should do so now.
+
+\subsection{Passwords}
+
+If you ever expect to connect your IIgs to a network (including the internet)
+it is recommended that you password protect all of your GNO user IDs.
+This is done with the
+\htlink{passwd}{http://www.gno.org/~gno/man/man1/passwd.1}(1)
+command; see the manual page for details.
+
+Because there is no inherent security features in the Apple IIgs in general
+(or GNO in particular), password protecting accounts on a stand-alone
+machine does not gain any real level of security; if someone has physical
+access to your IIgs, then they can get anything off of it that they want
+to.  On the other hand, password protecting your accounts can't hurt, and
+it is an excellent habit to get into.  (Rather, \em not \rm password 
+protecting accounts is a very poor habit to get into.)
+
+\subsection{Configuring the Namespace Facility}
+
+\em This section is yet to be written. \rm
+
+\subsection{Configuring Host and Network}
+
+\em This section is yet to be written. \rm
+
+\subsection{Configuring the System Logger}
+
+\em This section is yet to be written. \rm
+
+\subsection{Configuring the Shell}
+
+\em This section is yet to be written. 
+Talk briefly on /etc/glogin, \$HOME/glogin, and \$HOME/gshrc.
+Leave real docs for the gsh manual.
+\rm
+
+\subsection{Message of the Day}
+
+\em This section is yet to be written. \rm
+
+\subsection{Adding Groups}
+
+\em This section is yet to be written. \rm
+
+\subsection{Adding Users}
+
+\em This section is yet to be written. \rm
+
+\subsection{Configuring Documentation Programs}
+
+\em This section is yet to be written. 
+Discuss /etc/whereis.conf, MANPATH, etc.
+\rm
+
+\subsection{Configuring Outbound SLIP}
+
+\em This section is yet to be written. \rm
+
+\subsection{Configuring Inbound Serial Connections}
+
+\em This section is yet to be written. \rm
 
 \section{Obtaining Source}
 
@@ -1259,7 +1452,7 @@ Source for the base distribution is available in one of two ways:
 Anonymous FTP and anonymous CVS.
 
 You can obtain the GNO source via anonymous FTP from 
-\hturl{ftp://ftp.gno.org/pub/apple2/gs.specific/gno/base206/src}.
+\hturl{ftp://ftp.gno.org/pub/apple2/gs.specific/gno/base/src}.
 The files in that directory hierarchy are updated daily from the
 master repository.  Files that have been recently added or modified
 will be listed in one or more of the 
