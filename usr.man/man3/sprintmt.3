@@ -1,0 +1,81 @@
+.\" Man page by Devin Reade.
+.\"
+.\" $Id: sprintmt.3,v 1.1 1998/10/25 17:15:51 gdr-ftp Exp $
+.\"
+.TH SPRINTMT 3 "24 October 1998" GNO "Library Routines"
+.SH NAME
+.BR sprintmt ,
+.BR vsprintmt
+\- multi threading safe print formatting
+.SH SYNOPSIS
+#include <gno/gno.h>
+.sp 1
+char *\fBsprintmt\fR (char *\fIbuffer\fR, size_t \fIbufferlen\fR,
+const char *\fIfmt\fR, ...);
+.br
+char *\fBvsprintmt\fR (char *\fIbuffer\fR, size_t \fIbufferlen\fR,
+const char *\fIfmt\fR, va_list \fIap\fR);
+.SH DESCRIPTION
+.BR sprintmt
+and 
+.BR vsprintmt
+are multithread-safe versions of the
+.BR sprintf (3)
+and 
+.BR vsprintf (3)
+routines.
+.LP
+The contents of the format string
+.IR fmt ,
+with appropriate arguments substituted for the format specifiers,
+is copied into the user supplied
+.IR buffer .
+At most, 
+.IR bufferlen -1
+characters will be written 
+.IR buffer .
+.LP
+These routines have a much more limited set of format specifiers than 
+do the usual stdio routines.  They are:
+.RS
+.IP "\fB%d\fR, \fB%ld\fR"
+Print the decimal representation of a value of type
+.BR "int" 
+or
+.BR "long int" , 
+respectively.
+.IP "\fB%u\fR, \fB%lu\fR"
+Print the decimal representation of a value of type
+.BR "unsigned int" 
+or
+.BR "unsigned long int" ,
+respectively.
+.IP "\fB%x\fR, \fB%X\fR, \fB%lx\fR, \fB%lX\fR"
+Print the hexadecimal representation of an
+.BR "unsigned int"
+or 
+.BR "unsigned long int" .
+If the 
+.B x
+character is used, alphabetic characters are in lower case; otherwise
+they are in upper case.
+.IP \fB%s\fR
+Print a NULL-terminated string.
+If the 's' is preceeded by an 'l', the 'l' is ignored.
+.IP \fB%m\fR
+Print the current textual representation of
+.BR errno ,
+as returned by
+.BR strerror (3).
+If the 'm' is preceeded by an 'l', the 'l' is ignored.
+This format specifier is not available in the usual stdio functions.
+.RE
+.SH RETURN VALUE
+These routines return a pointer to the terminating NULL byte in
+.IR buffer .
+.SH MT STATUS
+Safe.
+.SH SEE ALSO
+.BR printf (3),
+.BR stdio (3),
+.BR strerror (3).

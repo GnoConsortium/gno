@@ -35,6 +35,8 @@
 .SH NAME
 .BR syslog ,
 .BR vsyslog ,
+.BR syslogmt ,
+.BR vsyslogmt ,
 .BR openlog ,
 .BR closelog ,
 .BR setlogmask
@@ -49,6 +51,13 @@ void
 .br
 void
 \fBvsyslog\fR (int \fIpriority\fR, const char *\fImessage\fR,
+va_list \fBargs\fR);
+.br
+void
+\fBsyslogmt\fR (int \fIpriority\fR, const char *\fImessage\fR, ...);
+.br
+void
+\fBvsyslogmt\fR (int \fIpriority\fR, const char *\fImessage\fR,
 va_list \fBargs\fR);
 .br
 void
@@ -87,6 +96,24 @@ function
 is an alternate form in which the arguments have already been captured
 using the variable-length argument facilities of
 .BR varargs (3).
+.LP
+The
+.BR syslogmt
+and
+.BR vsyslogmt
+are multithread-safe variants of the
+.BR syslog
+and
+.BR vsyslog
+routines.  Note that the permissable list of format specifiers for these
+two routines is much smaller than those for 
+.BR syslog
+or
+.BR vsyslog .
+The full list of format specifiers is given in the
+.BR sprintmt (3)
+manual page.
+These two routines are GNO-specific and therefore non-portable.
 .LP
 The message is tagged with
 .IR priority .
@@ -263,8 +290,18 @@ syslog(LOG_INFO, "Connection from host %d", CallingHost);
 
 syslog(LOG_INFO|LOG_LOCAL2, "foobar error: %m");
 .fi
+.SH MT STATUS
+.BR syslogmt 
+and
+.BR vsyslogmt
+are thread safe; the remainder are not.
+.BR openlog 
+should be called in the parent thread before creating the child threads.
+This will ensure that any generated messages are properly tagged with
+.IR ident .
 .SH SEE ALSO
 .BR logger (1),
+.BR sprintmt (3),
 .BR syslogd (8)
 .SH HISTORY
 These

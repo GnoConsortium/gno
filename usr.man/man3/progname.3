@@ -1,6 +1,6 @@
 .\" Man page by Devin Reade.
 .\"
-.\" $Id: progname.3,v 1.1 1997/02/27 07:32:24 gdr Exp $
+.\" $Id: progname.3,v 1.2 1998/10/25 17:15:51 gdr-ftp Exp $
 .\"
 .TH "__PROGNAMEGS" 3 "21 January 1997" GNO "Library Routines"
 .SH NAME
@@ -9,14 +9,32 @@
 .SH SYNOPSIS
 #include <gno/gno.h>
 .sp 1
+char *\fB__progname\fR;
+.br
 char *\fB__prognameGS\fR (void);
 .SH DESCRIPTION
+.BR __progname
+points to a NULL-terminated string which is the base name of the
+executing program.  It is initially the string '(unknown)', but is
+set to the proper value upon the first call to 
+.BR __prognameGS .
+.LP
 .BR __prognameGS
-returns a NULL-terminated string which is the base name of
-the executing program.  This is a wrapper function to the GS/OS
+sets the string
+.BR __progname
+to its proper value by using the result of the GS/OS
 .BR GetNameGS
-system call, and is used in the 
-.BR err (3)
-routines.
+system call.  If for some reason that system call fails, the value of 
+.BR __progname
+is left unchanged.  On success, the value is cached, so subsequent calls to
+.BR __prognameGS
+merely reference
+.BR __progname .
+.SH RETURN VALUE
+.BR __prognameGS
+always returns the value of
+.BR __progname .
 .SH SEE ALSO
-.BR err (3)
+.BR err (3),
+.br
+The \fIGS/OS Reference Manual\fR.
