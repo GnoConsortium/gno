@@ -11,7 +11,7 @@
  * Copyright 1995-1997 by Devin Reade for James Brookes' describe(1) utility.
  * See the included README file and man page for details.
  *
- * $Id: descu.c,v 1.4 1997/09/24 06:34:58 gdr Exp $
+ * $Id: descu.c,v 1.5 1997/10/30 04:19:10 gdr Exp $
  */
 
 #include <sys/types.h>
@@ -141,7 +141,7 @@ inhale (char *pathname) {
 descEntry *
 extract_info(char *source) {
 
-  char *p;
+  char *p, *q, *r;
   descEntry *entry;
 
   if ((entry = malloc(sizeof(descEntry))) == NULL) {
@@ -165,6 +165,49 @@ extract_info(char *source) {
   /* terminate the name, dropping trailing space */
   do { --p; } while (isspace(*p));
   *(p+1) = '\0';
+
+  /* drop trailing blank lines, except for one */
+  p = r = entry->data;
+  p += strlen(p);
+  q = p - 1;
+  while ((q >= r) && isspace(*q)) {
+	*q-- = '\0';
+  }
+  q++;
+  if (q < p) {
+	*q++ = '\n';
+  }
+#if 0
+  if (q < p) {
+	*q++ = '\n';
+  }
+#endif
+  if (q < p) {
+	*q = '\0';
+  }
+
+  /* eliminate whitespace at the beginning of lines */
+  p = entry->data;
+  for (;;) {
+	/* skip to next newline */
+  	while (*p && *p != '\n') p++;
+	if (*p == '\0') break;
+        p++;
+	while (*p == '\n') p++;
+	if (!isspace(*p)) continue;
+
+	/* move q to first non-whitespace character */
+	q = p;
+	while (isspace(*q)) q++;
+	if (*q == '\0') break;
+	
+	/* shift the buffer */
+	r = p;
+	while (*q) {
+		*r++ = *q++;
+	}
+	*r = '\0';
+  }
 
   return entry;
 }
