@@ -1,7 +1,7 @@
 /*
  * These routines were written by Devin Reade for GNO v2.0.4.
  *
- * $Id: basename.c,v 1.3 1997/09/21 06:04:59 gdr Exp $
+ * $Id: basename.c,v 1.4 1998/04/10 21:33:20 gdr-ftp Exp $
  *
  * This file is formatted for tabs every 8 columns.
  */
@@ -71,7 +71,8 @@ dirname (const char *path)
 	delim = strchr(dir,':') ? ':' : '/';
 	p = strrchr(dir,delim);
 	if (p == NULL) {
-		*dir = '\0';
+		*dir     = '.';
+		*(dir+1) = '\0';
 	} else {
 		*p = '\0';
 	}
