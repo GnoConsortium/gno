@@ -1,0 +1,283 @@
+.\" Copyright (c) 1990, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)stdio.3	8.7 (Berkeley) 4/19/94
+.\"
+.TH STDIO 3 "15 September 1997" GNO "Library Routines"
+.SH NAME
+.BR stdio
+\- standard input/output library functions
+.SH SYNOPSIS
+.br
+#include <stdio.h>
+.br
+FILE *stdin;
+.br
+FILE *stdout;
+.br
+FILE *stderr;
+.SH DESCRIPTION
+The standard I/O library provides a simple and efficient buffered stream
+I/O interface.
+Input and output is mapped into logical data streams
+and the physical I/O
+characteristics are concealed. The functions and macros are listed
+below; more information is available from the individual man pages.
+.LP
+A stream is associated with an external file (which may be a physical
+device) by
+.IR opening 
+a file, which may involve creating a new file. Creating an
+existing file causes its former contents to be discarded.
+If a file can support positioning requests (such as a disk file, as opposed
+to a terminal) then a
+.IR "file position indicator"
+associated with the stream is positioned at the start of the file (byte
+zero), unless the file is opened with append mode. If append mode
+is used, the position indicator will be placed the end-of-file.
+The position indicator is maintained by subsequent reads, writes
+and positioning requests. All input occurs as if the characters
+were read by successive calls to the
+.BR fgetc (3)
+function; all output takes place as if all characters were
+read by successive calls to the
+.BR fputc (3)
+function.
+.LP
+A file is disassociated from a stream by
+.IR closing 
+the file.
+Output streams are flushed (any unwritten buffer contents are transferred
+to the host environment) before the stream is disassociated from the file.
+The value of a pointer to a
+.BR FILE
+object is indeterminate after a file is closed (garbage).
+.LP
+A file may be subsequently reopened, by the same or another program
+execution, and its contents reclaimed or modified (if it can be repositioned
+at the start).  If the main function returns to its original caller, or
+the
+.BR exit (3)
+function is called, all open files are closed (hence all output
+streams are flushed) before program termination.  Other methods
+of program termination, such as
+.BR abort (3)
+do not bother about closing files properly.
+.LP
+This implementation makes a distinction between
+.I text
+and
+.I binary
+streams.  For text streams, all carrige returns are mapped to linefeeds 
+during input, and all linefeeds are mapped to carrige returns on output.
+No extra padding appears on any stream.
+.LP
+At program startup, three streams are predefined and need not be
+opened explicitly:
+.RS
+.IR "standard input"
+(for reading conventional input),
+.br
+.IR "standard output"
+(for writing conventional output), and
+.br
+.IR "standard error"
+(for writing diagnostic output).
+.RE
+These streams are abbreviated
+.IR stdin ,
+.IR stdout ,
+and
+.IR stderr .
+Initially, the standard error stream
+is unbuffered; the standard input and output streams are
+fully buffered if and only if the streams do not refer to
+an interactive or
+.I terminal
+device, as determined by the
+.BR isatty (3)
+function.
+In fact,
+.IR all 
+freshly-opened streams that refer to terminal devices
+default to line buffering, and
+pending output to such streams is written automatically
+whenever an such an input stream is read.
+Note that this applies only to
+.IR "true reads" ;
+if the read request can be satisfied by existing buffered data,
+no automatic flush will occur.
+In these cases,
+or when a large amount of computation is done after printing
+part of a line on an output terminal, it is necessary to
+.BR fflush (3)
+the standard output before going off and computing so that the output
+will appear.
+Alternatively, these defaults may be modified via the
+.BR setvbuf (3)
+function.
+.LP
+The
+.BR stdio
+library is a part of the library
+.BR libc
+and routines are automatically loaded as needed by the linker.
+The
+.BR SYNOPSIS
+sections of the following manual pages indicate which include files
+are to be used, what the compiler declaration for the function
+looks like and which external variables are of interest.
+.LP
+The following are defined as macros;
+these names may not be re-used
+without first removing their current definitions with
+.BR #undef :
+.BR BUFSIZ ,
+.BR EOF ,
+.BR FILENAME_MAX ,
+.BR FOPEN_MAX ,
+.BR L_cuserid ,
+.BR L_ctermid ,
+.BR L_tmpnam,
+.BR NULL ,
+.BR SEEK_END ,
+.BR SEEK_SET ,
+.BR SEE_CUR ,
+.BR TMP_MAX ,
+.BR clearerr ,
+.BR feof ,
+.BR ferror ,
+.BR fileno ,
+.BR freopen ,
+.BR fwopen ,
+.BR getc ,
+.BR getchar ,
+.BR putc ,
+.BR putchar ,
+.BR stderr ,
+.BR stdin ,
+.BR stdout .
+Function versions of the macro functions
+.BR feof ,
+.BR ferror ,
+.BR clearerr ,
+.BR fileno ,
+.BR getc ,
+.BR getchar ,
+.BR putc ,
+and
+.BR putchar 
+exist and will be used if the macros
+definitions are explicitly removed.
+.SH SEE ALSO
+.BR open (2),
+.BR close (2),
+.BR read (2),
+.BR write (2)
+.SH BUGS
+The standard buffered functions do not interact well with certain other
+library and system functions, especially
+.BR fork (2),
+.BR fork2 (2),
+.BR vfork (2),
+and
+.BR abort (3).
+.SH STANDARDS
+The
+.BR stdio
+library conforms to ANSI/C.
+.SH LIST OF FUNCTIONS
+.nf
+Function	Description
+--------	-----------
+clearerr	check and reset stream status
+fclose	close a stream
+fdopen	stream open functions
+feof		check and reset stream status
+ferror	check and reset stream status
+fflush	flush a stream
+fgetc	get next character or word from input stream
+fgetln	get a line from a stream
+fgetpos	reposition a stream
+fgets	get a line from a stream
+fileno	check and reset stream status
+fopen	stream open functions
+fprintf	formatted output conversion
+fpurge	flush a stream
+fputc	output a character or word to a stream
+fputs	output a line to a stream
+fread	binary stream input/output
+freopen	stream open functions
+fropen	open a stream
+fscanf	input format conversion
+fseek	reposition a stream
+fsetpos	reposition a stream
+ftell	reposition a stream
+funopen	open a stream
+fwopen	open a stream
+fwrite	binary stream input/output
+getc		get next character or word from input stream
+getchar	get next character or word from input stream
+gets		get a line from a stream
+getw		get next character or word from input stream
+mkstemp	create unique temporary file
+mktemp	create unique temporary file
+perror	system error messages
+printf	formatted output conversion
+putc		output a character or word to a stream
+putchar	output a character or word to a stream
+puts		output a line to a stream
+putw		output a character or word to a stream
+remove	remove directory entry
+rewind	reposition a stream
+scanf	input format conversion
+setbuf	stream buffering operations
+setbuffer	stream buffering operations
+setlinebuf	stream buffering operations
+setvbuf	stream buffering operations
+snprintf	formatted output conversion
+sprintf	formatted output conversion
+sscanf	input format conversion
+strerror	system error messages
+sys_errlist	system error messages
+sys_nerr	system error messages
+tempnam	temporary file routines
+tmpfile	temporary file routines
+tmpnam	temporary file routines
+ungetc	un-get character from input stream
+vfprintf	formatted output conversion
+vfscanf	input format conversion
+vprintf	formatted output conversion
+vscanf	input format conversion
+vsnprintf	formatted output conversion
+vsprintf	formatted output conversion
+vsscanf	input format conversion
+.fi

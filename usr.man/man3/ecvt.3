@@ -1,0 +1,59 @@
+.\" This manual page is derived from Linux sources.
+.\"
+.\" Devin Reade, 1997
+.\"
+.\" $Id: ecvt.3,v 1.1 1997/09/16 00:11:29 gdr Exp $
+.\"
+.TH ECVT 3 "15 September 1997" GNO "Library Routines"
+.SH NAME
+.BR ecvt ,
+.BR fcvt
+\- convert a floating-point number to a string
+.SH SYNOPSIS
+#include <stdlib.h>
+.sp 1
+char *\fBecvt\fR (double \fInumber\fR, size_t \fIndigits\fR, int *\fIdecpt\fR, int *\fIsign\fR);
+.br
+char *\fBfcvt\fR (double \fInumber\fR, size_t \fIndigits\fR, int *\fIdecpt\fR, int *\fIsign\fR);
+.SH DESCRIPTION
+The 
+.BR ecvt
+function converts
+.IR number
+to a NULL terminated string of
+.IR ndigits
+digits, and returns a pointer to the string. The string itself does not
+contain a decimal point; however, the position of the decimal point relative
+to the start of the string is stored in 
+.IR decpt .
+A negative value for
+.IR decpt
+means that the decimal point is to the left of the start of the string.
+If the sign of
+.IR number
+is negative,
+.IR sign
+is set to a non-zero value, otherwise it's set to 0.
+.LP
+The
+.BR fcvt
+function is identical to
+.BR ecvt ,
+except that
+.IR ndigits
+specifies the number of digits after the decimal point.
+.SH RETURN VALUE
+Both the 
+.BR ecvt
+and 
+.BR fcvt
+functions return a pointer to a static string containing the ASCII
+representation of
+.IR number .
+The static string is overwritten by each call to
+.BR ecvt
+or
+.BR fcvt .
+.SH SEE ALSO
+.BR gcvt (3),
+.BR sprintf (3)

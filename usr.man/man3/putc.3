@@ -1,0 +1,126 @@
+.\" Copyright (c) 1990, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Chris Torek and the American National Standards Committee X3,
+.\" on Information Processing Systems.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)putc.3	8.1 (Berkeley) 6/4/93
+.\"
+.TH PUTC 3 "15 September 1997" GNO "Library Routines"
+.SH NAME
+.BR fputc ,
+.BR putc ,
+.BR putchar ,
+.BR putw
+\- output a character or word to a stream
+.SH SYNOPSIS
+#include <stdio.h>
+.sp 1
+int \fBfputc\fR (int \fIc\fR, FILE *\fIstream\fR);
+.br
+int \fBputc\fR (int \fIc\fR, FILE *\fIstream\fR);
+.br
+int \fBputchar\fR (int \fIc\fR);
+.br
+int \fBputw\fR (int \fIw\fR, FILE *\fIstream\fR);
+.SH DESCRIPTION
+The
+.BR fputc 
+function
+writes the character
+.I c
+(converted to an ``unsigned char'')
+to the output stream pointed to by
+.IR stream .
+.LP
+.BR Putc 
+acts essentially identically to
+.BR fputc ,
+but is a macro that expands in-line. It may evaluate
+.I stream
+more than once, so arguments given to
+.BR putc 
+should not be expressions with potential side effects.
+.LP
+.BR Putchar 
+is identical to
+.BR putc 
+with an output stream of
+.IR stdout .
+.LP
+The
+.BR putw 
+function
+writes the specified
+.IR int 
+to the named output
+.IR stream .
+.SH RETURN VALUES
+The functions,
+.BR fputc ,
+.BR putc 
+and
+.BR putchar 
+return the character written.
+If an error occurs, the value
+.BR EOF
+is returned.
+The
+.BR putw 
+function
+returns 0 on success;
+.BR EOF
+is returned if
+a write error occurs,
+or if an attempt is made to write a read-only stream.
+.SH SEE ALSO
+.BR ferror (3),
+.BR fopen (3),
+.BR getc (3),
+.BR stdio (3)
+.SH STANDARDS
+The functions
+.BR fputc ,
+.BR putc ,
+and
+.BR putchar ,
+conform to ANSI/C.
+A function
+.BR putw 
+function appeared in 
+.BR v6 .
+.SH BUGS
+The size and byte order of an
+.IR int 
+varies from one machine to another, and
+.BR putw 
+is not recommended for portable applications.
