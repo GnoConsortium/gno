@@ -1,13 +1,12 @@
 #
 # Makefile for libcrypt
 #
-# $Id: Makefile,v 1.1 1998/02/09 08:25:32 taubert Exp $
+# $Id: Makefile,v 1.2 1998/03/11 04:23:33 gdr-ftp Exp $
 #
 
-LIB=	crypt
-OBJ_ASM=crypta.o
-OBJ_C=	crypt.o
-
-OBJS=	$(OBJ_ASM) $(OBJ_C)
+LIB	= crypt
+SRCS	= crypta.asm crypt.c
 
 .INCLUDE: /src/gno/lib/lib.mk
+
+crypta.o: crypta.mac
