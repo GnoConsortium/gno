@@ -1,4 +1,4 @@
-************************************************************************
+**************************************************************************
 *
 * The GNO Shell Project
 *
@@ -6,12 +6,13 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: jobs.asm,v 1.4 1998/07/20 16:23:07 tribby Exp $
+* $Id: jobs.asm,v 1.5 1998/08/03 17:30:22 tribby Exp $
 *
 **************************************************************************
 *
 * JOBS.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Job control handling routines
 *
@@ -184,7 +185,7 @@ done	return
 ;====================================================================
 
 palloc	START
-
+               
 	using	pdata
 	using	global
 
@@ -211,7 +212,7 @@ end	equ	pid+2
 	pha
 
 	ph4	#p_space
-	jsl	~NEW
+	~NEW
 	sta	pp
 	stx	pp+2
 
@@ -271,7 +272,7 @@ in02	anop
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW
+	~NEW
 	pei	(cmd+2)	
 	pei	(cmd)
 	phx
@@ -318,7 +319,7 @@ noprint	anop
 ;====================================================================
 
 pallocpipe	START
-
+               
 	using	pdata
 	using	global
 
@@ -346,7 +347,7 @@ end	equ	pid+2
 	pha
 
 	ph4	#p_space
-	jsl	~NEW
+	~NEW
 	sta	pp
 	stx	pp+2
 
@@ -380,7 +381,7 @@ bg01	ldy	#p_flags
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW
+	~NEW
 	pei	(cmd+2)	
 	pei	(cmd)
 	phx

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: main.asm,v 1.5 1998/07/20 16:23:08 tribby Exp $
+* $Id: main.asm,v 1.6 1998/08/03 17:30:22 tribby Exp $
 *
 **************************************************************************
 *
@@ -14,6 +14,8 @@
 *   By Tim Meekins
 *   Modified by Dave Tribby for GNO 2.0.6
 *
+* Startup portion of shell
+* 
 * Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
 *              |     |                  |       |       |       |
 *	^	^	^	^	^	^	
@@ -58,7 +60,7 @@ init	START
 
 
 MAIN	START
-
+               
 	using	global
 
 p	equ	0
@@ -101,7 +103,7 @@ argloop	dec	argc	Decrement argument count.
 	inc	ExecFlag
 	inc	FastFlag
 	ph4	#1024
-	jsl	~NEW
+	~NEW
 	sta	ExecCmd
 	sta	p
 	stx	ExecCmd+2

@@ -7,7 +7,7 @@
 *   Tim Meekins
 *   Derek Taubert
 *
-* $Id: shellvar.asm,v 1.4 1998/07/20 16:23:10 tribby Exp $
+* $Id: shellvar.asm,v 1.5 1998/08/03 17:30:24 tribby Exp $
 *
 **************************************************************************
 *
@@ -118,7 +118,8 @@ showusage	ldx	#^Usage
 ; Show all environment variables
 ;
 showvars	anop
-	jsl	alloc256	Allocate 256 bytes
+	ph4	#261
+	~NEW		Allocate 261 bytes
 	sta	varbuf	 for name buffer.
 	stx	varbuf+2
 	ora	varbuf+2
@@ -128,9 +129,8 @@ showvars	anop
 	stx	valbuf+2
 	ora	valbuf+2	If memory was not allocated,
 	bne	startshow
-	ldx	varbuf+2
-	lda	varbuf
-	jsl	free256
+	ph4	varbuf
+	jsl	nullfree
 svwhoops	ld2	$201,ErrError		report memory error
 	ErrorGS Err
 	jmp	exit		 and exit.
@@ -138,7 +138,7 @@ svwhoops	ld2	$201,ErrError		report memory error
 startshow      anop
 	lda	#1022	Store buffer len == 1022 in value
 	sta	[valbuf]	 buffer (save 2 bytes at end for 0).
-	lda	#256	Store buffer len == 256 in name
+	lda	#260	Store buffer len == 260 in name
 	sta	[varbuf]	 buffer.
 	lock	setmutex
 	mv4	varbuf,idxName	Initialize ReadIndexedGS
@@ -149,11 +149,18 @@ showloop	ReadIndexedGS idxParm	Get next indexed variable.
 	ldy	#2	Get length of name.
 	lda	[varbuf],y
 	beq	showdone	If 0, we've got all the names.
-	cmp	#254	If len > 253,
+	cmp	#257	If len > 256,
 	bcs	bumpindx	  we didn't get it.
 
+	tay		Store 0 at end of
+               iny4		 name string so it
+	short	a	  can be treated like
+	lda	#0	   a c-string.
+	sta	[varbuf],y
+	long	a
+
 	ldx	idxExport	X = variable's export flag.
-	ldy	#2	Y = offset in varname of length word.
+	ldy	#4	Y = offset in varname to text.
 	jsr	prnameval	Print varname and varval.
 
 bumpindx	inc	idxIndex	Bump index number.
@@ -164,9 +171,8 @@ bumpindx	inc	idxIndex	Bump index number.
 ;
 showdone	anop
 	unlock setmutex	Unlock mutual exclusion.
-	ldx	varbuf+2
-	lda	varbuf
-	jsl	free256	Free the name buffer.
+	ph4	varbuf
+	jsl	nullfree	Free the name buffer.
 	ldx	valbuf+2
 	lda	valbuf
 	jsl	free1024	Free the value buffer.
@@ -301,7 +307,7 @@ notdef	ldx	#^error2		'Variable not defined'
 	bra	doneone
 
 def	ldx	RSexport	X = export flag.
-	ldy	#0	Y = offset in varname to length word.
+	ldy	#2	Y = offset in varname to text.
 	jsr	prnameval	Print varname and varval.
 
 doneone	anop
@@ -329,14 +335,10 @@ exit	lda	space
 
 ;
 ; Utility subroutine to print name and value in varname and varval
-;  Call with X = export flag, Y = index to length word in varbuf.
+;  Call with X = export flag, Y = index to text in varbuf.
 ;
 prnameval	anop
 	phy		Hold name length offset on stack.
-	lda	[varbuf],y	Get length of name.
-	and	#$FF	(maximum len is 255)
-	xba		Swap length bytes so result buf
-	sta	[varbuf],y	 can be treated like a p-string.
 	cpx	#0	If export flag is set,
 	bne	needshift	 go upshift the name.
 	ldx	exflag	If we're listing all vars, it's OK.
@@ -346,12 +348,10 @@ prnameval	anop
 ;
 ; Variable is exported: need to upshift its name:
 ;
-needshift	xba
-               tax		Length in X.
-	iny2		Index to first char in Y.
-	short	a	Switch to 1-byte memory access.
+needshift	short	a	Switch to 1-byte memory access.
 
 upper	lda	[varbuf],y	Get next character.
+	beq	golong	If 0, at end.
 	cmp	#'a'	If >= 'a'
 	bcc	noshift	 and <= 'z',
 	cmp	#'z'+1
@@ -359,21 +359,19 @@ upper	lda	[varbuf],y	Get next character.
 	and	#$5F		upshift the char.
 	sta	[varbuf],y
 noshift	iny		Bump the index and
-	dex		 and decrement the counter,
-	bne	upper	  staying in upshift loop until done.
+	bra	upper	 stay in upshift loop until done.
 
-	long	a		Switch back to 1-word access.
+golong	long	a	Switch back to 1-word access.
 ;
 ; Name is ready for printing
 ;
 nameok	ldx	varbuf+2	
 	clc
-	pla		Get name length offset from stack.
-	ina		Add one, to get p-string length addr.
+	pla		Get text offset from stack.
 	adc	varbuf	Add starting address,
 	bcc	prname
 	inx		 adjusting high-order word if needed.
-prname	jsr	putp	Print name (p-string)
+prname	jsr	puts	Print name
 
 	ldx	#^showeq
 	lda	#showeq

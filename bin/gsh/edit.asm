@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: edit.asm,v 1.4 1998/07/20 16:23:03 tribby Exp $
+* $Id: edit.asm,v 1.5 1998/08/03 17:30:28 tribby Exp $
 *
 **************************************************************************
 *
@@ -971,7 +971,7 @@ loop	pha
 ;=========================================================================
 
 wordmatch	START
-
+               
 	using	global
 	using	hashdata
 	using BuiltInData
@@ -1114,7 +1114,7 @@ gv02a	anop
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW	Request memory to hold name.
+	~NEW		Request memory to hold name.
 	sta	0
 	stx	0+2
 	ply		Get matchbuf offset from stack.
@@ -1140,7 +1140,7 @@ gv01	lda	NameText-1,y	Get next byte of name.
 nextvar	inc	idxIndex
 	jmp	varloop
 
-vardone	rts
+vardone	rts		Return from wordmatch
 
 ;
 ; Match by file names; start by moving wordgs_text + trailing "*" to a GS/OS string
@@ -1212,7 +1212,7 @@ filematch	anop
 	iny		Get length of name + 1
 	pea	0
 	phy
-	jsl	~NEW	Request memory to hold name.
+	~NEW		Request memory to hold name.
 	ply		Get matchbuf offset from stack.
 	sta	matchbuf,y	Store allocated memory's
 	txa		 address in matchbuf array.
@@ -1265,7 +1265,7 @@ isdir	lda	nummatch
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW
+	~NEW
 	ply
 	sta	8
 	stx	10
@@ -1277,9 +1277,9 @@ isdir	lda	nummatch
 	txa
 	sta	matchbuf+2,y
 	jsr	copycstr
-	pei	(2)
-	pei	(0)
-	jsl	nullfree
+	pei	(2)	Free entry that was
+	pei	(0)	 allocated in non-directory
+	jsl	nullfree	  section of code.
 	ldy	NameLen
 	lda	sepstyle
 	sta	[8],y
@@ -1350,7 +1350,7 @@ hl0            inx
 	pha
 	pea	0
 	phx
-	jsl	~NEW
+	~NEW
 	ply
 	pei	(q+2)
 	pei	(q)
@@ -1401,7 +1401,7 @@ bl0            inx
 	pha
 	pea	0
 	phx
-	jsl	~NEW
+	~NEW
 	ply
 	pei	(q+2)
 	pei	(q)
@@ -1416,7 +1416,7 @@ binext	add2	p,#10,p
                bra	bilup
 bidone	anop
 
-done	rts                                                        
+done	rts		Return from wordmatch.
 
 startpos	ds	2
 cmdflag	ds	2
@@ -1570,7 +1570,7 @@ vt100key	dc	65i2'undefined_char,0,0'		;^@ ... @
 **************************************************************************
 
 bindkeyfunc	START
-
+               
 	using	keybinddata
 
 p	equ	0
@@ -1608,7 +1608,7 @@ addb	adc	#0
 	beq	next
 	phy
 	ph4	#128*6
-	jsl	~NEW
+	~NEW
 	sta	p
 	stx	p+2
 	ldy	#128*6-2
@@ -1678,7 +1678,7 @@ done	return
 **************************************************************************
 
 bindkey	START
-
+               
 str	equ	0
 func	equ	str+4
 arg	equ	func+2
@@ -1769,7 +1769,7 @@ foundit	pla
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW
+	~NEW
 	sta	str
 	stx	str+2
 	pei	(arg+2)

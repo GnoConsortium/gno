@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: builtin.asm,v 1.4 1998/07/20 16:23:01 tribby Exp $
+* $Id: builtin.asm,v 1.5 1998/08/03 17:30:26 tribby Exp $
 *
 **************************************************************************
 *
@@ -47,7 +47,6 @@
 *   cmdbi	(command name is "commands")
 *
 **************************************************************************
-
 
 	mcopy /obj/gno/bin/gsh/builtin.mac
 
@@ -101,7 +100,7 @@ end	equ	argc+2
 	ld4	builtintbl,tbl
 	ld2	-1,val
 	lda	argc
-	jeq	done
+	beq	done
 
 loop	ldy	#2
 	lda	[tbl]
@@ -449,7 +448,7 @@ cdmutex	key		Mutual exclusion key
 
 ; Parameter block for GS/OS SetPrefix call
 PRec	dc	i'2'	pCount
-PRecNum	dc	i'0'	prefixNum (0 = current directory)
+	dc	i'0'	prefixNum (0 = current directory)
 PRecPath	ds	4	Pointer to input prefix path
 
 ; Parameter block for GS/OS GetFileInfo call
@@ -721,41 +720,30 @@ end	equ	argv+4
 
 wait	lock	pwdmutex	
 
-	jsl	alloc256	Allocate buffer for GetPrefix.
-	sta	gpptr
-	stx	gpptr+2
+	pea	0
+               jsl	getpfxstr	Get value of prefix 0.
 	sta	ptr
 	stx	ptr+2
 
-	lda	#256	Set max return len.
-	sta	[ptr]
+	ora	ptr+2	If NULL pointer returned,
+	beq	done	 an error was reported.
 
-	GetPrefix gpparm	Get value of prefix 0 via GetPrefix.
-	bcc	ok	If there was an error,
-awshit	sta	errError		Save the value
-	ErrorGS err		 and report it.
-	bra	done
+	ldy	#2	If length of returned
+	lda	[ptr],y	 GS/OS string is 0,
+	beq	freebuf	  an error was reported.
 
-ok	ldy	#2	Get GS/OS string length word.
-	lda	[ptr],y
-	xba		Swap the bytes and store back,
-	sta	[ptr],y	 so it can be used as a p-string.
-
-	ldx	ptr+2	Load X/A with addr 3 bytes beyond ptr.
-	lda	ptr
-	clc
-	adc	#3
-	bcc	doputp
+	lda	ptr	X/A = address of
+	clc		 text (four bytes
+	adc	#4	  beyond start).
+	bcc	doputs
 	inx
-doputp	anop
-	jsr	putp	Print the p-string
+doputs	jsr	puts	Print the c-string
 	jsr	newline	 and add a newline.
 
-done	ldx	ptr+2	Free the buffer.
-	lda	ptr
-	jsl	free256
+freebuf	ph4	ptr	Free the buffer.
+	jsl	nullfree
 
-	unlock pwdmutex
+done	unlock pwdmutex
 
 exit	lda	space	Deallocate stack space
 	sta	end-3	 and return to the caller.
@@ -772,15 +760,6 @@ exit	lda	space	Deallocate stack space
 	rtl     
 
 pwdmutex	key
-
-; Parameter block for GS/OS call GetPrefix
-gpparm	dc	i'2'	Parameter count
-	dc	i'0'	Prefix number
-gpptr	ds	4	Pointer to result buffer
-
-; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
-err	dc	i2'1'	pCount
-errError	ds	2	Error number
 
 Usage	dc	c'Usage: pwd',h'0d00'
 
@@ -904,28 +883,32 @@ thispfx	lock	pwdmutex
 showcwd	pei	(ptr+2)
 	pei	(ptr)
 	jsl	nullfree
-	jsl	alloc256
+
+	pea	0
+               jsl	getpfxstr	Get value of prefix 0.
 	sta	ptr
 	stx	ptr+2
-	sta	gpptr
-	stx	gpptr+2
-	lda	#256
-	sta	[ptr]
-	GetPrefix gpparm
-	ldy	#2
-	lda	[ptr],y
-	xba
-	sta	[ptr],y
 
-	ldx	ptr+2
-	add2	ptr,#3,@a
-	jsr	putp
-	ldx	file+2
+	ora	ptr+2	If NULL pointer returned,
+	beq	donecwd	 an error was reported.
+
+	ldy	#2	If length of returned
+	lda	[ptr],y	 GS/OS string is 0,
+	beq	freebuf	  an error was reported.
+
+	lda	ptr	X/A = address of
+	clc		 text (four bytes
+	adc	#4	  beyond start).
+	bcc	doputs
+	inx
+doputs	jsr	puts	Print the directory name.
+
+	ldx	file+2	Print the file name.
 	lda	file
 	jsr	puts
-	ldx	ptr+2
-	lda	ptr
-	jsl	free256
+
+freebuf	ph4	ptr	Free the buffer.
+	jsl	nullfree
 	stz	ptr
 	stz	ptr+2
 	bra	donecwd
@@ -966,10 +949,6 @@ aliasstr	dc	c'Aliased as ',h'00'
 
 pwdmutex	key
 
-gpparm	dc	i'2'
-	dc	i'0'
-gpptr	ds	4
-
 GRec	dc	i'4'
 GRecPath	ds	4
 	ds	2
@@ -991,7 +970,8 @@ prefix	START
 
 dir	equ	1
 numstr	equ	dir+4
-space	equ	numstr+4
+pfxnum	equ	numstr+4
+space	equ	pfxnum+2
 argc	equ	space+3
 argv	equ	argc+2
 end	equ	argv+4
@@ -1007,144 +987,182 @@ end	equ	argv+4
 
 	lock	mutex
 
-	lda	argc
+	lda	argc	Get number of arguments.
 	dec	a
-	beq	showall
+	beq	showall	If no parameters, show all prefixes.
 	dec	a
-	jeq	showone
+	jeq	showone	If one, show one.
 	dec	a
-	jeq	setprefix
+	jeq	setprefix	If two, set a prefix.
 
 	ldx	#^usage
 	lda	#usage
 	jsr	errputs
 	jmp	done
+;
+; No parameters provided: show all the prefixes
+;
+showall	anop
+	lda	#$FFFF
+	sta	pfxnum	First prefix # will be 0.
 
-showall	jsl	alloc256
-	sta	PRecPath
-	stx	PRecPath+2
+	pha		Get the boot volume string.
+	jsl	getpfxstr
 	sta	dir
 	stx	dir+2
-	lda	#254
-	sta	[dir]
-	
-	ld2	1,PRecNum
-	GetBootVol PRecNum
-	jcs	awshit
+
+	ora	dir+2	If NULL pointer returned,
+	beq	bumppfx	 an error was reported.
+
 	ldx	#^bootstr
 	lda	#bootstr
 	jsr	puts
-	ldy	#2
-	lda	[dir],y
-	xba
-	sta	[dir],y
 	ldx	dir+2
-	lda	dir
-	inc2	a
-	inc	a
-	jsr	putp
-	jsr	newline
+	lda	dir	X/A = address of
+	clc		 text (four bytes
+	adc	#4	  beyond start).
+	bcc	doputs
+	inx
+doputs	jsr	puts	Print the directory name
+	jsr	newline	 and a newline.
+	bra	nextall	Jump into the all loop.
 
-	stz	PRecNum
-allloop	GetPrefix PRec
-	jcs	awshit
-	ldy	#2
+allloop	lda	pfxnum
+	pha
+	jsl	getpfxstr
+	sta	dir
+	stx	dir+2
+
+	ora	dir+2	If NULL pointer returned,
+	beq	bumppfx	 an error was reported.
+
+	ldy	#2	Get length word.
 	lda	[dir],y
-	beq	nextall
-	xba
-	sta	[dir],y
-	Int2Dec (PRecNum,#pfxstr,#2,#0)
+	beq	nextall	If zero, do the next prefix.
+	Int2Dec (pfxnum,#pfxstr,#2,#0)
 	ldx	#^pfxstr
 	lda	#pfxstr
 	jsr	puts
 	ldx	dir+2
-	lda	dir
-	inc2	a
-	inc	a
-	jsr	putp
+	lda	dir	X/A = address of
+	clc		 text (four bytes
+	adc	#4	  beyond start).
+	bcc	doputs2
+	inx
+doputs2	jsr	puts	Print the directory name
 	jsr	newline
 
-nextall	inc	PRecNum
-	if2	PRecNum,cc,#32,allloop
+nextall	ph4	dir	Free the GS/OS result buffer
+	jsl	nullfree	 allocated for pathname.
+bumppfx	inc	pfxnum	Bump the prefix number.
+	if2	pfxnum,cc,#32,allloop
 	jmp	finish
-		    
-showone	ldy	#6
-	lda	[argv],y
-	sta	numstr+2
-	pha
-	dey2
-	lda	[argv],y
+
+;
+; One parameter provided: show a single prefix
+;    
+showone	ldy	#1*4+2	Put pointer to
+	lda	[argv],y	 first command
+	sta	numstr+2	  argument in
+	pha		   numstr, and
+	dey2		    also on stack
+	lda	[argv],y	     as parameter.
 	sta	numstr
 	pha
-	jsr	cstrlen
+	jsr	cstrlen	Get length of argument.
 	tax
 
-	Dec2Int (numstr,@x,#0),PRecNum
+	Dec2Int (numstr,@x,#0),@a	Convert to integer.
+	cmp	#32	If prefix num >= 32,
+	bcc	getpfx
+	jsr	newline		just print blank line.
+	jmp	done
 
-	jsl	alloc256
-	sta	PRecPath
-	stx	PRecPath+2
+getpfx	pha		Get that prefix value.
+	jsl	getpfxstr
 	sta	dir
 	stx	dir+2
-	lda	#254
-	sta	[dir]
-	GetPrefix PRec
-	bcs	awshit
-	ldy	#2
-	lda	[dir],y
-	xba
-	sta	[dir],y
-	ldx	dir+2
-	lda	dir
-	inc2	a
-	inc	a
-	jsr	putp
-	jsr	newline
-	lda	PRecPath
-	ldx	PRecPath+2
-	jsl	free256
-	
-	bra	done
 
-setprefix      ldy   #6
-	lda	[argv],y
-	sta	numstr+2
-	pha
-	dey2
-	lda	[argv],y
+	ora	dir+2	If NULL pointer returned,
+	jeq	done	 an error was reported.
+
+	Int2Dec (pfxnum,#pfxstr,#2,#0)
+
+	ldy	#2	Get length word.
+	lda	[dir],y
+	beq	donewline	If zero, just print newline.
+	ldx	dir+2
+	lda	dir	X/A = address of
+	clc		 text (four bytes
+	adc	#4	  beyond start).
+	bcc	doputs3
+	inx
+doputs3	jsr	puts	Print the directory name
+donewline	jsr	newline
+	ph4	dir	Free the GS/OS result buffer
+	jsl	nullfree	 allocated for pathname.
+	jmp	done
+
+;
+; Two parameters provided: set a prefix
+;
+setprefix	ldy	#1*4+2	Put pointer to
+	lda	[argv],y	 first command
+	sta	numstr+2	  argument (prefix
+	pha		   num) in numstr, and
+	dey2		    also on stack
+	lda	[argv],y	     as parameter.
 	sta	numstr
 	pha
-	jsr	cstrlen
+	jsr	cstrlen	Get length of argument.
 	tax
 
-	Dec2Int (numstr,@x,#0),PRecNum
+	Dec2Int (numstr,@x,#0),PRecNum	Convert to integer string.
 
-	ldy	#2*4+2
+               lda	PRecNum
+	cmp	#32	If prefix num >= 32,
+	bcs	done		nothing to do.
+
+	ldy	#2*4+2	Put pointer to
+	lda	[argv],y	 second command
+	pha		  argument (value)
+	dey2		   on stack as parameter.
 	lda	[argv],y
 	pha
-	dey2
-	lda	[argv],y
-	pha
-	jsr	c2gsstr
-	sta	PRecPath
-	sta	GRecPath
+	jsr	c2gsstr	Convert to GS string.
+
+	sta	GRecPath	Store in GetFileInfo
+	stx	GRecPath+2	 parameter block and
+	sta	PRecPath	  SetPrefix p.b.
 	stx	PRecPath+2
-	stx	GRecPath+2
 
+;
+; Get file information to determine whether target is a valid directory
+;
 	GetFileInfo GRec
-	bcc	okay
-awshit	ldx	#^errorstr
-	lda	#errorstr
+	bcc	ok
+	sta	ErrError
+	ErrorGS Err
+	bra	done
+
+ok	if2	GRecFT,eq,#$F,ok2  If filetype != $F,
+	ldx	#^direrr		print error message
+	lda	#direrr		 'Not a directory'
 	jsr	errputs
-	bra	finish
+	bra	done
 
-okay	SetPrefix PRec
-	bcs	awshit
+ok2	SetPrefix PRec	Set the prefix.
+	bcc	finish	If error flag set,
+	ldx	#^errorstr		print error message
+	lda	#errorstr		 'could not set prefix,
+	jsr	errputs		   pathname may not exist.'
 
-finish	ph4	PRecPath
+finish	ph4	PRecPath	Free the name string buffer.
 	jsl	nullfree
 
+
 done	unlock mutex
+
 	lda	space
 	sta	end-3
 	lda	space+1
@@ -1166,14 +1184,28 @@ errorstr	dc	c'prefix: could not set prefix, pathname may not exist.'
 usage	dc	c'Usage: prefix prefixnum prefixname',h'0d00'
 bootstr	dc	c' *: ',h'00'
 pfxstr	dc	c'00: ',h'00'
+dirErr	dc	c'prefix: Not a directory',h'0d00'
+                       
+;
+; Parameter block for GS/OS GetFileInfo call
+;
+GRec	dc	i'3'	pCount
+GRecPath	ds	4	Pointer to input pathname
+GRecAcc	ds	2	access (result)
+GRecFT	ds	2	fileType (result)
 
-PRec	dc	i'2'
-PRecNum	dc	i'0'
-PRecPath	ds	4
+;
+; Parameter buffer for SetPrefix GS/OS call
+;
+PRec	dc	i'2'	pCount
+PRecNum	dc	i'0'	prefix number
+PRecPath	ds	4	pointer to GS/OS string with value
 
-GRec	dc	i'2'
-GRecPath	ds	4
-GRecAcc	ds	2
+;
+; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
+;
+Err	dc	i2'1'	pCount
+ErrError	ds	2	Error number
 
 	END
 

@@ -6,12 +6,13 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: term.asm,v 1.4 1998/07/20 16:23:11 tribby Exp $
+* $Id: term.asm,v 1.5 1998/08/03 17:30:25 tribby Exp $
 *
 **************************************************************************
 *
 * TERM.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Routines for dealing with Termcap under gsh.
 *
@@ -37,13 +38,13 @@ TIOCGETP	gequ	$40067408
 **************************************************************************
 
 InitTerm	START
-
+               
 	using	termdata
 
 ;
 ; See if $TERM exists
 ;
-	ReadVariableGS dummyresult
+	ReadVariableGS ReadVarPB
 
 	lda	term_len	Get length of $TERM
 	bne	allocate	If 0,
@@ -52,12 +53,12 @@ InitTerm	START
 allocate	anop		Allocate termcap buffers.
 
 	ph4	#1024
-	jsl	~NEW
+	~NEW
                sta	bp
 	stx	bp+2
 
 	ph4	#1024
-	jsl	~NEW
+	~NEW
 	sta	areabuf
 	stx	areabuf+2
 

@@ -1,7 +1,7 @@
 #
 # makefile for building gsh.  This is for use with dmake.
 #
-# $Id: Makefile,v 1.5 1998/06/30 17:25:01 tribby Exp $
+# $Id: Makefile,v 1.7 1998/09/08 16:53:04 tribby Exp $
 #
 # Devin Reade, February 1998.
 #
@@ -28,8 +28,8 @@ SRCS	= $(MAINSRC) \
 	  orca.asm \
 	  edit.asm \
 	  term.asm \
-	  bufpool.asm
-# unused:	mmdebug.asm
+	  bufpool.asm \
+	  mmdebug.asm
 
 # Note: STACK variable does not control size of stack/direct-page segment
 #       since this is assembly language. Edit stack segment in main.asm
@@ -41,9 +41,12 @@ SRCS	= $(MAINSRC) \
 # ltermcap library from GNO v2.0.4.
 #
 # LDADD	= -ltermcap
-LDLIBS	+= -l/trenco3/lib.206/ltermcap
+###LDLIBS	+= -l/trenco3/lib.206/ltermcap
 ###LDLIBS	+= -l/h1/orca/libraries/ltermcap
-###LDLIBS	+= -l/usr/lib/libtermcap
+LDLIBS	+= -l/usr/lib/libtermcap
+
+# For debugging: produce a link map
+## LDFLAGS	+= -M
 
 # Make sure our macro files get built before trying to assemble source files.
 # LOCAL_SETUP	= macros

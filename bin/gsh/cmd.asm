@@ -1,4 +1,4 @@
-***********************************************************************
+**************************************************************************
 *
 * The GNO Shell Project
 *
@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: cmd.asm,v 1.4 1998/07/20 16:23:02 tribby Exp $
+* $Id: cmd.asm,v 1.5 1998/08/03 17:30:27 tribby Exp $
 *
 **************************************************************************
 *
@@ -325,7 +325,7 @@ errstr2	dc	c"gsh: Missing ending '.",h'0d00'
 **************************************************************************
 
 command        START
-
+               
 pipefds	equ	1
 errappend      equ   pipefds+2
 errfile        equ   errappend+2
@@ -359,7 +359,7 @@ end            equ   waitpid+4
                tcd
 
                ph4   #1024	Allocate 1024 bytes
-               jsl   ~NEW	 and pointer in cmdline.
+               ~NEW	 	 and pointer in cmdline.
                sta   cmdline
                stx   cmdline+2
                lda   #0	Initialize to null C string.
@@ -370,7 +370,7 @@ end            equ   waitpid+4
                stx   word+2
 
                ph4   #MAXARG*4
-               jsl   ~NEW
+               ~NEW
                sta   argv
                stx   argv+2
 
@@ -421,7 +421,7 @@ word1          pei   (word+2)
                inc   a
                pea   0
                pha
-               jsl   ~NEW
+               ~NEW
                sta   temp
                stx   temp+2
                ora   temp+2
@@ -771,7 +771,7 @@ free2         	pei   (argv+2)
 **************************************************************************
 
 ShellExec      START
-
+               
 	using	vardata
 	using	global
 
@@ -857,27 +857,27 @@ set_value	anop
 vars_set	unlock mutex
 
                ph4   #4                 ;Close parms
-               jsl   ~NEW
+               ~NEW
                sta   CRec
                stx   CRec+2
 
                ph4   #10                ;Open parms
-               jsl   ~NEW
+               ~NEW
                sta   ORec
                stx   ORec+2
 
                ph4   #12                ;NewLine parms
-               jsl   ~NEW
+               ~NEW
                sta   NRec
                stx   NRec+2
 
                ph4   #16                ;Read parms
-               jsl   ~NEW
+               ~NEW
                sta   RRec
                stx   RRec+2
 
                ph4   #1000           	;data buffer
-               jsl   ~NEW
+               ~NEW
                sta   data
                stx   data+2
 

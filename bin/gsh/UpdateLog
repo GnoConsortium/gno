@@ -1,6 +1,43 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Aug  2 98    [dmt] Remove alloc256/free256 and associated data. Replace
+	     with fixed 64-byte buffer for command filename (hash.asm)
+	     and allocation of 261-byte buffer via ~NEW for shell
+	     variable name (shellvar.asm).
+
+Aug  1 98    [dmt] Updated and expanded mmdebug.asm routines that perform
+	     error checking on memory management calls. Added macros ~NEW
+	     and ~DISPOSE that invoke either the real or debug routines.
+	     Fixed call to read $TERM variable's length (PR#81).
+	     Replace call to allocate256 in AppendHome (shell.asm) with
+	     code that allocates space for $HOME plus the string parameter.
+
+Jul 28 98    [dmt] In expandvars (expand.asm), use echoFlag=0 (not 1)
+	     for ReadLine. The characters are echoed as they are typed
+	     and do not need to be reprinted on stdout.
+
+Jul 27 98    [dmt] Added error checking to the various flavors of prefix:
+	      - Verify 2nd parameter is a valid directory before setting.
+	      - Verify 1st parameter < 32 before displaying or setting.
+
+Jul 26 98    [dmt] Removed last of old shell calls and calls to and code for
+	     p-string routines (p2cstr, c2pstr, c2pstr2, putp, errputp).
+	     Removed old shell macros and "str" from gsh.mac.  In removing
+	     putp calls, found instances in pwd & prefix commands and prompt
+	     handler where current directory name was assumed to be < 256
+	     characters; recoded to use new routine getpfxstr.
+
+Jul 21 98    [dmt] Changed invoke.asm to use RedirectGS instead of redirect.
+	     Changed popd (in dir.asm) to get length of prefix 0 before
+	     allocating its string, rather than assuming path is <= 256
+	     characters. This allows directory stack to use very long names.
+
+Jul 20 98    [dmt] Changed expand.asm to use InitWildcardGS and
+	     NextWildcardGS instead of their obsolete counterparts.
+
+Jul 20 98    [dmt] Changes up to this point checked-in to master archive.
+
 Jul 19 98    [dmt] Changed edit.asm to use ReadIndexedGS, InitWildcardGS,
 	     NextWildcardGS, instead of their obsolete counterparts.
 

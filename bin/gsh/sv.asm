@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: sv.asm,v 1.4 1998/07/20 16:23:10 tribby Exp $
+* $Id: sv.asm,v 1.5 1998/08/03 17:30:25 tribby Exp $
 *
 **************************************************************************
 *
@@ -35,7 +35,7 @@ dummysv	start		; ends up in .root
 **************************************************************************
 
 sv_alloc	START
-
+               
 ptr	equ	0
 space	equ	ptr+4
 
@@ -48,7 +48,7 @@ space	equ	ptr+4
 	asl	a
 	pea	0
 	pha
-	jsl	~NEW	Allocate the memory
+	~NEW		Allocate the memory
 	sta	ptr	 and save address in
 	stx	ptr+2	  direct page variable.
 
@@ -81,7 +81,7 @@ init	sta	[ptr],y	Set all entries
 **************************************************************************
 
 sv_add	START
-
+               
 p	equ	0
 base	equ	p+4
 space	equ	base+4
@@ -106,7 +106,7 @@ space	equ	base+4
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW		Allocate memory for it.
+	~NEW		Allocate memory for it.
 	sta	p                          Store address in p/p+1.
 	stx	p+2
 

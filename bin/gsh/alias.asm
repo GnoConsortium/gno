@@ -6,12 +6,13 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: alias.asm,v 1.4 1998/07/20 16:23:01 tribby Exp $
+* $Id: alias.asm,v 1.5 1998/08/03 17:30:25 tribby Exp $
 *
 **************************************************************************
 *
 * ALIAS.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
 *              |     |                  |       |       |       |
@@ -161,7 +162,7 @@ setalias	ldy	#4+2	;put alias name on stack
 	pha
 
 	ph4	#2
-	jsl	~NEW
+	~NEW
 	sta	arg
 	stx	arg+2
 	lda	#0
@@ -323,7 +324,7 @@ yahaha	sta	AliasTable,x
 ;=========================================================================
 
 expandalias	START
-
+               
 outbuf	equ	0
 sub	equ	outbuf+4
 word	equ	sub+4
@@ -333,7 +334,7 @@ space	equ	buf+4
 	subroutine (4:cmd),space
 
 	ph4	#1024
-	jsl	~NEW
+	~NEW
 	stx	buf+2
 	sta	buf
 	stx	outbuf+2
@@ -483,7 +484,7 @@ done	ldx	word+2
 ;=========================================================================
 
 addalias	START
-
+               
 	using	AliasData
 
 tmp	equ	0
@@ -539,7 +540,7 @@ replace	ldy	#8+2
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW
+	~NEW
 	sta	tmp
 	stx	tmp+2
 	ldy	#8
@@ -555,7 +556,7 @@ replace	ldy	#8+2
 	bra	done
 
 notfound	ph4	#4*3
-	jsl	~NEW
+	~NEW
 	sta	ptr
 	stx	ptr+2
 	ldy	#2
@@ -570,7 +571,7 @@ notfound	ph4	#4*3
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW
+	~NEW
 	sta	tmp
 	stx	tmp+2
 	ldy	#4
@@ -589,7 +590,7 @@ notfound	ph4	#4*3
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW
+	~NEW
 	sta	tmp
 	stx	tmp+2
 	ldy	#8

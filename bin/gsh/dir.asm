@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: dir.asm,v 1.4 1998/07/20 16:23:03 tribby Exp $
+* $Id: dir.asm,v 1.5 1998/08/03 17:30:27 tribby Exp $
 *
 **************************************************************************
 *
@@ -32,6 +32,8 @@
 * popd	
 *
 * path2tilde	
+*
+* getpfxstr	
 *
 **************************************************************************
 
@@ -552,59 +554,67 @@ space	equ	idx+2
 
 	subroutine (0:dummy),space
 
-	lda	tods
-	asl	a
-	asl	a
-	sta	idx
-	tay
-	lda	dirstack,y
-	ora	dirstack+2,y
+	lda	tods	Get index number.
+	asl	a	Multiply by four
+	asl	a	 to get byte offset.
+	sta	idx	Store in idx
+	tay		 and Y-register.
+	lda	dirstack,y	If there is an address
+	ora	dirstack+2,y	 in this position,
 	beq	setit
 	
 	lda	dirstack+2,y
 	pha
 	lda	dirstack,y
 	pha
-	jsl	nullfree
+	jsl	nullfree		free it.
 
 setit	lock	mutex
-	jsl	alloc256
-	sta	gppath
-	stx	gppath+2
-	sta	p
-	stx	P+2
-	lda	#254
-	sta	[p]
-	GetPrefix gpparm
-	ldy	#2
-	lda	[p],y
-	xba
-	sta	[p],y
-	add4	p,#3,p
-	pei	(p+2)
-	pei	(p)
-	jsr	p2cstr
+
+	pea	0
+               jsl	getpfxstr	Get value of prefix 0.
 	sta	p
 	stx	p+2
-	ldx	gppath+2
-	lda	gppath
-	jsl	free256
 
-	unlock mutex
+	ora	p+2	If NULL pointer returned,
+	beq	done	 an error was reported.
 
-	ldy	idx
-	lda	p
-	sta	dirstack,y
+	ldy	#2	If length of returned
+	lda	[p],y	 GS/OS string is 0,
+	bne	ok	  an error was reported.
+	
+	ph4	p	Free the buffer.
+	jsl	nullfree
+
+	bra	done
+
+;
+; Move text in GS/OS result buffer to beginning of buffer
+; (overwritting the two length words).
+;
+ok	clc		Source is result
+	lda	p	 buffer plus
+	adc	#4	  four bytes.
+	tay
+	lda	p+2
+	adc	#0
+	pha
+	phy
+	pei	(p+2)	Destination is first
+	pei	(p)	 byte of buffer.
+               jsr   copycstr
+
+	ldy	idx	Store address of string
+	lda	p	 in current position
+	sta	dirstack,y	  of directory stack.
 	lda	p+2
 	sta	dirstack+2,y
+
+done	unlock mutex
 
 	return
 		
 mutex	key
-
-gpparm	dc	i2'2'
-	dc	i2'0'
-gppath	dc	i4'0'
 
 	END
 
@@ -628,7 +638,7 @@ tods	dc	i'0'
 **************************************************************************
 
 path2tilde	START
-
+               
 ptr	equ	0
 newpath	equ	ptr+4
 home	equ	newpath+4
@@ -636,26 +646,24 @@ space	equ	home+4
 
 	subroutine (4:path),space
 
-	pei	(path+2)
-	pei	(path)
-	jsr	cstrlen
-	inc2	a
-	pea	0
+	pei	(path+2)	Get length of
+	pei	(path)	 path string
+	jsr	cstrlen	  parameter.
+	inc2	a	Add 2, and allocate
+	pea	0	 memory for result string.
 	pha
-	jsl	~NEW
+	~NEW
 	sta	newpath
 	stx	newpath+2
 	sta	ptr
 	stx	ptr+2
 
-	jsl	alloc256	Allocate 256 byte GS/OS result buf.
+	ph4	#homename	Get $HOME environment variable.
+	jsl	getenv
 	sta	home
 	stx	home+2
-	sta	ReadName
-	stx	ReadName+2
-	lda	#256	Set buffer length word.
-	sta	[home]
-	ReadVariableGS ReadVar	Read $home environment variable.
+	ora	home+2	If buffer wasn't allocated
+	jeq	notfound2	  cannot search for $HOME.
 
 	ldy	#2	Get result length word.
 	lda	[home],y
@@ -667,7 +675,7 @@ checkhome      lda   [path],y
 	beq	notfound2	 checking for end of string,
 	jsr	tolower	  converting to lower-case
 	jsr	toslash	   and changing ":" to "/".
-	pha		Hold that character on the stack.
+	pha		Hold on stack for comparison.
 	iny4		$home has 4 bytes of length info
 	lda	[home],y	 that need to be indexed over.
 	dey2		Take back 3 of the offset,
@@ -681,23 +689,31 @@ checkhome      lda   [path],y
 	dex		Decrement $home length counter.
                bne   checkhome	If more, stay in loop.
 
-; All the characters matched $home.
-	cmp	#'/'
+;
+; First part of parameter matched $HOME
+;
+	cmp	#'/'	This char = "/"?
+	beq	found	 yes -- it's a match.
+	lda   [path],y	If the following character
+	and	#$FF	 is zero (end of string),
 	beq	found
-      	lda   [path],y
-	and	#$FF
-	beq	found
-	jsr	toslash
+	jsr	toslash	  '/', or ':', we have a match.
 	cmp	#'/'
 	bne	notfound2
-     
-found	lda	#'~'
-	sta	[ptr]
-	incad	ptr
+found	lda	#'~'	Store '~' as first character
+	sta	[ptr]	 in result buffer, and bump
+	incad	ptr	  result pointer.
                bra   copyrest
 
-notfound	pla
-notfound2      ldy   #0
+;
+; First part of parameter does not match $HOME
+;     
+notfound	pla		Get rid of comparison value on stack.
+notfound2      ldy   #0	Not found: copy from beginning.
+
+;
+; Copy remainder of parameter (Y-reg marks start) to destination string
+;
 copyrest	short	a
 copyloop	lda	[path],y
 	beq	endcopy
@@ -710,28 +726,135 @@ copyput      	sta   [ptr]
 	short	a
 	iny
 	bra	copyloop
-endcopy	sta	[ptr]
+endcopy      	sta   [ptr]
 	long	a
-	dec	ptr
-	lda	[ptr]
+	dec	ptr	If final character
+	lda	[ptr]	 was "/",
 	cmp	#'/'
 	bne	skipshorten
-	lda	#0
+	lda	#0		obliterate it.
 	sta	[ptr]
 
-skipshorten	ldx	home+2
-	lda	home
-	jsl	free256
+skipshorten	pei	(home+2)	Free memory allocated
+	pei	(home)	 for the value of $HOME.
+	jsl	nullfree
 
 	return 4:newpath
 
-; Parameter block for shell ReadVariableGS call (p 423 in ORCA/M manual)
-ReadVar	anop
-	dc	i2'3'	pCount
-	dc	a4'homename'	Pointer to name
-ReadName	ds	4	GS/OS Output buffer ptr: value
-	ds	2	export flag
-
 homename	gsstr	'home'	Env variable name
+
+	END
+
+
+**************************************************************************
+*
+* Return pointer to current directory (\0) GS/OS string in a/x
+*
+**************************************************************************
+
+getpfxstr	START
+               
+p	equ	0
+space	equ	p+4
+
+	subroutine (2:pnum),space
+
+	lock	mutex
+
+; Use dummy GS/OS result buf to get length of pathname
+;
+	lda	pnum	Put prefix num into
+	cmp	#$FFFF	If it's $FFFF,
+	beq	doboot	 use GetBootVol, not GetPrefix.
+	
+	sta	gpnum	Store prefix num in parameter block.
+               ld4	TempResultBuf,gppath
+	GetPrefix gpparm
+	bra	chklen
+
+doboot         ld4	TempResultBuf,gbpath
+	GetBootVol gbparm
+
+chklen	lda	TempRBlen	Use that length
+	clc		 plus five (for
+	adc	#5	  len words and terminator)
+	pea	0	   to allocate memory
+	pha		    that holds the string.
+	~NEW
+	sta	p	Store result in
+	stx	p+2	 direct page pointer.
+
+	ora	p+2	If memory was not available,
+	bne	memok
+	lda	#0201	  report memory error and
+	bra	rpterr	   return NULL to user.
+
+
+memok	lda	TempRBlen	Store result buf
+	inc2	a	 length at start
+	inc2	a	  of buffer.
+	sta	[p]
+
+	tay		Store a null byte
+	short	a	 at the end of the
+	lda	#0	  string so it can
+	sta	[p],y	   be used as a c-string.
+	long	a
+;
+; Get the prefix string into the newly allocated buffer.
+;
+	lda	pnum	Prefix number tells
+	cmp	#$FFFF	 whether to use
+	beq	doboot2	  GetPrefix or GetBootVol.
+	
+               mv4	p,gppath
+	GetPrefix gpparm
+	bcs	rpterr
+	bra	done
+
+doboot2        mv4	p,gbpath
+	GetBootVol gbparm
+	bcc	done	If there was an error,
+
+rpterr	sta	errError		Save the value
+	ErrorGS err		 and report it.
+	ldy	#2		Set length of returned
+	lda	#0		 string to 0 so caller
+	sta	[p],y		  can detect error condition.
+
+done	unlock mutex
+
+;
+; Return pointer to caller. (Caller has responsibility to deallocate.)
+;
+	return 4:p
+		
+mutex	key
+
+;
+; Parameter block for GetPrefix GS/OS call
+;
+gpparm	dc	i2'2'	pCount
+gpnum	dc	i2'0'	prefixNum (from parameter)
+gppath	dc	i4'0'	prefix returned to this GS/OS buffer.
+
+;
+; Parameter block for GetBootVol GS/OS call
+;
+gbparm	dc	i2'1'	pCount
+gbpath	dc	i4'0'	prefix returned to this GS/OS buffer.
+
+;
+; GS/OS result buffer for getting the full length of the prefix string
+;
+TempResultBuf	dc	i2'5'	Only five bytes total.
+TempRBlen	ds	2	String's length returned here.
+	ds	1	Only 1 byte for value.
+
+;
+; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
+;
+err	dc	i2'1'	pCount
+errError	ds	2	Error number
 
 	END

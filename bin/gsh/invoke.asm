@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: invoke.asm,v 1.5 1998/07/20 16:23:07 tribby Exp $
+* $Id: invoke.asm,v 1.6 1998/08/03 17:30:21 tribby Exp $
 *
 **************************************************************************
 *
@@ -77,57 +77,39 @@ end	equ	sfile+4
 	phd
 	tcd
 ;
-; standard input
+; Redirect standard input
 ;
-	ora2	sfile,sfile+2,@a
-               beq   execa
-	pei	(sfile+2)	;for c2pstr
-	pei	(sfile)
-	pei	(sfile+2)
-	pei	(sfile)
-	jsr	cstrlen
-	inc	a
-	pea	0
-	pha
-	jsl	~NEW
-	sta	RedirectFile
-	stx	RedirectFile+2
-	phx
-	pha
-	jsr	c2pstr
-	stz	RedirectDev
-	stz	RedirectApp
-	Redirect RedirectParm
+	ora2	sfile,sfile+2,@a	If no name provided,
+               beq   execa	 skip it.
+	pei	(sfile+2)	Convert c-string
+	pei	(sfile)	 filename to
+	jsr	c2gsstr	  GS/OS string.
+	sta	RedirectFile	Store filename pointer
+	stx	RedirectFile+2	 in parameter block.
+	stz	RedirectDev	stdin devnum = 0.
+	stz	RedirectApp	Cannot append.
+	RedirectGS RedirectParm
 	php
-	ph4	RedirectFile
+	ph4	RedirectFile	Free allocated GS/OS string.
 	jsl	nullfree
 	plp
-	bcc	execa
-	ldx	#^err1	Print error message:
-	lda	#err1	 'Error redirecting standard input.'
-	jmp	badbye
+	bcc	execa	If RedirectGS failed,
+	ldx	#^err1	 print error message:
+	lda	#err1	  'Error redirecting standard input.'
+	jmp	badbye	   and quit.
 ;
-; standard output
+; Redirect standard output
 ;
 execa	ora2	dfile,dfile+2,@a
 	beq	execb
-	pei	(dfile+2)	;for c2pstr
-	pei	(dfile)
 	pei	(dfile+2)
 	pei	(dfile)
-	jsr	cstrlen
-	inc	a
-	pea	0
-	pha
-	jsl	~NEW
+	jsr	c2gsstr
 	sta	RedirectFile
 	stx	RedirectFile+2
-	phx
-	pha
-	jsr	c2pstr
-	ld2	1,RedirectDev
+	ld2	1,RedirectDev	stdout devnum = 1
 	mv2	app,RedirectApp
-	Redirect RedirectParm
+	RedirectGS RedirectParm
 	php
 	ph4	RedirectFile
 	jsl	nullfree
@@ -137,30 +119,18 @@ execa	ora2	dfile,dfile+2,@a
 	lda	#err2	 'Error redirecting standard output.'
 	jmp	badbye
 ;                   
-; standard error
+; Redirect standard error
 ;
 execb	ora2	efile,efile+2,@a
 	beq	execc
-	pei	(efile+2)	;for c2pstr
-	pei	(efile)
 	pei	(efile+2)
 	pei	(efile)
-	jsr	cstrlen
-	inc	a
-	pea	0
-	pha
-	jsl	~NEW
+	jsr	c2gsstr
 	sta	RedirectFile
 	stx	RedirectFile+2
-	phx
-	pha
-	jsr	c2pstr
 	ld2	2,RedirectDev
 	mv2	eapp,RedirectApp
-
-; Make shell call to recirect I/O
-	Redirect RedirectParm
-
+	RedirectGS RedirectParm
 	php
 	ph4	RedirectFile
 	jsl	nullfree
@@ -170,7 +140,7 @@ execb	ora2	efile,efile+2,@a
 	lda	#err3	 'Error redirecting standard error.'
 	jmp	badbye
 ;                         
-; is input piped in?
+; Is input piped in?
 ;
 execc	lda	pipein
 	beq	execd
@@ -181,7 +151,7 @@ execc	lda	pipein
 	lda	pipein
 	SetInputDevice (#3,@xa)
 ;
-; is output piped?
+; Is output piped?
 ;
 execd	lda	pipeout
 	beq	exece
@@ -191,14 +161,18 @@ execd	lda	pipeout
 	ldx	#0
 	lda	pipeout
 	SetOutputDevice (#3,@xa)
-                                      
 exece	anop
 
+;
+; All the file and pipe redirection has been handled. Time to say goodbye.
+;
 goodbye	ldy	#0
 	bra	exit
+
 badbye	jsr	errputs
                cop	$7F	; get out of the way
 	ldy	#1
+
 exit	lda	space
 	sta	end-3
 	lda	space+1
@@ -213,15 +187,19 @@ exit	lda	space
 
 	rtl     
 
+;
 ; Parameter block for shell call to redirect I/O (ORCA/M manual p.425)
-RedirectParm	anop
+;
+RedirectParm	dc	i2'3'	pCount
 RedirectDev    ds    2	Dev num (0=stdin,1=stdout,2=errout)
 RedirectApp    ds    2	Append flag (0=delete)
 RedirectFile   ds    4	File name (GS/OS input string)
 
+;
 ; Parameter block for GS/OS call to close a file
-CloseParm	dc	i'1'
-CloseRef	dc	i'0'
+;
+CloseParm	dc	i'1'	pCount
+CloseRef	dc	i'0'	refNum
 
 err1	dc	c'gsh: Error redirecting standard input.',h'0d00'
 err2	dc	c'gsh: Error redirecting standard output.',h'0d00'

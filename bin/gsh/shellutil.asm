@@ -6,12 +6,13 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shellutil.asm,v 1.4 1998/07/20 16:23:09 tribby Exp $
+* $Id: shellutil.asm,v 1.5 1998/08/03 17:30:24 tribby Exp $
 *
 **************************************************************************
 *
 * SHELLUTIL.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Utility functions used by the shell. Mainly string functions.
 *
@@ -185,171 +186,6 @@ done           sta   [q],y
 
 ;=========================================================================
 ;
-; Converts a pascal string to a c string. This allocates memory for the
-; new c string.
-;
-;=========================================================================
-
-p2cstr         START
-
-cstr           equ   1
-space          equ   cstr+4
-p              equ   space+2
-end            equ   p+4
-
-               tsc
-               sec
-               sbc   #space-1
-               tcs
-               phd
-               tcd
-
-               lda   [p]
-               and   #$FF
-	inc	a
-               pea   0
-               pha
-               jsl   ~NEW
-               sta   cstr
-               stx   cstr+2
-               lda   [p]
-	incad	p
-               and   #$FF
-               tax
-
-               short a
-               ldy   #0
-               cpx   #0
-               beq   done
-loop           lda   [p],y
-               sta   [cstr],y
-               iny
-               dex
-               bne   loop
-
-done           lda   #0
-               sta   [cstr],y
-
-               ldx   cstr+2
-               ldy   cstr
-
-               rep	#$21
-	longa	on
-               lda   space
-               sta   end-2
-               pld
-               tsc
-               adc   #end-3
-               tcs
-
-               tya
-
-               rts
-
-               END
-
-;=========================================================================
-;
-; Converts a c string to a pascal string. Does not allocate memory.
-;
-;=========================================================================
-
-c2pstr         START
-
-space          equ   1
-p              equ   space+2
-cstr           equ   p+4
-end            equ   cstr+4
-
-               tsc
-               phd
-               tcd
-
-               short a
-
-               ldy   #0
-loop           lda   [cstr],y
-               beq   endstr
-               iny
-               sta   [p],y
-               bra   loop
-endstr         tya
-               sta   [p]
-
-               rep	#$21
-	longa	on
-               lda   space
-               sta   end-2
-               pld
-               tsc
-               adc   #end-3
-               tcs
-
-               rts
-
-               END
-
-;=========================================================================
-;
-; Converts a c string to a pascal string. Allocates memory for p string.
-;
-;=========================================================================
-
-c2pstr2        START
-
-p	equ	1
-space          equ   p+4
-cstr           equ   space+2
-end            equ   cstr+4
-
-               tsc
-               sec
-               sbc   #space-1
-               tcs
-               phd
-               tcd
-
-	pei	(cstr+2)
-	pei	(cstr)
-	jsr	cstrlen
-	inc	a
-	pea	0
-	pha
-	jsl	~NEW
-	sta	p
-	stx	p+2
-
-               short a
-
-               ldy   #0
-loop           lda   [cstr],y
-               beq   endstr
-               iny
-               sta   [p],y
-               bra   loop
-endstr         tya
-               sta   [p]
-
-	ldx	p+2
-	ldy	p
-
-               rep	#$21
-	longa	on
-               lda   space
-               sta   end-2
-               pld
-               tsc
-               adc   #end-3
-               tcs
-
-	tya
-
-               rts
-
-               END
-
-;=========================================================================
-;
 ; Compare two c strings. Return 0 if equal, -1 if less than, +1 greater
 ;
 ;=========================================================================
@@ -406,7 +242,7 @@ done           rep	#$21
 ;
 ;=========================================================================
 
-cmpdcstr        START
+cmpdcstr	START
 
 hold           equ   1
 space          equ   hold+2
@@ -467,7 +303,7 @@ done           anop
 ;=========================================================================
 
 c2gsstr        START
-
+               
 len            equ   1
 gstr           equ   len+2
 space          equ   gstr+4
@@ -488,7 +324,7 @@ end            equ   cstr+4
 	adc	#3
                pea   0
                pha
-               jsl   ~NEW
+               ~NEW
                sta   gstr
                stx   gstr+2
 	incad	@xa
@@ -523,7 +359,7 @@ end            equ   cstr+4
 ;=========================================================================
 
 catcstr        START
-
+               
 new	equ	1
 space          equ   new+4
 q              equ   space+2
@@ -550,7 +386,7 @@ end            equ   p+4
 	plx
 	pea	0
 	pha
-	jsl	~NEW
+	~NEW
 	sta	new
 	stx	new+2
 
@@ -591,13 +427,7 @@ done           ldx   new+2
 ;=====================================================================
 
 nullfree	START
-
-*	lda	6,s                DEBUG code: break if
-*	and	#$FF80	 address is > $007FFFFF
-*	beq	notbad
-*	brk	$db
-*notbad	anop
-
+                     
 	lda	4,s
 	ora	6,s
 	bne	ok
@@ -609,7 +439,7 @@ nullfree	START
 	plx
 	rtl
 
-ok	jml	~DISPOSE
+ok	~DISPOSE
 
 	END
 
@@ -654,7 +484,7 @@ newline        ENTRY
 **************************************************************************
 
 getenv	START
-
+               
 len	equ	1
 retval	equ	len+2
 space	equ	retval+4
@@ -692,7 +522,7 @@ notnull	inc2	a	Add 4 bytes for result buf len words.
 	inc	a	Add 1 more for terminating null byte.
 	pea	0
 	pha
-	jsl	~NEW	Request the memory.
+	~NEW		Request the memory.
 	sta	RVresult	Store address in ReadVariable
 	stx	RVresult+2	 parameter block and
 	sta	retval	  direct page pointer.

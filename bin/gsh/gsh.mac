@@ -652,108 +652,6 @@
 	mend
 
 ; ------------------
-; Old shell calls
-; ------------------
-
-********************
-* ERROR
-********************
-	MACRO
-&lab	ERROR	&a1
-&lab	p16	$105,&a1
-	mend
-
-********************
-* EXPORT
-********************
-	macro
-&lab	EXPORT &a1
-&lab	p16	$116,&a1
-	mend
-
-********************
-* INIT_WILDCARD
-********************
-	MACRO
-&lab	INIT_WILDCARD &a1
-&lab	p16	$109,&a1
-	mend
-
-********************
-* NEXT_WILDCARD
-********************
-	MACRO
-&lab	NEXT_WILDCARD &a1
-&lab	p16	$10A,&a1
-	mend
-
-********************
-* PopVariables
-********************
-	MACRO
-&lab	PopVariables &a1
-&lab	p16	$117,&a1
-	mend
-
-********************
-* PushVariables
-********************
-	MACRO
-&lab	PushVariables &a1
-&lab	p16	$118,&a1
-	mend
-
-********************
-* READ_INDEXED
-********************
-	MACRO
-&lab	READ_INDEXED &a1
-&lab	p16	$108,&a1
-	mend
-
-********************
-* READ_VARIABLE
-********************
-	MACRO
-&lab	READ_VARIABLE &a1
-&lab	p16	$10B,&a1
-	mend
-
-********************
-* REDIRECT
-********************
-	macro
-&lab	REDIRECT &a1
-&lab	p16	$110,&a1
-	mend
-
-********************
-* Set_Variable
-********************
-	macro
-&lab	Set_Variable &a1
-&lab	p16	$106,&a1
-	mend
-
-********************
-* UnsetVariable
-********************
-	macro
-&lab	UnsetVariable &a1
-&lab	p16	$115,&a1
-	mend
-
-********************
-* p16
-********************
-	MACRO
-&lab	p16	&a1,&a2
-&lab	jsl	$E100A8
-	dc	i2'&a1'
-	dc	i4'&a2'
-	mend
-
-; ------------------
 ; Debugging
 ; ------------------
 
@@ -786,30 +684,12 @@ pastName&SYSCNT	anop
 ; Data Structures
 ; ------------------
 
-********************
-* dosin
-********************
-	macro
-&l	dosin	&adr
-&l	dc	i"l:~&sysname&syscnt"
-~&sysname&syscnt dc c"&adr"
-	mend
-
-********************
-* GSStr
-********************
+*****************************
+* GSStr: GS/OS output string
+*****************************
 	MACRO
 &lab	GSStr	&string
 &lab	dc	i2'L:&string'
-	dc	c"&string"
-	mend
-
-********************
-* Str
-********************
-	MACRO
-&lab	Str	&string
-&lab	dc	i1'L:&string'
 	dc	c"&string"
 	mend
 
@@ -2047,7 +1927,7 @@ pastName&SYSCNT	anop
 ********************
 	MACRO
 &lab	breakpoint &flag
-	lda	check4debug
+&lab	lda	check4debug
 	and	#$80
 	beq	*+4
 	brk	&flag
@@ -2071,4 +1951,24 @@ pastName&SYSCNT	anop
 	inx
 .done            
 skip&syscnt	anop
+	MEND
+
+
+********************************************************************
+* ~NEW: call ~NEW or DB~NEW, depending upon whether debug is wanted
+********************************************************************
+	MACRO
+&lab	~NEW
+&lab	anop
+	jsl	~NEW
+	MEND
+
+
+***************************************************************************
+* ~DISPOSE: call ~DISPOSE or DB~DISPOSE, depending upon if debug is wanted
+***************************************************************************
+	MACRO
+&lab	~DISPOSE
+&lab	anop
+	jml	~DISPOSE
 	MEND

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: prompt.asm,v 1.4 1998/07/20 16:23:08 tribby Exp $
+* $Id: prompt.asm,v 1.5 1998/08/03 17:30:23 tribby Exp $
 *
 **************************************************************************
 *
@@ -66,8 +66,8 @@ precmd	equ	prompt
 getvar	ph4	#promptname
 	jsl	getenv
 
-               php
-               sei		;interrupt free environment
+               php		Turn off interrupts: mutex
+               sei		 won't do what we want!
 
 	sta	promptgsbuf	Save pointer to GS/OS result buffer.
 	stx	promptgsbuf+2	If there is no memory to hold it,
@@ -107,57 +107,59 @@ done           jsr	standend
 	jsr	cursoron
 
 donemark2	anop
+	plp		Restore interrupts.
+
 	pei	(promptgsbuf+2)	Free $PROMPT value buffer
 	pei	(promptgsbuf)
 	jsl	nullfree
 
-	plp		Restore interrupts.
-
 	jsr	flush
 	return
-
-special        lda   [prompt]
+;
+; Previous character was a "%". Handle special character flags
+;
+special        lda   [prompt]	Get character following "%".
 	incad	prompt
                and   #$FF
-               beq   done
-               cmp   #'%'
-               beq   _putchar
-               cmp   #'h'
+               beq   done	If end of string, all done.
+               cmp   #'%'	If another "%",
+               beq   _putchar		print the "%"
+               cmp   #'h'	If 'h'
                beq   phist
-               cmp   #'!'
-               beq   phist
-               cmp   #'t'
+               cmp   #'!'	 or '!',
+               beq   phist		print history number.
+               cmp   #'t'	If 't'
                beq   ptime
-               cmp   #'@'
-               beq   ptime
-               cmp   #'S'
-               jeq   pstandout
-               cmp   #'s'
-               jeq   pstandend
-               cmp   #'U'
-               jeq   punderline
-               cmp   #'u'
-               jeq   punderend
-               cmp   #'d'
+               cmp   #'@'	 or '@',
+               beq   ptime		print time (am/pm format)
+               cmp   #'S'	If 'S',
+               jeq   pstandout		turn inverse mode on.
+               cmp   #'s'	If 's',
+               jeq   pstandend		turn inverse mode off.
+               cmp   #'U'	If 'U',
+               jeq   punderline		turn underline mode on.
+               cmp   #'u'	If 'u',
+               jeq   punderend		turn underline mode off
+               cmp   #'d'	If 'd'
                jeq   pcwd
-               cmp   #'/'
-               jeq   pcwd
-               cmp   #'c'
+               cmp   #'/'	 or '/',
+               jeq   pcwd		print working directory.
+               cmp   #'c'	If 'c'
                jeq   pcwdend
-               cmp   #'C'
-               jeq   pcwdend
-               cmp   #'.'
-               jeq   pcwdend
-               cmp   #'n'
-               jeq   puser
-               cmp   #'W'
-               jeq   pdate1
-               cmp   #'D'
-               jeq   pdate2
-	cmp	#'~'
-	jeq	ptilde
+               cmp   #'C'	 or 'C'
+               jeq   pcwdend	
+               cmp   #'.'	  or '.',
+               jeq   pcwdend		print final part of wrk dir.
+               cmp   #'n'	If 'n',
+               jeq   puser		print $USER
+               cmp   #'W'	If 'W',
+               jeq   pdate1		print date (mm/dd/yy)
+               cmp   #'D'	If 'D',
+               jeq   pdate2		print date (yy-mm-dd)
+	cmp	#'~'	If '~',
+	jeq	ptilde		print wrk dir with ~ subs.
+               jmp   promptloop	If none of these characters, ignore it.
 
-               jmp   promptloop
 ;
 ; Put history number
 ;
@@ -165,6 +167,7 @@ phist          lda   lasthist
                inc   a
                jsr   WriteNum
                jmp   promptloop
+
 ;
 ; Print current time
 ;
@@ -197,13 +200,14 @@ ptime3         lda   #'p'
 ptime4         jsr   putchar
 	lda	#'m'
 	jmp	_putchar
+
 ;
-; Set Stand Out
+; Set Stand Out (turn on inverse mode)
 ;
 pstandout      jsr	standout
 	jmp	promptloop
 ;
-; UnSet Stand Out
+; UnSet Stand Out (turn off inverse mode)
 ;
 pstandend      jsr	standend
 	jmp	promptloop
@@ -220,108 +224,93 @@ punderend      jsr	underend
 ;                             
 ; Current working directory
 ;
-pcwd           jsl	alloc1024
+pcwd	anop
+	pea	0
+               jsl	getpfxstr	Get value of prefix 0.
 	sta	pfx
 	stx	pfx+2
-               sta	GPpfx
-	stx	GPpfx+2
-	lda	#1024
-	sta	[pfx]
 
-	GetPrefix GPParm
-               ldy   #2
-	lda	[pfx],y
-               clc
-	adc	#3
-	sta	offset
-	ldy	#4
-pcwd1          lda   [pfx],y
-               and   #$FF
-	jsr	toslash
-         	phy
-	jsr	putchar
-               ply
-               iny
-               cpy   offset
-               bcc   pcwd1
-               ldx	pfx+2
-	lda	pfx
-	jsl   free1024
+	ora	pfx+2	If NULL pointer returned,
+	jeq	promptloop	 an error was reported.
+
+	ldy	#4	Text starts at byte 4.
+pcwd1          lda   [pfx],y	Get next
+	and   #$FF	 character.
+	beq	freepfx	Done when at end of string.
+	jsr	toslash	Convert to slash.
+	phy		Hold index on stack
+	jsr	putchar	 while printing character.
+	ply
+	iny		Bump index
+	bra	pcwd1	 and stay in loop.
+
+freepfx	ph4	pfx	Free the current directory buffer.
+	jsl	nullfree
 	jmp   promptloop
+
 ;
-; Current tail of working directory
+; Tail of current working directory
 ;
 pcwdend        anop
-	jsl	alloc1024
+	pea	0
+               jsl	getpfxstr	Get value of prefix 0.
 	sta	pfx
 	stx	pfx+2
-               sta	GPpfx
-	stx	GPpfx+2
-	lda	#1024
-	sta	[pfx]
 
-	GetPrefix GPParm
-               ldy	#2
-	lda	[pfx],y
-               clc
-	adc	#3
+	ora	pfx+2	If NULL pointer returned,
+	jeq	promptloop	 an error was reported.
+
+               ldy	#2	Get string's length word
+	lda	[pfx],y	 from bytes 2 & 3.
+               clc		Add 3 to get offset
+	adc	#3	 from beginning of buffer.
 	sta	offset
 	tay
-pcwdend1       dey
-               bmi   pcwdend2
-               lda   [pfx],y
-               and   #$FF
-               cmp   #':'
-               bne   pcwdend1
+pcwdend1       dey		If we've backed up to the beginning,
+               bmi   pcwdend2	 we can't go any further!
+               lda   [pfx],y	Get next character.
+               and   #$FF	
+               cmp   #':'               If it's not ':',
+               bne   pcwdend1	 keep searching backward.
 pcwdend2       iny
                cpy   offset
-               beq   pcwdend3
+               jeq   freepfx	Free the current directory buffer.
                lda   [pfx],y
                and   #$FF
                cmp   #':'
-               beq   pcwdend3
+               jeq   freepfx	Free the current directory buffer.
                phy
 	jsr	putchar
                ply
                bra   pcwdend2
-pcwdend3       ldx	pfx+2
-	lda	pfx
-	jsl	free1024
-	jmp   promptloop
+
 ;
 ; Current working directory substituting '~' if necessary
 ;
 ptilde         anop
-	jsl	alloc1024
+	pea	0
+               jsl	getpfxstr	Get value of prefix 0.
 	sta	pfx
 	stx	pfx+2
-               sta	GPpfx
-	stx	GPpfx+2
-	lda	#1024
-	sta	[pfx]
 
-	GetPrefix GPParm
-               ldy	#2
-	lda	[pfx],y
-               clc
-	adc	#4
-	tay
-               lda   #0
-               sta   [pfx],y
-	pei	(pfx+2)
-	lda	pfx
-               clc
-	adc	#4
+	ora	pfx+2	If NULL pointer returned,
+	jeq	promptloop	 an error was reported.
+	lda	pfx	Otherwise, restore low-order address.
+
+               clc		Add 4 to start of buffer
+	adc	#4	 so it can be treated like
+	bcc	pushad	  a c-string.
+	inx
+pushad	phx
 	pha
-	jsl	path2tilde
-	phx
-	pha
-	jsr	puts
-	jsl	~DISPOSE
-               ldx	pfx+2
-	lda	pfx
-	jsl	free1024
-	jmp   promptloop
+	jsl	path2tilde	Convert $HOME to "~"
+	phx		Push addr onto stack
+	pha		  for nullfree.
+	jsr	puts	Print tilde string.
+	jsl	nullfree	Free the converted string.
+
+	jmp	freepfx	Free the current directory buffer.
+
 ;                          
 ; Write user name
 ;
@@ -344,6 +333,7 @@ printit	jsr	puts
 	jsl	nullfree
 
 goploop	jmp	promptloop
+
 ;
 ; Write date as mm/dd/yy
 ;
@@ -366,6 +356,7 @@ pdate1         ReadTimeHex (@a,year,monday,@a)
                xba
                jsr   WriteNum
                jmp   promptloop
+
 ;
 ; Write date as yy-mm-dd
 ;
@@ -388,6 +379,7 @@ pdate2         ReadTimeHex (@a,year,monday,@a)
                inc   a
                jsr   WriteNum
                jmp   promptloop
+
 ;
 ; check for \ quote
 ;
@@ -441,16 +433,13 @@ write3         Int2Dec (@a,#num,#4,#0)
 ; Name of alias to execute before prompt
 precmdstr	dc	c'precmd',h'00'
 
-
-; Parameter block for GetPrefix GS/OS call
-GPParm         dc    i2'2'
-               dc    i2'0'
-GPpfx	dc    a4'0'
-
+; Names of environment variables
 promptname     gsstr	'prompt'
 username	gsstr	'user'
 
+; Default prompt
 dfltPrompt     dc    c'% ',h'00'
+
 num            dc    c'0000',h'00'
 
                END

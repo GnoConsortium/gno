@@ -1,4 +1,4 @@
-***********************************************************************
+**************************************************************************
 *
 * The GNO Shell Project
 *
@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: expand.asm,v 1.4 1998/07/20 16:23:03 tribby Exp $
+* $Id: expand.asm,v 1.5 1998/08/03 17:30:28 tribby Exp $
 *
 **************************************************************************
 *
@@ -35,7 +35,7 @@ dummyexpand	start		; ends up in .root
 **************************************************************************
 
 glob           START
-
+               
 	using	vardata
 
 count          equ   0
@@ -70,14 +70,15 @@ space          equ   buf+4
 ;
 ; noglob isn't set, so now we can actually start.
 ;
-doglob         jsl	alloc1024	;create an output buffer
-               sta   buf
-               sta   ptr
-               stx   buf+2
-               stx   ptr+2
-               jsl	alloc1024	;create a word buffer
-               sta   wordbuf
-               stx   wordbuf+2
+doglob         jsl	alloc1024	Create an output buffer.
+	sta	buf
+	stx	buf+2
+	sta	ptr	ptr points to next
+	stx	ptr+2	 position in buf.
+
+	jsl	alloc1024	Create a word buffer.
+	sta	wordbuf
+	stx	wordbuf+2
 
 ;
 ; Find the beginning of the next word
@@ -193,14 +194,14 @@ doneflush      jmp   findword
 ; Hello, boys and goils, velcome to Tim's Magik Shoppe
 ;
 ; Ok, here's the plan:
-;  1. We give _InitWildcard a PATHNAME.
-;  2. _NextWildcard returns a FILENAME.
+;  1. We give InitWildcardGS a PATHNAME.
+;  2. NextWildcardGS returns a FILENAME.
 ;  3. We need to expand to the command-line the full pathname.
 ;  4. Therefore, we must put aside the prefix, and cat each file returned
-;     from _NextWildcard to the saved prefix, but, we must still pass
-;     the entire path to _InitWildcard.
+;     from NextWildcardGS to the saved prefix, but, we must still pass
+;     the entire path to InitWildcardGS.
 ;  5. This solves our problem with quoting. Expand the quotes before
-;     passing along to _InitWildcard, BUT the saved prefix we saved to cat
+;     passing along to InitWildcardGS, BUT the saved prefix we saved to cat
 ;     to will still have the quotes in it, so that the tokenizer can deal
 ;     with it. Whew!
 ;
@@ -212,16 +213,18 @@ doneflush      jmp   findword
 ; Expand out the quoted stuff, and keep an eye out for that ubiquitous last
 ; filename separator... then we can isolate him!
 ;
-globword       stz   filesep	
-	jsl	alloc1024
-               sta   eptr
-               stx   eptr+2
-               sta   exppath
-               stx   exppath+2
+globword	stz	filesep	
+	jsl	alloc1024	Alloc buffer for wildcard pattern.
+	sta	exppath
+	stx	exppath+2
 
-               incad	eptr               ;leave room for pascal length
-               mv4   eptr,sepptr
-
+	incad	@xa	Leave room for length word
+	incad	@xa
+	sta	eptr
+	stx	eptr+2
+	sta	sepptr
+	stx	sepptr+2
+                     
                ldy   #0
 exploop        lda   [wordbuf],y
                and   #$FF
@@ -273,66 +276,65 @@ copyback       lda   [wordbuf],y
                cmp   #0
                bne   copyback
 ;
-; save the length, heh, heh, 16-bit sub will do it!
+; Calculate length by subtracting sepptr from starting address
 ;
                sub2  sepptr,exppath,@a
-               dec2  a                  ;don't count length byte or \0!
-               short a
+               dec2  a                  Don't count length word or \0
+	dec	a
                sta   [exppath]
-               long  a
 ;
-; We now have enough to call _InitWildCard!!!
-; [ let's mutex the rest so we don't have to fix _InitWC and _NextWC ;-) ]
+; We now have enough to call InitWildCardGS!!!
+; [ let's mutex the rest so we don't have to fix InitWC and NextWC ;-) ]
 ;
 	lock	glob_mutex
 ;
-; Call shell routine InitWildcard to initialize the filename pattern
+; Call shell routine InitWildcardGS to initialize the filename pattern
 ;
-               stz   count
-               mv4   exppath,initWCparm
-               Init_Wildcard initWCparm
+	stz	count
+	mv4	exppath,initWCpath
+	InitWildcardGS initWCparm
+
+	ph4	#65	Allocate memory for
+	~NEW	 	expanded name.
+	sta	gname	Store in direct
+	stx	gname+2	 page pointer
+	sta	nWCname	  and in NextWildcardGS
+	stx	nWCname+2	   parameter block.
+	lda	#65	Store maximum length at
+	sta	[gname]	 beginning of result buf.
 ;
-; hey, we better get some memory for these new files...
+; Call shell routine NextWildcardGS to get the next name that matches.
 ;
-               ph4   #65    
-               jsl   ~NEW
-               sta   gname
-               stx   gname+2
-               sta   nWCparm
-               stx   nWCparm+2
-;
-; Call shell routine NextWildcard to get the next name that matches.
-;
-WCloop         Next_Wildcard nWCparm
-               lda   [gname]
-               and   #$FF
-               beq   nomore
+WCloop         NextWildcardGS nWCparm
+	ldy	#2
+	lda	[gname],y
+	beq	nomore
 ;
 ; Keep count of how many paths are expanded
 ;
-               inc   count	
+	inc	count
 
 ;
 ; Copy the original path (up to file separator) to output buffer
 ;
-               ldy   #0
-outtahere      if2   @y,eq,filesep,globout
-               lda   [wordbuf],y
-               jsr   g_putspecial
-               iny
-               bra   outtahere
+	ldy	#0
+outtahere	if2	@y,eq,filesep,globout
+	lda	[wordbuf],y
+	jsr	g_putspecial
+	iny
+	bra	outtahere
 ;
 ; Copy the expanded filename to output buffer
 ;
-globout        lda   [gname]
-               and   #$FF
-               tax
-               ldy   #1
-globoutta      lda   [gname],y
-               jsr   g_putspecial
-               iny
-               dex
-               bne   globoutta
+globout	ldy	#2	Get returned length
+	lda	[gname],y	 from GS/OS buffer.
+	tax
+	ldy	#4
+globoutta	lda	[gname],y	Copy next character
+	jsr	g_putspecial	 into buffer.
+	iny
+	dex
+	bne	globoutta
 ;
 ; Place blank as separator after name and see if more are expanded.
 ;
@@ -345,6 +347,7 @@ globoutta      lda   [gname],y
 ;
 nomore         anop
 
+	unlock glob_mutex
 ;
 ; Deallocate path buffers (we should probably alloc once, not each word... )
 ;
@@ -354,7 +357,6 @@ nomore         anop
                ldx   exppath+2
                lda   exppath
                jsl   free1024
-	unlock glob_mutex
 
 	lda	count	If somehing was expanded,
                jne   findword	 go find the next word.
@@ -428,12 +430,18 @@ g_putbyte	short	a
 
 glob_mutex	key
 
-; Parameter block for InitWildcard shell call (ORCA/M pp 414-415)
-InitWCParm	ds	4	Path name, with wildcard
+;
+; Parameter block for shell InitWildcardGS call (p 414 in ORCA/M manual)
+;
+InitWCParm	dc	i2'2'	pCount
+InitWCPath	ds	4	Path name, with wildcard
 	dc	i2'%00000001'	Flags (this bit not documented!!!)
 
-; Parameter block for NextWildcard shell call (ORCA/M pp 417-418)
-nWCparm	ds	4	Pointer to returned path name
+;
+; Parameter block for shell NextWildcardGS call (p 414 in ORCA/M manual)
+;
+nWCparm	dc	i2'1'	pCount
+nWCname	ds	4	Pointer to returned path name
 
 nomatch	dc	c'No match: ',h'00'
 ignored	dc	c' ignored',h'0d00'
@@ -563,7 +571,7 @@ braceloop      lda   [cmd]
 ; get text from standard input
 ;
 stdinexpand    jsr   e_getbyte
-	ReadLine (#value,#MAXVAL,#13,#1),@a
+	ReadLine (#value,#MAXVAL,#13,#0),@a
 	sta	valueln
 	bra	chklen
 

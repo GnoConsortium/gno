@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: history.asm,v 1.4 1998/07/20 16:23:07 tribby Exp $
+* $Id: history.asm,v 1.5 1998/08/03 17:30:20 tribby Exp $
 *
 **************************************************************************
 *
@@ -65,7 +65,7 @@ histCmd        gequ  4
 ;=========================================================================
 
 InsertHistory  START
-
+               
                using HistoryData
                using global
 
@@ -85,7 +85,7 @@ space	equ	histvalptr+4
 	clc
 	adc	#4+1
                pha
-               jsl   ~NEW
+               ~NEW
                sta   ptr
                stx   ptr+2
                ora   ptr+2

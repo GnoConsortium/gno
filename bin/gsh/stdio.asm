@@ -6,12 +6,13 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: stdio.asm,v 1.3 1998/06/30 17:26:00 tribby Exp $
+* $Id: stdio.asm,v 1.4 1998/08/03 17:30:24 tribby Exp $
 *
 **************************************************************************
 *
 * STDIO.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * This is the custom stdio for the shell
 *
@@ -117,65 +118,6 @@ exit	long	a	SWITCH TO FULL-WORD MEMORY MODE.
 
 	END                 
 
-**************************************************************************
-*
-* putp - output a p string to standard out
-* On entry: A/X = pointer to string
-*
-**************************************************************************
-
-putp	START
-
-	using	stdout
-
-	tay		Note: lock destroys Acc
-	lock	mutex	Wait for others to leave, and lock.
-	sty	getchar+1          Save low-order bytes of address.
-	sty	cmpchar+1
-	txa
-
-	short	a	SWITCH TO SINGLE-BYTE MEMORY MODE.
-	sta	getchar+3	Store high-order byte of address.
-	sta	cmpchar+3
-	ora	getchar+2	If string address
-	ora	getchar+1	 is 00/0000,
-	beq	exit	  don't do the write.
-
-	ldy	index	Get current number of chars in stream.
-	ldx	#1	Skip len byte in source string offset.
-	bra	chklen	See if there are characters to copy.
-
-getchar	lda	>$FFFFFF,x	Get next character from string.
-	sta	stream,y	Store in output stream.
-	iny		Bump the stream and
-	inx		 string pointers.
-	cmp	#13	If newline was encountered,
-	beq	_flush	 go write & flush the stream.
-chklen	txa
-cmpchar	cmp	>$FFFFFF	If we have copied all the chars,
-	beq	check2
-               bcs	done	 all done.
-check2	cpy	#512	If stream length < 512,
-	bcc	getchar	 continue copying characters.
-
-_flush	sty	index	Save length of stream.
-	phx		Hold source string offset on stack.
-	long	a	SWITCH TO FULL-WORD MEMORY MODE.
-               Write	WriteParm	Write the stream to stdout
-	Flush	flushparm	 and flush it.
-	short	a	SWITCH TO SINGLE-BYTE MEMORY MODE.
-	plx		Restore source string offset to X-reg.
-	ldy	#0	Set stream length to 0.
-               bra	chklen
-
-; Arrive here when null character is encountered.
-done	sty	index	Save stream length in global.
-
-exit	long	a	SWITCH TO FULL-WORD MEMORY MODE.
-	unlock mutex	Allow others through.
-	rts		Return to caller.
-
-	END                 
 
 **************************************************************************
 *
@@ -293,59 +235,6 @@ _flush	sty	errindex
 	plx
 	ldy	#0
                bra	getchar
-
-done	sty	errindex
-	long	a
-	unlock errmutex
-	rts
-
-	END                 
-
-**************************************************************************
-*
-* errputp - output a p string to standard error
-* On entry: A/X = pointer to string
-*
-**************************************************************************
-
-errputp	START
-
-	using	stderr
-
-               tay		;lock destroys Acc
-	lock	errmutex
-               sty	getchar+1
-	sty	cmpchar+1
-	txa
-
-	short	a
-	sta	getchar+3
-	sta	cmpchar+3
-
-	ldy	errindex
-               ldx	#1
-
-getchar	lda	>$FFFFFF,x
-	sta	errstream,y
-	iny
-	inx
-	cmp	#13
-	beq	_flush
-next	txa
-cmpchar	cmp	>$FFFFFF
-	beq	check2
-               bcs	done
-check2	cpy	#256
-	bcc	getchar
-
-_flush	sty	errindex
-	phx
-	long	a
-               Write	errWriteParm
-	short	a
-	plx
-	ldy	#0
-               bra	next
 
 done	sty	errindex
 	long	a

@@ -6,12 +6,13 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: hash.asm,v 1.4 1998/07/20 16:23:06 tribby Exp $
+* $Id: hash.asm,v 1.5 1998/08/03 17:30:19 tribby Exp $
 *
 **************************************************************************
 *
 * HASH.ASM
 *   By Tim Meekins & Greg Thompson
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Command hashing routines
 *
@@ -179,7 +180,7 @@ tmp	ds	2
 **************************************************************************
 
 dohash         START
-
+               
                using hashdata
 
 h              equ   1
@@ -221,7 +222,7 @@ mktsize        asl	a
 	asl	a
                pea   0
                pha
-               jsl   ~NEW
+               ~NEW
                sta   table
                stx   table+2
 ;
@@ -300,7 +301,7 @@ hashloop       pei   (files+2)
 ; table[h] = (tablenode *)malloc(sizeof(tablenode))
 ;
 gotit          ph4   #tn_size
-               jsl   ~NEW
+               ~NEW
                sta   temp
                stx   temp+2
                ldy   h
@@ -358,7 +359,7 @@ done	anop
 **************************************************************************
 
 search         START
-
+               
 ptr            equ   1
 full_path      equ   ptr+4
 qh             equ   full_path+4
@@ -438,7 +439,7 @@ found          lda   [ptr]
                adc   #33	Add 33 (max prog name size + 1)
                pea   0
                pha
-               jsl   ~NEW	Allocate memory,
+               ~NEW		Allocate memory,
                sta   full_path	 storing address at
                stx   full_path+2	  functional return value.
 
@@ -553,137 +554,132 @@ done           return
 **************************************************************************
 
 dir_search     START
-
+               
 	using	hashdata
 
-temp2          equ   0
-temp           equ   temp2+4
-entry          equ   temp+4
-numEntries     equ   entry+2
-ptr            equ   numEntries+2
-space          equ   ptr+4
+temp2	equ	0
+temp	equ	temp2+4
+entry	equ	temp+4
+numEntries	equ	entry+2
+ptr	equ	numEntries+2
+space	equ	ptr+4
 
-               subroutine (4:dir,2:dirNum,4:files),space
+	subroutine (4:dir,2:dirNum,4:files),space
 ;
 ; Open directory name passed as 1st parameter
 ;
-               ld2   3,ORec
-               pei   (dir+2)            Turn "dir" c-string into
-               pei   (dir)	 a GS/OS string, allocated
+	ld2	3,ORec
+	pei	(dir+2)	Turn "dir" c-string into
+	pei	(dir)	 a GS/OS string, allocated
 	jsr	c2gsstr	  via ~NEW.
-               sta   ORecPath
-               stx   ORecPath+2
+	sta	ORecPath
+	stx	ORecPath+2
 	phx		Put GS/OS string addr on stack
 	pha		 so it can be deallocated.
-               Open  ORec	Open that file.
-               bcc   goodopen	If there was an error,
-               jsl   nullfree	 Free the GS/OS string
-               jmp   exit	  and exit.
+	Open	ORec	Open that file.
+	bcc	goodopen	If there was an error,
+	jsl	nullfree	 Free the GS/OS string
+	jmp	exit	  and exit.
 
-goodopen       jsl   nullfree	Free the GS/OS string.
+goodopen	jsl	nullfree	Free the GS/OS string.
 
 ;
 ; Set up parameter block for GetDirEntry
 ;
-               mv2   ORecRef,DRecRef	Copy the file ref num from open.
-               stz   DRecBase	Zero the base and
-               stz   DRecDisp	 displacement.
-	jsl	alloc256	Get 256 bytes for name.
-               sta   DRecName	Store address in param block
-               sta   ptr	 and also in direct page var.
-               stx   DRecName+2
-               stx   ptr+2
-               lda   #254               Set total length of GS/OS buffer in
-               sta   [ptr]	 bufsize word (save byte for 0 at end).
-               GetDirEntry DRec	Make DirEntry call.
+	mv2	ORecRef,DRecRef	Copy the file ref num from open.
+	stz	DRecBase	Zero the base and
+	stz	DRecDisp	 displacement.
+	GetDirEntry DRec	Make DirEntry call.
 
-               mv2   DRecEntry,numEntries	Save number of entries.
-               ld2   1,(DRecBase,DRecDisp)
-               stz   entry		# processed entries = 0.
-
-loop           lda   entry	If number of processed entries
-               cmp   numEntries	 equals the total number,
-               jge   done	  we are all done.
-               GetDirEntry DRec
+	mv2	DRecEntry,numEntries	Save number of entries.
+	ld2	1,(DRecBase,DRecDisp)
+	stz	entry		# processed entries = 0.
+;
+; Process each entry in the directory
+;
+loop	lda	entry	If number of processed entries
+	cmp	numEntries	 equals the total number,
+	jge	done	  we are all done.
+;
+; Get directory entry's information
+;
+	GetDirEntry DRec
 
 ; Check for filetype $B3: GS/OS Application (S16)
-               if2   DRecFileType,eq,#$B3,goodfile
+	if2	DRecFileType,eq,#$B3,goodfile
 
 ; Check for filetype $B5: GS/OS Shell Application (EXE)
-               if2   @a,eq,#$B5,goodfile
+	if2	@a,eq,#$B5,goodfile
 
 ; Check for filetype $B0, subtype $0006: Shell command file (EXEC)
-               cmp   #$B0
-               bne   nextfile
-               lda   DRecAuxType
-               cmp   #$06
-               bne   nextfile
-               lda   DRecAuxType+2
-               bne   nextfile
+	cmp	#$B0
+	bne	nextfile
+	lda	DRecAuxType
+	cmp	#$06
+	bne	nextfile
+	lda	DRecAuxType+2
+	bne	nextfile
 ;
 ; This directory entry points to an executable file.
 ; Included it in the file list.
 ;
 goodfile       inc	hash_numexe	Bump the (global) # files.
-               ldy   #2	Get length word from GS/OS string
-               lda   [ptr],y	 in result buffer.
-               add2  @a,#4,@y	Use length + 4 as index
-               lda   #0	 to store terminating
-               sta   [ptr],y	  null byte.
-               add2  ptr,#4,@a
-               pei   (ptr+2)            ;for copycstr
-               pha
-               pei   (ptr+2)
-               pha
-               jsr   lowercstr	Convert name to lower case.
 
-               ldy   #fn_next	temp = files->next.
-               lda   [files],y
-               sta   temp
-               ldy	#fn_next+2
-               lda   [files],y
-               sta   temp+2
+	ldx	TempRBlen	Get length word from GS/OS string
+	short	a
+	stz	TempRBname,x	 Store terminating null byte.
+	long	a
 
-               ph4   #fn_size	temp2 = new entry.
-               jsl   ~NEW
-               sta   temp2
-               stx   temp2+2
+	ph4	#TempRBname
+	jsr	lowercstr	Convert name to lower case.
 
-               ldy   #fn_next	files->next = temp2
-               sta   [files],y
-               ldy	#fn_next+2
+	ph4	#TempRBname	Push src addr for copycstr.
+
+	ldy	#fn_next	temp = files->next.
+	lda	[files],y
+	sta	temp
+	ldy	#fn_next+2
+	lda	[files],y
+	sta	temp+2
+
+	ph4	#fn_size	temp2 = new entry.
+	~NEW
+	sta	temp2
+	stx	temp2+2
+
+	ldy	#fn_next	files->next = temp2
+	sta	[files],y
+	ldy	#fn_next+2
 	txa
-               pha
-               sta   [files],y
+	pha
+	sta	[files],y
 
-               lda   temp2
-               clc
-               adc   #fn_name
-               pha
-               jsr   copycstr
+	lda	temp2
+	clc
+	adc	#fn_name
+	pha
+	jsr	copycstr	Copy string into entry.
 
-               lda   dirNum	temp2->dirnum = dirNum
-               sta   [temp2]	
+	lda	dirNum	temp2->dirnum = dirNum
+	sta	[temp2]
 
-               ldy   #fn_next           temp2->next = temp
-               lda   temp
-               sta   [temp2],y	
-               ldy	#fn_next+2
-               lda   temp+2
-               sta   [temp2],y
+	ldy	#fn_next	temp2->next = temp
+	lda	temp
+	sta	[temp2],y
+	ldy	#fn_next+2
+	lda	temp+2
+	sta	[temp2],y
 
-nextfile       inc   entry	Bump entry number
-               jmp   loop	 and stay in the loop.
+nextfile	inc	entry	Bump entry number
+	jmp	loop	 and stay in the loop.
 
 ;
 ; Done adding entries to the hash table from this directory
 ;
-done           ldx	DRecName+2	Free the Name buffer.
-	lda	DRecName
-	jsl	free256
+done           anop
 
-               ld2   1,ORec	ORec.pCount = 1
-               Close ORec
+	ld2	1,ORec	ORec.pCount = 1
+	Close	ORec
 
 exit           return
 
@@ -700,7 +696,7 @@ DRecRef        ds    2	refNum
 DRecFlag       ds    2	flags: extended/not
 DRecBase       dc    i'0'	base: displacement is absolute entry #
 DRecDisp       dc    i'0'	displacement: get tot # active entries
-DRecName       ds    4	name: result buf
+DRecName       dc    i4'TempResultBuf'	name: result buf
 DRecEntry      ds    2	entryNum: entry # whose info is rtrned
 DRecFileType   ds    2	fileType
 DRecEOF        ds    4	eof: # bytes in data fork
@@ -709,6 +705,12 @@ DRecCreate     ds    8	createDateTime
 DRecMod        ds    8	modDateTime
 DRecAccess     ds    2	access attribute
 DRecAuxType    ds    4	auxType
+
+; GS/OS result buffer for getting a directory entry's name
+TempResultBuf	dc	i2'68'	Total length = 64 bytes + 4 for length
+TempRBlen	ds	2	Value's length returned here
+TempRBname	ds	64	Allow 64 bytes for returned name
+	ds	1	Extra byte for null string termination
 
                END
 
@@ -719,7 +721,7 @@ DRecAuxType    ds    4	auxType
 **************************************************************************
 
 hashpath       START
-
+               
                using hashdata
 	using	vardata
 
@@ -749,22 +751,12 @@ end            equ   space+3
 ; Allocate special file node
 ;
                ph4   #fn_size
-               jsl   ~NEW
+               ~NEW
                sta   hash_files
                sta   files
                stx   hash_files+2
                stx   files+2
 
-;
-; Allocate memory for ExpandPath GS/OS result string
-;
-	jsl	alloc256
-	sta	EPoutputPath
-	stx	EPoutputPath+2
-	sta	ptr
-	stx	ptr+2
-	lda	#254
-	sta	[ptr]
 ;
 ; Initialize counters and pointers
 ;
@@ -779,7 +771,7 @@ end            equ   space+3
                sta   [files],y
                sta   [files]
 ;
-; Determine length of $PATH environment variable string
+; Get value of $PATH environment variable string
 ;
 	ph4	#pathname
 	jsl	getenv
@@ -911,55 +903,77 @@ storeit	phy		Push source index onto stack
 	long	a	Restore long accumulator.
 
 ;
-; Convert the input pathname into the corresponding
-; full pathname with colons as separators.
+; Convert the input pathname into the corresponding full pathname with
+; colons as separators. Use temp result buf this time, just to get length.
 ;
-xpandit	ExpandPath EPParm
+xpandit	anop
+               ld4	TempResultBuf,EPoutputPath
+	ExpandPath EPParm
+;
+; Allocate memory for ExpandPath GS/OS result string
+;
+	lda	TempRBlen	Get length of value.
+	inc2	a	Add 4 bytes for result buf len words.
+	inc2	a
+	sta	len	Save result buf len.
+	inc	a	Add 1 more for terminator.
+	pea	0
+	pha
+	~NEW		Request the memory.
+	sta	EPoutputPath	Store address in ReadVariable
+	stx	EPoutputPath+2	 parameter block and
+	sta	ptr	  direct page pointer.
+	stx	ptr+2
+	ora	ptr+2	If address == NULL,
+	jeq	donext	  get next entry.
+
+	lda	len	Store result buffer length
+	sta	[ptr]	 at beginning of buf.
+
+	ExpandPath EPParm	Call again, and get the name.
 	bcc	epok
 
 	ldx	#^eperrstr	Print error message:
 	lda	#eperrstr	 "Invalid pathname syntax."
 	jsr	errputs
-	jsl	nullfree	 Free GS/OS string (pushed earlier).
+donext	jsl	nullfree	 Free GS/OS string (pushed earlier).
 	jmp	next	 Get the next one.
 
-epok           jsl	nullfree	Free GS/OS string (addr on stack)
+epok           anop
+	jsl	nullfree	Free source string (addr on stack)
 
-	clc		Set ptr to GS/OS string
-	lda	EPoutputPath	 portion of result buffer.
-	adc	#2
-	sta	ptr
-	lda	EPoutputPath+2
+	ldy	#2
+	lda	[ptr],y	Get length of text
+	sta	len
+	tay
+	iny4		 and add four.
+	short	a
+	lda	#0	Store 0 at end of text so it
+	sta	[ptr],y	 can act like a C string.
+	long	a
+;
+; Move text in GS/OS result buffer to beginning of buffer
+; (overwritting the two length words).
+;
+	clc		Source is result
+	lda	ptr	 buffer plus
+	adc	#4	  four bytes.
+	tay
+	lda	ptr+2
 	adc	#0
-	sta	ptr+2
-
-	lda	[ptr]	Get GS/OS string's length word
-	sta	len	 and store in len.
-
-	inc2	a	Store 0 at end of text
-	tay		 in string.
-	lda	#0	
-	sta   [ptr],y
-
-	pea	0	Allocate memory the
-	phy		 size of the expanded path.
-	jsl	~NEW
-
-	pei	(ptr+2)
-	inc2	ptr
-	pei	(ptr)
-	phx
 	pha
-	sta	ptr
-	stx	ptr+2
+	phy
+	pei	(ptr+2)	Destination is first
+	pei	(ptr)	 byte of buffer.
+               jsr   copycstr
 
+	lda	ptr
                ldy   pathnum
                sta   hash_paths,y	Store address of this
-               txa		 path's address in the
+               lda	ptr+2	 path's address in the
                sta   hash_paths+2,y	  hash path table.
 
-               jsr   copycstr
-               ldy   len
+               ldy	len
                beq   bumppnum
                dey
                lda   [ptr],y	If last character
@@ -1052,13 +1066,6 @@ filesdone	anop
 noprint        ld2   1,hash_print	Set print flag.
 
 ;
-; Free memory allocated for ExpandPath output string
-;
-	lda	EPoutputPath
-	ldx	EPoutputPath+2
-	jsl	free256
-
-;
 ; Create the hash table from the file list.
 ;
                ph4   hash_files
@@ -1087,6 +1094,11 @@ hashnum        dc    c'000 files',h'0d00'
 EPParm	dc	i'2'	pCount = 2
 EPinputPath	ds	4	ptr to inputPath (GS/OS string)
 EPoutputPath	ds	4	ptr to outputPath (Result buffer)
+
+; GS/OS result buffer for getting the full length of expanded name
+TempResultBuf	dc	i2'5'	Only five bytes total.
+TempRBlen	ds	2	Value's length returned here.
+	ds	1	Only 1 byte for value.
 
 eperrstr	dc	c'rehash: Invalid pathname syntax.',h'0d00'
 toomanyerr	dc	c'rehash: Too many paths specified.',h'0d00'

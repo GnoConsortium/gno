@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shell.asm,v 1.4 1998/07/20 16:23:09 tribby Exp $
+* $Id: shell.asm,v 1.5 1998/08/03 17:30:23 tribby Exp $
 *
 **************************************************************************
 *
@@ -295,7 +295,9 @@ no_ovf	phx
 	sbc	#2	 addr of original output buffer.
 	bcs	no_undf
 	dex
-no_undf	jsl	free256
+no_undf	phx
+	pha
+	jsl	nullfree
 	rts
 
 gshrcName	dc	c'/gshrc',h'00'
@@ -312,35 +314,64 @@ gshrcName	dc	c'/gshrc',h'00'
 ;=========================================================================
 
 AppendHome	START
-outPtr	equ	0
-len	equ	4
-	subroutine (4:str),6
 
-	jsl	alloc256	Allocate memory for
-               stx	outPtr1+2	 GS/OS output buffer
-	sta	outPtr1	  that will hold the
-               stx	outPtr+2	   value of $HOME and
-	sta	outPtr	    the final result.
+outPtr	equ	0	Pointer into allocated memory
+str_len	equ	outPtr+4	Length of string parameter
+buf_len	equ	str_len+2	Size of GS/OS buffer
+space	equ	buf_len+2
 
+	subroutine (4:str),space
+
+	lock	mutex
+;
+; Get the variable's length using ReadVariableGS
+;
+               ld4	TempResultBuf,RVresult	Use temporary result buf.
+	ReadVariableGS ReadVar		Get length.
+
+;
+; Allocate memory for value string
+;
 	pei	(str+2)	Get length of
 	pei	(str)	 string to be
 	jsr	cstrlen	  appended.
-	sta	len
+	sta	str_len
 
-               lda	#255	Max len is 255 (leave room
-	sta	[outPtr]	 for C string terminator).
+	lda	TempRBlen	Get length of value.
+	bne	notnull	If 0,
+	inc	a	 increment because "@" will be used.
+notnull	inc2	a	Add 4 bytes for result buf len words.
+	inc2	a
+	clc		Add length of string parameter.
+	adc	str_len
+	sta	buf_len	Save result buf length.
+	inc	a	Add 1 more for terminating null byte.
+	pea	0
+	pha
+	~NEW		Request the memory.
+	sta	RVresult	Store address in ReadVariable
+	stx	RVresult+2	 parameter block and
+	sta	outPtr	  direct page pointer.
+	stx	outPtr+2
+	ora	outPtr+2	If address == NULL,
+	beq	exit	 return NULL to user.
 
-	ReadVariableGS rvbl	ReadVariable $HOME
+	lda	buf_len	Store result buffer length
+	sta	[outPtr]	 at beginning of buf.
+;
+; Read the full value into the allocated memory
+;
+	ReadVariableGS ReadVar	ReadVariable $HOME
                bcs	doAtSign	If error, use @/
 
-	ldy	#2
-	lda	[outPtr],y
-	beq	doAtSign	; $HOME not defined?
-      	clc
-	adc	#4	; turn into a cstring
-	tay
-	short	m
-	lda	#0
+	ldy	#2	Get length of
+	lda	[outPtr],y	 GS/OS string.
+	beq	doAtSign	If $HOME not defined, use "@".
+      	clc		
+	adc	#4	Turn into a c-string
+	tay		 by storing a 0 byte
+	short	m	  after the last $HOME
+	lda	#0	   character.
 	sta	[outPtr],y
 	long	m
 	bra	doAppend
@@ -351,12 +382,12 @@ len	equ	4
 doAtSign	lda	atSign
                ldy	#4
 	sta	[outPtr],y
-	lda	#1
-	ldy   #2
-	sta	[outPtr],y
+	lda	#1	Set GS/OS buffer
+	ldy   #2	 string length word
+	sta	[outPtr],y	  to 1.
 
 doAppend       anop
-	ldy	#0
+	ldy	#4	Start index beyond length words.
 	short	m
 lp	lda	[outPtr],y
                beq	noSep
@@ -369,7 +400,7 @@ lp	lda	[outPtr],y
 
 noSep	lda	#':'	No separator found; use ":".
 
-foundSep	sta	[str]	Store separator at end of string.
+foundSep	sta	[str]	Store sep at start of appended string.
 	long	m
 
 	pei	(str+2)
@@ -388,30 +419,44 @@ pushptr	phx
 
 	clc		Add 2 bytes to address of
 	lda	outPtr	 GS/OS output buffer to
-	adc	#2	  get address if GS/OS
+	adc	#2	  get address of GS/OS
 	bcc	no_ovf	   input string.
 	inc	outPtr+2
 no_ovf	sta	outPtr
 
                lda	[outPtr]	Adjust string length
 	clc		 to include appended
-	adc	len	  string (parameter).
+	adc	str_len	  string (parameter).
 	sta	[outPtr]
 ;
 ; NOTE: The returned value points to a GS/OS string, two bytes offset
 ;       from the allocated memory for a GS/OS result buffer. When the
 ;       memory is deallocated, the address must be adjusted back.
 ;
+exit	unlock mutex
 	return 4:outPtr
+
+mutex	key
 
 atSign	dc	c'@',i1'0'
 
+;
 ; Parameter block for Shell call ReadVariable (p 423 in ORCA/M reference)
-rvbl           dc	i2'3'	pCount
+;
+ReadVar	anop
+	dc	i2'3'	pCount
 	dc	a4'home'	address of variable's name
-outPtr1	dc	a4'0'	pointer to result buffer
-	dc	i2'0'	value of 'Export' flag (returned)
-
+RVresult	ds	4	GS/OS Output buffer ptr
+	ds	2	export flag (returned)
+;
+; GS/OS result buffer for getting the full length of the PATH env var.
+;
+TempResultBuf	dc	i2'5'	Only five bytes total.
+TempRBlen	ds	2	Value's length returned here.
+	ds	1	Only 1 byte for value.
+;
+; "HOME" as a GS/OS string
+;
 home	gsstr	'HOME'
 
 	END
