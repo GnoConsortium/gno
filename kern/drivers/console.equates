@@ -1,0 +1,38 @@
+*	$Id: console.equates,v 1.1 1998/02/02 08:18:11 taubert Exp $
+*********************************************************************
+*
+* TEXT TOOL DP LOCATIONS
+*
+*********************************************************************
+
+IODP_CH           gequ $00
+IODP_CV           gequ $02
+IODP_BASL         gequ $04     ;thru $07
+IODP_BASH         gequ $05
+IODP_InvFlag      gequ $08
+IODP_gInsertFlag  gequ $0A     ; insert or replace cursor?
+IODP_LongTemp     gequ $0C     ; temporary dereferencing pointer
+IODP_LongTemp2    gequ $10
+IODP_BLTop        gequ $14     ; Pointer to bottom of TOP block
+IODP_BLBot        gequ $16     ; Pointer to top of bottom block
+IODP_TopLine      gequ $18     ; Top line displayed on screen
+IODP_CurLine      gequ $1A     ; line the cursor is on
+IODP_CurCol       gequ $1C     ; column the cursor is in
+IODP_LeftCol      gequ $1E     ; Leftmost column displayed (sideways scrolling)
+IODP_BufBank      gequ $20     ; Bank number of 64K memory buffer
+IODP_LeftMar      gequ $22
+IODP_RightMar     gequ $24
+IODP_TopMar       gequ $26
+IODP_BotMar       gequ $28
+IODP_Scroll       gequ $2A
+IODP_ScrollFlag   gequ $2A
+IODP_GlobalCoords gequ $2C
+IODP_AutowrapFlag gequ $2E
+IODP_GotoFlag     gequ $30     ; state of goto x,y
+IODP_CurChar      gequ $32     ; current character under the cursor
+IODP_CurFlag      gequ $34     ; =1 if cursor on
+IODP_CurState     gequ $36     ; =1 if curchar, = 0 if screen char
+IODP_dTermioPtr   gequ $38
+IODP_procPtr      gequ $3C
+IODP_TextDPSize   gequ $40
+

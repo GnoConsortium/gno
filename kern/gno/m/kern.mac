@@ -1,0 +1,454 @@
+ MACRO
+&lab pushlong &addr,&offset
+&lab ANOP
+ LCLC &C
+ LCLC &REST
+&C AMID &addr,1,1
+ AIF "&C"="#",.immediate
+ AIF "&C"="[",.zeropage
+ AIF C:&offset=0,.nooffset
+ AIF "&offset"="s",.stack
+ pushword &addr+2,&offset
+ pushword &addr,&offset
+ MEXIT
+.nooffset
+ pushword &addr+2
+ pushword &addr
+ MEXIT
+.immediate
+&REST AMID &addr,2,L:&addr-1
+ dc I1'$F4',I2'(&REST)|-16'
+ dc I1'$F4',I2'&REST'
+ MEXIT
+.stack
+ pushword &addr+2,s
+ pushword &addr+2,s
+ MEXIT
+.zeropage
+ ldy #&offset+2
+ pushword &addr,y
+ ldy #&offset
+ pushword &addr,y
+ MEND
+ MACRO
+&lab pushword &SYSOPR
+&lab ANOP
+ AIF c:&SYSOPR=0,.b
+ LCLC &C
+&C AMID "&SYSOPR",1,1
+ AIF ("&C"="#").AND.(S:LONGA),.immediate
+ lda &SYSOPR
+ pha
+ MEXIT
+.b
+ pha
+ MEXIT
+.immediate
+ LCLC &REST
+ LCLA &BL
+&BL ASEARCH "&SYSOPR"," ",1
+ AIF &BL>0,.a
+&BL SETA L:&SYSOPR+1
+.a
+&REST AMID "&SYSOPR",2,&BL-2
+ dc I1'$F4',I2'&REST'
+ MEND
+ MACRO
+&lab subroutine &parms,&work
+&lab anop
+ aif c:&work,.a
+ lclc &work
+&work setc 0
+.a
+ gbla &totallen
+ gbla &worklen
+&worklen seta &work
+&totallen seta 0
+ aif c:&parms=0,.e
+ lclc &len
+ lclc &p
+ lcla &i
+&i seta c:&parms
+.b
+&p setc &parms(&i)
+&len amid &p,2,1
+ aif "&len"=":",.c
+&len amid &p,1,2
+&p amid &p,4,l:&p-3
+ ago .d
+.c
+&len amid &p,1,1
+&p amid &p,3,l:&p-2
+.d
+&p equ &totallen+3+&work
+&totallen seta &totallen+&len
+&i seta &i-1
+ aif &i,^b
+.e
+ tsc
+ sec
+ sbc #&work
+ tcs
+ inc a
+ phd
+ tcd
+ phb
+ phk
+ plb
+ mend
+ MACRO
+&lab return &r
+&lab anop
+ lclc &len
+ aif c:&r,.a
+ lclc &r
+&r setc 0
+&len setc 0
+ ago .h
+.a
+&len amid &r,2,1
+ aif "&len"=":",.b
+&len amid &r,1,2
+&r amid &r,4,l:&r-3
+ ago .c
+.b
+&len amid &r,1,1
+&r amid &r,3,l:&r-2
+.c
+ aif &len<>2,.d
+ ldy &r
+ ago .h
+.d
+ aif &len<>4,.e
+ ldx &r+2
+ ldy &r
+ ago .h
+.e
+ aif &len<>10,.g
+ ldy #&r
+ ldx #^&r
+ ago .h
+.g
+ mnote 'Not a valid return length',16
+ mexit
+.h
+ aif &totallen=0,.i
+ lda &worklen+1
+ sta &worklen+&totallen+1
+ lda &worklen
+ sta &worklen+&totallen
+.i
+ plb
+ pld
+ tsc
+ clc
+ adc #&worklen+&totallen
+ tcs
+ aif &len=0,.j
+ tya
+.j
+ rtl
+ mend
+ MACRO
+&lab long &stat
+&lab anop
+ lcla &t
+ lcla &len
+ lclc &ch
+&t seta 0
+&len seta l:&stat
+.a
+ aif &len=0,.b
+&ch amid &stat,&len,1
+ aif ("&ch"="x").or.("&ch"="y").or.("&ch"="i"),.i
+ aif ("&ch"="a").or.("&ch"="m"),.m
+.c
+&len seta &len-1
+ ago ^a
+.i
+ longi on
+&t seta &t+16
+ ago ^c
+.m
+ longa on
+&t seta &t+32
+ ago ^c
+.b
+ aif &t=0,.d
+ rep #&t
+.d
+ mend
+ MACRO
+&lab short &stat
+&lab anop
+ lcla &t
+ lcla &len
+ lclc &ch
+&t seta 0
+&len seta l:&stat
+.a
+ aif &len=0,.b
+&ch amid &stat,&len,1
+ aif ("&ch"="x").or.("&ch"="y").or.("&ch"="i"),.i
+ aif ("&ch"="a").or.("&ch"="m"),.m
+.c
+&len seta &len-1
+ ago ^a
+.i
+ longi off
+&t seta &t+16
+ ago ^c
+.m
+ longa off
+&t seta &t+32
+ ago ^c
+.b
+ aif &t=0,.d
+ sep #&t
+.d
+ mend
+ MACRO
+&lab str &string
+&lab dc i1'l:&string',c'&string'
+ MEND
+ macro
+&lab ph4 &n1
+ aif "&n1"="*",.f
+ lclc &c
+&lab anop
+&c amid &n1,1,1
+ aif "&c"="#",.d
+ aif s:longa=1,.a
+ rep #%00100000
+.a
+ aif "&c"<>"{",.b
+&c amid &n1,l:&n1,1
+ aif "&c"<>"}",.g
+&n1 amid &n1,2,l:&n1-2
+ ldy #2
+ lda (&n1),y
+ pha
+ lda (&n1)
+ pha
+ ago .e
+.b
+ aif "&c"<>"[",.c
+ ldy #2
+ lda &n1,y
+ pha
+ lda &n1
+ pha
+ ago .e
+.c
+ aif "&c"<>"<",.c1
+&n1 amid &n1,2,l:&n1-1
+ pei &n1+2
+ pei &n1
+ ago .e
+.c1
+ lda &n1+2
+ pha
+ lda &n1
+ pha
+ ago .e
+.d
+&n1 amid &n1,2,l:&n1-1
+ pea +(&n1)|-16
+ pea &n1
+ ago .f
+.e
+ aif s:longa=1,.f
+ sep #%00100000
+.f
+ mexit
+.g
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab iny2
+&lab iny
+ iny
+ mend
+ MACRO
+&lab pl4 &parm
+ lclc &char
+ lclc &char1
+ lclc &char2
+&lab anop
+ aif s:longa=1,.start
+ rep #%00100000
+.start
+&char amid &parm,1,1
+ aif "&char"<>"{",.chk
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ pla
+ sta (&parm)
+ ldy #2
+ pla
+ sta (&parm),y
+ ago .shorten
+.chk
+ aif "&char"<>"[",.chk2
+ pla
+ sta &parm
+ ldy #2
+ pla
+ sta &parm,y
+ ago .shorten
+.chk2
+ aif "&char"<>"@",.absolute
+&char1 amid &parm,2,1
+&char2 setc &char1
+ pl&char1
+ aif l:&parm<3,.chk2a
+&char2 amid &parm,3,1
+.chk2a
+ pl&char2
+ ago .shorten
+.absolute
+ pla
+ sta &parm
+ pla
+ sta &parm+2
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab _DelHeartBeat
+&lab ldx #$1303
+ jsl $E10000
+ MEND
+ MACRO
+&lab _ReadBParam
+&lab ldx #$0C03
+ jsl $E10000
+ MEND
+ MACRO
+&lab _SetHeartBeat
+&lab ldx #$1203
+ jsl $E10000
+ MEND
+ MACRO
+&lab _GetVector
+&lab ldx #$1103
+ jsl $E10000
+ MEND
+ MACRO
+&lab _SetVector
+&lab ldx #$1003
+ jsl $E10000
+ MEND
+ MACRO
+&lab _GetInterruptState
+&lab ldx #$3103
+ jsl $E10000
+ MEND
+ MACRO
+&lab move3 &from,&to1,&to2
+&lab ANOP
+ LCLC &C
+ LCLC &REST
+&C AMID &from,1,1
+&REST AMID &from,2,L:&from-1
+ AIF C:&to2=0,.a
+ moveword &from,&to1,&to2
+ AGO .b
+.a
+&lab moveword &from,&to1
+.b
+ AIF "&C"="#",.immediate
+ AIF C:&to2=0,.c
+ move1 &from+2,&to1+2,&to2+2
+ MEXIT
+.c
+ move1 &from+2,&to1+2
+ MEXIT
+.immediate
+ AIF C:&to2=0,.d
+ move1 #^&REST,&to1+2,&to2+2
+ MEXIT
+.d
+ move1 #^&REST,&to1+2
+ MEND
+ MACRO
+&lab moveword &from,&to1,&to2
+&lab ANOP
+ LCLC &C
+&C AMID &from,1,1
+ AIF "&C"="[",.zeropage
+ lda &from
+ sta &to1
+ AIF C:&to2=0,.a
+ sta &to2
+.a
+ MEXIT
+.zeropage
+ AIF "&to1"="0",.b
+ ldy #&to1
+ lda &from,y
+ sta &to2
+ MEXIT
+.b
+ lda &from
+ sta &to2
+ MEND
+ MACRO
+&lab move1 &from,&to1,&to2
+&lab ANOP
+ shortm
+ lda &from
+ sta &to1
+ AIF C:&to2=0,.a
+ sta &to2
+.a
+ longm
+ MEND
+ MACRO
+&lab longm
+&lab ANOP
+ rep #%00100000
+ longa on
+ MEND
+ MACRO
+&lab shortm
+&lab ANOP
+ sep #%00100000
+ longa off
+ MEND
+ MACRO
+&lab _MMStartUp
+&lab ldx #$0202
+ jsl $E10000
+ MEND
+ MACRO
+&lab _SetTSPtr
+&lab ldx #$0A01
+ jsl $E10000
+ MEND
+ MACRO
+&lab _EventAvail
+&lab ldx #$0B06
+ jsl $E10000
+ MEND
+ MACRO
+&lab _GetNextEvent
+&lab ldx #$0A06
+ jsl $E10000
+ MEND
+ MACRO
+&lab name
+&lab anop
+ aif DebugSymbols=0,.pastName
+ brl pastName&SYSCNT
+ dc i'$7771'
+ dc i1'L:&lab',c'&lab'
+pastName&SYSCNT anop
+.pastName
+ MEND

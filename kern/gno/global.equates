@@ -1,0 +1,28 @@
+*********************************************************************
+*
+* GSOS/P16/Shell Call DP locations
+*
+*********************************************************************
+
+pBlock	gequ  0
+cmdNum	gequ  4
+procEnt	gequ  6
+temp0	gequ  6
+pCount	gequ  10
+
+*********************************************************************
+*
+* Kernel process state IDs
+*
+*********************************************************************
+
+NPROC	gequ  32
+pUnused	gequ  $00
+pRunning	gequ  $01
+pReady	gequ  $02
+pBlocked	gequ  $03
+pNew	gequ  $04                ; ready, but no int info
+pSuspended	gequ  $05
+pWait	gequ  $06
+pWaitSigCH	gequ  $07
+pPaused	gequ  $08

@@ -1,0 +1,115 @@
+ MACRO
+&lab _NewHandle
+&lab ldx #$0902
+ jsl $E10000
+ MEND
+ MACRO
+&lab _DisposeHandle
+&lab ldx #$1002
+ jsl $E10000
+ MEND
+ MACRO
+&lab pulllong &addr1,&addr2
+&lab ANOP
+ AIF C:&addr1=0,.a
+ AIF C:&addr2=0,.b
+ LCLC &C
+&C AMID &addr1,1,1
+ AIF "&C"="[",.zeropage
+ pullword &addr1
+ sta &addr2
+ pullword &addr1+2
+ sta &addr2+2
+ MEXIT
+.a
+ pullword
+ pullword
+ MEXIT
+.b
+ pullword &addr1
+ pullword &addr1+2
+ MEXIT
+.zeropage
+ ldy #&addr2
+ pullword &addr1,y
+ ldy #&addr2+2
+ pullword &addr1,y
+ MEND
+ MACRO
+&lab pullword &SYSOPR
+&lab ANOP
+ pla
+ AIF c:&SYSOPR=0,.end
+ sta &SYSOPR
+.end
+ MEND
+ MACRO
+&lab pushlong &addr,&offset
+&lab ANOP
+ LCLC &C
+ LCLC &REST
+&C AMID &addr,1,1
+ AIF "&C"="#",.immediate
+ AIF "&C"="[",.zeropage
+ AIF C:&offset=0,.nooffset
+ AIF "&offset"="s",.stack
+ pushword &addr+2,&offset
+ pushword &addr,&offset
+ MEXIT
+.nooffset
+ pushword &addr+2
+ pushword &addr
+ MEXIT
+.immediate
+&REST AMID &addr,2,L:&addr-1
+ dc I1'$F4',I2'(&REST)|-16'
+ dc I1'$F4',I2'&REST'
+ MEXIT
+.stack
+ pushword &addr+2,s
+ pushword &addr+2,s
+ MEXIT
+.zeropage
+ ldy #&offset+2
+ pushword &addr,y
+ ldy #&offset
+ pushword &addr,y
+ MEND
+ MACRO
+&lab pushword &SYSOPR
+&lab ANOP
+ AIF c:&SYSOPR=0,.b
+ LCLC &C
+&C AMID "&SYSOPR",1,1
+ AIF ("&C"="#").AND.(S:LONGA),.immediate
+ lda &SYSOPR
+ pha
+ MEXIT
+.b
+ pha
+ MEXIT
+.immediate
+ LCLC &REST
+ LCLA &BL
+&BL ASEARCH "&SYSOPR"," ",1
+ AIF &BL>0,.a
+&BL SETA L:&SYSOPR+1
+.a
+&REST AMID "&SYSOPR",2,&BL-2
+ dc I1'$F4',I2'&REST'
+ MEND
+ MACRO
+&lab _SysFailMgr
+&lab ldx #$1503
+ jsl $E10000
+ MEND
+ MACRO
+&lab name
+&lab anop
+ aif DebugSymbols=0,.pastName
+ brl pastName&SYSCNT
+ dc i'$7771'
+ dc i1'L:&lab',c'&lab'
+pastName&SYSCNT anop
+.pastName
+ MEND

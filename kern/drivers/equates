@@ -1,0 +1,70 @@
+*	$Id: equates,v 1.1 1998/02/02 08:18:13 taubert Exp $
+
+* The size in bytes of the input and output buffers (each is BUF_SIZE bytes)
+BUF_SIZE	gequ  4096
+
+IncBusyFlag	gequ  $E10064
+DecBusyFlag	gequ  $E10068
+
+* Direct-page equates
+ibuf_hand      gequ  0
+obuf_hand      gequ  4
+in_buf	gequ  8
+out_buf	gequ  12
+ibuf_head	gequ  16                 ; *
+ibuf_tail	gequ  18                 ; *
+ibuf_mark	gequ  20	; *
+ibuf_size	gequ  22                 ; *
+obuf_head	gequ  24                 ; *
+obuf_tail	gequ  26                 ; *
+obuf_mark	gequ  28                 ; *
+obuf_size	gequ  30                 ; *
+ibuf_fcon	gequ  32
+obuf_fcon	gequ  34                 ; *
+fcon_type	gequ  36                 ; *
+fcon_status	gequ  38	; * initialize to non-zero
+dTermioPtr	gequ  40
+blockProc	gequ  44
+procPtr	gequ  46
+tmpProcID	gequ  50
+lastChar	gequ  52                 ; *
+lastInt	gequ  54                 ; *
+reg5Status	gequ  56                 ; *
+tx_in_progress	gequ  58                 ; *
+
+UDISPATCH2     gequ  $E1000C            user tool locator entry type 2
+INTMGRV        gequ  $E10010            system Interrupt Manager
+
+pReady         gequ  $02
+pBlocked       gequ  $03
+
+* Port-independent hardware/firmware equates and parameters
+
+v_Main	gequ  $E10010
+v_AppleTalk	gequ  $E10020
+v_Serial	gequ  $E10024
+
+TheVect	gequ  v_Serial
+
+SccControl	gequ  $E0C038
+SccControlB	gequ  $E0C038
+SccControlA	gequ  $E0C039
+SccData	gequ  $E0C03A
+SccDataB	gequ  $E0C03A
+SccDataA	gequ  $E0C03B
+*DTR	gequ  $EA
+DTR	gequ  $6A	; for channel 2
+SerFlag	gequ  $E10104
+
+* 100 - read
+* 010 - write
+* 001 - exceptional
+
+Tx_empty	gequ  %00000100
+Rx_empty	gequ  %00000001
+
+* fcon_type values
+FCON_NONE	gequ  0	no flowcontrol
+FCON_XON	gequ  1	XON/XOFF flowcontrol
+FCON_RTS	gequ  2	rts/cts flowcontrol
+

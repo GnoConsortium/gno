@@ -1,0 +1,6 @@
+ MACRO
+&lab _GetTSPtr
+&lab ldx #$0901
+     jsl $E10000
+ MEND
+

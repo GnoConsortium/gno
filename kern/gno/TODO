@@ -1,0 +1,88 @@
+todo
+====
+- select() on pipes
+- make console driver a loaded driver
+- check drive full error code
+- GetLang/SetLang
+- access devices via /dev
+- find out why tcp/ip takes so damn long to quit sometimes
+- check p8 launching
+- write up driver interface specs
+  revamp loaded driver interfaces so we can have stuff like /dev/audio
+- how can we pass back correct error codes from SOCKrdwr to read() and write()
+  lib routines?
+- create types, document diff between pid, kern pid, and kern table offset
+
+baz.todo
+========
+- Rewrite the texttools to properly support texttools features
+  regardless of redirection. At the same time, implement a simple
+  buffering scheme for the texttools to greatly improve texttools
+  redirection. (must be tied into PGClose so we properly flush the
+  buffers all the time).
+
+libs
+====
+- tc[gs]etattr, TIOCGETA, TIOCSETA
+- getlogin
+- sigemptyset, sigaddset, sigprocmask
+
+reported bugs
+=============
+1/1/95 - init messages appearing on single line
+
+done
+====
+10/27/97	wait() fixed to return -1, ECHILD if no children
+11/5/96		select() should re-start after signal
+		 should return EINTR after signal
+		 with wait & *wait = 0 should basically not block
+		semaphore and KERNkill code re-worked to not spaz out GNO for
+		 EINTR cases
+4/30/96		commonSwait wasn't working right for EINTR when != procBLOCKED
+3/31/96		libc: fixed %m and LOG_PID in vsprintf() (data bank problems)
+		libc: added gettimeofday()
+		libc: added setre[gu]id()
+3/11/96		fixed stack deallocation problems in KERNkill and KERNexecve
+3/7/96		fdCount++ was misplaced in dup2()
+2/13/96		select() timeout now works (YEA!)
+1/6/96		gs/os files working with select()
+		select() returns the proper value
+?	 filed& filed& -> bogus process due to context switch during KERNkill()
+		socket close swait() problem fixed by removing some swait() 
+		dependencies from socket close code
+1/25/95		echo code in tty.asm wasn't calling signalIO like it should
+		 have, select() on ptys seems to work now
+1/15/95		2.0.6b4 released
+1/12/95		ctool.asm: stuff added on 1/7/95 had incorrect entries (-1 doh!)
+		ps entry for init is now FUCK, FUCK, FUCKED!  why?  ACK!  don't
+		 link gno with lenviron installed!
+1/11/95		2.0.6b3 released
+1/10/95		receiveCommon - $0080.EOR.$FFFF was evaluating to $0000, thanx
+		 a lot, mikey.  This was causing the flags to get all fucked up
+		 and bank 0 space was disappearing because UserShutDown() was
+		 being used on forked memids instead of DisposeAll()
+1/9/95		serial drivers were checking RR3 for SIGHUPing rather than
+		 RR0
+		serial drivers do no SIGHUPing by default now - the special
+		 condition interrupt enable and interrupt handler need to be
+		 re-writen properly to handle different values for DHUP
+1/7/95		more net stuff: shutdown(), getpeeraddr(), getsockaddr(), and
+		 [gs]etsockopt() were added to the kern and libc
+1/2/95		2.0.6b1 released
+		added version resource to kern
+		fixed InOutStart/End calling (I fuqed it up while playing with
+		 making the console driver loadable)
+		libc: fixed strerror w/ network stuff
+		2.0.6b2 released
+1/1/95		modem, printer drivers working with select()
+		correct orcalib from baz
+		welcome version 2.0.6b1
+		libc: added hosname stuff
+		libc: updated perror w/ network stuff
+		kernVersion returns $0206 now
+12/?/94		null driver is now a loaded driver, and select() should work
+		right on it...
+12/15/94	select() on sockets (ha!  ha!  bitch!)
+12/12/94	Pass ioctl() on sockets directly to the usrreq routine
+		(do not pass go, do not collect $200)

@@ -1,0 +1,337 @@
+ MACRO
+&lab _DelHeartBeat
+&lab ldx #$1303
+ jsl $E10000
+ MEND
+ MACRO
+&lab _ReadBParam
+&lab ldx #$0C03
+ jsl $E10000
+ MEND
+ MACRO
+&lab _SetHeartBeat
+&lab ldx #$1203
+ jsl $E10000
+ MEND
+ MACRO
+&lab long &stat
+&lab anop
+ lcla &t
+ lcla &len
+ lclc &ch
+&t seta 0
+&len seta l:&stat
+.a
+ aif &len=0,.b
+&ch amid &stat,&len,1
+ aif ("&ch"="x").or.("&ch"="y").or.("&ch"="i"),.i
+ aif ("&ch"="a").or.("&ch"="m"),.m
+.c
+&len seta &len-1
+ ago ^a
+.i
+ longi on
+&t seta &t+16
+ ago ^c
+.m
+ longa on
+&t seta &t+32
+ ago ^c
+.b
+ aif &t=0,.d
+ rep #&t
+.d
+ mend
+ MACRO
+&lab short &stat
+&lab anop
+ lcla &t
+ lcla &len
+ lclc &ch
+&t seta 0
+&len seta l:&stat
+.a
+ aif &len=0,.b
+&ch amid &stat,&len,1
+ aif ("&ch"="x").or.("&ch"="y").or.("&ch"="i"),.i
+ aif ("&ch"="a").or.("&ch"="m"),.m
+.c
+&len seta &len-1
+ ago ^a
+.i
+ longi off
+&t seta &t+16
+ ago ^c
+.m
+ longa off
+&t seta &t+32
+ ago ^c
+.b
+ aif &t=0,.d
+ sep #&t
+.d
+ mend
+ MACRO
+&lab lsr3 &a
+&lab lsr &a
+ lsr &a
+ lsr &a
+ mend
+ MACRO
+&lab asl3 &a
+&lab asl &a
+ asl &a
+ asl &a
+ mend
+ MACRO
+&lab ph2 &parm
+ lclc &char
+&lab anop
+ aif c:&parm=0,.done
+&char amid &parm,1,1
+ aif "&char"="#",.immediate
+ aif "&char"="@",.at
+ aif s:longa=1,.chk
+ rep #%00100000
+.chk
+ aif "&char"<>"{",.absolute
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ lda (&parm)
+ pha
+ ago .shorten
+.absolute
+ lda &parm
+ pha
+ ago .shorten
+.immediate
+&parm amid &parm,2,l:&parm-1
+ pea &parm
+ ago .done
+.at
+&char amid &parm,2,1
+ ph&char
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab ph4 &parm
+ lclc &char
+ lclc &char1
+ lclc &char2
+&lab anop
+&char amid &parm,1,1
+ aif "&char"="#",.immediate
+ aif "&char"="@",.at
+ aif s:longa=1,.chk1
+ rep #%00100000
+.chk1
+ aif "&char"<>"{",.chk2
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ ldy #2
+ lda (&parm),y
+ pha
+ lda (&parm)
+ pha
+ ago .shorten
+.chk2
+ aif "&char"<>"[",.absolute
+ ldy #2
+ lda &parm,y
+ pha
+ lda &parm
+ pha
+ ago .shorten
+.absolute
+ lda &parm+2
+ pha
+ lda &parm
+ pha
+ ago .shorten
+.at
+&char1 amid &parm,2,1
+&char2 setc &char1
+ ph&char1
+ aif l:&parm<3,.chk2a
+&char2 amid &parm,3,1
+.chk2a
+ ph&char2
+ ago .shorten
+.immediate
+&parm amid &parm,2,l:&parm-1
+ pea +(&parm)|-16
+ pea &parm
+ ago .done
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab SetVector &a1
+&lab ph2 &a1(1)
+ ph4 &a1(2)
+ tool $1003
+ mend
+ MACRO
+&lab IntSource &a1
+&lab ph2 &a1
+ tool $2303
+ mend
+ MACRO
+&lab tool &a1
+&lab ldx #&a1
+ jsl $e10000
+ mend
+ MACRO
+&lab pushlong &addr,&offset
+&lab ANOP
+ LCLC &C
+ LCLC &REST
+&C AMID &addr,1,1
+ AIF "&C"="#",.immediate
+ AIF "&C"="[",.zeropage
+ AIF C:&offset=0,.nooffset
+ AIF "&offset"="s",.stack
+ pushword &addr+2,&offset
+ pushword &addr,&offset
+ MEXIT
+.nooffset
+ pushword &addr+2
+ pushword &addr
+ MEXIT
+.immediate
+&REST AMID &addr,2,L:&addr-1
+ dc I1'$F4',I2'(&REST)|-16'
+ dc I1'$F4',I2'&REST'
+ MEXIT
+.stack
+ pushword &addr+2,s
+ pushword &addr+2,s
+ MEXIT
+.zeropage
+ ldy #&offset+2
+ pushword &addr,y
+ ldy #&offset
+ pushword &addr,y
+ MEND
+ MACRO
+&lab pushword &SYSOPR
+&lab ANOP
+ AIF c:&SYSOPR=0,.b
+ LCLC &C
+&C AMID "&SYSOPR",1,1
+ AIF ("&C"="#").AND.(S:LONGA),.immediate
+ lda &SYSOPR
+ pha
+ MEXIT
+.b
+ pha
+ MEXIT
+.immediate
+ LCLC &REST
+ LCLA &BL
+&BL ASEARCH "&SYSOPR"," ",1
+ AIF &BL>0,.a
+&BL SETA L:&SYSOPR+1
+.a
+&REST AMID "&SYSOPR",2,&BL-2
+ dc I1'$F4',I2'&REST'
+ MEND
+ MACRO
+&lab _NewHandle
+&lab ldx #$0902
+ jsl $E10000
+ MEND
+ MACRO
+&lab jeq &loc
+&lab bne *+5
+ jmp &loc
+ mend
+ MACRO
+&lab jne &loc
+&lab beq *+5
+ jmp &loc
+ mend
+ MACRO
+&lab pl4 &parm
+ lclc &char
+ lclc &char1
+ lclc &char2
+&lab anop
+ aif s:longa=1,.start
+ rep #%00100000
+.start
+&char amid &parm,1,1
+ aif "&char"<>"{",.chk
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ pla
+ sta (&parm)
+ ldy #2
+ pla
+ sta (&parm),y
+ ago .shorten
+.chk
+ aif "&char"<>"[",.chk2
+ pla
+ sta &parm
+ ldy #2
+ pla
+ sta &parm,y
+ ago .shorten
+.chk2
+ aif "&char"<>"@",.absolute
+&char1 amid &parm,2,1
+&char2 setc &char1
+ pl&char1
+ aif l:&parm<3,.chk2a
+&char2 amid &parm,3,1
+.chk2a
+ pl&char2
+ ago .shorten
+.absolute
+ pla
+ sta &parm
+ pla
+ sta &parm+2
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab _GetVector
+&lab ldx #$1103
+ jsl $E10000
+ MEND
+ MACRO
+&lab _SetVector
+&lab ldx #$1003
+ jsl $E10000
+ MEND
+ MACRO
+&lab name
+&lab anop
+ aif DebugSymbols=0,.pastName
+ brl pastName&SYSCNT
+ dc i'$7771'
+ dc i1'L:&lab',c'&lab'
+pastName&SYSCNT anop
+.pastName
+ MEND

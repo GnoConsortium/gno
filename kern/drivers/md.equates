@@ -1,0 +1,11 @@
+*	$Id: md.equates,v 1.1 1998/02/02 08:18:15 taubert Exp $
+* Specific equates for the modem port version of the driver
+
+CtlPanBaud	gequ  $12
+PortControl	gequ  $E0C038
+PortData	gequ  $E0C03A
+PortNum	gequ  2	SIM modem port number
+Channel_Rx	gequ  %00000100
+Channel_Tx	gequ  %00000010
+Reg11	gequ  %01010000	modem
+PortReset	gequ  %01000000

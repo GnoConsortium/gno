@@ -1,0 +1,13 @@
+/*
+ *	$Id: kern.rez,v 1.1 1998/02/02 08:20:08 taubert Exp $
+ */
+
+#include "Types.rez"	//	include the type definitions
+
+resource rVersion (1) {
+	{2,0,6,release,0},
+	verUS,
+	"GNO Kernel (network)",
+	"Copyright 1991-1998, Procyon, Inc."
+	};
+

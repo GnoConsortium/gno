@@ -1,0 +1,432 @@
+ MACRO
+&lab iny2
+&lab iny
+ iny
+ mend
+ MACRO
+&lab dey2
+&lab dey
+ dey
+ mend
+ MACRO
+&lab ph2 &parm
+ lclc &char
+&lab anop
+ aif c:&parm=0,.done
+&char amid &parm,1,1
+ aif "&char"="#",.immediate
+ aif "&char"="@",.at
+ aif s:longa=1,.chk
+ rep #%00100000
+.chk
+ aif "&char"<>"{",.absolute
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ lda (&parm)
+ pha
+ ago .shorten
+.absolute
+ lda &parm
+ pha
+ ago .shorten
+.immediate
+&parm amid &parm,2,l:&parm-1
+ pea &parm
+ ago .done
+.at
+&char amid &parm,2,1
+ ph&char
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab long &stat
+&lab anop
+ lcla &t
+ lcla &len
+ lclc &ch
+&t seta 0
+&len seta l:&stat
+.a
+ aif &len=0,.b
+&ch amid &stat,&len,1
+ aif ("&ch"="x").or.("&ch"="y").or.("&ch"="i"),.i
+ aif ("&ch"="a").or.("&ch"="m"),.m
+.c
+&len seta &len-1
+ ago ^a
+.i
+ longi on
+&t seta &t+16
+ ago ^c
+.m
+ longa on
+&t seta &t+32
+ ago ^c
+.b
+ aif &t=0,.d
+ rep #&t
+.d
+ mend
+ MACRO
+&lab short &stat
+&lab anop
+ lcla &t
+ lcla &len
+ lclc &ch
+&t seta 0
+&len seta l:&stat
+.a
+ aif &len=0,.b
+&ch amid &stat,&len,1
+ aif ("&ch"="x").or.("&ch"="y").or.("&ch"="i"),.i
+ aif ("&ch"="a").or.("&ch"="m"),.m
+.c
+&len seta &len-1
+ ago ^a
+.i
+ longi off
+&t seta &t+16
+ ago ^c
+.m
+ longa off
+&t seta &t+32
+ ago ^c
+.b
+ aif &t=0,.d
+ sep #&t
+.d
+ mend
+ MACRO
+&lab MV2 &src,&adr
+&lab lcla &count
+ lda &src
+&count seta 1
+.loop
+ sta &adr(&count)
+&count seta &count+1
+ aif &count>c:&adr,.done
+ ago ^loop
+.done
+ mend
+ MACRO
+&lab LD2 &val,&adr
+&lab lcla &count
+ lda #&val
+&count seta 1
+.loop
+ sta &adr(&count)
+&count seta &count+1
+ aif &count>c:&adr,.done
+ ago ^loop
+.done
+ mend
+ MACRO
+&lab ph4 &parm
+ lclc &char
+ lclc &char1
+ lclc &char2
+&lab anop
+&char amid &parm,1,1
+ aif "&char"="#",.immediate
+ aif "&char"="@",.at
+ aif s:longa=1,.chk1
+ rep #%00100000
+.chk1
+ aif "&char"<>"{",.chk2
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ ldy #2
+ lda (&parm),y
+ pha
+ lda (&parm)
+ pha
+ ago .shorten
+.chk2
+ aif "&char"<>"[",.absolute
+ ldy #2
+ lda &parm,y
+ pha
+ lda &parm
+ pha
+ ago .shorten
+.absolute
+ lda &parm+2
+ pha
+ lda &parm
+ pha
+ ago .shorten
+.at
+&char1 amid &parm,2,1
+&char2 setc &char1
+ ph&char1
+ aif l:&parm<3,.chk2a
+&char2 amid &parm,3,1
+.chk2a
+ ph&char2
+ ago .shorten
+.immediate
+&parm amid &parm,2,l:&parm-1
+ pea +(&parm)|-16
+ pea &parm
+ ago .done
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab jeq &loc
+&lab bne *+5
+ jmp &loc
+ mend
+ MACRO
+&lab GSStr &string
+&lab dc i2'L:&string'
+ dc c"&string"
+ mend
+ MACRO
+&lab Destroy &a1
+&lab gsos $2002,&a1
+ mend
+ MACRO
+&lab Create &a1
+&lab gsos $2001,&a1
+ mend
+ MACRO
+&lab SetMark &a1
+&lab gsos $2016,&a1
+ mend
+ MACRO
+&lab GetEOF &a1
+&lab gsos $2019,&a1
+ mend
+ MACRO
+&lab Open &a1
+&lab gsos $2010,&a1
+ mend
+ MACRO
+&lab GetPrefixGS &a1
+&lab gsos $200A,&a1
+ mend
+ MACRO
+&lab Close &a1
+&lab gsos $2014,&a1
+ mend
+ MACRO
+&lab gsos &a1,&a2
+&lab jsl $E100A8
+ dc i2'&a1'
+ dc i4'&a2'
+ mend
+ MACRO
+&lab jcs &loc
+&lab bcc *+5
+ jmp &loc
+ mend
+ MACRO
+&lab asl2 &a
+&lab asl &a
+ asl &a
+ mend
+ MACRO
+&lab LD4 &val,&adr
+&lab lcla &count
+ lda #<&val
+&count seta 1
+.loop1
+ sta &adr(&count)
+&count seta &count+1
+ aif &count>c:&adr,.part2
+ ago ^loop1
+.part2
+ lda #+(&val)|-16
+&count seta 1
+.loop2
+ sta &adr(&count)+2
+&count seta &count+1
+ aif &count>c:&adr,.done
+ ago ^loop2
+.done
+ mend
+ MACRO
+&lab GetDirEntry &a1
+&lab gsos $201C,&a1
+ mend
+ MACRO
+&lab movelong &from,&to1,&to2
+&lab ANOP
+ LCLC &C
+ LCLC &REST
+&C AMID &from,1,1
+&REST AMID &from,2,L:&from-1
+ AIF "&C"="[",.zeropage
+ AIF C:&to2=0,.a
+ AIF ("&to1"="s").or.("&to1"="x").or.("&to1"="y"),.indexed
+ moveword &from,&to1,&to2
+ AGO .b
+.a
+ moveword &from,&to1
+.b
+ AIF "&C"="#",.immediate
+ AIF C:&to2=0,.c
+ moveword &from+2,&to1+2,&to2+2
+ MEXIT
+.c
+ moveword &from+2,&to1+2
+ MEXIT
+.immediate
+ AIF C:&to2=0,.d
+ moveword #^&REST,&to1+2,&to2+2
+ MEXIT
+.d
+ moveword #^&REST,&to1+2
+ MEXIT
+.zeropage
+ moveword &from,&to1,&to2
+ ldy #&to1+2
+ lda &from,y
+ sta &to2+2
+ MEXIT
+.indexed
+ lda &from,&to1
+ sta &to2
+ lda &from+2,&to1
+ sta &to2+2
+ MEND
+ MACRO
+&lab moveword &from,&to1,&to2
+&lab ANOP
+ LCLC &C
+&C AMID &from,1,1
+ AIF "&C"="[",.zeropage
+ lda &from
+ sta &to1
+ AIF C:&to2=0,.a
+ sta &to2
+.a
+ MEXIT
+.zeropage
+ AIF "&to1"="0",.b
+ ldy #&to1
+ lda &from,y
+ sta &to2
+ MEXIT
+.b
+ lda &from
+ sta &to2
+ MEND
+ macro
+&lab popvariables &dcb
+&lab ~setm
+ jsl $E100A8
+ dc i2'$0117'
+ dc i4'&dcb'
+ ~restm
+ mend
+ macro
+&lab pushvariables &dcb
+&lab ~setm
+ jsl $E100A8
+ dc i2'$0118'
+ dc i4'&dcb'
+ ~restm
+ mend
+ macro
+&lab ~restm
+&lab anop
+ aif (&~la+&~li)=2,.i
+ sep #32*(.not.&~la)+16*(.not.&~li)
+ aif &~la,.h
+ longa off
+.h
+ aif &~li,.i
+ longi off
+.i
+ mend
+ macro
+&lab ~setm
+&lab anop
+ aif c:&~la,.b
+ gblb &~la
+ gblb &~li
+.b
+&~la setb s:longa
+&~li setb s:longi
+ aif s:longa.and.s:longi,.a
+ rep #32*(.not.&~la)+16*(.not.&~li)
+ longa on
+ longi on
+.a
+ mend
+ MACRO
+&lab push3 &addr,&reg
+&lab ANOP
+ LCLC &C
+ LCLC &REST
+&C AMID &addr,1,1
+&REST AMID &addr,2,L:&addr
+ AIF C:&reg>0,.indexed
+ AIF "&C"="#",.immediate
+ lda &addr+1
+ pha
+ AGO .a
+.immediate
+ lda #(&REST)|-8
+ pha
+.a
+ phb
+ lda &addr
+ sta 1,s
+ MEXIT
+.indexed
+ lda &addr+1,&reg
+ pha
+ phb
+ lda &addr,&reg
+ sta 1,s
+ MEND
+ MACRO
+&lab MV4 &src,&adr
+&lab lcla &count
+ lda &src
+&count seta 1
+.loop1
+ sta &adr(&count)
+&count seta &count+1
+ aif &count>c:&adr,.part2
+ ago ^loop1
+.part2
+ lda &src+2
+&count seta 1
+.loop2
+ sta &adr(&count)+2
+&count seta &count+1
+ aif &count>c:&adr,.done
+ ago ^loop2
+.done
+ mend
+ macro
+&lab ExpandPath &a1
+&lab gsos $200E,&a1
+ mend
+ MACRO
+&lab name
+&lab anop
+ aif DebugSymbols=0,.pastName
+ brl pastName&SYSCNT
+ dc i'$7771'
+ dc i1'L:&lab',c'&lab'
+pastName&SYSCNT anop
+.pastName
+ MEND
