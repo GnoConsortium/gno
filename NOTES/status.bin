@@ -1,4 +1,6 @@
-Version: $Id: status.bin,v 1.2 1997/09/05 05:07:37 gdr Exp $
+This file lists the status of the various files in the GNO base distribution.
+
+Version: $Id: status.bin,v 1.3 1997/09/21 22:47:37 gdr Exp $
 
 Person Working on Component ("Owner")
 -------------------------------------
@@ -8,6 +10,7 @@ evan	Evan Day
 gdr	Devin Reade
 lb	Leslie Barstow
 matt	Matt Ackeret
+sonk	Soenke Behrens
 tl	Tilghman Lesher
 
 Column Key
@@ -21,7 +24,9 @@ Source		- Has the source been located/written? "dir" means it's
 		  installation scripts.
 Man		- Is the documentation complete?  This includes the man 
 			page, describe entry, rVersion fork, and any 
-			required auxillary documentation.
+			required auxillary documentation.  The label
+			'P' means it's present, 'T' means it's been
+			tested (reviewed).
 Compiled	- Has it been cleanly recompiled with new headers/libs?
 Tested		- Has it been tested?
 Archived	- Has it been entered in the CVS repository? (gdr to coord)
@@ -46,7 +51,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin				Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /bin/aroff			Y	Y
 /bin/binprint			Y
-/bin/cat			Y	Y	dave
+/bin/cat			Y	Y	dave	Y	P			Y
 /bin/center			Y
 /bin/chmod				Y	lb
 /bin/chtyp			Y	Y	evan
@@ -69,7 +74,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/freeze			Y	Y
 /bin/grep			Y	Y	evan
 /bin/gsh			Y	Y		prop
-/bin/head			Y	Y	dave
+/bin/head			Y	Y	dave	Y	P			Y
 /bin/hostname				Y	dt
 /bin/info			Y		lb	(rename to something else)
 /bin/kill				Y
@@ -99,19 +104,19 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/stty			Y	Y
 /bin/su				Y	Y
 /bin/sync				Y
-/bin/tail			Y	Y	dave
+/bin/tail			Y	Y	dave	Y	P			Y
 /bin/tar			Y	Y
 /bin/tee			Y	Y	gdr	Y
 /bin/test				Y	gdr	Y
 /bin/time			Y	Y
 /bin/touch			Y	Y	dt
-/bin/tr				Y	Y	dave
+/bin/tr				Y	Y	dave	Y	P			Y
 /bin/true				Y	gdr
 /bin/uncompress			Y	Y
 /bin/uniq			Y	Y
 /bin/upper			Y
 /bin/vi				Y	Y
-/bin/wc				Y	Y	dave
+/bin/wc				Y	Y	dave	Y	P			Y
 /bin/who			Y	Y	dt
 /dev				Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /dev/modem			Y	Y	dt	prop					Y	/gno.disk2/dev.shk
@@ -186,7 +191,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/bison			Y	N
 /usr/bin/cal			Y
 /usr/bin/calendar
-/usr/bin/catrez				Y
+/usr/bin/catrez				Y	dave	Y	missing desc entry	Y
 /usr/bin/cclean				Y	gdr
 /usr/bin/cjpeg				N		(add on)
 /usr/bin/cksum				Y
@@ -198,7 +203,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/copycat		Y	Y
 /usr/bin/cpp					gdr
 /usr/bin/ctags				Y	dt
-/usr/bin/cut				Y	dave
+/usr/bin/cut				Y	dave	Y	P			Y
 /usr/bin/dhrystone		Y	N
 /usr/bin/diff				Y	gdr
 /usr/bin/dirname			Y	gdr
@@ -231,7 +236,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/lpq		(lpr)		Y	dt
 /usr/bin/lpr		(lpr)	Y	Y	dt
 /usr/bin/lprm		(lpr)		Y	dt
-/usr/bin/lseg			Y	Y	dave
+/usr/bin/lseg			Y	Y	dave	Y	P			Y
 /usr/bin/mkdep
 /usr/bin/makedmake				gdr
 /usr/bin/man			Y	Y	gdr	Y
