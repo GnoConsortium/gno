@@ -1,12 +1,15 @@
 #
-# Makefile for libc/gen.
+# gno/lib/libc/string/Makefile
 #
-# $Id: Makefile,v 1.1 1997/02/28 05:12:50 gdr Exp $
+# Devin Reade, 1997
+#
+# $Id: Makefile,v 1.2 1997/09/05 06:33:22 gdr Exp $
 #
 
+.INCLUDE:	../../../paths.mk
 .INCLUDE: 	../../const.mk
 
-OBJS	= case.o str.o
+OBJS	= case.o str.o strerror.o
 
 default:	$(OBJS)
 
