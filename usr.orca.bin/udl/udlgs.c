@@ -4,7 +4,7 @@
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.10 1997/08/02 21:09:13 gdr Exp $
+ * $Id: udlgs.c,v 1.11 1997/12/08 16:07:19 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -12,7 +12,17 @@
 #include <orca.h>
 #include <shell.h>
 #include <gsos.h>
+#include <stdlib.h>
+
+#ifdef __GNO__
+#include <unistd.h>
+#include <gno/gno.h>
+#else
 #include <getopt.h>
+#endif
+
+/* We having a naming inconsistency in <shell.h> */
+#define Next_WildcardGSPB	NextWildcardGSPB
 
 #include "common.h"
 
@@ -29,9 +39,6 @@ Init_WildcardGSPB InitWild;
 
 extern pascal void SystemQuitFlags (unsigned);
 extern pascal void SystemQuitPath (GSString255Ptr);
-extern int needsgno(void);
-extern void begin_stack_check(void);
-extern int  end_stack_check(void);
 
 /*
  * Prototypes of functions in this file
@@ -40,6 +47,13 @@ extern int  end_stack_check(void);
 extern int CheckGSOSType (char *name);
 extern void SetGSOSType (char *name, int type, int auxtype);
 extern int right_shell_version (void);
+
+#ifdef __STACK_CHECK__
+static void
+printStack (void) {
+	fprintf(stderr, "stack usage: %d bytes\n", _endStackCheck());
+}
+#endif
 
 int main(int argc,char *argv[]) {
   FILE *infile, *outfile;
@@ -67,8 +81,9 @@ int main(int argc,char *argv[]) {
   *currentDirectory = '\0';
   recursionDepth=0;
   
-#ifdef CHECK_STACK
-  begin_stack_check();
+#ifdef __STACK_CHECK__
+  _beginStackCheck();
+  atexit(printStack);
 #endif
   
   /* In case of exit(), free the mem I allocated */
@@ -314,10 +329,6 @@ int main(int argc,char *argv[]) {
     p++;
   } /* end while */
 
-#ifdef CHECK_STACK
-  fprintf(stderr,"stack usage: %d bytes\n",end_stack_check());
-#endif
-  
   return (EXIT_SUCCESS);
 }
 

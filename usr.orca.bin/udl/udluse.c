@@ -4,12 +4,12 @@
  *
  * Usage strings.
  *
- * $Id: udluse.c,v 1.10 1997/08/02 21:09:13 gdr Exp $
+ * $Id: udluse.c,v 1.11 1997/12/08 16:07:19 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
 
-#ifdef GNO
+#ifdef __GNO__
 #pragma noroot
 #endif
 

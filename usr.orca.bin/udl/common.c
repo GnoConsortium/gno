@@ -4,12 +4,12 @@
  *
  * Routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.c,v 1.9 1996/02/04 01:34:26 gdr Exp $
+ * $Id: common.c,v 1.10 1997/12/08 16:07:19 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
 
-#ifdef GNO
+#ifdef __GNO__
 #pragma noroot
 #endif
 
@@ -602,12 +602,12 @@ void cleanup (void) {
 
 void usage (void) {
   extern char use1[]; /* from udluse.c */
-#ifdef GNO
+#ifdef __GNO__
   extern char use2[];
 #endif
 
   fprintf(stderr,"%s",use1);
-#ifdef GNO
+#ifdef __GNO__
   if(!needsgno())
     fprintf(stderr,"%s",use2);
 #endif
@@ -837,7 +837,7 @@ char *Mktemp(const char *base)
       }
 
     /* Make sure the file name does not already exist */
-#ifdef GNO
+#ifdef __GNO__
     if (needsgno() == TRUE) {
 #endif
       if (stat(st,&tstat) == 0)
@@ -845,7 +845,7 @@ char *Mktemp(const char *base)
 	free (st);
 	st = Mktemp (base);
       }
-#ifdef GNO
+#ifdef __GNO__
     } else { /* ORCA/Shell doesn't like stat one little bit */
       FILE *fp;
       if ((fp = fopen(st,"r")) != NULL)

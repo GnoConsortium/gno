@@ -4,12 +4,12 @@
  *
  * Contains definitions of global variables declared in common.h
  *
- * $Id: globals.c,v 1.6 1996/02/04 01:34:28 gdr Exp $
+ * $Id: globals.c,v 1.7 1997/12/08 16:07:19 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
 
-#ifdef GNO
+#ifdef __GNO__
 #pragma noroot
 #endif
 
