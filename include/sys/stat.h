@@ -36,7 +36,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)stat.h	8.6 (Berkeley) 3/8/94
- * $Id: stat.h,v 1.1 1997/02/28 04:42:15 gdr Exp $
+ * $Id: stat.h,v 1.2 1999/02/14 07:19:59 gdr-ftp Exp $
  */
 
 #ifndef _SYS_STAT_H_
@@ -49,6 +49,10 @@
  */
 #ifndef _SYS_TIME_H_
 #include <sys/time.h>
+#endif
+
+#ifndef _SYS_TYPES_H_
+#include <sys/types.h>
 #endif
 
 #ifdef __GNO__
