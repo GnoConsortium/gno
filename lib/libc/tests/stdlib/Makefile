@@ -1,13 +1,16 @@
 #
-# $Id: Makefile,v 1.1 1997/02/28 05:12:57 gdr Exp $
+# $Id: Makefile,v 1.2 1997/09/21 17:54:27 gdr Exp $
 #
 
-.INCLUDE:	../../const.mk
+.INCLUDE:	../../../../paths.mk
+.INCLUDE:	../../../const.mk
 
 LIBC	:= ../../libc
 LDLIBS	 = -l$(LIBC)
 CFLAGS	:= -v -w -G25 $(STACK) $(DEFINES) $(INCLUDES)
 
-default: environ
+default: assert environ
 
-.PRECIOUS: environ.o
+.PRECIOUS: assert.o environ.o
+
+.INCLUDE:	../../rules.mk
