@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.2 1997/10/30 03:49:46 gdr Exp $
+# $Id: Makefile,v 1.3 1998/03/08 17:38:21 gdr-ftp Exp $
 #
 
 # Program name
@@ -13,4 +13,4 @@ BINDIR	= /usr/bin
 
 .INCLUDE:	/src/gno/prog.mk
 
-head.o::	def.h extern.h
+head.o:	def.h extern.h
