@@ -1,0 +1,40 @@
+     BANNER(6)	MISCELLANEOUS	BANNER(6)
+     
+     
+     
+     NAME
+     banner - print large banner on printer
+     
+     SYNOPSIS
+     /usr/games/banner [ -w n ] message ...
+     
+     DESCRIPTION
+     Banner prints a large, high quality banner on the standard
+     output.  If the message is omitted, it prompts for and reads
+     one line of its standard input.  If -w is given, the output
+     is scrunched down from a width of 132 to n , suitable for a
+     narrow terminal.  If n is omitted, it defaults to 80.
+     
+     The output should be printed on a hard-copy device, up to
+     132 columns wide, with no breaks between the pages. The
+     volume is great enough that you may want a printer or a fast
+     hardcopy terminal, but if you are patient, a decwriter or
+     other 300 baud terminal will do.
+     
+     BUGS
+     Several ASCII characters are not defined, notably <, >, [,
+     ], \,^, _, {, }, |, and ~.  Also, the characters ", ', and &
+     are funny looking (but in a useful way.)
+     
+     The -w option is implemented by skipping some rows and
+     columns.  The smaller it gets, the grainier the output. 
+     Sometimes it runs letters together.
+     
+     AUTHOR
+     Mark Horton
+     
+     ACKNOWLEDGEMENTS
+     Copyright (c) 1980 The Regents of the University of
+     California. All rights reserved. This product includes
+     software developed by the University of California, Berkeley
+     and its contributors

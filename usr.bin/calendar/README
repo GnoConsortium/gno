@@ -1,0 +1,4 @@
+To install the calendar program, create a file called "Calendar" in your
+home directory, and put a line:
+:bin:calendar
+in your "gshrc" file.

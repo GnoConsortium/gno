@@ -1,0 +1,21 @@
+
+CALENDAR(1)                                                        CALENDAR(1)
+
+NAME
+     calendar - reminder service
+
+SYNOPSIS
+     calendar
+
+DESCRIPTION
+     calendar consults the file calendar in the current directory and prints
+     out lines that contain today's or tomorrow's date anywhere in the line.
+     Most reasonable month-day dates such as ``Aug. 24,'' ``august 24,''
+     ``8/24,'' etc., are recognized, but not ``24 August'' or ``24/8''.  On
+     weekends ``tomorrow'' extends through Monday.
+
+BUGS
+     calendar's extended idea of ``tomorrow'' does not account for holidays.
+
+Page 1                          Release 4.0.5                         May 1992
+

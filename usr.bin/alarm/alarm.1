@@ -1,0 +1,37 @@
+alarm (1)
+
+NAME
+	alarm - alarm clock reminder
+
+SYNOPSIS
+	alarm [+]#### [<delay> ["<message>"]]
+
+DESCRIPTION
+	alarm is a reminder program. Typically it is executed in the
+	background. The program sleeps until the alarm time, and so
+	uses very little CPU.
+
+	The first argument defines the time, or time delay, for the
+	alarm to ring. It must consist of an optional leading plus
+	sign followed by four decimal digits. If the plus sign is
+	present the alarm will ring in 'hhmm' hours. If the plus sign
+	is absent, the alarm will ring at time 'hhmm' in 24-hour
+	format. The alarm rings five times, each time delivering a
+	beep, with beeps two seconds apart. The second argument, if
+	present, changes the time between beeps. The third argument,
+	if present, is echoed to stdout after each beep as a reminder
+	message.
+
+EXAMPLES
+	alarm +0080 5 "Your TV show is on in five minutes" &
+		rings the bell every five seconds and delivers the
+		message eighty minutes after the current time.
+
+	alarm 1955
+		rings the bell every two seconds at 7:55 PM
+
+FILES
+	none
+
+AUTHOR
+	Christopher Neufeld (neufeld@physics.utoronto.ca)
