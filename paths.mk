@@ -7,8 +7,14 @@
 #
 # Devin Reade, 1997
 #
-# $Id: paths.mk,v 1.6 1998/02/15 19:44:01 gdr-ftp Exp $
+# $Id: paths.mk,v 1.7 1998/02/17 00:26:27 gdr-ftp Exp $
 #
+
+# This one isn't really a path, but it affects the creation of path
+# names.  If PRODOS_OBJS is set to "true" (minus the quotes), then the
+# created object files will follow ProDOS naming conventions.
+
+PRODOS_OBJS	= true
 
 # SRC_DIR is the top-level GNO source distribution directory (containing
 # $(SRC_DIR)/gno, $(SRC_DIR)/gno/lib, and so forth).  It also corresponds
@@ -24,6 +30,11 @@
 SRC_DIR		= /src
 CWD		= $(PWD:s,:,/,g)
 OBJ_DIR		= /obj$(CWD:s,${SRC_DIR},,)
+
+.SOURCE.a :	$(OBJ_DIR)
+.SOURCE.o :	$(OBJ_DIR)
+.SOURCE.r :	$(OBJ_DIR)
+.SOURCE.root :	$(OBJ_DIR)
 
 # RELEASE_DIR is the directory into which we will put the created
 # distribution files.

@@ -2,7 +2,7 @@
 # Compilation constants for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binconst.mk,v 1.6 1998/02/15 19:43:57 gdr-ftp Exp $
+# $Id: binconst.mk,v 1.7 1998/02/17 00:26:24 gdr-ftp Exp $
 #
 # Devin Reade, 1997.
 #
@@ -41,6 +41,11 @@ DESC	*= $(PROG).desc
 	MAN1SFX	= 1G
 .END
 
-# Define all object files as being in the /obj hierarchy.
-OBJS	*= $(OBJ_DIR){$(SRCS:b)}.o
-
+# Objects are source file names with [.c|.asm] changed to .o
+# If we're keeping object files on a ProDOS partition, change the
+# '_' characters in file names to '.'
+.IF $(PRODOS_OBJS) == true
+	OBJS	+= {$(SRCS:b:s/_/./g)}.o
+.ELSE
+	OBJS	+= {$(SRCS:b)}.o
+.END

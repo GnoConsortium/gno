@@ -2,7 +2,7 @@
 # Standard compilation rules for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binrules.mk,v 1.5 1998/02/15 19:44:00 gdr-ftp Exp $
+# $Id: binrules.mk,v 1.6 1998/02/17 00:26:25 gdr-ftp Exp $
 #
 # Devin Reade, Dave Tribby, 1997.
 #
@@ -18,16 +18,15 @@ $(OBJ_DIR):
 # Include standard occ options
 #   -a0: use .o suffix for object file
 #   -c:  don't link after compiling
-$(OBJ_DIR)$(MAIN).o: $(MAINSRC)
+$(MAIN).o: $(MAINSRC)
 	$(CC) -o $@ $(CFLAGS:s/ -r / /) -a0 -c $(MAINSRC)
 
 # Program depends upon all the objects. Add the version resource.
 $(OBJ_DIR)$(PROG): $(OBJS)
 	$(CC) -o $@ $(LDFLAGS) $< $(LDLIBS)
-
-$(OBJ_DIR)$(PROG):: $(OBJ_DIR)$(PROG).r
 	$(CATREZ) -d $@ $(OBJ_DIR)$(PROG).r
-
+$(OBJ_DIR)$(PROG): $(PROG).r
+                  
 # Remove intermediate files.  If we don't put shell meta characters in
 # here, then dmake doesn't have to start up a subshell and can instead
 # exec the line directly
@@ -41,7 +40,7 @@ clean:
 clobber: clean
 	-$(RM) $(OBJ_DIR)$(PROG)
 
-# Default target for object files
-$(OBJ_DIR)%.o: %.c ;	$(CC) -o $@ $(CFLAGS) -a0 -c $<
-$(OBJ_DIR)%.o: %.asm ;	$(AS) -o $@ $(ASFLAGS) -a0 -c $<
-$(OBJ_DIR)%.r: %.rez;	$(REZ) -o $@ $(REZFLAGS) $<
+# Implicit rule to handle ProDOS-renamed object files
+%.o: %.O;
+%.O .PRECIOUS : $$(@:b:s/./_/g).c
+	$(CC) -o $(OBJ_DIR)$*.o $(CFLAGS) -c $<
