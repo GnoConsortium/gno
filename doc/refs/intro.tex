@@ -1,7 +1,7 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.4 1998/01/26 07:13:09 gdr-ftp Exp $
+% $Id: intro.tex,v 1.5 1998/06/12 14:47:33 gdr-ftp Exp $
 % 
 
 \documentclass{report}
@@ -14,8 +14,8 @@
 \begin{document}
 
 \title{GNO Overview and Installation}
-\author{Jawaid Bazyar \\ Tim Meekins}
-\date{28 November 1997}
+\author{Jawaid Bazyar \\ Tim Meekins \\ Devin Reade}
+\date{11 June 1998}
 \maketitle
 
 \bibliographystyle{plain}
@@ -851,6 +851,168 @@ directories. Here is a brief rundown of thier contents:
 \begin{rawhtml}
 <!-- cleantable-end -->
 \end{rawhtml}
+
+\chapter{Installation for GNO v2.0.6}
+
+\em GNO v2.0.6 is not yet available.  These installation instructions
+have been included both for the benefit of the development team and as
+draft instructions for when the update is released.  Please don't ask
+when v2.0.6 will be ready; we'll get it to you as soon as possible.\rm
+
+\em These instructions should be considered as draft quality.  If you
+have suggestions on or corrections to these instructions, please forward
+them to Devin Reade.\rm
+
+This chapter contains information on how to install the newest version
+of GNO, which is version 2.0.6 or later.  It explains how to install
+the base \em binary\rm distribution.  Installation of GNO sources such that
+you are able to \em build\rm the base distribution itself are at this
+time beyond the scope of this document.
+
+At this time, unfortunately, installing GNO is fairly cumbersome.
+Gsh's scripting abilities are crude at best, and for various reasons
+the Apple Installer program is not sufficient,
+When sh (the Bourne Shell) is finished for GNO, installation should be easier.
+
+Information in this chapter may change
+significantly from release to release, so even if you have previously
+installed a version newer than v2.0.4, you should review this chapter
+prior to doing a new installation.
+
+\section{Planning Your System}
+
+The install scripts assumes that your \em new\rm distribution will be installed
+on to the two volumes \bf /gno \rm (ProDOS) and \bf /gno-hfs \rm (HFS).
+It also assumes these volumes already exist and are \em empty\rm.
+You may use other volume names,
+but you will have to edit certain files before you run your distribution.
+
+
+\begin{tabular}{ll}
+boot disk (used only for installation)	& 800k \\
+binary distribution (shk files)		& 4.6 MB \\
+binary distribution (extracted)		& 12.1 MB \\
+complete GNO source			& 15.0 MB \\
+\end{tabular}
+
+
+\section{Downloading and Extracting the Archive Files}
+
+Your first step is of course to download the distribution.  You should
+have the following NuFX archives:
+
+\begin{itemize}
+
+\item{\bf gnoboot.shk\rm}
+This is the GNO installation bootstrap disk.  It should be extracted to
+a ProDOS-formatted 800k floppy disk named ``/gno.boot'' (the name is
+critical).  It does not include a copy of GS/OS and is
+therefore not bootable; you will have to boot your system in the normal
+fashion.
+
+\item{\bf gno.01.shk\rm, \bf gno.02.shk\rm, ... \bf gno.16.shk\rm}
+These disk archives contain the main portion of the GNO distribution.
+They must be placed in a single temporary subdirectory on a hard drive,
+Zip disk, or other large capacity storage device.  They should not yet be
+extracted.
+
+\item{\bf gnohfs.shk\rm}
+This archive consists of files that do not conform to ProDOS naming 
+conventions.  While it is possible to run GNO without any HFS partitions
+at all, it is recommended that you have available to GNO a small amount
+of space on an HFS partition.  If you use the \bf namespace\rm(5) facility,
+it is unnecessary to dedicate an entire HFS partition to GNO.
+
+\end{itemize}
+
+You should now do the following steps:
+
+\begin{comment}
+
+If your volumes are named something else, replace the names in the cd commands
+below with the appropriate name.
+ 
+\end{comment}
+
+
+\begin{enumerate}
+
+\item
+Set your DOWNLOAD\_DIR environment variable to the directory
+into which you placed the above NuFX (*.shk) files.
+For example, if the files gnohfs.shk, gno.01.shk, gno.02.shk 
+(and so forth) were in /download, you would type:
+
+\begin{verbatim}
+	setenv DOWNLOAD_DIR /download
+\end{verbatim}
+
+\item
+Assuming your distribution is to be installed onto the /gno partition,
+issue the commands:
+
+\begin{verbatim}
+	cd /gno
+	/gno.boot/installboot1
+\end{verbatim}
+
+This will install the majority of the GNO binaries.
+
+\item
+There are a small number of recommended files that do not follow ProDOS
+naming conventions.  To install these files, issue the commands:
+
+\begin{verbatim}
+	cd /gno-hfs
+	/gno.boot/installboot2
+\end{verbatim}
+
+This assumes that /gno-hfs is an HFS partition.  If you would like to 
+use on your HFS partition a single subdirectory for GNO, then you could
+create and cd into /some-partition/gno-hfs instead.
+
+This step is optional.  It is possible to use the GNO binary distribution
+without an HFS partition, but some information will be missing.
+
+\item
+You should now edit the file /gno/etc/namespace.  If your
+files were extracted onto a volume other than /gno, you will
+have to replace all the ":gno:" strings with the appropriate
+path.
+
+You may want to put /usr onto a different partition; it will
+get fairly large over time.
+
+If you have a RAM disk, you should consider having it renamed
+to /tmp using renram5(8) or mktmp(8), in which case its entry
+should be removed from the namespace file.
+	    
+See the kernel reference manual for a description of this file.
+
+\item
+If you are not short of disk space, you should create .so links
+for your manual pages.  (See the mkso(8) man page for an
+explanation.)  You can do this by executing the following
+commands:
+
+\begin{verbatim}
+    	cd /gno/usr/man
+    	mkso -v -H /gno-hfs/man mkso.data
+\end{verbatim}
+	    	
+\item
+You should now return to your program launcher (the Finder,
+ProSEL-16, or whatever you used to start /gno.boot/kern) by
+typing "exit" at the prompt.  To startup up your new version
+of GNO, you should then launch /gno/kern.  You will then see
+a "login:" prompt.  Enter "root" as the user name; you will
+not yet need a password.
+
+\end{enumerate}
+
+\section{Custom Configuration}
+
+
 
 \chapter{Desk Accessories}
 

@@ -2,13 +2,24 @@
 # It is critical that there be no whitespace either preceeding nor
 # following these file names.
 #
-# $Id: ignored.pages,v 1.1 1998/02/19 03:03:53 gdr-ftp Exp $
+# $Id: ignored.pages,v 1.2 1998/06/12 14:47:30 gdr-ftp Exp $
 #
 00.DUMMY
-../../usr.man/man4/tty.4
-../../bin/gsh/updates1.1
+../../usr.bin/awk/tests/addr.1
+../../usr.bin/awk/tests/out/out.1.2
+../../usr.bin/awk/tests/out/out.1.4
+../../usr.bin/awk/tests/out/out.2.1
+../../usr.bin/awk/tests/out/out.2.2
+../../usr.bin/awk/tests/out/out.2.3
+../../usr.bin/awk/tests/out/out.2.4
+../../usr.bin/awk/tests/out/out.3.1
+../../usr.bin/awk/tests/out/out.8.1
+../../usr.bin/dirname/dirname.1
 ../../sbin/reboot/boot.hp300.8
 ../../sbin/reboot/boot.i386.8
 ../../sbin/reboot/boot.sparc.8
 ../../sbin/reboot/boot.tahoe.8
 ../../sbin/reboot/boot.vax.8
+../../usr.man/man3/getcap.3
+../../usr.sbin/cron/cron.8
+../../usr.sbin/inetd/inetd.8
