@@ -429,7 +429,7 @@ name:           t = sp->fts_path + NAPPEND(p->fts_parent);
          * one directory.
          */
         if (p->fts_level == FTS_ROOTLEVEL) {
-! 		if (FCHDIR(sp, sp->fts_rfd)) {
+ 		if (FCHDIR(sp, sp->fts_rfd)) {
                         SET(FTS_STOP);
                         return (NULL);
                 }
@@ -945,40 +945,6 @@ fts_lfree(register FTSENT *head)
 
 /*
  * Allow essentially unlimited paths; find, rm, ls should all work on any tree.
-}
-
-/*
- * Change to dir specified by fd or p->fts_accpath without getting
- * tricked by someone changing the world out from underneath us.
- * Assumes p->fts_dev and p->fts_ino are filled in.
- */
-static int
-fts_safe_changedir(FTS *sp, FTSENT *p, int fd)
-{
-	int ret, oerrno, newfd;
-	struct stat sb;
-
-	newfd = fd;
-	if (ISSET(FTS_NOCHDIR))
-		return (0);
-	if (fd < 0 && (newfd = open(p->fts_accpath, O_RDONLY, 0)) < 0)
-		return (-1);
-	if (fstat(newfd, &sb)) {
-		ret = -1;
-		goto bail;
-	}
-	if (p->fts_dev != sb.st_dev || p->fts_ino != sb.st_ino) {
-		errno = ENOENT;		/* disinformation */
-		ret = -1;
-		goto bail;
-	}
-	ret = fchdir(newfd);
-bail:
-	oerrno = errno;
-	if (fd < 0)
-		(void)close(newfd);
-	errno = oerrno;
-	return (ret);
  * Most systems will allow creation of paths much longer than MAXPATHLEN, even
  * though the kernel won't resolve them.  Add the size (not just what's needed)
  * plus 256 bytes so don't realloc the path 2 bytes at a time.
@@ -1025,4 +991,38 @@ fts_maxarglen(char * const *argv)
                 if ((len = strlen(*argv)) > max)
                         max = len;
         return (max);
+}
+
+/*
+ * Change to dir specified by fd or p->fts_accpath without getting
+ * tricked by someone changing the world out from underneath us.
+ * Assumes p->fts_dev and p->fts_ino are filled in.
+ */
+static int
+fts_safe_changedir(FTS *sp, FTSENT *p, int fd)
+{
+	int ret, oerrno, newfd;
+	struct stat sb;
+
+	newfd = fd;
+	if (ISSET(FTS_NOCHDIR))
+		return (0);
+	if (fd < 0 && (newfd = open(p->fts_accpath, O_RDONLY, 0)) < 0)
+		return (-1);
+	if (fstat(newfd, &sb)) {
+		ret = -1;
+		goto bail;
+	}
+	if (p->fts_dev != sb.st_dev || p->fts_ino != sb.st_ino) {
+		errno = ENOENT;		/* disinformation */
+		ret = -1;
+		goto bail;
+	}
+	ret = fchdir(newfd);
+bail:
+	oerrno = errno;
+	if (fd < 0)
+		(void)close(newfd);
+	errno = oerrno;
+	return (ret);
 }
