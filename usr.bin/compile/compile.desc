@@ -1,0 +1,51 @@
+Name:    compile
+Version: 1.1 (13 Feb 98)
+Shell:   GNO
+Author:  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+This is the GNO version of the ORCA/Shell "compile" command.  It is
+provided for compatibility reasons; occ is the recommended command for
+compiling or assembling source code under GNO.  For GNO, the "compile",
+"cmpl", "assemble", and "asml" commands are all the program.
+
+Name:    cmpl
+Version: 1.1 (13 Feb 98)
+Shell:   GNO
+Author:  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+This is the GNO version of the ORCA/Shell "cmpl" command.  It is
+provided for compatibility reasons; occ is the recommended command for
+compiling or assembling source code under GNO.  For GNO, the "compile",
+"cmpl", "assemble", and "asml" commands are all the program.
+
+Name:    assemble
+Version: 1.1 (13 Feb 98)
+Shell:   GNO
+Author:  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+This is the GNO version of the ORCA/Shell "assemble" command.  It is
+provided for compatibility reasons; occ is the recommended command for
+compiling or assembling source code under GNO.  For GNO, the "compile",
+"cmpl", "assemble", and "asml" commands are all the program.
+
+Name:    asml
+Version: 1.1 (13 Feb 98)
+Shell:   GNO
+Author:  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+This is the GNO version of the ORCA/Shell "asml" command.  It is
+provided for compatibility reasons; occ is the recommended command for
+compiling or assembling source code under GNO.  For GNO, the "compile",
+"cmpl", "assemble", and "asml" commands are all the program.

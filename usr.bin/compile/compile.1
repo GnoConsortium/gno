@@ -1,0 +1,44 @@
+.\"
+.\" Devin Reade, 1998
+.\"
+.\" $Id: compile.1,v 1.1 1998/02/15 00:05:27 gdr-ftp Exp $
+.\"
+.TH COMPILE 1 "13 February 1998" GNO "Commands and Applications"
+.SH NAME
+asml, assemble, cmpl, compile \-
+compile or assemble a source file
+.SH SYNOPSIS
+\fBasml\fR [\fIoptions\fR] \fIsourcefile\fR [\fIqualifiers\fR]
+.br
+\fBassemble\fR [\fIoptions\fR] \fIsourcefile\fR [\fIqualifiers\fR]
+.br
+\fBcmpl\fR [\fIoptions\fR] \fIsourcefile\fR [\fIqualifiers\fR]
+.br
+\fBcompile\fR [\fIoptions\fR] \fIsourcefile\fR [\fIqualifiers\fR]
+.SH DESCRIPTION
+These programs are the secondary front ends to the ORCA language compilers
+and assemblers. (The primary front end is
+.BR occ (1)).
+.LP
+For a complete explanation of these commands including a description of
+.IR options
+and
+.IR qualifiers ,
+see the chapter
+.I "The Command Processor"
+in any of the ORCA/C, ORCA/M, or ORCA/Pascal Reference Manuals.
+.LP
+The
+.BR asml ,
+.BR assemble ,
+.BR cmpl ,
+and
+.BR compile
+commands are in fact the same program.  As of this writing, they are
+installed on the target system by copying the binary.  When symlinks
+become available in the GNO kernel, they will be used instead.
+.SH "SEE ALSO"
+.BR dmake (1),
+.BR occ (1).
+.br
+.IR "ORCA/C Reference Manual" .
