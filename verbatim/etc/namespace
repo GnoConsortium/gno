@@ -1,0 +1,11 @@
+:HFSinclude	:s22:dist:HFSinclude
+:bin		:s21:dist:bin
+:dev		:s21:dist:dev
+:doc		:s21:dist:doc
+:etc		:s21:dist:etc
+:home		:s21:dist:home
+:lang		:s21:dist:lang
+:lib		:s21:dist:lib
+:sbin		:s21:dist:sbin
+:usr		:s21:dist:usr
+:var		:s21:dist:var
