@@ -6,7 +6,7 @@
 # 
 # Devin Reade, September 1997.
 #
-# $Id: fudgeinstall,v 1.6 1999/01/18 03:00:15 gdr-ftp Exp $
+# $Id: fudgeinstall,v 1.7 1999/01/26 08:20:04 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -232,7 +232,8 @@ chtyp -lrez	$SRC/gno/rinclude/*.rez
 install -V	$SRC/gno/rinclude/*.rez		$RELDIR/lib/rinclude
 
 echo "installing files in /usr/include"
-install -V	$SRC/gno/include/*.h		$RELDIR/usr/include
+# The cd is (maybe) necessary due to PR#110
+cd $SRC/gno/include;	install -V *.h		$RELDIR/usr/include
 install -V	$SRC/gno/include/arpa/*.h	$RELDIR/usr/include/arpa
 install -V	$SRC/gno/include/gno/*.h	$RELDIR/usr/include/gno
 install -V	$SRC/gno/include/machine/*.h	$RELDIR/usr/include/machine
@@ -241,7 +242,7 @@ install -V	$SRC/gno/include/netinet/*.h	$RELDIR/usr/include/netinet
 install -V	$SRC/gno/include/protocols/*.h	$RELDIR/usr/include/protocols
 install -V	$SRC/gno/include/rpc/*.h	$RELDIR/usr/include/rpc
 install -V	$SRC/gno/include/sys/*.h	$RELDIR/usr/include/sys
-chtyp -lcc 	$RELDIR/usr/include/*.h
+cd $SRC/gno/include;	chtyp -lcc 	$RELDIR/usr/include/*.h
 chtyp -lcc 	$RELDIR/usr/include/arpa/*.h
 chtyp -lcc 	$RELDIR/usr/include/gno/*.h
 chtyp -lcc 	$RELDIR/usr/include/machine/*.h
@@ -272,22 +273,25 @@ install -V	17/occ		$RELDIR/usr/orca/bin
 # udl		done
 
 # install man pages
+# We have to do a cd here because it seems that there is a 2k upper limit
+# on the number of bytes on the command line.  Exceeding this causes a 
+# crash.  See PR#110.
 echo "installing files in /usr/man/man1"
-install -V $SRC/gno/usr.man/man1/*.1 $RELDIR/usr/man/man1
+cd $SRC/gno/usr.man/man1;	install -V *.1 $RELDIR/usr/man/man1
 echo "installing files in /usr/man/man2"
-install -V $SRC/gno/usr.man/man2/*.2 $RELDIR/usr/man/man2
+cd $SRC/gno/usr.man/man2;	install -V *.2 $RELDIR/usr/man/man2
 echo "installing files in /usr/man/man3"
-install -V $SRC/gno/usr.man/man3/*.3 $RELDIR/usr/man/man3
+cd $SRC/gno/usr.man/man3;	install -V *.3 $RELDIR/usr/man/man3
 echo "installing files in /usr/man/man4"
-install -V $SRC/gno/usr.man/man4/*.4 $RELDIR/usr/man/man4
+cd $SRC/gno/usr.man/man4;	install -V *.4 $RELDIR/usr/man/man4
 echo "installing files in /usr/man/man5"
-install -V $SRC/gno/usr.man/man5/*.5 $RELDIR/usr/man/man5
+cd $SRC/gno/usr.man/man5;	install -V *.5 $RELDIR/usr/man/man5
 echo "installing files in /usr/man/man6"
-install -V $SRC/gno/usr.man/man6/*.6 $RELDIR/usr/man/man6
+cd $SRC/gno/usr.man/man6;	install -V *.6 $RELDIR/usr/man/man6
 echo "installing files in /usr/man/man7"
-install -V $SRC/gno/usr.man/man7/*.7 $RELDIR/usr/man/man7
+cd $SRC/gno/usr.man/man7;	install -V *.7 $RELDIR/usr/man/man7
 echo "installing files in /usr/man/man8"
-install -V $SRC/gno/usr.man/man8/*.8 $RELDIR/usr/man/man8
+cd $SRC/gno/usr.man/man8;	install -V *.8 $RELDIR/usr/man/man8
 
 echo "installing files in /usr/sbin"
 # catman	done
