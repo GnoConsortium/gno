@@ -1,0 +1,92 @@
+.\" Copyright (c) 1990, 1993, 1994
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the Institute of Electrical and Electronics Engineers, Inc.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)basename.1	8.2 (Berkeley) 4/18/94
+.\"	$Id: basename.1,v 1.1 1998/03/25 15:08:16 gdr-ftp Exp $
+.\"
+.TH BASENAME 1
+.SH NAME
+.PP
+\fBbasename\fR, \fBdirname\fR
+\- return filename or directory portion of pathname
+.SH SYNOPSIS
+.PP
+\fBbasename\fR \fIstring\fR [\fI.suffix\fR]
+.sp 1
+\fBdirname\fR \fIpath\fR
+.SH DESCRIPTION
+.PP
+\fBBasename\fR
+deletes any prefix ending with the last slash \/ or colon :
+character present in \fIstring\fR, and a \fIsuffix\fR,
+if given. The resulting filename is written to the
+standard output. Any trailing slash \/ or colon : characters
+in \fIstring\fR will be removed. A non-existent suffix is
+ignored.
+.PP
+\fBDirname\fR deletes the filename portion, beginning
+with the last slash \/ or colon : character to the end
+of \fIstring\fR,  and writes the result to the standard
+output.
+.SH EXAMPLES 
+.PP
+The following line sets the shell variable \fBFOO\fR
+to \fI/usr/bin\fR.
+.PP
+\fBFOO=`dirname /usr/bin/trail`\fR
+.PP
+Both the \fBbasename\fR and \fBdirname\fR
+exit 0 on success, and >0 if an error occurs.
+.SH NOTES
+.PP
+Because these programs use \fBbasename\fR(3) and
+\fBdirname\fR(3) respectively, there is a preference
+on ':' as a deliminator.  Additionally, if a ':' is
+used anywhere in the pathname, it will be considered
+the deliminator.
+.SH SEE ALSO
+.PP
+\fBcsh\fR(1),
+\fBsh\fR(1),
+\fBbasename\fR(3)
+.SH STANDARDS
+.PP
+The \fBbasename\fR and \fBdirname\fR functions are
+expected to be POSIX 1003.2 compatible.
+.SH COPYRIGHT
+.PP
+.nf
+This program contains material from the ORCA/C
+Run-Time Libraries, copyright 1987-1992
+by ByteWorks, Inc.  Used with Permission.

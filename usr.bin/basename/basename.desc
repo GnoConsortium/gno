@@ -1,0 +1,9 @@
+Name:    basename
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+ Shows only the basename of a given fully expanded filename.  

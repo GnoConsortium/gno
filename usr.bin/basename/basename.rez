@@ -1,0 +1,60 @@
+/*
+ * This is a CVS/RCS identification line -- an excellent tool for maintaining
+ * your sources:
+ *
+ * $Id: basename.rez,v 1.1 1998/03/25 15:08:21 gdr-ftp Exp $
+ */
+
+#include "Types.Rez"
+#include "Proginfo.Rez"
+
+resource rVersion (0x1, purgeable3, nocrossbank) {
+
+	{ 1, 0, 0,	/* version 1.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+          0		/* non-final release number */
+        },
+        verUS,		/* country code -- only some are avail */
+        "basename",	/* name */
+			/* _Very_ brief descrition.  Check "file info" */
+			/* shown in the Finder to see if it's too long */
+			/* Note that \n is used to separate lines here. */
+	"Strips the pathname from a fully expanded file path.\n"
+	"Ported from FreeBSD source code.\n"
+	"Scott Moberly <smoberly@s-cwis.unomaha.edu>"
+};
+
+#define ON 1
+#define OFF 2
+
+resource rProgramInfo (0x1,  purgeable3, nocrossbank) {
+	{ 6, 0, 0,	/* Minimun System Required */
+	    release,
+	    0
+	},
+	47104,	/* Minimum RAM required */
+	47104,	/* Optimal RAM required */
+	768, 	/* Zero Bank RAM reuired */
+
+	progCanMultitask	* ON +	// 1 = program can be multitasked
+	progCanSwitch     	* ON +	// 1 = program can go into standby mode
+	progCanStackShare 	* ON +	// 1 = program can stack-share
+	progAllowsNDAs    	* ON +	// program allows NDA useage
+	progAllowsCDAs    	* ON,	// program allows CDA access
+
+//---- shellInfo defining shell compatibility for EXEs
+//	Options available for each shell.
+//	piNotCompatible    	- program not compatible with this
+//	piUntested         	- program not tested with this shell
+//	piCompatible       	- program compatible with this shell
+//	piSpecialFeatures  	- program uses special features of this
+
+	progShellORCA		* piUntested	+
+	progShellORCA2		* piUntested	+
+	progShellProSel		* piUntested	+
+	progShellMTools		* piUntested	+
+	progShellMerlin16	* piUntested	+
+	progShellGSH		* piCompatible	+
+	progShellPrizm		* piUntested
+};
+

@@ -1,0 +1,9 @@
+Name:    dirname
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+ Shows only the directory name of a given fully expanded filename.  
