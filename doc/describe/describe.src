@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Sun Jan 17 17:32:20 1999
+# Last revision: Sun Feb 14 18:48:30 1999
 #
-# $Id: describe.src,v 1.22 1999/01/18 03:03:26 gdr-ftp Exp $
+# $Id: describe.src,v 1.23 1999/02/15 20:12:44 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -1883,26 +1883,28 @@ Displays system news (site specific notifications).  This should not be
 confused with USENET news readers or transport programs.
 
 Name:    newuser
-Version: 1.0
-Shell:   GNO/ME
-Author:  James Brookes
-Contact: jamesb@ecst.csuchico.edu
+Version: 1.2
+Shell:   GNO
+Author:  James Brookes.  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
 Where:   /usr/sbin
-FTP:     -
+FTP:     ftp.gno.org
 
-Create a home directory with basic gshrc for a new user, and add user
-into /etc/passwd file for immediate access.
+Create a home directory in /home with a template $HOME/gshrc and $HOME/glogin
+for a new user, and add the user's entry into the /etc/passwd file for
+immediate access.  See also newuserv.
 
 Name:    newuserv
-Version: 1.0
-Shell:   GNO/ME
-Author:  James Brookes
-Contact: jamesb@ecst.csuchico.edu
+Version: 1.2
+Shell:   GNO
+Author:  James Brookes.  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
 Where:   /usr/sbin
-FTP:     -
+FTP:     ftp.gno.org
 
-Create a home directory with basic gshrc for new user, and add user
-to /var/adm/newuser/newusers file for validation by the system operator.
+Create a home directory in /home with a template $HOME/gshrc and $HOME/glogin
+for a new user, and add the user's entry into the /var/adm/newuser/newusers
+file for validation by the system operator.  See also newuserv.
 
 Name:    nl
 Version: 1.0
