@@ -2,7 +2,7 @@
 # This file is intended for use with dmake.  There are constructs in 
 # here that (as yet) make it unsuitable to be used on the GS.
 #
-# $Id: Makefile,v 1.3 1997/10/30 04:23:37 gdr Exp $
+# $Id: Makefile,v 1.4 1997/11/01 19:49:27 gdr Exp $
 #
 XFER	= xfer
 TMP	= /tmp/gnobuild
@@ -52,7 +52,7 @@ $(XFER)/root.shk: $(ROOTFILES)
 
 # make sure the filename fits
 $(XFER)/usr.orcabin.shk: $(XFER)/usr.orca.bin.shk
-	cp $< $@
+	mv $< $@
 
 # .PHONY: $(XFER_LIST)
 
