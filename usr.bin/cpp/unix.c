@@ -1,7 +1,12 @@
+#ifdef __ORCAC__
+segment "cpp_3_____";
+#endif
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "cpp.h"
 
 extern	int getopt(int, char *const *, const char *);
@@ -88,7 +93,7 @@ setup(int argc, char **argv)
 	setsource(fp, fd, NULL);
 }
 
-
+#ifndef __ORCAC__
 
 /* memmove is defined here because some vendors don't provide it at
    all and others do a terrible job (like calling malloc) */
@@ -114,3 +119,4 @@ memmove(void *dp, const void *sp, size_t n)
 	}
 	return 0;
 }
+#endif

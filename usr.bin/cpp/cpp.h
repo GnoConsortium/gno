@@ -1,4 +1,4 @@
-/* $Id: cpp.h,v 1.1 1997/10/30 05:51:12 gdr Exp $ */
+/* $Id: cpp.h,v 1.2 1997/12/02 08:05:52 gdr Exp $ */
 #define	INS	32768		/* input buffer */
 #define	OBS	4096		/* outbut buffer */
 #define	NARG	32		/* Max number arguments to a macro */
@@ -156,9 +156,25 @@ extern	Nlist *kwdefined;
 extern	Includelist includelist[NINCLUDE];
 extern	char wd[];
 
+#ifndef __ORCAC__	/* make sure we get our own decls */
 extern int creat(char *, int);
 extern int open(char *, int);
 extern int close(int);
 extern int dup2(int, int);
 extern int write(int, char *, size_t);
 extern int read(int, char *, size_t);
+#endif
+
+#ifdef __ORCAC__
+#  define STATIC static
+#  ifdef NDEBUG
+#    define CHECKIN()
+#    define CHECKOUT()
+#  else
+#    include <assert.h>
+#    define CHECKIN()	static int recursing=0; assert(!recursing); recursing++
+#    define CHECKOUT()  --recursing
+#  endif
+#else
+#  define STATIC
+#endif

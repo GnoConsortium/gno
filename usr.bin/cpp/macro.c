@@ -1,6 +1,12 @@
+#ifdef __ORCAC__
+segment "cpp_2_____";
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __GNO__
+#include <gno/gno.h>	/* for _assertStack() */
+#endif
 #include "cpp.h"
 
 /*
@@ -180,8 +186,16 @@ expand(Tokenrow *trp, Nlist *np)
 	Tokenrow ntr;
 	int ntokc, narg, i;
 	Token *tp;
-	Tokenrow *atr[NARG+1];
 	int hs;
+#ifdef __ORCAC__
+	Tokenrow **atr;
+
+	atr = domalloc(sizeof(Tokenrow *) * (NARG+1));
+#define RETURN free(atr);return
+#else
+	Tokenrow *atr[NARG+1];
+#define RETURN return;
+#endif
 
 	copytokenrow(&ntr, np->vp);		/* copy macro value */
 	if (np->ap==NULL)			/* parameterless */
@@ -190,13 +204,13 @@ expand(Tokenrow *trp, Nlist *np)
 		ntokc = gatherargs(trp, atr, &narg);
 		if (narg<0) {			/* not actually a call (no '(') */
 			trp->tp++;
-			return;
+			RETURN;
 		}
 		if (narg != rowlen(np->ap)) {
 			error(ERROR, "Disagreement in number of macro arguments");
 			trp->tp->hideset = newhideset(trp->tp->hideset, np);
 			trp->tp += ntokc;
-			return;
+			RETURN;
 		}
 		substargs(np, &ntr, atr);	/* put args into replacement */
 		for (i=0; i<narg; i++) {
@@ -218,8 +232,9 @@ expand(Tokenrow *trp, Nlist *np)
 	insertrow(trp, ntokc, &ntr);
 	trp->tp -= rowlen(&ntr);
 	dofree(ntr.bp);
-	return;
+	RETURN;
 }	
+#undef RETURN
 
 /*
  * Gather an arglist, starting in trp with tp pointing at the macro name.
@@ -343,6 +358,10 @@ substargs(Nlist *np, Tokenrow *rtr, Tokenrow **atr)
 				insertrow(rtr, 1, atr[argno]);
 			else {
 				copytokenrow(&tatr, atr[argno]);
+#ifdef __ORCAC__
+				/* make sure we don't overrun the stack */
+				_assertStack(256, __LINE__, __FILE__);
+#endif
 				expandrow(&tatr, "<macro>");
 				insertrow(rtr, 1, &tatr);
 				dofree(tatr.bp);
@@ -360,14 +379,15 @@ void
 doconcat(Tokenrow *trp)
 {
 	Token *ltp, *ntp;
-	Tokenrow ntr;
+	STATIC Tokenrow ntr;
 	int len;
 
+	CHECKIN();
 	for (trp->tp=trp->bp; trp->tp<trp->lp; trp->tp++) {
 		if (trp->tp->type==DSHARP1)
 			trp->tp->type = DSHARP;
 		else if (trp->tp->type==DSHARP) {
-			char tt[128];
+			STATIC char tt[128];
 			ltp = trp->tp-1;
 			ntp = trp->tp+1;
 			if (ltp<trp->bp || ntp>=trp->lp) {
@@ -392,6 +412,7 @@ doconcat(Tokenrow *trp)
 			trp->tp--;
 		}
 	}
+	CHECKOUT();
 }
 
 /*
@@ -423,10 +444,11 @@ stringify(Tokenrow *vp)
 	static Token t = { STRING };
 	static Tokenrow tr = { &t, &t, &t+1, 1 };
 	Token *tp;
-	uchar s[STRLEN];
+	STATIC uchar s[STRLEN];
 	uchar *sp = s, *cp;
 	int i, instring;
 
+	CHECKIN();
 	*sp++ = '"';
 	for (tp = vp->bp; tp < vp->lp; tp++) {
 		instring = tp->type==STRING || tp->type==CCON;
@@ -447,6 +469,7 @@ stringify(Tokenrow *vp)
 	sp = s;
 	t.len = strlen((char*)sp);
 	t.t = newstring(sp, t.len, 0);
+	CHECKOUT();
 	return &tr;
 }
 

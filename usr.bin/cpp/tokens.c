@@ -1,6 +1,11 @@
+#ifdef __ORCAC__
+segment "cpp_3_____";
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "cpp.h"
 
 static char wbuf[2*OBS];
@@ -306,7 +311,7 @@ puttokens(Tokenrow *trp)
 		memcpy(wbp, p, len);
 		wbp += len;
 		if (wbp >= &wbuf[OBS]) {
-			write(1, wbuf, OBS);
+			write(STDOUT_FILENO, wbuf, OBS);
 			if (wbp > &wbuf[OBS])
 				memcpy(wbuf, wbuf+OBS, wbp - &wbuf[OBS]);
 			wbp -= OBS;
@@ -321,7 +326,7 @@ void
 flushout(void)
 {
 	if (wbp>wbuf) {
-		write(1, wbuf, wbp-wbuf);
+		write(STDOUT_FILENO, wbuf, wbp-wbuf);
 		wbp = wbuf;
 	}
 }
@@ -343,9 +348,31 @@ setempty(Tokenrow *trp)
 char *
 outnum(char *p, int n)
 {
+#ifdef __appleiigs__
+	int i, m;
+	char *q = p;
+
+	/* find out how many decimal places there are */
+	m = n;
+	i = 1;
+	while ((m / 10) != 0) {
+		i++;
+		m /= 10;
+	}
+	p += i;
+	m = n;
+	do {
+		*p = m%10 + '0';
+		m = m/10;
+		--p;
+		--i;
+	} while (i > 0);
+	assert(q == p);
+#else
 	if (n>=10)
 		p = outnum(p, n/10);
 	*p++ = n%10 + '0';
+#endif
 	return p;
 }
 

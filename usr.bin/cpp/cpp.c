@@ -1,4 +1,8 @@
+#ifdef __ORCAC__
+segment "cpp_3_____";
+#endif
 #include <stdio.h>
+#undef fputc
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -17,15 +21,27 @@ int	ifdepth;
 int	ifsatisfied[NIF];
 int	skipping;
 
-char rcsid[] = "$Revision: 1.1 $ $Date: 1997/10/30 05:51:12 $";
+char rcsid[] = "$Revision: 1.2 $ $Date: 1997/12/02 08:05:52 $";
+
+#if defined(__GNO__) && defined(__STACK_CHECK__)
+#include <err.h>
+#include <gno/gno.h>
+static void
+printStack (void) {
+	warnx("stack usage: %d bytes\n", _endStackCheck());
+}
+#endif
 
 int
 main(int argc, char **argv)
 {
 	Tokenrow tr;
 	time_t t;
-	char ebuf[BUFSIZ];
+	STATIC char ebuf[BUFSIZ];
 
+#if defined(__GNO__) && defined(__STACK_CHECK__)
+	atexit(printStack);
+#endif
 	setbuf(stderr, ebuf);
 	t = time(NULL);
 	curtime = ctime(&t);
@@ -262,6 +278,11 @@ dofree(void *p)
 {
 	free(p);
 }
+
+#ifdef __ORCAC__	/* required for variadic routines */
+#pragma debug 0
+#pragma optimize 78
+#endif
 
 void
 error(enum errtype type, char *string, ...)

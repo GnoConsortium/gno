@@ -1,0 +1,17 @@
+/*
+ * $Id: cpp.rez,v 1.1 1997/12/02 08:05:52 gdr Exp $
+ */
+
+#include "Types.Rez"
+
+resource rVersion (0x1, purgeable3, nocrossbank) {
+
+	{ 2, 0, 0,	/* version */
+	  release,	/* development|alpha|beta|final|release */
+          0		/* non-final release number */
+        },
+        verUS,
+        "cpp",
+        "C Preprocessor\n"
+        "Ported by Devin Reade for GNO v2.0.6.  Originally from lcc v4.0."
+};

@@ -1,5 +1,10 @@
+#ifdef __ORCAC__
+segment "cpp_3_____";
+#endif
 #include <stdlib.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "cpp.h"
 
 Includelist	includelist[NINCLUDE];
@@ -9,10 +14,11 @@ extern char	*objname;
 void
 doinclude(Tokenrow *trp)
 {
-	char fname[256], iname[256];
+	STATIC char fname[256], iname[256];
 	Includelist *ip;
 	int angled, len, fd, i;
 
+	CHECKIN();
 	trp->tp += 1;
 	if (trp->tp>=trp->lp)
 		goto syntax;
@@ -45,7 +51,7 @@ doinclude(Tokenrow *trp)
 		goto syntax;
 	fname[len] = '\0';
 	if (fname[0]=='/') {
-		fd = open(fname, 0);
+		fd = open(fname, O_RDONLY); /* gdr: last arg previously zero */
 		strcpy(iname, fname);
 	} else for (fd = -1,i=NINCLUDE-1; i>=0; i--) {
 		ip = &includelist[i];
@@ -60,9 +66,9 @@ doinclude(Tokenrow *trp)
 			break;
 	}
 	if ( Mflag>1 || !angled&&Mflag==1 ) {
-		write(1,objname,strlen(objname));
-		write(1,iname,strlen(iname));
-		write(1,"\n",1);
+		write(STDOUT_FILENO,objname,strlen(objname));
+		write(STDOUT_FILENO,iname,strlen(iname));
+		write(STDOUT_FILENO,"\n",1);
 	}
 	if (fd >= 0) {
 		if (++incdepth > 10)
@@ -73,9 +79,11 @@ doinclude(Tokenrow *trp)
 		trp->tp = trp->bp+2;
 		error(ERROR, "Could not find include file %r", trp);
 	}
+	CHECKOUT();
 	return;
 syntax:
 	error(ERROR, "Syntax error in #include");
+	CHECKOUT();
 	return;
 }
 

@@ -1,6 +1,10 @@
+#ifdef __ORCAC__
+segment "cpp_1_____";
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "cpp.h"
 
 /*

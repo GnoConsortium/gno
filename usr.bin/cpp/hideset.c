@@ -1,3 +1,6 @@
+#ifdef __ORCAC__
+segment "cpp_3_____";
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -40,17 +43,22 @@ int
 newhideset(int hs, Nlist *np)
 {
 	int i, len;
-	Nlist *nhs[HSSIZ+3];
+	STATIC Nlist *nhs[HSSIZ+3];
 	Hideset hs1, hs2;
 
+	CHECKIN();
 	len = inserths(nhs, hidesets[hs], np);
 	for (i=0; i<nhidesets; i++) {
 		for (hs1=nhs, hs2=hidesets[i]; *hs1==*hs2; hs1++, hs2++)
-			if (*hs1 == NULL)
+			if (*hs1 == NULL) {
+				CHECKOUT();
 				return i;
+			}
 	}
-	if (len>=HSSIZ)
+	if (len>=HSSIZ) {
+		CHECKOUT();
 		return hs;
+	}
 	if (nhidesets >= maxhidesets) {
 		maxhidesets = 3*maxhidesets/2+1;
 		hidesets = (Hideset *)realloc(hidesets, (sizeof (Hideset *))*maxhidesets);
@@ -60,6 +68,7 @@ newhideset(int hs, Nlist *np)
 	hs1 = (Hideset)domalloc(len*sizeof(Hideset));
 	memmove(hs1, nhs, len*sizeof(Hideset));
 	hidesets[nhidesets] = hs1;
+	CHECKOUT();
 	return nhidesets++;
 }
 
