@@ -1,0 +1,60 @@
+# Tests for pwd command; invoked by command file "fulltests"
+#   Written by Dave Tribby (September 1997)
+#   $Id: dotests,v 1.1 1997/10/03 04:02:40 gdr Exp $
+
+# Location of the pwd command to be tested
+set cmdir=":src:gno:bin:pwd"
+set testcmd="$cmdir:pwd"
+
+# Echoing to a file leaves a blank at the end of the line;
+# clean this up with the tr command
+set cleancmd=":src:gno:usr.bin:tr:tr -d ' '"
+
+# Record starting time
+echo -n "Testing command $testcmd beginning at"
+date
+
+set cmp=":tmp:pwd.gsh"
+set dest=":tmp:pwd.new"
+
+echo "Command directory ($cmdir)"
+cd $cmdir
+echo "$cmdir" | $cleancmd > $cmp
+$testcmd > $dest
+echo "  Completion status = $status"
+echo "Checking results against gsh built-in (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set dir=":tmp"
+echo "Temporary directory ($dir)"
+cd $dir
+echo "$dir" | $cleancmd > $cmp
+$testcmd > $dest
+echo "  Completion status = $status"
+echo "Checking results against gsh built-in (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set dir=":usr:include"
+echo "Header directory ($dir)"
+cd $dir
+echo "$dir" | $cleancmd > $cmp
+$testcmd > $dest
+echo "  Completion status = $status"
+echo "Checking results against gsh built-in (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+
+echo "***** Error Messages *****"
+
+set dest=":tmp:err.cond"
+
+echo ""
+echo "Expected error: illegal option"
+$testcmd -x > $dest
+echo "  Error completion status = $status (expected: 1)"

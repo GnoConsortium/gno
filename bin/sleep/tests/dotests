@@ -1,0 +1,43 @@
+# Tests for sleep command; invoked by command file "fulltests"
+#   Written by Dave Tribby (September 1997)
+#   $Id: dotests,v 1.1 1997/10/03 04:02:41 gdr Exp $
+
+# Location of the pwd command to be tested
+set testcmd="../sleep"
+
+# Record starting time
+echo -n "Testing command $testcmd beginning at"
+date
+
+set time=2
+echo "Sleep $time seconds"
+date
+$testcmd $time
+set teststatus=$status
+date
+echo "  Completion status = $teststatus"
+echo ""
+
+set time=10
+echo "Sleep $time seconds"
+date
+$testcmd $time
+set teststatus=$status
+date
+echo "  Completion status = $teststatus"
+echo ""
+
+
+echo "***** Error Messages *****"
+
+set dest="/tmp/err.cond"
+
+echo ""
+echo "Expected error: illegal option"
+$testcmd -x
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+echo "Expected error: usage string only"
+$testcmd
+echo "  Error completion status = $status (expected: 1)"

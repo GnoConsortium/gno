@@ -1,0 +1,10 @@
+Name:    sleep
+Version: 2.0 (September 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin/sleep
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+ Suspend execution for an interval of time.
+  
