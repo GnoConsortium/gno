@@ -1,0 +1,31 @@
+$Id: README.src,v 1.1 1997/03/11 08:08:06 gdr Exp $
+
+Have a look in the NOTES directory, especially the files "status"
+and "notes.*".  There are notes in there on changed header files --
+I have tried to minimize the impact on your work due to changed header
+files, but there are a few to note.  Here are two other comments
+from the "notes.*" file that I would like to bring to your attention:
+
+        Currently there is a problem with the nroff package,
+        and many of the man pages will not look right on the
+        IIgs.  I'm working on an update of nroff.  Putting it under
+        Insight has shown a significant number of memory trashing
+        bugs (which are now gone).
+
+        I'm not done mkso yet (mkso is the program that creates
+        the .so links required for the various manual pages).  I
+        still have to make it check for the legality of file names
+        on the current file system.  I also plan to make it such
+        that one can place those .so links that require HFS on 
+        another partition, and still have them find the sourced
+        files.
+
+I've also included built versions of libc and libutil.  IT IS CRITICAL
+THAT THESE LIBRARIES ONLY BE USED WITH THE VERSION OF ORCALIB FOR WHICH
+THEY WERE COMPILED, since struct FILE has changed.  See the comments in
+the NOTES/README.beta and orcacdefs/defaults.h files.
+
+Also as a reminder, the gno-beta mailing list has been set up.  To
+join it, send email to <majordomo@myrias.com> with the following text
+and nothing else in the body of the message:
+	subscribe gno-beta
