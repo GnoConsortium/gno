@@ -1,0 +1,596 @@
+#  Test gsh built-in commands
+#   Written by Dave Tribby beginning June 1998
+#   $Id: dotests,v 1.1 1999/11/30 20:28:24 tribby Exp $
+# -----------------------------------------------------------------------
+# Support commands that must be available (usually in tests directory)
+#   echoparams		echo parameters passed from command line;
+#			uses reparse.asm assembly language subroutine
+#   callsystem		call the system() library subroutine
+# Support exec files that must be available (usually in tests directory)
+#   prin10params	prints $0 through $10
+#   singletc		execute a single test and compare results
+#   releasemem		releases most gsh memory; use with debug mem mgr
+#
+# Additional job control tests that cannot be part of this file are
+# found in testjobs and testjobs2.
+#
+# Output comparison files are read from the directory specified within this
+# script by variable $cmpout (/src/gno/bin/gsh/tests/bi.out/). NOTE: the
+# hash.list file needs updating when contents of /bin and /usr/bin changes.
+# -----------------------------------------------------------------------
+
+# NOTE: $PATH might be messed up, so use full path for sed
+set SED=/usr/bin/sed
+
+# Clean up the alias environment, so results are consistent
+# A. Generate the cleanup aliases command file
+set tmpcmd=/tmp/cleanalias
+alias | $SED -e 's/:.*//' -e 's/^/unalias /' > $tmpcmd
+# B. Run the cleanup command
+echo -n "Removing all aliases..."
+source $tmpcmd
+echo
+
+# Clean up the variable environment, so results are consistent
+# A. Generate the cleanup variables command file
+set tmpcmd=/tmp/cleanenv
+set | $SED -e '/TERM/d' -e 's/ = .*//' -e 's/^/unset /' > $tmpcmd
+# B. Run the cleanup command
+echo -n "Removing environment variables..."
+source $tmpcmd
+echo
+
+# Add back a few environment variables
+
+# Location of shell to be tested
+set objdir /obj/gno/bin/gsh
+setenv SHELL=$objdir/gsh
+
+setenv USER=test
+
+set testdir=/src/gno/bin/gsh/tests
+setenv HOME=$testdir
+
+setenv PATH "$objdir"
+set PATH "$testdir $PATH /bin /usr/bin"
+export PATH
+rehash
+
+# Directories for holding test output and comparison output
+setenv cmpdir=$testdir/bi.out
+setenv outdir=/tmp/bi.out
+
+# Use either cmp or diff for comparing files
+setenv compare="diff"
+setenv compare="cmp"
+
+# Create directory under /tmp to hold results
+# GNO's rm command is no longer implemented under the cp command
+set RM="/bin/rm"
+
+# Create directory under /tmp to hold results
+echo -n "Removing output directory $outdir..."
+$RM -rf $outdir/*
+rmdir $outdir
+echo
+mkdir $outdir
+
+
+echo " = = = = = Start of $SHELL built-in tests = = = = ="
+echo ""
+
+# Use clear at beginning
+setenv testcmd="clear"
+echo "Test: $testcmd"
+$testcmd
+echo "  Completion status for $testcmd = $status"
+echo ""
+
+# There should be no aliases at this point
+setenv testcmd="alias"
+setenv listfile="$testcmd.0.list"
+singletc
+
+# Add a few aliases back in
+echo "Adding aliases for ls and mv"
+alias ls 'ls -l'
+alias mv 'cp -p mv'
+
+setenv testcmd="alias"
+setenv listfile="$testcmd.list"
+singletc
+
+setenv testcmd="alias"
+setenv testarg="newcmd date"
+echo "Test: $testcmd $testarg"
+$testcmd $testarg
+echo "  Completion status = $status"
+unset testarg
+
+setenv testcmd="unalias"
+setenv testarg="newcmd"
+echo "Test: $testcmd $testarg"
+$testcmd $testarg
+echo "  Completion status = $status"
+unset testarg
+
+setenv testcmd="which"
+setenv testarg="ls"
+setenv listfile="$testcmd.0.list"
+singletc
+
+setenv testcmd="unalias"
+echo "Test: $testcmd $testarg"
+$testcmd $testarg
+echo "  Completion status = $status"
+
+setenv testcmd="which"
+setenv listfile="$testcmd.list"
+singletc
+unset testarg
+
+
+setenv testcmd="echo"
+echo "Test: $testcmd"
+setenv listfile="$testcmd.list"
+echo '\- - - - - - - - - -  E C H O  T E S T S  - - - - - - - - - -'  >  $outdir/$listfile
+echo                                                                  >> $outdir/$listfile
+echo Testing  whether  the  echo  command  inserts  an  extra  space: >> $outdir/$listfile
+echo -n "There should be no space between ->"                         >> $outdir/$listfile
+echo "<- the '->' and '<-'"                                           >> $outdir/$listfile
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo ""
+
+set testcmd=sed
+echo "Test: $testcmd and redirected stdin/stdout"
+setenv infile="${testcmd}0.in"
+setenv listfile1="${testcmd}1.list"
+echo "This is a test"             >  $outdir/$infile
+echo "This is another test"       >> $outdir/$infile
+$testcmd -e's/test/success/' < $outdir/$infile > $outdir/$listfile1
+$compare $cmpdir/$listfile1 $outdir/$listfile1
+echo "  comparison status = $status for $listfile1"
+echo ""
+                             
+setenv listfile2="${testcmd}2.list"
+echo "Test: $testcmd and pipes"
+cat $outdir/$infile | $testcmd -e's/test/success/' | cat > $outdir/$listfile2
+$compare $cmpdir/$listfile1 $outdir/$listfile2
+echo "  comparison status = $status for $listfile2"
+echo ""
+
+
+setenv testcmd="commands"
+setenv listfile="$testcmd.list"
+singletc
+
+
+setenv testcmd="export"
+
+setenv testcmd="set"
+setenv listfile="$testcmd.list"
+singletc
+
+
+## NOTE: need to clean up prefixes so results are consistent
+
+# NOTE: since prefix is a non-forked built-in command, it must be
+#       executed from a new shell to capture its output
+setenv testcmd="$SHELL"
+setenv testarg="-f prefix"
+setenv listfile="prefix.list"
+singletc
+unset testarg
+
+
+setenv testcmd="pushd"
+setenv testarg="$cmpdir"
+echo "Test: $testcmd $testarg"
+$testcmd $testarg
+echo "  Completion status = $status"
+unset testarg
+
+setenv testcmd="dirs"
+echo "Test: $testcmd $testarg"
+$testcmd $testarg
+echo "  Completion status = $status"
+unset testarg
+
+setenv testcmd="cd"
+setenv testarg="$outdir"
+echo "Test: $testcmd $testarg"
+$testcmd $testarg
+echo "  Completion status = $status"
+unset testarg
+
+# NOTE: since pwd is a non-forked built-in command, it must be
+#       executed from a new shell to capture its output
+setenv testcmd="$SHELL"
+setenv testarg="-f pwd"
+setenv listfile="pwd.list"
+singletc
+unset testarg
+
+setenv testcmd="chdir"
+setenv testarg="/bin"
+echo "Test: $testcmd $testarg"
+$testcmd $testarg
+echo "  Completion status = $status"
+unset testarg
+
+setenv testcmd="$SHELL"
+setenv testarg="-f pwd"
+setenv listfile="pwd.2.list"
+singletc
+unset testarg
+
+setenv testcmd="popd"
+echo "Test: $testcmd $testarg"
+$testcmd $testarg
+echo "  Completion status = $status"
+unset testarg
+
+
+## NOTE: may need shorter path so results are consistent,
+##       but also need access to /bin and /usr/bin commands.
+setenv testcmd="rehash"
+echo "Test: $testcmd $testarg"
+$testcmd $testarg
+echo "  Completion status = $status"
+
+## Comparison file hash.list may need to be replaced, depending upon
+## changes to contents of /bin/ and /usr/bin/ directories.
+setenv testcmd="hash"
+setenv listfile="$testcmd.list"
+singletc
+
+# Create two commands by the same name in different directories
+setenv testcmd="pathtst"
+echo "echo This is test command number 1" > /tmp/$testcmd
+chtyp -l exec /tmp/$testcmd
+echo "echo This is test command number 2" > $outdir/$testcmd
+chtyp -l exec $outdir/$testcmd
+                                
+# Add those directories to $PATH (holding onto the old $PATH)
+setenv holdpath="$PATH"
+setenv PATH="/tmp $outdir $PATH"
+rehash
+setenv listfile="$testcmd.1.list"
+singletc
+
+# Reorder the search of $PATH and try again
+setenv OLDPATHMODE=1
+rehash
+setenv testarg="with OLDPATHMODE set"
+setenv listfile="$testcmd.2.list"
+singletc
+unset testarg
+
+# Reset environment so $PATH acts in the expected way
+setenv PATH="$holdpath"
+unset OLDPATHMODE
+unset holdpath
+rehash
+$RM /tmp/$testcmd $outdir/$testcmd
+    
+
+setenv testcmd="unhash"
+
+
+# Job control: see separate file "testjobs", which must be sourced.
+
+setenv testcmd="bg"
+
+setenv testcmd="fg"
+
+setenv testcmd="kill"
+
+setenv testcmd="stop"
+
+setenv testcmd="jobs"
+
+
+
+# Cannot test output from these...just status
+
+setenv testcmd="tset"
+echo "Test: $testcmd"
+$testcmd
+echo "  Completion status = $status"
+echo ""
+
+setenv testcmd="setdebug"
+setenv testarg="-pathtrace"
+echo "Test: $testcmd"
+$testcmd $testarg
+echo "  Completion status = $status"
+echo ""
+unset testarg
+
+setenv testcmd="bindkey"
+
+
+setenv testcmd="history"
+echo "Test: $testcmd"
+$testcmd
+echo "  Completion status = $status"
+
+setenv testcmd="ps"
+echo "Test: $testcmd"
+$testcmd
+echo "  Completion status = $status"
+echo ""
+
+
+# These have been tested enough through other uses
+
+setenv testcmd="source"
+
+setenv testcmd="unset"
+
+setenv testcmd="setenv"
+
+
+
+# Cannot figure how to test these...
+
+setenv testcmd="exit"
+
+setenv testcmd="edit"
+
+
+# Create a gsh execution file with a forked command in it and execute
+# it two different ways. (From "cmdtest")
+echo
+echo "= =  Testing execution file with forked commands = = = = = = = "
+
+set tmpcmd=/tmp/testcmds
+echo -n > $tmpcmd
+chtyp -l exec $tmpcmd
+
+set echo_cmd="/bin/echo"
+set ps_cmd="/bin/ps -l"
+echo "$echo_cmd $ps_cmd" >>  $tmpcmd
+echo "$ps_cmd"           >>  $tmpcmd
+
+# Execute the command
+echo -n "= =  Executing as a command: "
+$tmpcmd
+
+# Source the command
+echo -n "= =  Sourcing the command: "
+source $tmpcmd
+
+echo "= =  Execution files did not hang: test successful! = = = = = ="
+
+
+echo
+echo " = = = = = Start of $SHELL commandline expansion tests  = = = ="
+echo
+
+setenv home=/src/gno/bin/gsh/tests
+
+setenv listfile="tilde.list"
+echo 'Test: echo ~/ ~:'
+echo ~/ ~: > $outdir/$listfile
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo ""
+
+setenv listfile="glob.list"
+echo 'ls *.c bad*name dot*'
+ls *.c bad*name dot* > $outdir/$listfile
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo ""
+
+setenv listfile="multi.list"
+echo 'Test: multiple commands separated by ";"'
+set t_num=0
+set t_num=1 ; echo "Test variable has been set to $t_num" > $outdir/$listfile
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo ""
+unset t_num
+
+setenv listfile="semi.list"
+echo 'Test: semicolons within quoted parameters'
+echoparams "This ; will" 'see if ; are confusing' > $outdir/$listfile
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo ""
+
+setenv listfile="null.list"
+echo 'Test: null parameters'
+echoparams "Parameter #1" "" p3 '' "Last param" > $outdir/$listfile
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo ""
+
+# Next two commands operate with KEEPQUOTE environment variable set
+
+setenv listfile=keep.list
+echo 'Test: keep single quotes around parameters'
+setenv KEEPQUOTE=1
+echoparams 'Parameter #1' "" p3 '' "Last param" > $outdir/$listfile
+echo "  Completion status = $status"
+unset KEEPQUOTE
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo ""
+
+setenv listfile=keep2.list
+echo 'Test: keep single quotes around parameters, again'
+setenv KEEPQUOTE=1
+echoparams '{ print "Hello, world" }' filename > $outdir/$listfile
+echo "  Completion status = $status"
+unset KEEPQUOTE
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo ""
+
+
+# Ensure that $0 - $10 are created appropriately
+setenv testcmd="print10params"
+setenv listfile="print10.list"
+echo "Test: $testcmd"
+$testcmd p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 > $outdir/$listfile
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo
+
+echo
+echo " = = = = = =  Start of $SHELL system() interface tests  = = = = ="
+echo
+
+setenv listfile="nullsys.list"
+echo 'Test: call system() with null parameter'
+callsystem "" > $outdir/$listfile
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo ""
+
+set sys_cmd "ps"
+echo "Test: concurrent execution of $sys_cmd"
+callsystem "$sys_cmd" & ; callsystem "$sys_cmd"
+echo
+set sys_cmd "/bin/ps -l"
+echo "Test: concurrent execution of $sys_cmd"
+callsystem "$sys_cmd" & ; callsystem "$sys_cmd"
+echo
+set sys_cmd "pwd"
+echo "Test: concurrent execution of $sys_cmd"
+callsystem "$sys_cmd" & ; callsystem "$sys_cmd"
+echo
+set sys_cmd "rehash"
+echo "Test: concurrent execution of $sys_cmd"
+callsystem "$sys_cmd" & ; callsystem "$sys_cmd"
+echo
+set sys_cmd "hash"
+echo "Test: concurrent execution of $sys_cmd"
+callsystem "$sys_cmd" & ; callsystem "$sys_cmd"
+echo
+echo "= = =  Execution did not hang: test successful!  = = = = ="
+
+echo
+echo " = = = = = $SHELL commands' usage strings and status test  = = = ="
+echo
+
+#    Non-forked commands
+
+bg a b c
+echo "  Completion status = $status (expected 1)"
+
+chdir a b c
+echo "  Completion status = $status (expected 1)"
+
+cd a b c
+echo "  Completion status = $status (expected 1)"
+
+clear a b c
+echo "  Completion status = $status (expected 1)"
+
+export
+echo "  Completion status = $status (expected 1)"
+
+fg a b c
+echo "  Completion status = $status (expected 1)"
+
+jobs a b c
+echo "  Completion status = $status (expected 1)"
+
+kill a b c
+echo "  Completion status = $status (expected 1)"
+
+popd a b c
+echo "  Completion status = $status (expected 1)"
+
+prefix a b c
+echo "  Completion status = $status (expected 1)"
+
+pushd a b c
+echo "  Completion status = $status (expected 1)"
+
+pwd a b c
+echo "  Completion status = $status (expected 1)"
+
+rehash a b c
+echo "  Completion status = $status (expected 1)"
+
+stop a b c
+echo "  Completion status = $status (expected 1)"
+
+tset a b c
+echo "  Completion status = $status (expected 1)"
+
+unalias
+echo "  Completion status = $status (expected 1)"
+
+unhash a b c
+echo "  Completion status = $status (expected 1)"
+
+unset
+echo "  Completion status = $status (expected 1)"
+
+
+#    Forked commands
+
+commands a b b
+echo "  Completion status = $status (expected 1)"
+
+setdebug a b c
+echo "  Completion status = $status (expected 1)"
+
+dirs a b c
+echo "  Completion status = $status (expected 1)"
+
+hash a b c
+echo "  Completion status = $status (expected 1)"
+
+ps a b c
+echo "  Completion status = $status (expected 1)"
+
+set -x
+echo "  Completion status = $status (expected 1)"
+
+setenv -x
+echo "  Completion status = $status (expected 1)"
+
+bindkey a b c
+echo "  Completion status = $status (expected 1)"
+
+echo -x
+echo "  Completion status = $status (expected 1)"
+
+history a b c
+echo "  Completion status = $status (expected 1)"
+
+which
+echo "  Completion status = $status (expected 1)"
+
+edit
+echo "  Completion status = $status (expected 1)"
+
+echo
+echo " = = = = = End of $SHELL tests = = = = ="
+echo
+echo "Note: To test job control commands, source testjobs and testjobs2."

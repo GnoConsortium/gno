@@ -1,0 +1,49 @@
+#  Release as much memory as possible from current invocation of gsh.
+#  This is only useful when using the debug version of memory routines
+#  found in mmdebug.asm, because the normal memory routines hold on to
+#  allocated memory for reuse.  The steps for using this to check for
+#  memory leaks:
+#	- link gsh with debug memory management routines
+#	- execute that version (it will be much slower than normal)
+#	- perform activities with the debug gsh
+#	- source this file
+#	- get memory manager ID of the debug gsh (via ps, for example)
+#	- using the NiftyList NDA, list memory allocated by MMID+$0D00;
+#	  for example, if MMID=1009 enter the NiftyList command
+#		1D09id
+#	  There should be several blocks of size $400, plus blocks for
+#	  strings holding the current directory, the current command,
+#	  and the name of the history file.  All other allocated memory
+#	  is suspicious. (If a gsh command is killed, its memory will
+#	  probably be left allocated.)
+#   Written by Dave Tribby (November 1998)
+#   $Id: releasemem,v 1.1 1999/11/30 20:28:24 tribby Exp $
+
+echo " = = = = = Releasing gsh allocated memory = = = = ="
+echo " Note: This command should be sourced, not executed"
+echo
+
+# NOTE: $PATH might be messed up, so use full path for sed and cat
+set SED=/usr/bin/sed
+set CAT=/bin/cat
+
+echo -n "Removing all aliases..."
+# A. Generate the cleanup aliases command file
+set tmpcmd=/tmp/cleanalias
+alias | $SED -e 's/:.*//' -e 's/^/unalias /' > $tmpcmd
+# B. Run the cleanup command
+source $tmpcmd
+echo
+
+echo -n "Releasing hash table memory..."
+unhash
+echo
+
+echo -n "Removing directory stack..."
+dirs | $SED -e's/[^ ]* [^ ]*/popd; /' > $tmpcmd
+source $tmpcmd
+
+echo -n "Reduce the history to 1 (minimum)"
+setenv HISTORY=1
+echo
+echo "=> Manually enter any command for final release of history memory"

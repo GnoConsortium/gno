@@ -1,0 +1,10 @@
+# Run one test and compare results.
+# Before calling, set $testcmd, $testarg, $listfile
+
+echo "Test: $testcmd $testarg"
+$testcmd $testarg > $outdir/$listfile
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare $cmpdir/$listfile $outdir/$listfile
+echo "  comparison status = $status for $listfile"
+echo ""

@@ -1,0 +1,29 @@
+#  Test gsh built-in job commands
+#   Written by Dave Tribby (December 1998)
+#   $Id: testjobs2,v 1.1 1999/11/30 20:28:24 tribby Exp $
+#  This shell exec file must be sourced rather than run
+
+echo " = = = = = Test of $SHELL job control"
+echo ""
+echo "NOTE: $0 must be sourced rather than run; otherwise it kills itself!"
+echo ""
+
+/bin/sleep 15 &
+
+echo
+echo "Should show one job"
+jobs
+
+echo
+echo "Kill the first job"
+kill %1
+
+/bin/sleep 5 &
+
+echo
+echo "There should now be another job"
+jobs
+
+echo
+echo "Wait on the final job"
+fg

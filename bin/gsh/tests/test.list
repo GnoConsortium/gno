@@ -1,0 +1,446 @@
+Script started on: Fri Nov 26 21:55:46 1999
+Executing gshrc from directory /H2/NewDev
+[61] tests=> dotests ; exit
+Removing all aliases...
+Removing environment variables...
+hashed 118 files
+Removing output directory /tmp/bi.out...
+ = = = = = Start of /obj/gno/bin/gsh/gsh built-in tests = = = = =
+Test: clear
+  Completion status for clear = 0
+Test: alias 
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for alias.0.list
+Adding aliases for ls and mv
+Test: alias 
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for alias.list
+Test: alias newcmd date
+  Completion status = 0
+Test: unalias newcmd
+  Completion status = 0
+Test: which ls
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for which.0.list
+Test: unalias ls
+  Completion status = 0
+Test: which ls
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for which.list
+Test: echo
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for echo.list
+Test: sed and redirected stdin/stdout
+  comparison status = 0 for sed1.list
+Test: sed and pipes
+  comparison status = 0 for sed2.list
+Test: commands 
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for commands.list
+Test: set 
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for set.list
+Test: /obj/gno/bin/gsh/gsh -f prefix
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for prefix.list
+Test: pushd /src/gno/bin/gsh/tests/bi.out
+~/bi.out ~ 
+  Completion status = 0
+Test: dirs 
+~/bi.out ~ 
+  Completion status = 0
+Test: cd /tmp/bi.out
+  Completion status = 0
+Test: /obj/gno/bin/gsh/gsh -f pwd
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for pwd.list
+Test: chdir /bin
+  Completion status = 0
+Test: /obj/gno/bin/gsh/gsh -f pwd
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for pwd.2.list
+Test: popd 
+~ 
+  Completion status = 0
+Test: rehash 
+hashed 118 files
+  Completion status = 0
+Test: hash 
+  Completion status = 0
+Checking results against control file (no differences expected)
+[datafork] /src/gno/bin/gsh/tests/bi.out/hash.list differ: /tmp/bi.out/hash.list char 18, line 1
+  comparison status = 1 for hash.list
+hashed 121 files
+Test: pathtst 
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for pathtst.1.list
+hashed 121 files
+Test: pathtst with OLDPATHMODE set
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for pathtst.2.list
+hashed 118 files
+Test: tset
+  Completion status = 0
+Test: setdebug
+  Completion status = 0
+Test: history
+   1:  less ../Makefile
+   2:  pushd /src/gno
+   3:  fgrep clean *.mk
+   4:  more binrules.mk
+   5:  popd
+   6:  edit Makefile
+   7:  dmake -u clean
+   8:  dmake -n clean
+   9:  dmake -n clobber
+  10:  ls
+  11:  dmake clobber
+  12:  ls
+  13:  ls *.c
+  14:  more testfork.c
+  15:  ls
+  16:  edit dotests
+  17:  more shellenv.c
+  18:  ls *.c
+  19:  ll calls*
+  20:  edit Makefile *.c
+  21:  ll
+  22:  more cmdtest4fr
+  23:  rm cmdtest4fr
+  24:  more cmdtestmul
+  25:  rm cmdtestmul
+  26:  ls
+  27:  more dotests
+  28:  ls
+  29:  edit dotests
+  30:  chtyp -l exec dotests
+  31:  edit dotests
+  32:  ll
+  33:  more fulltests.mul
+  34:  more /var/tmp/test.list
+  35:  edit /var/tmp/test.list
+  36:  ls
+  37:  more releasemem
+  38:  ls
+  39:  more singletc
+  40:  fgrep singletc dotests
+  41:  edit dotests
+  42:  ls
+  43:  more smallbi
+  44:  ls
+  45:  more testedit
+  46:  ll test*
+  47:  edit Makefile
+  48:  clrff
+  49:  clrff
+  50:  ls
+  51:  mkdir extra
+  52:  mv singletc testedit extra/
+  53:  ls -n
+  54:  mv fulltests.mul extra/
+  55:  more cmdtest
+  56:  mv cmdtest extra/
+  57:  ls
+  58:  dmake clean
+  59:  dmake clobber
+  60:  exit
+  61:  dotests ; exit
+  Completion status = 0
+Test: ps
+   ID  STATE   TT MMID  UID   TIME COMMAND
+    1  ready   co 1002 0000  23:12 NullProcess
+    2  paused  nu 1004 0000   0:01 init
+    3  blocked nu 1003 0000   0:00 syslogd
+  382  paused  co 1006 0000   0:22 -gsh
+  539  waiting co 1005 0000   0:00 /src/gno/build.tools/fulltests
+  548  paused  07 1011 0000   0:05 gsh
+  547  waiting 06 1010 0000   0:00 script /tmp/rawlist
+  549  ready   06 100F 0000   2:34 forked child of script /tmp/rawlist
+  558  ready   07 1008 0000   0:14 dotests
+  820  running 07 1012 0000   0:00 forked child of dotests
+  Completion status = 0
+= =  Testing execution file with forked commands = = = = = = = 
+= =  Executing as a command: /bin/ps -l 
+   ID  PPID PGRP STATE     TT MMID USER     TIME COMMAND
+    1     1   00 ready     co 1002 0000    23:12 NullProcess
+    2     1   02 paused    00 1004 0000    00:01 init
+    3     2   02 blocked   00 1003 0000    00:00 syslogd
+  382     2   04 paused    co 1006 0000    00:22 -gsh
+  539   382   03 waitsigch co 1005 0000    00:00 /src/gno/build.tools/fullte...
+  548   547   06 paused    07 1011 0000    00:05 gsh
+  547   539   03 waitsigch 06 1010 0000    00:00 script /tmp/rawlist
+  549   547   03 ready     06 100F 0000    02:38 forked child of process 547
+  558   548   05 waitsigch 07 1008 0000    00:14 dotests
+  838   558   05 waitsigch 07 1012 0000    00:00 /tmp/testcmds
+  840   838   05 running   07 100D 0000    00:00 /bin/ps -l
+= =  Sourcing the command: /bin/ps -l 
+   ID  PPID PGRP STATE     TT MMID USER     TIME COMMAND
+    1     1   00 ready     co 1002 0000    23:12 NullProcess
+    2     1   02 paused    00 1004 0000    00:01 init
+    3     2   02 blocked   00 1003 0000    00:00 syslogd
+  382     2   04 paused    co 1006 0000    00:22 -gsh
+  539   382   03 waitsigch co 1005 0000    00:00 /src/gno/build.tools/fullte...
+  548   547   06 paused    07 1011 0000    00:05 gsh
+  547   539   03 waitsigch 06 1010 0000    00:00 script /tmp/rawlist
+  549   547   03 ready     06 100F 0000    02:39 forked child of process 547
+  558   548   05 paused    07 1008 0000    00:15 dotests
+  843   558   07 running   07 100D 0000    00:00 /bin/ps -l
+= =  Execution files did not hang: test successful! = = = = = =
+ = = = = = Start of /obj/gno/bin/gsh/gsh commandline expansion tests  = = = =
+Test: echo ~/ ~:
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for tilde.list
+ls *.c bad*name dot*
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for glob.list
+Test: multiple commands separated by ";"
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for multi.list
+Test: semicolons within quoted parameters
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for semi.list
+Test: null parameters
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for null.list
+Test: keep single quotes around parameters
+"  Completion status = 0"
+Checking results against control file (no differences expected)
+  comparison status = 0 for keep.list
+Test: keep single quotes around parameters, again
+"  Completion status = 0"
+Checking results against control file (no differences expected)
+  comparison status = 0 for keep2.list
+Test: print10params
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for print10.list
+ = = = = = =  Start of /obj/gno/bin/gsh/gsh system() interface tests  = = = = =
+Test: call system() with null parameter
+  Completion status = 0
+Checking results against control file (no differences expected)
+  comparison status = 0 for nullsys.list
+Test: concurrent execution of ps
+Test of system() function
+   ID  STATE   TT MMID  UID   TIME COMMAND
+    1  ready   co 1002 0000  23:12 NullProcess
+    2  paused  nu 1004 0000   0:01 init
+    3  blocked nu 1003 0000   0:00 syslogd
+  382  paused  co 1006 0000   0:22 -gsh
+  539  waiting co 1005 0000   0:00 /src/gno/build.tools/fulltests
+  548  paused  07 1011 0000   0:05 gsh
+  547  waiting 06 1010 0000   0:00 script /tmp/rawlist
+  549  ready   06 100F 0000   2:58 forked child of script /tmp/rawlist
+  558  ready   07 1008 0000   0:18 dotests
+  942  ready   07 1013 0000   0:00 callsystem ps
+  943  running 07 1012 0000   0:00 forked child of callsystem ps
+  944  ready   07 1015 0000   0:00 callsystem ps
+Test of system() function
+ `ps`  returns value = 0
+   ID  STATE   TT MMID  UID   TIME COMMAND
+    1  ready   co 1002 0000  23:12 NullProcess
+    2  paused  nu 1004 0000   0:01 init
+    3  blocked nu 1003 0000   0:00 syslogd
+  382  paused  co 1006 0000   0:22 -gsh
+  539  waiting co 1005 0000   0:00 /src/gno/build.tools/fulltests
+  548  paused  07 1011 0000   0:05 gsh
+  547  waiting 06 1010 0000   0:00 script /tmp/rawlist
+  549  ready   06 100F 0000   2:59 forked child of script /tmp/rawlist
+  558  waiting 07 1008 0000   0:18 dotests
+  945  running 07 1012 0000   0:00 forked child of callsystem ps
+  944  waiting 07 1015 0000   0:00 callsystem ps
+ `ps`  returns value = 0
+Test: concurrent execution of /bin/ps -l
+Test of system() function
+   ID  PPID PGRP STATE     TT MMID USER     TIME COMMAND
+    1     1   00 ready     co 1002 0000    23:12 NullProcess
+    2     1   02 paused    00 1004 0000    00:01 init
+    3     2   02 blocked   00 1003 0000    00:00 syslogd
+Test of system() function
+  382     2   04 paused    co 1006 0000    00:22 -gsh
+  539   382   03 waitsigch co 1005 0000    00:00 /src/gno/build.tools/fullte...
+  548   547   06 paused    07 1011 0000    00:05 gsh
+  547   539   03 waitsigch 06 1010 0000    00:00 script /tmp/rawlist
+  549   547   03 ready     06 100F 0000    03:00 forked child of process 547
+  558   548   05 waitsigch 07 1008 0000    00:19 dotests
+  949   558   07 waitsigch 07 1013 0000    00:00 callsystem "/bin/ps -l"
+  950   949   07 running   07 100D 0000    00:00 /bin/ps -l
+  951   558   05 ready     07 1014 0000    00:00 callsystem "/bin/ps -l"
+   ID  PPID PGRP STATE     TT MMID USER     TIME COMMAND
+    1     1   00 ready     co 1002 0000    23:12 NullProcess
+    2     1   02 paused    00 1004 0000    00:01 init
+  952   951   05 ready     07 1015 0000    00:00 /bin/ps -l
+    3     2   02 blocked   00 1003 0000    00:00 syslogd
+  382     2   04 paused    co 1006 0000    00:22 -gsh
+ `/bin/ps -l`  returns value = 0
+  539   382   03 waitsigch co 1005 0000    00:00 /src/gno/build.tools/fullte...
+  548   547   06 paused    07 1011 0000    00:05 gsh
+  547   539   03 waitsigch 06 1010 0000    00:00 script /tmp/rawlist
+  549   547   03 ready     06 100F 0000    03:00 forked child of process 547
+  558   548   05 waitsigch 07 1008 0000    00:19 dotests
+  951   558   05 waitsigch 07 1014 0000    00:00 callsystem "/bin/ps -l"
+  952   951   05 running   07 1015 0000    00:00 /bin/ps -l
+ `/bin/ps -l`  returns value = 0
+Test: concurrent execution of pwd
+Test of system() function
+:src:gno:bin:gsh:tests:
+ `pwd`  returns value = 0
+Test of system() function
+:src:gno:bin:gsh:tests:
+ `pwd`  returns value = 0
+Test: concurrent execution of rehash
+Test of system() function
+hashed 118 files
+ `rehash`  returns value = 0
+Test of system() function
+hashed 118 files
+ `rehash`  returns value = 0
+Test: concurrent execution of hash
+Test of system() function
+apropos         ctags           gsh.r           pwd             testjobs        
+aroff           cut             gsh0            rcp             testjobs2       
+asml            date            gsh10           releasemem      time            
+assemble        day             head            removerez       touch           
+aw30            describe        help            rlogin          tr              
+awk             df              hostname        rm              true            
+basename        diff            init            rmdir           udl             
+binprint        dirname         install         rsh             uname           
+callsystem      dmake           kill            script          uncompress      
+cat             dotests         last            sed             uniq            
+catrez          du              launch          setvers         unshar          
+center          echo            less            shellenv        uptime          
+chmod           echoparams      link            singletc        vi              
+chtyp           egrep           logger          sleep           wall            
+cksum           false           ls              split           wc              
+Test of system() function
+cmp             fgrep           lseg            strings         whatis          
+cmpl            fmt             man             stty            whereis         
+coff            freeze          mkdir           su              who             
+colcrt          ftp             more            sum             whois           
+compile         getvers         nroff           tail            yankit          
+compress        grep            passwd          tar             yes             
+copycat         gsh             print10params   tee             
+cp              gsh.debug       ps              test            
+cpp             gsh.nodebug     purge           testfork        
+ `hash`  returns value = 0
+apropos         ctags           gsh.r           pwd             testjobs        
+aroff           cut             gsh0            rcp             testjobs2       
+asml            date            gsh10           releasemem      time            
+assemble        day             head            removerez       touch           
+aw30            describe        help            rlogin          tr              
+awk             df              hostname        rm              true            
+basename        diff            init            rmdir           udl             
+binprint        dirname         install         rsh             uname           
+callsystem      dmake           kill            script          uncompress      
+cat             dotests         last            sed             uniq            
+catrez          du              launch          setvers         unshar          
+center          echo            less            shellenv        uptime          
+chmod           echoparams      link            singletc        vi              
+chtyp           egrep           logger          sleep           wall            
+cksum           false           ls              split           wc              
+cmp             fgrep           lseg            strings         whatis          
+cmpl            fmt             man             stty            whereis         
+coff            freeze          mkdir           su              who             
+colcrt          ftp             more            sum             whois           
+compile         getvers         nroff           tail            yankit          
+compress        grep            passwd          tar             yes             
+copycat         gsh             print10params   tee             
+cp              gsh.debug       ps              test            
+cpp             gsh.nodebug     purge           testfork        
+ `hash`  returns value = 0
+= = =  Execution did not hang: test successful!  = = = = =
+ = = = = = /obj/gno/bin/gsh/gsh commands' usage strings and status test  = = = =
+Usage: bg [%job | pid]
+  Completion status = 1 (expected 1)
+Usage: chdir [pathname]
+  Completion status = 1 (expected 1)
+Usage: cd [pathname]
+  Completion status = 1 (expected 1)
+Usage: clear
+  Completion status = 1 (expected 1)
+Usage: export var ...
+  Completion status = 1 (expected 1)
+Usage: fg [%job | pid]
+  Completion status = 1 (expected 1)
+Usage: jobs [-l]
+  Completion status = 1 (expected 1)
+kill: No such job or pid.
+  Completion status = 1 (expected 1)
+Usage: popd [+n]
+  Completion status = 1 (expected 1)
+Usage: prefix prefixnum prefixname
+  Completion status = 1 (expected 1)
+usage: pushd [+n | dir]
+  Completion status = 1 (expected 1)
+Usage: pwd
+  Completion status = 1 (expected 1)
+Usage: rehash
+  Completion status = 1 (expected 1)
+Usage: stop [%job | pid]
+  Completion status = 1 (expected 1)
+Usage: tset
+  Completion status = 1 (expected 1)
+Usage: unalias name ...
+  Completion status = 1 (expected 1)
+Usage: unhash
+  Completion status = 1 (expected 1)
+Usage: unset var ...
+  Completion status = 1 (expected 1)
+Usage: commands
+  Completion status = 1 (expected 1)
+Usage: setdebug (value | [+|-]flag ... )
+Flags: gsostrace  - Trace GS/OS calls
+       gsosblocks - Trace GS/OS parameter blocks
+       gsoserrors - Trace GS/OS errors
+       pathtrace  - Trace GS/OS pathnames
+       sigtrace   - Trace signals
+       systrace   - Trace system calls
+       breakpoint - Coded brk instructions
+  Completion status = 1 (expected 1)
+usage: dirs [-l]
+  Completion status = 1 (expected 1)
+Usage: hash
+  Completion status = 1 (expected 1)
+Usage: ps
+  Completion status = 1 (expected 1)
+Usage:
+  set                 - displays all variables
+  set ... [var]       - displays the value of var
+  set [var value]...  - sets var to value
+  set [var=value]...  - sets var to value
+  Completion status = 1 (expected 1)
+Usage:
+  set                 - displays all variables
+  set ... [var]       - displays the value of var
+  set [var value]...  - sets var to value
+  set [var=value]...  - sets var to value
+  Completion status = 1 (expected 1)
+Usage: bindkey [-l] function string
+  Completion status = 1 (expected 1)
+Usage: echo [-n] [strings...]
+  Completion status = 1 (expected 1)
+Usage: history
+  Completion status = 1 (expected 1)
+Usage: which [file ...]
+  Completion status = 1 (expected 1)
+edit: no filename specified
+  Completion status = 1 (expected 1)
+ = = = = = End of /obj/gno/bin/gsh/gsh tests = = = = =
+Note: To test job control commands, source testjobs and testjobs2.
+Script done on: Fri Nov 26 22:04:34 1999
