@@ -4,7 +4,7 @@
  *
  * Devin Reade, February 1998
  *
- * $Id: removerez.c,v 1.1 1998/03/31 03:32:59 gdr-ftp Exp $
+ * $Id: removerez.c,v 1.2 1998/04/10 20:19:24 gdr-ftp Exp $
  */
 
 #define __USE_DYNAMIC_GSSTRING__
@@ -46,7 +46,7 @@ main (int argc, char **argv) {
 			usage = 1;
 		}
 	}
-	if (usage || (argc-optind)<2) {
+	if (usage || (argc-optind)<1) {
 		errx(EXIT_FAILURE, "usage: %s file [...]\n", argv[0]);
 	}
 	for (i=optind; i<argc; i++) {
