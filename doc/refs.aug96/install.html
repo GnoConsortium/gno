@@ -1,0 +1,844 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>GNO/ME Version 2</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><font size="7" face="Times">GNO/ME Version 2.0</font></p>
+
+<p><font size="5" face="Times">By Jawaid Bazyar and Tim Meekins</font></p>
+
+<hr>
+
+<p><font face="Times">The GNO Multitasking Environment is
+Copyright 1991-1996 by Procyon Enterprises Incorporated</font></p>
+
+<p><font face="Times">Documentation, second edition, August 1996.</font></p>
+
+<p><font face="Times">The ORCA/C run-time libraries are Copyright
+1987-1993 Byte Works, Inc. and distributed with permission.</font></p>
+
+<p><font face="Times">This product includes software developed by
+the University of California, Berkeley and its contributors.</font></p>
+
+<p><font face="Times">GNO/ME 2.0 also includes several utilities
+and libraries produced by outside authors and in the public
+domain. This software is included solely as a convenience to
+users of GNO/ME, and is not considered part of GNO/ME for
+copyright purposes.</font></p>
+
+<p><font face="Times">GNO and GNO/ME are trademarks of Procyon
+Enterprises Incorporated.</font></p>
+
+<p><font face="Times">Apple IIGS, APW, Finder, GS/OS, ProDOS,
+Macintosh, and HFS are registered trademarks of Apple Computer,
+Inc.</font></p>
+
+<p><font face="Times">AppleWorks GS is a trademark of Claris
+Corp.</font></p>
+
+<p><font face="Times">UNIX is a registered trademark of AT&amp;T
+Bell Laboratories.</font></p>
+
+<p><font face="Times"><b>Important Notice</b>: This is a fully
+copyrighted work and as such is protected under the copyright
+laws of the United States of America. According to these laws,
+consumers of copywritten material may make copies for their
+personal use only. Duplication for any other purpose whatsoever
+would constitute infringement of copyright laws and the offender
+would be liable to civil damages of up to $50,000 in addition to
+actual damages, plus criminal penalties of up to one year
+imprisonment and/or a $10,000 fine.</font></p>
+
+<p><font face="Times">Procyon Enterprises Inc. MAKES NO
+WARRANTIES, EITHER EXPRESS OR IMPLIED, REGARDING THE ENCLOSED
+COMPUTER SOFTWARE PACKAGE, ITS MERCHANTABILITY OR ITS FITNESS FOR
+ANY PARTICULAR PURPOSE. THE EXCLUSION OF IMPLIED WARRANTIES IS
+NOT PERMITTED IN SOME STATES. THE ABOVE EXCLUSION MAY NOT APPLY
+TO YOU. THIS WARRANTY PROVIDES YOU WITH SPECIFIC LEGAL RIGHTS.
+THERE MAY BE OTHER RIGHTS THAT YOU MAY HAVE WHICH VARY FROM STATE
+TO STATE.</font></p>
+
+<p><font face="Times">This product is sold for use on a <i>single
+computer</i> at a <i>single location</i>. For information on
+obtaining a site license for using multiple copies, contact the
+publisher.</font></p>
+
+<p><font face="Times">Procyon Enterprises, Inc.<br>
+P.O. Box 641<br>
+Englewood, CO 80151-0641 USA<br>
+(303) 781-3273</font></p>
+
+<hr>
+
+<p><font size="6" face="Times">Credits</font></p>
+
+<p><font face="Times">&quot;Always listen to experts. They'll
+tell you what can't be done, and why. Then do it.&quot;<br>
+Lazarus Long</font></p>
+
+<p><font face="Times">The <b>GNO</b> <b>M</b>ultitasking <b>E</b>nvironment
+for the Apple IIgs </font></p>
+
+<p><font face="Times">Copyright 1991-1993, Procyon Enterprises
+Inc. and Tim Meekins</font></p>
+
+<p><font face="Times">Please direct all inquiries to:</font></p>
+
+<dir>
+    <li><font face="Times"><b>Procyon, Inc.<br>
+        PO Box 641<br>
+        Englewood, CO 80151-0641 USA<br>
+        (303) 781-3273</b></font></li>
+</dir>
+
+<p><font face="Times">For on-line technical assistance, contact:</font></p>
+
+<ul>
+    <li><font face="Times">America OnLine : </font><font
+        face="Courier">GNOJawaid, GNOTim2</font></li>
+    <li><font face="Times">GEnie : </font><font face="Courier">Procyon.Inc</font></li>
+    <li><font face="Times">Internet : </font><font face="Courier">bazyar@hypermall.com</font></li>
+    <li><font face="Times">Delphi : </font><font face="Courier">JAWAIDB</font></li>
+</ul>
+
+<p><font face="Times">Written by:</font></p>
+
+<p><font face="Times"><b>Jawaid Bazyar</b> Kernel &amp;
+Documentation<br>
+<b>Tim Meekins</b> Shell &amp; Documentation<br>
+<b>Albert Chin</b> Documentation<br>
+<b>Andrew Roughan </b>Documentation<b><br>
+Derek Taubert</b> Kernel support and utilities<br>
+<b>Greg Thompson, Philip Vandry</b>, <b>James Brookes</b>, <b>Ian
+Schmidt</b> Utilities</font></p>
+
+<p><font face="Times">With many thanks to:</font></p>
+
+<dir>
+    <li><font face="Times">Bill Gulstad, Rob Knauerhase, and
+        everyone on the GNOBETA Internet mailing list</font><p><font
+        face="Times">Dave Lyons, for tolerating my endless
+        questions since the beginning of time, for getting me
+        started in IIgs programming, and for calling GNO 'cool'.</font></p>
+        <p><font face="Times">Mike Westerfield, for your
+        technical assistance and all your work in making great
+        development tools for the IIgs.</font></p>
+    </li>
+</dir>
+
+<p><font face="Times">Special thanks to:</font></p>
+
+<dir>
+    <li><font face="Times">Matt Deatherage, for egging me on to
+        complete the project; also, for your most helpful
+        technical support through DEVSUPPORT- you guys made this
+        thing possible!</font><p><font face="Times">Randy Hyde,
+        for telling me it couldn't be done.</font></p>
+    </li>
+</dir>
+
+<hr>
+
+<p><font size="6" face="Times">Miscellaneous</font></p>
+
+<p><font face="Times"><b>Reporting Bugs</b></font></p>
+
+<p><font face="Times">In any large piece of computer software
+such as the GNO/ME system, bugs are sure to turn up, no matter
+how much testing is performed on the software before it goes out
+the door. If you discover a bug in GNO/ME, we'd like to hear
+about it. There are several things we require, however, to make
+bug reports useful to us.</font></p>
+
+<p><font face="Times">First of all, we need a complete
+description of your computer system; how much RAM, what cards, in
+what slots, what type of disk storage, etc. This information is
+very important in tracking down hardware-dependent bugs. Also, we
+need to know the version numbers of the software involved; the
+GNO Kernel, the GNO Shell, and any utilities.</font></p>
+
+<p><font face="Times">Second, we need a step-by-step description
+of how to duplicate the bug. If this requires writing down
+individual keystrokes, then we need it. Only in this way can we
+decide whether the bug is hardware dependent or global.</font></p>
+
+<p><font face="Times">You can send bug reports to any of the
+electronic mail addresses listed on the 'Credits' page, or by
+mailing a disk containing a description of the problem and the
+necessary software and files to the Procyon address.</font></p>
+
+<p><font face="Times"><b>User Projects</b></font></p>
+
+<p><font face="Times">If you're working on a project which
+utilizes GNO/ME in some way, we'd like to know about it. Just
+contact us by mail, phone, or whatever is most convenient for
+you, and tell us about your project. If possible, we'll
+coordinate your efforts with those of other programmers. If we
+really like your project and think it may be useful to others, we
+may include it on the next GNO/ME distribution!</font></p>
+
+<p><font face="Times"><b>Software Piracy</b></font></p>
+
+<p><font face="Times">If you copied GNO/ME from someone and are
+now reading this, take a moment to reflect on what you've done.
+GNO/ME is a project that has consumed around three man-years of
+effort, huge amounts of money, and a lot of grief on our part.
+The kernel alone consists of over 18,000 lines of source code;
+the shell and utilities make up another twenty to thirty thousand
+lines.</font></p>
+
+<p><font face="Times">Is it right that you're now benefiting from
+our effort without any just compensation to the authors and
+Procyon, Inc.? We are Apple II programmers born, bred and raised
+in the spirit of the machine; we love to program it, and probably
+always will. But if we cannot make enough money to make it
+worthwhile to continue work on GNO/ME, then we won't; because by
+worthwhile, we mean not only food on the table, but resources for
+expansion; expansion of our IIgs product line and support to IIgs
+owners being abandoned by the rest of the industry. In short,
+support us and we'll support you.</font></p>
+
+<p><font face="Times">GNO/ME is very inexpensive when you
+consider what it allows you to do, and what it will allow you to
+do when software development for GNO/ME starts full-swing. And
+it's a small price to pay indeed for our loyalty to you, the IIgs
+owner.</font></p>
+
+<p><font face="Times">To all you GNO/ME purchasers out there:
+thank you very much. We will continue to provide you with new
+IIgs products until our hair and teeth fall out, and our fingers
+are too frail to type the keys (and even then, with Easy Access,
+we might crank out a program or two). We hope you will be
+sufficiently impressed with the system to recommend it to others.</font></p>
+
+<p><font face="Times">p.s. Remember - if someone comes up to you
+on the street and offers you some IBM, <b>Just Say GNO!</b></font></p>
+
+<hr>
+
+<p><font size="6" face="Times">Preface</font></p>
+
+<p><font face="Times">Computers are tools. The flexibility of a
+tool determines how useful it is. Early computers were much like
+the one this software was written for: the Apple IIgs. They could
+only run one program at a time, and their usefulness was limited
+to what the particular program the user was executing offered. In
+the late 1960's, a team of researchers at AT&amp;T began
+developing the UNIX operating system. The UNIX design was
+partially based on the premise that most programs are I/O bound,
+that is, most of the time the program executes is spent waiting
+for user input or other I/O operations. While one program is
+waiting for I/O, why not allow another program to execute? This
+is what they did, and the result was one of the most successful
+computer operating systems ever created.</font></p>
+
+<p><font face="Times">The Apple IIgs, like the Macintosh it is
+modelled after, provides very limited multitasking abilities in
+the form of desk accessories (NDAs). The programs in the NDA menu
+are available in whatever application you use as long as it
+follows Apple's guidelines. However, there are many graphics
+based programs that don't support NDAs, and in addition there is
+a wealth of software that has been developed for the Byte Works'
+ORCA environment. This environment is mainly text-based, and thus
+makes access to NDAs impossible. As if that wasn't enough, it's
+very difficult to write an NDA to allow the application to keep
+running concurrently. So the benefits are lost, and we're back at
+ground zero.</font></p>
+
+<p><font face="Times">Enter the GNO Multitasking Environment.
+What was once just dreamed about is now a reality. GNO/ME
+provides an environment that is almost entirely compatible with
+software developed for the ORCA environment. But GNO/ME also
+provides a wealth of new abilities, lots of new ground for
+developers and users alike.</font></p>
+
+<p><font face="Times">Before we begin describing, we'd like to
+respond to those who say such a multitasking system isn't
+possible on the Apple IIgs. Obviously it is: you hold it in your
+hands. Some say the Apple IIgs isn't powerful enough to make
+multitasking useful. We point out that the Apple IIgs is much
+more powerful than the first computers UNIX was designed to run
+on; they only had 64K of real memory, and were 16 bit machines.
+Some ask why you'd ever need to run more than one program at
+once. These are the same people who asked why we'd ever need more
+than 64K of memory, or more than 140K of storage on disks (end
+soapbox).</font></p>
+
+<hr>
+
+<p><font size="6" face="Times">Introduction</font></p>
+
+<p><font face="Times">The GNO Multitasking Environment provides
+pre-emptive multitasking. Many programs can be executing at the
+same time; each is called a 'process'. Each process is allowed to
+run for a short period of time (1/20th of a second on average).
+When its time runs out, the current process is set aside and
+another one chosen to run next. This cycle continues until there
+are no more processes left (i.e. when you exit GNO/ME). Starting
+up processes to run 'in the background' is a simple matter of
+adding a few characters to the shell commands.</font></p>
+
+<p><font face="Times">GNO/ME provides a shell that takes full
+advantage of the multitasking ability provided. The most
+important feature of the shell is job control (starting,
+terminating, and suspending processes). But the shell also
+provides power never before seen on the Apple IIgs. The ability
+to choose files by 'wildcard' has been around for a while, but
+the GNO Shell takes this to a new level with 'regular
+expressions', a very powerful yet simple programming language.
+Other benefits of the GNO shell are too numerous to mention. (see
+the <i>GNO Shell User's Manual </i>for details).</font></p>
+
+<p><font face="Times">In addition to being compatible with the
+ORCA system, GNO/ME is a very powerful programming environment.
+Available to the programmer are all the calls needed to control
+processes, support Inter-Process Communication, and other tools
+needed in a multitasking environment. </font></p>
+
+<p><font face="Times">GNO/ME also boasts the first completely
+consistent method for accessing serial and console I/O. The IIgs
+TextTools have been incredibly enhanced to provide a truly
+all-encompassing interface for serial, console, and IPC
+applications. Imagine being able to attach terminals to your GS,
+and have a useful shell in each one. Multiuser BBSs, remote
+dial-ups, UUCP or SLIP that doesn't take over your computer- the
+applications are endless!</font></p>
+
+<p><font face="Times">With all this talk of shell utilities, have
+desktop users (users of programs like AppleWorks GS) been left
+behind? Absolutely not. GNO/ME doesn't allow more than one
+desktop program to run concurrently, but it DOES let you run a
+desktop program with as many text applications as you like. In
+other words, no functionality is lost from the IIgs by using
+GNO/ME.</font></p>
+
+<p><font face="Times">Finally, the GNO Multitasking Environment
+comes with a large number of free utilities that bring some of
+the power of a UNIX system to the Apple IIgs. Also, a number of
+programming libraries are included that make it easy to port
+programs from UNIX or MS-DOS systems to the Apple IIgs.</font></p>
+
+<hr>
+
+<p><font size="6" face="Times">The GNO/ME package</font></p>
+
+<p><font face="Times">Included in your GNO/ME Version 2.0 package
+are:</font></p>
+
+<ul>
+    <li><font face="Times">this GNO/ME overview </font></li>
+    <li><font face="Times">the GNO Shell User's Manual</font></li>
+    <li><font face="Times">the GNO Kernel Reference Manual</font></li>
+    <li><font face="Times">a selection of utility and library
+        documentation</font></li>
+    <li><font face="Times">a reading list containing a wide
+        selection of books for both the user and the programmer</font></li>
+    <li><font face="Times">three disks containing the GNO Kernel,
+        GNO Shell, and loads of utilities</font></li>
+</ul>
+
+<hr>
+
+<p><font size="6" face="Times">Hardware Requirements</font></p>
+
+<p><font face="Times">GNO/ME will work on any Apple IIgs with at
+least 2 MegaBytes of memory and a hard drive.</font></p>
+
+<p><font face="Times">You should have at least 5 MegaBytes of
+hard disk space free.</font></p>
+
+<p><font face="Times">We recommend 4 MegaBytes of Memory and an
+accellerator card, especially if you will be using GNO with many
+background processes. A modem and access to an on-line service
+will greatly speed access to technical assistance and new
+utilities as they are made available.</font></p>
+
+<hr>
+
+<p><font size="6" face="Times">Installation</font></p>
+
+<p><font face="Times">GNO/ME is a very large system. Most of the
+system is stored on the three disks in a compressed format. For
+this reason we recommend that you read this section carefully and
+use the included automated installation program to save yourself
+the major headache of arranging everything. You'll need a hard
+drive partition with at least 5 Megabytes free to install GNO/ME.
+The entire installation process should take no longer than 10
+minutes. </font></p>
+
+<p><font face="Times">If you are upgrading from GNO 1.0 to GNO
+2.0, we recommend that you install GNO 2.0 on a new area of your
+hard drive. This is because GNO 2.0 provides new versions of
+almost all the utilities and other software provided with GNO
+1.0. You can then move the parts of your old system that aren't a
+part of the standard GNO 2.0 distribution over to the new
+installation. </font></p>
+
+<p><font face="Times">The installer program is able to the copy
+the GNO libraries for use with the ORCA languages and tools. If
+you want to use your ORCA languages and tools, you should answer
+the appropriate questions during the install process. ORCA
+installation is covered in more detail below.</font></p>
+
+<p><font face="Times">Step 1:</font></p>
+
+<dir>
+    <li><font face="Times">Copy the contents of /GNO.Disk1 to the
+        partition where you want to install GNO/ME. The easiest
+        way to do this is to run the IIGS Finder&trade; program,
+        insert the </font><font size="2" face="Courier">/GNO.Disk1</font><font
+        face="Times"> disk, and drag the </font><font size="2"
+        face="Courier">/GNO.Disk1</font><font face="Times"> onto
+        the icon of the drive you want to install on. The Finder
+        will tell you that the disks are of a different size, and
+        ask you if you wish to place the contents of </font><font
+        size="2" face="Courier">/GNO.Disk1</font><font
+        face="Times"> in a folder on the hard drive partition.
+        Answer &quot;Yes&quot;, and the Finder will copy the
+        data.</font></li>
+</dir>
+
+<p><font face="Times">Step 2:</font></p>
+
+<dir>
+    <li><font face="Times">Open the newly created </font><font
+        size="2" face="Courier">GNO.Disk1</font><font
+        face="Times"> folder on the partition and execute 'Kern'
+        by double-clicking on the </font><font size="2"
+        face="Courier">Kern</font><font face="Times"> icon. </font><font
+        size="2" face="Times">GNO.Disk1</font><font face="Times">
+        contains a minimal GNO system which you have just started
+        up. You'll see some copyright messages, and after a few
+        seconds the desktop will appear.</font></li>
+</dir>
+
+<p><font face="Times">Step 3:</font></p>
+
+<dir>
+    <li><font face="Times">Install will ask you questions before
+        the installation process begins. Questions asked by
+        Install are boldfaced in the following discussion. If
+        you're uncertain of how to answer, click on the 'Info'
+        button to get more information on the question. This
+        information is reproduced here for ease of reference.</font><p><font
+        face="Times"><b>Do you have existing Byteworks (ORCA)
+        language products?</b></font></p>
+        <p><font face="Times">If you use Byteworks language
+        products such as ORCA/C, ORCA/M, ORCA/Pascal, etc. and
+        wish to use them from GNO/ME then answer 'Yes' to this
+        question. Otherwise, answer 'No'.</font></p>
+        <p><font face="Times">Clicking on the 'Info' button will
+        display the following text:</font></p>
+        <p><font size="2" face="Geneva,Arial">If you currently
+        use products such as ORCA/C, ORCA/Pascal, ORCA/M, etc.,
+        and wish to use them from GNO/ME then you should answer
+        'Yes' to this dialog.</font></p>
+        <p><font size="2" face="Geneva,Arial">Install will then
+        ask you to locate the file &quot;ORCA.SYS16&quot; (the
+        ORCA Shell). Usually, it will be in a directory called
+        &quot;ORCA&quot; on one of your hard drive partitions. On
+        our system, it is :software:orca. The location of this
+        file determines where Install puts the GNO-specific
+        ORCA/C header files and libraries (in the ORCA LIBRARIES
+        directory). If you have renamed ORCA.SYS16 to something
+        else, select that instead. </font></p>
+        <p><font size="2" face="Geneva,Arial">Install uses this
+        information to correctly set the ORCA prefixes and add
+        the EXECUTABLES directory to the $PATH variable in your
+        gshrc file. See the GNO Shell User's Manual, Appendix B,
+        for more information on the ORCA prefixes.</font></p>
+        <p><font face="Times"><b>Do you want to install the
+        modified ORCA/C 2.0 ORCALIB library?</b></font></p>
+        <p><font face="Times">If you have ORCA/C 2.0 installed
+        and you answered 'Yes' to the previous question, then you
+        should answer 'Yes' now. If you have ORCA/C 1.3
+        installed, or you do not have any ORCA languages or
+        tools, then you should answer 'No'.</font></p>
+        <p><font face="Times">Clicking 'Info' will display the
+        following text:</font></p>
+        <p><font size="2" face="Geneva,Arial">GNO/ME 2.0 comes
+        with a modified version of the ORCA/C ORCALIB standard
+        library. This library adds specific support for some of
+        GNO's special files (pipes, terminals, etc) transparently
+        and corrects other problems the standard ORCALIB has with
+        GNO.</font></p>
+        <p><font size="2" face="Geneva,Arial">This special
+        ORCALIB is only for use with ORCA/C 2.0. It will NOT work
+        with previous versions of ORCA/C.</font></p>
+        <p><font size="2" face="Geneva,Arial">Note that all of
+        GNO's other libraries (libgno, libbsd, libc) work fine
+        with ORCA/C 1.3.</font></p>
+        <p><font face="Times"><b>Do you want to install the
+        Multi-User package?</b></font></p>
+        <p><font face="Times">If you wish to have the Multi User
+        package installed, answer 'Yes'. It is recommended that
+        new users do not install this package until they are
+        familiar with the system. This package is not fully
+        discussed in the GNO/ME manuals and may introduce many
+        unfamiliar concepts.</font></p>
+        <p><font face="Times">Clicking 'Info' will display the
+        following text:</font></p>
+        <p><font size="2" face="Geneva,Arial">The 'Multi-User'
+        package consists of a number of cooperating programs,
+        including init(8) and login(8). MU provides for
+        password-protected access to the GNO Shell via the
+        console or serial ports (modems and dedicated terminals).
+        It also handles multiple user accounts, and a certain
+        level of protection between users. </font></p>
+        <p><font size="2" face="Geneva,Arial">If you will be
+        using a terminal with GNO, or want to be able to dial
+        into GNO with a modem, you should install MU.</font></p>
+        <p><font size="2" face="Geneva,Arial">You may wish to
+        hold off setting up the Multi-User package until you
+        learn your way around GNO a little better, as it's simple
+        to set up MU later.</font></p>
+    </li>
+</dir>
+
+<p><font face="Times">Step 4:</font></p>
+
+<dir>
+    <li><font face="Times">The Installer will now proceed to
+        arrange the GNO Multitasking Environment on your hard
+        drive. Initially, the contents of /GNO.Disk1 will be
+        moved into the proper places on the volume you have
+        chosen. When asked by the Installer, you should place
+        /GNO.Disk2 and /GNO.Disk3 into the disk drive. The
+        contents of these disks will be extracted and
+        decompressed into their proper places.</font><p><font
+        face="Times">If the installer cannot finish it's tasks
+        for some reason, it will abort to the shell. At this
+        point you should study the error messages to determine
+        the cause of the failure, </font></p>
+    </li>
+</dir>
+
+<p><font face="Times">Step 5:</font></p>
+
+<dir>
+    <li><font face="Times">When the Installer finishes, you will
+        be returned to the GNO prompt. At this time you should
+        type 'exit' to return to Finder and delete the </font><font
+        size="2" face="Courier">GNO.Disk1</font><font
+        face="Times"> directory, as it is no longer needed (GNO
+        is completely installed in a subdirectory </font><font
+        face="Courier">'</font><font size="2" face="Courier">GNO</font><font
+        face="Courier">'</font><font face="Times"> on the same
+        partition </font><font size="2" face="Courier">GNO.Disk1</font><font
+        face="Times"> is on.</font></li>
+</dir>
+
+<p><font face="Times">That's all!</font></p>
+
+<p><font face="Times"><b>What has been installed?</b></font></p>
+
+<p><font face="Times">If you examine the directory that you chose
+for GNO/ME, you will find that the Installer has created several
+directories. Here is a brief rundown of thier contents:</font></p>
+
+<p>&nbsp;</p>
+
+<dir>
+    <li><font face="Times">:gno:bin: This directory contains the
+        executable shell utilities included with the GNO/ME
+        package.</font></li>
+    <li><font face="Times">gno:dev: This directory contains
+        device drivers. The GNO/ME package includes serial
+        drivers for the II</font><font size="2" face="Times">GS</font><font
+        face="Times">' built-in modem and printer ports.</font></li>
+    <li><font face="Times">:gno:etc: Various system configuration
+        files</font></li>
+    <li><font face="Times">:gno:initrc This a startup file for
+        kern and must remain in this directory.</font></li>
+    <li><font face="Times">:gno:kern This is the GNO kernel.
+        Launch this to start GNO/ME.</font></li>
+    <li><font face="Times">:gno:lib: This directory is provided
+        for,,,, It is currently empty.</font></li>
+    <li><font face="Times">:gno:tmp: This directory is provided
+        for,,,, It is currently empty.</font></li>
+    <li><font face="Times">:gno:user: This directory is created
+        if you installed the Multi-User package. It contains a
+        user directories for users of the system. Currently there
+        is only one: 'root'. </font></li>
+    <li><font face="Times">:gno:usr: This directory contains UNIX
+        System Resources (USR).</font></li>
+    <li><font face="Times">:gno:usr:bin: Miscellaneous utilities</font></li>
+    <li><font face="Times">:gno:usr:man: This directory contains
+        the manual pages for the 'man' utility. There are eight
+        categories of information as defined by UNIX standards.
+        These eight categories are presented in either formatted
+        (man) or unformatted (cat) entries.</font></li>
+    <li><font face="Times">:gno:usr:games: The classic &quot;Hunt
+        the Wumpus&quot; game, and perhaps others.</font></li>
+    <li><font face="Times">:gno:usr:sbin: System administration
+        utilities.</font></li>
+</dir>
+
+<hr>
+
+<p><font size="6" face="Times">Desk Accessories</font></p>
+
+<p><font face="Times">The following is a description of the desk
+accessories that are shipped with GNO/ME.</font></p>
+
+<p><font face="Times"><b>GSI NDA</b></font></p>
+
+<p><font face="Times">The Graphical Shell Interface New Desk
+Accessory allows you to access the shell from a window inside a
+desktop application. Selecting 'GSI' from the Apple menu opens a
+window and brings up a shell in it. You can use the shell in this
+window just as you would in text mode.</font></p>
+
+<p><font face="Times">At this time, GSI doesn't support any
+terminal emulations; i.e., it's a 'dumb' interface. As a result,
+full screen programs like 'less' and 'vi' will not work properly
+in GSI.</font></p>
+
+<p><font face="Times"><b>Suspend NDA</b></font></p>
+
+<p><font face="Times">The Suspend New Desk Accessory allows you
+to temporarily stop a desktop program and return to the text
+shell. To return to the desktop program, simply type '<b>fg</b>'.</font></p>
+
+<p><font face="Times">You may put desktop programs in the
+background ('<b>bg</b>') at your own risk. This is not guaranteed
+to work for all programs, and putting a desktop program in the
+background will not put the Apple IIgs in text mode.</font></p>
+
+<p><font face="Times">Also, do not run another desktop program
+when one is currently suspended. The GNO kernel tries to cleanly
+terminate the second program, but may not always be able to
+accomplish this.</font></p>
+
+<p><font face="Times"><b>GNO Snooper CDA</b></font></p>
+
+<p><font face="Times">The GNO Snooper CDA is a utility that is
+very helpful in debugging software, and reporting system crashes.
+Snooper has access to information inside the kernel that is not
+generally available to processes.</font></p>
+
+<p><font face="Times">When you enter the control panel and choose
+&quot;GNO Snooper&quot; a process list is displayed, which is
+very similar to the 'ps' shell command, and a menu is presented
+with the following options:</font></p>
+
+<p><font face="Times">D)etails</font></p>
+
+<p><font face="Times">Get detailed information on a process.
+Snooper asks you for the process ID number of the process you
+want to investigate. Snooper then dumps the state of the 65816
+registers and shows various other information about the process.</font></p>
+
+<p><font face="Times">K)ill</font></p>
+
+<p><font face="Times">This option sends a SIGKILL (signal number
+9) to a process. Just type in the process ID of the process you
+want to kill.</font></p>
+
+<p><font face="Times">P)rocess Group Dump</font></p>
+
+<p><font face="Times">Dumps the system process group tables,
+which is very useful for debugging code which manipulates process
+groups. The first table, 'pgrp', is the process group reference
+count table. This table lists how many processes (and TTYs)
+belong to that process group. pgrp ID's start at 2, so the first
+pgrp listed is 2.</font></p>
+
+<p><font face="Times">The second listing is the ttyStruct table.
+This table shows which pgrp each TTY belongs to. The TTYs start
+with .null (0), then move on to .ttyb, .ttya, .ttyco, etc.</font></p>
+
+<p><font face="Times">F)ile Table Dump</font></p>
+
+<p><font face="Times">Lists all open files that GNO knows about.
+The information is presented in tuples. The first element is the
+real GS/OS refNum or device driver ID. The second is the type of
+file (GSOS, ttyXX, or PIPE). The third is how many references to
+that file are open. This information is global, so if two
+processes have .NULL opened, the refcount for .tty00 will be 2.</font></p>
+
+<hr>
+
+<p><font size="6" face="Times">Reading List</font></p>
+
+<p><font face="Times"><b>Recommended Reading for Users</b></font></p>
+
+<p><font face="Times">Title: Learning Unix<br>
+Author: James Gardner<br>
+Publisher: Sams<br>
+Edition: 1991<br>
+ISBN: 0-672-30001-X</font></p>
+
+<p><font face="Times">Comment: With disks containing MSDOS
+simulation of Unix (MKS Tools). A good tutorial / reference book
+for those without constant access to Unix.</font></p>
+
+<p><font face="Times">Title: The Unix Operating System<br>
+Author: Kaare Christian<br>
+Publisher: Wiley<br>
+Edition: 2nd ed. 1988<br>
+ISBN: 0-471-84781-X</font></p>
+
+<p><font face="Times">Comment: A classic overview of Unix
+commands. Good in coverage.</font></p>
+
+<p><font face="Times">Title: Peter Norton's Guide to Unix<br>
+Authors: Peter Norton and Harley Hahn<br>
+Publisher: Bantam Computer<br>
+Edition: 1991<br>
+ISBN: 0-553-35260-1</font></p>
+
+<p><font face="Times">Comment: Good coverage. A good introduction
+for beginners (especially those accustomed to DOS).</font></p>
+
+<p><font face="Times">Title: Unix in a Nutshell<br>
+Authors: Daniel Gilly and O'Reilly staff<br>
+Publisher: O'Reilly<br>
+Edition: 2nd ed. 1992 (System V and Solaris 2)<br>
+ISBN: 1-56592-001-5</font></p>
+
+<p><font face="Times">Comment: **** Highly Recommended **** An
+excellent desktop reference to almost all Unix commands &quot;a
+complete reference containing all commands and options, plus
+generous descriptions and examples that put the commands in
+context.&quot; Also, an edition for 4.3. BSD.</font></p>
+
+<p><font face="Times">Title: Life with Unix - A Guide for
+Everyone<br>
+Authors: Don Libes and Sandy Ressler<br>
+Publisher: Prentice Hall<br>
+Edition: 1990<br>
+ISBN: 0-13-536657-7</font></p>
+
+<p><font face="Times">Comment: **** Highly Recommended **** An
+everything-you-want-to-know-about-Unix book. It includes info you
+might not find elsewhere. &quot;This book is the
+&quot;other&quot; book about Unix, a study in reading between the
+lines - which is very much what learning UNIX is like.&quot;</font></p>
+
+<p><font face="Times">Title: Unix for the Impatient<br>
+Authors: Paul Abrahams and Bruce Larson<br>
+Publisher: Addison Wesley<br>
+Edition: 1992<br>
+ISBN: 0-201-55703-7</font></p>
+
+<p><font face="Times">Comment: **** Highly Recommended **** A
+new, comprehensive, in-depth reference to Unix. &quot;a handbook
+you can use both as a manual to learn UNIX and as a ready
+reference for fast answers to specific UNIX questions.&quot;</font></p>
+
+<p><font face="Times">Title: Learning the vi Editor<br>
+Author: Linda Lamb<br>
+Publisher: O'Reilly<br>
+Edition: 1990<br>
+ISBN: 0-937175-67-6</font></p>
+
+<p><font face="Times">Comment: A very good guide to vi and ex
+commands. With a quick reference card.</font></p>
+
+<p><font face="Times">Titles: vi Tutor and vi Reference<br>
+Authors: Michael Pierce and Robert Ware (Tut), Maarten Litmaati
+(Ref)<br>
+Edition: 1.3 (Tut), 8 (Ref)</font></p>
+
+<p><font face="Times">Comment: These and other good vi stuff are
+obtainable by anonymous ftp from cs.uwp.edu (in pub/vi) ...</font></p>
+
+<p><font face="Times"><b>Recommended Reading for Programmers</b></font></p>
+
+<p><font face="Times">Title: The Design and Implementation of the
+4.3 BSD Unix Operating System<br>
+Authors: Samuel Leffler et al<br>
+Publisher: Addison-Wesley<br>
+Edition: 1990<br>
+ISBN: 0-201-06196-1</font></p>
+
+<p><font face="Times">Comment: An authoritative description of
+the design of BSD Unix. &quot;It covers the internal structure of
+the 4.3BSD system and the concepts, data structures, and
+algorithms used in implementing the system facilities.&quot;</font></p>
+
+<p><font face="Times">Title: The Unix Programming Environment<br>
+Authors: Brian Kernighan and Rob Pike<br>
+Publisher: Prentice-Hall<br>
+Edition: 1984<br>
+ISBN: 0-13-937681-X</font></p>
+
+<p><font face="Times">Comment: A true classic on Unix
+programming.</font></p>
+
+<p><font face="Times">Title: Advanced Programming in The Unix
+Environment<br>
+Author: Richard Stevens<br>
+Publisher: Addison-Wesley<br>
+Edition: 1992<br>
+ISBN: 0-201-56317-7</font></p>
+
+<p><font face="Times">Comment: **** Highly Recommended **** A
+going-to-be classic on how programs work under Unix. The source
+codes and errata list are obtainable by anonymous ftp from
+ftp.uu.net (in /published/books).</font></p>
+
+<p><font face="Times">Title: Advanced Unix Programming<br>
+Author: Marc Rochkind<br>
+Publisher: Prentice Hall<br>
+Edition: 1985<br>
+ISBN: 0-13-011818-4</font></p>
+
+<p><font face="Times">Comment: A superb book covering all system
+calls in detail.</font></p>
+
+<p><font face="Times">Title: Using C on the Unix System<br>
+Author: David Curry<br>
+Publisher: O'Reilly<br>
+Edition: 1990<br>
+ISBN: 0-937175-23-4</font></p>
+
+<p><font face="Times">Comment: This book is directed to
+(would-be) system programmers.</font></p>
+
+<p><font face="Times"><b>Required Reading for Programmers</b></font></p>
+
+<p><font face="Times">Title: The C Programming Language<br>
+Authors: Brian Kernighan and Dennis Ritchie <br>
+Publisher: Prentice Hall<br>
+Edition: 2nd ed. 1988<br>
+ISBN: 0-13-110362-8</font></p>
+
+<p><font face="Times">Comment: The answers to the exercises can
+be found in C Answer Book written by Tondo and Gimpel and
+published by Prentice Hall (ISBN: 0-13-109653-2).</font></p>
+
+<p><font face="Times">All the books listed below are available
+from:</font></p>
+
+<p><font face="Times">Resource Central<br>
+PO Box 11250<br>
+Overland Park Kansas 66207<br>
+(913) 469 6502</font></p>
+
+<p><font face="Times">Title: Apple IIgs ToolBox Reference.<br>
+Volumes 1, 2 &amp; 3<br>
+Author: Apple Computer<br>
+Publisher: Addison-Wesley</font></p>
+
+<p><font face="Times">Title: Programmers Reference for System 6.0<br>
+Author: Mike Westerfield<br>
+Publisher: Byteworks, Inc</font></p>
+
+<p><font face="Times">Title: Apple IIgs Firmware Reference<br>
+Author: Apple Computer<br>
+Publisher: Addison-Wesley</font></p>
+
+<p><font face="Times">Title: GS/OS Reference<br>
+Author: Apple Computer<br>
+Publisher: Addison-Wesley</font></p>
+</body>
+</html>

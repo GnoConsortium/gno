@@ -1,0 +1,709 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>GNO Shell User's Manual</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p align="right"><font size="7" face="Times"><b>GNO Shell User's
+Manual</b></font></p>
+
+<p align="right"><font size="5" face="Times">By Tim Meekins,
+Albert Chin, and Jawaid Bazyar</font></p>
+
+<p align="right"><font size="5" face="Times">Edited by Andrew
+Roughan</font></p>
+
+<p align="right">&nbsp;</p>
+
+<p align="right">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><font size="6" face="Times">Table of Contents</font></p>
+
+<p>&nbsp;</p>
+
+<p><b>Chapter 1 Getting started with the GNO Shell </b></p>
+
+<dir>
+    <li>Introduction <br>
+        Customizing the Shell Environment <br>
+        Invoking gsh </li>
+</dir>
+
+<p><b>Chapter 2 Interacting with the GNO Shell </b></p>
+
+<dir>
+    <li>Executing Commands <br>
+        Command-line Editor <br>
+        Command Input <br>
+        Command Editing <br>
+        History Editing Keys<br>
+        Command, Filename and Variable completion </li>
+</dir>
+
+<p><b>Chapter 3 Using the GNO Shell more productively </b></p>
+
+<dir>
+    <li>What does this command do? <br>
+        Option Arguments <br>
+        Entering Multiple commands <br>
+        Using Aliases as Shorthand <br>
+        Redirecting Input and Output <br>
+        Pipelines <br>
+        Job Control <br>
+        Working with Pathnames <br>
+        Pathname Expansion <br>
+        Quoting Special Characters <br>
+        How gsh Finds a Command </li>
+</dir>
+
+<p><b>Chapter 4 Built-in Commands </b></p>
+
+<dir>
+    <li>Built-ins vs EXE Commands <br>
+        Shell Commands <br>
+        Kernel Commands <br>
+        Environment Commands </li>
+</dir>
+
+<p><b>Chapter 5 Shell Variables </b></p>
+
+<dir>
+    <li>Using shell variables <br>
+        Scope <br>
+        Description of Pre-defined Shell Variables <br>
+        Accessing shell variables </li>
+</dir>
+
+<p><b>Appendix A Sample gsh session </b></p>
+
+<p><b>Appendix B Prefix Conventions </b></p>
+
+<p><b>Appendix C Errors </b></p>
+
+<p><b>Appendix D Signals </b></p>
+
+<p><b>Appendix E Non-Compliant Applications </b></p>
+
+<p><b>Appendix F Termcaps </b></p>
+
+<p><b>Glossary </b></p>
+
+<p>&nbsp;</p>
+
+<p><b>Index 63</b></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><font size="6" face="Times">Chapter 1</font></p>
+
+<p><font size="6" face="Times">Getting started with the GNO Shell</font></p>
+
+<p align="right"><font size="2" face="Times">&quot;Computer
+operating systems are among the most complex objects created by
+mankind...&quot;</font></p>
+
+<p align="right"><font size="2" face="Times">Douglas Comer,
+Operating System Design, The Xinu Approach</font></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>Introduction</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">The GNO shell is an integral part of the
+GNO Multitasking Environment (GNO/ME). The GNO shell provides the
+interface between the user and the GNO Kernel. While both work
+together, the jobs they perform are quite different. This manual
+documents the functions of the shell.</font></p>
+
+<p><font face="Times">The user interacts with the shell through a
+command-line interface. Command-line interfaces provide a unique
+way of interacting with the operating system. Unlike GUIs
+(Graphical User Interfaces), with which you are already familiar
+with by using programs such as the Finder and ShrinkIt! GS, all
+commands are typically entered using the keyboard. The shell
+interprets commands and passes them to the kernel for control and
+execution.</font></p>
+
+<p><font face="Times">The command-line interface will be
+unfamiliar to some people However, once the command-line
+interface has been mastered, the user should have no difficulty
+using any current or future GNO applications. Those of you
+already familiar with Unix interfaces, such as the C shell,
+Bourne shell, and Korn shell, or the ORCA shell on the Apple
+IIGS, will begin to realize the advantages which GNO/ME is able
+to provide.</font></p>
+
+<p><font face="Times">The way this manual is presented allows the
+complete beginner to simply work through the chapters in a
+chronological prder. Chapter 2 familiarises the user with
+entering basic commands whereas the more powerful GNO/ME features
+are introduced in Chapter 3. Chapter 4 documents the commands
+which are built into the GNO Shell and Chapter 5 explains shell
+variables which give the user control over how thier installation
+functions.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>Customizing the Shell Environment</b></font></p>
+
+<p><font face="Times">When <b>gsh</b>, the implimentation of the
+GNO Shell, is executed, it reads in and processes the <i>gshrc</i>
+file. This file contains start-up instructions for the shell,
+which can be used to customize the operation of the shell and
+other aspects of the system. It is created by the GNO Installer
+during the installation process.</font></p>
+
+<p><font face="Times">The following is a sample <i>gshrc</i> file
+(line numbers have been added for convenience):</font></p>
+
+<pre>
+1	###
+2	#
+3	# GNO 2.0 gshrc file
+4	#
+5	###
+6	#
+7	# Initialize our environment
+8	#
+9	set path=&quot;:hard:gno:bin :hard:gno:usr:bin&quot;
+10	set prompt=&quot;[%h] %S%t%s %C&gt; &quot;
+11	set home=&quot;:hard:gno:user:root&quot;
+12	set term=gnocon
+13	export path prompt home term
+14	setenv history=100 savehist=25
+15	###
+16	#
+17	#Set up standard prefixes for utilities.
+18	#
+19	###
+20	prefix 2 :software:orca:libraries
+21	prefix 3 :software:orca
+22	prefix 4 :software:orca:shell
+23	prefix 5 :software:orca:languages
+24	prefix 6 :software:orca:utilities
+25	prefix 7 :tmp
+26	###
+27	#
+28	# Set up prefixes for Orca2.0(tm)'s benefit
+29	#
+30	###
+31	prefix 13 :software:orca:libraries
+32	prefix 14 :software:orca
+33	prefix 15 :software:orca:shell
+34	prefix 16 :software:orca:languages
+35	prefix 17 :software:orca:utilities
+36	alias ls 'ls -CF'
+37	alias dir 'ls -al'
+38	alias cp 'cp -i'
+39	alias rm 'cp -p rm'
+40	alias mv 'cp -p mv'
+41	setenv usrman='/usr/man'
+42	set fignore='.a .root .sym'
+43	alias zcat 'compress -cd'
+44	setenv pager=less
+45	setenv less=-e
+46	set nonewline=1
+47	#
+48	# Move to home directory
+49	#
+50	cd line
+</pre>
+
+<p><font face="Times">When you install GNO/ME, the GNO installer
+knows where to find the GNO utilities and any ORCA utilities you
+may have. Unfortunately it does not know where all the other
+utilities and applications that you may wish to use are located.
+It is therefore necessary to edit the setup file in order to tell
+the GNO shell where these programs are on your hard disk.</font></p>
+
+<p><font face="Times">The setup file, <i>gshrc</i>, is located in
+the /usr directory of the path where you installed GNO/ME. You
+can use any text editor from the desktop to edit the <i>gshrc</i>
+file, or if you are already familiar with the editor <b>vi</b>
+you can use this utility after launching the GNO kernel.</font></p>
+
+<p><font face="Times">Line 9 is the statement that we are
+concerned with. <b>Hard </b>represents the name of your
+particular hard drive volume where you have installed GNO/ME.</font></p>
+
+<p><font size="2" face="Courier">set path=&quot;:hard:gno:bin
+:hard:gno:usr:bin&quot; line #9</font></p>
+
+<p><font face="Times">You will see that spaces have been inserted
+between pathnames. The space is the pathname separator and the
+colon has been used as the path delimiter for this specific
+variable, PATH. As an exercise, add your system directory to this
+statement. Line 9 should now look like this:</font></p>
+
+<p><font size="2" face="Courier">set path=&quot;:hard:gno:bin
+:hard:gno:usr:bin :hard:system&quot;</font></p>
+
+<p><font face="Times">What you have just done allows the GNO
+shell to find the <b>Finder</b> application. Now go ahead and add
+any pathnames that hold utilities or applications that you will
+use frequently from GNO/ME. It should also be noted that it is
+possible to have more than one pathname containing EXE, SYS16, or
+EXEC files; this is impossible under ORCA. The PATH variable is
+discussed thoroughly in Chapter 5.</font></p>
+
+<p><font face="Times">For now, the remaining lines of the <i>gshrc</i>
+file do not need editing. As you gain an understanding of the
+system you may wish to make further changes to the <i>gshrc</i>
+file. Make sure you save the file before you exit the editor.</font></p>
+
+<p><font face="Times">It is possible to modify these instructions
+while the GNO shell is active, but any changes will be lost upon
+exiting <b>gsh.</b> If you wish the changes to remain effective
+for the next session you must add them to the <i>gshrc</i> file.</font></p>
+
+<p><font face="Times">By customizing the <i>gshrc</i> file it is
+possible to make the GNO environment more like U</font><font
+size="2" face="Times">NIX, </font><font face="Times">the ORCA
+environment, or something completly different. Customization of
+the GNO environment leads to greater user productivity.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>Invoking </b>.i.<b>gsh</b></font></p>
+
+<p><font face="Times">GNO/ME can be launched from a program
+launcher, such as the System 6.0 Finder. Launch the GNO Kernel
+program, <b>kern</b> by double clicking on it. The GNO kernel
+automatically executes the supplied GNO shell, <b>gsh</b>.</font></p>
+
+<p><font face="Times">The prompt, &quot;<tt>[1] 2:00am root </tt></font><font
+size="2" face="Courier"><tt>%</tt></font><font face="Times">&quot;,
+indicates that <b>gsh</b> is ready to receive input from the
+keyboard.</font></p>
+
+<p><font face="Times">To start a new <b>gsh</b> from the
+command-line simply type <b>gsh</b>. If multiple copies of the <b>gsh</b>
+process are undesirable, use the command <b>source gsh</b>
+instead. This is useful for testing changes made to the <i>gshrc</i>
+file. <b>Source</b> is a built-in comand which is discussed in
+Chapter 4 <b>Shell commands</b>.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="6" face="Times">Chapter 2</font></p>
+
+<p><font size="6" face="Times">Interacting with the GNO Shell</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>Executing Commands</b></font></p>
+
+<p><font face="Times">A command consists of two parts: a name and
+its arguments. The command name is the name used to start the
+command. The name is usually the name of a file which can be
+executed. The only exceptions are commands which are built-in to
+the shell. These commands are documented in Chapter 4 <b>Built-In
+Commands</b>. Any shell utility command with a filetype of EXE,
+SYS16, or EXEC, can be executed in this fashion. The command name
+must be separated from the command arguments with a space.</font></p>
+
+<p><font face="Times">The command arguments are parameters that
+the command takes as data to work with (In Applesoft BASIC,
+&quot;</font><font size="2" face="Courier">HELLO WORLD</font><font
+face="Times">&quot; would be an argument for the </font><font
+size="2" face="Courier">PRINT</font><font face="Times"> command).
+Command arguments are separated from each other with a space.
+Note that although arguments extend the usefulness of a command,
+not all commands have arguments. Any arguments entered after the
+command will be passed by the shell to the program when it starts
+exectuting. </font></p>
+
+<p><font face="Times">The examples below use the following
+commands:</font></p>
+
+<p><font size="2" face="Courier"><b>qtime</b></font><font
+face="Times"> displays time in English text.</font></p>
+
+<p><font size="2" face="Courier"><b>echo</b></font><font
+face="Times"> prints arguments to the screen.</font></p>
+
+<p><font face="Times">Examples:</font></p>
+
+<p><font size="2" face="Courier">% <b>qtime</b></font></p>
+
+<p><font size="2" face="Courier">It's almost five.</font></p>
+
+<p><font size="2" face="Courier">% <b>echo II Infinitum</b></font></p>
+
+<p><font size="2" face="Courier">II Infinitum</font></p>
+
+<p><font face="Times">At the simplest level the user enters
+commands to the shell by typing them on the keyboard. <b>Gsh</b>
+includes a command-line editor to help the user enter and edit
+commands. The editor also provides a way to modify and execute
+previous commands. Additionally the editor can help complete the
+names of commands, filenames and variables.</font></p>
+
+<p><font face="Times"><b></b></font>&nbsp;</p>
+
+<p><font face="Times"><b>Command-line Editor</b></font></p>
+
+<p><font face="Times">Below is a complete description of the
+functions of the command-line editor with short examples
+depicting how each editing key works.</font></p>
+
+<p><font face="Times">Throughout the examples the underline
+character, &quot;</font><font size="2" face="Courier">_</font><font
+face="Times">&quot;, will be used to represent the current cursor
+position. In addition, &quot;OA&quot; is used to represent the
+Open Apple key and the term <i>word</i> is used to indicate a
+string of characters consisting of only letters, digits, and
+underscores. To the right of a editing key entry is the </font><font
+size="2" face="Courier">bindkey</font><font size="2" face="Times">
+</font><font face="Times">function name which is used to remap
+editing functions to new keys. This information is included for
+reference purposes only. See Chapter 4 <b>Shell Commands</b> for
+more information on the </font><font size="2" face="Courier">bindkey</font><font
+face="Times"> command.</font></p>
+
+<p><font face="Times">It should be pointed out that at this stage
+that the user should not be concerned with what the actual
+commands used in the examples do, rather the user should
+concentrate on how the command-line editor functions work.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>Command Input</b></font></p>
+
+<p><font size="2" face="Courier">These command-line editor keys
+deal with entering text directly on the command-line.</font></p>
+
+<p><font size="2" face="Courier">RETURN</font><font face="Times">
+</font><font size="2" face="Courier"><b>newline</b></font></p>
+
+<blockquote>
+    <p><font face="Times">The return key is used to terminate
+    line input. <b>gsh</b> then interprets the command on the
+    line and acts accordingly. The position of the cursor on the
+    command-line does not matter.</font></p>
+    <p><font size="2" face="Courier">Before</font></p>
+    <p><font size="2" face="Courier">% <b>echo f</b><b><u>o</u></b><b>o
+    bar</b> (RETURN)</font></p>
+    <p><font size="2" face="Courier">After</font></p>
+    <p><font size="2" face="Courier">foo bar</font></p>
+    <p><font size="2" face="Courier">% _</font></p>
+</blockquote>
+
+<p><font size="2" face="Courier">CTRL-D</font><font face="Times">
+&lt;no bindkey name&gt;</font></p>
+
+<blockquote>
+    <p><font face="Times">Exits <b>gsh</b> if it was the first
+    character typed on the command-line. If there are still jobs
+    running in the background or stopped, <b>gsh</b> will display
+    &quot;</font><font size="2" face="Courier">There are stopped
+    jobs.</font><font face="Times">&quot; If you press </font><font
+    size="2" face="Courier">CTRL-D</font><font face="Times"> a
+    second time without an intervening command, <b>gsh</b> will
+    terminate all the jobs in the job list and exit.</font></p>
+</blockquote>
+
+<p><font size="2" face="Courier">CTRL-R</font><font face="Times">
+</font><font size="2" face="Courier"><b>redraw</b></font></p>
+
+<blockquote>
+    <p><font face="Times">Moves to the next line and re-displays
+    the current command-line. Use this to redraw the current line
+    if the screen becomes garbled.</font></p>
+</blockquote>
+
+<p><font size="2" face="Courier">CTRL-L</font><font face="Times">
+</font><font size="2" face="Courier"><b>clear-screen</b></font></p>
+
+<blockquote>
+    <p><font face="Times">Clears the screen, moves the cursor to
+    the top line, and redraws the prompt and any command-line
+    that was in the process of being edited.</font></p>
+</blockquote>
+
+<p><font face="Times"><b>Command Editing</b></font></p>
+
+<p><font size="2" face="Courier">These command-line editor keys
+allow editing of the command-line text.</font></p>
+
+<p><font size="2" face="Courier">CTRL-B <b>backward-char</b></font></p>
+
+<blockquote>
+    <p><font size="2" face="Courier">LEFT-ARROW</font><font
+    face="Times"> Moves the cursor one character to the left. You
+    cannot move past the first character on the line. If so, <b>gsh</b>
+    will output an error beep.</font></p>
+    <p><font size="2" face="Courier">Before After</font></p>
+    <p><font size="2" face="Courier">% <b>print f</b><b><u>o</u></b><b>o
+    bar</b> (LEFT-ARROW) % <b>print </b><b><u>f</u></b><b>oo bar</b></font></p>
+</blockquote>
+
+<p><font size="2" face="Courier">CTRL-F <b>forward-char</b></font></p>
+
+<p><font size="2" face="Courier">RIGHT-ARROW</font><font
+face="Times"> Moves the cursor one character to the right. You
+cannot move past the last character on the line. If so, <b>gsh</b>
+will output an error beep.</font></p>
+
+<p><font size="2" face="Courier">Before After</font></p>
+
+<p><font size="2" face="Courier">% <b>print f</b><b><u>o</u></b><b>o
+bar</b> (RIGHT-ARROW) % <b>print fo</b><b><u>o</u></b><b> bar</b></font></p>
+
+<p><font size="2" face="Courier">DELETE</font><font face="Times">
+</font><font size="2" face="Courier"><b>backward-delete-char</b></font></p>
+
+<p><font face="Times">Deletes the character to the left of the
+cursor. You can delete up to the first character on the
+command-line.</font></p>
+
+<p><font size="2" face="Courier">Before After</font></p>
+
+<p><font size="2" face="Courier">% <b>print f</b><b><u>o</u></b><b>o
+bar</b> (DELETE) % <b>print </b><b><u>o</u></b><b>o bar</b></font></p>
+
+<p><font size="2" face="Courier">CLEAR <b>kill-whole-line</b></font></p>
+
+<p><font size="2" face="Courier">CTRL-X</font><font face="Times">
+Deletes all characters on the command line and positions the
+cursor after the prompt.</font></p>
+
+<p><font size="2" face="Courier">Before After</font></p>
+
+<p><font size="2" face="Courier">% <b>prin</b><b><u>t</u></b><b>
+foo bar</b> (CTRL-X) % <b>_</b> </font></p>
+
+<p><font size="2" face="Courier">CTRL-Y;</font><font face="Times">
+</font><font size="2" face="Courier"><b>kill-end-of-line</b></font></p>
+
+<p><font face="Times">Deletes all characters from the cursor to
+the end of the command-line.</font></p>
+
+<p><font size="2" face="Courier">Before After</font></p>
+
+<p><font size="2" face="Courier">% <b>print f</b><b><u>o</u></b><b>o
+bar</b> (CTRL-Y) % <b>print f_</b> </font></p>
+
+<p><font size="2" face="Courier">CTRL-D <b>delete-char</b></font></p>
+
+<p><font size="2" face="Courier">OA-D</font><font face="Times">
+Deletes the character under the cursor.</font></p>
+
+<p><font size="2" face="Courier">Before After</font></p>
+
+<p><font size="2" face="Courier">% <b>print fo</b><b><u>o</u></b><b>
+bar</b> (OA-D) % <b>print fo</b><b><u> </u></b><b>bar</b></font></p>
+
+<p><font size="2" face="Courier">CTRL-A <b>beginning-of-line</b></font></p>
+
+<p><font size="2" face="Courier">OA-&lt;</font><font face="Times">
+Moves the cursor to the beginning of the line.</font></p>
+
+<p><font size="2" face="Courier">Before After</font></p>
+
+<p><font size="2" face="Courier">% <b>print </b><b><u>f</u></b><b>oo
+bar</b> (OA-&lt;) % <b><u>p</u></b><b>rint foo bar</b></font></p>
+
+<p><font size="2" face="Courier">CTRL-E <b>end-of-line</b></font></p>
+
+<p><font size="2" face="Courier">OA-&gt;</font><font face="Times">
+Moves the cursor to the first position past the last character on
+the line.</font></p>
+
+<p><font size="2" face="Courier">Before After</font></p>
+
+<p><font size="2" face="Courier">% <b>print </b><b><u>f</u></b><b>oo
+bar</b> (OA-&gt;) % <b>print foo bar</b><b><u>_</u></b> </font></p>
+
+<p><font size="2" face="Courier">OA-RIGHT-ARROW <b>forward-word</b></font></p>
+
+<p><font face="Times">Moves the cursor right to the last
+character of the current word.</font></p>
+
+<p><font size="2" face="Courier">Before After</font></p>
+
+<p><font size="2" face="Courier">% <b>print </b><b><u>f</u></b><b>oo
+bar</b> (OA-RIGHT-ARROW) % <b>print fo</b><b><u>o</u></b><b> bar</b></font></p>
+
+<p><font size="2" face="Courier">OA-LEFT ARROW <b>backward-word</b></font></p>
+
+<p><font face="Times">Moves the cursor left to the beginning of
+the current word.</font></p>
+
+<p><font size="2" face="Courier">Before After</font></p>
+
+<p><font size="2" face="Courier">% <b>print f</b><b><u>o</u></b><b>o
+bar</b> (OA-LEFT ARROW) % <b>print </b><b><u>f</u></b><b>oo bar</b></font></p>
+
+<p><font size="2" face="Courier">% <b>print foo </b><b><u>b</u></b><b>ar</b>
+(OA-LEFT ARROW) % <b>print </b><b><u>f</u></b><b>oo bar</b></font></p>
+
+<p><font size="2" face="Courier">OA-E</font><font face="Times"> </font><font
+size="2" face="Courier"><b>toggle-cursor</b></font></p>
+
+<p><font face="Times">Toggles input mode between insert and
+overstrike. Overstrike mode is distinguished by a solid inverse
+cursor and insert mode by a blinking '</font><font size="2"
+face="Courier"><b>_</b></font><font face="Times">' cursor. In
+overstrike mode, any characters that are typed directly
+over-write those characters below the cursor. In insert mode, the
+characters typed are inserted before the character below the
+cursor.</font></p>
+
+<p><font face="Times"><b>History Editing Keys</b></font></p>
+
+<p><font face="Times">These command-line editor keys allow access
+to previously entered commands. The GNO shell automatically keeps
+track of previous commands in what is called a history buffer.</font></p>
+
+<p><font face="Times">The maximum number of command-lines saved
+in the history buffer is determined by the shell variable . A
+default value for this variable is set in the <i>gshrc</i> file
+that the GNO Installer creates. The lines saved to the history
+buffer are kept between sessions. That is, when you exit <b>gsh</b>,
+$</font><font size="2" face="Courier">SAVEHIST</font><font
+face="Times"> command-lines are saved to the </font><font
+size="2" face="Courier">history</font><font face="Times"> file in
+your </font><font size="2" face="Courier">$HOME</font><font
+face="Times"> directory. When <b>gsh</b> is invoked again, all
+command-lines saved in the history buffer will be available using
+history editing keys. See Chapter 5 <b>Description of Predefined
+Shell Variables</b> for more informtation on the </font><font
+size="2" face="Courier">HISTORY</font><font face="Times"> and </font><font
+size="2" face="Courier">SAVEHIST</font><font face="Times">
+variables.</font></p>
+
+<dir>
+    <li><font size="2" face="Courier">CTRL-P <b>up-history</b></font><p><font
+        size="2" face="Courier">UP-ARROW</font><font face="Times">
+        Fetches the previous command-line. If the current
+        command-line is the first line in the history buffer, the
+        next line fetched will be an empty command-line. If
+        invoked again, the last line in the history buffer will
+        be displayed.</font></p>
+        <p><font size="2" face="Courier">Before After</font></p>
+        <p><font size="2" face="Courier">% <b>print foo bar</b></font></p>
+        <p><font size="2" face="Courier">% <b>echo Apple II</b></font></p>
+        <p><font size="2" face="Courier">% <b>echo GNO/ME</b></font></p>
+        <p><font size="2" face="Courier">% <b>_</b> (UP-ARROW) % <b>echo
+        GNO/ME_</b> </font></p>
+        <p><font size="2" face="Courier">% <b>echo GNO/ME_</b>
+        (UP-ARROW) % <b>echo Apple II_</b> </font></p>
+        <p><font size="2" face="Courier">CTRL-N <b>down-history</b></font></p>
+        <p><font size="2" face="Courier">DOWN-ARROW</font><font
+        face="Times"> Fetches the next command-line. If the
+        current command-line is the last command line in the
+        history buffer, the next line fetched will be the first
+        command-line in the history buffer.</font></p>
+        <p><font size="2" face="Courier">Before After</font></p>
+        <p><font size="2" face="Courier">% print foo bar</font></p>
+        <p><font size="2" face="Courier">% echo Apple II</font></p>
+        <p><font size="2" face="Courier">% echo GNO/ME</font></p>
+        <p><font size="2" face="Courier">% <b>_</b> (DOWN-ARROW)
+        % <b>print foo bar_</b> </font></p>
+        <p><font size="2" face="Courier">% <b>print foo bar_</b>
+        (DOWN-ARROW) % <b>echo Apple II_</b> </font></p>
+        <p><font face="Times"><b>Command, Filename and Variable
+        completion</b></font></p>
+        <p><font face="Times">These command-line editor keys can
+        be used to complete filenames, commands and variables.</font></p>
+        <p><font size="2" face="Courier">CTRL-D</font><font
+        face="Times"> </font><font size="2" face="Courier"><b>list-choices</b></font></p>
+        <p><font face="Times">Lists commands and pathnames that
+        match the current word.</font></p>
+        <p><font size="2" face="Courier">Before</font></p>
+        <p><font size="2" face="Courier">% <b>print foo_ bar</b>
+        (CTRL-D)</font></p>
+        <p><font size="2" face="Courier">After</font></p>
+        <p><font size="2" face="Courier">foo.c fool foo.m</font></p>
+        <p><font size="2" face="Courier">% <b>print foo_ bar</b></font></p>
+        <p><font size="2" face="Courier">TAB</font><font
+        face="Times"> </font><font size="2" face="Courier"><b>complete-word</b></font></p>
+        <p><font face="Times">Command, pathname and variable
+        completion. If the cursor is positioned on the first word
+        of the command-line, command pathname is performed, else
+        pathname or variable completion is performed. The word is
+        expanded to the closest matching command, pathname or
+        variable. Characters are appended up to the point that
+        they would cause more than one. If a complete pathname
+        results for pathname completion, <b>gsh</b> appends a
+        &quot;</font><font size="2" face="Courier">/</font><font
+        face="Times">&quot; if the pathname is a directory;
+        otherwise, it appends a space.</font></p>
+        <p><font size="2" face="Courier">Before After</font></p>
+        <p><font size="2" face="Courier">% <b>ca_</b> (TAB) % <b>cat_</b></font></p>
+        <p><font size="2" face="Courier">% <b>mo_ foo.c</b> (TAB)
+        % <b>more_ foo.c</b></font></p>
+        <p><font size="2" face="Courier">% <b>more fo_</b> (TAB)
+        % <b>more foo_</b> </font></p>
+        <p><font size="2" face="Courier">% <b>echo $TERMC_</b>
+        (TAB) % <b>echo $TERMCAP_</b></font></p>
+        <p><font face="Times">Note that if there is more than one
+        match for the partial command, <b>gsh</b> will sound a
+        beep on the speaker. You can use the CTRL-D (</font><font
+        size="2" face="Courier">list-choices</font><font
+        face="Times">) command to see the list of possible
+        matches, and should either finish entering the command
+        manually or type enough additional characters to
+        guarantee a unique match.</font></p>
+        <p><font face="Times">If the </font><font size="2"
+        face="Courier">$FIGNORE </font><font face="Times">variable
+        is set, <b>gsh</b> ignores filenames (when doing
+        completion) that end with any of the suffixes in </font><font
+        size="2" face="Courier">$FIGNORE</font><font face="Times">.
+        See Chapter 5 <b>Description of Pre-defined Shell
+        Variables</b> for more information regarding the </font><font
+        size="2" face="Courier">$FIGNORE </font><font
+        face="Times">variable.</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>Other ways of entering commands</b></font></p>
+
+<p><font face="Times"><u>Terminal Input</u></font></p>
+
+<p><font face="Times">An example involving the connection of a
+terminal; will be dealt with in Chapter 3 <b>Redirecting Input
+and Output</b> but it is necessary to mention here that when
+using .i.<b>gsh</b> over a terminal, some keystrokes must be
+slightly modified. This is because there are no terminals that
+can transmit the OA key. Instead, a two-key sequence must be used
+which replaces OA with ESC. For example, instead of pressing OA-E
+to toggle insert mode, you can type ESC-E over a terminal to do
+the same thing.</font></p>
+
+<p><font face="Times">If you will be using terminals seriously
+then you should install the Remote Access package.</font></p>
+
+<dir>
+    <li><font face="Times"><u>Script File</u></font></li>
+</dir>
+
+<p><font face="Times">While you would normally type commands on
+the command-line, you can also store a series of often used
+commands in a file. A file containing such a series of commands
+is called a script. A script is normally created by using a text
+editor.</font></p>
+
+<p><font face="Times">By typing the name of the script file, the
+shell will execute it, line by line, as if you had typed each
+command separately. The <i>gshrc</i> file presented in Chapter 1 <b>Customizing
+the Shell Environment</b> is an example of a script file.</font></p>
+</body>
+</html>

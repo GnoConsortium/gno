@@ -1,0 +1,1849 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>GNO Shell User's Manual</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><font size="6" face="Times">Chapter 5</font></p>
+
+<p><font size="6" face="Times">Shell Variables</font></p>
+
+<p align="right"><font size="2" face="Times">And then one day,
+hurray! Another way for gnomes to say hooray!</font></p>
+
+<p align="right"><font size="2" face="Times">Syd Barret, <u>The
+Gnome</u></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>Using shell variables</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>gsh</b> supports <b>variables</b> in the
+shell environment. These variables can be used by any shell
+utility or script. Many EXE files and shell scripts pre-define
+certain shell variables that contain formatting options or other
+options for a specific utility. As an example, the <b>ls</b>
+utility looks for the variable </font><font size="2"
+face="Courier">TERM</font><font face="Times"> that defines the
+terminal type currently being used. When <b>ls</b> is started, it
+reads the value of the </font><font size="2" face="Courier">TERM</font><font
+face="Times"> variable and avoids printing Apple II specific
+MouseText characters if the set terminal does not support them.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>gsh</b> has set aside certain variables
+for its specific use. Shell utilities should be aware of these
+variables and use them appropriately. Use caution when changing
+shell variables, because the change could affect more than just
+the shell.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>of Shell Variables</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">There are two types of processes that are
+involved in any discussion of a multitasking system.The original
+process, <b>gsh</b> for example, is called a parent process. If <b>gsh</b>
+invokes a process, such as <b>ls</b>, <b>cp</b>, or <b>mv</b>,
+that process is called a child process. It is possible for any
+process to define a variable. These variables will not be made
+available to other processes unless the program that defined the
+variable specifically makes them available. </font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The <i>export</i> command makes variables
+defined by one process available to its children. See the example
+<i>gshrc</i> shell script shown in Chaper 1 <b>Customizing the
+Shell Environment</b>. In the case of the shell, most of its
+variables are exported and, therefore, all shell utilities can
+read the value of a shell variable. However, programs cannot
+change the value of a shell variable. In general, executables
+share their environment with that of the shell, so that a utility
+can change variables in its parent's environment. This allows
+communication between programs and the shell.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>Description of Pre-defined Shell
+Variables</b></font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font face="Times">The following variables have special
+meaning to <b>gsh</b>. Shell variables are not case sensitive.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<dir>
+    <li><font size="2" face="Courier">$0, $1, $2, ...</font><p><font
+        face="Times">String values that contain the arguments to
+        a shell script. Variable 0 contains the name of the
+        script. The first argument begins with variable 1 and so
+        on. To expand a variable, use the dollar character,
+        &quot;$&quot; (See Chapter 5 <b>Accessing shell variables</b>)</font></p>
+        <p><font size="2" face="Courier">$&lt;</font><font
+        face="Times"> When encountered, the variable is expanded
+        using a value obtained from standard input. This provides
+        a means of obtaining user input in script files. Note
+        that the shell variables are expanded before the
+        command-line is executed (See Chapter 5 <b>Accessing
+        shell variables</b>) When prompting the user for input,
+        be sure that the prompt is in a separate command-line
+        than the $&lt;. Also, if the user wishes to enter a value
+        with spaces, he must quote what he types with
+        double-quotes.</font></p>
+        <p><font size="2" face="Courier">$ECHO</font><font
+        face="Times"> A boolean value that, if defined, will
+        cause commands in a shell script to be echoed to standard
+        output.</font></p>
+        <p><font size="2" face="Courier">$FIGNORE </font><font
+        face="Times">This variable, if set, contains a list of
+        filename suffixes. When doing command or filename
+        completion, <b>gsh</b> will ignore any filename with a
+        suffix listed in </font><font size="2" face="Courier">FIGNORE</font><font
+        face="Times">. For example, you might want to </font><font
+        size="2" face="Courier">set&nbsp;fignore=&quot;.A&nbsp;.ROOT&nbsp;.SYM&quot;</font><font
+        face="Times"> to ignore object files and other compiler
+        droppings.</font></p>
+        <p><font size="2" face="Courier">$HISTORY</font><font
+        face="Times"> A numeric value that contains the number of
+        history commands (command-lines) remembered. If the value
+        is 0 or </font><font size="2" face="Courier">HISTORY</font><font
+        face="Times"> is undefined, all commands will be
+        remembered. Previous command-lines can be called back
+        with the UP-ARROW and DOWN-ARROW (See Chapter 2<b>,
+        History Editing Commands</b>).</font></p>
+        <p><font size="2" face="Courier">$HOME</font><font
+        face="Times"> The </font><font size="2" face="Courier">HOME</font><font
+        face="Times"> directory is the main directory of the
+        shell; it is the directory <b>gsh</b> defaults to when it
+        starts. The tilde character (&quot;~&quot;) can be used
+        as a shorthand method of accessing the </font><font
+        size="2" face="Courier">HOME</font><font face="Times">
+        directory (as discussed in Chapter 3, <b>Tilde Expansion</b>).</font></p>
+        <p><font size="2" face="Courier">$IGNOREEOF </font><font
+        face="Times">A boolean value that, if enabled, will
+        prevent ^D from exiting the shell.</font></p>
+        <p><font size="2" face="Courier">$NOBEEP</font><font
+        face="Times"> A boolean value that, if set, will prevent <b>gsh</b>
+        from sounding the speaker when errors occur while editing
+        a command-line.</font></p>
+        <p><font size="2" face="Courier">$NODIREXEC</font><font
+        face="Times"> A boolean value that, if set, will disable <b>gsh</b>'s
+        feature of treating directory names as commands; i.e. if
+        a directory is specified as a command, <b>gsh</b> will
+        move to that directory as though the cd command was being
+        used.</font></p>
+        <p><font size="2" face="Courier">$NOGLOB</font><font
+        face="Times"> A boolean value that, if enabled, will
+        disable filename globbing. Command arguments will be
+        passed to their commands &quot;as-is&quot;, without any
+        wildcard expansion.</font></p>
+        <p><font size="2" face="Courier">$NONEWLINE</font><font
+        face="Times"> A boolean value that, if set, will disable
+        carriage returns being output before and after command
+        execution. Previous examples given in this manual have
+        this option set.</font></p>
+        <p><font size="2" face="Courier">$PATH</font><font
+        face="Times"> A string value that defines the pathnames
+        where shell scripts, EXE utilities, and SYS16 programs
+        can be found (See <b>Chapter 3, How gsh finds a command</b>).
+        Because GS/OS uses colons as separators in pathnames, <b>gsh</b>
+        cannot allow colons to be used as separators in the PATH
+        variable, as U</font><font size="2" face="Times">NIX</font><font
+        face="Times"> does. If one of the path entries has a
+        space within it (which is possible with the HFS FST),
+        then the space should be quoted with a backslash,
+        &quot;\&quot;.</font></p>
+        <p><font size="2" face="Courier">$PRECMD </font><font
+        face="Times">Actually an <u>alias</u> and not a variable,
+        if </font><font size="2" face="Courier">PRECMD</font><font
+        face="Times"> is defined it will be executed just before
+        gsh prints the prompt for a command line. For example, </font><font
+        size="2" face="Courier">alias precmd qtime</font><font
+        face="Times"> will print the time in English text before
+        every prompt.</font></p>
+        <p><font size="2" face="Courier">$PROMPT</font><font
+        face="Times"> When <b>gsh</b> prompts you to enter a
+        command, the prompt that appears before the cursor can be
+        customized for your <b>gsh</b> environment. If </font><font
+        size="2" face="Courier">PROMPT</font><font face="Times">
+        is undefined, the default prompt of &quot;% &quot; is
+        used. The prompt string recognizes certain character
+        sequences in the </font><font size="2" face="Courier">PROMPT</font><font
+        face="Times"> variable and interprets them accordingly.
+        The following are the special characters:</font></p>
+        <p><font size="2" face="Courier">%h, %!, !</font><font
+        face="Times"> Current history number.</font></p>
+        <p><font size="2" face="Courier">%t, %@</font><font
+        face="Times"> Current time of day in 12 hour am/pm
+        format.</font></p>
+        <p><font size="2" face="Courier">%d, %/</font><font
+        face="Times"> Current working directory.</font></p>
+        <p><font size="2" face="Courier">%~</font><font
+        face="Times"> Current working directory with tilde
+        (&quot;</font><font size="2" face="Courier">~</font><font
+        face="Times">&quot;) replacement.</font></p>
+        <p><font size="2" face="Courier">%c, %C, %.</font><font
+        face="Times"> Trailing component of current working
+        directory.</font></p>
+        <p><font size="2" face="Courier">%S, %s</font><font
+        face="Times"> Inverse mode ON (</font><font size="2"
+        face="Courier">%S</font><font face="Times">) / OFF (</font><font
+        size="2" face="Courier">%s</font><font face="Times">).</font></p>
+        <p><font size="2" face="Courier">%U, %u</font><font
+        face="Times"> Begin and end Underline mode (only on
+        terminals that support underline. </font><font size="2"
+        face="Courier">gnocon</font><font face="Times"> will use
+        inverse mode instead.)</font></p>
+        <p><font size="2" face="Courier">%%</font><font
+        face="Times"> Displays a single &quot;</font><font
+        size="2" face="Courier">%</font><font face="Times">&quot;
+        character.</font></p>
+        <p><font size="2" face="Courier">%n</font><font
+        face="Times"> User name (contents of </font><font
+        size="2" face="Courier">$USER</font><font face="Times">
+        variable).</font></p>
+        <p><font size="2" face="Courier">%W</font><font
+        face="Times"> The date in mm/dd/yy format.</font></p>
+        <p><font size="2" face="Courier">%D</font><font
+        face="Times"> The date in yy-mm-dd format.</font></p>
+        <p><font size="2" face="Courier">\n</font><font
+        face="Times"> Newline</font></p>
+        <p><font size="2" face="Courier">\r</font><font
+        face="Times"> Carriage Return</font></p>
+        <p><font size="2" face="Courier">\t</font><font
+        face="Times"> Tab</font></p>
+        <p><font size="2" face="Courier">\b</font><font
+        face="Times"> Bell (beep)</font></p>
+        <p><font face="Times">Examples of prompts already used in
+        this manual are &quot;</font><font face="Courier">[1]%</font><font
+        face="Times">&quot;, and &quot;</font><font
+        face="Courier">[/user/root]%</font><font face="Times">&quot;</font></p>
+        <p><font face="Times">These were created by using the
+        commands <b>set prompt &quot;[%h]</b></font><font
+        face="Courier"><b>%</b></font><font face="Times">&quot;
+        and <b>set prompt &quot;[%d]</b></font><font
+        face="Courier"><b>%</b></font><font face="Times"><b>&quot;</b>.</font></p>
+        <p><font size="2" face="Courier">$PUSHDSILENT</font></p>
+        <p><font face="Times">If this variable is defined, <b>gsh</b>
+        will not print the directory stack after any of the
+        directory stack commands (See Chapter 4 </font><font
+        size="2" face="Courier"><b>pushd</b></font><font
+        face="Times">, </font><font size="2" face="Courier"><b>popd</b></font><font
+        face="Times">, .) </font></p>
+        <p><font size="2" face="Courier">$SAVEHIST</font><font
+        face="Times"> A numeric value that contains the number of
+        commands to save to disk when exiting <b>gsh</b>. These
+        commands are then read back in when <b>gsh</b> is
+        restarted which allows old commands to be reused. If the
+        value is 0 or </font><font size="2" face="Courier">SAVEHIST</font><font
+        face="Times"> is undefined, no commands will be saved to
+        disk.</font></p>
+        <p><font size="2" face="Courier">$TERM </font><font
+        face="Times">This variable contains the name of the
+        terminal emulation that the shell and other applications
+        should use. By default, it is '</font><font size="2"
+        face="Courier">gnocon</font><font face="Times">'. When
+        the shell encounters a '</font><font size="2"
+        face="Courier">set term</font><font face="Times">'
+        command, it automatically calls the </font><font size="2"
+        face="Courier"><b>tset</b></font><font face="Times">
+        command to reload the termcap information. See Appendix F
+        <b>Termcaps</b>.</font></p>
+        <p><font size="2" face="Courier">$TERMCAP </font><font
+        face="Times">This variable specifies the location of the <i>termcap</i>
+        file. The shell and other applications look for <i>termcap</i>
+        in the /etc directory, but if </font><font size="2"
+        face="Courier">TERMCAP</font><font face="Times"> is set,
+        the fully specified termcap file is used instead. This
+        allows users to install custom termcap entries. See
+        Appendix F <b>Termcaps</b>.</font></p>
+        <p><font size="2" face="Courier">$USER</font><font
+        face="Times"> A string that represents the name of the
+        current user. This variable is usually set by <b>login</b>(1).</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>Accessing shell variables</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">Shell variables are defined or changed with
+the </font><font size="2" face="Courier">set</font><font
+face="Times"> command. The </font><font size="2" face="Courier">unset</font><font
+face="Times"> command is used to delete a variable. See Chapter 4
+<b>Environment Commands</b> for more information on the </font><font
+size="2" face="Courier">set</font><font face="Times"> and </font><font
+size="2" face="Courier">unset</font><font face="Times"> commands</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">To access shell variables from the command
+line or a shell script, use the character &quot;$&quot; followed
+by the variable name. The dollar sign character will expand the
+variable to its value. If you wish to use the dollar sign
+character in a string from the command line, remember to enclose
+it in single quotes or use the &quot;\&quot; escape character. If
+you use double quotes, the shell will try to expand the variable.
+To differentiate the variable name from characters that may
+immediately follow it, the variable name may be optionally
+surrounded with braces, &quot;{&quot; and &quot;}&quot;.This
+provides a very powerful way of user interaction with shell
+scripts. As an example,</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">[1] 9:41pm root&gt; <b>set</b></font></p>
+
+<p><font size="2" face="Courier">PAGER = less</font></p>
+
+<p><font size="2" face="Courier">SAVEHIST = 25</font></p>
+
+<p><font size="2" face="Courier">PATH = :hard:gno:bin
+:right:gno:usr:bin</font></p>
+
+<p><font size="2" face="Courier">USRMAN = /usr/man</font></p>
+
+<p><font size="2" face="Courier">HISTORY = 100</font></p>
+
+<p><font size="2" face="Courier">status = 0</font></p>
+
+<p><font size="2" face="Courier">fignore = .a .root .sym</font></p>
+
+<p><font size="2" face="Courier">TERM = gnocon</font></p>
+
+<p><font size="2" face="Courier">LESS = -e</font></p>
+
+<p><font size="2" face="Courier">PROMPT = [%h] %S%t%s %C&gt; </font></p>
+
+<p><font size="2" face="Courier">HOME = :hard:gno:user:root</font></p>
+
+<p><font size="2" face="Courier">user = root</font></p>
+
+<p><font size="2" face="Courier">nonewline = 1</font></p>
+
+<p><font size="2" face="Courier">[2] 9:41pm root&gt; <b>set
+history 30 user user1 ; set</b></font></p>
+
+<p><font size="2" face="Courier">PAGER = less</font></p>
+
+<p><font size="2" face="Courier">SAVEHIST = 25</font></p>
+
+<p><font size="2" face="Courier">PATH = :hard:gno:bin
+:right:gno:usr:bin</font></p>
+
+<p><font size="2" face="Courier">USRMAN = /usr/man</font></p>
+
+<p><font size="2" face="Courier">HISTORY = 30</font></p>
+
+<p><font size="2" face="Courier">status = 0</font></p>
+
+<p><font size="2" face="Courier">fignore = .a .root .sym</font></p>
+
+<p><font size="2" face="Courier">TERM = gnocon</font></p>
+
+<p><font size="2" face="Courier">LESS = -e</font></p>
+
+<p><font size="2" face="Courier">PROMPT = [%h] %S%t%s %C&gt; </font></p>
+
+<p><font size="2" face="Courier">HOME = :hard:gno:user:root</font></p>
+
+<p><font size="2" face="Courier">user = user1</font></p>
+
+<p><font size="2" face="Courier">nonewline = 1</font></p>
+
+<p><font size="2" face="Courier">[3] 9:41pm root&gt; <b>unset
+savehist ; set</b></font></p>
+
+<p><font size="2" face="Courier">PAGER = less</font></p>
+
+<p><font size="2" face="Courier">PATH = :hard:gno:bin
+:hard:gno:usr:bin</font></p>
+
+<p><font size="2" face="Courier">USRMAN = /usr/man</font></p>
+
+<p><font size="2" face="Courier">HISTORY = 30</font></p>
+
+<p><font size="2" face="Courier">status = 0</font></p>
+
+<p><font size="2" face="Courier">fignore = .a .root .sym</font></p>
+
+<p><font size="2" face="Courier">TERM = gnocon</font></p>
+
+<p><font size="2" face="Courier">LESS = -e</font></p>
+
+<p><font size="2" face="Courier">PROMPT = [%h] %S%t%s %c&gt; </font></p>
+
+<p><font size="2" face="Courier">HOME = :hard:gno:user:root</font></p>
+
+<p><font size="2" face="Courier">user = user1</font></p>
+
+<p><font size="2" face="Courier">nonewline = 1</font></p>
+
+<p><font size="2" face="Courier">[6] 9:43pm root&gt; <b>echo
+'Current value of $path = ' $path</b></font></p>
+
+<p><font size="2" face="Courier">Current value of $path =
+:right:gno:bin :right:gno:usr:bin </font></p>
+
+<p><font size="2" face="Courier">[7] 9:44pm root&gt; <b>echo
+&quot;value of $path = &quot; $path</b></font></p>
+
+<p><font size="2" face="Courier">value of :right:gno:bin
+:right:gno:usr:bin = :right:gno:bin :right:gno:usr:bin </font></p>
+
+<p><font size="2" face="Courier">[9] 9:45pm root&gt; <b>set user1
+foo</b></font></p>
+
+<p><font size="2" face="Courier">[10] 9:45pm root&gt; <b>echo
+$user1</b></font></p>
+
+<p><font size="2" face="Courier">foo </font></p>
+
+<p><font size="2" face="Courier">[11] 9:45pm root&gt; <b>echo
+${user}1</b></font></p>
+
+<p><font size="2" face="Courier">user11 </font></p>
+
+<p><font size="2" face="Courier">[12] 9:46pm root&gt; <b>echo
+&quot;echo '\$path = ' \$path&quot; &gt;&gt; change.path</b></font></p>
+
+<p><font size="2" face="Courier">[13] 9:46pm root&gt; <b>echo
+&quot;set path \$1&quot; &gt;&gt; change.path</b></font></p>
+
+<p><font size="2" face="Courier">[14] 9:47pm root&gt; <b>echo
+'rehash' &gt;&gt; change.path</b></font></p>
+
+<p><font size="2" face="Courier">[15] 9:47pm root&gt; <b>cat
+change.path</b></font></p>
+
+<p><font size="2" face="Courier">echo '$path = ' $path</font></p>
+
+<p><font size="2" face="Courier">set path $1</font></p>
+
+<p><font size="2" face="Courier">rehash</font></p>
+
+<p><font size="2" face="Courier">[16] 9:48pm root&gt; <b>change.path
+'/dev/gno/utilities'</b></font></p>
+
+<p><font size="2" face="Courier">$path = /dev/gno/orca
+/dev/gno/utilities</font></p>
+
+<p><font size="2" face="Courier">hashed 22 files.</font></p>
+
+<p><font size="2" face="Courier">[17] 9:49pm root&gt; <b>change.path
+$PATH</b></font></p>
+
+<p><font size="2" face="Courier">$path = /dev/gno/orca
+/dev/gno/utilities</font></p>
+
+<p><font size="2" face="Courier">hashed 55 files.</font></p>
+
+<p><font size="2" face="Courier">[18] 9:50pm root&gt; <b>echo
+this is $homeplate</b></font></p>
+
+<p><font size="2" face="Courier">this is </font><font size="2"
+face="Times">{ variable </font><font size="2" face="Courier">homeplate</font><font
+size="2" face="Times"> wasn't found }</font></p>
+
+<p><font size="2" face="Courier">[19] 9:51pm root&gt; <b>echo
+this is ${home}plate</b></font></p>
+
+<p><font size="2" face="Courier">this is /dev/gnoplate </font><font
+size="2" face="Times">{ variable </font><font size="2"
+face="Courier">home</font><font size="2" face="Times"> is found }</font></p>
+
+<p><font size="2" face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b></b></font>&nbsp;</p>
+
+<p><font size="6" face="Times">Appendix A</font></p>
+
+<p><font size="6" face="Times">Sample gsh session</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The following represents a sample session
+in gsh. Many of the features discussed in this manual are
+reviewed here. Comments are enclosed in braces (&quot;{}&quot;).</font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">[1] gno&gt; <b>set</b></font></p>
+
+<p><font size="2" face="Courier">savehist = 25</font></p>
+
+<p><font size="2" face="Courier">path = /dev/orca/utilities
+/dev/gno/orca /dev/gno/utilities</font></p>
+
+<p><font size="2" face="Courier">history = 25</font></p>
+
+<p><font size="2" face="Courier">prompt = [%h] %C&gt; </font></p>
+
+<p><font size="2" face="Courier">user = achin</font></p>
+
+<p><font size="2" face="Courier">home = /dev/gno</font></p>
+
+<p><font size="2" face="Courier">nonewline = 1</font></p>
+
+<p><font size="2" face="Courier">[2] gno&gt; <b>echo environment
+variable PROMPT = $PROMPT</b></font></p>
+
+<p><font size="2" face="Courier">environment variable PROMPT =
+[%h] %C&gt;</font></p>
+
+<p><font size="2" face="Courier">[3] gno&gt; <b>cat gshrc</b></font></p>
+
+<p><font size="2" face="Times">{ <b>gshrc</b> is the startup
+file. }</font></p>
+
+<p><font size="2" face="Courier">###</font></p>
+
+<p><font size="2" face="Courier">#</font></p>
+
+<p><font size="2" face="Courier"># GNO 2.0 gshrc file</font></p>
+
+<p><font size="2" face="Courier">#</font></p>
+
+<p><font size="2" face="Courier">###</font></p>
+
+<p><font size="2" face="Courier">#</font></p>
+
+<p><font size="2" face="Courier"># Initialize our environment</font></p>
+
+<p><font size="2" face="Courier">#</font></p>
+
+<p><font size="2" face="Courier">set path=&quot;:hard:gno:bin
+:right:gno:usr:bin&quot;</font></p>
+
+<p><font size="2" face="Courier">set prompt=&quot;[%h] %S%t%s
+%C&gt; &quot;</font></p>
+
+<p><font size="2" face="Courier">set
+home=&quot;:hard:gno:user:root&quot;</font></p>
+
+<p><font size="2" face="Courier">set term=gnocon</font></p>
+
+<p><font size="2" face="Courier">export path prompt home term</font></p>
+
+<p><font size="2" face="Courier">setenv history=100 savehist=25</font></p>
+
+<p><font size="2" face="Courier">###</font></p>
+
+<p><font size="2" face="Courier">#</font></p>
+
+<p><font size="2" face="Courier">#Set up standard prefixes for
+utilities.</font></p>
+
+<p><font size="2" face="Courier">#</font></p>
+
+<p><font size="2" face="Courier">###</font></p>
+
+<p><font size="2" face="Courier">prefix 2
+:software:orca:libraries</font></p>
+
+<p><font size="2" face="Courier">prefix 3 :software:orca</font></p>
+
+<p><font size="2" face="Courier">prefix 4 :software:orca:shell</font></p>
+
+<p><font size="2" face="Courier">prefix 5
+:software:orca:languages</font></p>
+
+<p><font size="2" face="Courier">prefix 6
+:software:orca:utilities</font></p>
+
+<p><font size="2" face="Courier">prefix 7 :tmp</font></p>
+
+<p><font size="2" face="Courier">###</font></p>
+
+<p><font size="2" face="Courier">#</font></p>
+
+<p><font size="2" face="Courier"># Set up prefixes for
+Orca2.0(tm)'s benefit</font></p>
+
+<p><font size="2" face="Courier">#</font></p>
+
+<p><font size="2" face="Courier">###</font></p>
+
+<p><font size="2" face="Courier">prefix 13
+:software:orca:libraries</font></p>
+
+<p><font size="2" face="Courier">prefix 14 :software:orca</font></p>
+
+<p><font size="2" face="Courier">prefix 15 :software:orca:shell</font></p>
+
+<p><font size="2" face="Courier">prefix 16
+:software:orca:languages</font></p>
+
+<p><font size="2" face="Courier">prefix 17
+:software:orca:utilities</font></p>
+
+<p><font size="2" face="Courier">alias ls 'ls -CF'</font></p>
+
+<p><font size="2" face="Courier">alias dir 'ls -al'</font></p>
+
+<p><font size="2" face="Courier">alias cp 'cp -i'</font></p>
+
+<p><font size="2" face="Courier">alias rm 'cp -p rm'</font></p>
+
+<p><font size="2" face="Courier">alias mv 'cp -p mv'</font></p>
+
+<p><font size="2" face="Courier">setenv usrman='/usr/man'</font></p>
+
+<p><font size="2" face="Courier">set fignore='.a .root .sym'</font></p>
+
+<p><font size="2" face="Courier">alias zcat 'compress -cd'</font></p>
+
+<p><font size="2" face="Courier">setenv pager=less</font></p>
+
+<p><font size="2" face="Courier">setenv less=-e</font></p>
+
+<p><font size="2" face="Courier">set nonewline=1</font></p>
+
+<p><font size="2" face="Courier">#</font></p>
+
+<p><font size="2" face="Courier"># Move to home directory</font></p>
+
+<p><font size="2" face="Courier">#</font></p>
+
+<p><font size="2" face="Courier">cd</font></p>
+
+<p><font size="2" face="Courier">[4] gno&gt; <b>cat gshrc &gt;
+.ttyb&amp;</b></font></p>
+
+<p><font size="2" face="Times">{ <b>.ttyb</b> is the printer
+connected to the printer port. }</font></p>
+
+<p><font size="2" face="Courier">[2]</font></p>
+
+<p><font size="2" face="Courier">[5] gno&gt; <b>echo File
+\'gshrc\' sent to printer.</b></font></p>
+
+<p><font size="2" face="Courier">File 'gshrc' sent to printer.</font></p>
+
+<p><font size="2" face="Courier">[6] gno&gt; <b>alias l 'ls -F';
+l</b></font></p>
+
+<p><font size="2" face="Times">{ The ls &quot;-F&quot; option
+displays executable and directory files differently. }</font></p>
+
+<p><font size="2" face="Courier">:dev:gno</font></p>
+
+<p><font size="2" face="Courier">doc/ foo* gsh* gshrc* kern*</font></p>
+
+<p><font size="2" face="Courier">man/ message message2 orca/
+press.release </font></p>
+
+<p><font size="2" face="Courier">release.notes samples/ todo
+updates utilities/</font></p>
+
+<p><font size="2" face="Courier">[7] gno&gt; <b>history</b></font></p>
+
+<p><font size="2" face="Courier">1: set</font></p>
+
+<p><font size="2" face="Courier">2: echo environment variable
+PROMPT = $PROMPT</font></p>
+
+<p><font size="2" face="Courier">3: cat .gshrc</font></p>
+
+<p><font size="2" face="Courier">4: cat .gshrc &gt; .printer&amp;</font></p>
+
+<p><font size="2" face="Courier">5: echo File \'gshrc\' sent to
+printer.</font></p>
+
+<p><font size="2" face="Courier">6: ls</font></p>
+
+<p><font size="2" face="Courier">7: history</font></p>
+
+<p><font size="2" face="Courier">[8] gno&gt; <b>no_file</b></font></p>
+
+<p><font size="2" face="Courier">no_file: Command not found.</font></p>
+
+<p><font size="2" face="Courier">[9] gno&gt; <b>message</b></font></p>
+
+<p><font size="2" face="Courier">message: Not executable.</font></p>
+
+<p><font size="2" face="Courier">[10] gno&gt; <b>unset USER</b></font></p>
+
+<p><font size="2" face="Times">{ Environment variables are not
+case sensitive. }</font></p>
+
+<p><font size="2" face="Courier">[11] gno&gt; <b>set PATH</b></font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">path = /dev/orca/utilities
+/dev/gno/orca /dev/gno/utilities</font></p>
+
+<p><font size="2" face="Courier">[12] gno&gt; <b>set PROMPT</b></font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">prompt = [%h] %C&gt;</font></p>
+
+<p><font size="2" face="Courier">[13] gno&gt; <b>unset PROMPT</b></font></p>
+
+<p><font size="2" face="Courier">% <b>cp message message2&amp;</b></font></p>
+
+<p><font size="2" face="Courier">[2]</font></p>
+
+<p><font size="2" face="Courier">% <b>rm doc&amp;</b></font></p>
+
+<p><font size="2" face="Courier">rm: :dev:gno:doc directory</font></p>
+
+<p><font size="2" face="Courier">% <b>rm -r doc&amp;</b></font></p>
+
+<p><font size="2" face="Courier">[3]</font></p>
+
+<p><font size="2" face="Courier">% <b>ls *</b></font></p>
+
+<p><font size="2" face="Courier">:dev:gno</font></p>
+
+<p><font size="2" face="Courier">foo* gsh* gshrc* kern* man/</font></p>
+
+<p><font size="2" face="Courier">message message2 orca/
+press.release release.notes</font></p>
+
+<p><font size="2" face="Courier">samples/ todo updates utilities/</font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">% <b>echo *</b></font></p>
+
+<p><font size="2" face="Courier">gshrc foo message Finder.Data
+utilities press.release man release.notes todo</font></p>
+
+<p><font size="2" face="Courier">updates gsh kern samples doc
+orca message2</font></p>
+
+<p><font size="2" face="Courier">% <b>echo g* m*</b></font></p>
+
+<p><font size="2" face="Courier">gshrc gsh message man message2</font></p>
+
+<p><font size="2" face="Courier">% <b>echo g?</b></font></p>
+
+<p><font size="2" face="Courier">No match.</font></p>
+
+<p><font size="2" face="Courier">% <b>pwd</b></font></p>
+
+<p><font size="2" face="Courier">/dev/gno</font></p>
+
+<p><font size="2" face="Courier">% <b>clear ; df</b></font></p>
+
+<p><font size="2" face="Courier">.d## Volume Device Free Total
+Capacity System</font></p>
+
+<p><font size="2" face="Courier">---- ----------------
+---------------- ------- ------- -------- -----------</font></p>
+
+<p><font size="2" face="Courier">.d1 :system .APPLESCSI.HD01.
+25746 50773 49% ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d2 :dev .APPLESCSI.HD01. 44868
+65108 31% ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d3 :usr .APPLESCSI.HD01. 44526
+48725 8% ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d4 :ram5 .DEV2 493 512 3%
+ProDOS</font></p>
+
+<p><font size="2" face="Courier">% <b>which ls cp echo ps</b></font></p>
+
+<p><font size="2" face="Courier">ls: /dev/gno/utilities/ls</font></p>
+
+<p><font size="2" face="Courier">cp: /dev/gno/utilities/cp</font></p>
+
+<p><font size="2" face="Courier">echo: Shell Built-in Command</font></p>
+
+<p><font size="2" face="Courier">ps: Shell Built-in Command</font></p>
+
+<p><font size="2" face="Courier">% <b>echo -n foo</b></font></p>
+
+<p><font size="2" face="Courier">foo % <b>l .dev2
+.applescsi.hd01.01</b></font></p>
+
+<p><font size="2" face="Times">{ Because of the previous
+&quot;echo -n&quot;, the </font><font size="2" face="Courier">PROMPT</font><font
+size="2" face="Times"> is displayed on the line where echo output
+ended. }</font></p>
+
+<p><font size="2" face="Courier">:ram5</font></p>
+
+<p><font size="2" face="Courier">df echo history ls ls.ram5 </font></p>
+
+<p><font size="2" face="Courier">ls.system prefix ps set which</font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">:system</font></p>
+
+<p><font size="2" face="Courier">AppleworksGS/ BASIC.System*
+HyperCard/ ProDOS* a2fx/</font></p>
+
+<p><font size="2" face="Courier">basic.launcher* emacs.icon
+fontasm/ gutenberg/ icons/</font></p>
+
+<p><font size="2" face="Courier">kermit/ publish.it/ review
+shr.pic/ shrinkit/</font></p>
+
+<p><font size="2" face="Courier">snowterm/ system/</font></p>
+
+<p><font size="2" face="Courier">% <b>alias print 'echo'; alias
+copy 'cp'; alias delete 'rm'; alias</b></font></p>
+
+<p><font size="2" face="Courier"><b>catalog 'ls -l'; alias rename
+'mv'</b></font></p>
+
+<p><font size="2" face="Times">{ Useful aliases for Orca fans. }</font></p>
+
+<p><font size="2" face="Courier">% <b>alias</b></font></p>
+
+<p><font size="2" face="Courier">l: ls -F</font></p>
+
+<p><font size="2" face="Courier">print: echo</font></p>
+
+<p><font size="2" face="Courier">copy: cp</font></p>
+
+<p><font size="2" face="Courier">delete: rm</font></p>
+
+<p><font size="2" face="Courier">catalog: ls -l</font></p>
+
+<p><font size="2" face="Courier">rename: mv</font></p>
+
+<p><font size="2" face="Courier">% <b>set PROMPT='[!] %C&gt; '</b></font></p>
+
+<p><font size="2" face="Courier">[30] gno&gt; <b>cd samples</b></font></p>
+
+<p><font size="2" face="Courier">[31] samples&gt; <b>cmpl ps.c
+keep=ps &gt; .dev2/ps&amp;</b></font></p>
+
+<p><font size="2" face="Courier">[2]</font></p>
+
+<p><font size="2" face="Courier">[32] samples&gt; <b>cmpl kill.c
+keep=kill &gt; .dev2/kill&amp;</b></font></p>
+
+<p><font size="2" face="Courier">[3]</font></p>
+
+<p><font size="2" face="Courier">[34] samples&gt; <b>ls dummy_dir</b></font></p>
+
+<p><font size="2" face="Courier">[35] samples&gt; <b>ls -9</b></font></p>
+
+<p><font size="2" face="Courier">ls: unrecognized option `-9'</font></p>
+
+<p><font size="2" face="Courier">usage: ls [-acdfgilqrstu1ACLFR]
+[name ...]</font></p>
+
+<p><font size="2" face="Courier">[36] samples&gt; <b>ls -9
+&gt;&amp; .dev2/error</b></font></p>
+
+<p><font size="2" face="Courier">{ Each pathname has a device
+name entry (cf. ps). }</font></p>
+
+<p><font size="2" face="Courier">[37] samples&gt; <b>cat &lt;
+/ram5/error</b></font></p>
+
+<p><font size="2" face="Courier">ls: unrecognized option `-9'</font></p>
+
+<p><font size="2" face="Courier">usage: ls [-acdfgilqrstu1ACLFR]
+[name ...]</font></p>
+
+<p><font size="2" face="Courier">[38] samples&gt; <b>ls *.c;grep
+\#\i\n\c\l\u\d\e [^sfd]*.c</b></font></p>
+
+<p><font size="2" face="Times">{ grep searches for a regular
+expression in a file and outputs the lines that match. }</font></p>
+
+<p><font size="2" face="Courier">comp.c dp.c edit.c ffdir.c gar.c</font></p>
+
+<p><font size="2" face="Courier">kill.c link.c ps.c setdebug.c</font></p>
+
+<p><font size="2" face="Courier">kill.c:#include &lt;stdio.h&gt;</font></p>
+
+<p><font size="2" face="Courier">kill.c:#include &lt;memory.h&gt;</font></p>
+
+<p><font size="2" face="Courier">kill.c:#include
+&quot;3/work/gno/conf.h&quot;</font></p>
+
+<p><font size="2" face="Courier">kill.c:#include
+&quot;3/work/gno/proc.h&quot;</font></p>
+
+<p><font size="2" face="Courier">kill.c:#include
+&quot;3/work/gno/kerntool.h&quot;</font></p>
+
+<p><font size="2" face="Courier">gar.c:#include &lt;stdio.h&gt;</font></p>
+
+<p><font size="2" face="Courier">gar.c:#include &lt;orca.h&gt;</font></p>
+
+<p><font size="2" face="Courier">gar.c:#include
+&quot;3/work/gno/kerntool.h&quot;</font></p>
+
+<p><font size="2" face="Courier">gar.c:#include
+&lt;gno/signal.h&gt;</font></p>
+
+<p><font size="2" face="Courier">ps.c:#include &lt;stdio.h&gt;</font></p>
+
+<p><font size="2" face="Courier">ps.c:#include &lt;memory.h&gt;</font></p>
+
+<p><font size="2" face="Courier">ps.c:#include &lt;string.h&gt;</font></p>
+
+<p><font size="2" face="Courier">ps.c:#include &lt;orca.h&gt;</font></p>
+
+<p><font size="2" face="Courier">ps.c:#include
+&quot;3/work/gno/conf.h&quot;</font></p>
+
+<p><font size="2" face="Courier">ps.c:#include
+&quot;3/work/gno/proc.h&quot;</font></p>
+
+<p><font size="2" face="Courier">ps.c:#include
+&quot;3/work/gno/kvm.h&quot;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include &lt;stdio.h&gt;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include &lt;stdlib.h&gt;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include &lt;string.h&gt;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include &lt;ctype.h&gt;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include &lt;types.h&gt;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include &lt;gsos.h&gt;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include &lt;shell.h&gt;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include &lt;orca.h&gt;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include &lt;stddef.h&gt;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include
+&lt;texttool.h&gt;</font></p>
+
+<p><font size="2" face="Courier">edit.c:#include
+&lt;gno/kerntool.h&gt;</font></p>
+
+<p><font size="2" face="Courier">comp.c:#include &lt;stdio.h&gt;</font></p>
+
+<p><font size="2" face="Courier">comp.c:#include &lt;stdlib.h&gt;</font></p>
+
+<p><font size="2" face="Courier">comp.c:#include &lt;string.h&gt;</font></p>
+
+<p><font size="2" face="Courier">comp.c:#include &lt;ctype.h&gt;</font></p>
+
+<p><font size="2" face="Courier">comp.c:#include &lt;types.h&gt;</font></p>
+
+<p><font size="2" face="Courier">comp.c:#include &lt;shell.h&gt;</font></p>
+
+<p><font size="2" face="Courier">comp.c:#include &lt;gsos.h&gt;</font></p>
+
+<p><font size="2" face="Courier">comp.c:#include &lt;orca.h&gt;</font></p>
+
+<p><font size="2" face="Courier">comp.c:#include
+&lt;texttool.h&gt;</font></p>
+
+<p><font size="2" face="Courier">comp.c:#include
+&lt;gno/kerntool.h&gt;</font></p>
+
+<p><font size="2" face="Courier">link.c:#include &lt;stdio.h&gt;</font></p>
+
+<p><font size="2" face="Courier">link.c:#include &lt;stdlib.h&gt;</font></p>
+
+<p><font size="2" face="Courier">link.c:#include &lt;string.h&gt;</font></p>
+
+<p><font size="2" face="Courier">link.c:#include &lt;ctype.h&gt;</font></p>
+
+<p><font size="2" face="Courier">link.c:#include &lt;types.h&gt;</font></p>
+
+<p><font size="2" face="Courier">link.c:#include &lt;shell.h&gt;</font></p>
+
+<p><font size="2" face="Courier">link.c:#include &lt;orca.h&gt;</font></p>
+
+<p><font size="2" face="Courier">link.c:#include
+&lt;texttool.h&gt;</font></p>
+
+<p><font size="2" face="Courier">link.c:#include
+&lt;gno/kerntool.h&gt;</font></p>
+
+<p><font size="2" face="Courier">[39] samples&gt; <b>head link.c</b></font></p>
+
+<p><font size="2" face="Times">{ head displays the first few
+lines of a file. }</font></p>
+
+<p><font size="2" face="Courier">/* </font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">parsing code for compile, cmpl,
+cmplg</font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">The options flags are set up in
+a bizarre format as follows:</font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">76543210 76543210 76543210
+76543210</font></p>
+
+<p><font size="2" face="Courier">yz qrstuvwx ijklmnop abcdefgh</font></p>
+
+<p><font size="2" face="Courier">[40] samples&gt; <b>set PATH</b></font></p>
+
+<p><font size="2" face="Courier">path =
+/dev/orca/utilities:/dev/gno/orca:/dev/gno/utilities</font></p>
+
+<p><font size="2" face="Courier">[41] samples&gt; <b>unset PATH</b></font></p>
+
+<p><font size="2" face="Courier">[42] samples&gt; <b>set PATH</b></font></p>
+
+<p><font size="2" face="Courier">Variable Not Found</font></p>
+
+<p><font size="2" face="Courier">[43] samples&gt; <b>rm
+m[e][s][s]age[2]</b></font></p>
+
+<p><font size="2" face="Courier">[44] samples&gt; <b>rehash</b></font></p>
+
+<p><font size="2" face="Courier">hashed 0 files.</font></p>
+
+<p><font size="2" face="Courier">[45] samples&gt; <b>rm who_cares
+about_the parameters</b></font></p>
+
+<p><font size="2" face="Times">{ rm will not be recognized as a
+command because the hash-table is empty. }</font></p>
+
+<p><font size="2" face="Courier">rm: Command not found.</font></p>
+
+<p><font size="2" face="Courier">[46] samples&gt; <b>set path =
+/dev/orca/utilities ~/orca ~/utilities</b></font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">/dev/orca/utilities
+/dev/gno/orca /dev/gno/utilities =</font></p>
+
+<p><font size="2" face="Courier">[47] samples&gt; <b>set PATH</b></font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">path = =</font></p>
+
+<p><font size="2" face="Courier">[48] samples&gt; <b>set
+path=&quot;~/../orca/utilities ~/orca $HOME/utilities&quot;</b></font></p>
+
+<p><font size="2" face="Times">{ Filename expansion will be
+performed before PATH is set. }</font></p>
+
+<p><font size="2" face="Courier">[49] samples&gt; <b>set path</b></font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">path = /dev/orca/utilities
+/dev/gno/orca /dev/gno/utilities</font></p>
+
+<p><font size="2" face="Courier">[49] samples&gt; <b>rehash</b></font></p>
+
+<p><font size="2" face="Courier">hashed 68 files.</font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="6" face="Times"></font>&nbsp;</p>
+
+<p><font size="6" face="Times">Appendix B</font></p>
+
+<p><font size="6" face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">When <b>gsh</b> is started, GS/OS assigns
+certain values to individual prefixes, and usually the <i>gshrc</i>
+file also sets some prefixes. A total of 32 prefixes are
+available to the user. The following list documents each prefix
+and the purpose of each.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<dir>
+    <li><font face="Times"><u>Number</u> <u>Description</u></font><p><font
+        face="Times">@ AppleShare prefix. If GNO resides on an
+        AppleShare volume, this prefix is set to the pathname of
+        the user's directory on the file server; otherwise, this
+        prefix is set to the same pathname as prefix number 9.</font></p>
+        <p><font face="Times">* Boot volume prefix. It is not
+        possible to modify the value of this prefix with the
+        shell's </font><font size="2" face="Courier">prefix</font><font
+        face="Times"> command. The only other way to access this
+        prefix is the GS/OS _GetBootVol call.</font></p>
+        <p><font face="Times">0 Prefix 0 is the current working
+        directory. It is the prefix that is changed by the </font><font
+        size="2" face="Courier">cd</font><font face="Times">
+        command.</font></p>
+        <p><font face="Times">1 Directory a program resides in.
+        In the shell, this is usually /bin. The kernel sets this
+        prefix (and 9/) appropriately for each program that is
+        executed.</font></p>
+        <p><font face="Times">2-8 Used by Orca 1.0 languages and
+        utilities</font></p>
+        <p><font face="Times">2 If the ORCA languages are being
+        used, prefix 2 points to the ORCA Libraries directory.</font></p>
+        <p><font face="Times">3 This prefix should point to the
+        directory that contains ORCA.SYS16.</font></p>
+        <p><font face="Times">4 ORCA Shell directory should point
+        to the directory that contains the EDITOR, SYSTABS,
+        SYSCMND, etc. files.</font></p>
+        <p><font face="Times">5 ORCA Languages directory</font></p>
+        <p><font face="Times">6 ORCA Utilities directory</font></p>
+        <p><font face="Times">7 ORCA Temp directory - setting
+        this to a RAM disk makes certain editor operations
+        faster.</font></p>
+        <p><font face="Times">9 Same as prefix 1/</font></p>
+        <p><font face="Times">10-12 Standard input, output, and
+        error device names. GNO sets these to be '.ttyco'.</font></p>
+        <p><font face="Times">13 Same as prefix 2/ above if Orca
+        2.0 languages are being used.</font></p>
+        <p><font face="Times">14 Same as prefix 3/</font></p>
+        <p><font face="Times">15 Same as prefix 4/</font></p>
+        <p><font face="Times">16 Same as prefix 5/</font></p>
+        <p><font face="Times">17 Same as prefix 6/</font></p>
+        <p><font face="Times">18 Same as prefix 7/</font></p>
+    </li>
+</dir>
+
+<p><font size="6" face="Times">Appendix C</font></p>
+
+<p><font size="6" face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>gsh</b> tries, when an error occurs, to
+output an informative error message that will lead you to the
+solution of your problem. This appendix documents all <b>gsh</b>
+error messages and what the probable cause of the problem might
+be. There are five classes of errors: generic gsh, command-entry,
+syntax, execution, and built-in. Each error is discussed
+separately.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>Generic gsh Errors</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">These errors can typically occur at any
+time and may not be directly related to something the user has
+done. Some of them are trivial, and some are very serious and
+should be reported immediately.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>gsh: There are stopped
+jobs.</i></b></font></p>
+
+<p><font face="Times">All jobs must be killed before exiting the
+shell. Use the jobs and kill commands.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>Command Editing Errors</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">Command editing errors occur when entering
+information on the command-line. If you try to move the cursor
+too far to the left or right of your command-line (i.e. before
+the first character or after the last character), an error will
+occur. At present, gsh indicates a command-entry error with a </font><font
+size="2" face="Courier"><b><i>Beep</i></b></font><font
+face="Times">. This is to notify you that the action you
+requested is not possible.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>Syntax Errors</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">Syntax errors occur while gsh is trying to
+understand the command you have entered on the command-line.
+Problems arise when you wish to quote an argument (&quot;) and
+only enter one quote.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>gsh: Missing ending
+&quot;.</i></b></font></p>
+
+<p><font face="Times">A second &quot; wasn't supplied when
+quoting text.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>gsh: Missing ending '.</i></b></font></p>
+
+<p><font face="Times">A second ' wasn't supplied when quoting
+text.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>gsh: Too many arguments,
+so no dessert tonight.</i></b></font></p>
+
+<p><font face="Times">The command-line contained too many
+arguments which exceeded the available memory allocated by <b>gsh</b>.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>gsh: Not enough memory for
+arguments.</i></b></font></p>
+
+<p><font face="Times">No memory was available for allocating
+command-line arguments.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>gsh: Extra '&lt;'
+encountered.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>gsh: Extra '&gt;' or
+'&gt;&gt;' encountered.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>gsh: Extra '&gt;&amp;' or
+'&gt;&gt;&amp;' encountered</i></b></font></p>
+
+<p><font face="Times">Text may be redirected to only one file.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>gsh: No file specified for
+'&lt;'.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>gsh: No file specified for
+'&gt;' or '&gt;&gt;'.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>gsh: No file specified for
+'&gt;&amp;' or '&gt;&gt;&amp;'.</i></b></font></p>
+
+<p><font face="Times">A file must be specified when redirecting
+I/O.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>gsh: '|' conflicts with
+'&gt;' or '&gt;&gt;'.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>gsh: '|' conflicts with
+'&lt;'.</i></b></font></p>
+
+<p><font face="Times">Piping is another form of redirection, thus
+pipes and redirections cannot be mixed.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>Execution Errors</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">After <b>gsh</b> parses the command-line,
+it will then execute the command and pass any arguments to the
+command. If, however, the command does not exist, <b>gsh</b> will
+report an error. The reason the command does not exist could be
+either the command name was typed wrong or the command does not
+exist.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>$0: Command not found.</i></b></font></p>
+
+<p><font face="Times">$0 represents the command to be executed.
+Either the command name was entered incorrectly or the command
+does not exist. Recheck the spelling of the command and check
+$PATH to make sure the command exists in the pathname list.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>$0: Not executable.</i></b></font></p>
+
+<p><font face="Times">$0 represents the command to be executed. </font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>heh heh, next time you'll
+need to specify a command before redirecting.</i></b></font></p>
+
+<p><font face="Times">Redirection was specified but the
+command-line had no command.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>Cannot fork (too many
+processes?)</i></b></font></p>
+
+<p><font face="Times">An error was encountered forking a process.
+The most likely culprit is there are too many processes running. </font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>Built-in Command Errors</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">These are errors which can be returned by
+many of the built-in commands. Every built-in also contains a
+Usage message on the proper invocation method.</font></p>
+
+<p><font size="2" face="Courier"><b><i>cd: Not a directory</i></b></font></p>
+
+<p><font face="Times">Tried to change the cwd to a file that
+isn't a directory.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>prefix: could not set
+prefix, pathname may not exist.</i></b></font></p>
+
+<p><font face="Times">GS/OS Prefix command failed, most likely
+the pathname did not exist or the disk is damaged.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>setdebug: Unknown flag</i></b></font></p>
+
+<p><font face="Times">An unknown flag was sent to </font><font
+size="2" face="Courier">setdebug</font><font face="Times">. Run </font><font
+size="2" face="Courier">setdebug</font><font face="Times"> with
+no arguments for a list of possible flags.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>ps: error in kvm_open()</i></b></font></p>
+
+<p><font face="Times">ps was unable to access the process data
+structure. It would be amazing that the kernel is still running
+for this error to occur.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>set: Variable not
+specified</i></b></font></p>
+
+<p><font face="Times">A variable was not passed to set, for
+example, &quot;</font><font size="2" face="Courier">set =bar</font><font
+face="Times">&quot;. Make sure the variable name was specified
+without the preceding dollar sign. For example, if foo is not
+set, then &quot;</font><font size="2" face="Courier">set $foo=bar</font><font
+face="Times">&quot; would be expanded to &quot;</font><font
+size="2" face="Courier">set =bar</font><font face="Times">&quot;,
+this resulting in this error.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>kill: Invalid signal
+number</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>kill: Invalid signal name</i></b></font></p>
+
+<p><font face="Times">See Appendix C for a list of valid signal
+numbers and names.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>fg: No job to foreground.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>bg: No job to background.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>stop: No job to stop.</i></b></font></p>
+
+<p><font face="Times">There aren't any jobs so this command is
+useless.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>fg: No such job.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>bg: No such job.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>stop: No such job.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>kill: No such job.</i></b></font></p>
+
+<p><font face="Times">The specified job (or process) doesn't
+exist.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b><i>fg: Gee, this job is
+already in the foreground.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>bg: Gee, this job is
+already in the background.</i></b></font></p>
+
+<p><font size="2" face="Courier"><b><i>stop: Gee, this job is
+already stopped.</i></b></font></p>
+
+<p><font face="Times">Well, this should be self-explanatory.
+Also, some of these should be impossible to get, unless you're
+bound and determined to crash gsh, but then, these errors will
+keep you from crashing it, so, what's the point? </font></p>
+
+<p><font size="6" face="Times">Appendix D</font></p>
+
+<p><font size="6" face="Times">Signals</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The following list describes all signals
+present in the GNO Multitasking Environment. These signals are
+used to communicate with processes and the GNO kernel. <b>gsh</b>
+provides a means to send signals to processes via the kill
+command. Furthermore, GNO/ME provides interfaces for C and
+Assembly Language programmers to handle signals in their
+programs. Note that not all of these signals are actually used in
+GNO/ME 2.0.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<dir>
+    <li><font face="Times"><u>Name (Value)</u> <u>Description</u></font><p><font
+        face="Times"><b>SIGHUP</b> (1) Hangup.</font></p>
+        <p><font face="Times"><b>SIGINT</b> (2) Interrupt.</font></p>
+        <p><font face="Times"><b>SIGQUIT</b> (3) Quit.</font></p>
+        <p><font face="Times"><b>SIGILL</b> (4) Illegal
+        Instruction.</font></p>
+        <p><font face="Times"><b>SIGTRAP</b> (5) Trace trap.</font></p>
+        <p><font face="Times"><b>SIGABRT</b> (6) Abort (cf.
+        abort(3)).</font></p>
+        <p><font face="Times"><b>SIGEMT</b> (7) Emulator trap.</font></p>
+        <p><font face="Times"><b>SIGFPE</b> (8) Arithmetic
+        exception.</font></p>
+        <p><font face="Times"><b>SIGKILL</b> (9) Kill. This
+        signal cannot be caught, blocked, or ignored. If a signal
+        is not specified for the kill command, this signal is
+        sent to the process.</font></p>
+        <p><font face="Times"><b>SIGBUS</b> (10) Bus error.</font></p>
+        <p><font face="Times"><b>SIGSEGV</b> (11) Segmentation
+        violation.</font></p>
+        <p><font face="Times"><b>SIGSYS</b> (12) Bad argument to
+        system call.</font></p>
+        <p><font face="Times"><b>SIGPIPE</b> (13) Write on a pipe
+        or other socket with no one to read it.</font></p>
+        <p><font face="Times"><b>SIGALRM</b> (14) Alarm clock.</font></p>
+        <p><font face="Times"><b>SIGTERM</b> (15) Software
+        termination signal.</font></p>
+        <p><font face="Times"><b>SIGURG</b> (16) Urgent condition
+        present on socket.</font></p>
+        <p><font face="Times"><b>SIGSTOP</b> (17) Stop. This
+        signal cannot be caught, blocked, or ignored.</font></p>
+        <p><font face="Times"><b>SIGTSTP</b> (18) Stop signal
+        generated from keyboard.</font></p>
+        <p><font face="Times"><b>SIGCONT</b> (19) Continue after
+        stop. This signal cannot be blocked.</font></p>
+        <p><font face="Times"><b>SIGCHLD</b> (20) Child status
+        has changed.</font></p>
+        <p><font face="Times"><b>SIGTTIN</b> (21) Background read
+        attempted from control terminal.</font></p>
+        <p><font face="Times"><b>SIGTTOU</b> (22) Background
+        write attempted to control terminal.</font></p>
+        <p><font face="Times"><b>SIGIO</b> (23) Input/Output
+        possible signal.</font></p>
+        <p><font face="Times"><b>SIGXCPU</b> (24) Exceeded CPU
+        time limit.</font></p>
+        <p><font face="Times"><b>SIGUSR1</b> (30) User defined
+        signal 1.</font></p>
+        <p><font face="Times"><b>SIGUSR2</b> (31) User defined
+        signal 2.</font></p>
+    </li>
+</dir>
+
+<p><font size="6" face="Times">Appendix E</font></p>
+
+<p><font size="6" face="Times">Non-Compliant Applications</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">GNO/ME wasn't really designed with the
+intention of making EVERY program you currently run work under
+GNO/ME; that task would have been impossible. Our main goal was
+to provide a UNIX-based multitasking environment; that we have
+done. We made sure as many existing applications as we had time
+to track and debug worked with GNO/ME. The current list of
+compatible and non-compatible applications can be found in the
+file &quot;RELEASE.NOTES&quot; on the GNO/ME disk.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">However, due to the sheer number of
+applications and authors, there are some programs that just plain
+don't work; and some that mostly work, except for annoyances such
+as two cursors appearing, or keyboard characters getting 'lost'.
+The problem here is that some programs use their own text drivers
+(since TextTools output was very slow at one time); since GNO/ME
+doesn't know about these custom drivers, it goes on buffering
+keyboard characters and displaying the cursor. There is a way,
+however, to tell GNO/ME about these programs that break GNO/ME's
+rules.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">We've defined an auxType for S16 and EXE
+files, to allow distinction between programs that are GNO/ME
+compliant and those that are not. Setting the auxType of an
+application to $DC00 disables the interrupt driven keyboard
+buffering and turns off the GNO/ME cursor. Desktop programs use
+the GNO/ME keyboard I/O via the Event Manager, and thus should <i>not</i>
+have their auxType changed.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">You can change a program's auxType with the
+following shell command:</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Courier">chtyp -a \$DC00 filename</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">where filename is the name of the
+application. As more programmers become aware of GNO/ME and work
+to make their software compatible with it, this will become less
+of a problem, but for older applications that are unlikely to
+ever change (like the America OnLine software) $DC00 is a
+reasonable approach.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b></b></font>&nbsp;</p>
+
+<p><font size="6" face="Times">Appendix F</font></p>
+
+<p><font size="6" face="Times">Termcaps</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">'Termcap' is short for 'terminal
+capability', and is the name of a database which applications can
+use to do full-screen output on any kind of terminal. The termcap
+database contains records for the various supported terminals,
+each of which contains fields that look like this:</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>cap</b>=<b>value</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>cap</b> is a two-letter code that
+represents a cursor movement, screen mode change (such as inverse
+or underline mode), and various other things. <b>Value</b> is
+usually a sequence of control characters that is sent to a
+terminal to initiate the desired action. <b>Value</b> can also be
+'boolean', or yes/no, values, for such things as &quot;Does this
+terminal support cursor movement?&quot;. The termcap file is
+documented in the electronic manual entry <b>termcap</b>(5).</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The termcap library does not specifically
+require GNO/ME.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The following terminal types are supported
+in the GNO/ME termcap file:</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">gnocon GNO Console</font></p>
+
+<p><font face="Times">CONSOLE GS/OS .console driver</font></p>
+
+<p><font face="Times">ptse Proterm Special Emulation</font></p>
+
+<p><font face="Times">vt100 DEC VT-100 terminal</font></p>
+
+<p><font face="Times">ansisys MS-DOS ANSI.SYS</font></p>
+
+<p><font face="Times">xerox820 Xerox 820-II CP/M terminal</font></p>
+
+<p><font face="Times">iw1 Apple ImageWriter I printer</font></p>
+
+<p><font face="Times">iw-alt Alternate ImageWriter I printer</font></p>
+
+<p><font face="Times">deskjet Hewlett Packard DeskJet 500 printer</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The printer entries allow a formatted
+electronic manual page to be sent to the printer. For example,
+the following script would bring up the manual page for '<b>ls</b>',
+format it for the DeskJet 500, and print it with italics and
+boldface:</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">set temp=$term</font></p>
+
+<p><font face="Times">set term=deskjet</font></p>
+
+<p><font face="Times">man $1 &gt; .ttyb</font></p>
+
+<p><font face="Times">set term=$temp</font></p>
+
+<dir>
+    <li><font size="6" face="Times">Glossary</font><p><font
+        face="Times"><b><i>Alias</i></b>. A name used as an
+        abbreviation for one or more commands. An alias allows
+        you to replace any command string with a short sequence
+        of characters.</font></p>
+        <p><font face="Times"><b><i>Applesoft</i></b>. An
+        implementation of BASIC for the Apple II.</font></p>
+        <p><font face="Times"><b><i>APW</i></b>. Apple
+        Programmer's Workshop. Similar to ORCA.</font></p>
+        <p><font face="Times"><b><i>BASIC</i></b>. Beginners
+        All-purpose Symbolic Instruction Code. A simple computer
+        language.</font></p>
+        <p><font face="Times"><b><i>Built-in command</i></b>. A
+        command processed by <b>gsh</b>. These commands are not
+        external to the shell, but are included within the <b>gsh</b>
+        program.</font></p>
+        <p><font face="Times"><b><i>Command</i></b>. An action
+        for <b>gsh</b> to perform. Commands can be either simple
+        or compound. A simple command is an alias assignment,
+        variable assignment, I/O redirection, or built-in
+        command. A compound command is a pipeline.</font></p>
+        <p><font face="Times"><b><i>Directory</i></b>. A special
+        type of file that contains a list of other files; usually
+        used to categorize files related in some way. </font></p>
+        <p><font face="Times"><b><i>Environment</i></b>. The
+        state of a process, which includes information such as
+        its open files, current directory (working directory),
+        and local and global variables. Three environments exist
+        under <b>gsh</b>:</font></p>
+        <p><font face="Times"><i>Child environment</i>:: The
+        environment of the child process.</font></p>
+        <p><font face="Times"><i>Current environment</i>:: The
+        environment of the current process.</font></p>
+        <p><font face="Times"><i>Parent environment</i>:: The
+        environment of the parent process.</font></p>
+        <p><font face="Times"><b><i>Environment file</i></b>. A
+        file that is interpreted by an application to allow the
+        user to customize its operation. For <b>gsh</b>, this
+        file is &quot;gshrc&quot;.</font></p>
+        <p><font face="Times"><b><i>Export</i></b>. A way to pass
+        a variable from a parent process to child process.</font></p>
+        <p><font face="Times"><b><i>File</i></b>. An object used
+        to store data and/or programs. On the II</font><font
+        size="2" face="Times">GS</font><font face="Times">, files
+        are tagged with types such as EXE, SRC, TXT, etc.</font></p>
+        <p><font face="Times"><b><i>Filter</i></b>. A command
+        that reads from its standard input and writes to its
+        standard output. For example, a filter program could be
+        written to convert all characters to upper case. Filters
+        are used mainly in pipelines.</font></p>
+        <p><font face="Times"><b><i>Flag</i></b>. A character
+        used to represent an option to a command. Flags are
+        either short or long options whose character
+        representations are &quot;-&quot; and &quot;+&quot;.</font></p>
+        <p><font face="Times"><b><i>Glob</i></b>. Slang for
+        Pathname Expansion.</font></p>
+        <p><font face="Times"><b><i>GNO/ME</i></b>. GNO
+        Multitasking Environment. The complete package including
+        the GNO kernel and the GNO Shell.</font></p>
+        <p><font face="Times"><b><i>GNO Kernel</i></b>. Heart of
+        GNO/ME. Executes processes when asked by the GNO Shell</font></p>
+        <p><font face="Times"><b><i>GNO Shell</i></b>. Provides
+        an interface between the user and the GNO kernel.</font></p>
+        <p><font face="Times"><b><i>gsh</i></b>. GNO
+        Implementation of a UNIX-like shell.</font></p>
+        <p><font face="Times"><b><i>GS/OS</i></b>. 16 bit
+        Operating System for the Apple IIgs.</font></p>
+        <p><font face="Times"><b><i>History</i></b>. A variable
+        number of command-lines saved by <b>gsh</b> for future
+        reference. The number of command-lines saved is dependent
+        on the </font><font size="2" face="Courier">$HISTORY</font><font
+        face="Times"> environment variable.</font></p>
+        <p><font face="Times"><b><i>History file</i></b>. A file
+        containing command-lines entered while in a <b>gsh</b>
+        session. The number of command-lines saved is dependent
+        on the </font><font size="2" face="Courier">$SAVEHIST</font><font
+        face="Times"> environment variable.</font></p>
+        <p><font face="Times"><b><i>Interrupt</i></b>. A signal
+        generated by a sequence of keyboard characters or by a
+        command that terminates the current executing process,
+        unless the process has set up a trap to handle the
+        interrupt signal.</font></p>
+        <p><font face="Times"><b><i>I/O Redirection</i></b>. The
+        process of changing the standard input, standard output,
+        and standard error associated with a process so that it
+        is redirected to a file instead of the console.</font></p>
+        <p><font face="Times"><b><i>Job</i></b>. A set of related
+        processes. A job can be either:</font></p>
+        <p><font face="Times"><i>Background job</i> :A process
+        that executes with the current process. Background jobs
+        are not associated with the terminal.</font></p>
+        <p><font face="Times"><i>Foreground job</i> : A process
+        that is currently executing and which is associated with
+        the terminal.</font></p>
+        <p><font face="Times"><b><i>Multiprocessing</i></b>.
+        Indicates a machine with more than one CPU.</font></p>
+        <p><font face="Times"><b><i>Multitasking</i></b>. The
+        ability to run more than one program at a time, or the
+        illusion of more than one program running at a time -
+        usually the latter.</font></p>
+        <p><font face="Times"><b><i>ORCA</i></b> Shell programing
+        environment for the Apple //gs. Also a type of whale.</font></p>
+        <p><font face="Times"><b><i>Path search</i></b>. The
+        means of searching a pathname list for a command or
+        script.</font></p>
+        <p><font face="Times"><b><i>Pathname</i></b>. A string
+        used to identify a file.</font></p>
+        <p><font face="Times"><i>Pathname completion</i>. The
+        means of generating all pathnames matching a given
+        pattern.</font></p>
+        <p><font face="Times"><i>Pathname expansion</i>. The
+        means of replacing a pattern with a list of pathnames
+        matching that pattern.</font></p>
+        <p><font face="Times"><b><i>Pattern</i></b>. A string of
+        characters used to match literal characters and/or
+        multiple characters.</font></p>
+        <p><font face="Times"><b><i>Permission</i></b>. Each file
+        has certain permissions associated with it: destroy,
+        rename, backup, invisible, write, and read.</font></p>
+        <p><font face="Times"><b><i>Pipe</i></b>. A conduit
+        through which a stream of characters can pass from one
+        process to another. This is accomplished by linking the
+        standard output of one process to the standard input of a
+        second process.</font></p>
+        <p><font face="Times"><b><i>Pipeline</i></b>. Two or more
+        processes connected together by pipes.</font></p>
+        <p><font face="Times"><b><i>Process</i></b>. A single
+        thread of execution that consists of a program and an
+        execution environment.</font></p>
+        <p><font face="Times"><i>Child process</i>: A new process
+        created by another process.</font></p>
+        <p><font face="Times"><i>Parent process</i>: A process
+        that creates a child process.</font></p>
+        <p><font face="Times"><b><i>Process id</i></b>: Each
+        active process is uniquely identified by a positive
+        integer called the process id.</font></p>
+        <p><font face="Times"><b><i>ProDOS</i></b>. 8-bit Disk
+        Operating System for Apple II computers.</font></p>
+        <p><font face="Times"><b><i>Prompt</i></b>. A message
+        displayed by <b>gsh</b> when it is ready to receive a
+        command.</font></p>
+        <p><font face="Times"><b><i>Quoting</i></b>. A means of
+        including special characters as arguments to a command or
+        as the command name. Certain characters have certain
+        meanings to <b>gsh</b> and quoting them makes <b>gsh</b>
+        ignore them.</font></p>
+        <p><font face="Times"><b><i>Reserved word</i></b>. A word
+        that is treated specially by <b>gsh</b>. This word is
+        part of the <b>gsh</b> grammar.</font></p>
+        <p><font face="Times"><b><i>Script</i></b>. A sequence of
+        commands contained in a file.</font></p>
+        <p><font face="Times"><b><i>Signal</i></b>. An
+        asynchronous message that consists of a number or name
+        that can be sent from one process to another.</font></p>
+        <p><font face="Times"><b><i>Standard Error</i></b>. The
+        file associated with error messages for a process. This
+        file is usually the terminal.</font></p>
+        <p><font face="Times"><b><i>Standard Input</i></b>. The
+        file associated with a processes input. This file is
+        usually the terminal.</font></p>
+        <p><font face="Times"><b><i>Standard Output</i></b>. The
+        file associated with a processes output. This file is
+        usually the terminal.</font></p>
+        <p><font face="Times"><b><i>Tilde Expansion</i></b>.
+        Words beginning with &quot;<b>~</b>&quot; are treated
+        specially by <b>gsh</b>. The &quot;<b>~</b>&quot; is
+        expanded to the value of the </font><font size="2"
+        face="Courier">HOME </font><font face="Times">variable.</font></p>
+        <p><font face="Times"><b><i>UNIX</i></b>. Popular
+        operating system which has growing use in education and
+        business. One of the first operating systems to support
+        multitasking.</font></p>
+        <p><font face="Times"><b><i>Variable</i></b>. A named
+        location in <b>gsh</b> that contains text. The text of a
+        variable can be expanded in a command by preceding the
+        variable name with a dollar sign ($).</font></p>
+        <p><font face="Times"><b><i>Wildcard</i></b>. See Pattern
+        and Pathname Expansion.</font></p>
+        <p><font face="Times"><b><i>Working directory</i></b>.
+        The current directory.</font></p>
+    </li>
+</dir>
+
+<p><font size="6" face="Times">Index</font></p>
+
+<p><font size="2"></font>&nbsp;</p>
+
+<dir>
+    <li><font size="2"></font>&nbsp;</li>
+</dir>
+
+<dir>
+    <li><font size="2"></font>&nbsp;</li>
+</dir>
+
+<dir>
+    <li><font size="2"></font>&nbsp;</li>
+</dir>
+</body>
+</html>

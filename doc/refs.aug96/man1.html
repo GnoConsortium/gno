@@ -1,0 +1,2396 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>NAME</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>intro - introduction to commands and application programs</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>This section describes, in alphabetical order, commands
+        available for GNO. Certain distinctions of purpose are
+        made in the headings. For example, BUILT-IN UTILITIES are
+        those commands which are part of the GNO shell and not
+        contained in stand-alone files.</li>
+</dir>
+
+<p><b>Manual Page Command Syntax</b></p>
+
+<dir>
+    <li>Unless otherwise noted, commands described in the <b>SYNOPSIS</b>
+        section of a manual page accept options and other
+        arguments according to the following syntax and should be
+        interpreted as explained below:<p><b>name</b> [- <b>option
+        </b>...] [ <i>cmdarg</i> ...]</p>
+        <p>where:</p>
+        <p><b>[]</b> Surround an option or cmdarg that is not
+        required.</p>
+        <p><b>...</b> Indicates multiple occurrences of the
+        option or cmdarg.</p>
+        <p><b>name</b> The name of an executable file.</p>
+        <p><b>option</b> </p>
+        <p>(Almost always preceded by a &quot;-&quot;.)</p>
+        <p><b>noargletter ...</b> or,</p>
+        <p><b>argletter</b> <b>optarg</b> <b>[,...]</b></p>
+        <p><b>noargletter</b> </p>
+        <p>A single letter representing an option without an
+        option-argument. Note that more than one noargletter
+        option can be grouped after one &quot;-&quot;.</p>
+        <p><b>argletter</b></p>
+        <p>A single letter representing an option requiring an
+        option-argument.</p>
+        <p><b>optarg</b> An option-argument (character string)
+        satisfying a preceding argletter. Note that groups of
+        optargs following an argletter must be separated by white
+        space and quoted.</p>
+        <p><b>cmdarg</b></p>
+        <p>Path name (or other command argument) not beginning
+        with a &quot;-&quot;, or &quot;-&quot; by itself
+        indicating the standard input.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<p><i>GNO Shell User's Manual</i></p>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>binprint - dump binary files in ascii/hex format</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>binprint</b> [-<i>c</i> columns] [<i>filename</i>]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>binprint</b> takes binary data and formats it as a
+        sequence of ascii data and hex values that represent the
+        binary data. The format of the output is very similar to
+        that produced by the IIGS Monitor and the NiftyList
+        utility.<p>Two columns of output are produced. The first
+        column is the hex representation of the data. The second
+        column is the ascii representation of the data. If the
+        particular byte being printed is a non-printable ASCII
+        character, it is printed as a '.'.</p>
+        <p>If the -c option is specified, the number following it
+        is used to determine the number of columns (of bytes) per
+        line. The default is 16.</p>
+        <p>If the filename is not specified, input is taken from
+        standard input.</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li><b>binprint</b> is slow.</li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li><b>binprint</b> was written by Derek Taubert for GNO/ME.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>cal - display a calendar</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>cal</b> [ [ <i>month</i> ] <i>year</i> ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>cal</b> displays a calendar for the specified year. If
+        a month is also specified, a calendar for that month only
+        is displayed. If neither is specified, a calendar for the
+        present month is printed.<p><i>year</i> can be between 1
+        and 9999. Be aware that `cal 78' refers to the early
+        Christian era, not the 20th century. Also, the year is
+        always considered to start in January, even though this
+        is historically naive.</p>
+        <p>month is a number between 1 and 12.</p>
+        <p>The calendar produced is that for England and her
+        colonies.</p>
+        <p>Try September 1752.</p>
+    </li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>cat - concatenate and print files</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>cat</b> [ -<i>benstuv</i> ] [ file ...]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>The <b>cat</b> utility reads files sequentially, writing
+        them to the standard output. The file operands are
+        processed in command line order. A single dash represents
+        standard input.<p>The options are as follows:</p>
+        <p>-<i>b</i> Implies the -<i>n</i> option but doesn't
+        number blank lines.</p>
+        <p>-<i>e</i> Implies the -<i>v</i> option, and displays a
+        dollar sign ($) at the end of each line as well.</p>
+        <p>-<i>n</i> Number the output lines, starting at 1.</p>
+        <p>-<i>s</i> Squeeze multiple adjacent empty lines,
+        causing the output to be single spaced.</p>
+        <p>-<i>t</i> Implies the -<i>v</i> option, and displays
+        tab characters as [^I] as well.</p>
+        <p>-<i>u</i> The -u option guarantees that the output is
+        unbuffered.</p>
+        <p>-<i>v</i> Displays non-printing characters so they are
+        visible. Control characters print line [^X] for
+        control-X; the delete character (octal 0177) prints as
+        [^?] Non-ascii characters (with the high bit set) are
+        printed as [M-] (for meta) followed by the character for
+        the low 7 bits.</p>
+        <p>The <b>cat</b> utility exits 0 on success, and &gt;0
+        if an error occurs.</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Because of the shell language mechanism used to perform
+        output redirection, the command &quot;<font
+        face="Courier New">cat file1 file 2 &gt; file1</font>&quot;
+        will cause the original data in file1 to be destroyed!
+        Use &quot;<font face="Courier New">cat file2 &gt;&gt;
+        file1</font>&quot; instead.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>head</b>(1), <b>more</b>(1), <b>tail</b>(1), Rob Pike
+        &quot;<i>UNIX Style, or cat -v Considered Harmful</i>&quot;,
+        &quot;<i>USENIX Summer Conference Proceedings</i>&quot;
+        (1983)</li>
+</dir>
+
+<p><b>HISTORY</b></p>
+
+<dir>
+    <li>A <b>cat</b> command appeared in Version 6 AT&amp;T UNIX.</li>
+</dir>
+
+<hr>
+
+<p><font face="Times"><b>NAME</b></font></p>
+
+<p><font face="Times"><b>center</b> - Center text on terminal</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>SYNOPSIS</b></font></p>
+
+<p><font face="Times"><b>center</b> [columns] [file]</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>DESCRIPTION</b></font></p>
+
+<p><font face="Times"><b>Center</b> is used to center lines of
+text either fed from stdin, or from the specified file.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">One may pipe input in to it from the
+command line, or launch it by itself.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">The commands are as follows:</font></p>
+
+<p>&nbsp;</p>
+
+<dir>
+    <li><font face="Times">columns How many columns should be
+        considered when centering the text.</font><p><font
+        face="Times">Defaults to 80 columns.</font></p>
+        <p><font face="Times">file Specifies the file to open for
+        centering. Defaults to stdin.</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>FILES</b></font></p>
+
+<p><font face="Times"><b>center</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>AUTHOR</b></font></p>
+
+<dir>
+    <li><font face="Times">Written by Marek Pawlowski. Source
+        code in Public Domain. Contact author for redistribution
+        rights, or inclusion in a software package. Munge at
+        will. Credit to Marek Pawlowski must be retained in
+        modified source code. Preview of modifications
+        appreciated. Contact Marek Pawlowski at
+        marekp@pnet91.cts.com, marekp@cerf.net.</font></li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>chmod - Modify file permission flags.</li>
+</dir>
+
+<dir>
+    <li><b>SYNOPSIS</b></li>
+</dir>
+
+<dir>
+    <li><b>chmod</b> [<i>vV</i>] [octnum]|[+-=][<i>rwdnbi</i>] <i>file</i>...</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>chmod</b> is a program which modifies the permission
+        flags of a series of files. It will modify the read,
+        write, destroy, rename, backup, and invisible flags of
+        the files selected.</li>
+</dir>
+
+<p><b>OPTIONS</b></p>
+
+<dir>
+    <li>-<i>v</i> verbose. Provides debugging information.<p>-<i>V</i>
+        version. Prints out the version number.</p>
+    </li>
+</dir>
+
+<p><b>USAGE</b></p>
+
+<dir>
+    <li>- remove a permission flag.<p>+ add a permission flag.</p>
+        <p>= add permission flag, and clear all other flags.</p>
+    </li>
+</dir>
+
+<p><b>PERMISSIONS</b></p>
+
+<dir>
+    <li><i>r</i> read permssion.<p><i>w</i> write permission.</p>
+        <p><i>d</i> destroy permission.</p>
+        <p><i>n</i> rename permission.</p>
+        <p><i>b</i> backup needed flag.</p>
+        <p><i>i</i> invisible flag.</p>
+    </li>
+</dir>
+
+<p><b>EXAMPLES</b></p>
+
+<dir>
+    <li>`Lock' a file: <font face="Courier New">% chmod -wdn foo</font>
+        <p>`Unlock' a file: <font face="Courier New">% chmod +wdn
+        foo</font></p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Currently octal mode is only guarenteed to work with the
+        ProDOS filesystem, as the chmod() call supplied with
+        Orca/C doesn't seem to work well with other FSTs. Many of
+        the standard Unix permission flags are not implemented,
+        as the ProDOS filesystem does not support these
+        permissions. Among unsupported permissions are seperate
+        sets of flags for user, group, and world. As well, the -x
+        flag is not supported - if you wish to create an
+        executable shell script, use chtyp instead.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li>ls(1), chtyp(1)</li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>James Brookes<p>bb252@cleveland.freenet.edu</p>
+        <p>jamesb@cscihp.ecst.csuchico.edu</p>
+    </li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>chtyp - change file and aux types</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>chtyp</b> { [-t filetype] [-a auxtype] } | { -l lang }
+        file...</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>chtyp</b> is used to change the file types and aux
+        types of the specified file(s).<p>type is one of:</p>
+        <p>a decimal number [66]</p>
+        <p>a hexidecimal number preceeded by a $ [$42]</p>
+        <p>an official Apple mnemonic [FTD]</p>
+        <p>and auxtype is either:</p>
+        <p>a decimal number [64222]</p>
+        <p>a hexidecimal number preceeded by a $ [$FADE]</p>
+        <p>lang is one of:</p>
+        <p>CC ORCA/C</p>
+        <p>ASM65816 ORCA/M or APW Assembler</p>
+        <p>IBASIC ORCA/Integer Basic</p>
+        <p>LINK ZapLink</p>
+        <p>APWC APW C</p>
+        <p>PASCAL ORCA/Pascal</p>
+        <p>REZ Apple Resource Tool</p>
+        <p>EXEC Shell Script file</p>
+        <p>TMLPASCAL TML Pascal </p>
+        <p>If the -l is used, the -t and -a options cannot be
+        used.</p>
+    </li>
+</dir>
+
+<p><b>ERRORS</b></p>
+
+<dir>
+    <li>If <b>chtyp</b> is interrupted with a signal (SIGINT,
+        SIGTERM, etc.) the program aborts with a message telling
+        what signal caused the termination.<p>If some other error
+        occurs, <b>chtyp</b> aborts with an error message.</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Note that when giving hexadecimal arguments to <b>chtyp</b>,
+        you must quote any '$' characters with a \. For example,<p><font
+        face="Courier New">chtyp -t \$50 -a \$8002 teach.file</font></p>
+    </li>
+</dir>
+
+<p>Additional language stamps can only be added by modifying the
+source code.</p>
+
+<p>&nbsp;</p>
+
+<p><b>AUTHOR</b></p>
+
+<p>Original version by Greg Thompson.</p>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>cmp - perform a byte-by-byte comparison of two files</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>cmp</b> [ -<b>ls</b> ] <i>filename1</i> <i>filename2</i>
+        [ <i>skip1</i> ] [ <i>skip2</i> ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>cmp</b> compares <i>filename1</i> and <i>filename2</i>
+        . If <i>filename1</i> is `-', the standard input is used.
+        With no options, <b>cmp</b> makes no comment if the files
+        are the same; if they differ, it reports the byte and
+        line number at which the difference occurred, or, that
+        one file is an initial subsequence of the other. <p><i>skip1</i>
+        and <i>skip2</i> are initial byte offsets into <i>filename1</i>
+        and <i>filename2</i> respectively, and may be either
+        octal or decimal; a leading <b>0</b> denotes octal.</p>
+    </li>
+</dir>
+
+<p><b>OPTIONS</b></p>
+
+<dir>
+    <li>-<b>l</b> Print the byte number (in decimal) and the
+        differing bytes (in octal) for all differences between
+        the two files.<p>-<b>s</b> Silent. Print nothing for
+        differing files; set exit codes only.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>diff</b>(1)</li>
+</dir>
+
+<p><b>DIAGNOSTICS</b></p>
+
+<dir>
+    <li>Exit code <b>0</b> is returned for identical files, <b>1</b>
+        for different files, and <b>2</b> for an inaccessible or
+        missing argument, or a system error.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b> </p>
+
+<dir>
+    <li>compress, uncompress, zcat - compress and expand data</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>compress</b> [-cCdDf?hkKvV][-b
+        maxbits][-Iinpath][-Ooutpath][filenames...]<p><b>uncompress</b>
+        [-fCcvVkK?h][-Iinpath][-Ooutpath][filenames...]</p>
+        <p><b>zcat </b>[-CvV?h][-Iinpath][-Ooutpath][filenames...]</p>
+        <p>-<i>V</i> print Version</p>
+        <p>-<i>d</i> decompress input (default is compress)</p>
+        <p>-<i>v</i> verbose</p>
+        <p>-<i>f</i> force overwrite of output file (default =
+        off)</p>
+        <p>-<i>n</i> no header: useful to uncompress old files</p>
+        <p>-<i>c</i> write all output to stdout (default = off)</p>
+        <p>-<i>C</i> generate output compatible with compress 2.0</p>
+        <p>-<i>k</i> %s input file (default = keep)</p>
+        <p>-<i>K</i> %s output file on error (default = kill)</p>
+        <p>-<i>b maxbits</i> default = 16 bits</p>
+        <p>-<i>I pathname</i> infile path = none</p>
+        <p>-<i>O pathname</i> outfile path = none</p>
+        <p>-<i>?</i> -<i>h</i> help, print full usage message</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>Compress</b> reduces the size of the named files using
+        adaptive Lempel-Ziv coding. Whenever possible, each file
+        is replaced by one with the extension .Z, while keeping
+        the same ownership modes, access and modification times.
+        If no files are specified, the standard input is
+        compressed to the standard output.Compressed files can be
+        restored to their original form using <b>uncompress</b>
+        or <b>zcat</b>.<p>The -f option will force compression of
+        <i>name</i>. This is useful for compressing an entire
+        directory, even if some of the files do not actually
+        shrink. If -f is not given and compress is run in the
+        foreground, the user is prompted as to whether an
+        existing file should be overwritten.</p>
+        <p>The -c option makes <b>compress</b>/<b>uncompress</b>
+        write to the standard output; no files are changed. The
+        nondestructive behavior of zcat is identical to that of <b>uncompress</b>
+        -c.</p>
+        <p><b>Compress</b> uses the modified Lempel-Ziv algorithm
+        popularized in &quot;<i>A Technique for High Performance
+        Data Compression</i>&quot;, Terry A. Welch, &quot;<i>IEEE
+        Computer</i>,&quot; vol. 17, no. 6 (June 1984), pp. 8-19.
+        Common substrings in the file are first replaced by 9-bit
+        codes 257 and up. When code 512 is reached, the algorithm
+        switches to 10-bit codes and continues to use more bits
+        until the limit specified by the -b flag is reached
+        (default 16). Bits must be between 9 and 16. The default
+        can be changed in the source to allow compress to be run
+        on a smaller machine.</p>
+        <p>After the bits limit is attained, compress
+        periodically checks the compression ratio. If it is
+        increasing, <b>compress</b> continues to use the existing
+        code dictionary. However, if the compression ratio
+        decreases, <b>compress</b> discards the table of
+        substrings and rebuilds it from scratch. This allows the
+        algorithm to adapt to the next &quot;block&quot; of the
+        file.</p>
+        <p>Note that the -b flag is omitted for <b>uncompress</b>,
+        since the bits parameter specified during compression is
+        encoded within the output, along with a magic number to
+        ensure that neither decompression of random data nor
+        recompression of compressed data is attempted.</p>
+        <p>The amount of compression obtained depends on the size
+        of the input, the number of bits per code, and the
+        distribution of common substrings. Typically, text such
+        as source code or English is reduced by 50-60%.
+        Compression is generally much faster compressing, but the
+        output is not as small as freeze.</p>
+        <p>Under the -v option, a message is printed yielding the
+        percentage of reduction for each file compressed.</p>
+        <p>If the -V option is specified, the current version and
+        compile options are printed on stderr.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>Exit status is normally 0; if the last file is larger
+        after (attempted) compression, the status is 2; if an
+        error occurs, exit status is 1.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>freeze</b>(1)</li>
+</dir>
+
+<p><b>DIAGNOSTICS</b></p>
+
+<dir>
+    <li>Usage: compress [\-dfvcV] [\-b maxbits] [file ...]<p>Invalid
+        options were specified on the command line.</p>
+        <p>Missing maxbits</p>
+        <p>Maxbits must follow -b.</p>
+        <p>file : not in compressed format</p>
+        <p>The file specified to uncompress has not been
+        compressed.</p>
+        <p>file : compressed with bits, can only handle yy bits</p>
+        <p>File was compressed by a program that could deal with
+        more bits than the compress code on this machine.
+        Recompress the file with smaller bits.</p>
+        <p>file : already has .Z suffix -- no change</p>
+        <p>The file is assumed to be already compressed. Rename
+        the file and try again.</p>
+        <p>file : filename too long to tack on .Z</p>
+        <p>The file cannot be compressed because its name is
+        longer than 12 characters. Rename and try again. This
+        message does not occur on BSD systems. </p>
+        <p>file already exists; do you wish to overwrite (y or
+        n)?</p>
+        <p>Respond &quot;y&quot; if you want the output file to
+        be replaced; &quot;n&quot; if not.</p>
+        <p>Compression: &quot;xx.xx%&quot;</p>
+        <p>Percentage of the input saved by compression.
+        (Relevant only for -v.)</p>
+        <p>-- not a regular file: unchanged</p>
+        <p>When the input file is not a regular file,(e.g. a
+        directory), it is left unaltered.</p>
+        <p>-- file unchanged</p>
+        <p>No savings is achieved by compression. The input
+        remains virgin.</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Although compressed files are compatible between machines
+        with large memory, -b 12 should be used for file transfer
+        to architectures with a small process data space (64KB or
+        less, as exhibited by the DEC PDP series, the Intel
+        80286, etc.)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>conv - convert file formats</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>conv</b> -<i>convspec</i> <i>file1</i> ...</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>conv</b> converts files between various formats. <i>convspec</i>
+        is a specification detailing the type of file1 and the
+        type to convert it to. <p><i>-crlf</i> convert line
+        terminators from CR (Apple) to LF (Unix).</p>
+        <p><i>-lfcr</i> convert line terminators from LF (Unix)
+        to CR (Apple).</p>
+        <p><i>-detab spacing</i> translate tabs to spaces, using
+        tabs every <i>spacing</i> characters. A smart algorithm
+        is used which only inserts enough spaces to move to the
+        next tab stop. <i>spacing</i> is an integer less than 20.</p>
+        <p><i>-0001</i> converts all 0x00 bytes to 0x01 for using
+        Macintosh sound files on the IIgs.</p>
+    </li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li><b>conv</b> is very quick on all the conversions except
+        -detab (speed approaches 30K/sec). <b>conv</b> works
+        under the Orca shell also, and supports the Orca method
+        of wildcards. Look at the code to see how nasty this
+        makes programs.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>cat</b>(1), <b>more</b>(1), <b>tr</b>(1)</li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li><b>conv</b> was written by Greg Thompson for GNO/ME.</li>
+</dir>
+
+<hr>
+
+<p><font size="3"><b>NAME</b></font></p>
+
+<dir>
+    <li><font face="Times">du - Display disk usage statistics</font></li>
+</dir>
+
+<p><font size="3"><b>SYNOPSIS</b></font></p>
+
+<dir>
+    <li><font face="Times"><b>du</b> [ -<i>aksx</i> ] <i>pathname</i>
+        ...</font></li>
+</dir>
+
+<p><font size="3"><b>DESCRIPTION</b></font></p>
+
+<dir>
+    <li><font face="Times">The <b>du</b> utility displays the
+        block usage of files in the current directory or for the
+        entire tree of a given pathname.</font><p><font
+        face="Times">The options are as follows:</font></p>
+        <p><font face="Times">-<i>a</i> Generate an entry for
+        each file.</font></p>
+        <p><font face="Times">-<i>k</i> By default, <b>du</b>
+        displays the number of blocks as returned by the <b>stat</b>(2)
+        system call, i.e. 512-byte blocks. If the -<i>k</i> flag
+        is specified, the number displayed is the number of
+        1024-byte blocks with partial blocks rounded up.</font></p>
+        <p><font face="Times">-<i>s</i> Generate only the grand
+        total. If neither -<i>a</i> or -<i>s</i> are specified,
+        an entry is generated for each directory only.</font></p>
+        <p><font face="Times">-<i>x</i> Don't traverse any mount
+        points.</font></p>
+        <p><font face="Times">Files having multiple hard links
+        are counted (and displayed) a single time per <b>du</b>
+        execution.</font></p>
+    </li>
+</dir>
+
+<p><font size="3"><b>SEE ALSO</b></font></p>
+
+<dir>
+    <li><font face="Times"><b>df</b>(1)</font></li>
+</dir>
+
+<p><font size="3"><b>BUGS</b></font></p>
+
+<dir>
+    <li><font face="Times">The Apple IIGS does not have the
+        concept of mount points, and thus the -<i>x</i> option is
+        useless.</font></li>
+</dir>
+
+<p><font size="3"><b>HISTORY</b></font></p>
+
+<dir>
+    <li><font face="Times">A <b>du</b> command appeared in
+        Version 6 AT&amp;T Unix.</font></li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>eps - display extended process status information.</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>eps</b> [-<i>anlw</i>] [-<i>t tty</i>] [-<i>u user</i>]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>eps</b> is an extended <b>ps</b> command which
+        displays more information than the <b>gsh</b> builtin <b>ps</b>.</li>
+</dir>
+
+<p><b>USAGE</b></p>
+
+<dir>
+    <li>-<i>a</i> Show all processes; normally eps limits the
+        processes displayed to those that are owned by the
+        current user.<p>-<i>n</i> Show username instead of
+        userID, which is default.</p>
+        <p>-<i>l</i> Long list. This includes PPID (parent's
+        PID), MMID (Memory Manager ID) and a longer time field.</p>
+        <p>-<i>w</i> Wider list. A single <i>w</i> results in a
+        132 column wide listing, and two results in the whole
+        command line being displayed. Normally the command line
+        will be truncated to either 80 (default) or 132 (-w)
+        columns.</p>
+        <p>-<i>t tty</i> Display only those processes that are
+        owned by <i>tty</i>.</p>
+        <p>-<i>u user</i> Display only those processes that are
+        owned by <i>user</i>.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><i>GNO Shell Reference Manual</i>, <b>parent</b>(1)</li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>James Brookes<p>bb252@cleveland.freenet.edu</p>
+        <p>jamesb@cscihp.ecst.csuchico.edu</p>
+    </li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>fold - fold long lines for finite width output device</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>fold</b> [ -<b>w</b> <i>width</i> ] </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>Fold</b> is a filter which folds the contents of the
+        specified files, or the standard input if no files are
+        specified, breaking the lines to have maximum of 80
+        characters.<p>The options are as follows:</p>
+        <p>-<b>w</b> <i>width</i></p>
+        <p>Specifies a line width to use instead of the default
+        80 characters.<i>Width </i>should be a multiple of 8 if
+        tabs are present, or the tabs should be expanded using <b>conv</b>(1)
+        before using <b>fold</b> .</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>conv</b>(1)</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>If underlining is present it may be messed up by folding.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>getvers,setvers - manipulate rVersion resources in
+        executable files</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>getvers</b> <i>filename</i><p><b>setvers</b> <i>file</i>
+        ' <i>string1</i> ~ <i>string2</i> ' [ <i>country</i> ] <b>v</b><i>majrev.minrev.bugrev</i></p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>getvers</b> accepts as input the name of an executable
+        file, and prints the version information stored in the
+        rVersion resource of the file. If no rVersion resource is
+        present it will abort with the error `This file has no
+        rVersion resource'.<p>To add information to the rVersion
+        resource, <b>setvers</b> is used. The rVersion format
+        allows for two stirngs of up to 255 characters, although
+        it is suggested that for this use you keep each field
+        shorter than 80 characters.</p>
+        <p><i>string1</i> is separated from <i>string2</i> by a ~
+        (tilde) character, and both strings should be enclosed in
+        single quotes. <i>string1</i> is required to be the name
+        of the program. Any `_' character in <i>string2</i> will
+        be interpreted as a carriage return. When using GNO, make
+        sure to quote the single quotes and the tilde with
+        backslashes. </p>
+        <p>The optional field <i>country</i> (no spaces allowed)
+        allows you to set the country field of the rVersion
+        resource. The last parameter is the current revision
+        number of the program in the format <b>majrev . minrev .
+        bugrev</b>, where</p>
+        <p><b>majrev</b> is a single or double digit number from
+        00 to 99, and <b>minrev</b> and <b>bugrev</b> are single
+        digit numbers from zero to nine.</p>
+    </li>
+</dir>
+
+<p><b>COUNTRIES</b></p>
+
+<dir>
+    <li>Valid Countries/Regions (case IS sensitive)<p>Arabia
+        Iceland</p>
+        <p>Australia Israel</p>
+        <p>Belgium/Luxembourg Italy</p>
+        <p>Bosnia/Herzegovena Japan</p>
+        <p>Britian Korea</p>
+        <p>China Malta</p>
+        <p>Cyprus Netherlands</p>
+        <p>Denmark Norway</p>
+        <p>Finland Portugal</p>
+        <p>France Spain</p>
+        <p>FrenchCanadian Sweden</p>
+        <p>FrenchSwiss Taiwan</p>
+        <p>GermanSwiss Thailand</p>
+        <p>Germany Turkey</p>
+        <p>Greece UnitedStates</p>
+    </li>
+</dir>
+
+<p><b>EXAMPLES</b></p>
+
+<dir>
+    <li>Set the version of program `chmod' to read:<p>chmod
+        v01.0.0</p>
+        <p>James Brookes</p>
+        <p>jamesb@cscihp.ecst.csuchico.edu</p>
+        <p>Country: United States</p>
+        <p>in Orca:</p>
+        <p><font face="Courier New"># setvers chmod 'chmod~James
+        Brookes_jamesb@cscihp.ecst.csuchico.edu' v01.0.0</font></p>
+        <p>in GNO:</p>
+        <p><font face="Courier New">% setvers chmod
+        \'chmod\\~James Brookes_jamesb@cscihp.ecst.csuchico.edu\'
+        v01.0.0</font></p>
+    </li>
+</dir>
+
+<p><b>CAVEATS</b></p>
+
+<dir>
+    <li>If an rVersion resource already exists, it will be
+        overwritten and replaced with the new one. Other
+        resources will be unaffected.</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Little crawly things, also known as insects.</li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>Ian Schmidt - Two Meg Software (irsman@iastate.edu)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>grep, egrep, fgrep - search a file for a string or
+        regular expression</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>grep</b> [ -<b>bchilnsvw</b> ] [ -<b>e</b> <i>expression</i>
+        ] [ <i>filename</i> ... ]<p><b>egrep</b> [ -<b>bchilnsv</b>
+        ] [ -<b>e</b> <i>expression</i> ] [ -<b>f</b> <i>filename</i>
+        ] [ <i>expression</i> ] [ <i>filename</i> ... ] </p>
+        <p><b>fgrep</b> [ -<b>bchilnsvx</b> ] [ -<b>e</b> <i>string</i>
+        ] [ -<b>f</b> <i>filename</i> ] [ <i>string</i> ] [ <i>filename</i>
+        ... ]</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>Commands of the <b>grep</b> family search the input
+        filenames (the standard input default) for lines matching
+        a pattern. Normally, each line found is copied to the
+        standard output. <b>grep</b> patterns are limited regular
+        expresions in the style of <b>ed</b>(1). <b>egrep</b>
+        patterns are full regular expressions including
+        alternation. <b>fgrep</b> patterns are fixed strings - no
+        regular expression metacharacters are supported, and as a
+        result <b>fgrep</b> is generally an order of magnitude
+        faster than the other versions of <b>grep</b>.<p>Take
+        care when using the characters `$', `*', [, `^', `|',
+        `(', `)', and `\' in the <i>expression</i>, as these
+        characters are also meaningful to the shell. It is safest
+        to enclose the entire <i>expression</i> argument in
+        single quotes `...'</p>
+        <p>When any of the <b>grep</b> utilities is applied to
+        more than one input file, the name of the file is
+        displayed preceding each line which matches the pattern.
+        The filename is not displayed when processing a single
+        file, so if you actually want the filename to appear, use
+        <b>.null</b> as a second file in the list.</p>
+    </li>
+</dir>
+
+<p><b>OPTIONS</b></p>
+
+<dir>
+    <li>-<b>b</b> Precede each line by the block number on which
+        it was found. This is sometimes useful in locating disk
+        block numbers by context.<p>-<b>c</b> Display a count of
+        matching lines rather than displaying the lines which
+        match.</p>
+        <p>-<b>h</b> Do not display filenames.</p>
+        <p>-<b>i</b> Ignore the case of letters in making
+        comparisons - that is, upper and lower case are
+        considered identical.</p>
+        <p>-<b>l</b> List only the names of files with matching
+        lines (once) separated by NEWLINE characters.</p>
+        <p>-<b>n</b> Precede each line by its relative line
+        number in the file.</p>
+        <p>-<b>s</b> Work silently, that is, display nothing
+        except error messages. This is useful for checking the
+        error status.</p>
+        <p>-<b>v</b> Invert the search to only display lines that
+        do not match.</p>
+        <p>-<b>w</b> Search for the expression as a word as if
+        surrounded by \&lt; and \&gt;. This applies to grep only.</p>
+        <p>-<b>x</b> Display only those lines which match exactly
+        - that is, only lines which match in their entirety. This
+        applies to fgrep only.</p>
+        <p>-<b>e</b> <i>expression</i> </p>
+        <p>Same as a simple <i>expression</i> argument, but
+        useful when the <i>expression</i> begins with a `-'.</p>
+        <p>-<b>e</b> <i>string</i></p>
+        <p>For <b>fgrep</b> the argument is a literal character <i>string
+        </i>.</p>
+        <p>-<b>f</b> <i>filename</i> </p>
+        <p>Take the regular expression (<b>egrep</b>) or a list
+        of strings separated by NEWLINE (<b>fgrep</b>) from <i>filename</i>
+        .</p>
+    </li>
+</dir>
+
+<p><b>REGULAR EXPRESSIONS</b></p>
+
+<dir>
+    <li>The following one-character regular expressions match a
+        single character:<p><b>c</b> An ordinary character ( not
+        one of the special characters discussed below) is a
+        one-character regular expression that matches that
+        character.</p>
+        <p><b>\ c</b> A backslash (\) followed by any special
+        character is a one-character regular expression that
+        matches the special character itself. The special
+        characters are:</p>
+        <p>&#149; `.', `*', `[', and `\' (period, asterisk, left
+        square bracket, and backslash, respectively), which are
+        always special, except when they appear within square
+        brackets ([]).</p>
+        <p>&#149; `^' (caret or circumflex), which is special at
+        the beginning of an entire regular expression, or when it
+        immediately follows the left of a pair of square brackets
+        ([]).</p>
+        <p>&#149; $ (currency symbol), which is special at the
+        end of an entire regular expression.</p>
+        <p>A backslash followed by one of `&lt;', `&gt;', `(',
+        `)', `{', or `}', represents a special operator in the
+        regular expression; see below.</p>
+        <p><b>.</b> A `<b>.</b>' (period) is a one-character
+        regular expression that matches any character except
+        NEWLINE.</p>
+        <p>[ <i>string</i> ]</p>
+        <p>A non-empty string of characters enclosed in square
+        brackets is a one-character regular expression that
+        matches any one character in that string. If, however,
+        the first character of the string is a `^' (a circumflex
+        or caret), the one-character regular expression matches
+        any character except NEWLINE and the remaining characters
+        in the string. The `^' has this special meaning only if
+        it occurs first in the string. The `-' (minus) may be
+        used to indicate a range of consecutive ASCII characters;
+        for example, [<b>0-9</b>] is equivalent to [<b>0123456789</b>].
+        The `-' loses this special meaning if it occurs first
+        (after an initial `^', if any) or last in the string. The
+        `]' (right square bracket) does not terminate such a
+        string when it is the first character within it (after an
+        initial `^', if any); that is, []<b>a-f</b>] matches
+        either `]' (a right square bracket ) or one of the
+        letters a through f inclusive. The four characters `.',
+        `*', `[', and `\' stand for themselves within such a
+        string of characters.</p>
+        <p>The following rules may be used to construct regular
+        expressions:</p>
+        <p><b>*</b> A one-character regular expression followed
+        by `*' (an asterisk) is a regular expression that matches
+        zero or more occurrences of the one-character regular
+        expression. If there is any choice, the longest leftmost
+        string that permits a match is chosen.</p>
+        <p><b>\(and\)</b></p>
+        <p>A regular expression enclosed between the character
+        sequences \( and \) matches whatever the unadorned
+        regular expression matches. This applies only to <b>grep</b>.</p>
+        <p><b>\ </b><b><i>n</i></b> The expression \ <i>n</i>
+        matches the same string of characters as was matched by
+        an expression enclosed between <b>\(</b> and <b>\)</b>
+        earlier in the same regular expression. Here <i>n</i> is
+        a digit; the sub-expression specified is that beginning
+        with the n th occurrence of <b>\(</b> counting from the
+        left. For example, the expression <b>^\(.*\)\1$</b>
+        matches a line consisting of two repeated appearances of
+        the same string.</p>
+        <p><b>Concatenation</b></p>
+        <p>The concatenation of regular expressions is a regular
+        expression that matches the concatenation of the strings
+        matched by each component of the regular expression.</p>
+        <p><b>\&lt;</b> The sequence <b>\&lt;</b> in a regular
+        expression constrains the one-character regular
+        expression immediately following it only to match
+        something at the beginning of a word; that is, either at
+        the beginning of a line, or just before a letter, digit,
+        or underline and after a character not one of these.</p>
+        <p><b>\&gt;</b> The sequence <b>\&gt;</b> in a regular
+        expression constrains the one-character regular
+        expression immediately following it only to match
+        something at the end of a word; that is, either at the
+        end of a line, or just before a character which is
+        neither a letter, digit, nor underline.</p>
+        <p><b>\{ m \}</b></p>
+        <p><b>\{ m ,\}</b></p>
+        <p><b>\{ m , n \}</b></p>
+        <p>A regular expression followed by <b>\{ m \}</b>, <b>\{
+        m , \ }</b>, or <b>\{ m , n \}</b> matches a range of
+        occurrences of the regular expression. The values of m
+        and n must be non-negative integers less than 256; \{ m
+        \} matches exactly m occurrences; \{ m ,\} matches at
+        least m occurrences; \{ m , n \} matches any number of
+        occurrences between m and n inclusive. Whenever a choice
+        exists, the regular expression matches as many
+        occurrences as possible.</p>
+        <p><b>^</b> A circumflex or caret (^) at the beginning of
+        an entire regular expression constrains that regular
+        expression to match an initial segment of a line.</p>
+        <p><b>$</b> A currency symbol ($) at the end of an entire
+        regular expression constrains that regular expression to
+        match a final segment of a line.</p>
+        <p>The construction</p>
+        <p><font face="Courier New"><b>example% ^ </b>entire
+        regular expression $</font></p>
+        <p>constrains the entire regular expression to match the
+        entire line.</p>
+        <p>egrep accepts regular expressions of the same sort
+        grep does, except for \(, \), \ n, \&lt;, \&gt;, \{, and
+        \}, with the addition of:</p>
+        <p>* A regular expression (not just a one-character
+        regular expression) followed by `*' (an asterisk) is a
+        regular expression that matches zero or more occurrences
+        of the one-character regular expression. If there is any
+        choice, the longest leftmost string that permits a match
+        is chosen.</p>
+        <p>+ A regular expression followed by `+' (a plus sign)
+        is a regular expression that matches one or more
+        occurrences of the one-character regular expression. If
+        there is any choice, the longest leftmost string that
+        permits a match is chosen.</p>
+        <p>? A regular expression followed by `?' (a question
+        mark) is a regular expression that matches zero or one
+        occurrences of the one-character regular expression. If
+        there is any choice, the longest leftmost string that
+        permits a match is chosen.</p>
+        <p>| Alternation: two regular expressions separated by
+        `|' or NEWLINE match either a match for the first or a
+        match for the second.</p>
+        <p>() A regular expression enclosed in parentheses
+        matches a match for the regular expression.</p>
+        <p>The order of precedence of operators at the same
+        parenthesis level is `[ ]' (character classes), then `*'
+        `+' `?' (<b>closures</b>),then concatenation, then `|' (<b>alternation</b>)
+        and NEWLINE.</p>
+    </li>
+</dir>
+
+<p><b>EXAMPLES</b></p>
+
+<p>&nbsp;</p>
+
+<dir>
+    <li>Search a file for a fixed string using <b>fgrep</b>:<p><font
+        face="Courier New"><b>example% fgrep intro
+        /usr/share/man/man3/*.3*</b></font></p>
+        <p>Look for character classes using <b>grep</b>:</p>
+        <p><font face="Courier New"><b>example% grep
+        '[1-8]([CJMSNX])' /usr/share/man/man1/*.1</b></font></p>
+        <p>Look for alternative patterns using <b>egrep</b>:</p>
+        <p><font face="Courier New"><b>example% egrep
+        '(Sally|Fred) (Smith|Jones|Parker)' telephone.list</b></font></p>
+        <p>To get the filename displayed when only processing a
+        single file, use <b>.null</b> as the second file in the
+        list:</p>
+        <p><font face="Courier New"><b>example% grep 'Sally
+        Parker' telephone.list /dev/null</b></font></p>
+    </li>
+</dir>
+
+<p><b>FILES</b></p>
+
+<p>.null</p>
+
+<p>&nbsp;</p>
+
+<p><b>SEE ALSO</b></p>
+
+<p><b>awk</b>(1), <b>gsh</b>(1), <b>vi</b>(1), <b>sed</b>(1)</p>
+
+<p>&nbsp;</p>
+
+<p><b>BUGS</b></p>
+
+<p>Lines are limited to 1024 characters by <b>grep</b>; longer
+lines are truncated.</p>
+
+<p>&nbsp;</p>
+
+<dir>
+    <li>The combination of -<b>l</b> and -<b>v</b> options does
+        not produce a list of files in which a regular expression
+        is not found. To get such a list, use the C shell
+        construct (Note: this is NOT the same as gsh, which does
+        not support such programming).<p><font size="2"
+        face="Courier New">foreach filename (*)</font></p>
+        <p><font size="2" face="Courier New">if (`grep &quot; re
+        &quot; $ filename | wc -l` == 0) echo $ filename </font></p>
+        <p><font size="2" face="Courier New">end</font></p>
+        <p>Ideally there should be only one <b>grep</b>.</p>
+    </li>
+</dir>
+
+<p><b>DIAGNOSTICS</b></p>
+
+<dir>
+    <li>Exit status is 0 if any matches are found, 1 if none, 2
+        for syntax errors or inaccessible files.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>head - give first few lines</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>head</b> [-<i>count</i>] [<i>file</i> ...]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>This filter gives the first <i>count</i> lines of each of
+        the specified files, or of the standard input. If <i>count</i>
+        is omitted it defaults to 10.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>tail</b>(1)</li>
+</dir>
+
+<p><b>HISTORY</b></p>
+
+<dir>
+    <li><b>head</b> appeared in 3 BSD.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>ls - list contents of directory</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>ls</b> [ -<b>acdfilqrstu1ACLFR</b> ] <i>name</i> ...</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>For each directory argument, <b>ls</b> lists the contents
+        of the directory; for each file argument, <b>ls</b>
+        repeats its name and any other information requested. By
+        default, the output is sorted alphabetically. When no
+        argument is given, the current directory is listed. When
+        several arguments are given, the arguments are first
+        sorted appropriately, but file arguments are processed
+        before directories and their contents.<p>There are a
+        large number of options:</p>
+        <p>-<b>l</b> List in long format, giving mode, number of
+        links,owner, size in bytes, and time of last modification
+        for each file. If the file is a special file the size
+        field will instead contain the major and minor device
+        numbers. If the file is a symbolic link the pathname of
+        the linked-to file is printed preceded by ``-&gt;''.</p>
+        <p>-<b>t</b> Sort by time modified (latest first) instead
+        of by name.</p>
+        <p>-<b>a</b> List all entries; in the absence of this
+        option, entries whose names begin with a period (.) or
+        whose GS/OS 'invisible' flag is set are not listed.</p>
+        <p>-<b>A</b> List all entries except for the current
+        directory (.) and the parent directory (..).</p>
+        <p>-<b>s</b> Give size in kilobytes of each file.</p>
+        <p>-<b>d</b> If argument is a directory, list only its
+        name; often used with -<b>l</b> to get the status of a
+        directory.</p>
+        <p>-<b>L</b> If argument is a symbolic link, list the
+        file or directory the link references rather than the
+        link itself. Note that if the link references a directory
+        the link is always followed, unless the -<b>l</b> option
+        is used.</p>
+        <p>-<b>r</b> Reverse the order of sort to get reverse
+        alphabetic or oldest first as appropriate.</p>
+        <p>-<b>u</b> Use time of last access instead of last
+        modification for sorting (with the -<b>t </b>option)
+        and/or printing (with the -<b>l</b> option).</p>
+        <p>-<b>c</b> Use time of file creation for sorting or
+        printing.</p>
+        <p>-<b>i</b> For each file, print the i-number in the
+        first column of the report.</p>
+        <p>-<b>f</b> Force each argument to be interpreted as a
+        directory and list the name found in each slot. This
+        option turns off -<b>l</b>, -<b>t</b>, -<b>s</b>, and -<b>r</b>,
+        and turns on -<b>a</b>; the order is the order in which
+        entries appear in the directory.</p>
+        <p>-<b>F</b> Cause directories to be marked with a
+        trailing `/', sockets with a trailing `=', executable
+        files with a trailing `*', and symbolic links to files
+        with a trailing `@'. Symbolic links to directories are
+        marked with a trailing `/', unless the -l option is also
+        used.</p>
+        <p>-<b>R</b> recursively list subdirectories encountered.</p>
+        <p>-<b>1</b> force one entry per line output format; this
+        is the default when output is not to a terminal.</p>
+        <p>-<b>C</b> force multi-column output; this is the
+        default when output is to a terminal.</p>
+        <p>-<b>q</b> force printing of non-graphic characters in
+        file names as the character `?'; this is the default when
+        output is to a terminal.</p>
+        <p>-<b>n</b> Causes <b>ls</b> to not sort files; this is
+        useful when organizing libraries in alphabetical order
+        for ORCA languages.</p>
+        <p>The mode printed under the -l option contains 11
+        characters which are interpreted as follows: the first
+        character is</p>
+        <p><b>e</b> if the entry has a resource fork,</p>
+        <p><b>d</b> if the entry is a directory;</p>
+        <p><b>b</b> if the entry is a block-type special file;</p>
+        <p><b>c</b> if the entry is a character-type special
+        file;</p>
+        <p><b>l</b> if the entry is a symbolic link;</p>
+        <p><b>s</b> if the entry is a socket, or</p>
+        <p><b>-</b> if the entry is a plain file.</p>
+        <p>The next 9 characters are interpreted as three sets of
+        three bits each. The first set refers to owner
+        permissions; the next refers to permissions to others in
+        the same user-group; and the last to all others. Within
+        each set the three characters indicate permission
+        respectively to read, to write, or to execute the file as
+        a program. For a directory, `execute' permission is
+        interpreted to mean permission to search the directory.
+        The permissions are indicated as follows:</p>
+        <p><b>i</b> if the file is invisible</p>
+        <p><b>d</b> if the file can be deleted</p>
+        <p><b>r</b> if the file is readable;</p>
+        <p><b>w</b> if the file is writable;</p>
+        <p><b>x</b> if the file is executable;</p>
+        <p><b>-</b> if the indicated permission is not granted.</p>
+        <p>The group-execute permission character is given as <b>s</b>
+        if the file has the set-group-id bit set; likewise the
+        user-execute permission character is given as <b>s</b> if
+        the file has the set-user-id bit set.</p>
+        <p>When the sizes of the files in a directory are listed,
+        a total count of blocks, including indirect blocks is
+        printed.</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>The output device is assumed to be 80 columns wide.<p>GNO
+        and GS/OS do not currently support links, user/group
+        permissions, the concept of 'i-numbers', or 'special'
+        files; thus, ls options that deal with these are ignored.</p>
+    </li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>lseg - list segments in an OMF file</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>lseg</b> file</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>lseg</b> lists the segments of an OMF executable file.
+        While it can list the segments in an intermediate object
+        file, the information isn't as useful.<p><b>lseg</b> is
+        intended for discovering the location of stack segments
+        in existing applications (for editing to smaller sizes),
+        as an aid in determining how to segment large C files
+        whose segments exceed the bank size, and for deciding
+        which segments to recombine after excessive segmentation.</p>
+    </li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>Jawaid Bazyar for GNO/ME.</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Doesn't detect non-OMF files, and thus can get very
+        confused if you do &quot;lseg *&quot; and one of the
+        files chosen isn't an OMF file. Usually the only way to
+        terminate is to interrupt the program with ^C.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>make - build a program according to a program definition
+        file</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>make</b> [-d] [-p] [-s] inputFile</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>make</b> is a program maintenance utility that aids in
+        creating programs from multiple source files.<p>inputFile
+        is the name of the Program Description File. If absent,
+        make defaults to using 'makefile' as the PDF. make's
+        options are as follows:</p>
+        <p>-d Display the modification date and time as each file
+        is checked. </p>
+        <p>-p Operate in programmer/debug mode. </p>
+        <p>-s Operate in silent mode.</p>
+        <p>The logical definition of each of the PDF parameters
+        follows:</p>
+        <p><font face="Courier New"># Comments begin with a pound
+        sign &quot;#&quot;. </font></p>
+        <p><font face="Courier New"># </font></p>
+        <p><font face="Courier New">TargetFile: DependentFile1 \
+        #</font></p>
+        <p><font face="Courier New">DependentFile2 DependentFilen
+        </font></p>
+        <p><font face="Courier New">ShellCommand1 </font></p>
+        <p><font face="Courier New">ShellCommand2 </font></p>
+        <p><font face="Courier New">. </font></p>
+        <p><font face="Courier New">. </font></p>
+        <p><font face="Courier New">ShellCommandn</font></p>
+    </li>
+</dir>
+
+<p><b>MAKE PARAMETERS</b></p>
+
+<dir>
+    <li>Comments can be placed anywhere in the PDF file. If a
+        pound sign is in column one, the entire line is treated
+        as a comment. Anything following the pound is ignored by
+        make. Comments may also be placed on parameter lines
+        containing Target/Dependent file parameters.<p>The
+        TargetFile parameter must start in column one and ends
+        with a colon &quot;:&quot;. It can be a full path name,
+        partial path name or file in the current directory. This
+        file is usually an object type file created by a
+        compiler. Dependent file parameter(s) follow the
+        semicolon and are separated by a space, a comma or both.
+        Dependent file parameters are usually CC, PAS, ASM or
+        some type of included SRC file. Essentially, TargetFile
+        is the result of compiling the dependent source files.</p>
+        <p><b>make</b> obtains the modfication date and time of
+        the Target file and then compares it to each of the
+        dependent file(s) moving left to right. If one of the
+        dependent files has a date and time later than the Target
+        file, the subsequent ShellCommands are executed.
+        Target/Dependent parameters may be continued by placing a
+        reverse slash &quot;\&quot; on the line following a
+        dependent file parameter. make will interpret the next
+        line as dependent file parameters which may also be
+        continued and so on. There should not be any blank lines
+        between the continued line and next line.</p>
+        <p>ShellCommands must contain a space in column one to
+        differentiate them from Target/Dependent file parameters.
+        If make determines that a Target file needs to be
+        recreated, the ShellCommands following the
+        Target/Dependent file parameters are passed, as is, to
+        the shell interpreter. The commands must be valid shell
+        commands. ShellCommands are executed until a blank line
+        is encountered or an error occurs during the execution of
+        the last command. If an error occurs, make terminates
+        without reading the remaining PDF parameters. If a blank
+        line is read, make returns to Target/Dependent search
+        mode.</p>
+        <p>MAKE Example</p>
+        <p><font size="2" face="Courier New"># </font></p>
+        <p><font size="2" face="Courier New"># File: Example.Make
+        - A MAKE example PDF #</font></p>
+        <p><font size="2" face="Courier New">Menu.Root: Menu.CC #
+        Contains menu related routines </font></p>
+        <p><font size="2" face="Courier New">compile menu.cc
+        keep=menu</font></p>
+        <p><font size="2" face="Courier New">Window.Root:
+        Window.CC # Contains window handling routines </font></p>
+        <p><font size="2" face="Courier New">compile window.cc
+        keep=window</font></p>
+        <p><font size="2" face="Courier New">Misc.Root: Misc.CC
+        Misc.h # Contains miscellaneous program routines </font></p>
+        <p><font size="2" face="Courier New">compile misc.cc
+        keep=misc</font></p>
+        <p><font size="2" face="Courier New">Main.Root: Main.CC
+        Include/Main.h Include/Misc.h # Main program </font></p>
+        <p><font size="2" face="Courier New">compile main.cc
+        keep=main</font></p>
+        <p><font size="2" face="Courier New">MyProg: Menu.Root
+        Window.Root Misc.Root \ # re-link required? </font></p>
+        <p><font size="2" face="Courier New">Main.Root # check
+        all dependent files </font></p>
+        <p><font size="2" face="Courier New">link main misc menu
+        window keep=myprog # Shell comment </font></p>
+        <p><font size="2" face="Courier New">chtyp -t s16 myprog
+        # change type to S16</font></p>
+        <p><font size="2" face="Courier New"># End of PDF</font></p>
+        <p>The example PDF shows a program that is made up of 4
+        source files. The Main and Misc routines are also
+        dependent on include files containing information that if
+        changed would force a re-compile of that module.</p>
+        <p>One thing to keep in mind is the order of
+        Target/Dependent parameters can be important. make
+        examines the PDF from the top down. If a file is modified
+        due to a command later in the PDF, make will not return
+        to a previous Target/Dependent parameter in which that
+        file was a dependent file.</p>
+    </li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>Original make util written by Larry Agle for ORCA;
+        modifications made to make it look more like UNIX make,
+        and misc. Bug fixes by Jawaid Bazyar.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>makemake - scan C source files for dependencies and
+        create a makefile</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>makemake</b> source.c </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>makemake</b> takes the C source file(s) as input, and
+        scans them for dependencies (#includes). It does not
+        count standard headers (#includes with the filename
+        surrounded by &lt; &gt;).<p>The dependency information
+        for all the source files specified is then written to a
+        file 'makefile' in the current directory.</p>
+        <p><b>makemake</b> does not create link scripts nor does
+        it put an executable dependendcy into the file, as these
+        require link information not available from the <b>makemake</b>
+        command line.</p>
+    </li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>Jawaid Bazyar for GNO/ME's 'make' utility. He got tired
+        of writing them by hand.</li>
+</dir>
+
+<dir>
+    <li><b>BUGS</b></li>
+</dir>
+
+<dir>
+    <li><b>makemake</b> does not properly handle recursive or
+        multiple includes of the same file. If the same file is
+        included more than once, <b>makemake</b> will list it
+        that many times in the output makefile. While multiple
+        includes don't hurt anything, it can take more time to
+        process the makefile. Recursive includes will, of course,
+        hang <b>makemake</b>.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>man - online manual system (Version 1.6)</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>man</b> [ <i>section</i> ] <i>manpagename</i></li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>man</b> is the access point to the online manual
+        system. <b>man</b> works as a shell that calls an
+        appropriate text formatter to format a manual page. There
+        are currently three text formatters available for the
+        GNO/ME system.<p><b>nroff</b> Unix standard typesetting
+        package</p>
+        <p><b>aroff</b> formats AppleWorks GS(tm) documents</p>
+        <p><b>cat</b> used to display preformatted documents</p>
+        <p>If the option section argument is specified, <b>man</b>
+        looks specifically in that section of the manual for the
+        manpage. This is needed in situations where there are
+        manpages with the same name in different sections (for
+        example, <b>sleep</b>(1) and <b>sleep</b>(3).</p>
+    </li>
+</dir>
+
+<p><b>ENVIRONMENT</b></p>
+
+<dir>
+    <li><b>man</b> recognizes the following variables from the
+        shell.<p><b>USRMAN</b></p>
+        <p>This variable is required . It points to the manual
+        system root directory.</p>
+        <p><b>PAGER</b></p>
+        <p><b>man</b> uses <b>more</b> as the default pager. If
+        you wish to use a different pager, <b>less</b> perhaps,
+        then you must set this variable to point to that pager.</p>
+    </li>
+</dir>
+
+<p><b>Compressed Manual Pages and Links</b></p>
+
+<dir>
+    <li>If <b>man</b> finds a file in the manual that ends in a '<b>.l</b>'
+        suffix, it takes the contents of that file as a 'link' to
+        the actual manpage. This is useful for manpages that
+        describe multiple commands, and prevents having multiple
+        copies of the manpage.<p>Manual pages may be compressed
+        with <b>compress</b> or <b>freeze</b>, in which case the
+        appropriate program is called to uncompress the manual
+        file.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>more</b>(1), <b>less</b>(1), <b>compress</b>(1), <b>freeze</b>(1).</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>mkdir - Makes directories</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>mkdir</b> <i>dirname</i> ...</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>The <b>mkdir</b> command creates subdirectories with the <i>dirname</i>s
+        specified. If a file with that <i>dirname</i> exists, an
+        error is returned. dirname may be a full pathname, or a
+        partial pathname, in which case the directory is created
+        as a subdirectory of the current directory.<p><b>mkdir</b>
+        only creates the filename portion of the specified path.
+        If, for instance, you do </p>
+        <p><font face="Courier New"><b>mkdir /usr/local/bbs/foo</b></font></p>
+        <p>directory foo will only be created if all of <b>/usr</b>,
+        <b>local</b>, and <b>bbs</b> exist.</p>
+    </li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li><b>mkdir</b> was written by James Brookes for GNO/ME.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>more - text pager</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>more</b> [ <i>file</i> ...]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>more</b> allows the user to view the specified <i>file</i>(s)
+        screen by screen or line by line. If no <i>file</i>s are
+        specified, standard input is used.<p>Every time <b>more</b>
+        has displayed a screen of text, it displays a prompt</p>
+        <p><font face="Courier New">- filename (xx%) - </font></p>
+        <p>indicating the percentage of the file that has been
+        viewed and its filename. If standard input is used,</p>
+        <p><font face="Courier New">'&nbsp;-&nbsp;more&nbsp;-&nbsp;'</font></p>
+        <p>is used as the prompt instead.</p>
+        <p>A number of key commands are available at the prompt.</p>
+        <p><b>q</b> quit viewing the current file, and move to
+        the next file (if any)</p>
+        <p><b>[RETURN]</b></p>
+        <p>display the next line of the file</p>
+        <p><b>[ESC]</b> abort <b>more</b>, including any more
+        files that may have been specified</p>
+        <p><b>[SPACE]</b></p>
+        <p>display the next page of the file</p>
+    </li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>This version of more was written by Jawaid Bazyar and
+        Derek Taubert.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>passwd - set a user's login password</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>passwd</b> [ -<b>?</b> | -<b>v</b> ] [ <i>username</i>
+        ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>passwd</b> changes the specified user's password. Only
+        root is allowed to alter passwords other than his own. If
+        the<i>username</i> is not given, the user's own login
+        name is assumed. Users other than root must then enter
+        the old password to verify permission to change the
+        password. Finally, the user must type the desired new
+        password twice to insure that no mistakes are made.<p>To
+        cancel <b>passwd</b>, type CTRL-@ when asked to enter the
+        new password. </p>
+        <p>The -<b>?</b> flag causes <b>passwd</b> to display a
+        brief usage message, and the -<b>v</b> flag causes <b>passwd</b>
+        to display version information.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>login</b>(1)</li>
+</dir>
+
+<p><b>FILES</b></p>
+
+<dir>
+    <li><b>/etc/passwd</b> - contains the password information</li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>Eric Shepherd<p>Internet uerics@mcl.mcl.ucsb</p>
+        <p>AOL Sheppy</p>
+    </li>
+</dir>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>purge - deallocate purgeable memory handles</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>purge</b> [-v]</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><dir>
+            <li>This program purges all memory blocks marked
+                purgable. This is very important when using the
+                Orca compilers and shells since certain blocks
+                get left lying around and can (and have!) caused
+                compiler errors. By purging memory before
+                compiles a large percentage of strange compiler
+                errors can be eliminated. After purging, all
+                memory possible is then freed for usage.<dir>
+                    <li><dir>
+                            <li>-v gives a verbose listing of
+                                each handle being purged and
+                                before and after free memory
+                                statistics.</li>
+                        </dir>
+                    </li>
+                </dir>
+                <p>The problems mentioned above usually occur
+                when a program has over-written one of the ORCA
+                FastFile system's memory handles. Purging clears
+                these handles and forces a reload from disk.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li><dir>
+            <li>Purging memory when non-shell applications are
+                running could be dangerous.</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li><dir>
+            <li>rx, rc, rb, rz - Receive Files and Commands with
+                X/Y/ZMODEM</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>rz</b> -tv<p><b>rb</b> -tv</p>
+                <p><b>rc</b> -tv file</p>
+                <p><b>rx</b> -tv file</p>
+                <p><b>gz</b> file ... [-v]</p>
+                <p><b>rzCOMMAND</b></p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><dir>
+            <li>This program uses error correcting protocols to
+                receive files over a dial-in serial port from a
+                variety of programs running under many operating
+                systems. It is invoked from a shell prompt
+                manually, or automatically as a result of an
+                &quot;<b>sz</b> file ...&quot; command given to
+                the calling program.<p>This is a shareware
+                program copyrighted by Omen Technology INC.</p>
+                <p><b>Rz</b> (Receive ZMODEM) receives one or
+                more files with the ZMODEM protocol. Pathnames
+                are supplied by the sending program, and
+                directories are made if necessary (and possible).
+                Normally, the &quot;<b>rz</b>&quot; command is
+                automatically issued by the calling ZMODEM
+                program, but defective ZMODEM implementations may
+                require starting <b>rz</b> manually.</p>
+                <p><b>Rb</b> receives file(s) with YMODEM,
+                accepting either standard128 byte sectors or 1024
+                byte sectors (sb <b>-k</b> option). The user
+                should determine when the 1024 byte block length
+                actually improves throughput.</p>
+                <p>If True YMODEM&trade; (Omen Technology
+                trademark) file information (file length, etc.)
+                is received, the file length controls the number
+                of bytes written to the output dataset, and the
+                modify time and file mode (iff non zero) are set
+                accordingly.</p>
+                <p>If True YMODEM file information is not
+                received, slashes in the pathname are changed to
+                underscore, and any trailing period in the
+                pathname is eliminated. This conversion is useful
+                for files received from CP/M and other historical
+                systems.</p>
+                <p><b>Rc</b> receives a single <u>file</u> with
+                XMODEM-CRC or XMODEM-1k-CRC protocol. The user
+                should determine when the 1024 byte block length
+                actually improves throughput without causing
+                problems. The user must supply the file name to
+                both sending and receiving programs. Up to 1023
+                garbage characters may be added to the received
+                file.</p>
+                <p><b>Rx</b> receives a single <u>file</u> with
+                XMODEM or XMODEM-1k protocol. The user should
+                determine when the 1024 byte block length
+                actually improves throughput without causing
+                problems. The user must supply the file name to
+                both sending and receiving programs. Up to 1023
+                garbage characters may be added to the received
+                file.</p>
+                <p><b>Rz</b> may be invoked as <b>rzCOMMAND</b>
+                (with an optional leading - as generated by
+                login(1)). For each received file, <u>rz</u> will
+                pipe the file to ``COMMAND filename'' where
+                filename is the name of the transmitted file with
+                the file contents as standard input.</p>
+                <p>Each file transfer is acknowledged when
+                COMMAND exits with 0 status. A non zero exit
+                status terminates transfers.</p>
+                <p>A typical use for this form is <u>rzmail</u>
+                which calls rmail(1) to post mail to the user
+                specified by the transmitted file name. For
+                example, sending the file &quot;caf&quot; from a
+                PC-DOS system to <u>rzmail</u> on a Unix system
+                would result in the contents of the DOS file
+                &quot;caf&quot; being mailed to user
+                &quot;caf&quot;.</p>
+                <p>The meanings of the available options are:</p>
+                <dir>
+                    <li><dir>
+                            <li><b>tim</b> Change timeout to <u>tim</u>
+                                tenths of seconds.<p><b>v </b>Verbose
+                                causes a list of file names to be
+                                appended to /tmp/rzlog . More v's
+                                generate more detailed debugging
+                                output.</p>
+                            </li>
+                        </dir>
+                    </li>
+                </dir>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>DIAGNOSTICS</b></p>
+
+<dir>
+    <li><dir>
+            <li>Exit status is as follows: 0 for successful
+                transfers. 1 if unrecoverable errors are
+                detected. 2 if syntax errors or file access
+                problems are detected. 3 if the program was
+                terminated by a caught interrupt.</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>sz</b>(1).</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li><dir>
+            <li>ZMODEM's support of XOFF/XON flow control allows
+                proper operation in many environments that do not
+                support XMODEM uploads. Unfortunately, not all
+                Unix versions support input flow control. The TTY
+                input buffering on some systems may not
+                adequately buffer long blocks or streaming input
+                at high speed. You should suspect this problem
+                when you can't send data to the Unix system at
+                high speeds using ZMODEM, YMODEM-1k or XMODEM-1k,
+                but YMODEM with 128 byte blocks works properly.<p>If
+                a program that does not properly implement the
+                specified file transfer protocol causes <b>rz</b>
+                to &quot;hang&quot; the port after a failed
+                transfer, either wait for <b>rz</b> to time out
+                or keyboard a dozen Ctrl-X characters.</p>
+                <p>Many programs claiming to support YMODEM only
+                support XMODEM with 1k blocks, and they often
+                don't get that quite right.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li><dir>
+            <li>This version of <b>rz</b> does not support some
+                ZMODEM features.<p>The ASCII option's CR/LF to NL
+                translation merely deletes CR's.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>ZMODEM CAPABILITIES</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>Rz</b> supports ZMODEM command execution
+                (zcommand), incoming ZMODEM binary (-b), ASCII
+                (-a), newer(-n), newer+longer(-N), protect (-p),
+                Crash Recovery(-r), clobber (-y), match+clobber
+                (-Y), compression(-Z), and append (-+) requests.
+                Other options sent by the sender are ignored. The
+                default is protect (-p) and binary (-b).</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>FILES</b></p>
+
+<dir>
+    <li><dir>
+            <li>/tmp/rzlog stores debugging output generated with
+                -vv option</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li><dir>
+            <li>script - make typescript of a terminal session</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>script</b> [ -<b>a</b> ] [ <i>filename</i> ]</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>script</b> makes a typescript of everything
+                printed on your terminal. The typescript is
+                written to <i>filename</i> , or appended to <i>filename</i>
+                if the -<b>a</b> option is given. It can be sent
+                to the line printer later with <b>lpr</b>(1). If
+                no file name is given, the typescript is saved in
+                the file typescript .<p>The script ends when the
+                forked shell exits.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>OPTIONS</b></p>
+
+<dir>
+    <li><dir>
+            <li>-<b>a</b> Append the script to the specified file
+                instead of writing over it.</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>lpr</b> (1), <b>pty</b> (4)</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li><dir>
+            <li>script places <i>everything</i> in the log file.
+                This is not what the naive user expects.</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li><dir>
+            <li>sleep - suspend execution for an interval</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>sleep</b> <i>time</i></li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>Sleep</b> suspends execution for <i>time</i>
+                seconds. It is used to execute a command after a
+                certain amount of time as in a script:<dir>
+                    <li><dir>
+                            <li>sleep 105<p>command</p>
+                            </li>
+                        </dir>
+                    </li>
+                </dir>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>alarm</b>(3C), <b>sleep</b>(3)</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li><dir>
+            <li><i>Time</i> must be less than 2,147,483,647
+                seconds.</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li><dir>
+            <li>split - split a file into pieces</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>split</b> [ - <i>number</i> ] [ <i>infile</i>
+                [ <i>outfile</i> ] ]</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>split</b> reads <i>infile</i> and writes it in
+                <i>number</i> -line pieces (default 1000) onto a
+                set of output files (as many files as necessary).
+                The name of the first output file is <i>outfile</i>
+                with <b>aa</b> appended, the second file is <b>outfile</b>ab
+                , and so on lexicographically.<p>If no <i>outfile</i>
+                is given, <b>x</b> is used as default (output
+                files will be called <b>xaa</b> , <b>xab</b> ,
+                etc.).</p>
+                <p>If no <i>infile</i> is given, or if `<b>-</b>'
+                is given in its stead, then the standard input
+                file is used.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>OPTIONS</b></p>
+
+<dir>
+    <li><dir>
+            <li>- number Number of lines in each piece.</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li><dir>
+            <li>stty - set and view terminal options and
+                parameters</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>stty</b> [ <i>option</i> ... ] [ <i>charoption
+                c</i><b> </b>... ]</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><dir>
+            <li>If no options are specified, <b>stty</b> prints
+                out all the current terminal option settings. <i>options</i>
+                represent boolean flags in the terminal
+                parameters, and are as follows:<p><b>raw</b>
+                turns on RAW mode (no character or line
+                processing)</p>
+                <p><b>-raw</b> turns off RAW mode</p>
+                <p><b>ehco</b> if in CBREAK or COOKED mode,
+                echoes input characters</p>
+                <p><b>-echo</b> echo mode off</p>
+                <p><b>cbreak </b>turns on CBREAK mode (single
+                character processing)</p>
+                <p><b>-cbreak </b>turns off CBREAK mode
+                (line-at-a-time processing)</p>
+                <p><i>Charoptions</i> represent variables in the
+                terminal interface, and are as follows:</p>
+                <p><b>intr c</b> sets the interrupt character
+                (normally ^C)</p>
+                <p><b>start c</b> sets the start character
+                (normally ^Q)</p>
+                <p><b>stop c</b> sets the stop character
+                (normally ^S)</p>
+                <p><b>eof c</b> sets the eof character (normally
+                ^D)</p>
+                <p><b>susp c</b> sets the suspend character
+                (normally ^Z)</p>
+                <p><b>c</b> may be defined either as an octal
+                number such as 003, or in control character
+                format (^C).</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>tty</b>(4)</li>
+        </dir>
+    </li>
+</dir>
+
+<p><font size="2"><b>NAME</b></font></p>
+
+<dir>
+    <li><dir>
+            <li><font face="Times">sum - print checksum and block
+                count of a file</font></li>
+        </dir>
+    </li>
+</dir>
+
+<p><font size="2"><b>SYNOPSIS</b></font></p>
+
+<dir>
+    <li><dir>
+            <li><font face="Times"><b>sum</b> [ <i>file</i> ]</font></li>
+        </dir>
+    </li>
+</dir>
+
+<p><font size="2"><b>DESCRIPTION</b></font></p>
+
+<dir>
+    <li><dir>
+            <li><font face="Times"><b>Sum</b> calculates and
+                prints a 16-bit checksum for the named file, and
+                also prints the number of blocks in the file.
+                Stdin is used if no file names are given. <b>Sum</b>
+                is typically used to look for corrupted files, or
+                to validate a file communicated over some
+                transmission line.</font></li>
+        </dir>
+    </li>
+</dir>
+
+<p><font size="2"><b>DIAGNOSTICS</b></font></p>
+
+<dir>
+    <li><dir>
+            <li><font face="Times">``Read error'' is
+                indistinguishable from end of file on most
+                devices; check the block count.</font></li>
+        </dir>
+    </li>
+</dir>
+
+<p><font size="2"><b>SEE ALSO</b></font></p>
+
+<dir>
+    <li><dir>
+            <li><font face="Times"><b>wc</b>(1).</font></li>
+        </dir>
+    </li>
+</dir>
+
+<p><font size="2"><b>NOTE</b></font></p>
+
+<dir>
+    <li><dir>
+            <li><font face="Times"><b>Sum</b> is pretty slow on
+                large files when running on the GS. If anyone has
+                a faster algorithm for computing the 16-bit
+                checksum, I'd really appreciate seeing it. </font></li>
+        </dir>
+    </li>
+</dir>
+
+<p><font size="2"><b>AUTHOR</b></font></p>
+
+<dir>
+    <li><dir>
+            <li><font face="Times">Marek Pawlowski -
+                marekp@pnet91.cts.com</font></li>
+        </dir>
+    </li>
+</dir>
+
+
+</body>
+</html>

@@ -1,0 +1,1967 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>NAME</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>truncate, ftruncate - set a file to a specified length</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;sys/types.h&gt;<p>int <b>truncate</b>(char *<i>path</i>,
+        off_t <i>length</i>)</p>
+        <p>int <b>ftruncate</b>(int <i>fd</i>, off_t <i>length</i>)</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>truncate</b>() causes the file referred to by <i>path</i>
+        (or for <b>ftruncate</b>() the object referred to by <i>fd</i>
+        ) to have a size equal to length bytes. If the file was
+        previously longer than length , the extra bytes are
+        removed from the file. If it was shorter, bytes between
+        the old and new lengths are read as zeroes. With <b>ftruncate</b>(),
+        the file must be open for writing.</li>
+</dir>
+
+<p><b>RETURN VALUES</b></p>
+
+<dir>
+    <li><b>truncate</b>() returns:<p>0 on success.</p>
+        <p>-1 on failure and sets <b>errno</b> to indicate the
+        error.</p>
+    </li>
+</dir>
+
+<p><b>ERRORS</b></p>
+
+<dir>
+    <li><b>truncate</b>() may set <b>errno</b> to:<p><font
+        face="Courier New">EACCES</font> Search permission is
+        denied for a component of the path prefix of <i>path</i>.</p>
+        <p>Write permission is denied for the file referred to by
+        <i>path</i> .</p>
+        <p><font face="Courier New">EIO</font> An I/O error
+        occurred while reading from or writing to the file
+        system.</p>
+        <p><font face="Courier New">EISDIR</font> The file
+        referred to by <i>path</i> is a directory.</p>
+        <p><font face="Courier New">ENAMETOOLONG</font> The
+        length of the <i>path</i> argument exceeds {<font
+        face="Courier New">PATH_MAX</font>}.</p>
+        <p>A pathname component is longer than {<font
+        face="Courier New">NAME_MAX</font>} (see <b>sysconf</b>
+        (2V)) while {<font face="Courier New">_POSIX_NO_TRUNC</font>}
+        is in effect (see pathconf (2V)).</p>
+        <p><font face="Courier New">ENOENT</font> The file
+        referred to by <i>path</i> does not exist.</p>
+        <p><font face="Courier New">ENOTDIR</font> A component of
+        the path prefix of <i>path</i> is not a directory.</p>
+        <p><font face="Courier New">EROFS</font> The file
+        referred to by <i>path</i> resides on a read-only file
+        system.</p>
+        <p><b>ftruncate</b>() may set <b>errno</b> to:</p>
+        <p><font face="Courier New">EINVAL</font> <i>fd</i> is
+        not a valid descriptor of a file open for writing.</p>
+        <p><i>fd</i> refers to a socket, not to a file.</p>
+        <p><font face="Courier New">EIO</font> An I/O error
+        occurred while reading from or writing to the file
+        system.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>open</b> (2)</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>These calls should be generalized to allow ranges of
+        bytes in a file to be discarded.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>wait, WIFSTOPPED, WIFSIGNALED, WIFEXITED - wait for
+        process to terminate or stop</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;sys/wait.h&gt;<p>int <b>wait</b>(union wait
+        *<i>statusp</i>);</p>
+        <p><b>WIFSTOPPED</b>(union wait <i>status</i>);</p>
+        <p><b>WIFSIGNALED</b>(union wait <i>status</i>);</p>
+        <p><b>WIFEXITED</b>(union wait <i>status</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>wait</b> blocks the caller until a signal is received
+        or one of its child processes terminates. If any child
+        has died and this has not been reported using wait,
+        return is immediate, returning the process ID and exit
+        status of one of those children. If that child had died,
+        it is discarded. If there are no children, return is
+        immediate with the value -1 returned. If there are
+        processes that have not been reported by wait, the caller
+        is blocked.<p>If <i>status</i> is not a NULL pointer,
+        then on return from a successful <b>wait</b> call the
+        status of the child process whose process ID is the
+        return value of wait is stored in the <font
+        face="Courier New">wait union</font> pointed to by
+        status. The wstatus member of that union is an int; it
+        indicates the cause of termination and other information
+        about the terminated process in the following manner:</p>
+        <p>&#149; If the low-order 8 bits of <i>wstatus</i> are
+        equal to 0177 (hex 0xFF), the child process has stopped;
+        the high-order 8 bits of <i>wstatus</i> contain the
+        number of the signal that caused the process to stop. See
+        <b>signal</b>(2).</p>
+        <p>&#149; If the low-order 8 bits of <i>wstatus</i> are
+        non-zero and are not equal to 0177, the child process
+        terminated due to a signal; the low-order 7 bits of <i>wstatus</i>
+        contain the number of the signal that terminated the
+        process.</p>
+        <p>&#149; Otherwise, the child process terminated due to
+        an <b>exit</b>() call; the high-order 8 bits of wstatus
+        contain the low-order 8 bits of the argument that the
+        child process passed to <b>exit</b> or GS/OS Quit.</p>
+        <p>Other members of the <font face="Courier New">wait
+        union</font> can be used to extract this information more
+        conveniently:</p>
+        <p>&#149; If the <font face="Courier New">wstopval</font>
+        member has the value <font face="Courier New">WSTOPPED</font>,
+        the child process has stopped; the value of the <font
+        face="Courier New">wstopsig</font> member is the signal
+        that stopped the process.</p>
+        <p>&#149; If the <font face="Courier New">wtermsig</font>
+        member is non-zero, the child process terminated due to a
+        signal; the value of the <font face="Courier New">wtermsig</font>
+        member is the number of the signal that terminated the
+        process. </p>
+        <p>&#149; Otherwise, the child process terminated due to
+        an <b>exit</b>() call; the value of the <font
+        face="Courier New">wretcode</font> member is the
+        low-order 8 bits of the argument that the child process
+        passed to <b>exit</b>().</p>
+        <p>The other members of the <font face="Courier New">wait
+        union</font> merely provide an alternate way of analyzing
+        the status. The value stored in the <font
+        face="Courier New">wstatus</font> field is compatible
+        with the values stored by versions of the UNIX system,
+        and an argument of type<font face="Courier New"> int *</font>
+        may be provided instead of an argument of type <font
+        face="Courier New">union wait *</font> for compatibility
+        with those versions.</p>
+        <p><b>WIFSTOPPED</b>, <b>WIFSIGNALED</b>, <b>WIFEXITED</b>,
+        are macros that take an argument <i>status</i>, of type `<font
+        face="Courier New">union wait</font>', as returned by <b>wait</b>().
+        <b>WIFSTOPPED</b> evaluates to true (1) when the process
+        for which the <b>wait</b> call was made is stopped, or to
+        false (0) otherwise. <b>WIFSIGNALED</b> evaluates to true
+        when the process was terminated with a signal. <b>WIFEXITED</b>
+        evaluates to true when the process exited by using an <b>exit</b>(2)
+        call.</p>
+        <p>If <b>wait</b> returns due to a stopped or terminated
+        child process, the process ID of the child is returned to
+        the calling process. Otherwise, a value of -1 is returned
+        and <b>errno</b> is set to indicate the error.</p>
+    </li>
+</dir>
+
+<p><b>ERRORS</b></p>
+
+<dir>
+    <li>wait will fail and return immediately if one or more of
+        the following are true:<p><font face="Courier New">[ECHILD]</font>
+        The calling process has no existing unwaited-for child
+        processes.</p>
+        <p><font face="Courier New">[EFAULT]</font> The status or
+        rusage arguments point to an illegal address.</p>
+        <p><font face="Courier New">[EINTR]</font> The wait call
+        was interrupted by a caught signal.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>signal</b>(2), <b>exit</b>(3), <b>rexit</b>(3), <b>execve</b>(2)</li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li>If a parent process terminates without waiting on its
+        children, the Kernel Null Process (process ID = 0)
+        inherits the children.<p><b>wait</b> is automatically
+        restarted when a process receives a signal while awaiting
+        termination of a child process, if the signal is not
+        caught; i.e. <b>signal</b>() handler value is SIG_DFL or
+        SIG_IGN.</p>
+    </li>
+</dir>
+
+<p><font size="2" face="Courier">GSString255Ptr <b>__C2GSMALLOC</b>(char
+*<i>s</i>)</font></p>
+
+<p><font face="Times">Converts a C-style string to a Class 1
+GS/OS string, allocating space for the GS/OS string from C's
+malloc() routine. You must specifically deallocate the string
+with free() when you're through with it.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">char *<b>__GS2CMALLOC</b>(GSString255Ptr
+<i>g</i>)</font></p>
+
+<p><font face="Times">Converts a Class 1 GS/OS string to a
+C-style string, allocating space for the C string from C's
+malloc() routine. You must specifically deallocate the string
+with free() when you're through with it.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">char *<b>__GS2C</b>(char *<i>s</i>,
+GSString255Ptr <i>g</i>)</font></p>
+
+<p><font face="Times">Converts a Class 1 GS/OS string to a C
+string; the buffer space for the C string must be allocated
+beforehand by the caller. The return value is the address of the
+C string passed as argument s.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">int <b>_mapErr</b>(int <i>err</i>)</font></p>
+
+<p><font face="Times">Tries to map a GS/OS error code (err) to a
+UNIX errno code (return value). If there is no direct mapping,
+EIO is returned.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>access</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;unistd.h&gt;</font></p>
+
+<p><font size="2" face="Courier">int <b>access</b>(char *<i>name</i>,
+int <i>mode</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Returns TRUE (1) if the file specified by <i>name</i>
+can be acessed according to <i>mode</i> by the calling process.
+Values of mode are declared in &lt;unistd.h&gt; and are as
+follows:</font></p>
+
+<dir>
+    <li><font face="Times">F_OK - returns true if the file exists</font><p><font
+        face="Times">X_OK - returns true if the process has
+        execution permissions for the file</font></p>
+        <p><font face="Times">W_OK - returns true if the process
+        has write permissions for the file</font></p>
+        <p><font face="Times">R_OK - returns true if the process
+        has read permissions for the file</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>bcopy bzero</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;string.h&gt;</font></p>
+
+<p><font size="2" face="Courier">void <b>bcopy</b>(char *<i>b1</i>,
+char *<i>b2</i>, size_t <i>n</i>)</font></p>
+
+<p><font size="2" face="Courier">void <b>bzero</b>(char *<i>buf</i>,
+size_t <i>n</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>bcopy</b>() copies <i>n</i> bytes from
+memory address <i>b1</i> to memory address <i>b2</i>. <b>bcopy</b>()
+is functionally similar to <b>memcpy</b>(), except that bcopy
+copies from the first argument to the second argument, whereas <b>memcpy</b>()
+copies from the second argument to the first argument. If the
+memory areas overlap, the results are unpredictable. <b>bcopy</b>()
+is provided for compatibility with BSD source code.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>bzero</b>() clears n bytes of memory
+starting at <i>buf</i> to 0 (zero). This call is functionally
+equivalent to <b>memset</b>(buf,0,n) and is included for BSD
+source code compatibilty.</font></p>
+
+<p><font face="Times">See Also: <b>memcpy</b>, <b>memset</b>, <i>ORCA/C
+2.0 Manual</i></font></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>chdir</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;unistd.h&gt;</font></p>
+
+<p><font size="2" face="Courier">int <b>chdir</b>(const char *<i>pathname</i>)</font></p>
+
+<p><font face="Times">Changes the current working directory
+(GS/OS prefix 0) to the pathname specified by <i>pathname</i>. If
+an error occurs changing the prefix, -1 is returned and the error
+code is placed in <b>errno</b>.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>crypt</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">char *<b>crypt</b>(char *<i>pw</i>,char
+*<i>salt</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>crypt</b> is used to encrypt passwords
+for storage in the /etc/passwd file, and also to validate
+passwords entered in the login and passwd programs. <i>pw</i> is
+the password to encrypt, a NUL- terminated string. <i>salt</i> is
+a two- character encryption key that should be randomly generated
+by the caller in the case of encrypting a new password, or should
+be taken as the first two characters of the /etc/passwd password
+entry in the case of validating a password.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>crypt</b> returns a pointer to the
+encrypted password, which is formatted as printable ASCII
+characters and is NUL terminated. A static buffer is used to hold
+the result, so to be sure the encrypted password is not
+overwritten by a subsequent call to <b>crypt</b> copy it before
+use.</font></p>
+
+<p><font face="Times">See also: <b>getpass</b>, <b>getpwent</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>errno strerror perror</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">char *<b>strerror</b>(int <i>errnum</i>)</font></p>
+
+<p><font size="2" face="Courier">void <b>perror</b>(char *<i>s</i>)</font></p>
+
+<p><font size="2" face="Courier">extern int <b>errno</b>;</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">These routines are as documented in the
+ORCA/C manual, except that they support the full range of GNO's
+errno codes. <b>errno</b> is the variable that most library and
+kernel calls place their return status in. The codes are defined
+symbolically in &lt;errno.h&gt; and are listed here:</font></p>
+
+<p><font face="Times">EDOM domain error</font></p>
+
+<p><font face="Times">ERANGE number too large, too small, or
+illegal</font></p>
+
+<p><font face="Times">ENOMEM Not enough memory</font></p>
+
+<p><font face="Times">ENOENT No such file or directory</font></p>
+
+<p><font face="Times">EIO I/O error</font></p>
+
+<p><font face="Times">EINVAL Invalid argument</font></p>
+
+<p><font face="Times">EBADF bad file descriptor</font></p>
+
+<p><font face="Times">EMFILE too many files are open</font></p>
+
+<p><font face="Times">EACCESS access bits prevent the operation</font></p>
+
+<p><font face="Times">EEXIST the file exists</font></p>
+
+<p><font face="Times">ENOSPC the file is too large</font></p>
+
+<p><font face="Times">EPERM Not owner</font></p>
+
+<p><font face="Times">ESRCH No such process</font></p>
+
+<p><font face="Times">EINTR Interrupted system call</font></p>
+
+<p><font face="Times">E2BIG Arg list too long</font></p>
+
+<p><font face="Times">ENOEXEC Exec format error</font></p>
+
+<p><font face="Times">ECHILD No children</font></p>
+
+<p><font face="Times">EAGAIN No more processes</font></p>
+
+<p><font face="Times">ENOTDIR Not a directory</font></p>
+
+<p><font face="Times">ENOTTY Not a terminal</font></p>
+
+<p><font face="Times">EPIPE Broken pipe</font></p>
+
+<p><font face="Times">ESPIPE Illegal seek</font></p>
+
+<p><font face="Times">ENOTBLK not a block device</font></p>
+
+<p><font face="Times">EISDIR not a plain file</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>fsync</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">int <b>fsync</b>(int <i>fd</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Causes the operating system to flush any
+I/O buffers associated with the file referenced by file
+descriptor fd to disk. This ensures that all information is up to
+date, in the event of a system crash. This call is only needed in
+special circumstances, as when several daemon processes are all
+modifying the same file simultaneously (currently impossible with
+existing IIGS filesystems). This call is basically a <b>FlushGS</b>.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>ftruncate</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">int <b>ftruncate</b>(int <i>fd</i>,
+off_t <i>length</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Causes the EOF marker for the file
+specified by file descriptor <i>fd</i> to be set to length. In
+the event of an error, ftruncate returns -1 and sets errno.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getgrnam getgrgid getgrent setgrent
+setgroupent endgrent</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;sys/types.h&gt;</font></p>
+
+<p><font size="2" face="Courier">#include &lt;grp.h&gt;</font></p>
+
+<p><font size="2" face="Courier">struct group *<b>getgrnam</b>(const
+char *<i>name</i>);</font></p>
+
+<p><font size="2" face="Courier">struct group *<b>getgrgid</b>(gid_t
+<i>gid</i>);</font></p>
+
+<p><font size="2" face="Courier">struct group *<b>getgrent</b>(void);</font></p>
+
+<p><font size="2" face="Courier">int <b>setgrent</b>(void);</font></p>
+
+<p><font size="2" face="Courier">int <b>setgroupent</b>(int <i>stayopen</i>);</font></p>
+
+<p><font size="2" face="Courier">void <b>endgrent</b>(void);</font></p>
+
+<p><font face="Times">(POSIX)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">This family of functions should be used to
+access the groups database; applications should never read
+/etc/groups directly, as the implementation of the groups
+database is subject to change.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getgrnam</b>() reads the group database
+based on group name. It looks up the supplied group name and
+returns a pointer to a struct group (see below), or NULL on an
+error.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getgrgid</b>() is similar to <b>getgrnam</b>(),
+except that instead of looking up group information based on
+group name, a group ID is passed.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">To scan the groups database linearly, start
+the scan with either <b>setgrent</b>() or <b>setgroupent</b>().
+The two functions are identical for pure scanning operations, but
+have different behavior when mixing scan calls with <b>getgrnam</b>()
+or <b>getgrgid</b>().</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">After calling <b>setgrent</b> or <b>setgroupent</b>,
+the scan is set to the first entry in the database. <b>getgrent</b>
+returns a pointer to the current entry and moves the scan to the
+next entry. In the event of an error, <b>getgrent</b> returns
+NULL. When the program is done with the database, <b>endgrent</b>
+should be called.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">If <b>getgrnam</b> or <b>getgrgid</b> is
+called while scanning the group database, the database will be
+closed unless it was opened by calling setgroupent with an
+argument of 1. This indicates &quot;keep open&quot; mode, and
+allows fast random access of the database with the <b>getgrnam</b>
+and getgrgid functions (which would otherwise open and close the
+database for every call).</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getopt getopt_restart</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;getopt.h&gt;</font></p>
+
+<p><font size="2" face="Courier">int <b>getopt</b>(int <i>argc</i>,
+char * const *<i>argv</i>, const char *<i>optstring</i>)</font></p>
+
+<p><font size="2" face="Courier">int <b>getopt_restart</b>(void)</font></p>
+
+<p><font size="2" face="Courier">extern char *<b>optarg</b>;</font></p>
+
+<p><font size="2" face="Courier">extern int <b>optind</b>;</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>Getopt</b> helps parse command line
+options as are often used by UNIX utilities. It handles simple
+flags (such as &quot;ls -l&quot;) and also flags with arguments
+(&quot;cc -o prog prog.c&quot;).</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>Getopt</b> returns the next option
+letter in argv that matches a letter in optstring. <i>Optstring</i>
+is a string of recognized option letters; if a letter is followed
+by a colon, the option is expected to have an argument that may
+or may not be separated from it by white space. <b>Optarg</b> is
+set to point to the start of the option argument on return from
+getopt.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>Getopt</b> places in <b>optind</b> the
+argv index of the next argument to be processed. Because <b>optind</b>
+is external, it is normally initialized to zero automatically
+before the first call to <b>getopt</b>.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">When all options have been processed (i.e.,
+up to the first non-option argument), getopt returns EOF. The
+special option -- may be used to delimit the end of the options;
+EOF will be returned, and -- will be skipped.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>Getopt</b> prints an error message on
+stderr and returns a question mark (?) when it encounters an
+option letter not included in <i>optstring</i>.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">The following code fragment shows how one
+might process the arguments for a command that can take the
+mutually exclusive options a and b, and the options f and o, both
+of which require arguments:</font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">main(int argc, char **argv)</font></p>
+
+<p><font size="2" face="Courier">{</font></p>
+
+<p><font size="2" face="Courier">int c;</font></p>
+
+<p><font size="2" face="Courier">extern int optind;</font></p>
+
+<p><font size="2" face="Courier">extern char *optarg;</font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">while ((c = getopt(argc, argv,
+&quot;abf:o:&quot;)) != EOF)</font></p>
+
+<p><font size="2" face="Courier">switch (c) {</font></p>
+
+<p><font size="2" face="Courier">case `a':</font></p>
+
+<p><font size="2" face="Courier">if (bflg)</font></p>
+
+<p><font size="2" face="Courier">errflg++;</font></p>
+
+<p><font size="2" face="Courier">else</font></p>
+
+<p><font size="2" face="Courier">aflg++;</font></p>
+
+<p><font size="2" face="Courier">break;</font></p>
+
+<p><font size="2" face="Courier">case `b':</font></p>
+
+<p><font size="2" face="Courier">if (aflg)</font></p>
+
+<p><font size="2" face="Courier">errflg++;</font></p>
+
+<p><font size="2" face="Courier">else</font></p>
+
+<p><font size="2" face="Courier">bproc();</font></p>
+
+<p><font size="2" face="Courier">break;</font></p>
+
+<p><font size="2" face="Courier">case `f':</font></p>
+
+<p><font size="2" face="Courier">ifile = optarg;</font></p>
+
+<p><font size="2" face="Courier">break;</font></p>
+
+<p><font size="2" face="Courier">case `o':</font></p>
+
+<p><font size="2" face="Courier">ofile = optarg;</font></p>
+
+<p><font size="2" face="Courier">break;</font></p>
+
+<p><font size="2" face="Courier">case `?':</font></p>
+
+<p><font size="2" face="Courier">default:</font></p>
+
+<p><font size="2" face="Courier">errflg++;</font></p>
+
+<p><font size="2" face="Courier">break;</font></p>
+
+<p><font size="2" face="Courier">}</font></p>
+
+<p><font size="2" face="Courier">if (errflg) {</font></p>
+
+<p><font size="2" face="Courier">fprintf(stderr, &quot;Usage:
+...&quot;);</font></p>
+
+<p><font size="2" face="Courier">exit(2);</font></p>
+
+<p><font size="2" face="Courier">}</font></p>
+
+<p><font size="2" face="Courier">for (; optind &lt; argc;
+optind++) {</font></p>
+
+<p><font size="2" face="Courier">.</font></p>
+
+<p><font size="2" face="Courier">}</font></p>
+
+<p><font size="2" face="Courier">.</font></p>
+
+<p><font size="2" face="Courier">}</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">It is not obvious how `-' standing alone
+should be treated; this version treats it as a non-option
+argument, which is not always right. Option arguments are allowed
+to begin with `-'; this is reasonable but reduces the amount of
+error checking possible.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getopt_restart</b> should be used in
+restartable programs, before the first call to <b>getopt</b>, to
+reinitialize the <b>optind</b> and <b>optarg</b> variables.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getpass</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">char *<b>getpass</b>(const char
+*<i>prompt</i>)</font></p>
+
+<p><font face="Times">BSD</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Prompts the user for a password, and
+returns a pointer to a NUL-terminated string which contains the
+password the user typed. A password may be up to 8 characters
+long, and if the string the user</font></p>
+
+<p><font face="Times">types is longer than that the returned
+string is truncated to 8 characters. Argument <i>prompt</i> is
+the string to print before requesting input. Input characters are
+obscured - that is, not echoed - as the user types them. The
+backspace and delete keys may be used to edit input, although in
+practice this is difficult to use because the user cannot see
+what he types.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">A static buffer is used to to hold the
+password, so to be sure the password is not overwritten by a
+subsequent call to getpass, copy it before use.</font></p>
+
+<p><font face="Times">See also: <b>crypt</b>, <b>getpwent</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getpwnam getpwuid endpwent setpwent</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;pwd.h&gt;</font></p>
+
+<p><font size="2" face="Courier">struct passwd *<b>getpwnam</b>(const
+char *<i>name</i>);</font></p>
+
+<p><font size="2" face="Courier">struct passwd *<b>getpwuid</b>(uid_t
+<i>uid</i>);</font></p>
+
+<p><font size="2" face="Courier">void <b>endpwent</b>(void);</font></p>
+
+<p><font size="2" face="Courier">struct passwd *<b>getpwent</b>(void);</font></p>
+
+<p><font size="2" face="Courier">int <b>setpwent</b>(void);</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">The family of functions defined in
+&lt;pwd.h&gt; are used for accessing the /etc/passwd user
+database. Programs should never access this database directly, as
+the file format or other implementation details may change in the
+future.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getpwnam</b>() reads the user database
+based on user name. The argument <i>name</i> is a pointer to the
+user name to lookup. <b>getpwnam</b>() returns a pointer to a
+passwd structure or NULL on an error.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getpwuid</b>() reads the user database
+based on a user ID code. Argument <i>uid</i> is the user ID to
+return information on. <b>getpwuid</b>() returns a pointer to a
+passwd structure or NULL on an error.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">The remaining three functions are used for
+scanning the user database. The database is initialized by using
+the <b>setpwent</b>() function; an internal access marker is set
+to the first entry in the database.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getpwent</b>() is used to retrieve the
+current entry, returning a pointer to a passwd structure, and
+moving the marker to the next entry. If there are no more entries
+to scan, <b>getpwent</b>() returns a NULL pointer. If the
+database should be scanned again, <b>setpwent</b>() may be called
+again to reset the marker to the first entry. In the event of an
+error accessing the database, NULL is returned.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">When the application is through with the
+database, it should call endpwent().</font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">struct passwd { /* see
+getpwent(3) */</font></p>
+
+<p><font size="2" face="Courier">char *pw_name; /* pointer to
+user name */</font></p>
+
+<p><font size="2" face="Courier">char *pw_passwd; /* pointer to
+encrypted password */</font></p>
+
+<p><font size="2" face="Courier">int pw_uid; /* user ID */</font></p>
+
+<p><font size="2" face="Courier">int pw_gid; /* group ID */</font></p>
+
+<p><font size="2" face="Courier">int pw_quota; /* 'quota' field -
+not used */</font></p>
+
+<p><font size="2" face="Courier">char *pw_comment; /* pointer
+Comment field */</font></p>
+
+<p><font size="2" face="Courier">char *pw_gecos; /* not used */</font></p>
+
+<p><font size="2" face="Courier">char *pw_dir; /* pointer to
+user's '$home' directory name */</font></p>
+
+<p><font size="2" face="Courier">char *pw_shell; /* pointer to
+path of user's login shell */</font></p>
+
+<p><font size="2" face="Courier">};</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Not all of the string entries in struct
+passwd are used in GNO/ME, but those that are are all NUL-
+terminated strings.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>getwd</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;unistd.h&gt;</font></p>
+
+<p><font size="2" face="Courier">char *<b>getwd</b>(char *<i>pathname</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Gets the current working directory (GS/OS
+prefix 0) and copies it to the string space pointed to by <i>pathname</i>.
+<i>pathname</i> must point to a buffer large enough to hold the
+largest conceivable pathname. In practice, a 256 byte buffer
+works well, but with the plethora of GS/OS file systems now
+available 256 may be much too small. Due to this problem, we
+recommend you use <b>getwd</b> carefully, and with a future GNO
+release switch to getcwd (not yet available).</font></p>
+
+<p><font face="Times">If an error occurs during the operation, <b>getwd</b>
+returns NULL and places the error code in <b>errno</b>.
+Otherwise, <b>getwd</b> returns the prefix in <i>pathname</i>.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>gtty stty</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;sgtty.h&gt;</font></p>
+
+<p><font size="2" face="Courier">int <b>gtty</b>(int <i>filedes</i>,
+struct sgttyb *<i>argp</i>)</font></p>
+
+<p><font size="2" face="Courier">int <b>stty</b>(int <i>filedes</i>,
+struct sgttyb *<i>argp</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Set and get TTY status information in the
+sgttyb structures pointed to by the argument argp. See <b>ioctl</b>(2)
+and <b>tty</b>(4) for more details. These routines are basically
+short-cuts to </font></p>
+
+<p><font face="Times">ioctl(filedes, TIOCSETP, &amp;structure)
+and ioctl(filedes, TIOCGETP, &amp;structure).</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>index rindex</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">char *<b>index</b>(char *<i>a</i>,
+int <i>b</i>)</font></p>
+
+<p><font size="2" face="Courier">char *<b>rindex</b>(char *<i>a</i>,
+int <i>b</i>)</font></p>
+
+<p><font face="Times">(BSD)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">These functions are identical to <b>strchr</b>()
+and <b>strrchr</b>(), respectively. See your C compiler manual
+for more information. These functions are provided only for
+compatibility with BSD source code.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>isatty</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;sgtty.h&gt;</font></p>
+
+<p><font size="2" face="Courier">int <b>isatty</b>(int <i>filedes</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">This function returns true (1) if the file
+descriptor refers to a TTY (this includes PTYs) file. For all
+other types of descriptors, false (0) is returned.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>login</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;utmp.h&gt;</font></p>
+
+<p><font size="2" face="Courier">void <b>login</b>(struct utmp *<i>ut</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Writes the /etc/utmp structure pointed to
+by ut to the utmp file. The slot in /etc/utmp actually written to
+depends on the return value of the <b>ttyslot</b>() function,
+which maps each tty device to a unique slot number, based on the
+contents of /etc/ttys.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">This function should not generally be used
+by application code.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>mkdir</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">int <b>mkdir</b>(char *<i>dirname</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Creates a subdirectory (folder) with the
+name specified by dirname. Similar to the shell <b>'mkdir'</b>
+command.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>mktemp mkstemp</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">char *<b>mktemp</b>(char *<i>path</i>)</font></p>
+
+<p><font size="2" face="Courier">int <b>mkstemp</b>(char *<i>path</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Creates a filename based on the string path
+that is guaranteed to be unique. The string path must have the
+following format:</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">&quot;/volume/dir1/.../dirX/fileXXXXXX&quot;
+(Colons are also accepted as delimiters)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">The 'XXXXX' at the end of path is filler
+space that will be replaced with a string that will make path a
+unique filename.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">The unique string is generated by using the
+current process ID and a single character ASCII value; this may
+change in the future, and as such this behavior should not be
+relied upon.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>mktemp</b>() does not actually create
+any files, as compared with <b>tmpfile</b>() in the C library.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>mkstemp</b>() does create a file by
+calling <b>open</b>() on a unique pathname generated with <b>mktemp</b>().</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>mktemp</b>() returns a pointer to the
+new pathname (<i>path</i>), and <b>mkstemp</b>() returns a file
+descriptor to the new file, as would be returned by <b>open</b>().</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>open creat close read write lseek</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;fcntl.h&gt;</font></p>
+
+<p><font size="2" face="Courier">int <b>creat</b>(const char *<i>path</i>,
+int <i>mode</i>)</font></p>
+
+<p><font size="2" face="Courier">int <b>open</b>(const char *<i>path</i>,
+int <i>oflag</i>, ...)</font></p>
+
+<p><font size="2" face="Courier">int <b>close</b>(int <i>filds</i>)</font></p>
+
+<p><font size="2" face="Courier">int <b>read</b>(int <i>filds</i>,
+void *<i>buf</i>, size_t <i>count</i>)</font></p>
+
+<p><font size="2" face="Courier">int <b>write</b>(int <i>filds</i>,
+void *<i>buf</i>, size_t <i>count</i>)</font></p>
+
+<p><font size="2" face="Courier">long <b>lseek</b>(int <i>filds</i>,
+long <i>offset</i>, int <i>whence</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">These are similar to the low-level I/O
+routines provided by ORCA/C. However, the GNO versions of these
+routines deal with actual GS/OS refNums for filds. (ORCA/C's
+versions use a special library-maintained definition of file
+descriptor in order to fake the UNIX <b>dup</b>() system call.
+Here they revert to standard UNIX usage because GNO provides a
+real <b>dup</b>(2) handled within the kernel).</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>open</b>() uses vararg (variable
+argument) parameters. The third parameter is only expected (and
+is required) if O_CREAT is one of the flags specified in '<i>mode</i>',
+and specifies the access permissions to be given the new file.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">IMPORTANT NOTE: GNO's <b>read</b>()/<b>write</b>()
+functions take a size_t count, whereas ORCA's only take unsigned
+count. When recompiling code with the new GNO libraries, make
+very certain that any programs that use <b>read</b>()/<b>write</b>()
+do a #include &lt;fcntl.h&gt;, or it is likely that your programs
+will crash.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>opendir readdir rewinddir closedir</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;dirent.h&gt;</font></p>
+
+<p><font size="2" face="Courier">DIR *<b>opendir</b>(char *<i>filename</i>)</font></p>
+
+<p><font size="2" face="Courier">struct <b>dirent</b>
+*readdir(DIR *<i>dirp</i>)</font></p>
+
+<p><font size="2" face="Courier">void <b>rewinddir</b>(DIR *<i>dirp</i>)</font></p>
+
+<p><font size="2" face="Courier"><b>closedir</b>(DIR *<i>dirp</i>)</font></p>
+
+<p><font face="Times">(POSIX 1)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">This family of functions provides a
+machine-independent way to read a list of files (and information
+about them) from directories.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>opendir</b>() opens the directory
+specified by filename and prepares it for the scan operation. <b>opendir</b>()
+returns a pointer to a structure which is used in the other
+dirent calls.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>readdir</b>() takes a DIR * as argument
+and returns information about the next file in the directory. The
+return value is a pointer to a dirent structure (described
+below).</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">If you wish to scan the directory again
+without closing and then reopening the directory, use <b>rewinddir</b>().
+It resets the scan to the beginning of the directory.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">When finished with the directory, call <b>closedir</b>().</font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#define MAXNAMLEN 32 /* maximum
+filename length */</font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">struct dirent /* data from
+getdents()/readdir() */</font></p>
+
+<p><font size="2" face="Courier">{</font></p>
+
+<p><font size="2" face="Courier">long d_ino; /* inode number of
+entry */</font></p>
+
+<p><font size="2" face="Courier">off_t d_off; /* offset of disk
+directory entry */</font></p>
+
+<p><font size="2" face="Courier">unsigned short d_reclen; /*
+length of this record */</font></p>
+
+<p><font size="2" face="Courier">char d_name[MAXNAMLEN]; /* name
+of file */</font></p>
+
+<p><font size="2" face="Courier">unsigned short d_namlen; /*
+length of filename */</font></p>
+
+<p><font size="2" face="Courier">};</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">dirent is the structure returned by <b>readdir</b>()
+that contains information about the file. <b>d_ino</b> is not
+used on the Apple IIGS because neither ProDOS nor HFS have the
+concept of an &quot;inode&quot;, but to simulate its use a unique
+d_ino value is returned for each <b>readdir</b>() call. <b>d_off</b>
+is the offset in the directory of the current file; the first
+entry is number 1, the second 2, etc. <b>d_reclen</b> specifies
+the length of the entire dirent structure. <b>d_name</b> is a
+short array containing the filename of the current file read from
+the directory. d_namlen is the length of the string in <b>d_name</b>.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">More specific information can be obtained
+by passing <b>d_name</b> to the <b>stat</b>() system call.</font></p>
+
+<p><font face="Times">See also: <b>stat</b>(2)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>needsgno</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">int <b>needsgno</b>(void)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">This function returns 1 if GNO is
+operating, and 0 if it is not. Use this function to abort
+programs that use GNO-specific features, or to allow them to
+enable non-GNO environment dependent code.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>parsearg</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>~GNO_PARSEARG</b> subroutine
+(4:<i>commandline</i>,4:<i>argptr</i>)</font></p>
+
+<p><font size="2" face="Courier"><b>~GNO_PARSEARG</b>(char *<i>commandline</i>,
+char **<i>argptr</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">This function will take the command-line
+passed to a utility and parse it into an argv,argc structure like
+those used in C programs. This was written NOT as a replacement
+for a C parser, but for use by assembly language programmers
+writing shell commands.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><i>commandline</i> is the raw command line
+string as passed by the shell in the X &amp; Y registers. <i>argptr</i>
+is a pointer to an argv[]-style array. parsearg returns the
+number of arguments found in the accumulator.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">This function ASSUMES that the ByteWorks
+Memory Manager has been started up and is usable.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">This function is based on actual GNO/ME
+shell (gsh) parsing code.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>pcreate pbind pgetport psend preceive
+pdelete preset pgetcount</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;sys/ports.h&gt;</font></p>
+
+<p><font size="2" face="Courier">int <b>pcreate</b>(int <i>count</i>)</font></p>
+
+<p><font size="2" face="Courier">int <b>pbind</b>(int <i>portid</i>,
+char *<i>name</i>)</font></p>
+
+<p><font size="2" face="Courier">int <b>pgetport</b>(char *<i>name</i>)</font></p>
+
+<p><font size="2" face="Courier">int <b>psend</b>(int <i>portid</i>,
+long int <i>msg</i>)</font></p>
+
+<p><font size="2" face="Courier">long <b>preceive</b>(int <i>portid</i>)</font></p>
+
+<p><font size="2" face="Courier">int <b>pdelete</b>(int <i>portid</i>,
+int (*<i>dispose</i>)())</font></p>
+
+<p><font size="2" face="Courier">int <b>preset</b>(int <i>portid</i>,
+int (*<i>dispose</i>)())</font></p>
+
+<p><font size="2" face="Courier">int <b>pgetcount</b>(int <i>portid</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">The Ports IPC mechanism is a very flexible,
+powerful and efficient method of interprocess communication. A
+port is a queue that can contain a number of 32-bit values. The
+size of the port (how many messages it can contain) is specified
+in the <b>pcreate</b>() call.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Creation of a port is done with <b>pcreate</b>().
+You must specify the size of the port in this call, which must be
+at least 1 (one). The larger the port, the more data it can hold
+without blocking a process sending data to the port. <b>pcreate</b>()
+returns a port ID value that must be used in subsequent calls to
+the Port IPC routines.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">A name may be associated with a port; this
+allows totally unrelated processes to access a port without
+having to communicate the port ID through some other method, and
+without knowing the process ID of the other. To bind a name to a
+port, call <b>pbind</b>(). The name argument may be any length,
+but at most 32 characters are significant. If a name has already
+been bound to the chosen portid, an error is returned. To get the
+portid of a port by its name, use the <b>pgetport</b>() call.
+Pass in the name of the port whose port ID you wish to obtain. If
+no port has that name, an error is returned. Names are only
+unbound from a port when a port is deleted.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">psend() is used to send a 32-bit datum to a
+port. If the port is full (that is, if there are more unread
+messages in the port than are specified in the <b>pcreate</b>()
+call) then the sending process blocks until a message is read
+from the port. Messages are retrieved from a port using the <b>preceive</b>()
+call. pgetcount() returns the number of messages in the port that
+have not been received; this may be used to avoid blocking on a <b>psend</b>()
+call.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">If you wish to clear the contents of a
+port, say to synchronize communication after an error condition,
+use the <b>preset</b>() call. The arguments to this call are the
+port ID and the address of a <i>'dispose'</i> function. Each
+message in the port, before being cleared, is passed to the
+dispose function so that appropriate clean-up action may be taken
+on the data. For example, if the messages correspond to the
+address of memory blocks obtained with <b>malloc</b>(), you could
+pass <b>'free</b>()' as the dispose function to automatically
+deallocate that memory. If you don't wish to take any special
+action on the data being cleared, pass NULL for the dispose
+argument.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">To destroy a port, make the <b>pdelete</b>()
+call. It accepts the same arguments as <b>preset</b>() and they
+operate as described above. The difference between <b>preset</b>()
+and <b>pdelete</b>() is that the latter totally destroys a port;
+it may no longer be used. <b>preset</b>() clears a port's data
+but leaves the port open for more data transmission.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">For an example of the use of ports, see the
+source code to the print spooling utilities (<b>lpr</b>, <b>lpd</b>,
+<b>FilePort</b>). These are available from Procyon upon request.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>regexp</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Compile and execute regular-expression
+programs. Use 'man regexp' for details.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>send receive recvtim recvclr</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;gno/gno.h&gt;</font></p>
+
+<p><font size="2" face="Courier">int <b>send</b>(int pid,
+unsigned long <i>msg</i>);</font></p>
+
+<p><font size="2" face="Courier">unsigned long <b>receive</b>(void);</font></p>
+
+<p><font size="2" face="Courier">unsigned long <b>recvtim</b>(int
+<i>timeout</i>);</font></p>
+
+<p><font size="2" face="Courier">unsigned long <b>recvclr</b>(void);</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">These kernel functions comprise GNO's
+message-passing IPC system. Messages are unsigned 32-bit data
+values. A process sends a message to another by using the <b>send</b>()
+call. You must specify the process ID of the recipient and the
+message to pass. To receive a message, a process makes the <b>receive</b>()
+call. If no message has been sent to the process, the process
+sleeps until a message arrives. recvclr() is used to clear any
+pending message a process may have waiting. <b>recvtim</b>() is
+similar to <b>receive</b>() but takes a timeout argument,
+specified in 1/10ths of a second. If no message has been received
+in <i>timeout</i>/10 seconds, <b>recvtim</b>() fails and returns
+-1. The message buffer for a process is only one message deep;
+any attempt to <b>send</b>() a message to a process that already
+has one queued results in an error. For an IPC system with a
+deeper queue, see the Ports IPC section.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">A <b>receive</b>() that is interrupted by a
+signal will abort and return -1, with errno set to EINTR.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>setenv unsetenv</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;unistd.h&gt;</font></p>
+
+<p><font size="2" face="Courier">int <b>setenv</b>(const char *<i>name</i>,
+const char *<i>value</i>, int <i>rewrite</i>)</font></p>
+
+<p><font size="2" face="Courier">void <b>unsetenv</b>(const char
+*<i>name</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Set the value of the environmental variable
+name to be value. If <i>rewrite</i> is set, <b>setenv</b>
+replaces any current value. The variable is considered
+'exported', according to the shell convention for variables. No
+errors are possible, and the only return code is 0.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>unsetenv</b> removes the environmental
+variable specified by name from the variable table. The variable
+is no longer accessible, and any value that was assigned to that
+variable is deallocated. No errors are possible, and there is no
+return value.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>statfs</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">int <b>statfs</b>(char *<i>path</i>,
+struct statfs *<i>buf</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Returns information on the filesystem that
+the file <i>path</i> resides on. The information is placed in a
+structure pointed to by the input argument <i>buf</i>. Read <b>statfs</b>(3)
+for more information.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>strdup</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;string.h&gt;</font></p>
+
+<p><font size="2" face="Courier">char *<b>strdup</b>(const char *<i>str</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>strdup</b>() creates a copy of the
+NUL-terminated string pointed to by <i>str</i>. It allocates a
+piece of memory exactly large enough to hold the string with the <b>malloc</b>()
+library function. When you no longer need the copy, dispose of it
+with <b>free</b>().</font></p>
+
+<p><font face="Times">See also: <b>strcpy</b>(), <b>malloc</b>(),
+<b>free</b>()</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>strsep</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;string.h&gt;</font></p>
+
+<p><font size="2" face="Courier">char *<b>strsep</b>(char **<i>stringp</i>,
+const char *<i>delim</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Gets a token from string *<i>stringp</i>,
+where tokens are nonempty strings separated by characters from
+delim.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>strsep</b> writes NULs into *<i>stringp</i>
+to end tokens. <i>delim</i> need not remain constant from call to
+call. On return, *<i>stringp</i> points past the last NUL written
+(if there might be further tokens), or is NULL (if there are
+definitely no more tokens). If *<i>stringp</i> is NULL, <i>strsep</i>
+returns NULL.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>termcap</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">The termcap library accesses the
+/etc/termcap database, which is used to provide terminal-
+independent support for advanced terminal features, such as
+various text modes, scrolling regions, cursor movement, and more.
+Use 'man termcap' for more details.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>ttyname</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">#include &lt;unistd.h&gt;</font></p>
+
+<p><font size="2" face="Courier">char *<b>ttyname</b>(int <i>fd</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Returns the filename of the tty referenced
+by file descriptor <i>fd</i>. If fd does not refer to a tty file,
+NULL is returned. Otherwise, a pointer to the filename
+(NUL-terminated string) is returned.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">tty filenames are in the format
+&quot;.ttyXX&quot;, where XX is a device designator. When porting
+existing BSD code, take care to watch for code that depends on
+the existence of a '/' character in the string, as UNIX tty files
+are in the form &quot;/dev/ttyXX&quot;.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">The string pointer returned points to a
+static buffer, and will be overwritten on any further calls to <b>ttyname</b>.
+Copy the string if you wish to preserve it.</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times"><b>unlink</b></font></p>
+
+<p>&nbsp;</p>
+
+<p><font size="2" face="Courier">int <b>unlink</b>(char *<i>fname</i>)</font></p>
+
+<p>&nbsp;</p>
+
+<p><font face="Times">Causes the link file specified by <i>fname</i>
+to be removed. Since GNO/ME does not yet support symbolic or hard
+file links, this function operates the same as the <b>remove</b>()
+(or DestroyGS) routine.</font></p>
+
+<hr>
+
+<p><font face="Times"><b>NAME</b></font></p>
+
+<dir>
+    <li><font face="Times">tty - general terminal interface</font></li>
+</dir>
+
+<p><font face="Times"><b>SYNOPSIS</b></font></p>
+
+<dir>
+    <li><font face="Times">#include &lt;sgtty.h&gt;</font></li>
+</dir>
+
+<p><font face="Times"><b>DESCRIPTION</b></font></p>
+
+<dir>
+    <li><font face="Times">This file documents the special file </font><font
+        face="Courier">.tty</font><font face="Times"> and the
+        terminal drivers used for user-oriented I/O.</font></li>
+</dir>
+
+<p><font face="Times"><b>The Controlling Terminal</b></font></p>
+
+<dir>
+    <li><font face="Times">Every process has associated with it a
+        controlling terminal, which is the terminal the process
+        was invoked from. In some versions of Unix, the
+        controlling terminal association is responsible for job
+        control; this is not so under GNO. A process' controlling
+        terminal is inherited from its parent. By opening the
+        special file .tty, a process can access its controlling
+        terminal. This is useful where the input and output of a
+        process was redirected and the process wants to be sure
+        of outputting or getting input from the user at the
+        terminal.</font><p><font face="Times">A process can
+        remove the association it has with its controlling
+        terminal by opening the file .tty and issuing an</font></p>
+        <p><font face="Times">ioctl(f, TIOCNOTTY, 0);</font></p>
+        <p><font face="Times">This is often desirable in server
+        processes.</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>Process Groups</b></font></p>
+
+<dir>
+    <li><font face="Times">Every terminal has an associated
+        process group. Any time a signal-generating special
+        character is typed at the terminal, the terminal's
+        process group is sent that signal. Unix systems set
+        process groups using ioctl() calls, but under GNO a new
+        interface method is used; process group assignments are
+        controlled with the JOB CONTROL(2) routines.</font></li>
+</dir>
+
+<p><font face="Times"><b>Modes</b></font></p>
+
+<dir>
+    <li><font face="Times">There are four modes in which terminal
+        drivers operate. These modes control how the driver deals
+        with I/O.</font><p><font face="Times"><i>cooked</i> This
+        is the default mode of the terminal driver. If an
+        incoming character is one of the special characters
+        defined in sgttyb, tchars, or ltchars, the appropriate
+        action is performed (see below). This mode also allows
+        for input editing, as input is internally buffered line
+        by line, and data is returned to a reading process only
+        when CR is entered.</font></p>
+        <p><font face="Times"><i>cbreak</i> Input is returned on
+        a per-character basis, instead of line by line as in
+        cooked mode. If no data is available, a read will block
+        the calling process. If data is available, a number of
+        characters up to but not exceeding the requested number
+        will be returned. Special characters such as t_intrc are
+        not handled, but are passed on to the caller as data.</font></p>
+        <p><font face="Times"><i>raw</i> Like cbreak mode, except
+        that no input or output processing whatsoever is
+        performed.</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>Summary of terminal control modes</b></font></p>
+
+<p>&nbsp;</p>
+
+<dir>
+    <li><font face="Times">Due to the colorful history of Unix
+        systems, the data structures used to manipulate terminal
+        modes and settings are separated into four groups. Future
+        revisions of GNO will implement the POSIX termio
+        interface, which consolidates these structures into one
+        place.</font></li>
+</dir>
+
+<p><font face="Times"><b>sgtty</b></font></p>
+
+<dir>
+    <li><font face="Times">The basic ioctls use the structure
+        defined in &lt;sgtty.h&gt;:</font><p><font size="2"
+        face="Courier">struct sgttyb {</font></p>
+        <p><font size="2" face="Courier">char sg_ispeed;</font></p>
+        <p><font size="2" face="Courier">char sg_ospeed;</font></p>
+        <p><font size="2" face="Courier">char sg_erase;</font></p>
+        <p><font size="2" face="Courier">char sg_kill;</font></p>
+        <p><font size="2" face="Courier">short sg_flags;</font></p>
+        <p><font size="2" face="Courier">};</font></p>
+        <p><font face="Times">sg_ispeed and sg_ospeed indicate
+        the baud rates for input and output according to the
+        following table. Speed changes that do not apply to a
+        particular piece of hardware are ignored (for instance,
+        the console driver does not access a serial port so all
+        baud rate settings are, in effect, impossible). Also, not
+        all the baud rates supported by a particular device are
+        allowed to be set from this interface. </font></p>
+        <p><font face="Times">These symbolic names for the baud
+        rate settings are defined in &lt;sgtty.h&gt;.</font></p>
+        <p><font face="Times">B0 0 (hang up dataphone)</font></p>
+        <p><font face="Times">B50 1 50 baud</font></p>
+        <p><font face="Times">B75 2 75 baud</font></p>
+        <p><font face="Times">B110 3 110 baud</font></p>
+        <p><font face="Times">B134 4 134.5 baud</font></p>
+        <p><font face="Times">B150 5 150 baud</font></p>
+        <p><font face="Times">B300 7 300 baud</font></p>
+        <p><font face="Times">B600 8 600 baud</font></p>
+        <p><font face="Times">B1200 9 1200 baud</font></p>
+        <p><font face="Times">B1800 10 1800 baud</font></p>
+        <p><font face="Times">B2400 11 2400 baud</font></p>
+        <p><font face="Times">B4800 12 4800 baud</font></p>
+        <p><font face="Times">B9600 13 9600 baud</font></p>
+        <p><font face="Times">B19200 and</font></p>
+        <p><font face="Times">EXTA 14 19200 baud</font></p>
+        <p><font face="Times">B38400 and</font></p>
+        <p><font face="Times">EXTB 15 38400 baud</font></p>
+        <p><font face="Times">B57600 6 57600 baud</font></p>
+        <p><font face="Times">The sg_erase and sg_kill fields
+        specify the line-editing erase and kill characters.
+        sg_erase is 0x7F (delete) by default, and sg_kill is not
+        currently used.</font></p>
+        <p><font face="Times">sg_flags is a bitmapped value that
+        indicates various state settings for the terminal driver
+        (values are in hex).</font></p>
+        <p><font face="Times">EVENP 0x80 Use Even parity (serial
+        devices only)</font></p>
+        <p><font face="Times">ODDP 0x40 Use Odd parity (serial
+        devices only)</font></p>
+        <p><font face="Times">RAW 0x20 Raw mode: wake up on all
+        characters, 8-bit interface</font></p>
+        <p><font face="Times">CRMOD 0x10 Map CR into LF; output
+        LF as CR-LF</font></p>
+        <p><font face="Times">ECHO 0x08 Echo (full duplex)</font></p>
+        <p><font face="Times">CBREAK 0x02 Return each character
+        as soon as typed</font></p>
+        <p><font face="Times">TANDEM 0x01 Automatic flow control</font></p>
+        <p><font face="Times"><b>RAW</b> and <b>CBREAK</b> modes
+        were described above, in Modes.</font></p>
+        <p><font face="Times">If the <b>CRMOD</b> bit is set, a
+        line feed character is appended to any echoed or ouputted
+        carriage return.</font></p>
+        <p><font face="Times">The <b>ECHO</b> bit controls input
+        echoing; if enabled, any characters read from the
+        terminal are echoed. This behavior differs slightly from
+        Unix, where input characters are echoed as soon as typed.</font></p>
+        <p><font face="Times"><b>TANDEM</b> mode enables
+        automatic software flow control utilizing the special
+        characters t_startc and t_stopc in tchars (below).
+        Whenever the input queue is in danger of overflowing, the
+        system sends t_stopc; when the queue has drained
+        sufficiently, t_startc is sent. This mode has no effect
+        on the console driver.</font></p>
+        <p><font face="Times">Note: t_startc and t_stopc are used
+        for both directions of flow control; when t_stopc is
+        received from a remote system (or user), the terminal
+        stops output, and when t_startc is received output
+        resumes. Certain drivers may also require t_stopc and
+        t_startc to be the same character, in which case one or
+        the other setting will be ignored. See the driver's
+        documentation for details.</font></p>
+        <p><font face="Times">Basic Ioctls</font></p>
+        <p><font face="Times">Most <b>ioctl</b>() calls apply to
+        terminals. They have the form</font></p>
+        <p><font face="Times">#include &lt;sgtty.h&gt;</font></p>
+        <p><font face="Times">ioctl(int filedes, unsigned long
+        code, void *arg)</font></p>
+        <p><font face="Times">arg is usually a pointer to a
+        structure or int. The ioctl codes that apply to sgtty
+        are:</font></p>
+        <p><font face="Courier"><b>TIOCGETP</b></font><font
+        face="Times"> Fetch the basic parameters associated with
+        the terminal, and store in the sgttyb structure pointed
+        to by arg.</font></p>
+        <p><font face="Courier"><b>TIOCSETP</b></font><font
+        face="Times"> Set the terminal's basic parameters
+        according to the sgttyb structure pointed to by arg. The
+        input queue is flushed, and the call waits for the output
+        queue to drain before the parameters are changed.</font></p>
+        <p><font face="Courier"><b>TIOCSETN</b></font><font
+        face="Times"> This is like TIOCSETP, except there is no
+        delay and the input queue is not flushed.</font></p>
+        <p><font face="Times">With the following codes arg is
+        ignored.</font></p>
+        <p><font face="Courier"><b>TIOCEXCL</b></font><font
+        face="Times"> Set &quot;exclusive-use&quot; mode. The
+        terminal may not be opened again by any process until all
+        existing references are closed.</font></p>
+        <p><font face="Courier"><b>TIOCNXCL </b></font><font
+        face="Times">Turns off &quot;exclusive-use&quot; mode.</font></p>
+        <p><font face="Courier"><b>TIOCHPCL</b></font><font
+        face="Times"> When the last reference to the terminal is
+        closed, the terminal line is forced to hang up. This
+        applies only to modem drivers.</font></p>
+        <p><font face="Times">With the following codes, arg is a
+        pointer to an int.</font></p>
+        <p><font face="Courier"><b>TIOCGETD</b></font><font
+        face="Times"> The current line discipline number is
+        stored in the int pointed to by arg. This value is
+        currently ignored.</font></p>
+        <p><font face="Courier"><b>TIOCSETD</b></font><font
+        face="Times"> The line discipline is set according to the
+        int pointed to by arg.</font></p>
+        <p><font face="Courier"><b>TIOCFLUSH</b></font><font
+        face="Times"> The specified queue is flushed. If the
+        value pointed to by arg is zero, both the input and
+        output queues are flushed. If the value is FREAD (defined
+        in &lt;sys/file.h&gt;), the input queue is flushed. If
+        the value is FWRITE, the output queue is flushed.</font></p>
+        <p><font face="Times">The last few calls permit detailed
+        control of the driver. In cases where an argument is
+        required, it is described. Otherwise, arg should be a
+        NULL pointer.</font></p>
+        <p><font face="Courier"><b>TIOCSTI</b></font><font
+        face="Times"> The character pointed to by the argument is
+        placed in the input queue as if it had been typed on the
+        terminal.</font></p>
+        <p><font face="Courier"><b>TIOCSBRK</b></font><font
+        face="Times"> Begins a break sequence on the terminal.</font></p>
+        <p><font face="Courier"><b>TIOCCBRK</b></font><font
+        face="Times"> Ends a break sequence.</font></p>
+        <p><font face="Courier"><b>TIOCSDTR</b></font><font
+        face="Times"> The DTR line is turned on</font></p>
+        <p><font face="Courier"><b>TIOCCDTR</b></font><font
+        face="Times"> The DTR line is turned off</font></p>
+        <p><font face="Courier"><b>TIOCSTOP</b></font><font
+        face="Times"> Output is stopped as if t_stopc had been
+        typed on the terminal.</font></p>
+        <p><font face="Courier"><b>TIOCSTART</b></font><font
+        face="Times"> If output is stopped, it is resumed as if
+        t_startc had been typed on the terminal.</font></p>
+        <p><font face="Courier"><b>TIOCOUTQ</b></font><font
+        face="Times"> The number of characters in the output
+        queue is returned in the int pointed to by arg.</font></p>
+        <p><font face="Courier"><b>FIONREAD</b></font><font
+        face="Times"> The number of characters immediately
+        available for input from the terminal is returned in the
+        int pointed to by arg. This is the preferred method of
+        non-blocking I/O (checking for the presence of characters
+        without waiting for them).</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>Tchars</b></font></p>
+
+<dir>
+    <li><font face="Times">The second structure associated with a
+        terminal defines special characters. The structure is
+        defined in &lt;sys/ioctl.h&gt; which is automatically
+        included by &lt;sgtty.h&gt;.</font><p><font face="Times">struct
+        tchars {</font></p>
+        <p><font face="Times">char t_intrc; /* interrupt */</font></p>
+        <p><font face="Times">char t_quitc; /* quit */</font></p>
+        <p><font face="Times">char t_startc; /* start output */</font></p>
+        <p><font face="Times">char t_stopc; /* stop output */</font></p>
+        <p><font face="Times">char t_eofc; /* end-of-file */</font></p>
+        <p><font face="Times">char t_brkc; /* input delimiter
+        (like nl) */</font></p>
+        <p><font face="Times">};</font></p>
+        <p><font face="Times">The default values for these
+        characters are ^C, ^\, ^Q, ^S, ^D and -1 respectively. A
+        value of -1 for any of the characters means that the
+        effect of that character is ignored. The stop and start
+        characters may be the same to produce a 'toggle' effect.
+        It is not recommended to set any of the other characters
+        to the same values; the order in which the special
+        characters are checked is not defined, and the results
+        you get may not be what was expected.</font></p>
+        <p><font face="Times">The ioctl calls that apply to
+        tchars are:</font></p>
+        <p><font face="Courier"><b>TIOCGETC</b></font><font
+        face="Times"> Returns the special characters settings in
+        the tchars structure pointed to by arg.</font></p>
+        <p><font face="Courier"><b>TIOCSETC</b></font><font
+        face="Times"> The special characters are set according to
+        the given structure.</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>Local mode</b></font></p>
+
+<p>&nbsp;</p>
+
+<dir>
+    <li><font face="Times">The third structure in the terminal
+        interface is a local mode word. The various bitfields in
+        this word are as follows (values are in hex):</font><p><font
+        face="Times">LCRTBS 0x0001 Backspace on erase rather than
+        echoing erase</font></p>
+        <p><font face="Times">LPRTERA 0x0002 Printing terminal
+        erase mode</font></p>
+        <p><font face="Times">LCRTERA 0x0004 Erase character
+        echoes as backspace-space-backspace</font></p>
+        <p><font face="Times">LTILDE 0x0008 Convert ~ to ` on
+        output (for Hazeltine terminals)</font></p>
+        <p><font face="Times">LMDMBUF 0x0010 Stop/start output
+        when carrier drops</font></p>
+        <p><font face="Times">LLITOUT 0x0020 Suppress output
+        translations</font></p>
+        <p><font face="Times">LTOSTOP 0x0040 Send SIGTTOU for
+        background output (not implemented)</font></p>
+        <p><font face="Times">LFLUSHO 0x0080 Output is being
+        flushed</font></p>
+        <p><font face="Times">LNOHANG 0x0100 Don't send hangup
+        when carrier drops</font></p>
+        <p><font face="Times">LPASSOUT 0x0200 Cooked mode with
+        8-bit output</font></p>
+        <p><font face="Times">LCRTKIL 0x0400 BS-space-BS erase
+        entire line on line kill</font></p>
+        <p><font face="Times">LPASS8 0x0800 Pass all 8 bits
+        through on input, in any mode</font></p>
+        <p><font face="Times">LCTLECH 0x1000 Echo input control
+        chars as ^?</font></p>
+        <p><font face="Times">LPENDIN 0x2000 Retype pending input
+        at next read or input character</font></p>
+        <p><font face="Times">LDECCTQ 0x4000 Only ^Q restarts
+        output after ^S</font></p>
+        <p><font face="Times">LNOFLSH 0x8000 Inhibit flushing of
+        pending I/O when intr char is typed</font></p>
+        <p><font face="Times">The ioctl's used to access the
+        local mode follow. arg in all cases is a pointer to an
+        int.</font></p>
+        <p><font face="Courier"><b>TIOCLBIS</b></font><font
+        face="Times"> The bits of the local mode word specified
+        by `1' bits in the argument are set; this operation is a
+        bit-wise OR.</font></p>
+        <p><font face="Courier"><b>TIOCLBIC</b></font><font
+        face="Times"> The bits of the local mode word specified
+        by `1' bits in the argument are cleared; this operation
+        ANDs the local mode with the bitwise negation of the
+        argument.</font></p>
+        <p><font face="Courier"><b>TIOCLSET</b></font><font
+        face="Times"> Sets the local mode word to the value of
+        the argument.</font></p>
+        <p><font face="Courier"><b>TIOCLGET</b></font><font
+        face="Times"> Returns the local mode word in the int
+        pointed to by arg.</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>Local Special Characters</b></font></p>
+
+<dir>
+    <li><font face="Times">The fourth terminal structure is
+        another set of special characters. The structure is named
+        ltchars and is again defined in &lt;ioctl.h&gt;.</font><p><font
+        size="2" face="Courier">struct ltchars {</font></p>
+        <p><font size="2" face="Courier">char t_suspc; /* stop
+        process signal */</font></p>
+        <p><font size="2" face="Courier">char t_dsuspc; /*
+        delayed stop process signal */</font></p>
+        <p><font size="2" face="Courier">char t_rprntc; /*
+        reprint line */</font></p>
+        <p><font size="2" face="Courier">char t_flushc; /* flush
+        output (toggles) */</font></p>
+        <p><font size="2" face="Courier">char t_werasc; /* word
+        erase */</font></p>
+        <p><font size="2" face="Courier">char t_lnextc; /*
+        literal next character */</font></p>
+        <p><font size="2" face="Courier">};</font></p>
+        <p><font face="Times">Defaults for these characters are
+        ^Z, ^Y, ^R, ^O, ^W, and ^V. As with tchars, a value of -1
+        disables the effect of that character. Only t_suspc is
+        currently implemented for the console driver.</font></p>
+        <p><font face="Times">The applicable ioctl functions are:</font></p>
+        <p><font face="Courier"><b>TIOCSLTC</b></font><font
+        face="Times"> sets the local characters according to the
+        ltchars structure pointed to by arg.</font></p>
+        <p><font face="Courier"><b>TIOCGLTC</b></font><font
+        face="Times"> retreives the local characters, storing
+        them in the argument.</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>Window/terminal sizes</b></font></p>
+
+<p>&nbsp;</p>
+
+<dir>
+    <li><font face="Times">Provision is made for storage of the
+        current window or terminal size along with the other
+        terminal information. This info is recorded in a winsize
+        structure, and is defined in &lt;ioctl.h&gt;:</font><p><font
+        size="2" face="Courier">struct winsize {</font></p>
+        <p><font size="2" face="Courier">unsigned short ws_row;
+        /* rows, in characters */</font></p>
+        <p><font size="2" face="Courier">unsigned short ws_col;
+        /* columns, in characters */</font></p>
+        <p><font size="2" face="Courier">unsigned short
+        ws_xpixel; /* horizontal size, pixels */</font></p>
+        <p><font size="2" face="Courier">unsigned short
+        ws_ypixel; /* vertical size, pixels */</font></p>
+        <p><font size="2" face="Courier">};</font></p>
+        <p><font face="Times">A '0' in a field indicates that the
+        field value is undefined. '0' is the default when a
+        terminal is first opened. These values are not used by
+        the terminal driver itself; rather, they are for the
+        benefit of applications. The ioctl calls for winsize are:</font></p>
+        <p><font face="Courier"><b>TIOCGWINSZ</b></font><font
+        face="Times"> Returns the window size parameters in the
+        provided winsize structure.</font></p>
+        <p><font face="Courier"><b>TIOCSWINSZ</b></font><font
+        face="Times"> Sets the window size parameters. If any of
+        the values differ from the old ones, a SIGWINCH signal is
+        sent to the terminal's process group.</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>FILES</b></font></p>
+
+<dir>
+    <li><font face="Times">.tty</font><p><font face="Times">.ttyco
+        (console driver)</font></p>
+        <p><font face="Times">.tty* (user-installed drivers)</font></p>
+    </li>
+</dir>
+
+<p><font face="Times"><b>SEE ALSO</b></font></p>
+
+<dir>
+    <li><font face="Times"><i>GNO Shell Reference Manual</i>, <b>stty</b>(1),
+        <b>ioctl</b>(2), <b>signal</b>(2)</font></li>
+</dir>
+</body>
+</html>

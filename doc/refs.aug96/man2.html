@@ -1,0 +1,1398 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>NAME</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<hr>
+<p><b>NAME</b></p>
+
+<dir>
+    <li><dir>
+            <li>sx, sb, sz - Send Files with ZMODEM, YMODEM, or
+                XMODEM<p>zcommand, zcommandi - Send COmmands with
+                ZMODEM</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>sz</b> [-+abdefkLlNnopTtuvyYZ] file ...<p><b>sb</b>
+                [-dfktuv] file ...</p>
+                <p><b>sx</b> [-ktuv] file</p>
+                <p><b>zcommand</b> [-otv] COMMAND</p>
+                <p><b>zcommandi</b> [-otv] COMMAND</p>
+                <p><b>sz</b> -TT</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>Sz</b> (send ZMODEM) uses the ZMODEM, YMODEM
+                or XMODEM error correcting protocol to send one
+                or more files over a dial-in serial port to a
+                variety of programs running under PC-DOS, CP/M,
+                Unix, VMS, and other operating systems.<p>This is
+                a shareware program copyrighted by Omen
+                Technology INC.</p>
+                <p><b>Sz</b> sends one or more files with ZMODEM
+                protocol.</p>
+                <p>ZMODEM greatly simplifies file transfers
+                compared to XMODEM. In addition to a friendly
+                user interface, ZMODEM provides Personal Computer
+                and other users an efficient, accurate, and
+                robust file transfer method.</p>
+                <p>ZMODEM provides complete END-TO-END data
+                integrity between application programs. ZMODEM's
+                32 bit CRC catches errors that sneak into even
+                the most advanced networks.</p>
+                <p>Advanced file management features include
+                AutoDownload (Automatic file Download initiated
+                without user intervention), Display of individual
+                and total file lengths and transmission time
+                estimates, Crash Recovery, selective file
+                transfers, and preservation of exact file date
+                and length.</p>
+                <p>The -y option instructs the receiver to open
+                the file for writing unconditionally. The -a
+                option causes the receiver to convert Unix
+                newlines to PC-DOS carriage returns and
+                linefeeds.</p>
+                <p><b>Sb</b> sends one or more files with YMODEM
+                or ZMODEM protocol. The initial ZMODEM
+                initialization is not sent. When requested by the
+                receiver, <b>sb</b> supports YMODEM-g with
+                &quot;cbreak&quot; tty mode, XON/XOFF flow
+                control, and interrupt character set to CAN (^X).
+                YMODEM-g increases YMODEM throughput over error
+                free channels (direct connection, X.PC, etc.) by
+                disabling error recovery.</p>
+                <p>On Unix systems, additional information about
+                the file is transmitted. If the receiving program
+                uses this information, the transmitted file
+                length controls the exact number of bytes written
+                to the output dataset, and the modify time and
+                file mode are set accordingly.</p>
+                <p><b>Sx</b> sends a single file with XMODEM or
+                XMODEM-1k protocol (sometimes incorrectly called
+                &quot;ymodem&quot;). The user must supply the
+                file name to both sending and receiving programs.</p>
+                <p>If <b>sz</b> is invoked with $SHELL set and if
+                that variable contains the string rsh or rksh
+                (restricted shell), sz operates in restricted
+                mode. Restricted mode restricts pathnames to the
+                current directory and PUBDIR (usually
+                /usr/spool/uucppublic) and/or subdirectories
+                thereof.</p>
+                <p>The fourth form sends a single COMMAND to a
+                ZMODEM receiver for execution. Zcommand exits
+                with the COMMAND return value. If COMMAND
+                includes spaces or characters special to the
+                shell, it must be quoted.</p>
+                <p>The fifth form sends a single COMMAND to a
+                ZMODEM receiver for execution. Zcommandi exits as
+                soon as the receiver has correctly received the
+                command, before it is executed.</p>
+                <p>The sixth form (sz -TT) attempts to output all
+                256 code combinations to the terminal. If you are
+                having difficulty sending files, this command
+                lets you see which character codes are being
+                eaten by the operating system.</p>
+                <p>The meanings of the available options are:</p>
+                <dir>
+                    <li><dir>
+                            <li><dir>
+                                    <li><dir>
+                                        <li><i>+</i> Instruct the
+                                        receiver to append
+                                        transmitted data to an
+                                        existing file (ZMODEM
+                                        only).<p><i>a</i>
+                                        Instruct the ZMODEM
+                                        receiver to convert text
+                                        file format as
+                                        appropriate for the
+                                        receiving system. Valid
+                                        only for ZMODEM.</p>
+                                        <p><i>b</i> (Zmodem)
+                                        Binary override: transfer
+                                        file without any
+                                        translation.</p>
+                                        <p><i>c</i> Instruct the
+                                        receiver to change the
+                                        pathname if the
+                                        destination file exists.</p>
+                                        <p><i>d</i> Change all
+                                        instances of
+                                        &quot;.&quot; to
+                                        &quot;/&quot; in the
+                                        transmitted pathname.
+                                        Thus, C.omenB0000 (which
+                                        is unacceptable to MSDOS
+                                        or CP/M) is transmitted
+                                        as C/omenB0000. If the
+                                        resultant filename has
+                                        more than 8 characters in
+                                        the stem, a &quot;.&quot;
+                                        is inserted to allow a
+                                        total of eleven.</p>
+                                        <p><i>e</i> Escape all
+                                        control characters;
+                                        normally only XON, XOFF,
+                                        DLE, CR-@-CR, and Ctrl-X
+                                        are escaped.</p>
+                                        <p><i>f</i> Send Full
+                                        pathname. Normally
+                                        directory prefixes are
+                                        stripped from the
+                                        transmitted filename.</p>
+                                        <p><i>k</i> (X/Ymodem)
+                                        Send files using 1024
+                                        byte blocks rather than
+                                        the default 128 byte
+                                        blocks. 1024 byte packets
+                                        speed file transfers at
+                                        high bit rates. (ZMODEM
+                                        streams the data for the
+                                        best possible
+                                        throughput.)</p>
+                                        <p><i>L N</i> Use ZMODEM
+                                        sub-packets of length N.
+                                        A larger N (32 &lt;= N
+                                        &lt;= 1024) gives
+                                        slightly higher
+                                        hroughput, a smaller N
+                                        speeds error recovery.
+                                        The default is 128 below
+                                        300 baud, 256 above 300
+                                        baud, or 1024 above 2400
+                                        baud.</p>
+                                        <p><i>l N</i> Wait for
+                                        the receiver to
+                                        acknowledge correct data
+                                        every N (32 &lt;= N &lt;=
+                                        1024) characters. This
+                                        may be used to avoid
+                                        network overrun when XOFF
+                                        flow control is lacking.</p>
+                                        <p><i>n</i> (Zmodem) Send
+                                        each file if destination
+                                        file does not exist.
+                                        Overwrite destination
+                                        file if source file is
+                                        newer than the
+                                        destination file.</p>
+                                        <p><i>N</i> (Zmodem) Send
+                                        each file if destination
+                                        file does not exist.
+                                        Overwrite destination
+                                        file if source file is
+                                        newer or longer than the
+                                        destination file.</p>
+                                        <p><i>o</i> (Zmodem)
+                                        Disable automatic
+                                        selection of 32 bit CRC.</p>
+                                        <p><i>p</i> (Zmodem)
+                                        Protect existing
+                                        destination files by
+                                        skipping transfer if the
+                                        destination file exists.</p>
+                                        <p><i>r</i> (Zmodem)
+                                        Resume interrupted file
+                                        transfer. If the source
+                                        file is longer than the
+                                        destination file, the
+                                        transfer commences at the
+                                        offset in the source file
+                                        that equals the length of
+                                        the destination file.</p>
+                                        <p><i>rr </i>As above,
+                                        but compares the files
+                                        (the portion common to
+                                        sender and reciever)
+                                        before resuming the
+                                        transfer.</p>
+                                        <p><i>t</i> tim Change
+                                        timeout to tim tenths of
+                                        seconds.</p>
+                                        <p><i>u</i> Unlink the
+                                        file after successful
+                                        transmission.</p>
+                                        <p><i>w</i> N Limit the
+                                        transmit window size to N
+                                        bytes (ZMODEM).</p>
+                                        <p><i>v</i> Verbose
+                                        causes a list of file
+                                        names to be appended to
+                                        /tmp/szlog. More v's
+                                        generate more output.</p>
+                                        <p><i>y</i> Instruct a
+                                        ZMODEM receiving program
+                                        to overwrite any existing
+                                        file with the same name.</p>
+                                        <p><i>Y</i> Instruct a
+                                        ZMODEM receiving program
+                                        to overwrite any existing
+                                        file with the same name,
+                                        and to skip any source
+                                        files that do have a file
+                                        with the same pathname on
+                                        the destination system.</p>
+                                        <p><i>Z</i> Use ZMODEM
+                                        file compression to speed
+                                        file transfer.</p>
+                                        </li>
+                                        </dir>
+                                    </li>
+                                </dir>
+                            </li>
+                        </dir>
+                    </li>
+                </dir>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>DIAGNOSTICS</b></p>
+
+<dir>
+    <li><dir>
+            <li>Exit status is as follows: 0 for successful
+                transfers. 1 if unrecoverable errors are
+                detected. 2 if syntax errors or file access
+                problems are detected. 3 if the program was
+                terminated by a caught interrupt.</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>EXAMPLE</b></p>
+
+<dir>
+    <li><dir>
+            <li><u>ZMODEM File Transfer (GNO to remote system)</u><p><font
+                face="Courier New">% sz -a *.c</font></p>
+                <p>This single command transfers all .c files in
+                the current directory with conversion (-a) to end
+                of line conventions appropriate to the receiving
+                environment. With ZMODEM AutoDownload enabled,
+                will automatically recieve the files after
+                performing a security check.</p>
+                <p><font face="Courier New">% sz -Yan *.c *.h</font></p>
+                <p>Send only the .c and .h files that exist on
+                both systems, and are newer on the sending system
+                than the corresponding version on the receiving
+                system, converting Apple to UNIX text format.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><dir>
+            <li>rz(1).<p>Compile time options required for
+                various operating systems are described in the
+                source file.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>FILES</b></p>
+
+<dir>
+    <li><dir>
+            <li>32 bit CRC code courtesy Gary S. Brown.<p>sz.c,
+                crctab.c, rbsb.c, zm.c, zmr.c, zmodem.h Unix
+                source files</p>
+                <p>/tmp/szlog stores debugging output (sz -vv)</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>TESTING FEATURE</b></p>
+
+<dir>
+    <li><dir>
+            <li>The command &quot;sz -T file&quot; exercises the
+                Attn sequence error recovery by commanding errors
+                with unterminated packets. The receiving program
+                should complain five times about binary data
+                packets being too long. Each time sz is
+                interrupted, it should send a ZDATA header
+                followed by another defective packet. If the
+                receiver does not detect five long data packets,
+                the Attn sequence is not interrupting the sender,
+                and the Myattn string in sz.c must be modified.<p>After
+                5 packets, sz stops the &quot;transfer&quot; and
+                prints the total number of characters
+                &quot;sent&quot; (Tcount). The difference between
+                Tcount and 5120 represents the number of
+                characters stored in various buffers when the
+                Attn sequence is generated.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li><dir>
+            <li>When using buffered modems at high speed,
+                particular attention must be paid to flow
+                control. The modem and Unix must agree on the
+                flow control method. Sz on USG (SYS III/V)
+                systems uses XON/XOFF flow control. If flow
+                control cannot be properly set up, Try a &quot;-w
+                2048&quot; option to enforce protocol level flow
+                control. Experiment with different window sizes
+                for best results.<p>If a program that does not
+                properly implement the specified file transfer
+                protocol causes sb to &quot;hang&quot; the port
+                after a failed transfer, either wait for sb to
+                time out or type a dozen Ctrl-X characters.</p>
+                <p>Many programs claiming to support YMODEM only
+                support XMODEM with 1k blocks, and they often
+                don't get that quite right. XMODEM transfers add
+                up to 127 garbage bytes per file. XMODEM-1k and
+                YMODEM-1k transfers use 128 byte blocks to avoid
+                extra padding.</p>
+                <p>YMODEM programs use the file length
+                transmitted at the beginning of the transfer to
+                prune the file to the correct length; this may
+                cause problems with source files that grow during
+                the course of the transfer. This problem does not
+                pertain to ZMODEM transfers, which preserve the
+                exact file length unconditionally.</p>
+                <p>Most ZMODEM options are merely passed to the
+                receiving program; some programs do not implement
+                all of these options.</p>
+                <p>Circular buffering and a ZMODEM sliding window
+                should be used when input is from pipes instead
+                of acknowledging frames each 1024 bytes. If no
+                files can be opened, sz sends a ZMODEM command to
+                echo a suitable complaint; perhaps it should
+                check for the presence of at least one accessible
+                file before getting hot and bothered.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li><dir>
+            <li>On at least one BSD system, sz would abnormally
+                end if it got within a few kilobytes of the end
+                of file. Using the &quot;-w 8192&quot; flag fixed
+                the problem. The real cause is unknown, perhaps a
+                bug in the kernel TTY output routines.<p>The test
+                mode leaves a zero length file on the receiving
+                system.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>GNO/ME</b></p>
+
+<dir>
+    <li><dir>
+            <li>The usual manner of invoking sz to send files
+                from a IIgs is as follows:<p>Connect to the other
+                computer with a term program such as TelCom GS</p>
+                <p>Start the X/Y/Zmodem receive on the other side</p>
+                <p>Get/Quit back to the GNO Shell</p>
+                <p>Type:</p>
+                <p><font face="Courier New">sz -v -v -b filename1
+                filename2 .. &lt;.ttya &gt;.ttyb</font></p>
+                <p>You may put this operation in the background
+                of course. Tests have shown no data loss up to
+                9600 baud in background operation.</p>
+                <p>The -b option ensures binary mode. You must
+                use this if you're sending a ShrinkIt archive or
+                other binary file. For plain text files you can
+                leave off the -b.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li><dir>
+            <li>tar - extract and view tape archives</li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>tar</b> [-]{<i>x</i>|<i>t</i>}f[<i>v</i>] <i>archive</i></li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><dir>
+            <li><b>tar</b> lists the contents of and extracts
+                files from UNIX tape archives (*.tar files).<p>Traditionally,
+                <b>tar</b> does not require the normal '-'
+                character to denote its arguments. The option
+                flags are as follows:</p>
+                <p>-<i>x</i> Extract files from the archive</p>
+                <p>-<i>v</i> Verbose mode (tell what tar is
+                doing)</p>
+                <p>-<i>t</i> Tell mode (list files in archive)</p>
+                <p>-<i>f</i> Use a file on disk instead of a tape</p>
+                <p>Since the standard IIGS filesystem is not as
+                flexible, filename-wise, as UNIX filesystems,
+                some pre-processing is performed on filenames
+                created when an archive is extracted.</p>
+                <p>&#149; If a tar filename contains a double-/
+                (possible under UNIX if an archive was created by
+                specifying a directory with a trailing slash),
+                tar converts it to a single /.</p>
+                <p>&#149; If a filename contains non-alpha
+                numeric characters, they are converted to periods
+                ('.').</p>
+                <p><b>tar</b> does not maintain the file
+                protection bits from UNIX, nor does it maintain
+                the creation and modification dates.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li><dir>
+            <li>Does not create .tar archives<p>Does not work
+                with raw devices, only files</p>
+                <p>Does not allow user to specify which files to
+                extract from archive</p>
+                <p>tar should use the GS/OS JudgeName call.</p>
+                <p>The -x and -t options should be exclusive, but
+                are not.</p>
+            </li>
+        </dir>
+    </li>
+</dir>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>mkdir - Makes directories</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>mkdir</b> <i>dirname</i> ...</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>The <b>mkdir</b> command creates subdirectories with the <i>dirname</i>s
+        specified. If a file with that <i>dirname</i> exists, an
+        error is returned. dirname may be a full pathname, or a
+        partial pathname, in which case the directory is created
+        as a subdirectory of the current directory.<p><b>mkdir</b>
+        only creates the filename portion of the specified path.
+        If, for instance, you do </p>
+        <p><font face="Courier New"><b>mkdir /usr/local/bbs/foo</b></font></p>
+        <p>directory foo will only be created if all of <b>/usr</b>,
+        <b>local</b>, and <b>bbs</b> exist.</p>
+    </li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li><b>mkdir</b> was written by James Brookes for GNO/ME.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>more - text pager</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>more</b> [ <i>file</i> ...]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>more</b> allows the user to view the specified <i>file</i>(s)
+        screen by screen or line by line. If no <i>file</i>s are
+        specified, standard input is used.<p>Every time <b>more</b>
+        has displayed a screen of text, it displays a prompt</p>
+        <p><font face="Courier New">- filename (xx%) - </font></p>
+        <p>indicating the percentage of the file that has been
+        viewed and its filename. If standard input is used,</p>
+        <p><font face="Courier New">'&nbsp;-&nbsp;more&nbsp;-&nbsp;'</font></p>
+        <p>is used as the prompt instead.</p>
+        <p>A number of key commands are available at the prompt.</p>
+        <p><b>q</b> quit viewing the current file, and move to
+        the next file (if any)</p>
+        <p><b>[RETURN]</b></p>
+        <p>display the next line of the file</p>
+        <p><b>[ESC]</b> abort <b>more</b>, including any more
+        files that may have been specified</p>
+        <p><b>[SPACE]</b></p>
+        <p>display the next page of the file</p>
+    </li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>This version of more was written by Jawaid Bazyar and
+        Derek Taubert.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>passwd - set a user's login password</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>passwd</b> [ -<b>?</b> | -<b>v</b> ] [ <i>username</i>
+        ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>passwd</b> changes the specified user's password. Only
+        root is allowed to alter passwords other than his own. If
+        the<i>username</i> is not given, the user's own login
+        name is assumed. Users other than root must then enter
+        the old password to verify permission to change the
+        password. Finally, the user must type the desired new
+        password twice to insure that no mistakes are made.<p>To
+        cancel <b>passwd</b>, type CTRL-@ when asked to enter the
+        new password. </p>
+        <p>The -<b>?</b> flag causes <b>passwd</b> to display a
+        brief usage message, and the -<b>v</b> flag causes <b>passwd</b>
+        to display version information.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>login</b>(1)</li>
+</dir>
+
+<p><b>FILES</b></p>
+
+<dir>
+    <li><b>/etc/passwd</b> - contains the password information</li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>Eric Shepherd<p>Internet uerics@mcl.mcl.ucsb</p>
+        <p>AOL Sheppy</p>
+    </li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>purge - deallocate purgeable memory handles</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>purge</b> [-v]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>This program purges all memory blocks marked purgable.
+        This is very important when using the Orca compilers and
+        shells since certain blocks get left lying around and can
+        (and have!) caused compiler errors. By purging memory
+        before compiles a large percentage of strange compiler
+        errors can be eliminated. After purging, all memory
+        possible is then freed for usage.<p>-v gives a verbose
+        listing of each handle being purged and before and after
+        free memory statistics.</p>
+        <p>The problems mentioned above usually occur when a
+        program has over-written one of the ORCA FastFile
+        system's memory handles. Purging clears these handles and
+        forces a reload from disk.</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Purging memory when non-shell applications are running
+        could be dangerous.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>rx, rc, rb, rz - Receive Files and Commands with
+        X/Y/ZMODEM</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>rz</b> -tv<p><b>rb</b> -tv</p>
+        <p><b>rc</b> -tv file</p>
+        <p><b>rx</b> -tv file</p>
+        <p><b>gz</b> file ... [-v]</p>
+        <p><b>rzCOMMAND</b></p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>This program uses error correcting protocols to receive
+        files over a dial-in serial port from a variety of
+        programs running under many operating systems. It is
+        invoked from a shell prompt manually, or automatically as
+        a result of an &quot;<b>sz</b> file ...&quot; command
+        given to the calling program.<p>This is a shareware
+        program copyrighted by Omen Technology INC.</p>
+        <p><b>Rz</b> (Receive ZMODEM) receives one or more files
+        with the ZMODEM protocol. Pathnames are supplied by the
+        sending program, and directories are made if necessary
+        (and possible). Normally, the &quot;<b>rz</b>&quot;
+        command is automatically issued by the calling ZMODEM
+        program, but defective ZMODEM implementations may require
+        starting <b>rz</b> manually.</p>
+        <p><b>Rb</b> receives file(s) with YMODEM, accepting
+        either standard128 byte sectors or 1024 byte sectors (sb <b>-k</b>
+        option). The user should determine when the 1024 byte
+        block length actually improves throughput.</p>
+        <p>If True YMODEM&trade; (Omen Technology trademark) file
+        information (file length, etc.) is received, the file
+        length controls the number of bytes written to the output
+        dataset, and the modify time and file mode (iff non zero)
+        are set accordingly.</p>
+        <p>If True YMODEM file information is not received,
+        slashes in the pathname are changed to underscore, and
+        any trailing period in the pathname is eliminated. This
+        conversion is useful for files received from CP/M and
+        other historical systems.</p>
+        <p><b>Rc</b> receives a single <u>file</u> with
+        XMODEM-CRC or XMODEM-1k-CRC protocol. The user should
+        determine when the 1024 byte block length actually
+        improves throughput without causing problems. The user
+        must supply the file name to both sending and receiving
+        programs. Up to 1023 garbage characters may be added to
+        the received file.</p>
+        <p><b>Rx</b> receives a single <u>file</u> with XMODEM or
+        XMODEM-1k protocol. The user should determine when the
+        1024 byte block length actually improves throughput
+        without causing problems. The user must supply the file
+        name to both sending and receiving programs. Up to 1023
+        garbage characters may be added to the received file.</p>
+        <p><b>Rz</b> may be invoked as <b>rzCOMMAND</b> (with an
+        optional leading - as generated by login(1)). For each
+        received file, <u>rz</u> will pipe the file to ``COMMAND
+        filename'' where filename is the name of the transmitted
+        file with the file contents as standard input.</p>
+        <p>Each file transfer is acknowledged when COMMAND exits
+        with 0 status. A non zero exit status terminates
+        transfers.</p>
+        <p>A typical use for this form is <u>rzmail</u> which
+        calls rmail(1) to post mail to the user specified by the
+        transmitted file name. For example, sending the file
+        &quot;caf&quot; from a PC-DOS system to <u>rzmail</u> on
+        a Unix system would result in the contents of the DOS
+        file &quot;caf&quot; being mailed to user
+        &quot;caf&quot;.</p>
+        <p>The meanings of the available options are:</p>
+        <p><b>tim</b> Change timeout to <u>tim</u> tenths of
+        seconds.</p>
+        <p><b>v </b>Verbose causes a list of file names to be
+        appended to /tmp/rzlog . More v's generate more detailed
+        debugging output.</p>
+    </li>
+</dir>
+
+<p><b>DIAGNOSTICS</b></p>
+
+<dir>
+    <li>Exit status is as follows: 0 for successful transfers. 1
+        if unrecoverable errors are detected. 2 if syntax errors
+        or file access problems are detected. 3 if the program
+        was terminated by a caught interrupt.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>sz</b>(1).</li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li>ZMODEM's support of XOFF/XON flow control allows proper
+        operation in many environments that do not support XMODEM
+        uploads. Unfortunately, not all Unix versions support
+        input flow control. The TTY input buffering on some
+        systems may not adequately buffer long blocks or
+        streaming input at high speed. You should suspect this
+        problem when you can't send data to the Unix system at
+        high speeds using ZMODEM, YMODEM-1k or XMODEM-1k, but
+        YMODEM with 128 byte blocks works properly.<p>If a
+        program that does not properly implement the specified
+        file transfer protocol causes <b>rz</b> to
+        &quot;hang&quot; the port after a failed transfer, either
+        wait for <b>rz</b> to time out or keyboard a dozen Ctrl-X
+        characters.</p>
+        <p>Many programs claiming to support YMODEM only support
+        XMODEM with 1k blocks, and they often don't get that
+        quite right.</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>This version of <b>rz</b> does not support some ZMODEM
+        features.<p>The ASCII option's CR/LF to NL translation
+        merely deletes CR's.</p>
+    </li>
+</dir>
+
+<p><b>ZMODEM CAPABILITIES</b></p>
+
+<dir>
+    <li><b>Rz</b> supports ZMODEM command execution (zcommand),
+        incoming ZMODEM binary (-b), ASCII (-a), newer(-n),
+        newer+longer(-N), protect (-p), Crash Recovery(-r),
+        clobber (-y), match+clobber (-Y), compression(-Z), and
+        append (-+) requests. Other options sent by the sender
+        are ignored. The default is protect (-p) and binary (-b).</li>
+</dir>
+
+<p><b>FILES</b></p>
+
+<dir>
+    <li>/tmp/rzlog stores debugging output generated with -vv
+        option</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>script - make typescript of a terminal session</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>script</b> [ -<b>a</b> ] [ <i>filename</i> ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>script</b> makes a typescript of everything printed on
+        your terminal. The typescript is written to <i>filename</i>
+        , or appended to <i>filename</i> if the -<b>a</b> option
+        is given. It can be sent to the line printer later with <b>lpr</b>(1).
+        If no file name is given, the typescript is saved in the
+        file typescript .<p>The script ends when the forked shell
+        exits.</p>
+    </li>
+</dir>
+
+<p><b>OPTIONS</b></p>
+
+<dir>
+    <li>-<b>a</b> Append the script to the specified file instead
+        of writing over it.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>lpr</b> (1), <b>pty</b> (4)</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>script places <i>everything</i> in the log file. This is
+        not what the naive user expects.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>sleep - suspend execution for an interval</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>sleep</b> <i>time</i></li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>Sleep</b> suspends execution for <i>time</i> seconds.
+        It is used to execute a command after a certain amount of
+        time as in a script:<p>sleep 105</p>
+        <p>command</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>alarm</b>(3C), <b>sleep</b>(3)</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li><i>Time</i> must be less than 2,147,483,647 seconds.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>split - split a file into pieces</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>split</b> [ - <i>number</i> ] [ <i>infile</i> [ <i>outfile</i>
+        ] ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>split</b> reads <i>infile</i> and writes it in <i>number</i>
+        -line pieces (default 1000) onto a set of output files
+        (as many files as necessary). The name of the first
+        output file is <i>outfile</i> with <b>aa</b> appended,
+        the second file is <b>outfile</b>ab , and so on
+        lexicographically.<p>If no <i>outfile</i> is given, <b>x</b>
+        is used as default (output files will be called <b>xaa</b>
+        , <b>xab</b> , etc.).</p>
+        <p>If no <i>infile</i> is given, or if `<b>-</b>' is
+        given in its stead, then the standard input file is used.</p>
+    </li>
+</dir>
+
+<p><b>OPTIONS</b></p>
+
+<dir>
+    <li>- number Number of lines in each piece.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>stty - set and view terminal options and parameters</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>stty</b> [ <i>option</i> ... ] [ <i>charoption c</i><b>
+        </b>... ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>If no options are specified, <b>stty</b> prints out all
+        the current terminal option settings. <i>options</i>
+        represent boolean flags in the terminal parameters, and
+        are as follows:<p><b>raw</b> turns on RAW mode (no
+        character or line processing)</p>
+        <p><b>-raw</b> turns off RAW mode</p>
+        <p><b>ehco</b> if in CBREAK or COOKED mode, echoes input
+        characters</p>
+        <p><b>-echo</b> echo mode off</p>
+        <p><b>cbreak </b>turns on CBREAK mode (single character
+        processing)</p>
+        <p><b>-cbreak </b>turns off CBREAK mode (line-at-a-time
+        processing)</p>
+        <p><i>Charoptions</i> represent variables in the terminal
+        interface, and are as follows:</p>
+        <p><b>intr c</b> sets the interrupt character (normally
+        ^C)</p>
+        <p><b>start c</b> sets the start character (normally ^Q)</p>
+        <p><b>stop c</b> sets the stop character (normally ^S)</p>
+        <p><b>eof c</b> sets the eof character (normally ^D)</p>
+        <p><b>susp c</b> sets the suspend character (normally ^Z)</p>
+        <p><b>c</b> may be defined either as an octal number such
+        as 003, or in control character format (^C).</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>tty</b>(4)</li>
+</dir>
+
+<hr>
+
+<p><font size="3"><b>NAME</b></font></p>
+
+<dir>
+    <li><font face="Times">sum - print checksum and block count
+        of a file</font></li>
+</dir>
+
+<p><font size="3"><b>SYNOPSIS</b></font></p>
+
+<dir>
+    <li><font face="Times"><b>sum</b> [ <i>file</i> ]</font></li>
+</dir>
+
+<p><font size="3"><b>DESCRIPTION</b></font></p>
+
+<dir>
+    <li><font face="Times"><b>Sum</b> calculates and prints a
+        16-bit checksum for the named file, and also prints the
+        number of blocks in the file. Stdin is used if no file
+        names are given. <b>Sum</b> is typically used to look for
+        corrupted files, or to validate a file communicated over
+        some transmission line.</font></li>
+</dir>
+
+<p><font size="3"><b>DIAGNOSTICS</b></font></p>
+
+<dir>
+    <li><font face="Times">``Read error'' is indistinguishable
+        from end of file on most devices; check the block count.</font></li>
+</dir>
+
+<p><font size="3"><b>SEE ALSO</b></font></p>
+
+<dir>
+    <li><font face="Times"><b>wc</b>(1).</font></li>
+</dir>
+
+<p><font size="3"><b>NOTE</b></font></p>
+
+<dir>
+    <li><font face="Times"><b>Sum</b> is pretty slow on large
+        files when running on the GS. If anyone has a faster
+        algorithm for computing the 16-bit checksum, I'd really
+        appreciate seeing it. </font></li>
+</dir>
+
+<p><font size="3"><b>AUTHOR</b></font></p>
+
+<dir>
+    <li><font face="Times">Marek Pawlowski -
+        marekp@pnet91.cts.com</font></li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>sx, sb, sz - Send Files with ZMODEM, YMODEM, or XMODEM<p>zcommand,
+        zcommandi - Send COmmands with ZMODEM</p>
+    </li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>sz</b> [-+abdefkLlNnopTtuvyYZ] file ...<p><b>sb</b>
+        [-dfktuv] file ...</p>
+        <p><b>sx</b> [-ktuv] file</p>
+        <p><b>zcommand</b> [-otv] COMMAND</p>
+        <p><b>zcommandi</b> [-otv] COMMAND</p>
+        <p><b>sz</b> -TT</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>Sz</b> (send ZMODEM) uses the ZMODEM, YMODEM or XMODEM
+        error correcting protocol to send one or more files over
+        a dial-in serial port to a variety of programs running
+        under PC-DOS, CP/M, Unix, VMS, and other operating
+        systems.<p>This is a shareware program copyrighted by
+        Omen Technology INC.</p>
+        <p><b>Sz</b> sends one or more files with ZMODEM
+        protocol.</p>
+        <p>ZMODEM greatly simplifies file transfers compared to
+        XMODEM. In addition to a friendly user interface, ZMODEM
+        provides Personal Computer and other users an efficient,
+        accurate, and robust file transfer method.</p>
+        <p>ZMODEM provides complete END-TO-END data integrity
+        between application programs. ZMODEM's 32 bit CRC catches
+        errors that sneak into even the most advanced networks.</p>
+        <p>Advanced file management features include AutoDownload
+        (Automatic file Download initiated without user
+        intervention), Display of individual and total file
+        lengths and transmission time estimates, Crash Recovery,
+        selective file transfers, and preservation of exact file
+        date and length.</p>
+        <p>The -y option instructs the receiver to open the file
+        for writing unconditionally. The -a option causes the
+        receiver to convert Unix newlines to PC-DOS carriage
+        returns and linefeeds.</p>
+        <p><b>Sb</b> sends one or more files with YMODEM or
+        ZMODEM protocol. The initial ZMODEM initialization is not
+        sent. When requested by the receiver, <b>sb</b> supports
+        YMODEM-g with &quot;cbreak&quot; tty mode, XON/XOFF flow
+        control, and interrupt character set to CAN (^X).
+        YMODEM-g increases YMODEM throughput over error free
+        channels (direct connection, X.PC, etc.) by disabling
+        error recovery.</p>
+        <p>On Unix systems, additional information about the file
+        is transmitted. If the receiving program uses this
+        information, the transmitted file length controls the
+        exact number of bytes written to the output dataset, and
+        the modify time and file mode are set accordingly.</p>
+        <p><b>Sx</b> sends a single file with XMODEM or XMODEM-1k
+        protocol (sometimes incorrectly called
+        &quot;ymodem&quot;). The user must supply the file name
+        to both sending and receiving programs.</p>
+        <p>If <b>sz</b> is invoked with $SHELL set and if that
+        variable contains the string rsh or rksh (restricted
+        shell), sz operates in restricted mode. Restricted mode
+        restricts pathnames to the current directory and PUBDIR
+        (usually /usr/spool/uucppublic) and/or subdirectories
+        thereof.</p>
+        <p>The fourth form sends a single COMMAND to a ZMODEM
+        receiver for execution. Zcommand exits with the COMMAND
+        return value. If COMMAND includes spaces or characters
+        special to the shell, it must be quoted.</p>
+        <p>The fifth form sends a single COMMAND to a ZMODEM
+        receiver for execution. Zcommandi exits as soon as the
+        receiver has correctly received the command, before it is
+        executed.</p>
+        <p>The sixth form (sz -TT) attempts to output all 256
+        code combinations to the terminal. If you are having
+        difficulty sending files, this command lets you see which
+        character codes are being eaten by the operating system.</p>
+        <p>The meanings of the available options are:</p>
+        <p><i>+</i> Instruct the receiver to append transmitted
+        data to an existing file (ZMODEM only).</p>
+        <p><i>a</i> Instruct the ZMODEM receiver to convert text
+        file format as appropriate for the receiving system.
+        Valid only for ZMODEM.</p>
+        <p><i>b</i> (Zmodem) Binary override: transfer file
+        without any translation.</p>
+        <p><i>c</i> Instruct the receiver to change the pathname
+        if the destination file exists.</p>
+        <p><i>d</i> Change all instances of &quot;.&quot; to
+        &quot;/&quot; in the transmitted pathname. Thus,
+        C.omenB0000 (which is unacceptable to MSDOS or CP/M) is
+        transmitted as C/omenB0000. If the resultant filename has
+        more than 8 characters in the stem, a &quot;.&quot; is
+        inserted to allow a total of eleven.</p>
+        <p><i>e</i> Escape all control characters; normally only
+        XON, XOFF, DLE, CR-@-CR, and Ctrl-X are escaped.</p>
+        <p><i>f</i> Send Full pathname. Normally directory
+        prefixes are stripped from the transmitted filename.</p>
+        <p><i>k</i> (X/Ymodem) Send files using 1024 byte blocks
+        rather than the default 128 byte blocks. 1024 byte
+        packets speed file transfers at high bit rates. (ZMODEM
+        streams the data for the best possible throughput.)</p>
+        <p><i>L N</i> Use ZMODEM sub-packets of length N. A
+        larger N (32 &lt;= N &lt;= 1024) gives slightly higher
+        hroughput, a smaller N speeds error recovery. The default
+        is 128 below 300 baud, 256 above 300 baud, or 1024 above
+        2400 baud.</p>
+        <p><i>l N</i> Wait for the receiver to acknowledge
+        correct data every N (32 &lt;= N &lt;= 1024) characters.
+        This may be used to avoid network overrun when XOFF flow
+        control is lacking.</p>
+        <p><i>n</i> (Zmodem) Send each file if destination file
+        does not exist. Overwrite destination file if source file
+        is newer than the destination file.</p>
+        <p><i>N</i> (Zmodem) Send each file if destination file
+        does not exist. Overwrite destination file if source file
+        is newer or longer than the destination file.</p>
+        <p><i>o</i> (Zmodem) Disable automatic selection of 32
+        bit CRC.</p>
+        <p><i>p</i> (Zmodem) Protect existing destination files
+        by skipping transfer if the destination file exists.</p>
+        <p><i>r</i> (Zmodem) Resume interrupted file transfer. If
+        the source file is longer than the destination file, the
+        transfer commences at the offset in the source file that
+        equals the length of the destination file.</p>
+        <p><i>rr </i>As above, but compares the files (the
+        portion common to sender and reciever) before resuming
+        the transfer.</p>
+        <p><i>t</i> tim Change timeout to tim tenths of seconds.</p>
+        <p><i>u</i> Unlink the file after successful
+        transmission.</p>
+        <p><i>w</i> N Limit the transmit window size to N bytes
+        (ZMODEM).</p>
+        <p><i>v</i> Verbose causes a list of file names to be
+        appended to /tmp/szlog. More v's generate more output.</p>
+        <p><i>y</i> Instruct a ZMODEM receiving program to
+        overwrite any existing file with the same name.</p>
+        <p><i>Y</i> Instruct a ZMODEM receiving program to
+        overwrite any existing file with the same name, and to
+        skip any source files that do have a file with the same
+        pathname on the destination system.</p>
+        <p><i>Z</i> Use ZMODEM file compression to speed file
+        transfer.</p>
+    </li>
+</dir>
+
+<p><b>DIAGNOSTICS</b></p>
+
+<dir>
+    <li>Exit status is as follows: 0 for successful transfers. 1
+        if unrecoverable errors are detected. 2 if syntax errors
+        or file access problems are detected. 3 if the program
+        was terminated by a caught interrupt.</li>
+</dir>
+
+<p><b>EXAMPLE</b></p>
+
+<dir>
+    <li><u>ZMODEM File Transfer (GNO to remote system)</u><p><font
+        face="Courier New">% sz -a *.c</font></p>
+        <p>This single command transfers all .c files in the
+        current directory with conversion (-a) to end of line
+        conventions appropriate to the receiving environment.
+        With ZMODEM AutoDownload enabled, will automatically
+        recieve the files after performing a security check.</p>
+        <p><font face="Courier New">% sz -Yan *.c *.h</font></p>
+        <p>Send only the .c and .h files that exist on both
+        systems, and are newer on the sending system than the
+        corresponding version on the receiving system, converting
+        Apple to UNIX text format.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li>rz(1).<p>Compile time options required for various
+        operating systems are described in the source file.</p>
+    </li>
+</dir>
+
+<p><b>FILES</b></p>
+
+<dir>
+    <li>32 bit CRC code courtesy Gary S. Brown.<p>sz.c, crctab.c,
+        rbsb.c, zm.c, zmr.c, zmodem.h Unix source files</p>
+        <p>/tmp/szlog stores debugging output (sz -vv)</p>
+    </li>
+</dir>
+
+<p><b>TESTING FEATURE</b></p>
+
+<dir>
+    <li>The command &quot;sz -T file&quot; exercises the Attn
+        sequence error recovery by commanding errors with
+        unterminated packets. The receiving program should
+        complain five times about binary data packets being too
+        long. Each time sz is interrupted, it should send a ZDATA
+        header followed by another defective packet. If the
+        receiver does not detect five long data packets, the Attn
+        sequence is not interrupting the sender, and the Myattn
+        string in sz.c must be modified.<p>After 5 packets, sz
+        stops the &quot;transfer&quot; and prints the total
+        number of characters &quot;sent&quot; (Tcount). The
+        difference between Tcount and 5120 represents the number
+        of characters stored in various buffers when the Attn
+        sequence is generated.</p>
+    </li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li>When using buffered modems at high speed, particular
+        attention must be paid to flow control. The modem and
+        Unix must agree on the flow control method. Sz on USG
+        (SYS III/V) systems uses XON/XOFF flow control. If flow
+        control cannot be properly set up, Try a &quot;-w
+        2048&quot; option to enforce protocol level flow control.
+        Experiment with different window sizes for best results.<p>If
+        a program that does not properly implement the specified
+        file transfer protocol causes sb to &quot;hang&quot; the
+        port after a failed transfer, either wait for sb to time
+        out or type a dozen Ctrl-X characters.</p>
+        <p>Many programs claiming to support YMODEM only support
+        XMODEM with 1k blocks, and they often don't get that
+        quite right. XMODEM transfers add up to 127 garbage bytes
+        per file. XMODEM-1k and YMODEM-1k transfers use 128 byte
+        blocks to avoid extra padding.</p>
+        <p>YMODEM programs use the file length transmitted at the
+        beginning of the transfer to prune the file to the
+        correct length; this may cause problems with source files
+        that grow during the course of the transfer. This problem
+        does not pertain to ZMODEM transfers, which preserve the
+        exact file length unconditionally.</p>
+        <p>Most ZMODEM options are merely passed to the receiving
+        program; some programs do not implement all of these
+        options.</p>
+        <p>Circular buffering and a ZMODEM sliding window should
+        be used when input is from pipes instead of acknowledging
+        frames each 1024 bytes. If no files can be opened, sz
+        sends a ZMODEM command to echo a suitable complaint;
+        perhaps it should check for the presence of at least one
+        accessible file before getting hot and bothered.</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>On at least one BSD system, sz would abnormally end if it
+        got within a few kilobytes of the end of file. Using the
+        &quot;-w 8192&quot; flag fixed the problem. The real
+        cause is unknown, perhaps a bug in the kernel TTY output
+        routines.<p>The test mode leaves a zero length file on
+        the receiving system.</p>
+    </li>
+</dir>
+
+<p><b>GNO/ME</b></p>
+
+<dir>
+    <li>The usual manner of invoking sz to send files from a IIgs
+        is as follows:<p>Connect to the other computer with a
+        term program such as TelCom GS</p>
+        <p>Start the X/Y/Zmodem receive on the other side</p>
+        <p>Get/Quit back to the GNO Shell</p>
+        <p>Type:</p>
+        <p><font face="Courier New">sz -v -v -b filename1
+        filename2 .. &lt;.ttya &gt;.ttyb</font></p>
+        <p>You may put this operation in the background of
+        course. Tests have shown no data loss up to 9600 baud in
+        background operation.</p>
+        <p>The -b option ensures binary mode. You must use this
+        if you're sending a ShrinkIt archive or other binary
+        file. For plain text files you can leave off the -b.</p>
+    </li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>tar - extract and view tape archives</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>tar</b> [-]{<i>x</i>|<i>t</i>}f[<i>v</i>] <i>archive</i></li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>tar</b> lists the contents of and extracts files from
+        UNIX tape archives (*.tar files).<p>Traditionally, <b>tar</b>
+        does not require the normal '-' character to denote its
+        arguments. The option flags are as follows:</p>
+        <p>-<i>x</i> Extract files from the archive</p>
+        <p>-<i>v</i> Verbose mode (tell what tar is doing)</p>
+        <p>-<i>t</i> Tell mode (list files in archive)</p>
+        <p>-<i>f</i> Use a file on disk instead of a tape</p>
+        <p>Since the standard IIGS filesystem is not as flexible,
+        filename-wise, as UNIX filesystems, some pre-processing
+        is performed on filenames created when an archive is
+        extracted.</p>
+        <p>&#149; If a tar filename contains a double-/ (possible
+        under UNIX if an archive was created by specifying a
+        directory with a trailing slash), tar converts it to a
+        single /.</p>
+        <p>&#149; If a filename contains non-alpha numeric
+        characters, they are converted to periods ('.').</p>
+        <p><b>tar</b> does not maintain the file protection bits
+        from UNIX, nor does it maintain the creation and
+        modification dates.</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Does not create .tar archives<p>Does not work with raw
+        devices, only files</p>
+        <p>Does not allow user to specify which files to extract
+        from archive</p>
+        <p>tar should use the GS/OS JudgeName call.</p>
+        <p>The -x and -t options should be exclusive, but are
+        not.</p>
+    </li>
+</dir>
+</body>
+</html>

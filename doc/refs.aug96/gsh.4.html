@@ -1,0 +1,996 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>GNO Shell User's Manual</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p><font size="6" face="Times">Chapter 4</font></p>
+
+<p><font size="6" face="Times">Built-in Commands</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>Built-ins vs EXE Commands</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The term &quot;built-ins&quot; is used to
+describe commands that exist within the shell itself. These
+utilities run faster than external commands because the code is
+already loaded into memory. Files of type &quot;EXE&quot;, on the
+other hand, must be loaded into memory by <b>gsh</b> and
+executed. If an EXE command is executed again, it might, again,
+have to be loaded into memory. This results in longer execution
+time for the program.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>gsh</b> has a number of built-in
+commands which allow you to work with the shell, the GNO kernel,
+and the shell environment.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The following section describes the
+commands that are built-in to <b>gsh</b>. The &quot;[..]&quot;
+character sequence represents an optional argument to a command.
+The term &quot;</font><font size="2" face="Courier">SIGNAL</font><font
+face="Times">&quot; is used to represent one of the signal names
+or numbers listed in Appendix D <b>Signals</b>. The sequence
+&quot;...&quot; means the command accepts multiple arguments of
+the same type as the argument before the &quot;...&quot;
+sequence. The sequence &quot;{..}&quot; is used to represent a
+set, which is a list of possible arguments to choose from.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>Shell Commands</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">Shell built-ins provide support for
+external shell commands (i.e. EXE files and shell scripts) and
+provide some commands used in every-day work.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>bindkey [-l] function string</b></font></p>
+
+<p><font face="Times">Bindkey is used to customize the shell's
+command-line editor. Any key on the keyboard can be mapped to any
+of a number of functions. The various functions are as follows:</font></p>
+
+<dir>
+    <li><font size="2" face="Courier">backward-char</font><font
+        face="Times"> move cursor left</font><p><font size="2"
+        face="Courier">backward-delete-char</font><font
+        face="Times"> delete character to left</font></p>
+        <p><font size="2" face="Courier">backward-word</font><font
+        face="Times"> move cursor left one word</font></p>
+        <p><font size="2" face="Courier">beginning-of-line</font><font
+        face="Times"> move cursor to beginning of line</font></p>
+        <p><font size="2" face="Courier">clear-screen</font><font
+        face="Times"> clear screen and redraw prompt</font></p>
+        <p><font size="2" face="Courier">complete-word</font><font
+        face="Times"> perform filename completion</font></p>
+        <p><font size="2" face="Courier">delete-char</font><font
+        face="Times"> delete character under cursor</font></p>
+        <p><font size="2" face="Courier">down-history</font><font
+        face="Times"> replace command line with next history</font></p>
+        <p><font size="2" face="Courier">end-of-line</font><font
+        face="Times"> move cursor to end of line</font></p>
+        <p><font size="2" face="Courier">forward-char</font><font
+        face="Times"> move cursor to the right</font></p>
+        <p><font size="2" face="Courier">forward-word</font><font
+        face="Times"> move cursor one word to the right</font></p>
+        <p><font size="2" face="Courier">kill-end-of-line</font><font
+        face="Times"> delete line from cursor to end of line</font></p>
+        <p><font size="2" face="Courier">kill-whole-line</font><font
+        face="Times"> delete the entire command line</font></p>
+        <p><font size="2" face="Courier">list-choices</font><font
+        face="Times"> list file completion matches</font></p>
+        <p><font size="2" face="Courier">newline</font><font
+        face="Times"> finished editing, accept command line</font></p>
+        <p><font size="2" face="Courier">raw-char</font><font
+        face="Times"> character as-is</font></p>
+        <p><font size="2" face="Courier">redisplay</font><font
+        face="Times"> redisplay the command line</font></p>
+        <p><font size="2" face="Courier">toggle-cursor</font><font
+        face="Times"> toggle between insert and overwrite cursor</font></p>
+        <p><font size="2" face="Courier">undefined-char</font><font
+        face="Times"> this key does nothing</font></p>
+        <p><font size="2" face="Courier">up-history</font><font
+        face="Times"> replace command line with previous history</font></p>
+    </li>
+</dir>
+
+<p><font face="Times">Keys are bound to functions, not
+vice-versa. This means that you can have any number of commands
+refer to the same function. For example, the default bindings
+have </font><font size="2" face="Courier">CTRL-A</font><font
+face="Times"> and </font><font size="2" face="Courier">OA-&lt;</font><font
+face="Times"> both bound to </font><font size="2" face="Courier">beginning-of-line</font><font
+face="Times">.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">Most of the function names are
+self-explanatory, and are explained in Chapter 2, but a few
+deserve discussion. </font><font size="2" face="Courier">raw-char</font><font
+face="Times"> is what you should bind a key that should be
+inserted into the command-line as-is. The regular printable ASCII
+set, such as the letters a-z, numbers, etc. are bound to </font><font
+size="2" face="Courier">raw-char</font><font face="Times">.
+Control characters should not be bound to </font><font size="2"
+face="Courier">raw-char</font><font face="Times"> because the
+command-line editor will become confused (most control characters
+act as special GNO/ME console feature codes - see the <i>GNO
+Kernel Reference Manual</i>, Chapter 4 <b>TextTools Replacement</b>).</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">Any keystroke that should be rejected by
+the editor should be bound to </font><font size="2"
+face="Courier">undefined-char</font><font face="Times">. By
+default, this includes control characters and OA-sequences that
+are not assigned to any editing features. Any key bound to </font><font
+size="2" face="Courier">undefined-char</font><font face="Times">
+will cause <b>gsh</b> to beep and ignore the key.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">You can actually bind key sequences, not
+just keystrokes, to functions. There is no limit other than
+memory to how many characters are in a command sequence.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">Because terminals do not have the OA (Open
+Apple) key, ; is actually mapped by the kernel to a two-character
+sequence consisting of </font><font size="2" face="Courier">ESC</font><font
+face="Times"> and the key. For example, OA-Y would actually
+produce </font><font size="2" face="Courier">ESC-Y</font><font
+face="Times">.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">Control characters in the </font><font
+size="2" face="Courier"><b>string</b></font><font face="Times">
+are represented in ^X format; e.g. CTRL-A is represented by ^A.
+ESC (and OA) is represented by ^[.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">Examples:</font></p>
+
+<p><font size="2" face="Courier">% <b>bindkey kill-end-of-line ^K</b></font><font
+face="Times"> map CTRL-K to kill-end-of-line (like Emacs)</font></p>
+
+<p><font size="2" face="Courier">% <b>bindkey clear-screen ^[^X</b></font><font
+face="Times"> map OA-CLEAR to clear-screen</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>commands</b></font></p>
+
+<p><font face="Times">Displays a list of all built-in shell
+commands.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>cd [pathname]</b></font></p>
+
+<p><font size="2" face="Courier"><b>chdir [pathname]</b></font></p>
+
+<p><font face="Times">Changes the current working directory to
+pathname. If </font><font size="2" face="Courier">pathname</font><font
+face="Times"> is not given, the default </font><font size="2"
+face="Courier">HOME</font><font face="Times"> directory (i.e. the
+value of the </font><font size="2" face="Courier">HOME</font><font
+face="Times"> environment variable) is used. This makes it easy
+to move back to your home directory. Under <b>gsh</b>, unlike
+most U</font><font size="2" face="Times">NIX</font><font
+face="Times"> shells, the cd is not necessary, except to change
+automatically to your HOME directory. If a command is not a
+built-in or EXE file, but is instead the name of a directory, a
+cd is implied and performed on the directory unless the </font><font
+size="2" face="Courier">NODIREXEC</font><font face="Times">
+variable has been set.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">[1] gno&gt; <b>cd utilities</b></font></p>
+
+<p><font size="2" face="Courier">[2] gno/utilities&gt; <b>echo
+$HOME</b></font></p>
+
+<p><font size="2" face="Courier">/dev/gno</font></p>
+
+<p><font size="2" face="Courier">[3] gno/utilities&gt; <b>cd</b></font></p>
+
+<p><font size="2" face="Courier">[4] gno&gt; <b>utilities</b></font></p>
+
+<p><font size="2" face="Courier">[5] gno/utilities&gt; <b>../utilities</b></font></p>
+
+<p><font size="2" face="Courier">[6] gno/utilities&gt; <b>~</b></font></p>
+
+<p><font size="2" face="Courier">[7] gno&gt; _</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>clear</b></font></p>
+
+<p><font face="Times">This command takes no arguments. When
+invoked, the screen will be cleared.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>df</b></font></p>
+
+<p><font face="Times">This command takes no arguments. When
+invoked, a listing of free blocks for every block device is
+given. In addition, the device name, type, file system, and
+capacity is listed.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">[1] gno&gt; <b>df</b></font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">.d## Volume Device Free Total
+Capacity System</font></p>
+
+<p><font size="2" face="Courier">---- ----------------
+---------------- ------- ------- -------- -----------</font></p>
+
+<p><font size="2" face="Courier">.d1 :Procyon .CVTECH.S6.A 3166
+41037 92% ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d2 Apple 3.5 Drive
+.APPLEDISK3.5A </font></p>
+
+<p><font size="2" face="Courier">.d3 Apple 3.5 Drive
+.APPLEDISK3.5B </font></p>
+
+<p><font size="2" face="Courier">.d4 Console Driver .CONSOLE </font></p>
+
+<p><font size="2" face="Courier">.d5 :Day .CVTECH.S6.B 15881
+65535 75% ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d6 :Night .CVTECH.S6.C 39274
+65535 40% HFS</font></p>
+
+<p><font size="2" face="Courier">.d7 :Left .CVTECH.S6.D 5365
+51776 89% ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d8 :Right .CVTECH.S6.E 27477
+65535 58% ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d9 :Software .CVTECH.S6.F 3289
+40960 91% ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d10 :RAM5 .RAMDISK 505 512 1%
+ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d11 :Conner 40 .AFP1 7368 80604
+90% AppleShare</font></p>
+
+<p><font size="2" face="Courier">.d12 AppleTalk fsd .AFP2 </font></p>
+
+<p><font size="2" face="Courier">....</font></p>
+
+<p><font size="2" face="Courier">.d24 AppleTalk fsd .AFP14 </font></p>
+
+<p><font size="2" face="Courier">.d25 AppleTalk RPM .RPM </font></p>
+
+<p><font size="2" face="Courier">.d26 AppleTalk Main .APPLETALK </font></p>
+
+<p><font size="2" face="Courier">.d27 Serial Modem .SERIAL2 </font></p>
+
+<p><font size="2" face="Courier">.d28 :system .APPLESCSI.HD01.
+27561 50773 45% ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d29 :dev .APPLESCSI.HD01. 43431
+65108 33% ProDOS</font></p>
+
+<p><font size="2" face="Courier">.d30 :usr .APPLESCSI.HD01. 44376
+48725 8% ProDOS</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">Volume</font><font face="Times">
+- Name of device.</font></p>
+
+<p><font size="2" face="Courier">Device</font><font face="Times">
+- GS/OS device name.</font></p>
+
+<p><font size="2" face="Courier">Free</font><font face="Times"> -
+Total number of free blocks on device.</font></p>
+
+<p><font size="2" face="Courier">Total</font><font face="Times">
+- Total number of blocks on device.</font></p>
+
+<p><font size="2" face="Courier">Capacity</font><font
+face="Times"> - Percentage of used blocks on device.</font></p>
+
+<p><font size="2" face="Courier">System</font><font face="Times">
+- Format of file system. With System Software 6.0.1, the file
+systems available are ProDOS, HFS, Pascal, MS-DOS, and DOS 3.3,
+and some CD-ROM formats.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>echo [-n] arg [arg ...]</b></font></p>
+
+<p><font face="Times">Expands the &quot;</font><font size="2"
+face="Courier">arg</font><font face="Times">&quot; expression(s)
+and outputs them to the screen. If the &quot;</font><font
+size="2" face="Courier">-n</font><font face="Times">&quot; switch
+is specified, a </font><font size="2" face="Courier">NEWLINE</font><font
+face="Times"> character is not output after the last &quot;</font><font
+size="2" face="Courier">arg</font><font face="Times">&quot;
+expression. Special escape sequences may also be included in the
+arguments, similar to those used in C strings:</font></p>
+
+<p><font size="2" face="Courier">\b</font><font face="Times"> -
+Backspace</font></p>
+
+<p><font size="2" face="Courier">\f</font><font face="Times"> -
+Clears screen (form feed)</font></p>
+
+<p><font size="2" face="Courier">\n</font><font face="Times"> -
+Newline</font></p>
+
+<p><font size="2" face="Courier">\r</font><font face="Times"> -
+Return</font></p>
+
+<p><font size="2" face="Courier">\t</font><font face="Times"> -
+Tab</font></p>
+
+<p><font size="2" face="Courier">\nnn</font><font face="Times"> -
+A decimal ASCII code. nnn represents the ASCII code.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">[1] gno&gt; <b>echo Hello World</b></font></p>
+
+<p><font size="2" face="Courier">Hello World</font></p>
+
+<p><font size="2" face="Courier">[2] gno&gt; <b>echo -n Hello
+World</b></font></p>
+
+<p><font size="2" face="Courier">Hello World[3] gno&gt; <b>echo
+$PATH $HOME 'come get to $gnome'</b></font></p>
+
+<p><font size="2" face="Courier">/dev/gno/utilities
+/dev/orca/utilities /dev/gno come get to $gnome</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>exit</b></font></p>
+
+<p><font face="Times">Exits the shell or terminates a shell
+script.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>history</b></font></p>
+
+<p><font face="Times">This command displays the list of previous
+command-line entries. The number of entries saved is set in the </font><font
+size="2" face="Courier">$HISTORY</font><font face="Times">
+variable.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>pushd</b></font></p>
+
+<p><font face="Times"><b>popd [+n]</b></font></p>
+
+<p><font face="Times"><b>dirs</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">These three commands maintain the shell's <i>directory
+stack.</i> Let's say you're working in a directory
+/src/myprogs/class/program.1/, and you want to temporarily go to
+another directory. Instead of having to 'cd' there and 'cd' back
+to a very long directory name (i.e., lots of typing), you can use
+the pushd command, like so:</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">gsh&gt; <b>pushd /etc</b> </font><font
+size="2" face="Times">{ start in /src/myprogs/class/program.1/ }</font></p>
+
+<p><font size="2" face="Courier">...</font></p>
+
+<p><font size="2" face="Courier">gsh&gt; <b>popd</b> </font><font
+size="2" face="Times">{ back in /src/myprogs/class/program.1/ }</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The </font><font size="2" face="Courier">pushd</font><font
+face="Times"> command stores the current directory on a stack,
+and then changes the current directory to the argument. When you
+want to go back to the original directory, type popd. The shell
+will pull the last directory off the stack and 'cd' to that
+directory.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The </font><font size="2" face="Courier">popd
+</font><font face="Times">command when given an argument of +n
+will remove the n'th directory from the stack. It does not change
+to that directory.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The </font><font size="2" face="Courier">dirs
+</font><font face="Times">command displays the current directory
+stack.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>pwd</b></font></p>
+
+<p><font face="Times">Displays the current working directory.
+This is useful if you have not configured the </font><font
+size="2" face="Courier">$PROMPT</font><font face="Times"> string
+to output your current working directory.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">[1]&gt; <b>cd $HOME</b></font></p>
+
+<p><font size="2" face="Courier">[2]&gt; <b>pwd</b></font></p>
+
+<p><font size="2" face="Courier">/user/root</font></p>
+
+<p><font size="2" face="Courier">[3]&gt; <b>cd utilities</b></font></p>
+
+<p><font size="2" face="Courier">[4]&gt; <b>pwd</b></font></p>
+
+<p><font size="2" face="Courier">/user/root/utilities</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>source</b></font></p>
+
+<p><font face="Times">When a script is executed, <b>gsh</b>
+creates a new process to run the script. As a result, scripts
+cannot change the shell's prefixes and certain other parameters.
+Instead of executing the script directly, you may use the </font><font
+size="2" face="Courier">source</font><font face="Times"> command
+which does not create a new process to execute the script. Thus,
+the </font><font size="2" face="Courier">source</font><font
+face="Times"> command is effectively exactly like typing all the
+commands in the script from the keyboard.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>tset</b></font></p>
+
+<p><font face="Times">The </font><font size="2" face="Courier">tset</font><font
+face="Times"> command causes the shell to reread the </font><font
+size="2" face="Courier">/etc/termcap</font><font face="Times">
+file and reset its output system to use the terminal type
+specified in the $TERM variable. On startup, after reading the </font><font
+size="2" face="Courier">gshrc</font><font face="Times"> file, <b>gsh</b>
+automatically does a </font><font size="2" face="Courier">tset</font><font
+face="Times">. <b>gsh</b> also automatically does a tset whenever
+the </font><font size="2" face="Courier">$TERM</font><font
+face="Times"> variable is changed with the </font><font size="2"
+face="Courier">set</font><font face="Times"> command. You would
+use tset manually if, for example, a utility changed the value of
+</font><font size="2" face="Courier">$TERM</font><font
+face="Times">.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>which command_name
+[command_name ...]</b></font></p>
+
+<p><font face="Times">Let's say that you are working on a new
+version of the venerable shell utility </font><font size="2"
+face="Courier">ls</font><font face="Times">. Since a search of
+the hash table is done before searching the current directory,
+you might accidentally be using the wrong version of the command.
+You make changes and run the new program, but your changes don't
+seem to appear! Use the </font><font size="2" face="Courier">which</font><font
+face="Times"> command to check your sanity. Which also comes in
+handy in locating duplicate program names in the </font><font
+size="2" face="Courier">$PATH</font><font face="Times">
+directories (for example, an </font><font size="2" face="Courier">ls</font><font
+face="Times"> in both </font><font size="2" face="Courier">/bin</font><font
+face="Times"> and </font><font size="2" face="Courier">/usr/bin</font><font
+face="Times">.)</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The way to access a utility in the current
+directory which has the same name as a program in the </font><font
+size="2" face="Courier">$PATH</font><font face="Times"> is to
+prefix the command name with '</font><font size="2"
+face="Courier">.</font><font face="Times">', as in &quot;</font><font
+size="2" face="Courier">./ls</font><font face="Times">&quot;.
+Also, see </font><font size="2" face="Courier">unhash</font><font
+face="Times">.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b></b></font>&nbsp;</p>
+
+<p><font face="Times"><b>Kernel Commands</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>gsh</b> provides a set of commands to
+control the GNO kernel. These commands mainly deal with job
+control. See Chapter 3 <b>Job Control</b>.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>bg { %job | pid }</b></font></p>
+
+<p><font face="Times">Starts the specified job, if stopped, and
+places it in the background.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>fg { %job | pid }</b></font></p>
+
+<p><font face="Times">Starts the specified job, if stopped, and
+brings it into the foreground.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>jobs [-l]</b></font></p>
+
+<p><font face="Times">Displays a list of the shell's jobs. If the
+&quot;</font><font size="2" face="Courier">-l</font><font
+face="Times">&quot; switch is specified, the process id is
+included in the job list.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">[1] gno&gt; <b>cmpl foo.c
+keep=foo &amp;</b></font></p>
+
+<p><font size="2" face="Courier">[1] + Running cmpl foo.c
+keep=foo &amp;</font></p>
+
+<p><font size="2" face="Courier">[2] gno&gt; <b>echo hello</b></font></p>
+
+<p><font size="2" face="Courier">hello</font></p>
+
+<p><font size="2" face="Courier">[3] gno&gt; <b>jobs</b></font></p>
+
+<p><font size="2" face="Courier">[1] + Running cmpl foo.c
+keep=foo &amp;</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>kill {[-SIGNAL] %job | pid |
+[-l]</b></font></p>
+
+<p><font face="Times">The kill command will send the signal </font><font
+size="2" face="Courier">SIGNAL</font><font face="Times"> to the
+process number pid. The ps command documented below describes how
+to list all process ID's currently executing.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">SIGNAL</font><font face="Times">
+can be either a numeric value or string representing the signal
+to be sent to the process. All signals are documented in Appendix
+D <b>Signals</b>, with numeric and string value listed.
+Alternatively, specifying the </font><font size="2"
+face="Courier">-l</font><font face="Times"> option will list all
+the signals and their names.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">If the process number isn't known, but the
+job number is, replace the pid with a '%' followed by the job
+number.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b></b></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b></b></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>ps</b></font></p>
+
+<p><font face="Times">This command takes no arguments. When
+invoked, a list of all currently running processes is displayed.</font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">[2] 9:52pm root&gt; <b>ls -lR
+:hard:gno &gt; /ram5/dev &amp;</b></font></p>
+
+<p><font size="2" face="Courier">[1] + 35 Running ls -lR
+:hard:gno &amp;</font></p>
+
+<p><font size="2" face="Courier">[3] 9:53pm root&gt; <b>ps</b></font></p>
+
+<p><font size="2" face="Courier">ID STATE TT MMID UID TIME
+COMMAND</font></p>
+
+<p><font size="2" face="Courier">1 ready co 1002 0000 0:26
+NullProcess</font></p>
+
+<p><font size="2" face="Courier">2 ready co 1005 0000 0:02 gsh</font></p>
+
+<p><font size="2" face="Courier">35 ready co 100A 0000 0:01 ls
+-lR :hard:gno</font></p>
+
+<p><font size="2" face="Courier">36 running co 1007 0000 0:00 ps</font></p>
+
+<p><font size="2" face="Courier">[4] 9:53pm root&gt; </font></p>
+
+<p><font size="2" face="Courier">[1] + Done ls -lR :hard:gno</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">ID</font><font face="Times"> - A
+unique process ID assigned to a command by GNO. Use this number
+to reference any process.</font></p>
+
+<p><font size="2" face="Courier">STATE</font><font face="Times">
+- Current state of the process. Each process can be in any of the
+following states: </font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<dir>
+    <li><font face="Courier">RUNNING</font><font face="Times">
+        the process is currently in execution.</font><p><font
+        face="Courier">READY</font><font face="Times"> the
+        process is not currently executing, but is ready to be
+        executed as soon as it is assigned a time slice.</font></p>
+        <p><font face="Courier">BLOCKED</font><font face="Times">
+        the process is waiting for a slow I/O operation to
+        complete (for instance, a read from a TTY).</font></p>
+        <p><font face="Courier">NEW</font><font face="Times"> the
+        process has been created, but has not executed yet.</font></p>
+        <p><font face="Courier">SUSPENDED</font><font
+        face="Times"> the process was stopped with
+        SIGSTOP,SIGTSTP,SIGTTIN, or SIGTTOU.</font></p>
+        <p><font face="Courier">WAITING</font><font face="Times">
+        the process is waiting on a semaphore 'signal' operation.
+        Programs waiting for data from a pipe have this state.</font></p>
+        <p><font face="Courier">WAITSIGCH</font><font
+        face="Times"> the process is waiting to receive a SIGCHLD
+        signal.</font></p>
+        <p><font face="Courier">PAUSED</font><font face="Times">
+        the process is waiting for any signal.</font></p>
+    </li>
+</dir>
+
+<p><font size="2" face="Courier">TTY</font><font face="Times"> -
+Terminal connected to process.</font></p>
+
+<p><font face="Times">MMID - Memory Manager ID assigned to
+process.</font></p>
+
+<p><font face="Times">UID - ID of the user who initiated the
+process.</font></p>
+
+<p><font size="2" face="Courier">TIME</font><font face="Times"> -
+How much CPU time this process has used. This is not the elapsed
+time of the process.</font></p>
+
+<p><font size="2" face="Courier">COMMAND</font><font face="Times">
+- Command-line string used to invoke process.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>setdebug { val | {+|-}flag }</b></font></p>
+
+<p><font face="Times">Turns GNO kernel debugging code on or off.
+The value passed consists of a bit field, where each bit
+specifies a different type of debugging code to activate. An
+alternate method is to provide a list of debug flags, either
+preceded by a '+' or a '-'. Those preceded by a '+' are
+activated, and those preceeded with a '-' are deactivated. All
+debugging is deactivated by passing a value of 0. Running
+setdebug wtth no arguments returns a list of the debugging flags.
+Legal flags include:</font></p>
+
+<p><font size="2" face="Courier">gsostrace</font><font
+face="Times"> - Trace GS/OS calls</font></p>
+
+<p><font size="2" face="Courier">gsosblocks</font><font
+face="Times"> - Trace GS/OS parameter blocks</font></p>
+
+<p><font size="2" face="Courier">gsoserrors</font><font
+face="Times"> - Trace GS/OS errors</font></p>
+
+<p><font size="2" face="Courier">pathtrace</font><font
+face="Times"> - Trace GS/OS pathnames</font></p>
+
+<p><font size="2" face="Courier">sigtrace</font><font
+face="Times"> - Trace signals</font></p>
+
+<p><font size="2" face="Courier">systrace</font><font
+face="Times"> - Trace system calls</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>stop { %job | pid }</b></font></p>
+
+<p><font face="Times">Stops the execution of all processes in a
+specified job.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><b>Environment Commands</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">The last set of commands, environment
+commands, modify the <b>gsh</b> environment. Many of these
+commands have been used in other parts of this manual and,
+therefore, should not be new.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>alias [name] [value]</b></font></p>
+
+<p><font face="Times">Creates an alias for a string. When this
+alias is referenced as a command, </font><font size="2"
+face="Courier">value</font><font face="Times"> will be expanded
+into the command line. For commands that require many arguments
+or have several steps, you could set up an alias to save typing.
+You can also use aliases to create new names for commands. To
+obtain a list of all aliases, invoke </font><font size="2"
+face="Courier">alias</font><font face="Times"> with no arguments.
+To list the value of an alias, invoke </font><font size="2"
+face="Courier">alias</font><font face="Times"> with name only.
+Here are some alias examples:</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times"><u>Alias</u> <u>Command Name</u></font></p>
+
+<p><font size="2" face="Courier">ll or list_long ls -l</font></p>
+
+<p><font size="2" face="Courier">backup_sys cp -r /system
+/BackupDrive&amp;</font></p>
+
+<p><font size="2" face="Courier">backup_home cp -r $HOME
+/BackupDrive&amp;</font></p>
+
+<p><font size="2" face="Courier">print echo</font></p>
+
+<p><font size="2" face="Courier">catalog ls -l</font></p>
+
+<p><font size="2" face="Courier">delete rm</font></p>
+
+<p><font size="2" face="Courier">copy cp</font></p>
+
+<p><font size="2" face="Courier">type more</font></p>
+
+<p><font size="2" face="Courier">rename mv</font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>export </b>;<b>[variable ...]</b></font></p>
+
+<p><font face="Times">When a shell environment variable is marked
+as exportable, any process that is created from within the
+current process (most likely <b>gsh</b>), will be passed copies
+of the exported variables. See </font><font size="2"
+face="Courier"><b>setenv</b></font><font face="Times"> and
+Chapter 5 <b>Scope of shell variables.</b></font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>hash</b></font></p>
+
+<p><font face="Times">Displays a list of all commands currently
+in the shell's hash table; i.e., a list of commands in the
+various $PATH directories.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>prefix [prefixnum
+[prefixname]]</b></font></p>
+
+<p><font face="Times">GNO maintains a list of 32 'prefixes' for
+each process. Prefixes allow the user to reference a directory
+with a number. While <b>gsh</b> provides this ability with
+environment variables, the prefix command exists to support the
+ORCA compilers and other utilities that are dependent on certain
+GS/OS prefixes. Appendix B contains a list of these prefixes and
+their &quot;default&quot; meanings, as documented in the &quot;<i>Apple
+IIGS GS/OS Reference</i>&quot;, Volume 1.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">If </font><font size="2" face="Courier">prefixname</font><font
+face="Times"> is not given, the value of </font><font size="2"
+face="Courier">prefixnum</font><font face="Times"> is displayed.
+If neither argument is given, a list of currently assigned
+prefixes is displayed.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>rehash</b></font></p>
+
+<p><font face="Times">To decrease the time spent searching for a
+command, <b>gsh</b> builds a table of all commands which were
+found in the pathnames set in the </font><font size="2"
+face="Courier">$PATH</font><font face="Times"> variable. When a
+command is invoked, only this list is searched. When the </font><font
+size="2" face="Courier">$PATH</font><font face="Times"> variable
+is changed, <b>gsh</b> must rebuild this list. The </font><font
+size="2" face="Courier"><b>rehash</b></font><font face="Times">
+command tells <b>gsh</b> to rebuild the list.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">While the old list is still active, if </font><font
+size="2" face="Courier">$PATH</font><font face="Times"> is
+changed and one of the previous search paths is no longer online,
+<b>gsh</b> will try and execute the command from the offline
+device, resulting in a command failure.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">To make this a one-step process, the </font><font
+size="2" face="Courier">change.path</font><font face="Times">
+shell script listed in Chapter 5, <b>Accessing shell variables</b>
+can be used.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>set [var] [value] [{var
+value} ...]</b></font></p>
+
+<p><font size="2" face="Courier"><b>set var=value [var=value ...]</b></font></p>
+
+<p><font size="2" face="Courier"><b>setenv [var value]... </b></font></p>
+
+<p><font face="Times">Use these command to create or modify
+environment variables. If </font><font size="2" face="Courier">set</font><font
+face="Times"> is invoked with no arguments, a list of the current
+environment variables is displayed. If only </font><font size="2"
+face="Courier">var</font><font face="Times"> is given as an
+argument, the value of </font><font size="2" face="Courier">var</font><font
+face="Times"> is displayed. To set or reset a variable, use both
+the </font><font size="2" face="Courier">var</font><font
+face="Times"> and </font><font size="2" face="Courier">value</font><font
+face="Times"> arguments. There are two ways to set a variable,
+either by &quot;</font><font size="2" face="Courier">var value</font><font
+face="Times">&quot; or &quot;</font><font size="2" face="Courier">var=value</font><font
+face="Times">&quot;. To set multiple variables at once, simply
+list them all on the command line as shown above.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">setenv</font><font face="Times">
+works just like </font><font size="2" face="Courier">set</font><font
+face="Times">, but automatically exports the variable(s) or lists
+only exported variables.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font face="Times">When using </font><font size="2"
+face="Courier">set</font><font face="Times"> or </font><font
+size="2" face="Courier">setenv</font><font face="Times"> to view
+a list of variables, exported variables appear in ALL CAPS.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>unalias name [name ...]</b></font></p>
+
+<p><font face="Times">To remove an alias from the alias list, use
+this command. To remove multiple aliases with one command,
+specify all the aliases on the command line.</font></p>
+
+<p><font face="Times"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>unhash</b></font></p>
+
+<p><font face="Times">To disable the internal hash table created
+with the </font><font size="2" face="Courier">rehash</font><font
+face="Times"> command, use this command. This is useful if you
+wish to use only utilities in the current working directory
+(during testing, for example).</font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier"><b>unset </b>;<b>var [var...]</b></font></p>
+
+<p><font face="Times">To remove a variable from the environment,
+use </font><font size="2" face="Courier">unset</font><font
+face="Times">. </font><font size="2" face="Courier">unset</font><font
+face="Times"> accepts multiple names if more than one variable is
+to be deleted. Future attempts to access the variable </font><font
+size="2" face="Courier">var</font><font face="Times"> will result
+in an error or a NULL string, depending on the circumstances.</font></p>
+
+<p><font size="2" face="Courier"></font>&nbsp;</p>
+
+<p><font size="2" face="Courier">[8] 9:57pm root&gt; <b>set</b></font></p>
+
+<p><font size="2" face="Courier">PAGER = less</font></p>
+
+<p><font size="2" face="Courier">PATH = :hard:gno:bin
+:right:gno:usr:bin</font></p>
+
+<p><font size="2" face="Courier">user1 = foo</font></p>
+
+<p><font size="2" face="Courier">USRMAN = /usr/man</font></p>
+
+<p><font size="2" face="Courier">HISTORY = 30</font></p>
+
+<p><font size="2" face="Courier">status = 227</font></p>
+
+<p><font size="2" face="Courier">fignore = .a .root .sym</font></p>
+
+<p><font size="2" face="Courier">TERM = gnocon</font></p>
+
+<p><font size="2" face="Courier">LESS = -e</font></p>
+
+<p><font size="2" face="Courier">PROMPT = [%h] %S%t%s %C&gt; </font></p>
+
+<p><font size="2" face="Courier">HOME = :hard:gno:user:root</font></p>
+
+<p><font size="2" face="Courier">user = user1</font></p>
+
+<p><font size="2" face="Courier">nonewline = 1</font></p>
+
+<p><font size="2" face="Courier">[9] 9:57pm root&gt; <b>unset
+user1</b></font></p>
+
+<p><font size="2" face="Courier">[10] 9:57pm root&gt; <b>unset
+user</b></font></p>
+
+<p><font size="2" face="Courier">[11] 9:57pm root&gt; <b>set</b></font></p>
+
+<p><font size="2" face="Courier">PAGER = less</font></p>
+
+<p><font size="2" face="Courier">PATH = :hard:gno:bin
+:right:gno:usr:bin</font></p>
+
+<p><font size="2" face="Courier">USRMAN = /usr/man</font></p>
+
+<p><font size="2" face="Courier">HISTORY = 30</font></p>
+
+<p><font size="2" face="Courier">status = 0</font></p>
+
+<p><font size="2" face="Courier">fignore = .a .root .sym</font></p>
+
+<p><font size="2" face="Courier">TERM = gnocon</font></p>
+
+<p><font size="2" face="Courier">LESS = -e</font></p>
+
+<p><font size="2" face="Courier">PROMPT = [%h] %S%t%s %C&gt; </font></p>
+
+<p><font size="2" face="Courier">HOME = :hard:gno:user:root</font></p>
+
+<p><font size="2" face="Courier">nonewline = 1</font></p>
+
+<p>&nbsp;</p>
+</body>
+</html>

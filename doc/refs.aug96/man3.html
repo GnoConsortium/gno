@@ -1,0 +1,1871 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>NAME</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>tee - Pipe fitting.</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>tee</b> [ -<b>ai</b> ] [ <i>file</i> ...]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>The <b>tee</b> utility copies standard input to standard
+        output, making a copy in zero or more files. The output
+        is unbuffered.<p>The following options are available:</p>
+        <p>-<b>a</b> Append the output to the files rather than
+        overwriting them.</p>
+        <p>-<b>i</b> Ignore the <b>SIGINT</b> signal.</p>
+        <p>The following operands are available:</p>
+        <p><i>file</i> A pathname of an output file .</p>
+        <p>The <b>tee</b> utility takes the default action for
+        all signals, except in the event of the -<b>i</b> option.</p>
+        <p>The <b>tee</b> utility exits 0 on success, and &gt;0
+        if an error occurs.</p>
+    </li>
+</dir>
+
+<p><b>STANDARDS</b></p>
+
+<dir>
+    <li>The <b>tee</b> function is expected to be POSIX p1003.2
+        compatible.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><i>GNO/Shell User's Manual </i>, <b>signal</b>(2)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>time - time a command</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>time</b> <i>command</i></li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>The <b>time</b> command lets the specified <b>command</b>
+        execute and then outputs the amount of elapsed real time,
+        the time spent in the operating system, and the time
+        spent in execution of the command. Times are reported in
+        seconds and are written to standard error.<p>The <b>time</b>
+        command can be used to cause a command to be timed no
+        matter how much </p>
+        <p>CPU time it takes. For example:</p>
+        <p><font face="Courier New">% /bin/time cp /etc/rc
+        /usr/bill/rc</font></p>
+        <p><font face="Courier New">0.1 real 0.0 user 0.0 sys</font></p>
+        <p><font face="Courier New">% /bin/time nroff sample1
+        &gt; sample1.nroff</font></p>
+        <p><font face="Courier New">3.6 real 2.4 user 1.2 sys</font></p>
+        <p>This example indicates that the <b>cp</b> command used
+        negligible amounts of user ( <i>user</i> ) and system
+        time ( <i>sys</i> ), and had an elapsed time ( <i>real</i>
+        ) of 1/10 second (0.1). The <b>nroff</b> command used 2.4
+        seconds of user time and 1.2 seconds of system time, and
+        required 3.6 seconds of elapsed time.</p>
+    </li>
+</dir>
+
+<p><b>RESTRICTIONS</b></p>
+
+<dir>
+    <li>Times are measured to an accuracy of 1/60 second. Thus,
+        the sum of the user and system times can be larger than
+        the elapsed time, but this isn't likely.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>tr - translate characters</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>tr</b> [ -<b>cds</b> ] [ <i>string1</i> [ <i>string2</i>
+        ] ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>tr</b> copies the standard input to the standard
+        output with substitution or deletion of selected
+        characters. The arguments <i>string1</i> and <i>string2</i>
+        are considered sets of characters. Any input character
+        found in <i>string1</i> is mapped into the character in
+        the corresponding position within <i>string2</i>. When <i>string2</i>
+        is short, it is padded to the length of <i>string1</i> by
+        duplicating its last character.<p>In either string the
+        notation '<b>a - b' </b>denotes a range of characters
+        from <b>a</b> to <b>b</b> in increasing ASCII order. The
+        character \, followed by 1, 2 or 3 octal digits stands
+        for the character whose ASCII code is given by those
+        digits. As with the shell, the escape character \,
+        followed by any other character, escapes any special
+        meaning for that character.</p>
+        <p>When <i>string2</i> is short, characters in <i>string1</i>
+        with no corresponding character in <i>string2</i> are not
+        translated.</p>
+        <p>In either string the following abbreviation
+        conventions introduce ranges of characters or repeated
+        characters into the strings.</p>
+        <p><b>[ a - z ]</b></p>
+        <p>Stands for the string of characters whose ASCII codes
+        run from character <b>a</b> to character <b>z</b>,
+        inclusive.</p>
+        <p><b>[ a * n ]</b></p>
+        <p>Stands for n repetitions of <b>a</b>. If the first
+        digit of <b>n</b> is 0, <b>n</b> is considered octal;
+        otherwise, <b>n</b> is taken to be decimal. A zero or
+        missing <b>n</b> is taken to be huge; this facility is
+        useful for padding <i>string2</i>.</p>
+    </li>
+</dir>
+
+<p><b>OPTIONS</b></p>
+
+<dir>
+    <li>Any combination of the options -<b>c</b>, -<b>d</b>, or -<b>s</b>
+        may be used:<p>-<b>c</b> Complement the set of characters
+        in <i>string1</i> with respect to the universe of
+        characters whose ASCII codes are 01 through 0377 octal;</p>
+        <p>-<b>d</b> Delete all input characters in <i>string1</i>.</p>
+        <p>-<b>s</b> Squeeze all strings of repeated output
+        characters that are in <i>string2</i> to single
+        characters.</p>
+    </li>
+</dir>
+
+<p><b>EXAMPLE</b></p>
+
+<dir>
+    <li>The following example creates a list of all the words in
+        filename one per line in filename2, where a word is taken
+        to be a maximal string of alphabetics. The second string
+        is quoted to protect `\' from the shell. 012 is the ASCII
+        code for NEWLINE.<p><font face="Courier New"><b>tr -cs
+        A-Za-z '\012' &lt; filename1 &gt; filename2</b></font></p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>conv</b>(1), <b>more</b>(1)</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Will not handle ASCII NUL in <i>string1</i> or <i>string2</i>.
+        <b>tr</b> always deletes NUL from input.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>unshar - extracts files from shar archives</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>unshar</b> {-overwrite} {-nosort} <i>file1</i> <i>file2</i>
+        ...</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>Unshar</b> is a utility which extracts files from the
+        ubiquitous Unix shar archives. It has the following
+        advantages over existing unshar utilities:<p>- Small and
+        fast</p>
+        <p>- Handles many cat and sed formats</p>
+        <p>- Allows extraction of subdirectories</p>
+        <p>- Understands ./file type filenames</p>
+        <p>- Understands file continuation with &gt;&gt;</p>
+        <p>- Sorts file list by Subject: line</p>
+        <p>- Exits cleanly with CTRL-C</p>
+        <p><b>Unshar</b> treats quotes and imbedded escape
+        sequences intelligently and handles all the cat and sed
+        formats the author ever seen, including sed commands
+        which strip off more than one letter. There may be some
+        formats it won't handle, but I've yet to find them.</p>
+        <p>Invoke <b>unshar</b> with as many archive filenames as
+        you like. All the files in each archive will be extracted
+        into the current directory. If a file already exists, <b>unshar</b>
+        asks you how you want to handle it. Entering `Y' will
+        overwrite the existing file with the version in the
+        archive, `N' will skip past the file without extracting
+        it, and `A' will overwrite this file and any other
+        existing files without prompting you again. Including the
+        -o flag on the command line causes files to always be
+        overwritten.</p>
+    </li>
+</dir>
+
+<p><b>OPERATION</b></p>
+
+<dir>
+    <li><b>Unshar</b> scans through each archive specified on the
+        command line, looking for lines beginning with `cat' or
+        `sed'. All other lines are ignored. In particular, `echo'
+        lines are not echoed. This way, you don't get a load of
+        messages which are in any case fairly meaningless,
+        because the operations they are describing are
+        unsupported.<p>When a shar archive contains a file for
+        which a full pathname is given (as in source/file.c for
+        example) unshar will create whatever directories are
+        necessary. It also strips off leading /'s and ./'s, to
+        make filenames understandable by GS/OS.</p>
+        <p>Occasionally, a shar file distribution will contain a
+        file too large to fit into a single shar archive
+        (archives are typically limited to around 60K or so for
+        transmission over Usenet). One method some archivers use
+        to get around this is to split the large file into
+        several smaller parts, and use the shell `&gt;&gt;'
+        redirection operator to concatenate the parts together
+        while extracting the files. In order for this to work
+        properly, it is important that the archive files are
+        extracted in the correct sequence; otherwise, all the
+        pieces will get joined together in the wrong order.</p>
+        <p>To assist with this, <b>unshar</b> does a prescan over
+        all the files listed on the command line, and checks each
+        file for a &quot;Subject:&quot; line. If it finds such a
+        line, it scans it looking for any hints as to where the
+        file comes in the sequence. Most shar files you feed to
+        unshar will be directly from a Usenet sources or binaries
+        group, and will include a volume and issue reference on
+        the subject line. If <b>unshar</b> can't find such an
+        issue reference, it will look for a Part number and use
+        that instead.</p>
+        <p><b>Unshar</b> then extracts the archives starting with
+        the lowest numbered file. This helps to ensure that those
+        extra-large files are created correctly. You can tell
+        when such a file is being created, because <b>unshar</b>
+        says &quot;Extending file&quot; rather than
+        &quot;Unsharing file&quot;.</p>
+        <p>If for some reason you want the files to be unarchived
+        in the order listed on the command line, you can specify
+        the `-n' (nosort) switch, and no sorting will take place.</p>
+    </li>
+</dir>
+
+<p><b>HISTORY</b></p>
+
+<dir>
+    <li>V1.0 First release.<p>V1.1 Added support for some more
+        unusual uses of sed. </p>
+        <p>Increased speed, and reduced size slightly.</p>
+        <p>Fixed bug that truncated lines longer than 80 chars.</p>
+        <p>V1.2 Added support for sorting by Subject: line</p>
+        <p>Added support for file appending via &gt;&gt; </p>
+        <p>Fixed small bug in detection of disk write errors</p>
+    </li>
+</dir>
+
+<p><b>AUTHOR</b></p>
+
+<dir>
+    <li>Eddy Carroll (EMAIL: ecarroll@vax1.tcd.ie)<p>Apple //gs
+        port by Andy McFadden (fadden@uts.amdahl.com).</p>
+    </li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>wc - display a count of lines, words and characters</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>wc</b> [ -<b>lwc</b> ] [ <i>filename</i> ... ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>wc</b> counts lines, words, and characters in <i>filename</i>
+        s, or in the standard input if no filename appears. It
+        also keeps a total count for all named files. A word is a
+        string of characters delimited by SPACE, TAB, or NEWLINE
+        characters.</li>
+</dir>
+
+<p><b>OPTIONS</b></p>
+
+<dir>
+    <li>When <i>filename</i> s are specified on the command line,
+        their names will be printed along with the counts.<p>The
+        default is -<b>lwc</b> (count lines, words, and
+        characters).</p>
+        <p>-<b>l</b> Count lines.</p>
+        <p>-<b>w</b> Count words.</p>
+        <p>-<b>c</b> Count characters.</p>
+    </li>
+</dir>
+
+<p><b>EXAMPLE</b></p>
+
+<dir>
+    <li><font face="Courier New">example% wc $USRMAN/csh.1
+        $USRMAN/sh.1 $USRMAN/telnet.1</font><p><font
+        face="Courier New">1876 11223 65895
+        /usr/share/man/man1/csh.1</font></p>
+        <p><font face="Courier New">674 3310 20338
+        /usr/share/man/man1/sh.1</font></p>
+        <p><font face="Courier New">260 1110 6834
+        /usr/share/man/man1/telnet.1</font></p>
+        <p><font face="Courier New">2810 15643 93067 total</font></p>
+        <p><font face="Courier New">example%</font></p>
+    </li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>who - who is on the system</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>who</b> [ who-file ] [ am I ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>Who</b>, without an argument, lists the login name,
+        terminal name, and login time for each current UNIX user.<p>Without
+        an argument, <b>who</b> examines the <b>/etc/utmp</b>
+        file to obtain its information. If a file is given, that
+        file is examined. Typically the given file will be <b>/usr/adm/wtmp</b>,
+        which contains a record of all the logins since it was
+        created. Then <b>who</b> lists logins, logouts, and
+        crashes since the creation of the wtmp file. Each login
+        is listed with user name, terminal name (with `/dev/'
+        suppressed), and date and time. When an argument is
+        given, logouts produce a similar line without a user
+        name. Reboots produce a line with `x' in the place of the
+        device name, and a fossil time indicative of when the
+        system went down.</p>
+        <p>With two arguments, as in `who am I' (and also `who
+        are you'), <b>who</b> tells who you are logged in as.</p>
+    </li>
+</dir>
+
+<p><b>FILES</b></p>
+
+<dir>
+    <li>/etc/utmp</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li>getuid(2), utmp(5)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li><b>yes</b> - be repetitively affirmative</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li><b>yes</b> [ expletive ]</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>Yes</b> repeatedly outputs &quot;y&quot;, or if <i>expletive</i>
+        is given, that is output repeatedly. Termination is by
+        interrupt.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>alarm - set and reset alarm timer</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;gno/gno.h&gt;<p>long int <b>alarm</b>(long
+        int <i>seconds</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>alarm sets the counter on the calling process' alarm
+        timer to the value specified in <i>seconds</i>. If <i>seconds</i>
+        is (long int) 0, the alarm timer is disabled.<p>When an
+        alarm timer terminates (by counting down to 0), the
+        calling process is sent a SIGALRM signal.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>The amount of time previously remaining in the timer is
+        returned. No errors are possible.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>signal</b>(2), <b>sigpause</b>(2)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>dup,dup2 - duplicate open file descriptors</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;gno/gno.h&gt;<p>int <b>dup</b>(int <i>filedes</i>);</p>
+        <p>int <b>dup2</b>(int <i>filedes</i>, int <i>filedes2</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>Given the file descriptor of a valid open file, <b>dup</b>
+        creates a new file descriptor that is synonymous with <i>filedes</i>.
+        The new file descriptor is returned. The second form of
+        the call forces an existing file descriptor <i>filedes2</i>
+        to refer to the same file as <i>filedes</i>. If <i>filedes2</i>
+        already refers to an open file, it is closed first.</li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li><b>dup</b> returns the new file descriptor, and <b>dup2</b>
+        returns 0 if the calls are successful. In the event of an
+        error, -1 is returned and <b>errno</b> is set as follows:<p>[EBADF]
+        filedes refers to an invalid file descriptor (not an open
+        file)</p>
+        <p>[EMFILE] no more files can be opened; process is at
+        current limit (32).</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>fork</b>(2), <b>open</b>(2)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>execve - replace current process with an executable image
+        from a file</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;gno/gno.h&gt;<p>int <b>execve</b>(char *<i>pathname</i>,
+        char *<i>cmdline</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>execve</b> is the preferred method for loading program
+        files to be executed under the GNO system. A new userID
+        is allocated for the process, and the GS/OS System Loader
+        is used to bring the executable file specified by
+        pathname into memory. <i>pathname</i> can be a partial or
+        complete path. The executable loaded replaces the
+        executable associated with the current process.<p>If the
+        executable file does not contain an OMF Stack Segment
+        (SEGKIND = $12), a default stack of 4096 bytes is
+        allocated to the process. The direct-page pointer is set
+        to the bottom of the stack memory (for C programs this is
+        irrelevant).</p>
+        <p>The parameter <i>cmdline</i> is the list of arguments
+        to be passed to the new process (a copy is actually
+        passed). C programs parse cmdline automatically, and the
+        individual pieces can be accessed through the argc/argv
+        arguments to main(). <i>cmdline</i> can be accessed from
+        assembly langugage through the X (high-order word of <i>cmdline</i>)
+        and Y (low-order word) registers. However, if the
+        executable file is of file type S16 ($B3), the <i>cmdline</i>
+        argument is ignored and the X&amp;Y registers are set to
+        null (i.e. the command line is only passed to an EXE
+        executable). The 8 characters &quot;BYTEWRKS&quot; are
+        prepended to <i>cmdline</i> before being passed to the
+        process (this is the same identifier used by the ORCA
+        shell). This Shell Identifier distinguishes the GNO and
+        ORCA environments from others that don't support the full
+        range of shell calls, and can be accessed from C with the
+        library function <b>shellid</b>(). The A register is set
+        to the userID allocated for the process.</p>
+        <p>GS/OS prefixes 1 and 9 are set to the pathname of the
+        directory containing the executable file; if the length
+        of the path exceeds 64 characters prefix 1 is set to the
+        null prefix (length 0).</p>
+        <p>The following information is inherited by the new
+        executable: current machine state, controlling TTY,
+        process group ID, and prefixes 0 and 8. </p>
+        <p>Caught signals are reset to the default action.
+        Ignored signals remain ignored across the <b>execve</b>.
+        Any signals in the parent's queue are not passed to the
+        child, and the child is started with no signals blocked.
+        The child inherits all the open files of its parent.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>A successful <b>execve</b> does not return, as the
+        current executable is replaced with the one specified in
+        the call. If for some reason the call fails, execve
+        returns SYSERR (-1), and <b>errno</b> is set to one of
+        the following:<p>[ENOENT] the <i>pathname</i> specified
+        does not exist</p>
+        <p>[EIO] some general I/O error occurred trying to load
+        the executable</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>ORCA/C 1.3 and previous ignore any stack space allocated
+        for it by the GS/OS Loader (which execve calls) or by
+        default in execve. Stack space in ORCA/C programs is
+        determined by code in the .root object file, and can be
+        set with the #pragma stacksize directive. Read the
+        chapter on GNO Compliance in the <i>GNO Kernel Reference
+        Manual</i> for more information on this topic. ORCA/C 2.0
+        and newer use the system-provided stack space.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>exec</b>(2), <b>fork</b>(2), <b>wait</b>(2), <b>ioctl</b>(2),
+        <b>tty</b>(4), <i>GNO Kernel Reference Manual</i></li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>fork - start a new process from inside the current
+        application space</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;gno/gno.h&gt;<p>int <b>fork</b>(void *<i>addr</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>fork</b>'s argument <i>addr</i> is typically the
+        address of a C function, although it can be any valid
+        address inside the IIGS RAM space. <b>fork</b> creates a
+        new entry in the process table, and sets up default
+        settings for the new process. The process is allocated 1K
+        (1024 bytes) of stack space, and the direct page is set
+        to the beginning of this memory. The process is executed
+        in 16-bit full native mode, and the registers upon entry
+        to the routine are set as follows:<p>A the userID
+        assigned to the process</p>
+        <p>X 0</p>
+        <p>Y 0</p>
+        <p>The child inherits the memory shadowing and machine
+        state parameters of the parent, as well as signal
+        blocking information and the ID of the controlling TTY.
+        In addition, the child inherits all the open files of its
+        parent.</p>
+        <p>A forked process may share code with other children or
+        the parent. However, this is only allowed in a forward
+        manner; any forked process that exits by function return
+        will be terminated. Note that any shared global variables
+        will need to be moderated with some type of mutual
+        exclusion, either the kernel semaphore(2) routines or
+        custom routines. This includes C stdio routines.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li><b>fork</b> returns the process ID of the child, or -1
+        (SYSERR) if an error occurs, in which case <b>errno</b>
+        is set as follows:<p>[ENOMEM] not enough memory to create
+        the new process</p>
+        <p>[EAGAIN] all process slots full; no more can be
+        created</p>
+    </li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li>There is no way to pass parameters directly to a child
+        with <b>fork</b>(). Use <b>fork2</b>() instead.</li>
+</dir>
+
+<p><b>CAVEATS</b></p>
+
+<dir>
+    <li>Most UNIX <b>fork</b>s take no parameters; they copy the
+        entire address space of the calling process and return
+        with a different value in the parent and child. Due to
+        hardware limitations, this sort of manipulation isn't
+        possible on the IIgs. UNIX programs utilizing <b>fork</b>
+        will have to be modified slightly to work under GNO.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>fork2</b>(2), <b>exec</b>(2), <b>execve</b>(2), <b>wait</b>(2),
+        <b>screate</b>(2)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>getpid, getpgrp, getppid - return information about
+        processes</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;gno/gno.h&gt;<p>int <b>getpid</b>(void);</p>
+        <p>int <b>getpgrp</b>(int <i>pid</i>);</p>
+        <p>int <b>getppid</b>(void);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>The process ID is a unique value associated with a
+        process, and is needed for many system calls. pid's can
+        range from 0 (Kernel Null Process) to 32767. Some
+        programs use <b>getpid</b> to seed random number
+        generators. A much better approach on the IIGS is to use
+        the horizontal and vertical positions of the electron
+        gun, which can be obtained by reading the word value at
+        absolute memory location $E0C02E.<p><b>getpgrp</b>
+        returns the process group ID of the specified process, <i>pid</i>.
+        This function is usually used when you wish to send a
+        signal to all members of a process group using <b>kill</b>(2).</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li><b>getpid</b>: The process ID of the caller is returned.
+        No errors are possible.<p><b>getppid</b>: The process ID
+        of the caller's parent is returned. No errors are
+        possible.</p>
+        <p><b>getpgrp</b>: The process group ID of the specified
+        process is returned. In the event of an error, getpgrp
+        returns -1 and sets <b>errno</b> to the appropriate error
+        code:</p>
+        <p>[ESRCH] pid is not a valid process ID</p>
+    </li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li><b>getpgrp</b>() is provided solely for compatibility
+        with previous versions of the UNIX operating system. The
+        new Job Control interface should be used exclusively in
+        new software.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>fork</b>(2), <b>job control</b>(2), <b>ioctl</b>(2), <i>GNO
+        Kernel Reference Manual</i></li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>getuid, geteuid, getgid, getegid - get user and group
+        identity<p>getpgrp - get process group</p>
+    </li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;sys/types.h&gt;<p>uid_t = <b>getuid</b>(void)</p>
+        <p>uid_t = <b>geteuid</b>(void)</p>
+        <p>gid_t = <b>getgid</b>(void)</p>
+        <p>gid_t = <b>getegid</b>(void)</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>Getuid</b> returns the real user ID of the current
+        process, <b>geteuid</b> the effective user ID. The real
+        user ID identifies the person who is logged in. The
+        effective user ID gives the process additional
+        permissions during execution of &quot;set-user-ID&quot;
+        mode processes, which use getuid to determine the
+        real-user-id of the process that invoked them.<p><b>Getgid</b>
+        returns the real group ID of the current process, <b>getegid</b>
+        the effective group ID. The real group ID is specified at
+        login time. The effective group ID is more transient, and
+        determines additional access permission during execution
+        of a ``set-group-ID'' process, and it is for such
+        processes that getgid is most useful.</p>
+    </li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li>The <b>setr</b>*() functions are not currently
+        implemented in GNO/ME, because set-uid and set-group-ID
+        behavior is specific to the UNIX filesystem.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>setreuid</b>(2), <b>setregid</b>(2), <b>setgid</b>(3),
+        <b>tty</b>(4)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>intro - introduction to GNO system calls</li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>This section describes, in alphabetical order, the system
+        calls and kernel interfaces available for GNO. Certain
+        distinctions of purpose are made in the headings. </li>
+</dir>
+
+<p><b>Manual Page Command Syntax</b></p>
+
+<dir>
+    <li>Unless otherwise noted, calls described in the <b>SYNOPSIS</b>
+        section of a manual page accept parameters and require
+        the<p>name [- option ...] [ cmdarg ...]</p>
+        <p>where:</p>
+        <p>[] Surround an option or cmdarg that is not required.</p>
+        <p>... Indicates multiple occurrences of the option or
+        cmdarg.</p>
+        <p>name The name of an executable file.</p>
+        <p>option (Almost always preceded by a &quot;-&quot;.)</p>
+        <p>noargletter ... or,</p>
+        <p>argletter optarg [,...]</p>
+        <p>noargletter A single letter representing an option
+        without an option-argument. Note that more than one
+        noargletter option can be grouped after one
+        &quot;-&quot;.</p>
+        <p>argletter A single letter representing an option
+        requiring an option-argument.</p>
+        <p>optarg An option-argument (character string)
+        satisfying a preceding argletter. Note that groups of
+        optargs following an argletter must be separated by white
+        space and quoted.</p>
+        <p>cmdarg Path name (or other command argument) not
+        beginning with a &quot;-&quot;, or &quot;-&quot; by
+        itself indicating the standard input.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><i>GNO/ME Kernel Reference Manual</i></li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>ioctl - control device</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;sys/ioctl.h&gt;<p>int <b>ioctl</b>(int <i>fd</i>,
+        unsigned long <i>request</i>, void *<i>argp</i>)</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>Ioctl</b> performs a variety of functions on open file
+        descriptors. In particular, many operating
+        characteristics of character special files (e.g.
+        terminals) may be controlled with <b>ioctl</b> requests.
+        The writeups of various devices in section 4 discuss how <b>ioctl</b>
+        applies to them.<p>An <b>ioctl</b> <i>request</i> has
+        encoded in it whether the argument is an &quot;in&quot;
+        parameter or &quot;out&quot; parameter, and the size of
+        the argument argp in bytes. Macros and defines used in
+        specifying an <b>ioctl</b> request are located in the
+        file &lt;sys/ioctl.h&gt;.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>If an error has occurred, a value of -1 is returned and <b>errno</b>
+        is set to indicate the error.</li>
+</dir>
+
+<p><b>ERRORS</b></p>
+
+<dir>
+    <li><b>Ioctl</b> will fail if one or more of the following
+        are true:<p><font face="Courier New">[EBADF]</font> <i>Fd</i>
+        is not a valid descriptor.</p>
+        <p><font face="Courier New">[ENOTTY]</font> <i>Fd</i> is
+        not associated with a character special device.</p>
+        <p><font face="Courier New">[ENOTTY]</font> The specified
+        request does not apply to the kind of object that the
+        descriptor fd references.</p>
+        <p><font face="Courier New">[EINVAL]</font> <i>Request</i>
+        or <i>argp</i> is not valid.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>execve</b>(2), <b>tty</b>(4)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>tcnewpgrp, settpgrp, tctpgrp - interface for the new job
+        control model</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;gno/gno.h&gt;<p>int <b>tcnewpgrp</b>(int <i>fdtty</i>);</p>
+        <p>int <b>settpgrp</b>(int <i>fdtty</i>);</p>
+        <p>int <b>tctpgrp</b>(int <i>fdtty</i>, int <i>pid</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>The job control interface is used to control what
+        processes are ``in the foreground'' on a particular
+        terminal. Every tty has a process group. Each process is
+        a member of a process group. A process is a foreground
+        process on a tty if and only if that process and the
+        terminal belong to the same process group. Certain
+        characters typed on a tty with a nonzero process group
+        produce signals sent to every process which is a member
+        of the group (e.g. ^C). <p>A process is suspended
+        (stopped) if it performs a sufficiently invasive
+        operation on a tty with a different process group. This
+        includes these job control calls, reads from a terminal,
+        and writes to a terminal if configured to do so with <b>ioctl</b>(2).
+        When a tty file is first opened, it is assigned process
+        group 0; init has process group 0. As init launches login
+        processes on various ttys, it assigns process groups to
+        those ttys and processes.</p>
+        <p><b>tcnewpgrp</b>(fdtty): Allocates a new process group
+        and assigns it to the terminal referred to by fdtty. If
+        the calling process is not in the foreground, it is sent
+        SIGTTOU.</p>
+        <p><b>settpgrp</b>(fdtty): Sets the current process to
+        have the same process group as fdtty.</p>
+        <p><b>tctpgrp</b>(fdtty,pid): Sets the tty to the same
+        process group as pid, where pid is the current process or
+        a descendant of it. </p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>The calls will return 0 if no error occurs; otherwise,
+        they'll return -1 and set <b>errno</b> to one of the
+        following:<p><font face="Courier New">[EBADF]</font> <i>fdtty</i>
+        is not a valid file descriptor</p>
+        <p><font face="Courier New">[ENOTTY]</font> <i>fdtty</i>
+        does not refer to a terminal file</p>
+        <p><font face="Courier New">[ESRCH]</font> <i>pid</i> is
+        not a valid process identifier</p>
+    </li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li>Following are some example uses of the job control
+        interface.<p>&#149; Forking a pipeline in a job-control
+        shell: The shell starts with <b>tcnewpgrp</b>(fdtty), so
+        that the tty is in the new process group before there are
+        even any children. It then forks each process in the
+        pipeline. Each process does <b>settpgrp</b>(fdtty), thus
+        joining the new process group.</p>
+        <p>&#149; Handling a stopped child process: When the
+        shell sees that a pipeline has stopped or exited, it does
+        <b>tctpgrp</b>(fdtty,getpid()) to set the tty to its own
+        process group. To resume the pipeline it does <b>tctpgrp</b>(fdtty,pid)
+        where pid is one of the child processes, then sends
+        SIGCONT.</p>
+        <p>&#149; Starting a process under a new tty: When, for
+        instance, telnetd wants to grab a pseudo-tty, it opens
+        the pty and forks a child process. The child does <b>tcnewpgrp</b>(fdtty)
+        to give the tty a real process group, then <b>settpgrp</b>(fdtty)
+        to place itself into the foreground.</p>
+        <p>Security under this scheme is trivial. There is no way
+        a process can join a process group except by settpgrp(),
+        and that requires a descriptor open to a tty with that
+        pgrp. To make a tty have that pgrp requires either <b>tcnewpgrp</b>(),
+        in which case nobody else is using the pgrp, or <b>tctpgrp</b>(),
+        which reduces to the first problem of having a process in
+        the process group. End of security proof. (Wasn't that
+        easy?) Note that `using' must be defined as use both by
+        ttys and by processes; the system keeps a table of pgrps,
+        each with a total tty + process reference count. When the
+        reference count reaches zero, the pgrp is automatically
+        deallocated.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>ioctl</b>(2), <b>tty</b>(4), <b>signal</b>(2), <b>kill</b>(2),
+        <i>GNO Shell Reference Manual</i></li>
+</dir>
+
+<p><b>CREDITS</b></p>
+
+<dir>
+    <li>This job control interface was designed by Dan Bernstein
+        (brnstnd@kramden.acf.nyu.edu). He was inspired by Chris
+        Torek, and dedicated the system to Mark Teitelbaum. The
+        text of this manpage is derived from his original
+        specifications.<p>The GNO/ME implementation was written
+        strictly from specs.</p>
+    </li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>kill - send a signal to a process</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;gno/gno.h&gt;<p>int <b>kill</b>(int <i>pid</i>,
+        int <i>sig</i>)</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>kill</b> is used to send a signal to a process or
+        group of processes. Signals are software interrupts; they
+        act just like hardware interrupts and can also be used
+        for basic IPC (Inter-process communication). The various
+        signals are described in <b>signal</b>(2).<p><i>sig</i>
+        can be a signal number, or it can be 0, in which case no
+        signal is sent, but error checking is done (this can be
+        used to verify a process ID). If <i>sig</i> has been
+        blocked (<b>sigblock</b>(2)), the signal is deferred
+        until it is unblocked, and <b>kill</b> returns
+        immediately. Any previously pending signals of the same <i>sig</i>
+        are lost (i.e. signals are not stacked).</p>
+        <p>If <i>pid</i> is 0, the signal is sent to all
+        processes with the same process group ID as the caller,
+        except for system processes.</p>
+        <p>Processes may signal themselves, in which case the
+        signal handler is invoked immediately (if one is
+        installed).</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>Normally <b>kill</b> returns SYSOK (0). The following
+        conditions can cause <b>kill</b> to return SYSERR (-1):<p><font
+        face="Courier New">[ESHRC]</font> <i>pid</i> does not
+        correspond to an existing process</p>
+        <p><font face="Courier New">[EINVAL]</font> <i>sig</i>
+        specifies an invalid signal number</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>sigblock</b>(2), <b>signal</b>(2), <b>wait</b>(2)</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Do not attempt to send signals from inside a CDA (Classic
+        Desk Accessory) or interrupt handler.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>pipe - create an interprocess communication channel</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;gno/gno.h&gt;<p>int <b>pipe</b>(int <i>filedes[2]</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>The <b>pipe</b> system call creates an I/O mechanism
+        called a pipe. The file descriptors returned can be used
+        in read and write operations. When the pipe is written
+        using the descriptor <i>filedes[1]</i> up to 4096 bytes
+        of data are buffered before the writing process is
+        suspended. A read using the descriptor <i>filedes[0]</i>
+        will pick up the data.<p>It is assumed that after the
+        pipe has been set up, two (or more) cooperating processes
+        (created by subsequent fork calls) will pass data through
+        the pipe with Read and Write calls.</p>
+        <p>The shell has a syntax to set up a linear array of
+        processes connected by pipes.</p>
+        <p><b>Read</b> calls on an empty pipe (no buffered data)
+        with only one end (all write file descriptors closed)
+        returns an end-of-file.</p>
+        <p>A signal (SIGPIPE) is generated if a write on a pipe
+        with only one end is attempted.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>The function value zero is returned if the pipe was
+        created; -1 if an error occurred.</li>
+</dir>
+
+<p><b>ERRORS</b></p>
+
+<dir>
+    <li>The pipe call will fail if:<p><font face="Courier New">[EMFILE]</font>
+        Too many descriptors are active.</p>
+        <p><font face="Courier New">[ENFILE]</font> The system
+        file table is full.</p>
+        <p><font face="Courier New">[EFAULT]</font> The fildes
+        buffer is in an invalid area of the process's address
+        space.</p>
+    </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><i>GNO Shell Users Manual</i>, <b>read</b>(2), <b>write</b>(2),
+        <b>fork</b>(2)</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Should more than 4096 bytes be necessary in any pipe
+        among a loop of processes, deadlock will occur.</li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li>In the above text, mention is made to UNIX read and write
+        calls. On the Apple IIgs, these refer to any system calls
+        that do I/O, namely GS/OS ReadGS, WriteGS; TextTools
+        calls; and C library I/O calls such as read, fread, etc.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>screate, sdelete, swait, ssignal - semaphore operations</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;gno/gno.h&gt;<p>int <b>swait</b>(int <i>sem</i>);</p>
+        <p>int <b>ssignal</b>(int <i>sem</i>);</p>
+        <p>int <b>screate</b>(int <i>count</i>);</p>
+        <p>int <b>sdelete</b>(int <i>sem</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>screate</b> is used to allocate a semaphore from the
+        kernel semaphore manager. Semaphores are the most basic
+        form of interprocess communication, and these routines
+        provide the power necessary to solve a large number of
+        synchronization and communication problems. (See an
+        Operating Systems text).<p>The initial <i>count</i>
+        determines how many times <b>swait</b> can be called
+        before processes are blocked. <i>count</i> must be &gt;=
+        0, and is usually set to 1. <b>screate</b> returns a
+        semaphore ID number as an integer. This ID must be used
+        in all the other semaphore calls.</p>
+        <p><b>sdelete</b> releases the specified semaphore, and
+        returns all processes that were blocked to a ready state.</p>
+        <p><b>swait</b> decrements the value of the semaphore
+        (initially specified by <i>count</i> ) by 1. If the
+        semaphore count is less than zero, the process is blocked
+        and queued for release by <b>ssignal</b>.</p>
+        <p><b>ssignal</b> increments the semaphore count by one.
+        If the semaphore count is less than zero, <b>ssignal</b>
+        releases arbitrarily a process that had been blocked;
+        FIFO operation is not guaranteed.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>All the functions return SYSERR (-1) if an error occurs,
+        and an OK (0) if no error occurs.</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>There is currently no mechanism for deallocating
+        semaphores that are orphaned by abnormal process
+        termination.</li>
+</dir>
+
+<p><b>HISTORY</b></p>
+
+<dir>
+    <li>These semaphore routines were designed for XINU, written
+        by Douglas Comer.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>setdebug - set debugging output options</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;gno/gno.h&gt;<p>int <b>setdebug</b>(int <i>options</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>setdebug</b> enables and disables various debugging
+        routines built into the kernel. The routines display
+        useful debugging information to stderr (except for
+        dbgSIG, see BUGS). Debug output is enabled by setting the
+        corresponding bit in options, according to the following
+        table. To turn off all debugging output, options should
+        be set to 0. The various debug options are #defined in
+        &lt;gno/gno.h&gt;.<p><font face="Courier New">dbgGSOS</font>
+        prints out the call numbers of any GS/OS or ORCA/shell
+        calls that are made. The number is printed in hexadecimal
+        format and is prefixed with a '$' character. For this and
+        the other GS/OS call debug options, the entire call
+        sequence is enclosed in parenthesis '()' to ease tracing
+        multiple levels of calls.</p>
+        <p><font face="Courier New">dbgPATH</font> If this flag
+        is set, every time a filename argument to a GS/OS or
+        shell call is fully expanded the expanded version is
+        displayed as follows: &quot;<font face="Courier New">EP:&nbsp;&lt;fullpath&gt;</font>&quot;.</p>
+        <p><font face="Courier New">dbgERROR</font> For every
+        GS/OS call that is made, if an error occurs the error
+        code is printed in inverse lettering in hexidecimal
+        format. The code is prefixed with a '#' to distinguish
+        the error code from a call code on terminals that do not
+        support inverse mode. If no error occurs on the call, no
+        code is printed. This option has no effect unless <font
+        face="Courier New">dbgGSOS</font> is also enabled.</p>
+        <p><font face="Courier New">dbgSIG</font> This flag
+        enables signal tracing. Each time a signal is sent,
+        whether by kill(2), job control or keyboard, the signal
+        number and target process is displayed. The format is:
+        &quot;<font face="Courier New">kill (-signum): pid: tpid</font>&quot;.</p>
+        <p><font face="Courier New">dbgSYSCALL</font> The
+        parameter lists to common system calls are displayed by
+        this option flag. The actual format of the output varies
+        from call to call. The calls that currently support this
+        flag are <b>execve</b>(2), <b>fork</b>(2), and the job
+        control routines.</p>
+        <p><font face="Courier New">dbgPBLOCK</font> The memory
+        address of GS/OS and Shell parameter blocks is printed
+        for each call. As with <font face="Courier New">dbgERROR</font>,
+        this option has no effect unless <font face="Courier New">dbgGSOS</font>
+        is also enabled.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li><b>setdebug</b> returns the previous value of the debug
+        options word.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>fork</b>(2),<b>execve</b>(2),<b>ioctl</b>(2),<b>kill</b>(2)</li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>Due to problems associated with signals that are sent
+        during process termination, <font face="Courier New">dbgSIG</font>
+        prints its information to standard output instead of
+        standard error.</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>sigblock,sigmask - temporarily block signals</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;signal.h&gt;<p>long <b>sigblock</b>(long <i>mask</i>);</p>
+        <p>#define <b>sigmask</b>(<i>signum</i>)</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>sigblock</b> is used to temporarily block the
+        reception of signals. The input parameter <i>mask</i> is
+        a bit vector that specifies which signals are to be
+        blocked; a 1 in a bit n will block signal n+1. The mask
+        is bitwise-ored with the current signal mask to create
+        the new signal mask.<p><b>sigmask</b> is a macro that can
+        be used to calculate signal masks for <b>sigblock</b>. It
+        takes a signal number (<i>signum</i>) as an argument and
+        returns a mask that can then be passed to <b>sigblock</b>.</p>
+        <p>If a signal is sent to a process but is blocked, the
+        event is recorded for later release by <b>sigsetmask</b>(2).
+        Blocked signals are not stacked; further occurrences of a
+        blocked signal will overwrite any previous pending signal
+        of the same <i>signum</i>.</p>
+        <p>It is not possible to block SIGKILL, SIGCONT, or
+        SIGSTOP. This restriction is silently enforced by the
+        system.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>The previous value of the signal mask is returned.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>kill</b>(2), <b>sigsetmask</b>(2), <b>signal</b>(2)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>signal - a simplified software signal interface</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;signal.h&gt;<p>void (*<b>signal</b>(int <i>sig</i>;
+        void (*<i>func</i>(void))(void)</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>Signals are a basic form of IPC (inter-process
+        communication), and are generally used to notify a
+        process of some atypical event (although there is little
+        restriction on actual use). For example, signals are sent
+        in each of the following situations: user typing certain
+        chars at a terminal (^C, ^Z, etc.); execution of an
+        invalid instruction; by request of another process (<b>kill</b>);
+        stack overflow; a process making an input request while
+        running in the background; an attempt to write to a pipe
+        with no reader.<p>Most signals cause termination, unless
+        a handler is installed, or the signal is set to be
+        ignored. Certain signals cannot have their default action
+        modified; the system silently enforces this restriction.
+        The following is a list of signals and default actions
+        (taken from signal.h).</p>
+        <p>SIGHUP 1 hangup</p>
+        <p>SIGINT 2 interrupt</p>
+        <p>SIGQUIT 3 quit</p>
+        <p>SIGILL 4 illegal instruction</p>
+        <p>SIGTRAP 5 trace trap</p>
+        <p>SIGABRT 6 abort (generated by abort(3) routine) </p>
+        <p>SIGEMT 7 emulator trap </p>
+        <p>SIGFPE 8 arithmetic exception </p>
+        <p>SIGKILL 9 kill (cannot be caught, blocked, or ignored)
+        </p>
+        <p>SIGBUS 10 bus error </p>
+        <p>SIGSEGV 11 segmentation violation </p>
+        <p>SIGSYS 12 bad argument to system call </p>
+        <p>SIGPIPE 13 write on a pipe or other socket with no one
+        to read it </p>
+        <p>SIGALRM 14 alarm clock </p>
+        <p>SIGTERM 15 software termination signal </p>
+        <p>SIGURG 16@ urgent condition present on socket </p>
+        <p>SIGSTOP 17 | + stop (cannot be caught, blocked, or
+        ignored) </p>
+        <p>SIGTSTP 18 | + stop signal generated from keyboard </p>
+        <p>SIGCONT 19@ continue after stop (cannot be blocked) </p>
+        <p>SIGCHLD 20@ child status has changed </p>
+        <p>SIGCLD 20 System V name for SIGCHLD </p>
+        <p>SIGTTIN 21 | + background read attempted from control
+        terminal </p>
+        <p>SIGTTOU 22 | + background write attempted to control
+        terminal </p>
+        <p>SIGIO 23@ input/output possible on a file descriptor </p>
+        <p>SIGPOLL SIGIO System V name for SIGIO </p>
+        <p>SIGXCPU 24 exceeded CPU time limit </p>
+        <p>SIGUSR1 30 user defined signal 1 </p>
+        <p>SIGUSR2 31 user defined signal 2 </p>
+        <p>If <i>func</i> is SIG_DFL, the defult action for the
+        signal is reinstalled. This is normally termination if
+        the signal isn't ignored or caught. Signals marked with
+        an @ are discarded, and signals marked with | + cause the
+        process to stop. If <i>func</i> is SIG_IGN, any future
+        occurences of the signal are discarded, as well as any
+        pending instances. Any other value is treated as the
+        address of a handler routine. The system will block
+        further occurences of the signal before the handler is
+        called, and will unblock the signal automatically upon
+        return from the handler. The handler remains installed
+        after return, unlike earlier UNIX signal facilities.</p>
+        <p>If a signal occurs during certain system calls (<b>wait</b>(),
+        and input from a TTY), the call is automatically
+        restarted upon return from the handler.</p>
+        <p>A forked child inherits all signal information,
+        including pending signals and blocking and handler
+        information. <b>exec</b>() and <b>execve</b>() restore
+        all signal information to defaults and purge pending
+        signals.</p>
+    </li>
+</dir>
+
+<p><b>NOTES</b></p>
+
+<dir>
+    <li>The signal handler should be defined as follows:<p>void <b>handler</b>
+        (int <i>sig</i>, int <i>code</i>)</p>
+        <p><i>sig</i> is the signal that invoked the handler, and
+        <i>code</i> is additional information about the interrupt
+        condition. Currently, <i>code</i> is always 0. The
+        handler should probably also be compiled using the
+        #pragma databank 1 directive, in the event the signal
+        handler is not in the same bank as the C global data
+        segment (the handler is called with the data bank equal
+        to the program bank).</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>The previous action is returned on a successful call.
+        Otherwise, -1 is returned. <font face="Courier New">[EINVAL]</font>
+        will occur on any of the following conditions:<p>sig
+        specifies an invalid signal number.</p>
+        <p>An attempt is made to ignore or supply a handler for
+        SIGKILL or SIGSTOP.</p>
+        <p>An attempt is made to ignore SIGCONT (by default
+        SIGCONT is ignored).</p>
+    </li>
+</dir>
+
+<p><b>CAVEATS</b></p>
+
+<dir>
+    <li>ORCA/C already provides a signal() function, but it
+        doesn't do a whole lot. GNO's signal.h file replaces the
+        one that comes with ORCA.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>execve</b>(2), <b>fork</b>(2), <b>kill</b>(2), <b>sigblock</b>(2),
+        <b>sigsetmask</b>(2), <b>wait</b>(2), <b>tty</b>(4)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>sigpause - suspend process until a signal arrives</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;signal.h&gt;<p>int <b>sigpause</b>(long int <i>mask</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>sigpause</b> suspends execution of the calling process
+        until a signal arrives. The <i>mask</i> parameter is
+        assigned to the set of blocked signals (<b>sigsetmask</b>),
+        and then the process is paused. When a signal arrives,
+        the regular signal handler (if any) is executed, and then
+        the original signal mask is restored before returning to
+        the caller. Usually <i>mask</i> is 0 (zero) to pause
+        until any signal arrives.<p><b>sigpause</b> is normally
+        used in situations where one must protect a critical
+        section. A typical use begins with sigblock to block a
+        signal (and enable mutual exclusion); variables modified
+        on the occurrence of that signal are then manipulated,
+        code is executed, etc. To end the critical section and
+        wait for more work, sigpuase is called.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li><b>sigpause</b> always returns an error (-1) and sets <b>errno</b>
+        to EINTR.</li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>signal</b>(2), <b>sigblock</b>(2), <b>sigsetmask</b>(2)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>sigsetmask - set signal mask</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;signal.h&gt;<p>long <b>sigsetmask</b>(long <i>mask</i>);</p>
+        <p>#define <b>sigmask</b>(<i>signum</i>)</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>sigsetmask</b> is usually used to restore signal masks
+        after modification by <b>sigblock</b>. The parameter mask
+        is the absolute value the process signal mask will be set
+        to (compare to sigblock, which adds the argument to the
+        set of blocked signals).<p>If there are pending instances
+        of signals which become unblocked by the <b>sigsetmask</b>
+        call, they are 'released' into the system signal queue
+        and their 'pending' status is cleared. The system signal
+        queue is maintained by the kernel null process, and is
+        used in situations where signals could not normally be
+        sent (such as interrupt handlers).</p>
+        <p><b>sigmask</b> is a macro that can be used to
+        calculate signal masks for <b>sigsetmask</b>. It takes a
+        signal number, as listed in <b>signal</b>(2), as an
+        argument and returns a mask corresponding to that signal.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>The previous value of the signal mask is returned.</li>
+</dir>
+
+<p><b>CAVEATS</b></p>
+
+<dir>
+    <li>If somehow the process re-blocks a signal released by <b>sigsetmask</b>
+        before the system signal queue processes it, it will be
+        blocked and marked as pending. This can happen if a
+        signal handler makes a <b>sigblock</b> call. </li>
+</dir>
+
+<p><b>SEE ALSO</b></p>
+
+<dir>
+    <li><b>kill</b>(2), <b>sigblock</b>(2), <b>signal</b>(2)</li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>stat, fstat, lstat - return status information on
+        indicated files</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;sys/stat.h&gt;<p>int <b>stat</b>(const char
+        *<i>filename</i>, struct stat *<i>s_buf</i>);</p>
+        <p>int <b>fstat</b>(int <i>filedes</i>, struct stat *<i>s_buf</i>);</p>
+        <p>int <b>lstat</b>(const char *<i>filename</i>, struct
+        stat *<i>s_buf</i>);</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li>These calls are used to retreive status information about
+        files. They do much the same thing as the GS/OS call
+        GetFileInfo, except that they return the information in a
+        format compatible with UNIX's stat calls, and also
+        provide information about pipes and GNO Character
+        Devices.<p><b>stat</b> takes arguments <i>filename</i>, a
+        NUL-terminated string naming the file to get information
+        on, and <i>s_buf</i>, a pointer to a <font
+        face="Courier New">stat</font> structure, defined in
+        &lt;sys/stat.h&gt;. <i>filename</i> can be a partial or a
+        complete path. The miscellaneous types in <font
+        face="Courier New">struct stat</font>, below, are defined
+        in &lt;sys/types.h&gt;, automatically included by stat.h.</p>
+        <p><font size="2" face="Courier New">struct stat {</font></p>
+        <p><font size="2" face="Courier New">dev_t st_dev; /* ID
+        number of device file resides on */</font></p>
+        <p><font size="2" face="Courier New">ino_t st_ino; /*
+        inode number of file */</font></p>
+        <p><font size="2" face="Courier New">unsigned short
+        st_mode; /* type of file and mode */</font></p>
+        <p><font size="2" face="Courier New">short st_nlink; /*
+        number of links to file = 0 */</font></p>
+        <p><font size="2" face="Courier New">uid_t st_uid; /*
+        user id = 0 */</font></p>
+        <p><font size="2" face="Courier New">gid_t st_gid; /*
+        group id = 0 */</font></p>
+        <p><font size="2" face="Courier New">dev_t st_rdev; /*
+        device type ID */</font></p>
+        <p><font size="2" face="Courier New">off_t st_size; /*
+        length of file in bytes */</font></p>
+        <p><font size="2" face="Courier New">time_t st_atime; /*
+        last access time (same as mod time on Apple IIGS) */</font></p>
+        <p><font size="2" face="Courier New">int st_spare1; /*
+        reserved */</font></p>
+        <p><font size="2" face="Courier New">time_t st_mtime; /*
+        last modification time */</font></p>
+        <p><font size="2" face="Courier New">int st_spare2; /*
+        reserved */</font></p>
+        <p><font size="2" face="Courier New">time_t st_ctime; /*
+        file creation time */</font></p>
+        <p><font size="2" face="Courier New">int st_spare3; /*
+        reserved */</font></p>
+        <p><font size="2" face="Courier New">long st_blksize; /*
+        size in bytes of blocks on filesystem */</font></p>
+        <p><font size="2" face="Courier New">long st_blocks; /*
+        number of blocks file uses */</font></p>
+        <p><font size="2" face="Courier New">long st_spare4[2];
+        /* reserved */</font></p>
+        <p><font size="2" face="Courier New">};</font></p>
+        <p>The items marked 'reserved' are not currently used but
+        are reserved for future expansion; do not use these
+        fields for any reason. <font face="Courier New">st_dev</font>
+        is the device number the file resides on. This number is
+        the same as the GS/OS device ID number. <font
+        face="Courier New">st_rdev</font> is not currently used,
+        but may in the future designate a device type code.</p>
+        <p><font face="Courier New">st_mode</font> is a bit field
+        representing access mode and type of the file. The flags
+        in <font face="Courier New">st_mode</font> are as
+        follows:</p>
+        <p>#define S_IFDIR 0040000 /* directory */</p>
+        <p>#define S_IFCHR 0020000 /* character special */</p>
+        <p>#define S_IFBLK 0060000 /* block special */</p>
+        <p>#define S_IFREG 0100000 /* regular */</p>
+        <p>#define S_IFLNK 0120000 /* symbolic link */</p>
+        <p>#define S_IFSOCK 0140000 /* socket or pipe */</p>
+        <p>#define S_IREAD 0000400 /* read permission, owner */</p>
+        <p>#define S_IWRITE 0000200 /* write permission, owner */</p>
+        <p>#define S_IEXEC 0000100 /* file is an executable,
+        owner */</p>
+        <p><b>fstat</b> is similar to <b>stat</b> except the
+        argument is an open file descriptor <i>filedes</i>. If <i>filedes</i>
+        refers to a character device or pipe, the entire <font
+        face="Courier New">s_buf</font> is set to 0 and only <font
+        face="Courier New">st_mode</font> and <font
+        face="Courier New">st_dev</font> are set.</p>
+        <p><b>lstat</b> is similar to <b>stat</b>, but if the <i>filename</i>
+        is a link then information is returned about the link
+        file instead of the file linked to.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>If the call completes without mishap, stat returns a 0.
+        If an error occurs, <b>stat</b> returns -1 and sets errno
+        to one of the following:<p><font face="Courier New">[ENOENT]</font>
+        <i>filename</i> does not specify an existing file or
+        directory</p>
+        <p><font face="Courier New">[ENOTDIR]</font> an element
+        of <i>filename</i> is not an expected subdirectory</p>
+        <p><b>fstat</b> can additionally return </p>
+        <p><font face="Courier New">[EBADF]</font> <i>filedes</i>
+        does not refer to an open file descriptor</p>
+    </li>
+</dir>
+
+<p><b>BUGS</b></p>
+
+<dir>
+    <li>GNO does not yet support hard or symbolic file links on
+        the IIGS. Therefore, <b>lstat</b> operates exactly like
+        stat. But if there's a case where <b>lstat</b> might be
+        appropriate at a time when links are supported, then use
+        lstat instead and be ready for the future.<p><b>fstat</b>
+        doesn't do anything clever with all the unused fields in <font
+        face="Courier New">struct stat</font> when its argument
+        is a pipe or terminal.</p>
+    </li>
+</dir>
+
+<hr>
+
+<p><b>NAME</b></p>
+
+<dir>
+    <li>statfs - get file system statistics</li>
+</dir>
+
+<p><b>SYNOPSIS</b></p>
+
+<dir>
+    <li>#include &lt;sys/vfs.h&gt;<p>int <b>statfs</b>(char *<i>path</i>,
+        struct statfs *<i>buf</i>)</p>
+        <p>int <b>fstatfs</b>(int <i>fd</i>, struct statfs *<i>buf</i>)</p>
+    </li>
+</dir>
+
+<p><b>DESCRIPTION</b></p>
+
+<dir>
+    <li><b>statfs</b> returns information about a mounted file
+        system. <i>path</i> is the path name of any file within
+        the mounted filesystem. <i>Buf</i> is a pointer to a
+        statfs structure defined as follows:<p><font size="2"
+        face="Courier New">typedef struct {</font></p>
+        <p><font size="2" face="Courier New">long val[2];</font></p>
+        <p><font size="2" face="Courier New">} fsid_t;</font></p>
+        <p><font size="2" face="Courier New">struct statfs {</font></p>
+        <p><font size="2" face="Courier New">long f_type; /* type
+        of info, zero for now */</font></p>
+        <p><font size="2" face="Courier New">long f_bsize; /*
+        fundamental file system block size */</font></p>
+        <p><font size="2" face="Courier New">long f_blocks; /*
+        total blocks in file system */</font></p>
+        <p><font size="2" face="Courier New">long f_bfree; /*
+        free blocks */</font></p>
+        <p><font size="2" face="Courier New">long f_bavail; /*
+        free blocks available to non-superuser */</font></p>
+        <p><font size="2" face="Courier New">long f_files; /*
+        total file nodes in file system */</font></p>
+        <p><font size="2" face="Courier New">long f_ffree; /*
+        free file nodes in fs */</font></p>
+        <p><font size="2" face="Courier New">fsid_t f_fsid; /*
+        file system id */</font></p>
+        <p><font size="2" face="Courier New">long f_spare[7]; /*
+        spare for later */</font></p>
+        <p><font size="2" face="Courier New">};</font></p>
+        <p>Fields that are undefined for a particular file system
+        are set to -1. <b>fstatfs</b> returns the same
+        information about an open file referenced by descriptor <i>fd</i>.</p>
+    </li>
+</dir>
+
+<p><b>RETURN VALUE</b></p>
+
+<dir>
+    <li>Upon successful completion, a value of 0 is returned.
+        Otherwise, -1 is returned and the global variable <b>errno</b>
+        is set to indicate the error.</li>
+</dir>
+
+<p><b>ERRORS</b></p>
+
+<dir>
+    <li><b>statfs</b> fails if one or more of the following are
+        true:<p><font face="Courier New">ENOTDIR</font> A
+        component of the path prefix of <i>path</i> is not a
+        directory.</p>
+        <p><font face="Courier New">EINVAL</font> <i>path</i>
+        contains a character with the high-order bit set.</p>
+        <p><font face="Courier New">ENAMETOOLONG</font> The
+        length of a component of <i>path</i> exceeds 255
+        characters, or the length of path exceeds 1023
+        characters.</p>
+        <p><font face="Courier New">ENOENT</font> The file
+        referred to by <i>path</i> does not exist.</p>
+        <p><font face="Courier New">EACCES</font> Search
+        permission is denied for a component of the path prefix
+        of path.</p>
+        <p><font face="Courier New">EIO</font> An I/O error
+        occurred while reading from or writing to the file
+        system.</p>
+        <p><b>fstatfs</b> fails if one or both of the following
+        are true:</p>
+        <p><font face="Courier New">EBADF</font> <i>fd</i> is not
+        a valid open file descriptor.</p>
+        <p><font face="Courier New">EIO</font> An I/O error
+        occurred while reading from or writing to the file system</p>
+    </li>
+</dir>
+</body>
+</html>
