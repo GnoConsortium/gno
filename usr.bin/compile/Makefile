@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.2 1998/04/22 05:22:39 gdr-ftp Exp $
+# $Id: Makefile,v 1.3 1999/02/15 19:08:46 gdr-ftp Exp $
 #
 
 PROG	= compile
@@ -10,6 +10,7 @@ STACK	= 1024
 OPTIMIZE= 79
 
 HAS_MKSO_DATA	= true
+HAS_MKLINK_DATA	= true
 
 .INCLUDE : /src/gno/prog.mk
 
