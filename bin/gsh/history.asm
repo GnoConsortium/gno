@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: history.asm,v 1.2 1998/04/24 15:38:23 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * HISTORY.ASM
@@ -24,8 +26,12 @@
 *
 **************************************************************************
 
-               keep  o/history
-               mcopy m/history.mac
+	mcopy /obj/gno/bin/gsh/history.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 histNext       gequ  0
 histCmd        gequ  4

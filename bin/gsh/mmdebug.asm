@@ -1,4 +1,21 @@
-	mcopy	mdb.mac
+**************************************************************************
+*
+* The GNO Shell Project
+*
+* Developed by:
+*   Jawaid Bazyar
+*   Tim Meekins
+*
+* $Id: mmdebug.asm,v 1.2 1998/04/24 15:38:33 gdr-ftp Exp $
+*
+**************************************************************************
+
+	mcopy	/obj/gno/bin/gsh/mmdebug.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 ~NEW	START
 hand	equ	0

@@ -1,87 +1,102 @@
 #
-# GNO Shell Makefile
-# by T Meekins
+# makefile for building gsh.  This is for use with dmake.
+#
+# $Id: Makefile,v 1.2 1998/04/24 15:38:31 gdr-ftp Exp $
+#
+# Devin Reade, February 1998.
 #
 
-o/main.root: main.asm
-  purge ; compile main.asm keep=o/main
+PROG	= gsh
+MAIN	= main
+MAINSRC	= main.asm
+SRCS	= $(MAINSRC) alias.asm bufpool.asm builtin.asm cmd.asm dir.asm \
+	  edit.asm expand.asm hash.asm history.asm invoke.asm jobs.asm \
+	  orca.asm prompt.asm shell.asm shellutil.asm \
+	  shellvar.asm stdio.asm sv.asm term.asm
+# unused:	mmdebug.asm
+STACK	= 4096
 
-o/shell.root: shell.asm m/shell.mac
-  purge ; compile shell.asm keep=o/shell
+# This is a problem.  gsh was written to use the old termcap library.
+# Not only do we no longer build this library, but we don't even have the
+# sources for it.  This needs to be changed.  For the moment, use the
+# ltermcap library from GNO v2.0.4.
+#
+# LDADD	= -ltermcap
+LDLIBS	+= -l/trenco3/lib.206/ltermcap
 
-o/history.root: history.asm m/history.mac
-  purge ; compile history.asm keep=o/history
+# Make sure our macro files get built before trying to assemble source files.
+# LOCAL_SETUP	= macros
 
-o/prompt.root: prompt.asm m/prompt.mac
-  purge ; compile prompt.asm keep=o/prompt
+.INCLUDE : /src/gno/prog.mk
 
-o/cmd.root: cmd.asm m/cmd.mac
-  purge ; compile cmd.asm keep=o/cmd
+LOCAL_MACRO_SRC	= # gsh.mac
+MACRO_SRC = \
+	$(LOCAL_MACRO_SRC) \
+	/usr/ainclude/m16.gno \
+	$(LOCAL_MACRO_SRC) \
+	$(ORCA_DIST)/libraries/orcainclude/m16.orca \
+	$(ORCA_DIST)/libraries/orcainclude/m16.gs.os \
+	$(ORCA_DIST)/libraries/orcainclude/m16.tools \
+	$(ORCA_DIST)/libraries/orcainclude/m16.shell \
+	$(ORCA_DIST)/libraries/ainclude/m16.pascal \
+	$(ORCA_DIST)/libraries/ainclude/m16.debug
 
-o/expand.root: expand.asm m/expand.mac
-  purge ; compile expand.asm keep=o/expand
+MACROS	= \
+	$(OBJ_DIR)main.mac \
+	$(OBJ_DIR)alias.mac \
+	$(OBJ_DIR)bufpool.mac \
+	$(OBJ_DIR)builtin.mac \
+	$(OBJ_DIR)cmd.mac \
+	$(OBJ_DIR)dir.mac \
+	$(OBJ_DIR)edit.mac \
+	$(OBJ_DIR)expand.mac \
+	$(OBJ_DIR)hash.mac \
+	$(OBJ_DIR)history.mac \
+	$(OBJ_DIR)invoke.mac \
+	$(OBJ_DIR)jobs.mac \
+	$(OBJ_DIR)mmdebug.mac \
+	$(OBJ_DIR)orca.mac \
+	$(OBJ_DIR)prompt.mac \
+	$(OBJ_DIR)shell.mac \
+	$(OBJ_DIR)shellutil.mac \
+	$(OBJ_DIR)shellvar.mac \
+	$(OBJ_DIR)stdio.mac \
+	$(OBJ_DIR)sv.mac \
+	$(OBJ_DIR)term.mac
 
-o/invoke.root: invoke.asm m/invoke.mac
-  purge ; compile invoke.asm keep=o/invoke
+macros:	$(MACROS)
 
-o/shellutil.root: shellutil.asm m/shellutil.mac
-  purge ; compile shellutil.asm keep=o/shellutil
+#$(OBJ_DIR)%.mac: %.asm
+#	@echo making $@
+#	@$(MACGEN) $(MACGEN_FLAGS) $*.asm $@ $(MACRO_SRC)
 
-o/builtin.root: builtin.asm m/builtin.mac
-  purge ; compile builtin.asm keep=o/builtin
+# $(MACROS): $(LOCAL_MACRO_SRC)
 
-o/hash.root: hash.asm m/hash.mac
-  purge ; compile hash.asm keep=o/hash
+#$(OBJ_DIR)alias.mac: $(MACRO_SRC)
+#	$(MACGEN) $(MACGEN_FLAGS) alias.asm $@ $(MACRO_SRC)
 
-o/alias.root: alias.asm m/alias.mac
-  purge ; compile alias.asm keep=o/alias
+#bork:
+#	@echo OBJS are $(OBJS)
+#	gsh -c ${mktmp echo $(JINCL) $(JDEFS) $< > $@}
 
-o/dir.root: dir.asm m/dir.mac
-  purge ; compile dir.asm keep=o/dir
-
-o/shellvar.root: shellvar.asm m/shellvar.mac
-  purge ; compile shellvar.asm keep=o/shellvar
-
-o/jobs.root: jobs.asm m/jobs.mac
-  purge ; compile jobs.asm keep=o/jobs
-
-o/sv.root: sv.asm m/sv.mac
-  purge ; compile sv.asm keep=o/sv
-
-o/stdio.root: stdio.asm m/stdio.mac
-  purge ; compile stdio.asm keep=o/stdio
-
-o/orca.root: orca.asm m/orca.mac
-  purge ; compile orca.asm keep=o/orca
-
-o/edit.root: edit.asm m/edit.mac
-  purge ; compile edit.asm keep=o/edit
-
-o/term.root: term.asm m/term.mac
-  purge ; compile term.asm keep=o/term
-
-o/bufpool.root: bufpool.asm m/bufpool.mac
-  purge ; compile bufpool.asm keep=o/bufpool
-
-shell: o/main.root \
-       o/shell.root \
-       o/history.root \
-       o/prompt.root \
-       o/cmd.root \
-       o/expand.root \
-       o/invoke.root \
-       o/shellutil.root \
-       o/builtin.root \
-       o/hash.root \
-       o/alias.root \
-       o/shellvar.root \
-       o/jobs.root \
-       o/dir.root \
-       o/sv.root \
-       o/stdio.root \
-       o/orca.root \
-       o/edit.root \
-       o/term.root \
-       o/bufpool.root \
-       direct.root
-  pwd ; purge ; compile link.script keep=gsh
+$(ODIR)alias.o:		$(OBJ_DIR)alias.mac
+$(ODIR)bufpool.o:	$(OBJ_DIR)bufpool.mac
+$(ODIR)builtin.o:	$(OBJ_DIR)builtin.mac
+$(ODIR)cmd.o:		$(OBJ_DIR)cmd.mac
+$(ODIR)dir.o:		$(OBJ_DIR)dir.mac
+$(ODIR)edit.o:		$(OBJ_DIR)edit.mac
+$(ODIR)expand.o:	$(OBJ_DIR)expand.mac
+$(ODIR)hash.o:		$(OBJ_DIR)hash.mac
+$(ODIR)history.o:	$(OBJ_DIR)history.mac
+$(ODIR)invoke.o:	$(OBJ_DIR)invoke.mac
+$(ODIR)jobs.o:		$(OBJ_DIR)jobs.mac
+$(ODIR)main.o:		$(OBJ_DIR)main.mac
+$(ODIR)mmdebug.o:	$(OBJ_DIR)mmdebug.mac
+$(ODIR)orca.o:		$(OBJ_DIR)orca.mac
+$(ODIR)prompt.o:	$(OBJ_DIR)prompt.mac
+$(ODIR)shell.o:		$(OBJ_DIR)shell.mac
+$(ODIR)shellutil.o:	$(OBJ_DIR)shellutil.mac
+$(ODIR)shellvar.o:	$(OBJ_DIR)shellvar.mac
+$(ODIR)stdio.o:		$(OBJ_DIR)stdio.mac
+$(ODIR)sv.o:		$(OBJ_DIR)sv.mac
+$(ODIR)term.o:		$(OBJ_DIR)term.mac

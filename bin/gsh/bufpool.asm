@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: bufpool.asm,v 1.2 1998/04/24 15:38:05 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * BUFPOOL
@@ -15,8 +17,10 @@
 *
 **************************************************************************
 
-               keep  o/bufpool
-               mcopy m/bufpool.mac
+	mcopy /obj/gno/bin/gsh/bufpool.mac
+
+dummy	start		; ends up in .root
+	end
 
 **************************************************************************
 *

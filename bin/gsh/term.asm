@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: term.asm,v 1.2 1998/04/24 15:38:47 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * TERM.ASM
@@ -15,8 +17,12 @@
 *
 **************************************************************************
 
-               keep  o/term
-               mcopy m/term.mac
+	mcopy /obj/gno/bin/gsh/term.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 TIOCGETP	gequ	$40067408
 

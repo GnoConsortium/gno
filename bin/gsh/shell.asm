@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: shell.asm,v 1.2 1998/04/24 15:38:37 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * SHELL.ASM
@@ -15,8 +17,12 @@
 *
 **************************************************************************
 
-               keep  o/shell
-               mcopy m/shell.mac
+	mcopy /obj/gno/bin/gsh/shell.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 SIGINT	gequ	 2
 SIGTSTP	gequ	18

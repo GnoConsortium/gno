@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: shellutil.asm,v 1.2 1998/04/24 15:38:39 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * SHELLUTIL.ASM
@@ -15,8 +17,12 @@
 *
 **************************************************************************
 
-               keep  o/shellutil
-               mcopy m/shellutil.mac
+	mcopy /obj/gno/bin/gsh/shellutil.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 ;=========================================================================
 ;

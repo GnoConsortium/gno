@@ -15,8 +15,12 @@
 *
 **************************************************************************
 
-	keep	o/builtin
-	mcopy m/builtin.mac
+	mcopy /obj/gno/bin/gsh/builtin.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 p_next	gequ	0	;next in global proclist
 p_friends	gequ	p_next+4	;next in job list

@@ -13,8 +13,12 @@
 *
 **************************************************************************
 
-               keep  o/main
-               mcopy m/main.mac
+	mcopy /obj/gno/bin/gsh/main.mac
+
+dummy	start		; ends up in root
+	end
+
+	setcom 60
 
 init	START
 	jml	~GNO_COMMAND

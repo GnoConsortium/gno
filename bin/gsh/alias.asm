@@ -13,8 +13,12 @@
 *
 **************************************************************************
 
-               keep  o/alias
-	mcopy	m/alias.mac
+	mcopy	/obj/gno/bin/gsh/alias.mac
+
+dummy	start		; ends up in root
+	end
+
+	setcom 60
 
 VTABSIZE	gequ	17
 

@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: hash.asm,v 1.2 1998/04/24 15:38:21 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * HASH.ASM
@@ -15,8 +17,12 @@
 *
 **************************************************************************
 
-               keep  o/hash
-               mcopy m/hash.mac
+	mcopy /obj/gno/bin/gsh/hash.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 C1             gequ  11
 C2             gequ  13

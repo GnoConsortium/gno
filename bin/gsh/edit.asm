@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: edit.asm,v 1.2 1998/04/24 15:38:14 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * EDIT.ASM
@@ -15,8 +17,12 @@
 *
 **************************************************************************
 
-               keep  o/edit
-               mcopy m/edit.mac
+	mcopy /obj/gno/bin/gsh/edit.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 RAW	gequ	$20
 CRMOD	gequ	$10

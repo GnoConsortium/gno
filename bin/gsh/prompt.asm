@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: prompt.asm,v 1.2 1998/04/24 15:38:35 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * PROMPT.ASM
@@ -15,12 +17,16 @@
 *
 **************************************************************************
 
-               keep  o/prompt
-               mcopy m/prompt.mac
+	mcopy /obj/gno/bin/gsh/prompt.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 WritePrompt    START
 
-               using HistoryData
+	using HistoryData
 
 
 prompt	equ	0

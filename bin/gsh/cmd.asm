@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: cmd.asm,v 1.2 1998/04/24 15:38:09 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * CMD.ASM
@@ -15,8 +17,12 @@
 *
 **************************************************************************
 
-               mcopy m/cmd.mac
-               keep  o/cmd.mac
+	mcopy /obj/gno/bin/gsh/cmd.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 SIGINT	gequ	 2
 SIGSTOP	gequ	17

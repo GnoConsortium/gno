@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: expand.asm,v 1.2 1998/04/24 15:38:17 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * EXPAND.ASM
@@ -15,8 +17,12 @@
 *
 **************************************************************************
 
-               mcopy m/expand.mac
-               keep  o/expand.mac
+	mcopy /obj/gno/bin/gsh/expand.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 **************************************************************************
 *

@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: invoke.asm,v 1.2 1998/04/24 15:38:25 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * INVOKE.ASM
@@ -15,8 +17,12 @@
 *
 **************************************************************************
 
-               mcopy m/invoke.mac
-               keep  o/invoke.mac
+	mcopy /obj/gno/bin/gsh/invoke.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 SIGINT	gequ	 2
 SIGKILL	gequ	 9

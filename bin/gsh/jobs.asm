@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: jobs.asm,v 1.2 1998/04/24 15:38:27 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * JOBS.ASM
@@ -15,8 +17,12 @@
 *
 **************************************************************************
 
-	mcopy	m/jobs.mac
-	keep	o/jobs
+	mcopy	/obj/gno/bin/gsh/jobs.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 WSTOPPED	gequ	$7F
 

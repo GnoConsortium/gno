@@ -6,6 +6,8 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: sv.asm,v 1.2 1998/04/24 15:38:45 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * SV.ASM
@@ -15,9 +17,13 @@
 *
 **************************************************************************
 
-               keep  o/sv
-               mcopy m/sv.mac
+	mcopy /obj/gno/bin/gsh/sv.mac
                          
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
+
 **************************************************************************
 *
 * Allocate a string vector array

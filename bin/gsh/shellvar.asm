@@ -7,6 +7,8 @@
 *   Tim Meekins
 *   Derek Taubert
 *
+* $Id: shellvar.asm,v 1.2 1998/04/24 15:38:41 gdr-ftp Exp $
+*
 **************************************************************************
 *
 * SHELLVAR.ASM
@@ -16,8 +18,12 @@
 *
 **************************************************************************
 
-               keep  o/shellvar
-               mcopy m/shellvar.mac
+	mcopy /obj/gno/bin/gsh/shellvar.mac
+
+dummy	start		; ends up in .root
+	end
+
+	setcom 60
 
 **************************************************************************
 *

@@ -1,0 +1,35 @@
+/*
+ * Resources for version and comment
+ *
+ * $Id: gsh.rez,v 1.1 1998/04/24 15:38:19 gdr-ftp Exp $
+ */
+
+#define PROG "gsh"
+#define DESC "GNO/Shell\n"
+              
+#include "Types.rez"
+#include "/src/gno/build.tools/builddate.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 2, 0, 0,	/* Version 2.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,		/* Country */
+	PROG,		/* Program name */
+        DESC
+        BUILD_DATE
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG " v2.0\n"
+	DESC
+	"Written by Tim Meekins.\n"
+	BUILD_DATE
+};
