@@ -3,7 +3,7 @@
 
     the code that formats each individual paragraph is here.
 
-    $Id: print.c,v 1.2 1999/01/15 08:36:31 gdr-ftp Exp $
+    $Id: print.c,v 1.3 1999/01/15 15:45:04 gdr-ftp Exp $
 */
 
 #include <stdio.h>
@@ -11,8 +11,7 @@
 #include <string.h>
 #include <types.h>
 #include <texttool.h>
-
-#include "awgs.h"
+#include "aroff.h"
 
 extern saveArray *docSaveArray;
 extern Ruler *docRulers;
@@ -51,17 +50,26 @@ void printPara(RulerPtr ruler, pgraphPtr pptr)
 calcLine:
     /* width determines how long this line is in characters; thus, where
        the break for word wrap will occur */
-  if (curLine == 0) width = (ruler->rightMargin - ruler->indentMargin)/8;
-  else width = (ruler->rightMargin - ruler->leftMargin)/8;
-  
+  if (curLine == 0) {
+    width = (ruler->rightMargin - ruler->indentMargin)/8;
+  } else {
+    width = (ruler->rightMargin - ruler->leftMargin)/8;
+  }
+
   while (*txt != 0x0d) {
     switch (*txt) {
     case 1: txt+=3; break;
     case 2:
       style = *(++txt);
-      if (noboldflag) { ++txt; break; }/* turn off boldfacing */
-      if (style & 3) paraBuf[curLine][col++] = 15;
-      else paraBuf[curLine][col++] = 14;
+      if (noboldflag) {		/* turn off boldfacing */
+	++txt;
+	break;
+      }
+      if (style & 3) {
+	paraBuf[curLine][col++] = 15;
+      } else {
+	paraBuf[curLine][col++] = 14;
+      }
       txt++;
       break;
     case 3: txt+=2; break;
@@ -75,15 +83,17 @@ calcLine:
 	numctrl = 0;
 	for (z = col - 1; z > 0; z--) {
 	  if (paraBuf[curLine][z] == ' ') {
-	    if (z != col - 1)
+	    if (z != col - 1) {
 	      memcpy(&paraBuf[curLine+1][0],&paraBuf[curLine][z+1],
 		     (size_t) (col - z - 1));
+	    }
 	    paraBuf[curLine][z] = 0;
 	    curLine++; printcol -= (z + 1 + numctrl);
 	    col -= (z + 1);
 	    goto calcLine;
+	  } else if (paraBuf[curLine][z] < ' ') {
+	    numctrl++;
 	  }
-	  else if (paraBuf[curLine][z] < ' ') numctrl++;
 	}
 	curLine++; col = printcol = 0;
 	/* one big word... don't break line */
@@ -98,12 +108,13 @@ calcLine:
     if (z == 0) {
       width = (ruler->rightMargin - ruler->indentMargin)/8;
       left = (ruler->indentMargin)/8;
-    }
-    else {
+    } else {
       width = (ruler->rightMargin - ruler->leftMargin)/8;
       left = (ruler->leftMargin)/8;
     }
-    for (i = 0; i < left; i++) putchar(' ');
+    for (i = 0; i < left; i++) {
+      putchar(' ');
+    }
     printf("%s\n",paraBuf[z]);
   }
 }
