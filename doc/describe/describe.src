@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Thu Dec 31 09:42:23 1998
+# Last revision: Mon Jan  4 15:49:15 1999
 #
-# $Id: describe.src,v 1.17 1998/12/31 09:45:00 gdr-ftp Exp $
+# $Id: describe.src,v 1.18 1999/01/04 15:50:26 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -110,6 +110,16 @@ FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
 
 Locate commands by keyword.  Bundled with catman, makewhatis, man,
 and whatis in the manpack30.shk archive.
+
+Name:    ar
+Version: 1.0
+Shell:   GNO
+Author:  Scott Moberly
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     ftp.gno.org
+
+Create and maintain library archives. Front-end for makelib(1).
 
 Name:    argv0
 Version: 1.0
