@@ -1,0 +1,35 @@
+#! /bin/sh
+#
+# This script examines NuFX archives and verifies that the extracted files 
+# are able to fit onto a single 800k floppy.
+#
+# $Id: checksizes,v 1.1 1999/01/18 03:00:15 gdr-ftp Exp $
+#
+
+TMPDIR=${TMPDIR:-/tmp}
+tmpfile1=$TMPDIR/checksizes.$$a
+
+trap "rm -f $tmpfile1" 0 1 2 15
+
+if [ "$*" = "" ]; then
+	echo "Usage:  $0 file1 file2 ..."
+	exit 1
+fi
+
+maxOnDisk=778240
+errors=0
+set -e
+for f in $*; do
+	nulib tv $f > $tmpfile1
+	sizes="`perl -ne '(m,\%\s+(\d+)\s*$,) && print $1."\n";' $tmpfile1`"
+	total=0
+	for s in $sizes; do
+		newval="` expr \( $s / 512 \) \* 512 + 512`"
+		total="`expr $total + $newval`"
+	done
+	if [ $total -gt $maxOnDisk ]; then
+		echo "archive $f is too large.  Max=$maxOnDisk Current=$total"
+		errors="`expr $errors + 1`"
+	fi
+done
+exit $errors

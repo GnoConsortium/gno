@@ -5,7 +5,7 @@
 # 
 # Devin Reade, April 1998.
 #
-# $Id: mkboot,v 1.2 1998/04/24 03:38:51 gdr-ftp Exp $
+# $Id: mkboot,v 1.3 1999/01/18 03:00:16 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -21,6 +21,7 @@ setenv SRC	/src
 echo "creating directories ..."
 install -dV	$RELBOOT/bin
 install -dV	$RELBOOT/dev
+install -dV	$RELBOOT/doc
 install -dV	$RELBOOT/etc
 install -dV	$RELBOOT/home/root
 install -dV	$RELBOOT/lang/orca/languages
@@ -30,6 +31,7 @@ install -dV	$RELBOOT/lib
 install -dV	$RELBOOT/sbin
 install -dV	$RELBOOT/tmp
 install -dV	$RELBOOT/usr/bin
+install -dV	$RELBOOT/var/adm
 
 echo "installing files ..."
 # There's a bug in the v2.0.6 kernel right now that keeps us from
@@ -55,6 +57,7 @@ install -V	$RELDIR/bin/vi				$RELBOOT/bin
 install -V	$RELDIR/usr/bin/install			$RELBOOT/bin
 install -V	$RELDIR/usr/bin/yankit			$RELBOOT/bin
 install -V	$RELDIR/dev/*				$RELBOOT/dev
+install -V	$SRC/gno/verbatim/etc/glogin		$RELBOOT/etc
 install -V	$SRC/gno/verbatim/boot/namespace	$RELBOOT/etc
 install -V	$RELDIR/etc/termcap			$RELBOOT/etc
 install -V	$RELDIR/etc/tty.config			$RELBOOT/etc
@@ -64,6 +67,7 @@ install -V	$RELDIR/sbin/mkso			$RELBOOT/sbin
 chtyp -lexec $RELBOOT/gshrc $RELBOOT/installboot*
 
 echo "installing temporary files since gshk will not archive empty directories"
+install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/doc
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/home/root
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lang/orca/languages
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lang/orca/shell
@@ -71,3 +75,4 @@ install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lang/orca/utilities
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lib
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/tmp
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/usr/bin
+install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/var/adm
