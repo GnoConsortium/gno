@@ -1,7 +1,7 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.5 1998/06/12 14:47:33 gdr-ftp Exp $
+% $Id: intro.tex,v 1.6 1998/09/24 06:49:58 gdr-ftp Exp $
 % 
 
 \documentclass{report}
@@ -15,7 +15,7 @@
 
 \title{GNO Overview and Installation}
 \author{Jawaid Bazyar \\ Tim Meekins \\ Devin Reade}
-\date{11 June 1998}
+\date{24 September 1998}
 \maketitle
 
 \bibliographystyle{plain}
@@ -70,7 +70,8 @@ trademarks of Apple Computer, Inc.
 
 AppleWorks GS is a trademark of Claris Corp.
 
-UNIX is a registered trademark of AT\&T Bell Laboratories.
+UNIX is a registered trademark of The Open Group in the USA and other
+countries.
 
 \bf
 Important Notice:
@@ -115,47 +116,48 @@ their efforts are also appreciated:
 % \setlength{\itemindent}{1.5cm}
 
 \item[Kernel]
-Jawaid Bazyar,
+Jawaid Bazyar;
 Derek Taubert.
 
 \item[GNO Shell]
-Tim Meekins.
+Tim Meekins;
+Dave Tribby.
 
 \item[Documentation]
-Jawaid Bazyar,
-Albert Chin,
-Tim Meekins, 
-Devin Reade,
+Jawaid Bazyar;
+Albert Chin;
+Tim Meekins; 
+Devin Reade;
 Andrew Roughan.
 
 \item[Utilities]
-Matt Ackeret,
-Leslie Barstow,
-Soenke Behrens,
-James Brookes,
-Evan Day,
-Tilghman Lesher,
-Devin Reade,
-Ian Schmidt,
-Derek Taubert,
-Greg Thompson,
-Dave Tribby,
+Matt Ackeret;
+Leslie Barstow;
+Soenke Behrens;
+James Brookes;
+Evan Day;
+Tilghman Lesher;
+Devin Reade;
+Ian Schmidt;
+Derek Taubert;
+Greg Thompson;
+Dave Tribby;
 Philip Vandry.
 
 \item[Libraries]
-Jawaid Bazyar,
-Soenke Behrens,
-James Brookes,
-Douglas Gwyn,
-Tilghman Lesher,
-Devin Reade,
-Henry Spencer,
-Derek Taubert,
-Dave Tribby,
-Phillip Vandry,
-Mike Westerfield,
-Procyon, Inc.
-The Byte Works, Inc.
+Jawaid Bazyar;
+Soenke Behrens;
+James Brookes;
+Douglas Gwyn;
+Tilghman Lesher;
+Devin Reade;
+Henry Spencer;
+Derek Taubert;
+Dave Tribby;
+Phillip Vandry;
+Mike Westerfield;
+Procyon, Inc.;
+The Byte Works, Inc.;
 University of California, Berkeley.
 
 % \setlength{\itemindent}{0cm}
@@ -171,8 +173,8 @@ With many thanks to:
 Bill Gulstad, Rob Knauerhase,
 and everyone on the gno-devel and GNOBETA Internet mailing lists.
 \item 
-Dave Lyons, for tolerating my endless
-questions since the beginning of time, for getting me
+Dave Lyons, for tolerating Jawaid's endless
+questions since the beginning of time, for getting Jawaid
 started in IIgs programming, and for calling GNO ``cool''.
 \item
 Mike Westerfield, for your
@@ -183,11 +185,11 @@ development tools for the IIgs.
 Special thanks to:
 \begin{itemize}
 \item
-Matt Deatherage, for egging me on to
+Matt Deatherage, for egging Jawaid on to
 complete the project; also, for your most helpful
 technical support through DEVSUPPORT --- you guys made this thing possible!
 \item
-Randy Hyde, for telling me it couldn't be done.
+Randy Hyde, for telling Jawaid it couldn't be done.
 \end{itemize}
 
 \chapter{Preface}
@@ -268,6 +270,10 @@ ORCA system, GNO/ME is a very powerful programming environment.
 Available to the programmer are all the calls needed to control
 processes, support Inter-Process Communication, and other tools
 needed in a multitasking environment.
+In fact, a large portion of the libraries in GNO v2.0.6 and later
+are based upon code from FreeBSD UNIX (see \hturl{http://www.freebsd.org}).
+The version of FreeBSD on which the GNO libraries are based is also
+available at \hturl{ftp://ftp.gno.org/cdrom/usr/src}.
 
 GNO/ME also boasts the first completely
 consistent method for accessing serial and console I/O. The IIgs
@@ -292,6 +298,12 @@ the power of a UNIX system to the Apple IIgs. Also, a number of
 programming libraries are included that make it easy to port
 programs from UNIX or MS-DOS systems to the Apple IIgs.
 
+%
+% Dave Tribby thinks we should add in a ``what's new in 2.0.6'' list 
+% here.
+%
+
+
 \section{The GNO/ME Package}
 
 GNO is a large and complex system.  There are many pieces to it;
@@ -315,9 +327,12 @@ to versions 2.0.2, 2.0.3, and 2.0.4.  There is also a custom version
 of ORCALib that should be installed if you are using ORCA/C v2.0.x
 with GNO v2.0.4.
 
+\em A developmental release of GNO v2.0.6 is pending.  This page will 
+be updated as more information becomes available. \rm
+
 Finally, there is an extensive collection of third-party GNO utilities
 available.  A listing of these utilities may be found at
-\hturl{http://www.arrowweb.com/sbehrens/describe.htm}
+\hturl{http://www.gno.org/~gno/describe/}
 or
 \hturl{http://www.servtech.com/public/phoenix/computers/gno/index.html}.
 
@@ -363,9 +378,31 @@ Ask a question on the Delphi Apple II Programmers' Forum.  There
 are subject areas set up for GNO under ``third party technical support''.
 Delphi is accessible via \hturl{http://delphi.com}.  (Delphi is
 recommended for discussion of programming topics in general and
-has, for the most part, taken over from Genie as the centre of 
+has, for the most part, taken over from Genie as the center of 
 online Apple II communication.  Some packages are available free of
 charge.  Visit Delphi for more details.)
+
+Unlike USENET, on Delphi you should try to continue existing threads.
+The current ones for GNO are:
+
+	\begin{itemize}
+	\item	Message 1045: GNO: System Installation and Configuration
+	\item	Message 1046: GNO: References and Users' Manuals
+	\item	Message 1047: GNO: Manual Pages
+	\item	Message 1048: GNO: The Kernel
+	\item	Message 1049: GNO: Shells
+	\item	Message 1050: GNO: Libraries and System Header Files
+	\item	Message 1051: GNO: Interfacing with ORCA
+	\item	Message 1052: GNO: Networking and Telecommunications
+	\item	Message 1053: GNO: General Discussion
+	\end{itemize}
+
+\item
+Also on Delphi, there is a regularly scheduled GNO Programmers' Conference
+on Monday and Thursday evenings from 10pm to midnight EST/EDT.  Devin
+is usually around those evenings, although he sometimes misses the 
+conference.  If you don't catch him the first time, be sure to try again
+another day.
 \end{itemize}
 
 As a last resort, you can contact Devin Reade (one of the GNO
@@ -409,7 +446,10 @@ of how to duplicate the bug. If this requires writing down
 individual keystrokes, then we need it. Only in this way can we
 decide whether the bug is hardware dependent or global.
 
-Once you have collected this information, you should contact the 
+Once you have collected this information, the preferred method of
+submitting it is to use the online GNOBugs database at
+\hturl{http://www.gno.org/~gno/bugs.html}.
+Alternately, you could contact the 
 GNO developers in one of the ways mentioned in the section on
 \bf Obtaining Assistance\rm.
 
@@ -417,11 +457,17 @@ GNO developers in one of the ways mentioned in the section on
 
 If you're working on a project which
 utilizes GNO/ME in some way, we'd like to know about it. Just
-contact us by mail, phone, or whatever is most convenient for
-you, and tell us about your project. If possible, we'll
+Devin by email and tell him about your project. If possible, he'll
 coordinate your efforts with those of other programmers. If we
-really like your project and think it may be useful to others, we
-may include it on the next GNO/ME distribution!
+really like your project and think it may be useful to others, it
+may be included on the next GNO/ME distribution!
+
+It is, of course, good to not start work on something that is already
+being worked on or already finished.  Before starting a project, you may
+first wish to check the Program Status List at
+\hturl{http://www.gno.org/~gno/status.bin.html}
+or the Library Status List at
+\hturl{http://www.gno.org/~gno/status.lib.html}.
 
 \section{Software Piracy}
 
