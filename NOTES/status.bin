@@ -11,7 +11,7 @@
 *									*
 * Devin Reade, 10 April 1998.						*
 *									*
-* $Id: status.bin,v 1.15 1998/06/02 13:11:02 gdr-ftp Exp $		*
+* $Id: status.bin,v 1.16 1998/06/26 01:29:37 gdr-ftp Exp $		*
 *									*
 *************************************************************************
 
@@ -100,6 +100,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /bin/du				Y	Y	evan	Y
 /bin/echo			N	Y	dt
 /bin/ed
+/bin/edit			Y	Y		Y
 /bin/egrep			Y	Y	evan
 /bin/expr
 /bin/false			N	Y	gdr	Y	T	Y	Y	Y	RI
@@ -265,7 +266,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/launch			Y	Y	tl	Y
 /usr/bin/link	(ie: ld)	Y	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/locate			N	.	gdr
-/usr/bin/logger			N	Y
+/usr/bin/logger			N	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/logname
 /usr/bin/lpq			Y	Y	dt	.	.	.	.	.	.	(lpr)
 /usr/bin/lpr			Y	Y	dt	.	.	.	.	.	.	(lpr)
