@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.2 1998/03/08 17:40:53 gdr-ftp Exp $
+# $Id: Makefile,v 1.3 1998/12/31 21:34:56 gdr-ftp Exp $
 #
 
 PROG	= help
@@ -19,5 +19,13 @@ $(OBJ_DIR)$(PROG): help.gsh $(PROG).r
 	$(CATREZ) -d $@ $(OBJ_DIR)$(PROG).r
 
 $(OBJ_DIR):;	$(INSTALL) -d $(OBJ_DIR)
+
+# Implicit rule to handle Rez source on case sensitive Appleshare servers
+.IF $(APPLESHARE_CASE_SENSITIVE) != $(NULL)
+%.r : %.rez
+	$(INSTALL) $< $(TMPDIR)/$<
+	$(REZ) -o $@ -c $(REZFLAGS) $(TMPDIR)/$<
+	$(RM) -f $(TMPDIR)/$<
+.END
 
 .INCLUDE:	/src/gno/binrelease.mk
