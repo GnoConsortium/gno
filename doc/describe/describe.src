@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Sat May 30 01:58:49 1998
+# Last revision: Wed Jun  3 15:35:17 1998
 #
-# $Id: describe.src,v 1.9 1998/05/30 03:11:15 gdr-ftp Exp $
+# $Id: describe.src,v 1.10 1998/06/03 16:09:46 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -238,6 +238,7 @@ Author:  Kelvin W Sherlock
 Contact: ksherloc@mole.uvm.edu
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
 List an Applesoft BASIC file.
 
 Name:    booz
@@ -825,6 +826,7 @@ Author:  Leslie M. Barstow III
 Contact: wdphoenix@delphi.com 
 Where:   /usr/bin 
 FTP:     - 
+
 finger is a re-write of the UNIX finger utility.  Its purpose is to provide
 information about a user or users.  It shows their real name, home directory,
 default shell, last login time, and two files that they may create to provide
@@ -936,6 +938,16 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Another file compression utility.
 
+Name:    from
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Print names of those who have written.
+
 Name:    ftn
 Version: 1.1 (11 Oct 94)
 Shell:   GNO/ME
@@ -975,6 +987,7 @@ Author:  Ian Schmidt
 Contact: irsman@iastate.edu
 Where:   /usr/bin
 FTP:     pindarus.cs.uiuc.edu
+
 Gets the rVersion information on a EXE, including name, version, and any
 other information the author wishes to include, printing it to standard out.
 
@@ -1147,6 +1160,16 @@ A filter to strip newlines from the middle of paragraphs, but not
 elsewhere.  Written to ease the importing of text files into word
 processor documents.
 
+Name:    jot
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Print sequential or random data.
+
 Name:    jpegtran
 Version: 6
 Shell:   GNO, ORCA
@@ -1156,6 +1179,16 @@ Where:   /usr/local/bin
 FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Lossless transcoding of JPEG files.  Part of the jpeg tools archive.
+
+Name:    lam
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Laminate files.
 
 Name:    last
 Version: 1.1
@@ -1168,6 +1201,16 @@ FTP:     ground.isca.uiowa.edu
 Displays last logins for specified users or terminals.  It searches
 through the login accounting file "/var/adm/wtmp" for this information.
 It is only useful with GNO's Multi-User package.
+
+Name:    lc
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (comp.unix.sources port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     Diskettes
+
+Displays a count of code, comments and blanks in C source.
 
 Name:    less
 Version: 1.6 (12 May 92)
@@ -1294,6 +1337,7 @@ Author:  Ian Schmidt
 Contact: irsman@iastate.edu
 Where:   /usr/bin
 FTP:     pindarus.cs.uiuc.edu
+
 Gets and prints a wide variety of information on your IIgs system, including
 memory, versions of GNO, GS/OS, and the ROM, accelerator type if any, and more.
 
@@ -1551,6 +1595,16 @@ nl is a shell utility that gives shell access to Nifty List. Its main
 features are the shell's redirectable stdin and stdout, plus an optional
 internal filter to make the output closer to ORCA/M source.
 
+Name:    nohup
+Version: 1.0
+Shell:   GNO/ME
+Author:  Scott Moberly (FreeBSD port)
+Contact: smoberly@s-cwis.unomaha.edu
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Invoke a command immune from hangups.
+
 Name:    now
 Version: 1.2
 Shell:   GNO, ORCA
@@ -1625,6 +1679,7 @@ Author:  Ported by Devin Reade.
 Contact: gdr@myrias.com
 Where:   /usr/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
 Apply diffs to an original file.  This is based on BSD patch v2.0pl12u8.
 
 Name:    pbmtoiw
@@ -1899,6 +1954,7 @@ Author:  Ian Schmidt
 Contact: irsman@iastate.edu
 Where:   /usr/bin
 FTP:     pindarus.cs.uiuc.edu
+
 Sets the rVersion information on a EXE, including name, version, and any
 other information the author wishes to include.
 
@@ -2189,6 +2245,7 @@ Author:  Ian Schmidt
 Contact: irsman@drift.winternet.com
 Where:   /bin/
 FTP:     ground.isca.uiowa.edu
+
 Prints the name of the UNIX system (in this case GNO/ME) plus various
 other information such as your hostname if you are running the MU package.
 
@@ -2367,6 +2424,7 @@ Author:  Leslie M. Barstow III
 Contact: wdphoenix@delphi.com 
 Where:   /usr/bin 
 FTP:     - 
+
 write is a simple utility which writes a message to a user, no matter what
 terminal he or she is on.  The format is:  write username [message]
 If you do not input a message, you will be prompted for message lines until
@@ -2411,6 +2469,7 @@ Author:  Dave J. Roberts
 Contact: dave@mary.iia.org
 Where:   /usr/X/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu 
+
 graphical analog time display unit
 
 Name:    xload
@@ -2474,6 +2533,7 @@ Author:  Leslie M. Barstow III
 Contact: wdphoenix@delphi.com 
 Where:   /bin 
 FTP:     ftp.gno.org
+
 zsh is a program used to put a user's account in suspension.
 It prints a message and then exits.
 
