@@ -10,16 +10,12 @@
  * from the GNO v2.0.4 libc(3) man page (with a change of argument and
  * result types) by Devin Reade.  __C2GS was written by Devin Reade.
  *
- * $Id: gsstring.c,v 1.1 1997/02/28 05:12:47 gdr Exp $
+ * $Id: gsstring.c,v 1.2 1997/09/21 06:07:24 gdr Exp $
  */
 
 #ifdef __ORCAC__
 segment "libc_gno__";
 #endif
-
-#pragma optimize 0	/* 79 seems to work */
-#pragma debug 0
-#pragma memorymodel 0
 
 #include <machine/limits.h>
 #include <types.h>

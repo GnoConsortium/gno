@@ -1,7 +1,7 @@
 /*
  * libc/gno/map.c  -- various mapping functions
  *
- * $Id: map.c,v 1.2 1997/09/05 06:14:16 gdr Exp $
+ * $Id: map.c,v 1.3 1997/09/21 06:08:11 gdr Exp $
  *
  * This file is formatted with tabstops every 8 columns
  */
@@ -10,17 +10,10 @@
 segment "libc_gno__";
 #endif
  
-#pragma optimize 0
-#pragma memorymodel 0
-#pragma debug 0
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <gno/gno.h>
-
-/* needed only during debugging */
-#include <stdio.h>
 
 #define GS_READ      0x0001
 #define GS_WRITE     0x0002

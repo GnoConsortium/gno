@@ -1,5 +1,5 @@
 /*
- * $Id: gnomisc.c,v 1.1 1997/02/28 05:12:47 gdr Exp $
+ * $Id: gnomisc.c,v 1.2 1997/09/21 06:07:24 gdr Exp $
  *
  * This file is formatted with tabs every 8 characters.
  */
@@ -8,10 +8,8 @@
 segment "libc_gno__";
 #endif
 
-#pragma optimize 0	/* optimization breaks this file (79, 15 tried) */
-#pragma debug 0
-#pragma memorymodel 0
- 
+#pragma optimize 78	/* optimization breaks this file (79, 15 tried) */
+
 #include <sys/syslimits.h>
 #include <unistd.h>
 #include <gsos.h>
