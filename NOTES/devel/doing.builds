@@ -1,20 +1,56 @@
-$Id: doing.builds,v 1.1 1999/01/09 21:19:58 gdr-ftp Exp $
+$Id: doing.builds,v 1.2 1999/01/27 06:27:59 gdr-ftp Exp $
 
-GNO has to be build in the following sequence.  (There are dependancies.)
+This file describes how to build the GNO base distribution.  It is critical
+that things be done in the sequence given here, as there are dependencies.
 
-	../lib/orcalibs/Source
-	include
-	lib/lsaneglue
-	lib/libc
-	lib/libutil
-	lib/libedit
+The default target in each Makefile is 'build'; it causes the program or
+library to be built in the /obj hierarchy.  Each Makefile also has a
+'release' target, which caused built or verbatim files to be copied into
+the /dist hierarchy..  Both of these must be made before you proceed to the
+next step.
 
+All Makefiles also have an 'install' target, but that is only used for
+installing into a live system.  Caveat Emptor.
 
-- the default target in the makefiles causes the program or library 
-  to be built in the /obj hierarchy.
+- The first thing is to ensure that your system header files match those
+  in the distribution.  This is done by the following commands:
 
-- the 'release' target causes the final files to be placed into the
-  /dist hierarchy.
+	cd /src/gno
+	dmake headerInstall
+
+- Next, the libraries have to be built in the following sequence.  Each
+  of them should get a 'dmake build' followed by a 'dmake release':
+
+	/src/lib/orcalibs/Source/ORCALib
+	/src/lib/orcalibs/Source/SysFloat
+	/src/lib/orcalibs/Source/SysFPEFloat
+	/src/gno/lib/lsaneglue
+	/src/gno/lib/libc    (build top level last, or there won't be rez fork)
+	/src/gno/lib/libcontrib
+	/src/gno/lib/libcrypt
+	/src/gno/lib/libcurses
+	/src/gno/lib/libedit		(not yet building)
+	/src/gno/lib/libsim		(not yet building)
+	/src/gno/lib/libtermcap
+	/src/gno/lib/libutil
+	/src/gno/lib/liby
+	/src/gno/lib/netdb
+
+- Now you want to build each of the (finished) programs in the following
+  directory hierarchies.  The sequence doesn't really matter.  You need
+  to do both 'dmake build' and 'dmake release'.
+
+	/src/gno/bin
+	/src/gno/usr.bin
+	/src/gno/usr.orca.bin
+	/src/gno/usr.sbin
+	/src/gno/sbin
+
+  Note that not all checked in programs are necessarily finished, and 
+  therefore suitable for the 'build' and 'release' targets.  When in doubt,
+  check the file /src/gno/NOTES/status.bin.
+
+(need to add text about the sys and kern directories)
 
 - when the builds are closer to a sane state the /dist hierarchy
   will be used to directly make a distribution.  However for now,
@@ -25,22 +61,42 @@ GNO has to be build in the following sequence.  (There are dependancies.)
 - so, once the 'release' target has been made in all the relevent source
   directories, the following must occur:
 
-	- start with an empty /gno directory.
+	- start with all of the following volumes empty.  They may either be
+	  physical volumes, or empty directories specified via the namespace
+	  facility:
+		/gno
+		/gno-hfs		(MUST be an HFS volume)
+		/gno.boot
+	  Both /gno-hfs and /gno.boot may be no larger than 800k (ie: the
+	  results will fit onto an 800k floppy)
+
+	- make sure the three volumes above are online.  Since I use a 
+	  floppy for /gno-hfs, I keep forgetting that ...
+
 	- copy the entire contents of /dist to /gno
-	- make sure you have a /gno-hfs partition online
+
 	- run the /src/gno/build.tools/fudgeinstall script
+
 	- run the /src/gno/build.tools/mkboot script
+
 	- run the /src/gno/build.tools/mkdisk1 script
+
 	- go to the /gno directory.  Using gshk, archive all the 
 	  directories you find there (such as gno.01, gno.02, etc).
 	  You should create the files gno.01.shk, gno.02.shk, and so
-	  forth.  Don't include the upper directory name in the archive.
+	  forth.  
+	  *** Don't include the upper directory name in the archive. ***
 	  When creating gno.16.shk, leave out the /install directory.
+
 	- go to the /gno-hfs partition.  Archive up all contents of that
 	  partition to create the gnohfs.shk archive.  The gnohfs.shk
 	  file should be placed with the gno.??.shk files from the 
 	  previous step.
+	  *** Don't include the upper directory name in the archive. ***
+
 	- go to the /gno.boot partition and use gshk to archive all
 	  all the files in that partition.  Name the resulting archive
 	  file gnoboot.shk, and place it with the other archive files.
+	  *** Don't include the upper directory name in the archive. ***
+
 	- run the /src/gno/build.tools/mkdisk2 script
