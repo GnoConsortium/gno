@@ -1,0 +1,161 @@
+PREFACE
+^^^^^^^
+
+This file documents how to build the GNO documentation.
+
+Probably one of the first questions you may ask is "Why is the document
+source in LaTeX?".  It comes down to this:
+
+	- I wanted to provide a good selection of file formats.
+	- I wanted the results to look as professional as possible
+	  in all provided file formats.
+	- I wanted all file formats to originate from the same source.
+
+There was some question as to which language should be used for the
+original source.  LaTeX was chosen (rather arbitrarily) as the source
+language because it, IMHO, gives the optimal results for the three 
+points above.
+
+	Devin Reade
+	December 1997.
+
+$Id: README,v 1.1 1997/12/02 15:38:13 gdr Exp $
+
+
+WHAT THE FILES ARE
+^^^^^^^^^^^^^^^^^^
+
+	Makefile	Configuration file for use with dmake.
+	README		This file.
+	getdate		A perl script which extracts the date or version
+			from an RCS "Id" tag, and prints it in a more
+			"normal" fashion.  Usage: "getdate <infile >outfile"
+	gno.bib		The bibliography used in the Overview.  This
+			is processed using BibTeX.
+	index.html	This is the top-level page for the html version.
+			It contains links to the three books, the generated
+			man pages, the FAQ, et al.
+	intro.tex	This is the LaTeX source to the "Overview and
+			Installation Manual".
+	gsh.tex		This is the LaTeX source to the "GNO Shell Reference
+			Manual".
+	kern.tex	This is the LaTeX source to the "Kernel Reference
+			Manual".
+	mkhtmlman	This is a custom script which drives the man2html
+			program.  It basically searches for the man pages
+			in the GNO search tree to convert, and adds in some
+			custom info after the conversion has been done.
+	mkmandex	This is a custom script which generates the html
+			index pages for each "man page" chapter.
+	newer.c		A source file which compiles to a program that
+			compares the modification date of two files.  Used
+			by mkhtmlman to avoid unnecessary processing.
+	unaval.html	A generic web page that says "the page you requested
+			is not ready yet".
+
+WHAT YOU NEED
+^^^^^^^^^^^^^
+
+There are quite a few tools that you will need to build the GNO
+documentation.  They are:
+
+	dmake
+		This is not common on too many UNIX systems, but I needed
+		for certain contructs that gmake as too dumb to handle.
+		It was written by Dennis Vadura, 
+		<dvadura@watdragon.uwaterloo.ca>, and is available from
+			ftp://plg.uwaterloo.ca/pub/dmake
+			http://dmake.wticorp.com
+	perl5
+		Perl5 is needed by some of the translation utilities.
+	LaTeX2e
+		LaTeX is responsible for creating the DVI and Postscript
+		versions of the documentation.
+	bibtex, makeidx
+		These two utilities are required for making the bibliography
+		and index, respectively.  They are likely part of your
+		LaTeX distribution.
+	latex2html
+		This utility translates the man pages from nroff source
+		into html.  It is available via the CTAN site nearest you.
+		Check in the directory tex-archive/support/latex2html.
+		Three main CTAN sites are:
+			United States:		ftp.shsu.edu
+			United Kingdom:		ftp.tex.ac.uk
+			Germany:		ftp.dante.de
+	hthtml
+		This is a package that provides a cleaner interface
+		for displaying URLs either as footnotes (for printed
+		manuals) or as links (for online manuals).  It is
+		available from
+		http://www.cs.tu-bs.de/~krinke/hthtml/index.html
+	man2html
+		This is a program which converts preformatted nroff 
+		source to html.  It is available at
+			http://www.oac.uci.edu/indiv/ehood/man2html.html
+
+WHERE TO BUILD IT
+^^^^^^^^^^^^^^^^^
+
+First of all, we cannot build the documentation using GNO itself, as 
+GNO stands today.  We probably won't ever be able to, and if we are, 
+we probably won't want to build it under GNO.  The reason is simple;
+I normally build the docs using a 120MHz 686 with 80Meg of memory
+(running Linux).  Doing so takes many minutes, and most of the memory.
+Building it on a a 16Meg Linux machine absolutely thrashes the machine.
+
+That having been said, you should be able to rebuild the documentation
+on any UNIX box, provided you install (or have installed) the appropriate
+utilities.
+
+HOW TO BUILD IT
+^^^^^^^^^^^^^^^
+
+The documentation as it stands now will probably only build on my system.
+However, should I ever stop maintaining this documentation, it should
+be fairly simple to reconfigure it to run elsewhere.
+
+Most of the site-specific items are in the Makefile.  This includes
+the maintainer name and address, the basenames of the URLs used, 
+and so forth.  If the DRAFT macro is set to 'true' then many url links
+in the html versions will resolve to local files; this is used for testing.
+
+Some other dependancies are as follows.  Unless trenco is no longer the
+primary GNO site, the following should not need to be changed:
+
+	index.html:
+		There are some minor assumptions about the directory
+		structure and file names on the GNO html and ftp servers.
+
+	intro.tex:
+		There are some explicit references to the trenco ftp
+		in this document.  These should not be changed unless
+		trenco is no longer used.
+
+	mkhtmlman:
+		This script is heavily dependant on the structure of
+		the GNO source tree, and the directory from which it
+		is invoked.  On the other hand, there shouldn't be any
+		need to change this.
+
+	unaval.html:
+		The maintainer's name and address is hard-coded here.
+
+Once the above dependancies have been addressed, you can use dmake(1)
+to build the sources.  The primary targets are:
+
+	dvi:	Build the DVI (device independant) files.
+	ps:	Build the Postscript files.  Implies the dvi target.
+	h:	Build the html version of the *.tex files.  Because the
+		bibliography gets built by the dvi target, you should have
+		made the dvi target at least once.  If your dvi target is
+		out-of-date you will only get a warning.  If the bibliography
+		generated from gno.bib does not exist at all, then this
+		target will fail.
+	man:	Builds the html versions of the manual pages.
+	all:	Build all of the above targets.
+	upload:	Builds *.gz and *.Z files which are then used when I do
+		uploads to the http/ftp server.
+	clean:	Removes all temporary files.
+	clobber: Removes all generated files and directories.  Implies
+		'clean'.
