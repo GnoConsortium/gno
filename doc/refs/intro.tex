@@ -1,7 +1,7 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.11 1999/01/27 06:35:42 gdr-ftp Exp $
+% $Id: intro.tex,v 1.12 1999/01/28 05:22:16 gdr-ftp Exp $
 % 
 
 \documentclass{report}
@@ -1124,8 +1124,8 @@ the other set.
 \item
 Set your DOWNLOAD\_DIR environment variable to the directory
 into which you placed the base distribution NuFX archive files
-(gnoboot.shk, gnohfs.shk, gno.01.shk, and so forth).
-For example, if the NuFX files were in /download, you would type:
+(gnoboot.shk, gnohfs.shk, gno.01.shk, and so forth).  For
+example, if the NuFX files were in /download, you would type:
 
 \begin{verbatim}
 	setenv DOWNLOAD_DIR /download
@@ -1136,12 +1136,9 @@ pathname delimiter.  Do not use a trailing slash.
 
 \item
 Install the majority of the GNO base distribution files by
-changing directory into your destination directory and running the
-installboot1
-script. Assuming that you will be installing
-to the partition 
-/gno,
-the commands would be:
+changing directory into your destination directory and running
+the installboot1 script. Assuming that you will be installing
+to the partition /gno, the commands would be:
 
 \begin{verbatim}
 	cd /gno
@@ -1155,11 +1152,8 @@ Have patience.
 There are a small number of recommended files that do not follow
 ProDOS naming conventions.  If you wish to install these files,
 make sure that you have an HFS or Appleshare disk online. Change
-directories to that disk (or subdirectory) and run 
-installboot2.
-Assuming that the HFS disk is 
-/gno-hfs,
-the commands are:
+directories to that disk (or subdirectory) and run installboot2.
+Assuming that the HFS disk is /gno-hfs, the commands are:
 
 \begin{verbatim}
 	cd /gno-hfs
@@ -1176,17 +1170,10 @@ files were extracted onto a volume other than /gno, you will
 have to replace all the ``:gno:'' strings with the appropriate
 path.  Similarily, you will have to replace ``:gno-hfs:'' if
 that is not the name of your HFS (or Appleshare) partition
-where you ran the 
-installboot2
-script.  Note that you cannot currently use pathnames in the
-namespace
-file that contain spaces.
+where you ran the installboot2 script.  Note that you cannot
+currently use pathnames in the namespace file that contain spaces.
 
-The 
-gno.boot
-disk includes the 
-vi
-utility to do these edits.
+The gno.boot disk includes the vi utility to do these edits.
 You can also edit the namespace file with any other text editor
 of your choosing, as long as it is done before you try to run
 your new GNO distribution.

@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.12 1999/01/18 16:48:11 gdr-ftp Exp $
+# $Id: Makefile,v 1.13 1999/01/28 05:22:16 gdr-ftp Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -46,7 +46,6 @@ FTP_ROOT	= ftp://ftp.gno.org/pub/apple2/gs.specific/gno
 
 
 # Where can the FAQ be located?
-#FAQ		= http://web.cs.ualberta.ca/~glyn/FAQ.csa2g
 FAQ		= http://www.gno.org/~gno/FAQ.html
 FAQLOG		= http://www.gno.org/~gno/FAQ-log.html
 FAQ_TEXT	= $(FTP_ROOT)/doc/faq/CURRENT
@@ -58,7 +57,6 @@ FTP_GSH		= $(FTP_ROOT)/doc/refs/gsh
 
 
 # Where can the old v2.0.4 docs be found?
-#OLD_HTML	= http://web.cs.ualberta.ca/~glyn/GNOv2.0.4Docs
 OLD_HTML	= http://www.gno.org/~gno/docs.Aug96
 
 #########################################################

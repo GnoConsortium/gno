@@ -6,7 +6,7 @@
 # in the file ../../verbatim/boot/README.install, and writes its results
 # out to the same file.
 #
-# $Id: mknotes,v 1.1 1999/01/18 01:46:07 gdr-ftp Exp $
+# $Id: mknotes,v 1.2 1999/01/28 05:22:16 gdr-ftp Exp $
 #
 
 $texfile = "./intro.tex";
@@ -78,6 +78,7 @@ while (<fp>) {
 	$output .= "\t     ";
     }
     s,\\htlink\{([^\}]+)\},$1,g;    # show URLs as plain text
+    s,\\hturl\{([^\}]+)\},$1,g;
     s,\s*\\bf\s*, ,g;               # strip formatting commands
     s,\\rm,,g;
     s,\\,,g;                        # strip '\' from "\_"
