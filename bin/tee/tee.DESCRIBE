@@ -1,10 +1,10 @@
 Name:    tee
-Version: 1.1 (23 Nov 94)
+Version: 1.2 (2 Sep 96)
 Author:  Devin Reade
 Contact: <gdr@myrias.ab.ca>
 Where:   /bin/tee
 FTP:     cco.caltech.edu, grind.isca.uiowa.edu.
 
-Tee copies stdin to stdout without buffering and also makes a copy
-of the data to a specified file(s).  It is useful when you want to watch
-the output of a process, but also save it.
+Tee copies stdin to stdout, by default without buffering.  It also makes
+a copy of the data to a specified file(s).  It is useful when you want to
+watch the output of a process, but also save it.
