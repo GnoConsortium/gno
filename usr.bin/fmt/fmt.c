@@ -31,6 +31,10 @@
  * SUCH DAMAGE.
  */
 
+#ifdef __GNUC__
+#define lint
+#endif
+
 #ifndef lint
 static char copyright[] =
 "@(#) Copyright (c) 1980, 1993\n\
@@ -45,6 +49,43 @@ static char sccsid[] = "@(#)fmt.c	8.1 (Berkeley) 7/20/93";
 #include <ctype.h>
 #include <locale.h>
 #include <stdlib.h>
+#include <string.h>
+
+#ifdef SUNOS4
+#include "sunos4stdio.h"
+#endif
+
+#ifndef __P
+#ifdef __STDC__
+#define __P(a) a
+#else
+#define __P(a) ()
+#endif
+#endif
+
+#define REALLOC my_realloc
+
+static void fmt __P((FILE *fi));
+static void prefix __P((char *line));
+static void split __P((char *line));
+static void setout __P((void));
+static void pack __P((char *word, int wl));
+static void oflush __P((void));
+static void tabulate __P((char *line));
+static void leadin __P((void));
+static int  ispref __P((char *s1, char *s2));
+static void *my_realloc __P((void *buf, size_t size));
+#if 0
+static char *savestr __P((char *str));
+#endif
+
+extern int  ishead __P((char *));
+
+#if defined(SOLARIS) || defined(HALOS)
+#define INDEX(s,c) strchr((s),(c))
+#else
+#define INDEX index
+#endif
 
 /*
  * fmt -- format the concatenation of input files or standard input
@@ -69,7 +110,6 @@ int	pfx;			/* Current leading blank count */
 int	lineno;			/* Current input line */
 int	mark;			/* Last place we saw a head line */
 
-char	*malloc();		/* for lint . . . */
 char	*headnames[] = {"To", "Subject", "Cc", 0};
 
 /*
@@ -78,6 +118,7 @@ char	*headnames[] = {"To", "Subject", "Cc", 0};
  * at the end.
  */
 
+int
 main(argc, argv)
 	int argc;
 	char **argv;
@@ -134,6 +175,7 @@ main(argc, argv)
  * doing ^H processing, expanding tabs, stripping trailing blanks,
  * and sending each line down for analysis.
  */
+static void
 fmt(fi)
 	FILE *fi;
 {
@@ -154,9 +196,11 @@ fmt(fi)
 			if (cp - linebuf >= lbufsize) {
 				int offset = cp - linebuf;
 				lbufsize += CHUNKSIZE;
-				linebuf = realloc(linebuf, lbufsize);
-				if(linebuf == 0)
-					abort();
+				linebuf = REALLOC(linebuf, lbufsize);
+				if(linebuf == NULL) {
+				    perror("linebuf allocation failed");
+				    abort();
+				}
 				cp = linebuf + offset;
 			}
 			if (c == '\b') {
@@ -193,15 +237,17 @@ fmt(fi)
 		col = 0;
 		cp = linebuf;
 		cp2 = canonb;
-		while (cc = *cp++) {
+		while ((cc = *cp++)) {
 			if (cc != '\t') {
 				col++;
 				if (cp2 - canonb >= cbufsize) {
 					int offset = cp2 - canonb;
 					cbufsize += CHUNKSIZE;
-					canonb = realloc(canonb, cbufsize);
-					if(canonb == 0)
-						abort();
+					canonb = REALLOC(canonb, cbufsize);
+					if(canonb == 0) {
+					    perror("canob (1) allocation failed");
+					    abort();
+					}
 					cp2 = canonb + offset;
 				}
 				*cp2++ = cc;
@@ -211,9 +257,11 @@ fmt(fi)
 				if (cp2 - canonb >= cbufsize) {
 					int offset = cp2 - canonb;
 					cbufsize += CHUNKSIZE;
-					canonb = realloc(canonb, cbufsize);
-					if(canonb == 0)
-						abort();
+					canonb = REALLOC(canonb, cbufsize);
+					if(canonb == 0) {
+					    perror("canob (2) allocation failed");
+					    abort();
+					}
 					cp2 = canonb + offset;
 				}
 				*cp2++ = ' ';
@@ -240,6 +288,7 @@ fmt(fi)
  * Finally, if the line minus the prefix is a mail header, try to keep
  * it on a line by itself.
  */
+static void
 prefix(line)
 	char line[];
 {
@@ -261,7 +310,7 @@ prefix(line)
 	 */
 	if (np != pfx && (np > pfx || abs(pfx-np) > 8))
 		oflush();
-	if (h = ishead(cp))
+	if ((h = ishead(cp)))
 		oflush(), mark = lineno;
 	if (lineno - mark < 3 && lineno - mark > 0)
 		for (hp = &headnames[0]; *hp != (char *) 0; hp++)
@@ -287,6 +336,7 @@ prefix(line)
  * attached at the end.  Pass these words along to the output
  * line packer.
  */
+static void
 split(line)
 	char line[];
 {
@@ -316,7 +366,7 @@ split(line)
 		 */
 		if (*cp == '\0') {
 			*cp2++ = ' ';
-			if (index(".:!", cp[-1]))
+			if (INDEX(".:!", cp[-1]))
 				*cp2++ = ' ';
 		}
 		while (*cp == ' ')
@@ -344,6 +394,7 @@ char	*outp;				/* Pointer in above */
 /*
  * Initialize the output section.
  */
+static void
 setout()
 {
 	outp = NOSTR;
@@ -369,6 +420,7 @@ setout()
  * pack(word)
  *	char word[];
  */
+static void
 pack(word,wl)
 	char word[];
 	int wl;
@@ -407,6 +459,7 @@ pack(word,wl)
  * its way.  Set outp to NOSTR to indicate the absence of the current
  * line prefix.
  */
+static void
 oflush()
 {
 	if (outp == NOSTR)
@@ -420,6 +473,7 @@ oflush()
  * Take the passed line buffer, insert leading tabs where possible, and
  * output on standard output (finally).
  */
+static void
 tabulate(line)
 	char line[];
 {
@@ -459,6 +513,7 @@ tabulate(line)
  * Initialize the output line with the appropriate number of
  * leading blanks.
  */
+static void
 leadin()
 {
 	register int b;
@@ -469,12 +524,13 @@ leadin()
 	outp = cp;
 }
 
+#if 0
 /*
  * Save a string in dynamic space.
  * This little goodie is needed for
  * a headline detector in head.c
  */
-char *
+static char *
 savestr(str)
 	char str[];
 {
@@ -488,10 +544,12 @@ savestr(str)
 	strcpy(top, str);
 	return (top);
 }
+#endif
 
 /*
  * Is s1 a prefix of s2??
  */
+static int
 ispref(s1, s2)
 	register char *s1, *s2;
 {
@@ -499,4 +557,20 @@ ispref(s1, s2)
 	while (*s1++ == *s2)
 		;
 	return (*s1 == '\0');
+}
+
+
+/*
+ * some architectures' reallocs are too damned stupid to accept NULL
+ * buf arguments ...
+ */
+
+static void *
+my_realloc (void *buf, size_t size)
+{
+    if (buf == NULL) {
+	return (void *) malloc(size);
+    } else {
+	return (void *) realloc(buf, size);
+    }
 }

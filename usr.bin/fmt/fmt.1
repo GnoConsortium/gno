@@ -31,59 +31,67 @@
 .\"
 .\"     @(#)fmt.1	8.1 (Berkeley) 6/6/93
 .\"
-.Dd June 6, 1993
-.Dt FMT 1
-.Os
-.Sh NAME
-.Nm fmt
-.Nd simple text formatter
-.Sh SYNOPSIS
-.Nm fmt
-.Oo
-.Ar goal
-.Op Ar maximum
-.Oc
-.Op name ...
-.Sh DESCRIPTION
-.Nm Fmt
+.\" $Id: fmt.1,v 1.2 1997/09/21 22:12:26 gdr Exp $
+.\"
+.TH FMT 1 "2 August 1997" "GNO" "Commands and Applications"
+.SH NAME
+fmt \- simple text formatter
+.SH SYNOPSIS
+.BR fmt
+[
+.B -o
+.I goal
+[
+.I maximum
+]] [
+.B -c
+] [
+.I "name ..."
+]
+.SH DESCRIPTION
+.BR Fmt
 is a simple text formatter which reads the concatenation of input
 files (or standard input if none are given) and produces on standard
 output a version of its input with lines as close to the
-.Ar goal
+.I goal
 length
-as possible without exceeding the maximum.  The
-.Ar goal
-length defaults
-to 65 and the maximum to 75.  The spacing at the beginning of the
+as possible without exceeding the 
+.IR maximum .
+The
+.I goal
+length defaults to 65 and the 
+.I maximum
+to 75.  The spacing at the beginning of the
 input lines is preserved in the output, as are blank lines and
 interword spacing.
-.Pp
-.Nm Fmt
+.LP
+.BR Fmt
 is meant to format mail messages prior to sending, but may also be useful
 for other simple tasks.
 For instance,
 within visual mode of the
-.Xr ex 1
+.BR ex (1)
 editor (e.g.
-.Xr vi 1 )
+.BR vi (1))
 the command
-.Pp
-.Dl \&!}fmt
-.Pp
+.nf
+	\&!}fmt
+.fi
 will reformat a paragraph,
 evening the lines.
-.Sh SEE ALSO
-.Xr nroff 1 ,
-.Xr mail 1
-.Sh HISTORY
+.SH SEE ALSO
+.BR nroff (1),
+.BR mail (1)
+.SH HISTORY
 The
-.Nm fmt
-command appeared in
-.Bx 3 .
-.\" .Sh AUTHOR
-.\" Kurt Shoens
-.\" .br
-.\" Liz Allen (added goal length concept)
-.Sh BUGS
+.BR fmt
+command appeared in 4.3BSD.
+.SH AUTHOR
+Kurt Shoens
+.br
+Liz Allen (Added goal length concept.)
+.br
+Devin Reade (Updated for GNO.)
+.SH BUGS
 The program was designed to be simple and fast \- for more complex
 operations, the standard text processors are likely to be more appropriate.
