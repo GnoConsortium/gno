@@ -1,7 +1,7 @@
 /*
  * Test by Devin Reade
  *
- * $Id: popen.c,v 1.1 1997/02/28 05:12:52 gdr Exp $
+ * $Id: popen.c,v 1.2 1997/09/21 16:33:49 gdr Exp $
  */
 
 #include <stdio.h>
@@ -15,7 +15,7 @@ int main (int argc, char **argv) {
   FILE *fp;
 	int errflag = 0;
   int c;
-  char *mode;
+  char *mode = NULL;
 
   while ((c = getopt(argc, argv, "rw")) != EOF) {
 	   switch (c) {
@@ -33,19 +33,22 @@ int main (int argc, char **argv) {
   if (errflag) {
 	   exit(1);
 	}
-  if (argc - optind != 1) {
-	   errx(1,"one argument required");
+  if ((argc - optind != 1) || (mode == NULL)) {
+	   errx(1,"one flag and one argument required");
 	}
 
   if ((fp = popen(argv[optind], mode)) == NULL) {
+	   perror("popen failed");
+     exit(1);
 	   err(1, "popen failed");
   }
+  fprintf(stderr, "popen passed, starting loop\n");
   while (fgets(buffer, BUFFERSIZE, fp) != NULL) {
-	   printf("T: %s", buffer);
+	   fprintf(stderr, "T: %s", buffer);
   }
-  printf("now doing pclose\n");
+  fprintf(stderr, "now doing pclose\n");
 	c = pclose(fp);
-  printf("pclose returned %d\n", c);
+  fprintf(stderr, "pclose returned %d\n", c);
 
   return c;
 }
