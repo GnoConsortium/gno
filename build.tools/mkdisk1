@@ -5,7 +5,7 @@
 #
 # Devin Reade, April 1998
 #
-# $Id: mkdisk1,v 1.1 1998/04/22 04:51:10 gdr-ftp Exp $
+# $Id: mkdisk1,v 1.2 1999/02/15 21:39:11 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -113,7 +113,7 @@ mv $RELDIR/usr $RELDIR/gno.15
 
 echo gno.16
 install -d $RELDIR/gno.16
-mv $RELDIR/dev $RELDIR/doc $RELDIR/etc $RELDIR/home $RELDIR/install $RELDIR/lang $RELDIR/sbin $RELDIR/var $RELDIR/gno.16
+mv $RELDIR/Icons $RELDIR/System $RELDIR/dev $RELDIR/doc $RELDIR/etc $RELDIR/home $RELDIR/lang $RELDIR/sbin $RELDIR/var $RELDIR/gno.16
 
 echo " "
 echo " "

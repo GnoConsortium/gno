@@ -5,7 +5,7 @@
 # 
 # Devin Reade, April 1998.
 #
-# $Id: mkboot,v 1.4 1999/01/28 06:54:31 gdr-ftp Exp $
+# $Id: mkboot,v 1.5 1999/02/15 21:39:11 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -15,12 +15,17 @@ setenv RELBOOT	/gno.boot
 
 # Where are the GNO (and other) sources?
 setenv SRC	/src
+setenv DIST	/dist
 
 # Where do we keep the Finder.Data, Finder.Root, and icons files
 # that are created on the GS and copied over to the GNO boot disk?
 # Unfortunately, we can't put these into the repository because of
 # their resource forks (unless we were to binscii them)
 setenv BINSRC	/scratch/gnoboot.bins
+
+# We need two scratch files for some operations
+setenv JUNKFILE1	/tmp/finstall.junk1
+setenv JUNKFILE2	/tmp/finstall.junk2
 
 #==================================
 
@@ -74,7 +79,13 @@ install -V	$BINSRC/Finder.Root			$RELBOOT
 install -V	$BINSRC/Finder.Data			$RELBOOT
 install -V	$BINSRC/Icons/GNO.Icon			$RELBOOT/Icons
 
-chtyp -lexec $RELBOOT/gshrc $RELBOOT/installboot*
+echo "creating the mklinks script"
+echo '/^\#/d' > $JUNKFILE1
+echo 's/^/install -V /' >> $JUNKFILE1
+cat $DIST/install/mklink.* | sed -f $JUNKFILE1 > $JUNKFILE2
+msort $JUNKFILE2 > $RELBOOT/tmp/mklinks
+
+chtyp -lexec $RELBOOT/gshrc $RELBOOT/installboot* $RELBOOT/tmp/mklinks
 
 echo "installing temporary files since gshk will not archive empty directories"
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/doc
@@ -83,6 +94,5 @@ install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lang/orca/languages
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lang/orca/shell
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lang/orca/utilities
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/lib
-install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/tmp
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/usr/bin
 install 	$SRC/gno/verbatim/tmp/delete.me	$RELBOOT/var/adm

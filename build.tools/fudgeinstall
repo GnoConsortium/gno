@@ -6,7 +6,7 @@
 # 
 # Devin Reade, September 1997.
 #
-# $Id: fudgeinstall,v 1.8 1999/01/28 06:54:31 gdr-ftp Exp $
+# $Id: fudgeinstall,v 1.9 1999/02/15 21:39:11 gdr-ftp Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -26,6 +26,11 @@ setenv DIST	/dist
 # Unfortunately, we can't put these into the repository because of
 # their resource forks (unless we were to binscii them)
 setenv BINSRC	/scratch/gnoboot.bins
+
+# We need a scratch file for some operations
+setenv JUNKFILE	/tmp/finstall.junk
+
+#==================================
 
 # Create the directories we need.  Unfortunately, gsh is too stupid to
 # even allow us multiline commands by escaping the newline, so we have
@@ -83,6 +88,7 @@ install -dV $RELDIR/usr/man/cat8
 install -dV $RELDIR/usr/orca/bin
 install -dV $RELDIR/usr/sbin
 install -dV $RELDIR/var/adm
+install -dV $RELDIR/var/adm/newuser/skel
 install -dV $RELDIR/var/run
 install -dV $RELDIR/var/spool
 
@@ -98,9 +104,12 @@ install -V	/HFSinclude/sys/*.h	$RELDIR2/HFSinclude/sys
 echo "installing files in /Icons"
 install -V	$BINSRC/Icons/GNO.Icon	$RELDIR/Icons
 
+# These ones should eventually be installed as part of the 'release'
+# target.
 echo "installing files in /System"
 install -V  $BINSRC/System/Desk.Accs/GNOSnooperII $RELDIR/System/Desk.Accs
 install -V  $BINSRC/System/Desk.Accs/SuspDA       $RELDIR/System/Desk.Accs
+install -V  $BINSRC/System/Desk.Accs/TMTerm2.v1.0 $RELDIR/System/Desk.Accs/TMTerm
 install -V  $BINSRC/System/Drivers/FilePort       $RELDIR/System/Drivers
 install -V  $BINSRC/System/Drivers/FilePort.Data  $RELDIR/System/Drivers
 install -V  $BINSRC/System/Drivers/NullPort       $RELDIR/System/Drivers
@@ -172,11 +181,13 @@ install -V	/etc/freeze.cnf	$RELDIR/etc
 # gettytab	done
 install -V	$SRC/gno/verbatim/etc/glogin	$RELDIR/etc
 install -V	$SRC/gno/verbatim/etc/group	$RELDIR/etc
+install -V	$SRC/gno/verbatim/etc/hosts	$RELDIR/etc
 install -V	$SRC/gno/verbatim/etc/inittab	$RELDIR/etc
 install -V	$SRC/gno/verbatim/etc/motd	$RELDIR/etc
 echo >>					$RELDIR/etc/motd
 echo -n 'GNO release build date: ' >>	$RELDIR/etc/motd
 date >>					$RELDIR/etc/motd
+install -V	$SRC/gno/verbatim/etc/networks	$RELDIR/etc
 install -V	$SRC/gno/verbatim/etc/namespace	$RELDIR/etc
 install -V	$SRC/gno/verbatim/etc/passwd	$RELDIR/etc
 install -V	$SRC/gno/verbatim/etc/rchost	$RELDIR/etc
@@ -327,10 +338,16 @@ install -V	/usr/sbin/initd		$RELDIR/usr/sbin
 install -V	/usr/sbin/lpd		$RELDIR/usr/sbin
 # makewhatis	done
 install -V	/usr/sbin/mktmp		$RELDIR/usr/sbin
-install -V	/usr/sbin/newuser	$RELDIR/usr/sbin
-install -V	/usr/sbin/newuserv	$RELDIR/usr/sbin
+# newuser	done
+# newuserv	done
 install -V	/usr/sbin/runover	$RELDIR/usr/sbin
+install -V	$SRC/gno/verbatim/usr/sbin/slpscrpt.direct $RELDIR/usr/sbin
 install -V	/usr/sbin/uptimed	$RELDIR/usr/sbin
+
+echo "installing files in /var/adm/newuser"
+install -V	$SRC/gno/verbatim/var/adm/newuser/newid	$RELDIR/var/adm/newuser
+install -V	$SRC/gno/verbatim/var/adm/newuser/skel/glogin $RELDIR/var/adm/newuser/skel
+install -V	$SRC/gno/verbatim/var/adm/newuser/skel/gshrc $RELDIR/var/adm/newuser/skel
 
 echo "creating log files"
 touch		$RELDIR/var/adm/messages
@@ -343,7 +360,8 @@ chtyp -tbin -a0	$RELDIR/var/adm/utmp $RELDIR/var/adm/wtmp $RELDIR/var/adm/lastlo
 # all of the others.
 echo "creating the /usr/man/mkso.data file"
 install $SRC/gno/usr.man/mkso.data $RELDIR/usr/man/mkso.data
-cat $DIST/install/mkso.* | egrep -v -e '^#' | msort >> $RELDIR/usr/man/mkso.data
+cat $DIST/install/mkso.* | egrep -v -e '^#' > $JUNKFILE
+msort $JUNKFILE >> $RELDIR/usr/man/mkso.data
 
 # We won't use these directories, but they should be created for the user
 echo "creating /usr/local hierarchy"
