@@ -1,8 +1,13 @@
-#	$Id: Makefile,v 1.2 1998/02/09 08:43:52 taubert Exp $
+#	$Id: Makefile,v 1.3 1999/02/23 04:27:07 gdr-ftp Exp $
 
 .INCLUDE: /src/gno/paths.mk
 
-all: $(OBJ_DIR)modem $(OBJ_DIR)printer $(OBJ_DIR)null
+build: all
+
+all: $(OBJ_DIR) $(OBJ_DIR)modem $(OBJ_DIR)printer $(OBJ_DIR)null
+
+$(OBJ_DIR):
+	install -d $(OBJ_DIR)
 
 $(OBJ_DIR)modem: port.o msccf.o
 	$(LD) $(LDFLAGS) -l /usr/lib/libsim -o $@ $<
