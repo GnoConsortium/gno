@@ -1,7 +1,34 @@
 #! /usr/bin/perl 
 
+# This script makes the index listing used sort describe entries by
+# category.  It gets most of its information from where utilities
+# reside in the GNO ftp hierarchy.
+#
+# Devin Reade, January 1998
+#
+# $Id: mkindex,v 1.2 1998/01/17 21:26:42 gdr Exp $
+#
+
 $dirroot = "/ftp/pub/apple2/gs.specific";
 $dirlist = "gno orca";
+
+# This is a list of describe entries which we want to force into a
+# given category.  This should only be used when a utility doesn't have
+# an entry of its own in the .index.src files as a result of being 
+# archived with another utility.  For example, we fudge "descc" and
+# "descu" because they are archived in with "describe".
+
+$fudgelist{"cclean"}		= "gno/programming";	# with occ
+$fudgelist{"ccprep"}		= "gno/programming";	# with occ
+$fudgelist{"cjpeg"}		= "gno/graphics";	# part of jpeg tools
+$fudgelist{"djpeg"}		= "gno/graphics";	# part of jpeg tools
+$fudgelist{"jpegtran"}		= "gno/graphics";	# part of jpeg tools
+$fudgelist{"rdjpgcom"}		= "gno/graphics";	# part of jpeg tools
+$fudgelist{"wrjpgcom"}		= "gno/graphics";	# part of jpeg tools
+$fudgelist{"descc"}		= "gno/doc.utils";	# with describe
+$fudgelist{"descu"}		= "gno/doc.utils";	# with describe
+$fudgelist{"fortune"}		= "gno/games";		# resolve fortuna-[abc]
+# $fudgelist{""}		= "";
 
 #
 # Get the list of .index.src files.  We will look in here for references
@@ -58,7 +85,16 @@ foreach $f (@indexfiles) {
 @keylist = keys(%namelist);
 foreach $k (@keylist) {
     $s = $namelist{$k};
-    ($s eq ':') && ($s = ':unsorted:');
+    if ($s eq ':') {
+	if (defined($fudgelist{$k})) {
+	    $s = ':' . $fudgelist{$k} . ':';
+	} else {
+	    $s = ':unsorted:';
+	}
+    } elsif (defined($fudgelist{$k})) {
+	printf(stderr 
+	       "WARNING: %s should no longer be in the fudge list\n", $k);
+    }
     printf("%s\t%s\n", $k, $s);
 }
 
