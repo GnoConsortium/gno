@@ -1,13 +1,13 @@
-.TH catrez 1 "Commands and Applications" "27 July 1996" "Version 1.0"
+.\"
+.\" $Id: catrez.1,v 1.2 1997/09/26 06:29:55 gdr Exp $
+.\"
+.TH catrez 1 "25 September 1996" GNO "Commands and Applications"
 .SH NAME
 catrez \- concatenate resource forks from files
 .SH SYNOPSIS
 .B catrez
 [
-.I -v
-]
-[
-.I -a
+.I -av
 ]
 .RI "-d " dest_file
 .I file1
@@ -21,37 +21,49 @@ single file. (The data fork of the destination file is not modified.)
 This is useful to programmers who create
 resources for a program in several different files and need to combine
 them into the resource fork of the final executable file.
-
 .SH OPTIONS
-.IP -v
+.IP \fB-v\fR
 Produce verbose output, including: the program version,
 the name of each source file, the type & ID of each copied resource, and
 whether a resource converter is required.
-.IP -a
+.IP \fB-a\fR
 Append resources to the destination file rather than overwriting the
 resource fork.
-.IP "-d destfile"
+.IP "\fB-d\fR \fIdestfile\fR"
 Existing destination file name [required parameter].
-
 .SH "GNO COMPATIBILITY"
 .B catrez
 will shut itself down if it receives any of the following signals:
-SIGHUP (hang-up),
-SIGINT (user keyboard interrupt),
-SIGPIPE (writing to a pipe with no reader),
-SIGALRM (alarm timer expiration), or
-SIGTERM (kill). User signals (SIGUSR1 and SIGUSR2) are ignored.
+.RS
+.nf
 
+\fBSIGHUP\fR  (hang-up),
+\fBSIGINT\fR  (user keyboard interrupt),
+\fBSIGPIPE\fR (writing to a pipe with no reader),
+\fBSIGALRM\fR (alarm timer expiration), or
+\fBSIGTERM\fR (kill).
+
+.fi
+.RE
+User signals
+.RB ( SIGUSR1
+and
+.BR SIGUSR2 )
+are ignored.
 .SH EXAMPLES
-Append the resources from menu.r to the resource fork of progfile
-.nf
-     catrez -a -d progfile menu.r
-
-.fi
+Append the resources from menu.r to the resource fork of progfile:
+.RS
+catrez -a -d progfile menu.r
+.RE
+.LP
 Combine several resource files and add to progfile
-.nf
-     catrez -d progfile version.r menu.r window.r startup.r
-.fi
+.RS
+catrez -d progfile version.r menu.r window.r startup.r
+.RE
+.SH VERSION
+This manual page documents
+.BR catrez
+version 1.0.2.
 .SH "RETURN VALUES"
 .B catrez
 returns zero on success, non-zero otherwise.
