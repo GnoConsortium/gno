@@ -74,7 +74,7 @@ __OFLAG = -a0
    PCFLAGS += -E -P
    RC   := #f77                 # ratfor compiler
    FC   := #f77                 # fortran compiler
-   REZ  := occ                  # resource compiler (we should use rc(1))
+   REZ  := 17/occ               # resource compiler (we should use rc(1))
    REZFLAGS +=
 
    CATREZ := /usr/bin/catrez	# used for copying resource forks
@@ -128,7 +128,7 @@ __OFLAG = -a0
    %.root : %.asm ; $(AS) $(ASFLAGS) $<
 
 # Resource descriptions in REZ format
-   %.r : %.rez ; $(REZ) -c $(REZFLAGS) $<
+   %.r : %.rez ; $(REZ) -o $@ -c $(REZFLAGS) $<
 
 # Executables
    %$E : %$O ; $(LD) $(LDFLAGS) -o $@ $< $(LDLIBS)

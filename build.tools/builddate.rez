@@ -1,0 +1,15 @@
+/*
+ * This file is used to specify the build date in a programs resource
+ * fork.  It is used by #including it in the program *.rez file.
+ *
+ * $Id: builddate.rez,v 1.1 1998/02/14 23:56:39 gdr-ftp Exp $
+ */
+
+#define BUILD_DATE "Build Date:  " $$Date
+
+/*
+ Unfortunately, this mechanism doesn't seem to work.  It gets zeros for the
+ month and hour fields:
+	$$Format("%d/%d/%d %d:%d",$$Year,$$Month,$$Day,$$Hour,$$Minute)
+*/
+
