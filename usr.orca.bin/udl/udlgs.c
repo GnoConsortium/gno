@@ -4,7 +4,7 @@
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.12 1997/12/19 07:48:16 gdr Exp $
+ * $Id: udlgs.c,v 1.13 1999/01/15 07:36:15 gdr-ftp Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -252,7 +252,7 @@ int main(int argc, char **argv) {
   else {
     
     /* save the directory we're in */
-    if (getwd(rootdir)==NULL) {
+    if (getcwd(rootdir, MAXPATHLEN)==NULL) {
       fprintf(stderr,"%s: Couldn't stat .\n",program_name);
       exit (EXIT_FAILURE);
     }

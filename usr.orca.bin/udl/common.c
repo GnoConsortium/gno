@@ -4,7 +4,7 @@
  *
  * Routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.c,v 1.10 1997/12/08 16:07:19 gdr Exp $
+ * $Id: common.c,v 1.11 1999/01/15 07:36:15 gdr-ftp Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -860,7 +860,7 @@ char *Mktemp(const char *base)
 	fclose(fp);
       }
     }
-#endif
+#endif	/* __GNO__ */
 
     return st;
 }

@@ -4,7 +4,7 @@
  *
  * Header file for routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.h,v 1.9 1996/02/04 01:34:27 gdr Exp $
+ * $Id: common.h,v 1.10 1999/01/15 07:36:15 gdr-ftp Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -92,11 +92,6 @@ extern char *Mktemp(const char *base);
 extern char *get_path(const char *name);
 
 extern int needsgno(void);
-
-/* not strictly necessary, but it cuts down on warnings from gcc */
-#if defined(__GNUC__) || defined(_AIX)
-extern char *getwd(char *);
-#endif
 
 #if defined (__GNUC__) && !defined (__DJGPP__)
 extern char getopt(int, char **, char *);

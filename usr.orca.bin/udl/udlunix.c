@@ -4,7 +4,7 @@
  *
  * Unix specific routines.
  *
- * $Id: udlunix.c,v 1.10 1997/08/02 21:09:13 gdr Exp $
+ * $Id: udlunix.c,v 1.11 1999/01/15 07:36:15 gdr-ftp Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -134,8 +134,9 @@ int main(int argc,char *argv[]) {
   }
   
   /* save the directory we're in */
-  if (getwd(rootdir)==NULL) {
-    fprintf(stderr,"%s: Couldn't stat .\n",program_name);
+  if (getcwd(rootdir, MAXPATHLEN)==NULL) {
+    fprintf(stderr,"%s: getcwd failed for .: %s\n", 
+	    program_name, strerror(errno));
     exit (EXIT_FAILURE);
   }
 
