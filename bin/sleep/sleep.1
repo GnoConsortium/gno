@@ -33,7 +33,7 @@
 .\" SUCH DAMAGE.
 .\"
 .\"	@(#)sleep.1	8.3 (Berkeley) 4/18/94
-.\"	$Id: sleep.1,v 1.1 1997/10/03 04:02:40 gdr Exp $
+.\"	$Id: sleep.1,v 1.2 1997/10/30 02:34:54 gdr Exp $
 .\"
 .TH SLEEP 1 "September 1997" "" "Commands and Applications"
 .SH NAME
@@ -62,15 +62,12 @@ for any other signal it takes the standard action.
 The
 .BR sleep
 utility exits with one of the following values:
-.RS
-.BR 0
+.IP \fB0\fR
 On successful completion, or if the signal
 .BR SIGALRM
 was received.
-.LP
-.BR \&>\&0
+.IP \fB\&>\&0\fR
 An error occurred.
-.RE
 .SH EXAMPLES
 To schedule the execution of a command for
 some
