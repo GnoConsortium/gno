@@ -5,7 +5,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.4 1997/11/30 07:56:21 gdr Exp $
+# $Id: Makefile,v 1.5 1997/12/03 06:46:41 gdr Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -43,7 +43,7 @@ MINDEX		= index.html
 	HTML_ROOT	= http://trenco.myrias.com/~gno
 	GIFDIR		= http://trenco.myrias.com/icons
 .END
-FTP_ROOT	= ftp://trenco.myrias.com/pub/apple2/apple.16bit/gno
+FTP_ROOT	= ftp://trenco.myrias.com/pub/apple2/gs.specific/gno
 
 
 # Where can the FAQ be located?
