@@ -1,0 +1,125 @@
+$Id: README,v 1.1 1996/01/22 01:37:59 gdr Exp $
+
+This is the README file for the describe package.  This package is
+designated as version 1.0.1, and consists of the following utilities:
+
+	describe v1.0.1  - show database entries describing the current
+                           status of programs
+
+	descc    v1.0.1  - the describe source compiler
+
+	descu    v1.0    - the describe source updater
+
+ABOUT DESCRIBE AND DESCC
+========================
+
+  This is yet another project I've been sitting on for a while, but have
+finally decided to release.  The basic idea of the 'describe' package
+(the descc "compiler" and describe itself) is to provide a quick, easy
+way of accessing information related to the utilities which so many
+different people are releasing these days.  The reason it sat around on
+my harddrive so long is I was having qualms about its designated role in
+life.  I wasn't sure exactly what I wanted it to do.  Well, I've decided
+to KISS for now: descc simply compiles the utility list, which I maintain,
+into a (very) simple "database" located in /usr/local/lib/.  The companion
+utility 'describe' is used to fetch information about a particular utility
+from this "database".
+
+   descc is fairly limited, as is the "database" format itself.  Part of the
+KISS (or it wouldn't be out now) design philosophy ;).  Usage is simple:
+when you get a new listing (I'll provide monthly updates), simply "descc
+<filename>" where <filename> is the name of the newly released update.
+descc will simply write over the old database and replace it with the
+new.  (Note:  No appendages are allowed by descc.  See descu.)
+
+   As always, coments are appreciated.  And, moreso than on other projects,
+I'd appreciate some comments about the direction I'm going in, suggestions
+as to where to take this, etc.  I have a feeling that some fields in the
+format (eg, FTP:) are rather useless, and I'd like to know what you guys
+out there think.
+
+James Brookes
+jamesb@ecst.csuchico.edu
+
+ABOUT DESCU
+===========
+
+I think describe and descc were really good ideas; they sure beat the
+text file list of Gno utilities that James used to keep.  The one major
+shortfall I found was having to manually update the describe database
+source every time I wanted to include a new entry.
+
+I therefore wrote descu, the describe updater, which is also rather
+limited due to following the KISS principle.
+
+For completeness, I have also added the man pages describe.1, descc.8,
+and descu.8.  I briefly pondered having a describe.5, but alas I was too
+lazy; you can find the file formats as part of descc.8.
+
+Devin Reade
+gdr@myrias.ab.ca
+
+INSTALLATION
+============
+
+You can either type "dmake install", or do the following:
+
+	mkdir -p /usr/local/lib
+	cp ./describe /usr/local/bin
+	cp ./descc    /usr/sbin
+	cp ./descu    /usr/sbin
+	rm /usr/local/bin/descc
+
+You will also want to do the following, which is NOT done by dmake's
+install target:
+
+	rehash
+	descc ./describe.source
+
+CHANGES
+=======
+
+This details changes to the entire distribution.
+
+v1.1	May 1995
+	Initial release for descu.
+	Added -h and -v flags to describe and descc.
+	Common defines and typedefs were extracted to desc.h.
+	Descc now exits -1 on failure (vice 0).
+	In descc, some more error checking and flushing were added.  Also,
+		mygets wasn't dereferencing one of its arguments properly.
+	Allocated stack size was increased from 512 to 768 bytes.
+	Describe and descc were modified not to be dependant on the size
+		of integers.
+	Ran source files through indent(1).
+	
+v1.0	Feb 1994
+	Initial release for describe and descc.
+
+AUTHORS
+=======
+
+The original describe and descc utilities and the describe format were
+written by James Brookes <jamesb@ecst.csuchico.edu>.
+
+The descu utility and v1.1 modifications to describe and descc were by
+Devin Reade <gdr@myrias.ab.ca>.
+
+LEGALESE
+========
+
+The describe and descc utilities are copyright (c) 1994-1995 by James
+Brookes.  The descu utility is copyright (c) 1995 by Devin Reade.
+
+These programs may be freely copied provided that the archive, including
+source files and this README, remain intact.  Modified versions of these
+programs may not be distributed without the permission of the respective
+authors.
+
+Contact the respective authors for permission to include these programs on
+any commercial software collections.  Permission is granted to Usenet sites
+and GEnie Information Services for inclusion in software archives.
+
+The Apple IIGS executable files distributed with this archive contain
+material from the ORCA/C Run-Time Libraries, copyright 1987-1995 by
+Byte Works, Inc.  Used with permission.
