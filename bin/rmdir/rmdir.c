@@ -1,99 +1,136 @@
 /*
  * rmdir - remove directory
  *
- * A quick and dirty utility for Gno.  This will delete all empty
- * directories given as arguments.  It will skip non-directory files
- * directories that aren't empty.
+ * ChangeLog:
+ *	v1.1	- incorporated into GNO base distribution
+ *		- added -p flag for POSIX conformance
+ *		- moved rmdir(2) implementation to libc
+ *	v1.0	- initial revision
  *
- * If you don't compile with #define SHELL_COMD, then you just get the
- * rmdir(2) system call.
- *
- * Version 1.0 by Devin Reade <gdr@myrias.ab.ca>
+ * Version 1.1 by Devin Reade <gdr@myrias.ab.ca>
  */
 
-#include <gsos.h>
-#include <orca.h>
+#include <types.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+#include <err.h>
+#include <gno/gno.h>
 
-#define DIRECTORY 0x0F
+#include "contrib.h"
 
-extern GSString255Ptr __C2GSMALLOC(char *);
-extern int _mapErr(int);
-extern char *strerror(int errnum);
-extern void begin_stack_check(void);
-extern int end_stack_check(void);
-
-typedef struct DestroyRecGS {
-   Word pCount;
-   GSString255Ptr pathname;
-} DestroyRecGS, *DestroyRecPtrGS;
-
-int rmdir (const char *path) {
-   DestroyRecGS drec;
-   FileInfoRecGS frec;
-   int result;
-
-   /* make a GSString copy of path */
-   frec.pCount=3;
-   if ((frec.pathname = __C2GSMALLOC(path)) == NULL) {
-      errno = ENOMEM;
-      return -1;
-   }
-
-   /* check to ensure that it's a directory */
-   GetFileInfoGS(&frec);
-   if ((result = toolerror())!=0) {
-      errno = _mapErr(result);
-      free(frec.pathname);
-      return -1;
-   }
-   if (frec.fileType != DIRECTORY) {
-      errno = ENOTDIR;
-      free(frec.pathname);
-      return -1;
-   }
-
-   /* it's a directory; try to delete it */
-   drec.pCount=1;
-   drec.pathname = frec.pathname;
-   DestroyGS(&drec);
-   if ((result = toolerror())!=0) {
-      errno = _mapErr(result);
-      free(frec.pathname);
-      return -1;
-   }
-
-   /* it's been deleted.  Clean up and return */
-   free(frec.pathname);
-   return 0;
+#ifdef __STACK_CHECK__
+static void
+printStack (void) {
+	fprintf(stderr, "stack usage: %d bytes\n", _endStackCheck());
 }
-
-#ifdef SHELL_COMD
-
-int main(int argc, char **argv) {
-   int i, result;
-
-#ifdef CHECK_STACK
-   begin_stack_check();
-#endif
-         
-   result = 0;
-   for (i=1; i<argc; i++) {            /* loop over all filenames */
-
-      if (rmdir(argv[i])!=0) {
-         fprintf(stderr,"%s: %s: %s.  File skipped.\n",argv[0],argv[i],
-                 strerror(errno));
-         result = 1;
-      }
-   }
-
-#ifdef CHECK_STACK
-   fprintf(stderr,"stack usage: %d bytes\n",end_stack_check());
 #endif
 
-   return result;
+static void
+usage (void) {
+	fprintf(stderr, "usage: rmdir [-p] directory ...\n");
+	exit(1);
 }
 
-#endif /* SHELL_COMD */
+const char *nodup = "couldn't duplicate %s";
+
+int
+main(int argc, char **argv) {
+	int c, result, pflag;
+	char delim, *path, *root, *p, *q;
+
+#ifdef __STACK_CHECK__
+	_beginStackCheck();
+	atexit(printStack);
+#endif
+
+	pflag = 0;
+	while ((c = getopt (argc, argv, "p")) != EOF) {
+		switch (c) {
+		case 'p':
+			pflag = 1;
+			break;
+		default:
+			usage();
+		}
+	}
+
+	if ((argc - optind) == 0) {
+		usage();
+	}
+	result = 0;
+
+	/* loop over all filenames */
+	for (; optind<argc; optind++) {
+
+		path = argv[optind];
+
+		if (pflag == 0) {
+			/*
+			 * Just do the last directory component, and
+			 * skip the mess below
+			 */
+			if (rmdir(path)!=0) {
+				warn("%s skipped", path);
+				result++;
+			}
+
+		} else {
+
+			/* get the full pathname */
+			if ((path = LC_ExpandPath (path)) == NULL) {
+				warn("couldn't expand %s", argv[optind]);
+				continue;
+			}
+			if ((q = strdup(path)) == NULL) {
+				err(1, nodup, path);
+			}
+			path = q;
+
+			/* what is the volume component? */
+			q = (*path == ':') ? path+1 : path;
+			q = strchr(q, ':');
+			if (q != NULL) {
+				*q = '\0';
+			}
+
+			if (*path == ':') {
+				if ((root = strdup(path)) == NULL) {
+					err(1, nodup, path);
+				}
+			} else {
+				root = NULL;
+			}
+			if (q != NULL) {
+				*q = ':';
+			}
+			
+			for(;;) {
+				if (*path == '\0') {
+					/* deleted all the directories */
+					break;
+				}
+				if ((root != NULL) && !strcmp(root, path)) {
+					/* don't try to delete the volume */
+					break;
+				}
+				if (rmdir(path)!=0) {
+					warn("%s skipped", path);
+					result++;
+					break;
+				}
+				p = path + strlen(path) - 1;
+				while (p >= path) {
+					if (*p == ':') {
+						*p = '\0';
+						break;
+					} else {
+						*p-- = '\0';
+					}
+				}
+			}	
+		}
+	}
+	return result;
+}
