@@ -18,10 +18,12 @@
  * Written by Devin Reade <gdr@myrias.com> January 1996.
  * This program is placed in the public domain.
  *
- * $Id: renram5.c,v 1.2 1997/09/21 22:27:40 gdr Exp $
+ * $Id: renram5.c,v 1.3 1998/03/31 03:29:07 gdr-ftp Exp $
  *
  * This file is formatted with tab tops every 8 columns.
  */
+
+#define __USE_DYNAMIC_GSSTRING__	/* dynamic GS/OS strings */
 
 #include <types.h>
 #include <gsos.h>
@@ -31,6 +33,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#ifdef __GNO__
+#include <gno/gno.h>
+#endif
 
 #ifndef P_tmpdir
 #define P_tmpdir       "/tmp"
@@ -38,9 +43,6 @@
 
 #define OLD_TMP  "/RAM5"
 #define NEW_TMP  P_tmpdir
-
-extern GSString255Ptr __C2GSMALLOC(char *);
-extern int _mapErr(int);
 
 void usage(char *progname) {
   printf("Usage: %s [-d] [oldvolume [newvolume]]\n",progname);
@@ -60,7 +62,10 @@ int main (int argc, char **argv) {
   ChangePathRecGS pathrec;
   char *file1, *file2;
   int i, filecount, debug;
-  
+
+#ifdef __GNO__
+  __REPORT_STACK();
+#endif  
   filecount=0;
   debug=0;
   
@@ -102,7 +107,7 @@ int main (int argc, char **argv) {
    */
   
   devrec.pCount = 2;
-  if ((devrec.devName = (GSString32Ptr) __C2GSMALLOC(file2)) == NULL) {
+  if ((devrec.devName = __C2GSMALLOC(file2)) == NULL) {
     perror("couldn't duplicate destination volume name");
     exit(1);
   }

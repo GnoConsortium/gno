@@ -2,9 +2,8 @@ Name:    renram5
 Version: 1.0.1 (3 Aug 97)
 Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
-Contact: gdr@myrias.ab.ca
+Contact: gdr@trenco.gno.org
 Where:   /usr/sbin
-FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu
+FTP:     ftp.gno.org, ftp.cco.caltech.edu, grind.isca.uiowa.edu
 
-   Renames /RAM5 to /tmp on boot.
-
+Renames /RAM5 to /tmp on boot.
