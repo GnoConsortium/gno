@@ -2,7 +2,7 @@
 #
 # GNO 2.0.6 gshrc file
 #
-# $Id: gshrc,v 1.1 1997/09/30 04:49:32 gdr Exp $
+# $Id: gshrc,v 1.2 1997/10/30 04:22:33 gdr Exp $
 #
 ###
 
@@ -62,6 +62,7 @@ setenv	iwiiTypeFace	condensed
 alias /bin/rm	"cp -p rm"
 alias /bin/mv   "cp -p mv"
 alias cp 	"cp -i"
+alias df	/bin/df
 alias fcat	"melt -c"
 alias gunzip	\'gzip -d\'
 # these aliases are broken
