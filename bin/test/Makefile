@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.1 1997/10/30 03:35:20 gdr Exp $
+# $Id: Makefile,v 1.2 1998/02/19 02:23:42 gdr-ftp Exp $
 #
 
 PROG	= test
@@ -18,3 +18,6 @@ STACK	= 1280
 #	sh ${.CURDIR}/mkops
 
 .INCLUDE: /src/gno/prog.mk
+
+operators.o:	operators.h
+test.o:		operators.h
