@@ -1,6 +1,6 @@
 This file lists the status of the various files in the GNO base distribution.
 
-Version: $Id: status.bin,v 1.6 1997/11/01 19:36:19 gdr Exp $
+Version: $Id: status.bin,v 1.7 1997/12/02 05:27:55 gdr Exp $
 
 Person Working on Component ("Owner")
 -------------------------------------
@@ -42,11 +42,11 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 */system/Desk.Accs/gsi		Y	Y								/gno.disk2/system.shk
 */system/Desk.Accs/suspda 	Y	Y								/gno.disk2/system.shk
 */system/Drivers		Y	Y	-	dir	-	-	-	-	-	-
-*/system/Drivers/fileport 	Y	Y	dt	prop						/gno.disk2/system.shk
-*/system/Drivers/fileport.data 	Y	Y	dt	prop						/gno.disk2/system.shk
-*/system/Drivers/nullport 	Y	Y	dt	prop						/gno.disk2/system.shk
+*/system/Drivers/fileport 	Y	Y	dt							/gno.disk2/system.shk
+*/system/Drivers/fileport.data 	Y	Y	dt							/gno.disk2/system.shk
+*/system/Drivers/nullport 	Y	Y	dt							/gno.disk2/system.shk
 */system/System.Setup		Y	Y	-	dir	-	-	-	-	-	-
-*/system/System.Setup/sim	Y	Y	dt	prop						/gno.disk2/system.shk
+*/system/System.Setup/sim	Y	Y	dt							/gno.disk2/system.shk
 /					Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /HFSinclude				Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /bin				Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
@@ -74,7 +74,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/fgrep			Y	Y	evan
 /bin/freeze			Y	Y
 /bin/grep			Y	Y	evan
-/bin/gsh			Y	Y		prop
+/bin/gsh			Y	Y		Y
 /bin/head			Y	Y	dave	Y	T	Y	Y	Y	R
 /bin/hostname				Y	dt
 /bin/info			Y		lb	(rename to something else)
@@ -99,7 +99,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/sh					Y	gdr
 /bin/shutdown			Y
 /bin/sleep			Y	Y	dave	Y	T	Y	Y	Y	R
-/bin/split			Y	Y
+/bin/split			Y	Y	dave	Y	T			Y
 /bin/strings			Y	Y	lb
 /bin/stty			Y	Y
 /bin/su				Y	Y
@@ -114,15 +114,15 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /bin/true				Y	gdr	Y	T	Y	Y	Y	R
 /bin/uncompress			Y	Y
 /bin/uname				Y
-/bin/uniq			Y	Y
+/bin/uniq			Y	Y	dave
 /bin/upper			Y
 /bin/vi				Y	Y
 /bin/wc				Y	Y	dave	Y	T	Y	Y	Y	R
 /bin/yes			Y		dave	Y	T	Y	Y	Y	R
 /dev				Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
-/dev/modem			Y	Y	dt	prop					Y	/gno.disk2/dev.shk
-/dev/null				Y	dt	prop					Y	/gno.disk2/dev.shk
-/dev/printer			Y	Y	dt	prop					Y	/gno.disk2/dev.shk
+/dev/modem			Y	Y	dt						Y	/gno.disk2/dev.shk
+/dev/null				Y	dt						Y	/gno.disk2/dev.shk
+/dev/printer			Y	Y	dt						Y	/gno.disk2/dev.shk
 /doc					Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /etc				Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /etc/cronlog		(cron)
@@ -145,7 +145,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /home/root				Y	gdr	dir	-	-	-	-
 /initrc	(single-user)		Y	Y	gdr	Y		-				/gno.disk1/initrc
 /installbin			Y	Y	gdr			-				/gno.disk1/installbin
-/kern				Y	Y	dt	prop
+/kern				Y	Y	dt	
 /lib				Y	Y	gdr	dir	-	-	-	-	Y	/gno.disk1/installbin
 /lib/lbsd			Y	N	-
 /lib/lcrypt			Y	N	(now in libc)
@@ -195,7 +195,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/catrez				Y	dave	Y	T	Y	Y	Y	R
 /usr/bin/cclean				Y	
 /usr/bin/cjpeg				N		(add on)
-/usr/bin/cksum				Y
+/usr/bin/cksum				Y	dave
 /usr/bin/cmpl			Y	Y
 /usr/bin/coff				Y
 /usr/bin/col
@@ -261,13 +261,13 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target	Archive
 /usr/bin/rz			Y	Y
 /usr/bin/sb			Y
 /usr/bin/script			Y	Y
-/usr/bin/sed					dave
+/usr/bin/sed				Y	dave	Y
 /usr/bin/sendmail			N		(waiting on NNTP/UUCP)
 /usr/bin/setvers		Y	Y
 /usr/bin/shar
 /usr/bin/size
 /usr/bin/sort				Y	gdr	Y	(supercedes msort/dsort)
-/usr/bin/sum			Y	Y
+/usr/bin/sum			Y	Y	dave
 /usr/bin/sx			Y	Y
 /usr/bin/sz			Y	Y
 /usr/bin/talk				Y	dt
