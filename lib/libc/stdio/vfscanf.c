@@ -89,6 +89,16 @@ static char sccsid[] = "@(#)vfscanf.c	8.1 (Berkeley) 6/4/93";
 #define	CT_STRING	2	/* %s conversion */
 #define	CT_INT		3	/* integer, i.e., strtol or strtoul */
 #define	CT_FLOAT	4	/* floating, i.e., strtod */
+#ifdef __GNO__
+#define	CT_PSTRING	5	/* %b (Pascal-type string) conversion */
+#endif
+      
+#ifdef __GNO__
+typedef struct pString_t {
+	char	p_len;
+	char	p_txt[255];
+} pString_t, *pStringPtr_t;
+#endif
 
 #define u_char unsigned char
 #define u_long unsigned long
@@ -236,6 +246,12 @@ literal:
 		case 's':
 			c = CT_STRING;
 			break;
+
+#ifdef __GNO__
+		case 'b':
+			c = CT_PSTRING;
+			break;
+#endif
 
 		case '[':
 			fmt = __sccl(ccltab, fmt);
@@ -416,6 +432,59 @@ literal:
 				nassigned++;
 			}
 			continue;
+
+#ifdef __GNO__
+		case CT_PSTRING:
+			/* like CCL, but zero-length string OK, & no NOSKIP */
+			/*
+			 * From the ORCA/C ref manual:
+			 *  The b format specifier works exactly like the s
+			 *  format specifier, except that a string with a
+			 *  leading length byte is saved.  The string also has
+			 *  a null terminator.  If the input string is longer
+			 *  than 255 characters, the resulting string will be
+			 *  n mod 256 characters long, where n is the actual
+			 *  number of characters read.
+			 */
+			if (width == 0)
+				width = ~0;
+			if (flags & SUPPRESS) {
+				n = 0;
+				while (!isspace(*fp->_p)) {
+					n++, fp->_r--, fp->_p++;
+					if (--width == 0)
+						break;
+					if (fp->_r <= 0 && __srefill(fp))
+						break;
+				}
+				nread += n;
+			} else {
+				pStringPtr_t ps;
+
+				ps = va_arg(ap, pStringPtr_t);
+				ps->p_len = 0;
+				p = ps->p_txt;
+				while (!isspace(*fp->_p)) {
+					if (ps->p_len == 255) {
+						/* too long; wrap it */
+						ps->p_len = 0;
+						p = ps->p_txt;
+						nread += 255;
+					}
+					fp->_r--;
+					*p++ = *fp->_p++;
+					ps->p_len += 1;
+					if (--width == 0)
+						break;
+					if (fp->_r <= 0 && __srefill(fp))
+						break;
+				}
+				*p = 0;
+				nread += ps->p_len;
+				nassigned++;
+			}
+			continue;
+#endif	/* __GNO__ */
 
 		case CT_INT:
 			/* scan an integer as if by strtol/strtoul */
