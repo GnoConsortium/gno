@@ -1,13 +1,10 @@
-#ifdef __CCFRONT__
-#line 2
-#endif
 /*
  * udl - Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
  *       and Apple (CR).
  *
  * Routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.c,v 1.6 1995/02/08 06:12:33 gdr Exp $
+ * $Id: common.c,v 1.7 1995/02/13 19:47:27 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -853,7 +850,7 @@ char *mktemp(const char *base)
     	}
     }
 
-    /* Replace all "X" with part if ID string */
+    /* Replace all "X" with part of ID string */
     for(p1 = st + strlen(st) - 1,p2 = &id[14];
         p1 >= st && p2 >= id && *p1 == 'X';
         p1--,p2--)

@@ -4,7 +4,7 @@
  *
  * Header file for routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.h,v 1.6 1995/02/08 06:12:36 gdr Exp $
+ * $Id: common.h,v 1.7 1995/02/13 19:47:29 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -96,3 +96,5 @@ extern char *getwd(char *);
 #ifdef __GNUC__
 extern char getopt(int, char **, char *);
 #endif
+
+/* End Of File */

@@ -3,7 +3,7 @@
 # Copyright (c) 1993-1994 Soenke Behrens
 # For use with dmake
 #
-# $Id: Makefile.gs,v 1.6 1995/02/08 06:12:27 gdr Exp $
+# $Id: Makefile.gs,v 1.7 1995/02/13 19:47:23 gdr Exp $
 #
 # Define the following as necessary:
 #
@@ -29,8 +29,10 @@
 
 DEFINES = -DGNO -D_POSIX_C_SOURCE -D_POSIX_SOURCE -DHAS_ATEXIT \
 	  -DOVERFLOW_CHECK
-CFLAGS	= $(DEFINES) -O -w -v -s2048
-LDFLAGS	= -v -l/usr/lib/gnulib -s2048
+#CFLAGS	= $(DEFINES) -O -w -v -s2048
+#LDFLAGS	= -v -l/usr/lib/gnulib -s2048
+CFLAGS	= $(DEFINES) -O -v -s2048
+LDFLAGS	= -v -s2048
 
 #
 # You should not have to modify anything beyond this point

@@ -4,7 +4,7 @@ udl -	Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
 
 	(c) 1993-1995 Soenke Behrens, Devin Reade
 
-	Version 1.14: $Id: README,v 1.6 1995/02/08 06:12:31 gdr Exp $
+	Version 1.14: $Id: README,v 1.7 1995/02/13 19:47:25 gdr Exp $
 =============================================================================
 
 Udl converts text files between CR, LF and CR/LF (Apple, Unix and MS-DOS).
@@ -76,11 +76,11 @@ Compiling:
 =========
 
 There are two makefiles included:
-	Makefile.gs	- for use on the Apple IIgs running Gno
+	Makefile.gs	- for use on the Apple IIgs running GNO
 	Makefile.unix	- for use with Unix systems.
 
-Although udl on the IIgs can be run from either Gno or Orca shells,
-it cannot be built with the standard Orca installation due to a lack
+Although udl on the IIgs can be run from either GNO or ORCA shells,
+it cannot be built with the standard ORCA installation due to a lack
 of additional libraries.
 
 Before you type "make", have a look at the Makefile and edit the defines

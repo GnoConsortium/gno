@@ -1,13 +1,10 @@
-#ifdef __CCFRONT__
-#line 2
-#endif
 /*
  * udl - Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
  *       and Apple (CR).
  *
  * Contains definitions of global variables declared in common.h
  *
- * $Id: globals.c,v 1.3 1995/02/08 06:12:38 gdr Exp $
+ * $Id: globals.c,v 1.5 1996/01/22 01:01:34 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -36,3 +33,4 @@ char **pathList;    /* the list of files to process, given relative   */
 char dirbrk;  /* the character used to separate parts of a path name  */
 int recursionDepth; /* levels of subdirectories that we've traversed  */
 
+/* End Of File */

@@ -1,13 +1,10 @@
-#ifdef __CCFRONT__
-#line 2
-#endif
 /*
  * udl - Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
  *       and Apple (CR).
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.6 1995/02/08 06:12:44 gdr Exp $
+ * $Id: udlgs.c,v 1.7 1995/02/13 19:47:34 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
