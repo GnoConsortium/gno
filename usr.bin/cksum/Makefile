@@ -1,6 +1,6 @@
 #
 # This makefile is intended for use with dmake(1) on Apple IIGS
-# $Id: Makefile,v 1.2 1998/02/15 00:25:42 gdr-ftp Exp $
+# $Id: Makefile,v 1.3 1998/03/08 17:33:34 gdr-ftp Exp $
 #
 #	Created by Dave Tribby, December 1997
 
@@ -18,6 +18,5 @@ sum: cksum
 #
 # Additional dependancies
 #
-
-cksum.o::	extern.h
-print.o::	extern.h
+cksum.o:	extern.h
+print.o:	extern.h
