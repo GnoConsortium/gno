@@ -30,7 +30,7 @@
 .\" SUCH DAMAGE.
 .\"
 .\"	From: @(#)err.3	8.1 (Berkeley) 6/9/93
-.\"	$Id: err.3,v 1.2 1997/03/05 06:31:29 gdr Exp $
+.\"	$Id: err.3,v 1.3 1998/01/25 20:17:48 gdr-ftp Exp $
 .\"
 .TH ERR 3 "27 February 1997" GNO "Library Routines"
 .SH NAME
@@ -49,16 +49,16 @@
 .nf
 #include <err.h>
 
-void err (int \fIeval\fR, const char *\fIfmt\fR, ...);
-void verr (int \fIeval\fR, const char *\fIfmt\fR, va_list \fIargs\fR);
-void errx (int \fIeval\fR, const char *\fIfmt\fR, ...);
-void verrx (int \fIeval\fR, const char *\fIfmt\fR, va_list \fIargs\fR);
-void warn (const char *\fIfmt\fR, ...);
-void vwarn (const char *\fIfmt\fR, va_list \fIargs\fR);
-void warnx (const char *\fIfmt\fR, ...);
-void vwarnx (const char *\fIfmt\fR, va_list \fIargs\fR);
-void err_set_file (void *\fIfp\fR);
-void err_set_exit (void (*\fIexitf\fR)(int));
+void \fBerr\fR (int \fIeval\fR, const char *\fIfmt\fR, ...);
+void \fBverr\fR (int \fIeval\fR, const char *\fIfmt\fR, va_list \fIargs\fR);
+void \fBerrx\fR (int \fIeval\fR, const char *\fIfmt\fR, ...);
+void \fBverrx\fR (int \fIeval\fR, const char *\fIfmt\fR, va_list \fIargs\fR);
+void \fBwarn\fR (const char *\fIfmt\fR, ...);
+void \fBvwarn\fR (const char *\fIfmt\fR, va_list \fIargs\fR);
+void \fBwarnx\fR (const char *\fIfmt\fR, ...);
+void \fBvwarnx\fR (const char *\fIfmt\fR, va_list \fIargs\fR);
+void \fBerr_set_file\fR (void *\fIfp\fR);
+void \fBerr_set_exit\fR (void (*\fIexitf\fR)(int));
 .fi
 .SH DESCRIPTION
 The
