@@ -1,7 +1,7 @@
 .\"
 .\" Devin Reade, 1997
 .\"
-.\" $Id: fork.2,v 1.1 1997/02/27 07:32:12 gdr Exp $
+.\" $Id: fork.2,v 1.2 1998/01/25 18:03:31 gdr-ftp Exp $
 .\"
 .\" .TH FORK2 2 GNO "System Calls" "16 December 1996"
 .TH FORK 2 GNO "16 January 1997" "System Calls"
@@ -136,10 +136,10 @@ the child process does not or cannot
 it should call
 .BR _exit (3).
 .LP
-Orca/C's stack checking and stack repair code should be turned off
+ORCA/C's stack checking and stack repair code should be turned off
 when compiling routines containing these functions.  See 
 .BR occ (1)
-or the Orca/C Reference Manual for details.
+or the ORCA/C Reference Manual for details.
 .LP
 Because the
 .BR fork
@@ -149,7 +149,7 @@ tool set), the child function
 must restore the data bank register if it is going to access global 
 variables.  See the description of the
 .BR databank
-pragma in the Orca/C Reference Manual for details.
+pragma in the ORCA/C Reference Manual for details.
 .LP
 While
 .BR Splat!
@@ -212,4 +212,4 @@ first appeared in 3.0BSD.
 the
 .IR "GNO Kernel Reference Manual" ,
 and the
-.IR "Orca/C Reference Manual" .
+.IR "ORCA/C Reference Manual" .

@@ -101,7 +101,7 @@ a symbolic link,
 will fail even if the symbolic
 link points to a non-existent name.
 .IP \fBO_BINARY\fR
-Files opened with the Orca/Shell
+Files opened with the ORCA/Shell
 .BR open
 call by default do newline translation unless the
 .BR O_BINARY
@@ -131,7 +131,7 @@ a CR (carridge return).  During
 calls, the opposite translation occurs.
 This is similar to, but opposite of, the 
 .BR O_BINARY
-flag interpretation under the Orca/Shell.
+flag interpretation under the ORCA/Shell.
 .sp 1
 The
 .BR O_TRANS
@@ -195,7 +195,7 @@ open simultaneously by one process.
 .BR getdtablesize (2)
 returns the current system limit.
 .SH COMPATIBILITY
-Unlike the GNO implementation, the Orca/C
+Unlike the GNO implementation, the ORCA/C
 .BR open
 call takes no optional third parameter.
 .LP
@@ -215,7 +215,7 @@ calls.  Consequently, the umask is not used in
 .BR open (2),
 either.
 .LP
-Due to the way the stack is maintained under Orca/C, it is an error to
+Due to the way the stack is maintained under ORCA/C, it is an error to
 provide the
 .IR mode
 parameter if the
@@ -225,7 +225,7 @@ flag is not set.  Similarily, it is an error to omit
 if 
 .BR O_CREATE
 is set.  Depending on how the calling routine was compiled, this error
-will either manifest itself as a failed Orca/C runtime stack check, or
+will either manifest itself as a failed ORCA/C runtime stack check, or
 as a crash of the machine.
 .LP
 The flags

@@ -2,7 +2,7 @@
 .\" release for Gno v2.0.3 by Devin Reade.  As of GNO v2.0.6 it is now
 .\" part of libc.
 .\"
-.\" $Id: execve.2,v 1.1 1997/02/27 07:32:12 gdr Exp $
+.\" $Id: execve.2,v 1.2 1998/01/25 18:03:27 gdr-ftp Exp $
 .\"
 .TH EXECVE 2 "19 January 1997" GNO "System Calls"
 .SH NAME
@@ -170,16 +170,16 @@ in the parent after child has had a chance to
 however this is normally a race condition and the result is therefore
 indeterminant.
 .LP
-Programs compiled with Orca/C v1.3 (and earlier) ignore any stack space
+Programs compiled with ORCA/C v1.3 (and earlier) ignore any stack space
 allocated by the GS/OS Loader (which
 .BR _execve
-calls.  Stack space in Orca/C programs is determined by code in the
+calls.  Stack space in ORCA/C programs is determined by code in the
 .BR "*.root"
 object file, and can be set with the 
 .BR "#pragma stacksize"
 directive.  Read the chapter on GNO Compliance in the
 .I "GNO Kernel Reference Manual"
-for more information on this topic.  Orca/C v2.0 and later versions use
+for more information on this topic.  ORCA/C v2.0 and later versions use
 the system-provided stack space.
 .SH SEE ALSO
 .BR exit (2),
