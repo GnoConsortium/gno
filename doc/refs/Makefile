@@ -3,20 +3,22 @@
 # be run under GNO itself yet, and probably never will be due to the
 # dependancy on LaTeX.
 #
+# This file is for use with dmake.
+#
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.6 1997/12/06 07:02:52 gdr Exp $
+# $Id: Makefile,v 1.7 1998/01/26 07:13:04 gdr-ftp Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
 # during editing).
-DRAFT	= 
+DRAFT	=
 
 # This is the name and address that will be given as contact info
 # at the bottom of each of the HTML pages.  Do NOT use '<' or '>' in the
 # address.
 NAME		= Devin Reade
-ADDRESS		= gdr@eddore.myrias.com
+ADDRESS		= gdr@trenco.gno.org
 
 # Pathnames for various programs.
 DVIPS		= dvips
@@ -40,16 +42,16 @@ MINDEX		= index.html
 	# This is the directory where the remaining gifs may be found
 	GIFDIR		= file:/home/gdr/graphics/
 .ELSE
-	HTML_ROOT	= http://trenco.myrias.com/~gno
-	GIFDIR		= http://trenco.myrias.com/icons
+	HTML_ROOT	= http://www.gno.org/~gno
+	GIFDIR		= http://www.gno.org/icons
 .END
-FTP_ROOT	= ftp://trenco.myrias.com/pub/apple2/gs.specific/gno
+FTP_ROOT	= ftp://ftp.gno.org/pub/apple2/gs.specific/gno
 
 
 # Where can the FAQ be located?
 #FAQ		= http://web.cs.ualberta.ca/~glyn/FAQ.csa2g
-FAQ		= http://trenco.myrias.com/~gno/FAQ.html
-FAQLOG		= http://trenco.myrias.com/~gno/FAQ-log.html
+FAQ		= http://www.gno.org/~gno/FAQ.html
+FAQLOG		= http://www.gno.org/~gno/FAQ-log.html
 FAQ_TEXT	= $(FTP_ROOT)/doc/faq/CURRENT
 FAQLOG_TEXT	= $(FTP_ROOT)/doc/faq/LOG
 
@@ -60,7 +62,7 @@ FTP_GSH		= $(FTP_ROOT)/doc/refs/gsh
 
 # Where can the old v2.0.4 docs be found?
 #OLD_HTML	= http://web.cs.ualberta.ca/~glyn/GNOv2.0.4Docs
-OLD_HTML	= http://trenco.myrias.com/~gno/docs.Aug96
+OLD_HTML	= http://www.gno.org/~gno/docs.Aug96
 
 #########################################################
 # You should not have to modify anything below this line.

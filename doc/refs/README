@@ -19,7 +19,7 @@ points above.
 	Devin Reade
 	December 1997.
 
-$Id: README,v 1.1 1997/12/02 15:38:13 gdr Exp $
+$Id: README,v 1.2 1998/01/26 07:13:05 gdr-ftp Exp $
 
 
 WHAT THE FILES ARE
@@ -120,7 +120,7 @@ the maintainer name and address, the basenames of the URLs used,
 and so forth.  If the DRAFT macro is set to 'true' then many url links
 in the html versions will resolve to local files; this is used for testing.
 
-Some other dependancies are as follows.  Unless trenco is no longer the
+Some other dependancies are as follows.  Unless ftp.gno.org is no longer the
 primary GNO site, the following should not need to be changed:
 
 	index.html:
@@ -128,9 +128,9 @@ primary GNO site, the following should not need to be changed:
 		structure and file names on the GNO html and ftp servers.
 
 	intro.tex:
-		There are some explicit references to the trenco ftp
+		There are some explicit references to the ftp.gno.org
 		in this document.  These should not be changed unless
-		trenco is no longer used.
+		that site is no longer used.
 
 	mkhtmlman:
 		This script is heavily dependant on the structure of
