@@ -1,6 +1,6 @@
 7 Jan 97
 
-$Id: notes.960227,v 1.1 1997/02/28 05:42:27 gdr Exp $
+$Id: notes.960227,v 1.2 1997/03/05 07:25:48 gdr Exp $
 
 Header File Changes
 ===================
@@ -67,7 +67,7 @@ arpa/nameser.h:
 	the offsets of the remaining members haven't changed.  This
 	was a BSD change, not mine.
 
-	The following macros have been added.  The the header for
+	The following macros have been added.  See the header for
 	their meanings:
 		__BIND
 		HFIXEDSZ
@@ -136,7 +136,7 @@ net/*:
 	For your perusal (if required) I've included the directory
 	net.BSD which is the BSD 4.4 version of the net/* files.
 	This subdirectory is not intended to be part of the GNO
-	distribution.
+	distribution.  (The net.BSD directory is in the NOTES directory.)
 
 netinet/in.h:
 	If the functions in_makeaddr() and in_lnaof() are used in the
@@ -272,6 +272,13 @@ libc/sys/syscall.c
 Manual Page Considerations:
 ==========================
 
+NOTE NOTE NOTE:
+		Currently there is a problem with the nroff package,
+		and many of the man pages will not look right on the
+		IIgs.  I'm working on an update of nroff.  Putting it under
+		Insight has shown a significant number of memory trashing
+		bugs (which are now gone).
+
 undocumented(2):
 	This man page lists the undocumented kernel calls.  I don't 
 	know if all of these are supposed to _remain_ undocumented ...
@@ -290,3 +297,17 @@ intro(2):
 	The "DEFINITIONS" section of this man page is as yet verbatim
 	from the BSD man page; I haven't had a chance to review it.
 	If you have any comments, speak up ...
+
+
+Tools
+=====
+
+mkso:
+	I'm not done mkso yet (mkso is the program that creates
+	the .so links required for the various manual pages).  I
+	still have to make it check for the legality of file names
+	on the current file system.  I also plan to make it such
+	that one can place those .so links that require HFS on 
+	another partition, and still have them find the sourced
+	files.
+
