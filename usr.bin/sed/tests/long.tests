@@ -1,0 +1,18 @@
+# Test regular expression execution test
+cd /src/gno/usr.bin/sed
+
+echo "sed tests that take a long time"
+echo ""
+
+echo "Test # 1: Expression evaluation via sed (result = 24)"
+echo '(4+4)*3' | time ./sed -f tests/math.sed
+
+echo ""
+echo "Test # 2: Towers of Hanoi; must be run interactively"
+echo "Execute the command"
+echo "    sed -f hanoi.sed"
+echo "and enter the text"
+echo "    :abc: : :"
+echo ""
+echo "with *two* carriage returns. It will take a long time to"
+echo "print any results."
