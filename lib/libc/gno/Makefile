@@ -3,7 +3,7 @@
 #
 # Devin Reade, 1996
 #
-# $Id: Makefile,v 1.2 1997/09/05 06:12:22 gdr Exp $
+# $Id: Makefile,v 1.3 1997/09/21 06:08:48 gdr Exp $
 #
 
 .INCLUDE:	../../../paths.mk
@@ -13,10 +13,14 @@ OBJ_ASM	= gnocmd.o parsearg.o stack.o
 OBJ_C	= gnomisc.o gsstring.o map.o
 OBJS	= $(OBJ_ASM) $(OBJ_C)
 
+CFLAGS	+= -O78
+
 MACROS_ORCA	= $(ORCA_DIST)/OrcaInclude
 MACRO_FILES	= $(MACROS_ORCA)/m16.tools $(MACROS_ORCA)/m16.orca
 
-build:	$(OBJS)
+build:	../libc
+
+obj:	$(OBJS)
 
 stack.mac:
 	macgen -p stack.asm $@ $(MACRO_FILES)
