@@ -1,0 +1,56 @@
+#
+# Makefile for udl
+# (c) 1993-1994 Soenke Behrens
+#
+# $Id: Makefile.unx,v 1.1 1994/12/13 18:08:16 gdr Exp $
+#
+# Define the following as necessary:
+#
+#	HAS_ATEXIT if your system has atexit()
+#
+#	_POSIX_C_SOURCE and _POSIX_SOURCE if your compiler is Posix compliant
+#
+#	READDIR_RETURNS_DOT if your direct readdir() function will return
+#	entries for "." and "..".  SunOS4 is known to do this.
+#
+#	BROKEN_REALLOC if your realloc() doesn't behave like malloc() when
+#	passed a NULL pointer as the first argument.
+#
+
+# If you're on SunOS 4.x systems, use gcc instead; this is ANSI code.
+CC	= cc
+DESTDIR	= /usr/local/
+BINDIR	= bin
+MANDIR	= man/man1
+INSTALL	= cp -f
+
+DEFINES = -DREADDIR_RETURNS_DOT=1 -DBROKEN_REALLOC=1 -D_POSIX_C_SOURCE \
+	-D_POSIX_SOURCE
+CFLAGS  = $(DEFINES) -O
+# You may need -lucb in LDFLAGS
+LDFLAGS = 
+
+#
+# You should not have to modify anything beyond this point
+#
+
+udl: udl.o udluse.o common.o
+	$(CC) $(LDFLAGS) -o udl udl.o udluse.o common.o
+
+udl.o: udl.unix.c common.h
+	$(CC) -c $(CFLAGS) -o udl.o udl.unix.c
+
+install:
+	$(INSTALL) udl $(DESTDIR)$(BINDIR)
+	$(INSTALL) udl.1 $(DESTDIR)$(MANDIR)
+
+clean:
+	rm *.o
+
+clobber: clean
+	rm udl
+
+dist:
+	@echo 'Sorry, automatic packing not yet supported.'
+
+common.o::common.h

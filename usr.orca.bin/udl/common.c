@@ -1,0 +1,839 @@
+/*
+ * udl - Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
+ *       and Apple (CR).
+ *
+ * Routines common to both the Unix and Apple IIgs versions.
+ *
+ * $Id: common.c,v 1.1 1994/12/13 18:08:20 gdr Exp $
+ *
+ * Copyright (c) 1993-1994 Soenke Behrens
+ */
+
+#include "common.h"
+extern char *strdup(const char *);
+
+/*
+ * convert_gs() ... convert files to use CR as EOL
+ *
+ * Inputs:
+ *      FILE *infile    File to read from
+ *      FILE *outfile   File to write to
+ *
+ * Outputs:
+ *      None
+ */
+
+void convert_gs(FILE *infile, FILE *outfile) {
+  unsigned char a;
+  unsigned char *in_bufpos;
+  unsigned char *out_bufpos;
+  unsigned char *in_bufend;
+  unsigned char *out_bufend;
+  size_t file_remain;
+  
+  in_bufpos = in_buffer;
+  out_bufpos = out_buffer;
+  
+  (void) fseek(infile,0L,SEEK_END);
+  file_remain = ftell(infile);
+  rewind(infile);
+  
+  in_bufend = in_buffer + my_fread(infile,BUFFERSIZE);
+  out_bufend = out_buffer + BUFFERSIZE;
+  
+  while (file_remain != 0) {
+    a = *in_bufpos;
+    in_bufpos++;
+    
+    if (in_bufpos >= in_bufend) {
+      file_remain -= in_bufend - in_buffer;
+      in_bufend = in_buffer + my_fread(infile,BUFFERSIZE);
+      in_bufpos = in_buffer;
+    }
+    /* a = fgetc (infile); */
+
+    if(a == '\n') {
+      *out_bufpos = '\r';
+      out_bufpos++;
+      if (out_bufpos == out_bufend) {
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
+      }
+      /* fputc('\r',outfile); */
+    } else if(a == '\r') {
+      *out_bufpos = '\r';
+      out_bufpos++;
+      if (out_bufpos == out_bufend) {
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
+      }
+      /* fputc('\r',outfile); */
+      
+      if (*in_bufpos == '\n' && file_remain != 0) {
+	in_bufpos++;
+	
+	if (in_bufpos >= in_bufend) {
+	  file_remain -= in_bufend - in_buffer;
+	  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+	  in_bufpos = in_buffer;
+	}
+      }
+      /* if ((a = fgetc (infile)) != '\n')
+	 ungetc (a,infile); */
+    } else {
+      *out_bufpos = a;
+      out_bufpos++;
+      if (out_bufpos == out_bufend) {
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
+      }
+      /* fputc(a,outfile); */
+    }
+  }
+  /* Check for remainder in output buffer */
+  if (out_bufpos != out_buffer)
+    my_fwrite(out_buffer,outfile,out_bufpos - out_buffer);
+}
+
+/*
+ * convert_messy() ... convert files to use CR/LF as EOL
+ *
+ * Inputs:
+ *      FILE *infile    File to read from
+ *      FILE *outfile   File to write to
+ *
+ * Outputs:
+ *      None
+ */
+
+void convert_messy (FILE *infile, FILE *outfile) {
+  unsigned char a;
+  unsigned char *in_bufpos;
+  unsigned char *out_bufpos;
+  unsigned char *in_bufend;
+  unsigned char *out_bufend;
+  size_t file_remain;
+  
+  in_bufpos = in_buffer;
+  out_bufpos = out_buffer;
+  
+  (void) fseek(infile,0L,SEEK_END);
+  file_remain = ftell(infile);
+  rewind(infile);
+  
+  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+  out_bufend = out_buffer + BUFFERSIZE;
+  
+  while (file_remain != 0) {
+    a = *in_bufpos;
+    in_bufpos++;
+    
+    if (in_bufpos >= in_bufend) {
+      file_remain -= in_bufend - in_buffer;
+      in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+      in_bufpos = in_buffer;
+    }
+    /* a = fgetc (infile); */
+    
+    if(a == '\n') {
+      *out_bufpos = '\r';
+      out_bufpos++;
+      if (out_bufpos == out_bufend) {
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
+      }
+      /* fputc('\r',outfile); */
+      
+      *out_bufpos = '\n';
+      out_bufpos++;
+      if (out_bufpos == out_bufend) {
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
+      }
+      /* fputc('\n',outfile); */
+    } else if(a == '\r') {
+      *out_bufpos = '\r';
+      out_bufpos++;
+      if (out_bufpos == out_bufend) {
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
+      }
+      /* fputc('\r',outfile); */
+
+      *out_bufpos = '\n';
+      out_bufpos++;
+      if (out_bufpos == out_bufend) {
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
+      }
+      /* fputc('\n',outfile); */
+
+      if (*in_bufpos == '\n' && file_remain != 0) {
+	in_bufpos++;
+
+	if (in_bufpos >= in_bufend) {
+	  file_remain -= in_bufend - in_buffer;
+	  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+	  in_bufpos = in_buffer;
+	}
+      }
+      /* if ((a = fgetc (infile)) != '\n')
+	 ungetc (a,infile); */
+    } else {
+      *out_bufpos = a;
+      out_bufpos++;
+      if (out_bufpos == out_bufend) {
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
+      }
+      /* fputc(a,outfile); */
+    }
+  }
+  /* Check for remained in output buffer */
+  if (out_bufpos != out_buffer)
+    my_fwrite(out_buffer,outfile,out_bufpos - out_buffer);
+}
+
+/*
+ * convert_tunix() ... convert files to use LF as EOL
+ *
+ * Inputs:
+ *      FILE *infile    File to read from
+ *      FILE *outfile   File to write to
+ *
+ * Outputs:
+ *      None
+ */
+
+void convert_tunix (FILE *infile, FILE *outfile) {
+  unsigned char a;
+  unsigned char *in_bufpos;
+  unsigned char *out_bufpos;
+  unsigned char *in_bufend;
+  unsigned char *out_bufend;
+  size_t file_remain;
+  
+  in_bufpos = in_buffer;
+  out_bufpos = out_buffer;
+  
+  (void) fseek(infile,0L,SEEK_END);
+  file_remain = ftell(infile);
+  rewind(infile);
+  
+  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+  out_bufend = out_buffer + BUFFERSIZE;
+  
+  while (file_remain != 0) {
+    a = *in_bufpos;
+    in_bufpos++;
+    
+    if (in_bufpos >= in_bufend) {
+      file_remain -= in_bufend - in_buffer;
+      in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+      in_bufpos = in_buffer;
+    }
+    /* a = fgetc (infile); */
+    
+    if(a == '\r') {
+      *out_bufpos = '\n';
+      out_bufpos++;
+      if (out_bufpos == out_bufend) {
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
+      }
+      /* fputc('\n',outfile); */
+      
+      if (*in_bufpos == '\n' && file_remain != 0) {
+	in_bufpos++;
+
+	if (in_bufpos >= in_bufend) {
+	  file_remain -= in_bufend - in_buffer;
+	  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+	  in_bufpos = in_buffer;
+	}
+      }
+      /* if ((a = fgetc (infile)) != '\n')
+	 ungetc (a,infile); */
+    } else {
+      *out_bufpos = a;
+      out_bufpos++;
+      if (out_bufpos == out_bufend) {
+	my_fwrite(out_buffer,outfile,BUFFERSIZE);
+	out_bufpos = out_buffer;
+      }
+      /* fputc(a,outfile); */
+    }
+  }
+  /* Check for remainder in output buffer */
+  if (out_bufpos != out_buffer)
+    my_fwrite(out_buffer,outfile,out_bufpos - out_buffer);
+}
+
+/*
+ * convert_fast_gs() ... convert files to use CR as EOL
+ * Do not care about differing EOL chars in the same file,
+ * do not allow '\0' bytes, and replace in-vitro if possible.
+ *
+ * Inputs:
+ *      FILE *infile    File to read from
+ *      FILE *outfile   File to write to
+ *
+ * Outputs:
+ *      int     FALSE if no conversion took place, TRUE otherwise
+ */
+
+int convert_fast_gs(FILE *infile, FILE *outfile) {
+  unsigned char a;
+  unsigned char *in_bufpos;
+  unsigned char *out_bufpos;
+  unsigned char *in_bufend;
+  unsigned char *out_bufend;
+  size_t file_remain;
+  enum file_format infile_type;
+  
+  in_bufpos = in_buffer;
+  out_bufpos = out_buffer;
+  
+  (void) fseek(infile,0L,SEEK_END);
+  file_remain = ftell(infile);
+  rewind(infile);
+  
+  in_bufend = in_buffer + my_fread(infile,BUFFERSIZE);
+  out_bufend = out_buffer + BUFFERSIZE;
+  *in_bufend = '\0';
+  
+  infile_type = get_file_format (in_buffer);
+  
+  switch (infile_type) {
+  case apple:
+    if (verbose)
+      printf("%s: %s is already in Apple format, skipping.\n",
+	     program_name,current_file);
+    return (FALSE);
+    break;
+
+  case tunix:
+    /* Replace "in-vitro", so out_buffer isn't used */
+    while (file_remain != 0) {
+      a = *in_bufpos;
+      if (a == '\n')
+	*in_bufpos++ = '\r';
+      else if (a == '\0') { /* End of buffer reached */
+	
+	/* Write changed buffer out */
+	my_fwrite(in_buffer,outfile,in_bufend - in_buffer);
+	
+	/* And reload it */
+	file_remain -= in_bufend - in_buffer;
+	in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+	*in_bufend = '\0';
+	in_bufpos = in_buffer;
+      } else in_bufpos++;
+    }
+    return (TRUE);
+    break;
+    
+  case dos:
+    /* This I couldn't speed up, so use the existing thing */
+    convert_gs (infile, outfile);
+    return (TRUE);
+    break;
+
+  case binary:
+    return (FALSE);
+    break;
+  
+  default:
+    fprintf(stderr,"%s: Fatal internal error\n",program_name);
+    exit (EXIT_FAILURE);
+    break;
+  } /* switch */
+}
+
+/*
+ * convert_fast_messy() ... convert files to use CR/LF as EOL
+ * Just check if it's already in DOS format.
+ *
+ * Inputs:
+ *      FILE *infile    File to read from
+ *      FILE *outfile   File to write to
+ *
+ * Outputs:
+ *      int     FALSE if no conversion took place, TRUE otherwise
+ */
+
+int convert_fast_messy (FILE *infile, FILE *outfile) {
+  unsigned char *in_bufpos;
+  unsigned char *out_bufpos;
+  unsigned char *in_bufend;
+  unsigned char *out_bufend;
+  size_t file_remain;
+  enum file_format infile_type;
+  
+  in_bufpos = in_buffer;
+  out_bufpos = out_buffer;
+  
+  (void) fseek(infile,0L,SEEK_END);
+  file_remain = ftell(infile);
+  rewind(infile);
+  
+  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+  out_bufend = out_buffer + BUFFERSIZE;
+  *in_bufend = '\0';
+  
+  infile_type = get_file_format (in_buffer);
+  
+  switch (infile_type) {
+  case dos:
+    if (verbose)
+      printf("%s: %s is already in MS-DOS format, skipping.\n",
+	     program_name,current_file);
+    return (FALSE);
+    break;
+
+  case tunix: /* drop through */
+  case apple:
+    /* Wasn't able to speed this up, call old routine */
+    convert_messy (infile, outfile);
+    return (TRUE);
+    break;
+
+  case binary:
+    return (FALSE);
+    break;
+
+  default:
+    fprintf(stderr,"%s: Fatal internal error\n",program_name);
+    exit (EXIT_FAILURE);
+    break;
+  } /* switch */
+}
+
+/*
+ * convert_fast_tunix() ... convert files to use LF as EOL
+ * Do not care about differing EOL chars in the same file,
+ * do not allow '\0' bytes, and replace in-vitro if possible.
+ *
+ * Inputs:
+ *      FILE *infile    File to read from
+ *      FILE *outfile   File to write to
+ *
+ * Outputs:
+ *      int     FALSE if no conversion took place, TRUE otherwise
+ */
+
+int convert_fast_tunix (FILE *infile, FILE *outfile) {
+  unsigned char a;
+  unsigned char *in_bufpos;
+  unsigned char *out_bufpos;
+  unsigned char *in_bufend;
+  unsigned char *out_bufend;
+  size_t file_remain;
+  enum file_format infile_type;
+  
+  in_bufpos = in_buffer;
+  out_bufpos = out_buffer;
+  
+  (void) fseek(infile,0L,SEEK_END);
+  file_remain = ftell(infile);
+  rewind(infile);
+  
+  in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+  out_bufend = out_buffer + BUFFERSIZE;
+  *in_bufend = '\0';
+  
+  infile_type = get_file_format (in_buffer);
+  
+  switch (infile_type) {
+  case tunix:
+    if (verbose)
+      printf("%s: %s is already in Unix format, skipping.\n",
+	     program_name,current_file);
+    return (FALSE);
+    break;
+
+  case apple:
+    /* Replace "in-vitro", so out_buffer isn't used */
+    while (file_remain != 0) {
+      a = *in_bufpos;
+      if (a == '\r')
+	*in_bufpos++ = '\n';
+      else if (a == '\0'){       /* End of buffer reached */
+
+	/* Write changed buffer out */
+	my_fwrite(in_buffer,outfile,in_bufend - in_buffer);
+
+	/* And reload */
+	file_remain -= in_bufend - in_buffer;
+	in_bufend = in_buffer + my_fread(infile, BUFFERSIZE);
+	*in_bufend = '\0';
+	in_bufpos = in_buffer;
+      } else in_bufpos++;
+    }
+    return (TRUE);
+    break;
+    
+  case dos:
+    /* Couldn't speed it up, so use old routine */
+    convert_tunix (infile, outfile);
+    return (TRUE);
+    break;
+    
+  case binary:
+    return (FALSE);
+    break;
+
+  default:
+    fprintf(stderr,"%s: Fatal internal error\n", program_name);
+    exit (EXIT_FAILURE);
+    break;
+  } /* switch */
+}
+
+/*
+ * get_file_format() ... look at a buffer and find out what the EOL
+ * character is. If no EOL character is found, print an error message
+ * and exit.
+ *
+ * Inputs:
+ *      unsigned char *buffer   Buffer to search through, terminated
+ *                              by '\0'.
+ *
+ * Output:
+ *      enum file_format        tunix, dos, apple, or binary
+ */
+
+enum file_format get_file_format (unsigned char *buffer) {
+  unsigned char c;
+  enum file_format result = 0;
+  
+  while ((c = *buffer++) != '\0') {
+    if (c == '\n') {
+      result = tunix;
+      break;
+    } else if (c == '\r') {
+      if (*buffer == '\n')
+	result = dos;
+      else
+	result = apple;
+      break;
+    }
+  }
+        
+  if (result == 0) {
+    if (verbose) 
+      printf("%s: No EOL found on the first %d bytes "
+	     "of %s. Might be a binary file. File skipped\n",
+	     program_name,BUFFERSIZE, current_file);
+    result = binary;
+  }
+
+  return (result);
+}
+
+/*
+ * tryopen() ... try to open a file, exit if unsuccesful
+ *
+ * Inputs:
+ *      char *name      Name of file to be opened
+ *      char *mode      Mode string for fopen() call
+ *
+ * Output:
+ *      FILE *          File identifier of successful fopen()
+ */
+
+FILE *tryopen (char *name, char *mode) {
+  FILE *tmp;
+
+  if ((tmp = fopen(name,mode)) == NULL) {
+    fprintf(stderr,"%s: Unable to open file %s\n",program_name, name);
+    exit (EXIT_FAILURE);
+  } else
+    return (tmp);
+}
+
+/*
+ * my_fread() ... read data into global buffer and exit if I fail
+ *
+ * Inputs:
+ *      FILE *infile    File to read from
+ *      int howmuch     Number of bytes to read
+ *
+ * Output:
+ *      int     Number of bytes actually read
+ */
+
+int my_fread(FILE *infile, int howmuch) {
+  int result;
+
+  result = fread(in_buffer, 1, howmuch, infile);
+  if (ferror(infile)) {
+    fprintf(stderr,"%s: Error while reading data\n",program_name);
+    exit (EXIT_FAILURE);
+  }
+
+  return (result);
+}
+
+/*
+ * my_fwrite() ... write data from global buffer to file
+ *
+ * Inputs:
+ *      unsigned char *buffer   Buffer to write out
+ *      FILE *outfile   File to write to
+ *      int howmuch     Number of bytes to write
+ *
+ * Output:
+ *      None
+ */
+
+void my_fwrite (unsigned char *buffer, FILE *outfile, int howmuch) {
+  fwrite(buffer, 1, howmuch, outfile);
+  if (ferror(outfile)) {
+    fprintf(stderr,"%s: Error while writing data\n",program_name);
+    exit (EXIT_FAILURE);
+  }
+  
+  return;
+}
+
+/*
+ * copy_file() ... copies a file to another, creates the destination file.
+ *
+ * Inputs:
+ *      char *from      Name of file to copy from
+ *      char *to        Name of file to create and copy to
+ *
+ * Output:
+ *      None
+ */
+
+void copy_file (char *from, char *to) {
+  FILE *fp1, *fp2;
+  unsigned char *buffer;
+  size_t length;
+  
+  if((buffer = malloc(BUFFERSIZE)) == NULL) {
+    fprintf(stderr,"%s: memory allocation failure\n",program_name);
+    exit (EXIT_FAILURE);
+  }
+        
+  fp1 = tryopen (from,"rb");
+  fp2 = tryopen (to,"wb");
+  
+  while (!feof (fp1)) {
+    length = fread(buffer,1,BUFFERSIZE,fp1);
+    if (ferror(fp1)) {
+      fprintf(stderr,"%s: Error while trying to read %s\n",
+	      program_name, from);
+      free (buffer);
+      exit (EXIT_FAILURE);
+    }
+
+    if (fwrite(buffer,1,length,fp2) != length) {
+      fprintf(stderr,"%s: Error while trying to write out "
+	      "file %s\n",program_name,to);
+      free (buffer);
+      exit (EXIT_FAILURE);
+    }
+  }
+
+  if (fclose (fp1) == EOF || fclose (fp2) == EOF) {
+    perror ("closing files");
+    free (buffer);
+    exit (EXIT_FAILURE);
+  }
+}
+
+/*
+ * cleanup() ... called in case of an exit(). Frees memory I allocated.
+ *
+ * Inputs:
+ *      None
+ *
+ * Output:
+ *      None
+ */
+
+void cleanup (void) {
+  char **p;
+
+  free (program_name);
+  free (current_file);
+  free (in_buffer);
+  free (out_buffer);
+  if (pathList) {
+    p = pathList;
+    while(*p) free(*p++);
+    free (pathList);
+  }
+  
+  if (tempfile)
+    remove (tempfile);
+}
+
+/*
+ * usage() ... print out a usage string gotten from udluse.c
+ *
+ * Inputs:
+ *      None
+ *
+ * Outputs:
+ *      None
+ */
+
+void usage (void) {
+  extern char use1[]; /* from udluse.c */
+  extern char use2[];
+
+  fprintf(stderr,"%s",use1);
+#ifdef GNO
+  if(!needsgno())
+    fprintf(stderr,"%s",use2);
+#endif
+  
+  return;
+}
+
+/*
+ * build_file_list()  build the list of files to process
+ *
+ * Precondition:
+ *      file     is the file name to be added to the pathList
+ *      recurse  if non-zero, directories will be recursed
+ *
+ * Postcondition:
+ *      pathList will be a NULL-terminated array of strings.  Each
+ *      string is a partial pathname (relative to rootdir) of a file
+ *      to convert.
+ *
+ * Note:  This is a recursive routine that uses up (3 * sizeof(char *))
+ *        bytes of stack with each level of subdirectories.
+ */
+
+
+void build_file_list(char *file, short recurse) {
+  char *thisdir;
+  DIR *dir;
+  struct dirent *entry;
+
+  if (stat(file,&tstat)!=0) {
+    fprintf(stderr,"%s:  Couldn't stat %s.  File skipped\n",program_name,file);
+    return;
+  }
+
+  if (recurse && S_ISDIR(tstat.st_mode)) {
+    char tstr[2];
+    
+    /*
+     * It is a directory.  recurse through it.
+     */
+
+    /* save our state */
+    tstr[0] = dirbrk;
+    tstr[1] = '\0';
+    if (*currentDirectory) {
+      thisdir = strdup(currentDirectory);
+    } else {
+      thisdir = malloc(1);
+      if (thisdir != NULL) *thisdir='\0';
+    }
+    if (thisdir == NULL) {
+      perror("Couldn't duplicate current directory");
+      exit (EXIT_FAILURE);
+    }
+
+    if (*currentDirectory) strcat(currentDirectory,tstr);
+    strcat(currentDirectory,file);
+
+    /* recurse */
+    if ((dir = opendir(file)) == NULL) {
+      fprintf(stderr,"%s: Couldn't open %s.  Directory skipped.\n",
+              program_name,currentDirectory);
+    } else {
+      if (chdir(file) !=0) {
+        fprintf(stderr,"couldn't cd to %s\n",currentDirectory);
+        exit (EXIT_FAILURE);
+      }
+
+#ifdef READDIR_RETURNS_DOT
+      entry = readdir(dir);    /* for "."  */
+      entry = readdir(dir);    /* for ".." */               
+#endif                             
+
+      while ((entry = readdir(dir))!=NULL) {
+        /* ignore hidden files */
+        if (*(entry->d_name)!='.') build_file_list(entry->d_name,1);
+      }
+
+      if (*thisdir) {
+        if ((chdir(rootdir)!=0) || (chdir(thisdir)!=0)) {
+          fprintf(stderr,"couldn't cd to %s\n",thisdir);
+          exit (EXIT_FAILURE);
+        }
+      } else {
+        if (chdir(rootdir)!=0) {
+          fprintf(stderr,"couldn't cd to calling directory\n");
+          exit (EXIT_FAILURE);
+        }
+      }
+      
+    }
+    
+    /* restore our state */
+    strcpy(currentDirectory,thisdir);
+    free(thisdir);
+    
+  } else if (S_ISREG(tstat.st_mode)) {
+
+    /* It is a normal file.  Add it to the pathList */
+    add_to_pathList(currentDirectory, file);
+  }
+
+  return;
+}
+
+void add_to_pathList(char *thisdir, char *file) {
+  char **p;
+  
+  /* expand the pathList if necessary */
+  if (pathSlotsUsed >= pathSlots) {
+    pathSlots += PATHLIST_QUANTUM;
+#if BROKEN_REALLOC
+    if ((pathList==NULL) &&
+	((pathList = malloc((pathSlots+1) * sizeof(char *)))==NULL)) {
+      fprintf(stderr,"%s: Couldn't expand pathList\n",program_name);
+      exit (EXIT_FAILURE);
+    } else {
+      if ((p = realloc(pathList, (pathSlots+1) * sizeof(char *)))==NULL) {
+	fprintf(stderr,"%s: Couldn't expand pathList\n",program_name);
+	exit (EXIT_FAILURE);
+      }
+      pathList = p;
+    }
+#else
+    if ((p = realloc(pathList,(pathSlots+1) * sizeof(char *)))==NULL) {
+      fprintf(stderr,"%s: Couldn't expand pathList\n",program_name);
+      exit (EXIT_FAILURE);
+    } else pathList = p;
+#endif
+  }
+
+  /* add in the current directory and filename to the pathList */
+  pathList[pathSlotsUsed] = malloc(strlen(thisdir)+strlen(file)+2);
+  if (pathList[pathSlotsUsed] == NULL) {
+    fprintf(stderr,"%s: Couldn't duplicate filename %s%c%s\n",program_name,
+	    thisdir,dirbrk,file);
+    exit (EXIT_FAILURE);
+  }
+  if (*thisdir) {
+    sprintf(pathList[pathSlotsUsed],"%s%c%s",thisdir,dirbrk,file);
+  } else {
+    strcpy(pathList[pathSlotsUsed],file);
+  }
+  pathSlotsUsed++;
+  pathList[pathSlotsUsed] = NULL;
+  return;
+}
+
+/* End Of File */

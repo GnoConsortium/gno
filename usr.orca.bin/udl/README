@@ -1,0 +1,74 @@
+=============================================================================
+udl -	Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
+     	and Apple (CR).
+
+	(c) 1993-1994 Soenke Behrens
+
+	Version 1.13: $Id: README,v 1.1 1994/12/13 18:08:18 gdr Exp $
+=============================================================================
+
+Udl converts text files between CR, LF and CR/LF (Apple, Unix and MS-DOS).
+It is a very fast utility that ensures that the integrity of the file
+cannot be compromised during the translation.  It is also much easier
+to use than tr(1).
+
+================
+Revision History:
+================
+
+v1.01
+	Tabs are left alone now. Also recognizes CR/LF (MeSsy-DOS).
+
+v1.02
+	Does no longer read in the complete file, instead creates a temp
+	file in prefix 3/.
+
+v1.03
+	Fixed a bug, allocated not enough mem for strncpy.
+
+v1.1
+	Changed to use static GS/OS strings again. Made faster by factor
+	5.8.
+
+v1.11
+	Cleaned the code up a bit, wrote a Makefile, all output by udl is
+	prefixed with the name it was invoked with.
+
+v1.12
+	Sped up Apple <-> Unix conversion further (factor 1.5).
+
+v1.12 (Unix)
+	(December 1993)
+	Modified source to produce a Unix version
+
+v1.13
+	(Updated by Devin Reade, November 1994)
+	Added ability to recurse through directories (-R flag).
+	Changed behavior to ignore binary files rather than exiting.
+	Merged Unix and Apple IIgs versions.
+
+=========
+Compiling:
+=========
+
+There are two makefiles included:
+	Makefile.gs	- for use on the Apple IIgs running Gno
+	Makefile.unix	- for use with Unix systems.
+
+Although udl on the IIgs can be run from either Gno or Orca shells,
+it cannot be built with the standard Orca installation due to a lack
+of additional libraries.
+
+Before you type "make", have a look at the Makefile and edit the defines
+to your liking.
+
+Also, udl.c assumes that getopt() is declared in <unistd.h> and that
+the function strdup() exists in <string.h>. You might want to change
+these includes if that's not the case.
+
+=============================================================================
+Enjoy,
+
+Soenke
+schaf@meadow.muc.de
+December 1993
