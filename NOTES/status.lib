@@ -1,4 +1,4 @@
-$Id: status.lib,v 1.3 1997/09/21 22:29:52 gdr Exp $
+$Id: status.lib,v 1.4 1997/11/01 19:37:44 gdr Exp $
 
 Key for Code Status column:
 	R == reviewed
@@ -26,6 +26,18 @@ GOchange		libc/gno/gsstring.c	T	3	gno/gno.h
 GOfree			libc/gno/gsstring.c	T	3	gno/gno.h
 GOinit			libc/gno/gsstring.c	T	3	gno/gno.h
 InstallNetDriver	libc/sys/trap.asm	C	2U	gno/gno.h
+LC_CopyFile		libcontrib/copyfile.c	T		contrib.h
+LC_CopyFileGS		libcontrib/copyfile.c	T		contrib.h
+LC_ExpandPath		libcontrib/expandpath.c	T		contrib.h
+LC_ExpandPathGS		libcontrib/expandpath.c	T		contrib.h
+LC_StringArrayAdd	libcontrib/strarray.c	T		contrib.h
+LC_StringArrayDelete	libcontrib/strarray.c	T		contrib.h
+LC_StringArrayClear	libcontrib/strarray.c	T		contrib.h
+LC_StringArrayCat	libcontrib/strarray.c	T		contrib.h
+LC_StringArrayNew	libcontrib/strarray.c	T		contrib.h
+LC_xmalloc		libcontrib/xalloc.c	T		contrib.h
+LC_xrealloc		libcontrib/xalloc.c	T		contrib.h
+LC_xstrdup		libcontrib/xalloc.c	T		contrib.h
 SetGNOQuitRec		libc/sys/trap.asm	C	2U	gno/gno.h
 WriteGString		libc/gno/gnomisc.c	C
 __C2GS			libc/gno/gsstring.c	C	3	gno/gno.h
@@ -67,6 +79,7 @@ tctpgrp			libc/sys/trap.asm	C	2	gno/gno.h
 ~GNO_COMMAND		libc/gno/gnocmd.asm	C	3	na
 ~GNO_FREEARG		libc/gno/parsearg.asm	C	3	na
 ~GNO_PARSEARG		libc/gno/parsearg.asm	C	3	na
+
 
 
 BSD-ish
@@ -207,6 +220,7 @@ kvmgetproc		libc/sys/trap.asm	C	2U	gno/gno.h
 kvmnextproc		libc/sys/trap.asm	C	2U	gno/gno.h
 kvmsetproc		libc/sys/trap.asm	C	2U	gno/gno.h
 listen			libc/sys/trap.asm	C	2	sys/socket.h
+localeconv							(locale.h)
 login			libutil/login.c		C	na	libutil.h
 login_tty		libutil/logintty.c	C	na	libutil.h
 logout		[B]	libutil/logout.c		na	libutil.h
@@ -261,6 +275,7 @@ rename			libc/sys/syscall.c	T	2	stdio.h
 rewind			libc/stdio/rewind.c	T(1)	3	stdio.h
 rewinddir		libc/gen/dirent.c	T	3	dirent.h
 rindex			libc/string/str.c	C	3	string.h
+rmdir			libc/sys/syscall.c	T	2	unistd.h
 scandir			libc/gen/scandir.c	T	3	dirent.h
 scanf			libc/stdio/scanf.c	C	3	stdio.h
 scount			libc/sys/trap.asm	C	2	gno/gno.h
@@ -283,6 +298,7 @@ sethostname		libc/gen/hostname.c	C	3	unistd.h
 setjmp			libc/gen/setjmp.asm	C	3	setjmp.h
 setkey			libc/gen/crypt.c	C	3	unistd.h
 setlinebuf		libc/stdio/setbuffer.c	C	3	stdio.h
+setlocale							(locale.h)
 setlogin		libc/gen/getlogin.c	T	2	unistd.h
 setlogmask		libc/gen/syslog.asm	C	3	sys/syslog.h
 setpassent		libc/gen/getpwent.c		3	pwd.h
