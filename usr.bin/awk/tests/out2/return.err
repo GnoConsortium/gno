@@ -1,0 +1,5 @@
+/obj/gno/usr.bin/awk/awk: return not in function at source line 1
+ context is
+	 >>> {return <<< }
+/obj/gno/usr.bin/awk/awk: syntax error at source line 1
+/obj/gno/usr.bin/awk/awk: illegal statement at source line 1

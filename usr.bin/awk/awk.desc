@@ -1,0 +1,10 @@
+Name:    awk
+Version: 2.0 (March 1998)
+Shell:   GNO
+Author:  Jawaid Bazyar (from Bell Labs code; updated by Dave Tribby)
+Contact: tribby@cup.hp.com
+Where:   /usr/bin
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+ Pattern-directed scanning and processing language.
+  

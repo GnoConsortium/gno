@@ -1,0 +1,6 @@
+/obj/gno/usr.bin/awk/awk: extra ) at source line 1
+ context is
+	 >>> {) <<< 
+/obj/gno/usr.bin/awk/awk: syntax error at source line 1
+/obj/gno/usr.bin/awk/awk: illegal statement at source line 1
+	extra )

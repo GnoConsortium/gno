@@ -22,6 +22,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ****************************************************************/
 
+/* $Id: lib.c,v 1.2 1998/04/07 16:13:35 tribby Exp $ */
+
+#ifdef __GNO__
+segment "lib";
+#endif
+
 #define DEBUG
 #include <stdio.h>
 #include <string.h>

@@ -22,6 +22,8 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ****************************************************************/
 
+/* $Id: maketab.c,v 1.3 1998/04/07 16:13:46 tribby Exp $ */
+
 /*
  * this program makes the table to link function names
  * and type indices that is used by execute() in run.c.

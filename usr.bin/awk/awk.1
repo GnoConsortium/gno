@@ -1,15 +1,9 @@
-.de EX
-.nf
-.ft CW
-..
-.de EE
-.br
-.fi
-.ft 1
-..
-awk
-.TH AWK 1
-.CT 1 files prog_other
+.\" awk man page, taken from the download available on Brian Kernighan's
+.\" Web page at Bell Labs (Lucent Technologies); February 1998 version.
+.\"
+.\" Modified for GNO/ME 2.0.6 by Dave Tribby
+.\"     $Id: awk.1,v 1.3 1998/04/07 16:13:11 tribby Exp $
+.TH AWK 1 "March 1998" "GNO" "Commands and Applications"
 .SH NAME
 awk \- pattern-directed scanning and processing language
 .SH SYNOPSIS
@@ -101,10 +95,8 @@ An action is a sequence of statements.
 A statement can be one of the following:
 .PP
 .EX
-.ta \w'\f(CWdelete array[expression]'u
 .RS
 .nf
-.ft CW
 if(\fI expression \fP)\fI statement \fP\fR[ \fPelse\fI statement \fP\fR]\fP
 while(\fI expression \fP)\fI statement\fP
 for(\fI expression \fP;\fI expression \fP;\fI expression \fP)\fI statement\fP
@@ -124,8 +116,6 @@ delete\fI array\fP	#\fR delete all elements of array\fP
 exit\fR [ \fP\fIexpression \fP\fR]\fP	#\fR exit immediately; status is \fP\fIexpression\fP
 .fi
 .RE
-.EE
-.DT
 .PP
 Statements are terminated by
 semicolons, newlines or right braces.
@@ -133,7 +123,7 @@ An empty
 .I expression-list
 stands for
 .BR $0 .
-String constants are quoted \&\f(CW"\ "\fR,
+String constants are quoted \&\fB"\fR\ \fB"\fR,
 with the usual C escapes recognized within.
 Expressions take on string or numeric values as appropriate,
 and are built using the operators
@@ -198,7 +188,6 @@ and
 .BR atan2 
 are built in.
 Other built-in functions:
-.TF length
 .TP
 .B length
 the length of its argument
@@ -313,7 +302,6 @@ returns a copy of
 .I str
 with all lower-case characters translated to their
 corresponding upper-case equivalents.
-.PD
 .PP
 The ``function''
 .B getline
@@ -375,13 +363,13 @@ though an occurrence of the second.
 .PP
 A relational expression is one of the following:
 .IP
-.I expression matchop regular-expression
+.IR expression " " matchop " " regular-expression
 .br
-.I expression relop expression
+.IR expression " " relop " " expression
 .br
-.IB expression " in " array-name
+.IR expression " in " array-name
 .br
-.BI ( expr , expr,... ") in " array-name
+.RI ( expr , expr,... ") in " array-name
 .PP
 where a relop is any of the six relational operators in C,
 and a matchop is either
@@ -407,7 +395,6 @@ and
 do not combine with other patterns.
 .PP
 Variable names with special meanings:
-.TF FILENAME
 .TP
 .B CONVFMT
 conversion format used when converting numbers
@@ -456,7 +443,6 @@ non-null members are taken as filenames
 .TP
 .B ENVIRON
 array of environment variables; subscripts are names.
-.PD
 .PP
 Functions may be defined (at the position of a pattern-action statement) thus:
 .IP
@@ -472,35 +458,28 @@ the function definition.
 .TP
 .EX
 length($0) > 72
-.EE
+.PP
 Print lines longer than 72 characters.
 .TP
 .EX
 { print $2, $1 }
-.EE
+.IP
 Print first two fields in opposite order.
 .PP
 .EX
 BEGIN { FS = ",[ \et]*|[ \et]+" }
       { print $2, $1 }
-.EE
-.ns
 .IP
 Same, with input fields separated by comma and/or blanks and tabs.
 .PP
 .EX
-.nf
 	{ s += $1 }
 END	{ print "sum is", s, " average is", s/NR }
-.fi
-.EE
-.ns
 .IP
 Add up first column, print sum and average.
 .TP
 .EX
 /start/, /stop/
-.EE
 Print all lines between start/stop pairs.
 .PP
 .EX
@@ -510,7 +489,6 @@ BEGIN	{	# Simulate echo(1)
 	printf "\en"
 	exit }
 .fi
-.EE
 .SH SEE ALSO
 .IR lex (1), 
 .IR sed (1)
@@ -519,11 +497,28 @@ A. V. Aho, B. W. Kernighan, P. J. Weinberger,
 .I
 The AWK Programming Language,
 Addison-Wesley, 1988.  ISBN 0-201-07981-X
+.SH VERSION
+This manual page documents GNO/ME
+.BR awk
+version 2.0, based upon Lucent Technologies version 980211.
+.SH ATTRIBUTIONS
+This command was ported for distribution with GNO/ME 2.0.6
+from source code made available via the Web page of Brian
+Kernighan at Bell Labs (Lucent Technologies).
+.SH HISTORY
+GNO/ME version 1.0 (December 1994) of
+.BR awk
+was translated from Bell Labs source code
+(version July 23, 1993) by Jawaid Bazyar
+and distributed as a separate archive.
 .SH BUGS
 There are no explicit conversions between numbers and strings.
 To force an expression to be treated as a number add 0 to it;
-to force it to be treated as a string concatenate
-\&\f(CW""\fP to it.
+to force it to be treated as a string concatenate \fB""\fP to it.
 .br
 The scope rules for variables in functions are a botch;
 the syntax is worse.
+.br
+This GNO version has 4096 bytes of stack space allocated. This should
+be enough for most cases, but extreme recursion in an awk script can cause
+heavy stack usage and progam failure.

@@ -1,0 +1,15 @@
+                       NORTH
+                    S: K Q 7
+                    H: Q 7 4
+                    D: A 2
+                    C: J 10 7 6 2
+   WEST                                    EAST
+S: 9 4                                  S: A 10 5
+H: K 8 3                                H: A 10 9 6
+D: J 8 6 5 4                            D: K 10
+C: A 5 4                                C: K Q 9 3
+                       SOUTH
+                    S: J 8 6 3 2
+                    H: J 5 2
+                    D: Q 9 7 3
+                    C: 8

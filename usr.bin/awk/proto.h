@@ -22,6 +22,8 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ****************************************************************/
 
+/* $Id: proto.h,v 1.3 1998/04/07 16:13:52 tribby Exp $ */
+
 extern	int	yywrap(void);
 extern	void	setfname(Cell *);
 extern	int	constnode(Node *);

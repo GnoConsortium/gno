@@ -22,6 +22,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ****************************************************************/
 
+/* $Id: run.c,v 1.3 1998/04/07 16:13:55 tribby Exp $ */
+
+#ifdef __GNO__
+segment "run";
+#endif
+
 #define DEBUG
 #include <stdio.h>
 #include <ctype.h>
@@ -32,8 +38,18 @@ THIS SOFTWARE.
 #include <time.h>
 #include "awk.h"
 #include "ytab.h"
+#if defined(__GNO__)  &&  defined(__STACK_CHECK__)
+#include <gno/gno.h>
+#undef true
+#undef false
+#endif
 
 #define tempfree(x)	if (istemp(x)) tfree(x); else
+
+#ifdef __GNO__
+#undef FOPEN_MAX
+#define FOPEN_MAX 40
+#endif
 
 /*
 #undef tempfree
@@ -196,6 +212,9 @@ Cell *program(Node **a, int n)	/* execute an awk program */
 		tempfree(x);
 	}
   ex1:
+#if defined(__GNO__)  &&  defined(__STACK_CHECK__)
+	printf("=> stack usage: %d bytes\n", _endStackCheck());
+#endif
 	return(true);
 }
 
@@ -217,10 +236,18 @@ Cell *call(Node **a, int n)	/* function call.  very kludgy and fragile */
 	static Cell newcopycell = { OCELL, CCOPY, 0, "", 0.0, NUM|STR|DONTFREE };
 	int i, ncall, ndef;
 	Node *x;
+#ifdef __GNO__
+	Cell **args, **oargs;
+#else
 	Cell *args[NARGS], *oargs[NARGS];	/* BUG: fixed size arrays */
+#endif
 	Cell *y, *z, *fcn;
 	char *s;
 
+#ifdef __GNO__
+	args = malloc(sizeof(Cell *) * NARGS);
+	oargs = malloc(sizeof(Cell *) * NARGS);
+#endif
 	fcn = execute(a[0]);	/* the function itself */
 	s = fcn->nval;
 	if (!isfcn(fcn))
@@ -295,12 +322,22 @@ Cell *call(Node **a, int n)	/* function call.  very kludgy and fragile */
 		}
 	}
 	tempfree(fcn);
+#ifdef __GNO__
+	if (isexit(y) || isnext(y) || isnextfile(y)) {
+		free(args); free(oargs); return y;
+	}
+#else
 	if (isexit(y) || isnext(y) || isnextfile(y))
 		return y;
+#endif
 	tempfree(y);		/* this can free twice! */
 	z = fp->retval;			/* return value */
 	   dprintf( ("%s returns %g |%s| %o\n", s, getfval(z), getsval(z), z->tval) );
 	fp--;
+#ifdef __GNO__
+	free(args);
+	free(oargs);
+#endif
 	return(z);
 }
 
@@ -1114,6 +1151,11 @@ Cell *assign(Node **a, int n)	/* a[0] = a[1], a[0] += a[1], etc. */
 	return(x);
 }
 
+#ifdef __GNO__
+/* In full debug mode, there is too much code for one segment */
+segment "run2";
+#endif
+
 Cell *cat(Node **a, int q)	/* a[0] cat a[1] */
 {
 	Cell *x, *y, *z;
@@ -1615,7 +1657,15 @@ FILE *openfile(int a, char *us)
 	} else if (a == LE) {	/* input pipe */
 		fp = popen(s, "r");
 	} else if (a == LT) {	/* getline <file */
+#ifndef __ORCAC__	/* ORCA/C 2.1.0 reports a type conflict */
 		fp = strcmp(s, "-") == 0 ? stdin : fopen(s, "r");	/* "-" is stdin */
+#else
+		/* "-" is stdin */
+		if (strcmp(s, "-") == 0)
+			fp = stdin;
+		else
+			fp = fopen(s, "r");
+#endif
 	} else	/* can't happen */
 		ERROR "illegal redirection %d", a FATAL;
 	if (fp != NULL) {

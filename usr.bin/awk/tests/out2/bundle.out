@@ -1,0 +1,7 @@
+/tmp/bundle # bundle - combine multiple files into one
+/tmp/bundle 
+/tmp/bundle { print FILENAME, $0 }
+/tmp/unbundle # unbundle - unpack a bundle into separate files
+/tmp/unbundle 
+/tmp/unbundle $1 != prev { close(prev); prev = $1 }
+/tmp/unbundle            { print substr($0, index($0, " ") + 1) >$1 }

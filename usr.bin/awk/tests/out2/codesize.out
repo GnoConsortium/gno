@@ -1,0 +1,12 @@
+"getsval"  in file  ../tran.o  uses  122  stack bytes
+"string"  in file  ../lex.o  uses  128  stack bytes
+"split"  in file  ../run.o  uses  101  stack bytes
+Code file         Code bytes
+../main.o              4254
+../b.o                21244
+../lex.o              10704
+../parse.o             3253
+../run.o              43971
+../lib.o              19039
+../proctab.o           1569
+../tran.o              8450

@@ -1,0 +1,12 @@
+  0:  03010        ld    zero   # initialize sum to zero
+  1:  04011        st    sum
+  2:  01000   loop get          # read a number
+  3:  08007        jz    done   # no more input if number is zero
+  4:  05011        add   sum    # add in accumulated sum
+  5:  04011        st    sum    # store new value back in sum
+  6:  09002        j     loop   # go back and read another number
+  7:  03011   done ld    sum    # print sum
+  8:  02000        put
+  9:  10000        halt
+ 10:  00000   zero const 0
+ 11:  00000   sum  const

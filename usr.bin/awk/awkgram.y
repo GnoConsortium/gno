@@ -22,6 +22,8 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ****************************************************************/
 
+/* $Id: awkgram.y,v 1.2 1998/04/07 16:13:23 tribby Exp $ */
+
 %{
 #include <stdio.h>
 #include <string.h>

@@ -22,6 +22,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ****************************************************************/
 
+/* $Id: tran.c,v 1.2 1998/04/07 16:14:02 tribby Exp $ */
+
+#ifdef __GNO__
+segment "tran";
+#endif
+
 #define	DEBUG
 #include <stdio.h>
 #include <math.h>
@@ -230,10 +236,72 @@ Cell *setsymtab(char *n, char *s, Awkfloat f, unsigned t, Array *tp)
 
 int hash(char *s, int n)	/* form hash value for string s */
 {
+#ifndef __GNO__
 	unsigned hashval;
+#else		/* Need 32 bits; int on Apple IIGS is only 16 */
+	unsigned long hashval;
+#endif
 
+#if defined(__NOASM__) || !defined(__ORCAC__)
 	for (hashval = 0; *s != '\0'; s++)
 		hashval = (*s + 31 * hashval);
+#else
+	/* Use equivalent 65816 code to speed up Apple IIGS execution */
+	unsigned long newhash;
+	asm{
+		stz hashval	; hashval = 0
+		stz hashval+2
+		ldy #0x0000	; index into s = 0
+
+	forloop:
+		lda [s],y	; Get next character of s
+		and #0x00FF	;  (one byte only)
+		beq done	; Done if '\0'
+
+		tax		; Hold character in X-reg
+	; Calculate hasval, but instead of multiplying old value
+	; by 31, shift it left by 5 (mult by 32) and subtract.
+	; This is equivalent to
+	;   hashval = (hashval << 5) - hashval + *s
+		lda hashval	; Use newhash to accumulate
+		sta newhash	;  shifted hash value.
+		lda hashval+2
+		sta newhash+2
+		asl newhash	; First shift (*2)
+		rol newhash+2
+		asl newhash	; Second (*4)
+		rol newhash+2
+		asl newhash	; Third  (*8)
+		rol newhash+2
+		asl newhash	; Fourth (*16)
+		rol newhash+2
+		asl newhash	; Fifth  (*32)
+		rol newhash+2	;  (newhash = hashval*32)
+
+		sec		; newhash -= hashval
+		lda newhash
+		sbc hashval
+		sta newhash
+		lda newhash+2
+		sbc hashval+2
+		sta newhash+2
+
+		clc		; newhash += s[y]
+		txa		; (Restore s[y] from x-register)
+		adc newhash
+		bcc nocarry
+		inc newhash+2
+	nocarry:
+		sta hashval	; hashval = newhash
+		lda newhash+2
+		sta hashval+2
+
+		iny		; Bump index into s
+		bra forloop	;  and continue in loop.
+
+	done:			; When done, return hashval % n
+	}
+#endif
 	return hashval % n;
 }
 

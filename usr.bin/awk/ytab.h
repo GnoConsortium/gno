@@ -1,100 +1,102 @@
 
+/* $Id: ytab.h,v 1.2 1998/04/07 16:14:20 tribby Exp $ */
+
 typedef union  {
 	Node	*p;
 	Cell	*cp;
 	int	i;
 	char	*s;
-}	YYSTYPE;
-extern	YYSTYPE	yylval;
-#define	FIRSTTOKEN	57346
-#define	PROGRAM	57347
-#define	PASTAT	57348
-#define	PASTAT2	57349
-#define	XBEGIN	57350
-#define	XEND	57351
-#define	NL	57352
-#define	ARRAY	57353
-#define	MATCH	57354
-#define	NOTMATCH	57355
-#define	MATCHOP	57356
-#define	FINAL	57357
-#define	DOT	57358
-#define	ALL	57359
-#define	CCL	57360
-#define	NCCL	57361
-#define	CHAR	57362
-#define	OR	57363
-#define	STAR	57364
-#define	QUEST	57365
-#define	PLUS	57366
-#define	AND	57367
-#define	BOR	57368
-#define	APPEND	57369
-#define	EQ	57370
-#define	GE	57371
-#define	GT	57372
-#define	LE	57373
-#define	LT	57374
-#define	NE	57375
-#define	IN	57376
-#define	ARG	57377
-#define	BLTIN	57378
-#define	BREAK	57379
-#define	CLOSE	57380
-#define	CONTINUE	57381
-#define	DELETE	57382
-#define	DO	57383
-#define	EXIT	57384
-#define	FOR	57385
-#define	FUNC	57386
-#define	SUB	57387
-#define	GSUB	57388
-#define	IF	57389
-#define	INDEX	57390
-#define	LSUBSTR	57391
-#define	MATCHFCN	57392
-#define	NEXT	57393
-#define	NEXTFILE	57394
-#define	ADD	57395
-#define	MINUS	57396
-#define	MULT	57397
-#define	DIVIDE	57398
-#define	MOD	57399
-#define	ASSIGN	57400
-#define	ASGNOP	57401
-#define	ADDEQ	57402
-#define	SUBEQ	57403
-#define	MULTEQ	57404
-#define	DIVEQ	57405
-#define	MODEQ	57406
-#define	POWEQ	57407
-#define	PRINT	57408
-#define	PRINTF	57409
-#define	SPRINTF	57410
-#define	ELSE	57411
-#define	INTEST	57412
-#define	CONDEXPR	57413
-#define	POSTINCR	57414
-#define	PREINCR	57415
-#define	POSTDECR	57416
-#define	PREDECR	57417
-#define	VAR	57418
-#define	IVAR	57419
-#define	VARNF	57420
-#define	CALL	57421
-#define	NUMBER	57422
-#define	STRING	57423
-#define	REGEXPR	57424
-#define	GETLINE	57425
-#define	RETURN	57426
-#define	SPLIT	57427
-#define	SUBSTR	57428
-#define	WHILE	57429
-#define	CAT	57430
-#define	NOT	57431
-#define	UMINUS	57432
-#define	POWER	57433
-#define	DECR	57434
-#define	INCR	57435
-#define	INDIRECT	57436
-#define	LASTTOKEN	57437
+} YYSTYPE;
+extern YYSTYPE yylval;
+# define FIRSTTOKEN 257
+# define PROGRAM 258
+# define PASTAT 259
+# define PASTAT2 260
+# define XBEGIN 261
+# define XEND 262
+# define NL 263
+# define ARRAY 264
+# define MATCH 265
+# define NOTMATCH 266
+# define MATCHOP 267
+# define FINAL 268
+# define DOT 269
+# define ALL 270
+# define CCL 271
+# define NCCL 272
+# define CHAR 273
+# define OR 274
+# define STAR 275
+# define QUEST 276
+# define PLUS 277
+# define AND 278
+# define BOR 279
+# define APPEND 280
+# define EQ 281
+# define GE 282
+# define GT 283
+# define LE 284
+# define LT 285
+# define NE 286
+# define IN 287
+# define ARG 288
+# define BLTIN 289
+# define BREAK 290
+# define CLOSE 291
+# define CONTINUE 292
+# define DELETE 293
+# define DO 294
+# define EXIT 295
+# define FOR 296
+# define FUNC 297
+# define SUB 298
+# define GSUB 299
+# define IF 300
+# define INDEX 301
+# define LSUBSTR 302
+# define MATCHFCN 303
+# define NEXT 304
+# define NEXTFILE 305
+# define ADD 306
+# define MINUS 307
+# define MULT 308
+# define DIVIDE 309
+# define MOD 310
+# define ASSIGN 311
+# define ASGNOP 312
+# define ADDEQ 313
+# define SUBEQ 314
+# define MULTEQ 315
+# define DIVEQ 316
+# define MODEQ 317
+# define POWEQ 318
+# define PRINT 319
+# define PRINTF 320
+# define SPRINTF 321
+# define ELSE 322
+# define INTEST 323
+# define CONDEXPR 324
+# define POSTINCR 325
+# define PREINCR 326
+# define POSTDECR 327
+# define PREDECR 328
+# define VAR 329
+# define IVAR 330
+# define VARNF 331
+# define CALL 332
+# define NUMBER 333
+# define STRING 334
+# define REGEXPR 335
+# define GETLINE 336
+# define RETURN 337
+# define SPLIT 338
+# define SUBSTR 339
+# define WHILE 340
+# define CAT 341
+# define NOT 342
+# define UMINUS 343
+# define POWER 344
+# define DECR 345
+# define INCR 346
+# define INDIRECT 347
+# define LASTTOKEN 348

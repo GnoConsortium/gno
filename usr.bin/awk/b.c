@@ -24,6 +24,12 @@ THIS SOFTWARE.
 
 /* lasciate ogne speranza, voi ch'entrate. */
 
+/* $Id: b.c,v 1.2 1998/04/07 16:13:27 tribby Exp $ */
+
+#ifdef __GNO__
+segment "b";
+#endif
+
 #define	DEBUG
 
 #include <ctype.h>

@@ -22,6 +22,8 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ****************************************************************/
 
+/* $Id: main.c,v 1.3 1998/04/07 16:13:39 tribby Exp $ */
+
 char	*version = "version 980211";
 
 #define DEBUG
@@ -32,6 +34,9 @@ char	*version = "version 980211";
 #include <signal.h>
 #include "awk.h"
 #include "ytab.h"
+#if defined(__GNO__)  &&  defined(__STACK_CHECK__)
+#include <gno/gno.h>
+#endif
 
 extern	char	**environ;
 extern	int	nfields;
@@ -50,17 +55,26 @@ int	curpfile = 0;	/* current filename */
 
 int	safe	= 0;	/* 1 => "safe" mode */
 
+
 int main(int argc, char *argv[])
 {
 	char *fs = NULL, *marg;
 	int temp;
 
+#ifdef __GNO__
+#ifdef __STACK_CHECK__
+	__REPORT_STACK();
+#endif
+	environInit();
+#endif
 	cmdname = argv[0];
 	if (argc == 1) {
 		fprintf(stderr, "Usage: %s [-f programfile | 'program'] [-Ffieldsep] [-v var=value] [files]\n", cmdname);
 		exit(1);
 	}
+#ifndef __GNO__
 	signal(SIGFPE, fpecatch);
+#endif
 	yyin = NULL;
 	symtab = makesymtab(NSYMTAB);
 	while (argc > 1 && argv[1][0] == '-' && argv[1][1] != '\0') {
@@ -120,7 +134,11 @@ int main(int argc, char *argv[])
 			dbg = atoi(&argv[1][2]);
 			if (dbg == 0)
 				dbg = 1;
+#ifndef __GNO__
 			printf("awk %s\n", version);
+#else
+			printf("awk 2.0 for GNO/ME; based on %s\n", version);
+#endif
 			break;
 		default:
 			ERROR "unknown option %s ignored", argv[1] WARNING;
@@ -158,6 +176,9 @@ int main(int argc, char *argv[])
 		run(winner);
 	} else
 		bracecheck();
+#if defined(__GNO__)  &&  defined(__STACK_CHECK__)
+	printf("=> stack usage: %d bytes\n", _endStackCheck());
+#endif
 	return(errorflag);
 }
 

@@ -1,0 +1,42 @@
+-n Testing command  beginning at
+Tue Feb 17 13:06:25 PST 1998
+Testing prep1 and form1
+  Completion status = 0
+Checking results against control file form1.out (no differences expected)
+  Completion status = 0
+Testing prep2 and form2
+  Completion status = 0
+Checking results against control file form2.out (no differences expected)
+  Completion status = 0
+Testing info.awk (Germany)
+  Completion status = 0
+Checking results against control file infoG.out (no differences expected)
+  Completion status = 0
+Testing info.awk (US)
+  Completion status = 0
+Checking results against control file infoUS.out (no differences expected)
+  Completion status = 0
+Testing form.gen (England)
+  Completion status = 0
+Checking results against control file form.gen.out (no differences expected)
+  Completion status = 0
+Testing table
+  Completion status = 0
+Checking results against control file table.out (no differences expected)
+  Completion status = 0
+Testing table1
+  Completion status = 0
+Checking results against control file table1.out (no differences expected)
+  Completion status = 0
+Testing avgarea.awk (from command line)
+  Completion status = 0
+Checking results against control file avgarea.out (no differences expected)
+  Completion status = 0
+Testing join.awk
+  Completion status = 0
+Checking results against control file join.out (no differences expected)
+  Completion status = 0
+Testing merge.awk
+  Completion status = 0
+Checking results against control file merge.out (no differences expected)
+  Completion status = 0

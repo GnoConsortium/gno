@@ -22,6 +22,8 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ****************************************************************/
 
+/* $Id: parse.c,v 1.2 1998/04/07 16:13:49 tribby Exp $ */
+
 #define DEBUG
 #include <stdio.h>
 #include <string.h>

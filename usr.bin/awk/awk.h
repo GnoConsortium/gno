@@ -22,6 +22,8 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ****************************************************************/
 
+/* $Id: awk.h,v 1.2 1998/04/07 16:13:18 tribby Exp $ */
+
 typedef double	Awkfloat;
 
 /* unsigned char is more trouble than it's worth */
@@ -142,7 +144,9 @@ typedef struct Node {
 #define	NIL	((Node *) 0)
 
 extern Node	*winner;
+#ifndef __GNO__  /* nullstat not used/defined; causes debugger problems */
 extern Node	*nullstat;
+#endif
 extern Node	*nullnode;
 
 /* ctypes */

@@ -22,6 +22,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 THIS SOFTWARE.
 ****************************************************************/
 
+/* $Id: lex.c,v 1.3 1998/04/07 16:13:31 tribby Exp $ */
+
+#ifdef __GNO__
+segment "lex";
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -96,7 +102,11 @@ Keyword keywords[] ={	/* keep sorted: binary searched */
 #define	RET(x)	return(x)
 #endif
 
+#ifndef __STDC__
 int peek()
+#else
+int peek(void)
+#endif
 {
 	int c = input();
 	unput(c);
@@ -163,7 +173,11 @@ int	regexpr(void);
 int	sc	= 0;	/* 1 => return a } right now */
 int	reg	= 0;	/* 1 => return a REGEXPR now */
 
+#ifndef __STDC__
 int yylex()
+#else
+int yylex(void)
+#endif
 {
 	int c, n;
 	static char *buf = 0;
@@ -348,7 +362,11 @@ int yylex()
 	}
 }
 
+#ifndef __STDC__
 int string()
+#else
+int string(void)
+#endif
 {
 	int c, n;
 	char *s, *bp;
@@ -492,7 +510,11 @@ void startreg(void)	/* next call to yyles will return a regular expression */
 	reg = 1;
 }
 
+#ifndef __STDC__
 int regexpr()
+#else
+int regexpr(void)
+#endif
 {
 	int c;
 	static char *buf = 0;
