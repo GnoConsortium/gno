@@ -66,5 +66,17 @@ release: $(LIB) sane.h saneglue.3 mkso.data
 	install mkso.data $(MI_INSTALL)/mkso.lsaneglue
 	chtyp -lcc $(MI_INCDIR)/sane.h
 
+# Implicit rule to handle Rez source on case sensitive Appleshare servers
+.IMPORT .IGNORE: TMPDIR
+.IF $(TMPDIR) == $(NULL)
+TMPDIR		= 14
+.END
+.IF $(APPLESHARE_CASE_SENSITIVE) != $(NULL)
+%.r : %.rez
+	$(INSTALL) $< $(TMPDIR)/$<
+	$(REZ) -o $@ -c $(REZFLAGS) $(TMPDIR)/$<
+	$(RM) -f $(TMPDIR)/$<
+.END
+
 findfpcp.o:: findfpcp.mac
 saneglue.o:: saneglue.mac
