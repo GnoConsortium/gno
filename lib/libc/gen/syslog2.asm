@@ -12,7 +12,7 @@
 *
 * Phillip Vandry, August 1993
 *
-* $Id: syslog2.asm,v 1.1 1997/02/28 05:12:45 gdr Exp $
+* $Id: syslog2.asm,v 1.2 1998/06/24 04:19:59 gdr-ftp Exp $
 *
 * This file is formatted for tab stops at positions 10, 16, 41, 40, 57,
 * 65, and 73 (standard Orca/M systabs setting).
