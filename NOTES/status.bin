@@ -11,7 +11,7 @@
 *									*
 * Devin Reade, 10 April 1998.						*
 *									*
-* $Id: status.bin,v 1.13 1998/04/23 16:02:07 gdr-ftp Exp $		*
+* $Id: status.bin,v 1.14 1998/04/28 06:15:07 gdr-ftp Exp $		*
 *									*
 *************************************************************************
 
@@ -111,7 +111,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /bin/hostname			N	Y	dt
 /bin/info			Y	.	lb							# rename to something else
 /bin/kill			N	Y	dave	Y	T	Y	Y	Y	RI
-/bin/less			Y	Y	.	Y	.	.	.	Y
+/bin/less			Y	Y	sr	Y	.	.	.	Y
 /bin/ln				N	N
 /bin/ls				Y	Y	.	Y	.	.	.	Y
 /bin/make			Y	Y	.	Y	.	.	.	Y
@@ -131,7 +131,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /bin/sh				N	Y	gdr
 /bin/shutdown			Y	Y
 /bin/sleep			Y	Y	dave	Y	T	Y	Y	Y	RI
-/bin/split			Y	Y	dave	Y	T	Y	.	Y	RI	# test waiting on sed
+/bin/split			Y	Y	dave	Y	T	Y	Y	Y	RI
 /bin/strings			Y	Y	lb	Y
 /bin/stty			Y	Y	.	Y	.	.	.	Y
 /bin/su				Y	Y
@@ -157,8 +157,8 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /dev/printer			Y	Y	dt
 /doc				N	Y	gdr	dir	-	-	-	-
 /etc				Y	Y	gdr	dir	-	-	-	-
-/etc/cronlog			.	.	.	.	.	.	.	.	.	(cron)
-/etc/crontab			.	.	.	.	.	.	.	.	.	(cron)
+/etc/cronlog			.	.	sr	.	.	.	.	.	.	(cron)
+/etc/crontab			.	.	sr	.	.	.	.	.	.	(cron)
 /etc/freeze.cnf			.	.	.	.	.	.	.	.	.	(freeze)
 /etc/gettytab			Y	Y	.	Y
 /etc/group			Y	Y	gdr	Y	.	-
@@ -187,7 +187,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /lib/lstring			Y									# replaced by libc?
 /lib/orcalib			Y	Y	gdr	Y	T	Y	Y	Y
 /lib/sysfloat			N	Y	gdr	Y	T	Y	Y	Y
-/libexec/atrun
+/libexec/atrun			.	.	sr
 /libexec/fingerd
 /libexec/ftpd			N	Y	dt
 /libexec/rexecd
@@ -213,7 +213,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/ar			N	N
 /usr/bin/asml			N	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/assemble		N	Y	gdr	Y	T	Y	Y	Y	RI
-/usr/bin/at
+/usr/bin/at			.	.	sr
 /usr/bin/aw30			Y	.	.	Y	.	.	.	Y
 /usr/bin/awk			N	Y	dave	Y	T	T	T	Y	RI
 /usr/bin/bang			N	Y
@@ -230,7 +230,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/coff			N	Y
 /usr/bin/col
 /usr/bin/colcrt			N	Y	sr	Y	T	Y	Y	Y	RI
-/usr/bin/column
+/usr/bin/column			N	.	mober
 /usr/bin/compile		Y	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/copycat		Y	Y	tl
 /usr/bin/cpp			N	Y	gdr	Y				Y
@@ -245,7 +245,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/env			N	Y	gdr
 /usr/bin/ffdir			Y
 /usr/bin/file
-/usr/bin/find			N	.	gdr
+/usr/bin/find			N	.	gdr					# sr working on GS-specific implementation
 /usr/bin/finger
 /usr/bin/flex			Y	N
 /usr/bin/fmt			N	Y	gdr	Y	T	Y	Y	Y	RI
@@ -294,7 +294,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/rz			Y	Y
 /usr/bin/sb			Y
 /usr/bin/script			Y	Y	dave
-/usr/bin/sed			N	Y	dave	Y	Y	Y	Fail	Y	RI
+/usr/bin/sed			N	Y	dave	Y	Y	Y	Y	Y	RI
 /usr/bin/see			Y
 /usr/bin/sendmail		N	N									# waiting on SMTP
 /usr/bin/setvers		Y	Y	dave
@@ -372,7 +372,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/man/man8/intro.8		Y	Y	gdr	.	.	-	.	.	Y
 /usr/sbin			Y	Y	gdr	dir	-	-	-	-	Y
 /usr/sbin/catman		N	Y	gdr	Y	T	Y	Y	Y	RI	(man)
-/usr/sbin/cron			Y	Y		Y				Y
+/usr/sbin/cron			Y	Y	sr	Y				Y
 /usr/sbin/descc			N	Y	gdr	Y	T	Y	Y	Y	RI	(describe)
 /usr/sbin/descu			N	Y	gdr	Y	T	Y	Y	Y	RI	(describe)
 /usr/sbin/getty			Y	Y	gdr	Y	T	Y	Y	Y	RI
