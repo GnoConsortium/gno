@@ -1,0 +1,116 @@
+.\" Devin Reade, 1997
+.\"     
+.\" $Id: mkso.8,v 1.1 1997/12/21 22:39:13 gdr Exp $
+.\"
+.TH MKSO 8 "21 December 1997" GNO "System Administration"
+.SH NAME
+.BR mkso
+\- maintain manual page source links
+.SH SYNOPSIS
+.BR mkso
+[
+.BR -dhv
+] [
+.BI -H dir
+]
+.I datafile
+.SH DESCRIPTION
+Manual pages will often document more than one program, subroutine,
+or topic.  When this occurs, it is normal to create "links" for each
+documented program or subroutine to the original manual page.  For
+example, the
+.BR getcwd (3)
+manual page also documents
+.BR getwd (3).
+Assuming both of these functions are described in the file
+.BR man3/getcwd.3 ,
+then the file
+.BR man3/getwd.3
+would consist of the single line
+.nf
+
+	\.so man3/getcwd.3
+
+.fi
+This would result in the same manual page being shown for both functions,
+without duplicating the manual page.
+.LP
+While these source link files may be maintained by hand, doing so is tedious
+for large distributions, such as the GNO base distribution.
+.LP
+.BR mkso
+was written for the GNO base distribution to automate the creation and
+deletion of these source links.  By default,
+.BR mkso
+will create the links relative to the current directory as specified in
+.IR datafile .
+.IR datafile
+must have the following format:
+.nf
+
+	# Any blank line or line that has a "#" in the first
+	# column is a comment and is ignored.
+	#
+	# Pathnames must be delimited by "/", not ":".
+	#
+	# There are two columns here, delimited by spaces or tabs.
+	# The first is the "real" manual page (no check is done
+	# to verify that it does in fact exist).  The second column
+	# is the source link that will be created.
+	#
+	man2/alarm.2	man2/alarm10.2
+	man5/utmp.5	man5/wtmp.5
+	#
+	# This next one cannot be created on a ProDOS volume; see
+	# description of the -H flag.
+	#
+	man2/getpgrp.2	man2/_getpgrp.2
+
+.fi
+.LP
+.BR mkso
+does not create missing directories; the current directory should already
+contain the subdirectories
+.BR man1 ,
+.BR man2 ,
+.BR man3 ,
+.BR man4 ,
+.BR man5 ,
+.BR man6 ,
+.BR man7 ,
+and
+.BR man8 .
+.SH OPTIONS
+.IP "\fB-d\fR"
+Delete source links rather than creating them.  Source links will only
+be deleted if they contain a "magic number" which is inserted during
+link creation.
+.IP "\fB-h\fR"
+Print usage information and exit.
+.IP "\fB-H\fR \fIdir\fR"
+If the source link does not follow ProDOS filename conventions, then the
+link will be created in the directory given by
+.IR dir
+rather than the current directory.
+.IR dir
+is presumably a directory on an HFS volume.  The link itself will reference
+the full- rather than partial-pathname of the original file, so that
+.BR man (1)
+will be able to locate the original page.
+.sp 1
+As with the default behavior,
+.BR mkso
+does not create subdirectories, so ensure that
+.IR dir
+already contains the same list of subdirectories as the current directory.
+.IP "\fB-v\fR"
+Verbose operation.
+.SH VERSION
+This manual page documents
+.BR mkso
+version 1.0.
+.SH AUTHOR
+Devin Reade, 1997.
+.SH "SEE ALSO"
+.BR man (1),
+.BR nroff (1)

@@ -1,0 +1,9 @@
+Name:    mkso
+Version: 1.0 (21 Dec 97)
+Shell:   GNO
+Author:  Devin Reade
+Contact: gdr@eddore.myrias.com
+Where:   /sbin
+FTP:     trenco.myrias.com
+
+Maintains manual page source (.so) links.

@@ -1,0 +1,17 @@
+/*
+ * $Id: mkso.rez,v 1.1 1997/12/21 22:39:13 gdr Exp $
+ */
+
+#include "Types.Rez"
+
+resource rVersion (0x1, purgeable3, nocrossbank) {
+
+	{ 1, 0, 0,	/* version 1.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+          0		/* non-final release number */
+        },
+        verUS,
+        "mkso",
+        "Maintain manual page source links.\n"
+        "Written by Devin Reade for GNO v2.0.6"
+};
