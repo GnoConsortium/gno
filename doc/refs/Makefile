@@ -5,7 +5,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.3 1997/11/30 06:45:15 gdr Exp $
+# $Id: Makefile,v 1.4 1997/11/30 07:56:21 gdr Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -99,9 +99,10 @@ TEX_GARBAGE	= *.err *.aux *.log *.dvi *.toc *.idx *.ilg *.ind
 DVIPS_GARBAGE	= *.ps *.djc
 BIB_GARBAGE	= *.blg *.bbl
 
-UPLOADS	= htmld.tar.gz \
+UPLOADS	= \
 	intro.dvi.Z intro.ltr.ps.Z intro.a4.ps.Z \
-	kern.dvi.Z  kern.ltr.ps.Z  kern.a4.ps.Z
+	kern.dvi.Z  kern.ltr.ps.Z  kern.a4.ps.Z \
+	htmld.tar.gz
 
 #
 # targets
@@ -117,7 +118,7 @@ bib:	intro.bbl
 intro.bbl: gno.bib
 	bibtex intro
 
-upload:	man $(UPLOADS)
+upload:	all $(UPLOADS)
 
 htmld.tar.gz:	h
 	tar -cf - $(HTMLD) | gzip --best > $@
