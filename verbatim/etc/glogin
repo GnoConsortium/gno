@@ -1,9 +1,13 @@
+#! /bin/gsh
+
 ###
 #
-# GNO 2.0.6 system gsh login file.  This file is parsed by all gsh login
-# shells.
+# GNO 2.0.6 /etc/glogin file.
 #
-# $Id: glogin,v 1.1 1999/01/18 01:51:13 gdr-ftp Exp $
+# This file is parsed by all gsh login shells.
+# See also $HOME/glogin and $HOME/gshrc.
+#
+# $Id: glogin,v 1.2 1999/02/15 01:01:50 gdr-ftp Exp $
 #
 ###
 
