@@ -1,7 +1,7 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.10 1999/01/26 07:30:14 gdr-ftp Exp $
+% $Id: intro.tex,v 1.11 1999/01/27 06:35:42 gdr-ftp Exp $
 % 
 
 \documentclass{report}
@@ -263,7 +263,7 @@ to choose files by ``wildcard'' has been around for a while, but
 the GNO Shell takes this to a new level with ``regular
 expressions'', a very powerful yet simple programming language.
 Other benefits of the GNO shell are too numerous to mention. (see
-the \bf GNO Shell User's Manual \rm for details).
+the \bf GNO Shell User's Manual \rm  for details).
 
 In addition to being compatible with the
 ORCA system, GNO/ME is a very powerful programming environment.
@@ -331,7 +331,7 @@ the kernel, which is the heart of GNO.  It is intended mainly for programmers.
 
 The ``Manual Pages'' are the traditional form of UNIX documentation.
 They are normally viewed on your GS by typing ``man \it subject\rm'',
-where \it subject \rm is the name of the command, library routine, file
+where \it subject \rm  is the name of the command, library routine, file
 (and so forth) for which you are trying to obtain information.
 Man pages are provided for the \manpages{base distribution}, and are
 usually provided by authors of third-party programs.  Type ``man man''
@@ -356,7 +356,7 @@ memory and a hard drive.
 You should have at least 5 MegaBytes of hard disk space free for GNO
 v2.0.4.
 
-GNO version 2.0.6 is \em much \rm larger than previous versions.
+GNO version 2.0.6 is \em much \rm  larger than previous versions.
 Even if you are only installing v2.0.4 at this time, it is recommended
 that you reserve at least one 32-megabyte ProDOS partition for
 GNO-specific files.
@@ -529,7 +529,7 @@ many man-years of effort, huge amounts of money, and a lot of grief on the
 part of the developers.
 For example, the Byte Works' ORCA languages and development 
 environment (as of November 1997) consists of over 220,000 lines
-of source code, \em not \rm including the libraries, tool 
+of source code, \em not \rm  including the libraries, tool 
 interface files, test programs, samples, or the 5 800k disks
 of source in the courses for each language.  This work represents
 approximately 17 man-years of development, support, marketing,
@@ -859,7 +859,7 @@ same partition \texttt{GNO.Disk1} is on.
 GNO versions 2.0.2 through 2.0.4 were distributed as sequential
 updates to version 2.0.1, rather than as complete distributions.
 Consequently, you should install each of the version 2.0.2,
-2.0.3, and 2.0.4 distributions, \em in sequence, \rm over top of your
+2.0.3, and 2.0.4 distributions, \em in sequence, \rm  over top of your
 version 2.0.1 distribution.
 
 You should also obtain and install the Multi-User Update.
@@ -980,8 +980,8 @@ them to Devin Reade.\rm
 
 This chapter contains information on how to install the newest version
 of GNO, which is version 2.0.6 or later.  It explains how to install
-the base \em binary\rm distribution.  Installation of GNO sources such that
-you are able to \em build \rm the base distribution itself are at this
+the base \em binary\rm  distribution.  Installation of GNO sources such that
+you are able to \em build \rm  the base distribution itself are at this
 time beyond the scope of this document.
 
 At this time, unfortunately, installing GNO is fairly cumbersome.
@@ -996,35 +996,42 @@ prior to doing a new installation.
 
 \section{Planning Your System}
 
-The install scripts assumes that your \em new\rm distribution will be installed
-on to the two volumes \bf /gno \rm (ProDOS) and \bf /gno-hfs \rm (HFS 
-or AppleShare).
+The install scripts assumes that your \em new\rm  distribution will be 
+installed on to the two volumes \bf /gno \rm  (ProDOS) and \bf /gno-hfs \rm 
+(HFS or AppleShare).
 It also assumes these volumes already exist and are \em empty\rm.
 You may use other volume names,
 but you will have to edit certain files before you run your distribution.
 
+You will need \it at least\rm  the following amount of disk space.  
+It is recommended that you dedicate an entire 32Meg ProDOS partition to
+GNO.
+
 \begin{tabular}{ll}
 boot disk (used only for installation)	& 800k \\
-binary distribution (shk files)		& 4.6 MB \\
-binary distribution (extracted)		& 12.1 MB \\
-complete GNO source			& 15.0 MB \\
+binary distribution (shk files)		& 5.3 MB \\
+binary distribution (extracted)		& 12.0 MB \\
+complete GNO source (optional)		& 15.0 MB \\
 \end{tabular}
 
 Before you start, you should also ensure that your system meets the
 minimum hardware requirements, as documented in \bf Overview\rm.
 
 In order to install GNO, you will need some way to download the NuFX
-archive files to your GS.  You will also need GShrinkIt, which is available
+archive files to your GS.  You will also need GS-ShrinkIt, which is available
 from 
 \hturl{ftp://ftp.gno.org/pub/apple2/gs.specific/archivers/gshk11.bsc}.
 
 Part of the GNO installation still requires use of a text editor.  The
-GNO boot disk ships with \bf vi\rm installed;
-if you do not know how to use \bf vi\rm (or you need a refresher), see 
+GNO boot disk ships with \bf vi\rm  installed;
+if you do not know how to use \bf vi\rm  (or you need a refresher), see 
 \hturl{http://www.jaws.umn.edu/~tobkin/vi}
 for a good tutorial and quick reference guide.
 
 \section{Downloading and Extracting the Binary Distribution}
+
+If you have not yet read the section on \it Planning Your System\rm,
+please do so now.
 
 Your first step is of course to download the distribution.
 The distribution is available from 
@@ -1056,11 +1063,20 @@ Note that Appleshare volumes may be used in lieu of HFS volumes.
 
 \end{itemize}
 
-Next, using GShrinkIt or a similar program, extract the contents of the
+Using the Finder or a similar program, ensure that you have an empty ProDOS 
+partition \bf /gno \rm, and an HFS or AppleShare partition online.  The
+former \em may \rm  be named something else, but note the instructions
+below for handling this situation.  The latter is assumed to be called
+\bf /gno-hfs \rm  (modify the following instructions accordingly), and
+need not be otherwise empty.  The two subdirectories \bf HFSinclude \rm
+and \bf man \rm  will be created on \bf /gno-hfs  \rm during the installation
+process.
+
+Next, using GS-ShrinkIt or a similar program, extract the contents of the
 file gnoboot.shk onto an 800k floppy named \bf gno.boot\rm.  
 The name of the floppy is critical.  While you may use a hard drive 
 partition for \bf gno.boot\rm, this is likely a waste of hard drive space
-since \bf gno.boot\rm will only be used while installing GNO, not while
+since \bf gno.boot\rm  will only be used while installing GNO, not while
 running it.
 
 It should also be possible to use a RAM disk for \bf gno.boot\rm, but
@@ -1095,7 +1111,7 @@ shell session.
 
 Note that the boot disk currently uses the version 2.0.4 GNO kernel; this
 is a temporary measure due to a bug with using newer kernels in single user
-mode.  When GNO gets installed to your hard drive, you will have a newer
+mode.  When GNO is installed on your hard drive, you will have a newer
 kernel.
 
 \item
@@ -1107,9 +1123,9 @@ the other set.
 %% README.install-start
 \item
 Set your DOWNLOAD\_DIR environment variable to the directory
-into which you placed the above NuFX (*.shk) files. For example,
-if the files gnohfs.shk, gno.01.shk, gno.02.shk (and so forth)
-were in /download, you would type:
+into which you placed the base distribution NuFX archive files
+(gnoboot.shk, gnohfs.shk, gno.01.shk, and so forth).
+For example, if the NuFX files were in /download, you would type:
 
 \begin{verbatim}
 	setenv DOWNLOAD_DIR /download
@@ -1162,7 +1178,9 @@ path.  Similarily, you will have to replace ``:gno-hfs:'' if
 that is not the name of your HFS (or Appleshare) partition
 where you ran the 
 installboot2
-script.
+script.  Note that you cannot currently use pathnames in the
+namespace
+file that contain spaces.
 
 The 
 gno.boot
