@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: orca.asm,v 1.5 1998/08/03 17:30:22 tribby Exp $
+* $Id: orca.asm,v 1.6 1998/09/08 16:53:12 tribby Exp $
 *
 **************************************************************************
 *
@@ -58,38 +58,38 @@ space	equ	outPath+4
 	lda	argc	Make sure there are two or
 	cmp	#2	 more parameters.
 	bcs	enoughparms	  Otherwise,
-               ldx	#^enofile	    report error:
+	ldx	#^enofile	    report error:
 	lda	#enofile	     no filename specified
 	jsr	errputs
-               lda	#1
+	lda	#1
 	bra	seterr
 
 
 ; Allocate memory for sFile, inPath, and outPath
 
 enoughparms	anop
-               jsl	alloc1024
+	jsl	alloc1024
 	sta	sFile
 	stx	sFile+2
 	ora	sFile+2
-               beq	memerr1
+	beq	memerr1
 
-               jsl	alloc1024
+	jsl	alloc1024
 	sta	inPath
 	stx	inPath+2
 	ora	inPath+2
-               beq	memerr1
+	beq	memerr1
 
-               jsl	alloc1024
+	jsl	alloc1024
 	sta	outPath
 	stx	outPath+2
 	ora	outPath+2
-               bne	noerr1
+	bne	noerr1
 
-memerr1        ldx	#^enomem	Report error:
+memerr1	ldx	#^enomem	Report error:
 	lda	#enomem	 out of memory
 	jsr	errputs
-               lda	#-1
+	lda	#-1
 seterr	sta	retval
 	jmp	goaway
 
@@ -97,9 +97,9 @@ seterr	sta	retval
 ; Ready to start processing the filename(s).
 noerr1	anop
 	stz	retval	Zero return status
-               stz	sLen	 and length of source names.
+	stz	sLen	 and length of source names.
 
-	lda	#1                 Initialize parameter
+	lda	#1	Initialize parameter
 	sta	pnum	 number to 1.
 
 	lda	sFile	strPtr = sFile + 2
@@ -115,7 +115,7 @@ noerr1	anop
 ; Loop for getting name, converting it to a full path, and
 ; appending it to sFile
 
-doloop         short	m	Between parameters:
+doloop	short	m	Between parameters:
 	lda	#10	Store newline as delimiter
 	sta	[strPtr]	 character in strPtr.
 	long	m
@@ -123,20 +123,20 @@ doloop         short	m	Between parameters:
 	incad	strPtr	 and pointer.
 
 nodelimit	anop
-               lda	pnum	Get parameter number
+	lda	pnum	Get parameter number
 	asl	a	 and turn it into an
 	asl	a	  index to the proper
 	tay		   argv pointer.
 	lda	[argv],y	Store address in
-	sta   argLoopPtr	 direct page variable
+	sta	argLoopPtr	 direct page variable
 	iny2		  argLoopPtr.
 	lda	[argv],y
 	sta	argLoopPtr+2
 
-               lda	inPath	Get address of text field
+	lda	inPath	Get address of text field
 	clc		 in inPath.
 	adc	#2
-	sta   inLoopPtr
+	sta	inLoopPtr
 	lda	inPath+2
 	adc	#0
 	sta	inLoopPtr+2
@@ -147,22 +147,22 @@ nodelimit	anop
 
 whileloop	lda	[argLoopPtr],y	Get next character of name.
 	and	#$00FF	If it's the terminating null,
-               beq	donewhile	 done copying.
+	beq	donewhile	 done copying.
 
 	sta	[inLoopPtr],y	Store character (and null byte)
 	iny
-               cpy	#255	If < 255,
-               bcc	whileloop	  stay in loop.
+	cpy	#255	If < 255,
+	bcc	whileloop	  stay in loop.
 
-               ldx	#^einval	Print error:
+	ldx	#^einval	Print error:
 	lda	#einval	 invalid argument (filename too long)
 	jsr	errputs
-               lda	#2
+	lda	#2
 	bra	seterr
 
-donewhile	tya 		Set length of GS/OS string inPath.
+donewhile	tya		Set length of GS/OS string inPath.
 	sta	[inPath]
-               lda	#1024	Set max len of result buffer outPath.
+	lda	#1024	Set max len of result buffer outPath.
 	sta	[outPath]
 
 ; Set up GS/OS ExpandPath parameter buffer and make call.
@@ -180,14 +180,14 @@ donewhile	tya 		Set length of GS/OS string inPath.
 	sta	pathLen	 and store in pathLen.
 	clc
 	adc	sLen	If accumulated length is
-               cmp	#MAXPARMBUF	 beyond the maximum,
-               bcs	doloopend	  don't add this name.
+	cmp	#MAXPARMBUF	 beyond the maximum,
+	bcs	doloopend	  don't add this name.
 
 	sta	sLen	Store accumulated length in sLen.
 
 	pei	(pathLen)	Append outPath string
-               pei	(outPath+2)	 to the end of sFile's text.
-               lda	outPath
+	pei	(outPath+2)	 to the end of sFile's text.
+	lda	outPath
 	clc
 	adc	#4
 	pha
@@ -195,7 +195,7 @@ donewhile	tya 		Set length of GS/OS string inPath.
 	pei	(strPtr)
 	jsl	rmemcpy
 
-	lda   strPtr	Add pathLen to strPtr.
+	lda	strPtr	Add pathLen to strPtr.
 	clc
 	adc	pathLen
 	sta	strPtr
@@ -203,28 +203,28 @@ donewhile	tya 		Set length of GS/OS string inPath.
 	adc	#0
 	sta	strPtr+2
 
-doloopend      inc	pnum	pnum++
-	lda	pnum               if pnum < argc,
-	cmp   argc
+doloopend	inc	pnum	pnum++
+	lda	pnum	if pnum < argc,
+	cmp	argc
 	jcc	doloop	  continue processing filenames.
 
 ; All of the arguments have been processed.
 
 	lda	sLen	Save length in
-               sta	[sFile]	 GS/OS buffer.
+	sta	[sFile]	 GS/OS buffer.
 
 ; Set up shell SetLInfo parameter buffer and make call.
 
-               mv4	sFile,gl_sFile
+	mv4	sFile,gl_sFile
 	SetLInfoGS gl	Set the edit environment.
 
 	ph4	#editorvar	Get value of environment
 	jsl	getenv	 variable "editor".
 	sta	editcommand
 	stx	editcommand+2
-               ora	editcommand+2
+	ora	editcommand+2
 	bne	goteditvar	If $editor is not defined,
-               ph4   #defedit	  use default value.
+	ph4	#defedit	  use default value.
 	bra	execit
 
 goteditvar	anop		Add 4 to value returned by getenv
@@ -239,7 +239,7 @@ nobump	anop
 	pha
 execit	ph2	#0	Tells execute we're called by system
 	jsl	execute
-               sta	retval
+	sta	retval
 
 	lda	editcommand	If getenv allocated it,
 	ora	editcommand+2
@@ -247,28 +247,28 @@ execit	ph2	#0	Tells execute we're called by system
 
 	pei	(editcommand+2)	  free the "editcommand" string.
 	pei	(editcommand)
-	jsl   nullfree
+	jsl	nullfree
 
 
 ; See which GS/OS buffers need to be deallocated
 
-goaway         lda	sFile
+goaway	lda	sFile
 	ora	sFile+2
 	beq	donedealloc
 	ldx	sFile+2
 	lda	sFile
-               jsl   free1024
+	jsl	free1024
 
-               lda   inPath
-               ora   inPath+2
-               beq   donedealloc
+	lda	inPath
+	ora	inPath+2
+	beq	donedealloc
 	ldx	inPath+2
 	lda	inPath
 	jsl	free1024
 
-               lda   outPath
-               ora   outPath+2
-               beq   donedealloc
+	lda	outPath
+	ora	outPath+2
+	beq	donedealloc
 	ldx	outPath+2
 	lda	outPath
 	jsl	free1024
@@ -276,7 +276,7 @@ goaway         lda	sFile
 
 ; Return to caller with status set to value in retval
 
-donedealloc    return 2:retval
+donedealloc	return 2:retval
 
 
 ; Parameter block for GS/OS ExpandPath call (p. 140 in GS/OS Reference)

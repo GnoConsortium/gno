@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: bufpool.asm,v 1.4 1998/08/03 17:30:26 tribby Exp $
+* $Id: bufpool.asm,v 1.5 1998/09/08 16:53:05 tribby Exp $
 *
 **************************************************************************
 *
@@ -30,7 +30,7 @@
 * bufpool data:
 *    pool1024		dc   i4'0'
 *    pool1024mutex	key
-*                              
+*		          
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/bufpool.mac
@@ -45,7 +45,7 @@ dummybufpool	start		; ends up in .root
 **************************************************************************
 
 alloc1024	START
-               
+	
 	using	bufpool
 
 	lock	pool1024mutex
@@ -64,7 +64,7 @@ alloc1024	START
 	lda	[1],y
 	sta	pool1024+2
 	unlock pool1024mutex
-               pla
+	pla
 	plx
 	pld
 	rtl
@@ -119,5 +119,5 @@ bufpool	DATA
 
 pool1024	dc	i4'0'
 pool1024mutex	key
-                              
+		         
 	END

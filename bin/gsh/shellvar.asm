@@ -7,7 +7,7 @@
 *   Tim Meekins
 *   Derek Taubert
 *
-* $Id: shellvar.asm,v 1.5 1998/08/03 17:30:24 tribby Exp $
+* $Id: shellvar.asm,v 1.6 1998/09/08 16:53:13 tribby Exp $
 *
 **************************************************************************
 *
@@ -135,7 +135,7 @@ svwhoops	ld2	$201,ErrError		report memory error
 	ErrorGS Err
 	jmp	exit		 and exit.
 
-startshow      anop
+startshow	anop
 	lda	#1022	Store buffer len == 1022 in value
 	sta	[valbuf]	 buffer (save 2 bytes at end for 0).
 	lda	#260	Store buffer len == 260 in name
@@ -153,7 +153,7 @@ showloop	ReadIndexedGS idxParm	Get next indexed variable.
 	bcs	bumpindx	  we didn't get it.
 
 	tay		Store 0 at end of
-               iny4		 name string so it
+	iny4		 name string so it
 	short	a	  can be treated like
 	lda	#0	   a c-string.
 	sta	[varbuf],y
@@ -212,7 +212,7 @@ orcastyle	add2	argv,#4,argv	Point to next argument.
 	ldy	#2
 	lda	[argv],y
 	pha
-	lda	[argv]             Create GS/OS string
+	lda	[argv]	Create GS/OS string
 	pha		 that contains the value.
 	bra	set1	Complete operation in UNIX-style code.
 
@@ -220,7 +220,7 @@ orcastyle	add2	argv,#4,argv	Point to next argument.
 ; UNIX style set. Uses two arguments separated by "=".
 ; When we get here, Y-reg = index of "=" character.
 ;
-unixstyle      cpy   #0
+unixstyle	cpy	#0
 	bne	unix0
 	ldx	#^error1
 	lda	#error1		Print error message:
@@ -248,7 +248,7 @@ set1	jsr	c2gsstr	Convert value to GS/OS string.
 
 	lda	exflag	Set export flag in parameter block.
 	sta	RSexport
-                     
+		
 	SetGS ReadSetVar	Set variable value & export flag.
 
 	pei	(arg+2)
@@ -288,10 +288,10 @@ showonevar	anop
 	stx	varbuf+2
 	sta	RSname
 	stx	RSname+2
-                       
+		  
 	stz	RSexport
 
-	ReadVariableGS ReadSetVar	Read value of variable.
+	ReadVariableGS ReadSetVar 	Read value of variable.
 
 	lda	RSexport	If export flag is set, it's defined.
 	bne	def
@@ -314,7 +314,7 @@ doneone	anop
 	ldx	valbuf+2
 	lda	valbuf
 	jsl	free1024	Free valbuf.
-               ph4	varbuf
+	ph4	varbuf
 	jsl	nullfree	Free varbuf.
 
 
@@ -331,7 +331,7 @@ exit	lda	space
 
 	lda	#0	Return status = 0.
 
-	rtl     
+	rtl	  
 
 ;
 ; Utility subroutine to print name and value in varname and varval
@@ -502,7 +502,7 @@ done	lda	space
 
 	lda	#0
 
-	rtl     
+	rtl	  
 
 expmutex	key
 
@@ -596,7 +596,7 @@ done	lda	space
 
 	lda	#0
 
-	rtl     
+	rtl	  
 
 unsmutex	key
 
@@ -704,7 +704,7 @@ up9	anop
 	bne	done
 	lda	flag
 	sta	varoldpmode
-                          
+		     
 done	return      
 
 	END
@@ -741,7 +741,7 @@ loop	phx		Hold onto value table index.
 set	sta	evvaltbl,x	Save flag in variable.
 	inx2		Bump index.
 	cpx	evvaltblsz	If not at end,
-               bcc	loop	 stay in loop.
+	bcc	loop	 stay in loop.
 
 	unlock gvmutex	Mutual exclusion unlock.
 

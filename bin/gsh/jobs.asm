@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: jobs.asm,v 1.5 1998/08/03 17:30:22 tribby Exp $
+* $Id: jobs.asm,v 1.6 1998/09/08 16:53:10 tribby Exp $
 *
 **************************************************************************
 *
@@ -55,21 +55,21 @@ p_space	gequ	p_command+4	;space for structure
 ; p_flags values
 ;
 PRUNNING	gequ	%0000000000000001	;running
-PSTOPPED	gequ	%0000000000000010  ;stopped
-PNEXITED	gequ	%0000000000000100  ;normally exited
+PSTOPPED	gequ	%0000000000000010	;stopped
+PNEXITED	gequ	%0000000000000100	;normally exited
 PAEXITED	gequ	%0000000000001000	;abnormally exited
 PSIGNALED	gequ	%0000000000010000	;terminated by signal != SIGINT
 PNOTIFY	gequ	%0000000000100000	;notify async when done
 PTIME	gequ	%0000000001000000	;job times should be printed
-PAWAITED       gequ	%0000000010000000  ;top level is waiting for it
-PFOREGND       gequ	%0000000100000000  ;started in shells pgrp
-PDUMPED        gequ	%0000001000000000  ;process dumped core
-PDIAG          gequ	%0000010000000000  ;diagnostic output also piped out
-PPOU           gequ	%0000100000000000  ;piped output
-PREPORTED      gequ	%0001000000000000  ;status has been reported
-PINTERRUPTED   gequ	%0010000000000000  ;job stopped via interrupt signal
-PPTIME         gequ	%0100000000000000  ;time individual process
-PNEEDNOTE      gequ	%1000000000000000  ;notify as soon as practicle
+PAWAITED	gequ	%0000000010000000	;top level is waiting for it
+PFOREGND	gequ	%0000000100000000	;started in shells pgrp
+PDUMPED	gequ	%0000001000000000	;process dumped core
+PDIAG	gequ	%0000010000000000	;diagnostic output also piped out
+PPOU	gequ	%0000100000000000	;piped output
+PREPORTED	gequ	%0001000000000000	;status has been reported
+PINTERRUPTED	gequ	%0010000000000000	;job stopped via interrupt signal
+PPTIME	gequ	%0100000000000000	;time individual process
+PNEEDNOTE	gequ	%1000000000000000	;notify as soon as practicle
 
 ;====================================================================
 ;
@@ -128,7 +128,7 @@ loop	sta	p
 
 	sigsetmask oldsig
 	sigpause #0
-               bra	waitloop           
+	bra	waitloop	
 loop2	ldy	#p_next+2
 	lda	[p],y
 	tax
@@ -185,7 +185,7 @@ done	return
 ;====================================================================
 
 palloc	START
-               
+	
 	using	pdata
 	using	global
 
@@ -319,7 +319,7 @@ noprint	anop
 ;====================================================================
 
 pallocpipe	START
-               
+	
 	using	pdata
 	using	global
 
@@ -394,7 +394,7 @@ bg01	ldy	#p_flags
 	jsr	copycstr
 ;
 ; update the current pipeline to know about the last pipe.
-;                     
+;		 
 	lda	pjoblist
 	ldx	pjoblist+2
 loop	sta	p
@@ -474,7 +474,7 @@ end	equ	code+2
 	plb
 
 	stz	signum
-;                                  
+;		              
 ; get status for the process that just died
 ;
 	ldx	#0
@@ -545,11 +545,11 @@ stop2	pei	(p+2)
 	pea	0
 	pei	(signum)
 	jsl	pprint
-               bra	done          
+	bra	done          
 kill	ldy	#p_flags
 	lda	[p],y
 	bit	#PFOREGND	;only set status variable if in
-	beq	zap0               ; foreground
+	beq	zap0	; foreground
 	lda	waitstatus
 	jsr	setstatus
 	bra	zap
@@ -563,7 +563,7 @@ zap	ldy	#p_index
 	bit	#PFOREGND
 	beq	done
 	tctpgrp (gshtty,gshpid)
-                           
+		      
 done	anop
 	plb
 	lda	space
@@ -578,7 +578,7 @@ done	anop
 	
 	rtl
 
-;                     
+;		 
 ; Set $status return variable
 ;
 setstatus	ENTRY
@@ -586,29 +586,29 @@ setstatus	ENTRY
 	xba		Isolate status
 	and	#$FF	 byte.
 
-               cmp   #10
-               bcs   digits2or3	 If < 10,
-               adc   #'0'		Convert to single digit
-               sta   valstat_text		 and store in value string.
-               ldx	#1		Set length of string to 1.
+	cmp	#10
+	bcs	digits2or3	 If < 10,
+	adc	#'0'		Convert to single digit
+	sta	valstat_text		 and store in value string.
+	ldx	#1		Set length of string to 1.
 	stx	valstat
-               bra   set_value
+	bra	set_value
 
-digits2or3	cmp   #100	If parameter number
-               bcs   digits3	 >= 10 && < 99,
-               ldx	#2		length = 2
-               bra   setit	otherwise
+digits2or3	cmp	#100	If parameter number
+	bcs	digits3	 >= 10 && < 99,
+	ldx	#2		length = 2
+	bra	setit	otherwise
 digits3	ldx	#3		length = 3
 ;
 ; Store length (2 or 3) and convert number to text
 ;
-setit	stx 	valstat
+setit	stx	valstat
 	Int2Dec (@a,#valstat_text,valstat,#0)
 
 set_value	anop
 	SetGS	SetPB
 
-	rts                          
+	rts		    
 
 ;
 ; Parameter block for shell SetGS calls (p 427 in ORCA/M manual)
@@ -627,7 +627,7 @@ status	gsstr	'status'	Name of environment variable
 valstat	ds	2	Length word
 valstat_text	dc	c'000'	Text (up to three digits)
 
-	END         
+	END	      
 
 ;====================================================================
 ;
@@ -705,12 +705,12 @@ gotit3	anop
 	bne	gotit3c
 	jsr	newline
 	ldy	#p_flags
-               lda	#0
+	lda	#0
 	sta	[p],y
 	pei	(p+2)
 	pei	(p)
 	pea	0
-	pea 	0
+	pea	0
 	jsl	pprint
 gotit3c	anop
 
@@ -754,7 +754,7 @@ gotit4	ldy	#p_friends
 	pei	(p+2)
 	pei	(p)
 	jsl	nullfree
-               pla
+	pla
 	sta	P+2
 	pla
 	sta	p
@@ -782,7 +782,7 @@ fmaxloop	sta	p
 	ora	p+2
 	beq	gotmax
 	ldy	#p_index
-               lda	[p],y
+	lda	[p],y
 	cmp	prev
 	bcc	skipmax
 	sta	prev
@@ -846,7 +846,7 @@ done	lda	space,s
 	tcs
 	
 	rts
-                        
+		   
 	END
 
 **************************************************************************
@@ -1075,7 +1075,7 @@ killnull	ldx	#^err4
 	bra	done
 
 dokill	kill	(pid,signum)
-               cmp	#0
+	cmp	#0
 	beq	done
 	ldx	#^err2
 	lda	#err2
@@ -1093,7 +1093,7 @@ done	lda	space
 
 	lda	#0
 
-	rtl     
+	rtl	  
 
 Usage	dc	c'Usage: kill [-signum | -signame] [pid | %jobid] ...',h'0d00'
 err1	dc	c'kill: Invalid signal number.',h'0d00'
@@ -1107,37 +1107,37 @@ liststr	dc	c'sighup sigint sigquit sigill sigtrap sigabrt sigemt '
 	dc	c'sigttou sigio sigxcpu sigusr1 sigusr2',h'0d00'
 
 names	dc	c'sighup',h'0000'	;1
-	dc	c'sigint',h'0000'  ;2
-	dc	c'sigquit',h'00'   ;3
-	dc	c'sigill',h'0000'  ;4
-	dc	c'sigtrap',h'00'   ;5
-	dc	c'sigabrt',h'00'   ;6
-	dc	c'sigemt',h'0000'  ;7
-	dc	c'sigfpe',h'0000'  ;8
-	dc	c'sigkill',h'00'   ;9
-	dc	c'sigbus',h'0000'  ;10
-	dc	c'sigsegv',h'00'   ;11
-	dc	c'sigsys',h'0000'  ;12
-	dc	c'sigpipe',h'00'   ;13
-	dc	c'sigalrm',h'00'   ;14
-	dc	c'sigterm',h'00'   ;15
-	dc	c'sigurg',h'0000'  ;16
-	dc	c'sigstop',h'00'   ;17
-	dc	c'sigtstp',h'00'   ;18
-	dc	c'sigcont',h'00'   ;19
-	dc	c'sigchld',h'00'   ;20
-	dc	c'sigttin',h'00'   ;21
-	dc	c'sigttou',h'00'   ;22
+	dc	c'sigint',h'0000'	;2
+	dc	c'sigquit',h'00'	;3
+	dc	c'sigill',h'0000'	;4
+	dc	c'sigtrap',h'00'	;5
+	dc	c'sigabrt',h'00'	;6
+	dc	c'sigemt',h'0000'	;7
+	dc	c'sigfpe',h'0000'	;8
+	dc	c'sigkill',h'00'	;9
+	dc	c'sigbus',h'0000'	;10
+	dc	c'sigsegv',h'00'	;11
+	dc	c'sigsys',h'0000'	;12
+	dc	c'sigpipe',h'00'	;13
+	dc	c'sigalrm',h'00'	;14
+	dc	c'sigterm',h'00'	;15
+	dc	c'sigurg',h'0000'	;16
+	dc	c'sigstop',h'00'	;17
+	dc	c'sigtstp',h'00'	;18
+	dc	c'sigcont',h'00'	;19
+	dc	c'sigchld',h'00'	;20
+	dc	c'sigttin',h'00'	;21
+	dc	c'sigttou',h'00'	;22
 	dc	c'sigio',h'000000' ;23
-	dc	c'sigxcpu',h'00'   ;24
+	dc	c'sigxcpu',h'00'	;24
 	dc	h'0000000000000000' ;25
 	dc	h'0000000000000000' ;26
 	dc	h'0000000000000000' ;27
 	dc	h'0000000000000000' ;28
 	dc	h'0000000000000000' ;29
-	dc	c'sigusr1',h'00'   ;30
-	dc	c'sigusr2',h'00'   ;31
-                                        
+	dc	c'sigusr1',h'00'	;30
+	dc	c'sigusr2',h'00'	;31
+			
 	END
 
 **************************************************************************
@@ -1148,7 +1148,7 @@ names	dc	c'sighup',h'0000'	;1
 
 fg	START
 
-               using	pdata
+	using	pdata
 	using	global
 	
 pid	equ	0
@@ -1262,7 +1262,7 @@ err03	dc	c'fg: No such job.',h'0d00'
 
 bg	START
 
-               using	pdata
+	using	pdata
 	using	global
 	
 pid	equ	0
@@ -1327,7 +1327,7 @@ dofg1	anop
 	beq	dobg0
 ;	lda	[p],y
 	eor	#PFOREGND	
-               sta	[p],y
+	sta	[p],y
 dobg0	anop
 ;	lda	[p],y
 	bit	#PSTOPPED
@@ -1379,7 +1379,7 @@ err03	dc	c'bg: No such job.',h'0d00'
 
 stop	START
 
-               using	pdata
+	using	pdata
 	using	global
 	
 pid	equ	0
@@ -1549,11 +1549,11 @@ stat0	jsr	puts
 	lda	signum	
 	beq	sig0
 	if2	@a,ne,#SIGTTIN,sig2
-               ldx	#^sigttinstr
+	ldx	#^sigttinstr
 	lda	#sigttinstr
 	bra	sig1
 sig2	if2	@a,ne,#SIGTTOU,sig3
-               ldx	#^sigttoustr
+	ldx	#^sigttoustr
 	lda	#sigttoustr
 	bra	sig1
 sig3	ldx	#^sigotherstr

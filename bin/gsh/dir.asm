@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: dir.asm,v 1.5 1998/08/03 17:30:27 tribby Exp $
+* $Id: dir.asm,v 1.6 1998/09/08 16:53:07 tribby Exp $
 *
 **************************************************************************
 *
@@ -63,7 +63,7 @@ InitDStack	START
 
 	rts
 
-	END                         
+	END		   
 
 **************************************************************************
 *
@@ -196,7 +196,7 @@ xgoodie	jsl	dotods
 	pla
 	sta	dirstack+2,y
 	jmp	gototop
-                               
+		          
 rotate	add4	arg,#1,p
 	pei	(p+2)
 	pei	(p)
@@ -247,7 +247,7 @@ nextrot	pla
 	bra	gototop
 
 godir	jsl	dotods
-               pei	(arg+2)
+	pei	(arg+2)
 	pei	(arg)
 	jsl	gotodir
 	bne	exit
@@ -429,7 +429,7 @@ space	equ	retval+2
 
 	stz	retval
 
-      	pei   (dir+2)
+	pei	(dir+2)
 	pei	(dir)
 	jsr	c2gsstr
 	sta	PRecPath
@@ -484,9 +484,9 @@ Err	dc	i2'1'	pCount
 ErrError	ds	2	Error number
 
 dirErr	dc	c': Not a directory',h'0d00'
-                            
+		       
 	END
-               
+	
 **************************************************************************
 *
 * Display the directory stack
@@ -519,7 +519,7 @@ loop	lda	flag
 	pha
 	jsr	puts
 	jsl	nullfree
-               bra	next
+	bra	next
 long	ldy	idx
 	lda	dirstack+2,y
 	tax
@@ -572,7 +572,7 @@ space	equ	idx+2
 setit	lock	mutex
 
 	pea	0
-               jsl	getpfxstr	Get value of prefix 0.
+	jsl	getpfxstr	Get value of prefix 0.
 	sta	p
 	stx	p+2
 
@@ -602,7 +602,7 @@ ok	clc		Source is result
 	phy
 	pei	(p+2)	Destination is first
 	pei	(p)	 byte of buffer.
-               jsr   copycstr
+	jsr	copycstr
 
 	ldy	idx	Store address of string
 	lda	p	 in current position
@@ -638,7 +638,7 @@ tods	dc	i'0'
 **************************************************************************
 
 path2tilde	START
-               
+	
 ptr	equ	0
 newpath	equ	ptr+4
 home	equ	newpath+4
@@ -670,7 +670,7 @@ space	equ	home+4
 	beq	notfound2	If 0, just copy the rest.
 	tax		Use X to count down HOME chars.
 	ldy	#0	path index is based from 0.
-checkhome      lda   [path],y
+checkhome	lda	[path],y
 	and	#$FF	Isolate character in parameter,
 	beq	notfound2	 checking for end of string,
 	jsr	tolower	  converting to lower-case
@@ -687,14 +687,14 @@ checkhome      lda   [path],y
 	bne	notfound	 there is no match.
 	pla		Pop the parameter character off stack.
 	dex		Decrement $home length counter.
-               bne   checkhome	If more, stay in loop.
+	bne	checkhome	If more, stay in loop.
 
 ;
 ; First part of parameter matched $HOME
 ;
 	cmp	#'/'	This char = "/"?
 	beq	found	 yes -- it's a match.
-	lda   [path],y	If the following character
+	lda	[path],y	If the following character
 	and	#$FF	 is zero (end of string),
 	beq	found
 	jsr	toslash	  '/', or ':', we have a match.
@@ -703,13 +703,13 @@ checkhome      lda   [path],y
 found	lda	#'~'	Store '~' as first character
 	sta	[ptr]	 in result buffer, and bump
 	incad	ptr	  result pointer.
-               bra   copyrest
+	bra	copyrest
 
 ;
 ; First part of parameter does not match $HOME
 ;     
 notfound	pla		Get rid of comparison value on stack.
-notfound2      ldy   #0	Not found: copy from beginning.
+notfound2	ldy	#0	Not found: copy from beginning.
 
 ;
 ; Copy remainder of parameter (Y-reg marks start) to destination string
@@ -720,13 +720,13 @@ copyloop	lda	[path],y
 	cmp	#':'
 	bne	copyput
 	lda	#'/'
-copyput      	sta   [ptr]
+copyput	sta	[ptr]
 	long	a
 	incad	ptr
 	short	a
 	iny
 	bra	copyloop
-endcopy      	sta   [ptr]
+endcopy	sta	[ptr]
 	long	a
 	dec	ptr	If final character
 	lda	[ptr]	 was "/",
@@ -753,7 +753,7 @@ homename	gsstr	'home'	Env variable name
 **************************************************************************
 
 getpfxstr	START
-               
+	
 p	equ	0
 space	equ	p+4
 
@@ -768,11 +768,11 @@ space	equ	p+4
 	beq	doboot	 use GetBootVol, not GetPrefix.
 	
 	sta	gpnum	Store prefix num in parameter block.
-               ld4	TempResultBuf,gppath
+	ld4	TempResultBuf,gppath
 	GetPrefix gpparm
 	bra	chklen
 
-doboot         ld4	TempResultBuf,gbpath
+doboot	ld4	TempResultBuf,gbpath
 	GetBootVol gbparm
 
 chklen	lda	TempRBlen	Use that length
@@ -807,12 +807,12 @@ memok	lda	TempRBlen	Store result buf
 	cmp	#$FFFF	 whether to use
 	beq	doboot2	  GetPrefix or GetBootVol.
 	
-               mv4	p,gppath
+	mv4	p,gppath
 	GetPrefix gpparm
 	bcs	rpterr
 	bra	done
 
-doboot2        mv4	p,gbpath
+doboot2	mv4	p,gbpath
 	GetBootVol gbparm
 	bcc	done	If there was an error,
 

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shellutil.asm,v 1.5 1998/08/03 17:30:24 tribby Exp $
+* $Id: shellutil.asm,v 1.6 1998/09/08 16:53:13 tribby Exp $
 *
 **************************************************************************
 *
@@ -34,7 +34,7 @@ dummyshellutil	start		; ends up in .root
 ;
 ;=========================================================================
 
-tolower        START
+tolower	START
 
 	cmp	#'A'
 	bcc	done
@@ -43,7 +43,7 @@ tolower        START
 	adc	#'a'-'A'
 done	rts
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -51,14 +51,14 @@ done	rts
 ;
 ;=========================================================================
 
-toslash        START
+toslash	START
 
 	cmp	#':'
 	bne	done
 	lda	#'/'
 done	rts
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -66,42 +66,42 @@ done	rts
 ;
 ;=========================================================================
 
-lowercstr      START
+lowercstr	START
 
-space          equ   1
-p              equ   space+2
-end            equ   p+4
+space	equ	1
+p	equ	space+2
+end	equ	p+4
 
-               tsc
-               phd
-               tcd
+	tsc
+	phd
+	tcd
 
-               short a
+	short a
 
-               ldy   #-1
-loop           iny
-	lda   [p],y
-               beq   done
+	ldy	#-1
+loop	iny
+	lda	[p],y
+	beq	done
 	cmp	#'A'
 	bcc	loop
 	cmp	#'Z'+1
 	bcs	loop
 	adc	#'a'-'A'
-               sta   [p],y
-               bra   loop
+	sta	[p],y
+	bra	loop
 
-done           rep	#$21
+done	rep	#$21
 	longa	on
-	lda   space
-               sta   end-2
-               pld
-               tsc
-               adc   #end-3
-               tcs
+	lda	space
+	sta	end-2
+	pld
+	tsc
+	adc	#end-3
+	tcs
 
-               rts
+	rts
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -109,38 +109,38 @@ done           rep	#$21
 ;
 ;=========================================================================
 
-cstrlen        START
+cstrlen	START
 
-space          equ   1
-p              equ   space+2
-end            equ   p+4
+space	equ	1
+p	equ	space+2
+end	equ	p+4
 
-               tsc
-               phd
-               tcd
+	tsc
+	phd
+	tcd
 
-               short a
+	short a
 
-               ldy   #0
-loop           lda   [p],y
-               beq   done
-               iny
-               bra   loop
+	ldy	#0
+loop	lda	[p],y
+	beq	done
+	iny
+	bra	loop
 
-done           rep	#$21
+done	rep	#$21
 	longa	on
-               lda   space
-               sta   end-2
-               pld
-               tsc
-               adc   #end-3
-               tcs
+	lda	space
+	sta	end-2
+	pld
+	tsc
+	adc	#end-3
+	tcs
 
-               tya
+	tya
 
-               rts
+	rts
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -149,40 +149,40 @@ done           rep	#$21
 ;
 ;=========================================================================
 
-copycstr       START
+copycstr	START
 
-space          equ   1
-q              equ   space+2
-p              equ   q+4
-end            equ   p+4
+space	equ	1
+q	equ	space+2
+p	equ	q+4
+end	equ	p+4
 
-               tsc
-               phd
-               tcd
+	tsc
+	phd
+	tcd
 
-               short a
+	short a
 
-               ldy   #0
-loop           lda   [p],y
-               beq   done
-               sta   [q],y
-               iny
-               bra   loop
+	ldy	#0
+loop	lda	[p],y
+	beq	done
+	sta	[q],y
+	iny
+	bra	loop
 
-done           sta   [q],y
+done	sta	[q],y
 
-               rep	#$21
+	rep	#$21
 	longa	on
-               lda   space
-               sta   end-2
-               pld
-               tsc
-               adc   #end-3
-               tcs
+	lda	space
+	sta	end-2
+	pld
+	tsc
+	adc	#end-3
+	tcs
 
-               rts
+	rts
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -190,31 +190,31 @@ done           sta   [q],y
 ;
 ;=========================================================================
 
-cmpcstr        START
+cmpcstr	START
 
-space          equ   1
-q              equ   space+2
-p              equ   q+4
-end            equ   p+4
+space	equ	1
+q	equ	space+2
+p	equ	q+4
+end	equ	p+4
 
-               tsc
-               phd
-               tcd
+	tsc
+	phd
+	tcd
 
-               short a
+	short a
 
-               ldx   #0
-               
-               ldy   #0
-strloop        lda   [p],y
-               beq   strchk
-               cmp   [q],y
-               bne   notequal
-               iny
-               bra   strloop
+	ldx	#0
+	
+	ldy	#0
+strloop	lda	[p],y
+	beq	strchk
+	cmp	[q],y
+	bne	notequal
+	iny
+	bra	strloop
 
-strchk         lda   [q],y
-               beq   done
+strchk	lda	[q],y
+	beq	done
 
 lessthan	dex
 	bra	done
@@ -222,19 +222,19 @@ lessthan	dex
 notequal	bcc	lessthan
 	inx
 
-done           rep	#$21
+done	rep	#$21
 	longa	on
-               lda   space
-               sta   end-2
-               pld
-               tsc
-               adc   #end-3
-               tcs
+	lda	space
+	sta	end-2
+	pld
+	tsc
+	adc	#end-3
+	tcs
 
-               txa
-               rts
+	txa
+	rts
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -244,37 +244,37 @@ done           rep	#$21
 
 cmpdcstr	START
 
-hold           equ   1
-space          equ   hold+2
-q              equ   space+2
-p              equ   q+4
-end            equ   p+4
+hold	equ	1
+space	equ	hold+2
+q	equ	space+2
+p	equ	q+4
+end	equ	p+4
 
-               tsc
-               sec
-               sbc   #space-1
-               tcs
-               phd
-               tcd
+	tsc
+	sec
+	sbc	#space-1
+	tcs
+	phd
+	tcd
 
-               ldx   #0
-               
-               ldy   #0
-strloop        lda   [q],y
-               and   #$FF
-               jsr   tolower
-               sta   hold
-               lda   [p],y
-               and   #$FF
-               beq   strchk
-               jsr   tolower
-               cmp   hold
-               bne   notequal
-               iny
-               bra   strloop
+	ldx	#0
+	
+	ldy	#0
+strloop	lda	[q],y
+	and	#$FF
+	jsr	tolower
+	sta	hold
+	lda	[p],y
+	and	#$FF
+	beq	strchk
+	jsr	tolower
+	cmp	hold
+	bne	notequal
+	iny
+	bra	strloop
 
-strchk         lda   hold
-               beq   done
+strchk	lda	hold
+	beq	done
 
 lessthan	dex
 	bra	done
@@ -282,19 +282,19 @@ lessthan	dex
 notequal	bcc	lessthan
 	inx
 
-done           anop
-               lda   space
-               sta   end-2
-               pld
-               tsc
-               clc
-               adc   #end-3
-               tcs
+done	anop
+	lda	space
+	sta	end-2
+	pld
+	tsc
+	clc
+	adc	#end-3
+	tcs
 
-               txa
-               rts
+	txa
+	rts
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -302,55 +302,55 @@ done           anop
 ;
 ;=========================================================================
 
-c2gsstr        START
-               
-len            equ   1
-gstr           equ   len+2
-space          equ   gstr+4
-cstr           equ   space+2
-end            equ   cstr+4
+c2gsstr	START
+	
+len	equ	1
+gstr	equ	len+2
+space	equ	gstr+4
+cstr	equ	space+2
+end	equ	cstr+4
 
-               tsc
-               sec
-               sbc   #space-1
-               tcs
-               phd
-               tcd
+	tsc
+	sec
+	sbc	#space-1
+	tcs
+	phd
+	tcd
 
-               pei   (cstr+2)
-               pei   (cstr)
-               jsr   cstrlen
-               sta   len
+	pei	(cstr+2)
+	pei	(cstr)
+	jsr	cstrlen
+	sta	len
 	adc	#3
-               pea   0
-               pha
-               ~NEW
-               sta   gstr
-               stx   gstr+2
+	pea	0
+	pha
+	~NEW
+	sta	gstr
+	stx	gstr+2
 	incad	@xa
 	incad	@xa
-          	pei   (cstr+2)
-               pei   (cstr)
-               phx
-               pha
-               jsr   copycstr
-               lda   len
-               sta   [gstr]
+	pei	(cstr+2)
+	pei	(cstr)
+	phx
+	pha
+	jsr	copycstr
+	lda	len
+	sta	[gstr]
 
-               ldx   gstr+2
-               ldy   gstr
+	ldx	gstr+2
+	ldy	gstr
 
-               lda   space
-               sta   end-2
-               pld
-               tsc
-               adc   #end-3
-               tcs
+	lda	space
+	sta	end-2
+	pld
+	tsc
+	adc	#end-3
+	tcs
 
-               tya
-               rts
+	tya
+	rts
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -358,20 +358,20 @@ end            equ   cstr+4
 ;
 ;=========================================================================
 
-catcstr        START
-               
+catcstr	START
+	
 new	equ	1
-space          equ   new+4
-q              equ   space+2
-p              equ   q+4
-end            equ   p+4
+space	equ	new+4
+q	equ	space+2
+p	equ	q+4
+end	equ	p+4
 
-               tsc
-               sec
-               sbc   #space-1
-               tcs
-               phd
-               tcd
+	tsc
+	sec
+	sbc	#space-1
+	tcs
+	phd
+	tcd
 
 	pei	(p+2)
 	pei	(p)
@@ -405,20 +405,20 @@ copy2	lda	[q]
 	incad	q
 	bra	copy2	
 
-done           ldx   new+2
+done	ldx	new+2
 	ldy	new
-	lda   space
-               sta   end-2
-               pld
-               tsc
-               clc
-               adc   #end-3
-               tcs
+	lda	space
+	sta	end-2
+	pld
+	tsc
+	clc
+	adc	#end-3
+	tcs
 
-               tya
-               rts
+	tya
+	rts
 
-               END
+	END
 
 ;=====================================================================
 ;
@@ -427,11 +427,11 @@ done           ldx   new+2
 ;=====================================================================
 
 nullfree	START
-                     
+		
 	lda	4,s
 	ora	6,s
 	bne	ok
-               lda	2,s
+	lda	2,s
 	sta	6,s
 	lda	1,s
 	sta	5,s
@@ -450,13 +450,13 @@ ok	~DISPOSE
 ;
 ;=====================================================================
 
-newlineX       START
+newlineX	START
 
 	using	vardata
 
 	lda	varnewline
 	beq	newline
-               rts
+	rts
 
 ;=====================================================================
 ;
@@ -464,7 +464,7 @@ newlineX       START
 ;
 ;=====================================================================
 
-newline        ENTRY
+newline	ENTRY
 
 	lda	#13
 	jmp	putchar
@@ -484,7 +484,7 @@ newline        ENTRY
 **************************************************************************
 
 getenv	START
-               
+	
 len	equ	1
 retval	equ	len+2
 space	equ	retval+4
@@ -505,7 +505,7 @@ end	equ	var+4
 ; Get the variable's length using ReadVariableGS
 ;			Set up parameter block:
 	mv4	var,RVname		Addr of name, from user.
-               ld4	TempResultBuf,RVresult	Use temporary result buf.
+	ld4	TempResultBuf,RVresult	Use temporary result buf.
 	ReadVariableGS ReadVar		Get length.
 ;
 ; Allocate memory for value string
@@ -565,7 +565,7 @@ exit	unlock mutex
 	tya
 	
 	rtl
-                          
+		     
 mutex	key
 
 ; Parameter block for shell ReadVariableGS call (p 423 in ORCA/M manual)
@@ -604,6 +604,6 @@ lp1	lda	[src],y
 	sta	[dest],y
 	dey
 	dey
-               bpl	lp1
+	bpl	lp1
 done	return
 	END

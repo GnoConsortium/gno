@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: term.asm,v 1.5 1998/08/03 17:30:25 tribby Exp $
+* $Id: term.asm,v 1.6 1998/09/08 16:53:14 tribby Exp $
 *
 **************************************************************************
 *
@@ -38,7 +38,7 @@ TIOCGETP	gequ	$40067408
 **************************************************************************
 
 InitTerm	START
-               
+	
 	using	termdata
 
 ;
@@ -54,7 +54,7 @@ allocate	anop		Allocate termcap buffers.
 
 	ph4	#1024
 	~NEW
-               sta	bp
+	sta	bp
 	stx	bp+2
 
 	ph4	#1024
@@ -108,7 +108,7 @@ forward_char	equ	4
 up_history	equ	5
 down_history	equ	6
 
-               lda	#1
+	lda	#1
 	sta	didReadTerm
 
 	ph4	#termname
@@ -147,7 +147,7 @@ noentry	anop
 ok	jsl	nullfree	Free buffer allocated by getenv.
 	lda	#1
 	sta	termok
-	mv4	areabuf,area          
+	mv4	areabuf,area	   
 
 	tgetstr (#isid,#area)
 	jsr	puts
@@ -187,24 +187,24 @@ ok	jsl	nullfree	Free buffer allocated by getenv.
 	tgetstr (#usid,#area)
 	sta	uscap
 	stx	uscap+2
-                                
+		           
 	tgetstr (#klid,#area)
-               phx
+	phx
 	pha
 	ph2	#backward_char
 	jsl	bindkeyfunc
 	tgetstr (#krid,#area)
-               phx
+	phx
 	pha
 	ph2	#forward_char
 	jsl	bindkeyfunc
 	tgetstr (#kuid,#area)
-               phx
+	phx
 	pha
 	ph2	#up_history
 	jsl	bindkeyfunc
 	tgetstr (#kdid,#area)
-               phx
+	phx
 	pha
 	ph2	#down_history
 	jsl	bindkeyfunc
@@ -252,7 +252,7 @@ sg_flags	dc	i2'0'
 hold_term_val	ds	4
 
 	END
-                             
+		        
 **************************************************************************
 *
 * outc for outputting characters by termcap
@@ -512,7 +512,7 @@ termdata	DATA
 didReadTerm	dc	i2'0'
 
 termok	dc	i2'0'
-insertflag     dc    i2'1'
+insertflag	dc	i2'1'
 
 bp	ds	4
 areabuf	ds	4
@@ -532,4 +532,4 @@ vicap	ds	4
 vscap	ds	4
 
 	END
-                             
+		        

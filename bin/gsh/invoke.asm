@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: invoke.asm,v 1.6 1998/08/03 17:30:21 tribby Exp $
+* $Id: invoke.asm,v 1.7 1998/09/08 16:53:10 tribby Exp $
 *
 **************************************************************************
 *
@@ -76,11 +76,12 @@ end	equ	sfile+4
 	tsc
 	phd
 	tcd
+
 ;
 ; Redirect standard input
 ;
 	ora2	sfile,sfile+2,@a	If no name provided,
-               beq   execa	 skip it.
+	beq	execa	 skip it.
 	pei	(sfile+2)	Convert c-string
 	pei	(sfile)	 filename to
 	jsr	c2gsstr	  GS/OS string.
@@ -118,7 +119,7 @@ execa	ora2	dfile,dfile+2,@a
 	ldx	#^err2	Print error message:
 	lda	#err2	 'Error redirecting standard output.'
 	jmp	badbye
-;                   
+;	     
 ; Redirect standard error
 ;
 execb	ora2	efile,efile+2,@a
@@ -139,12 +140,12 @@ execb	ora2	efile,efile+2,@a
 	ldx	#^err3	Print error message:
 	lda	#err3	 'Error redirecting standard error.'
 	jmp	badbye
-;                         
+;		     
 ; Is input piped in?
 ;
 execc	lda	pipein
 	beq	execd
-	dup2  (pipein,#1)
+	dup2	(pipein,#1)
 	mv2	pipein2,CloseRef
 	Close CloseParm
 	ldx	#0
@@ -170,7 +171,7 @@ goodbye	ldy	#0
 	bra	exit
 
 badbye	jsr	errputs
-               cop	$7F	; get out of the way
+	cop	$7F	; get out of the way
 	ldy	#1
 
 exit	lda	space
@@ -185,15 +186,15 @@ exit	lda	space
 
 	cpy	#1	Clear/set carry for success/failure.
 
-	rtl     
+	rtl	  
 
 ;
 ; Parameter block for shell call to redirect I/O (ORCA/M manual p.425)
 ;
 RedirectParm	dc	i2'3'	pCount
-RedirectDev    ds    2	Dev num (0=stdin,1=stdout,2=errout)
-RedirectApp    ds    2	Append flag (0=delete)
-RedirectFile   ds    4	File name (GS/OS input string)
+RedirectDev	ds	2	Dev num (0=stdin,1=stdout,2=errout)
+RedirectApp	ds	2	Append flag (0=delete)
+RedirectFile	ds	4	File name (GS/OS input string)
 
 ;
 ; Parameter block for GS/OS call to close a file
@@ -204,8 +205,8 @@ CloseRef	dc	i'0'	refNum
 err1	dc	c'gsh: Error redirecting standard input.',h'0d00'
 err2	dc	c'gsh: Error redirecting standard output.',h'0d00'
 err3	dc	c'gsh: Error redirecting standard error.',h'0d00'
-                                                                         
-	END             
+							 
+	END	          
 
 **************************************************************************
 *
@@ -213,7 +214,7 @@ err3	dc	c'gsh: Error redirecting standard error.',h'0d00'
 *
 **************************************************************************
 
-invoke      	START
+invoke	START
 
 	using	hashdata
 	using	vardata
@@ -232,8 +233,8 @@ space	equ	dir+4
 	ld2	-1,rtnval
 	stz	biflag	;not a built-in
 
-               lda   argc	Get number of arguments.
-               bne   chknull	If != 0 continue with processing.
+	lda	argc	Get number of arguments.
+	bne	chknull	If != 0 continue with processing.
 
 	lda	sfile	If any of the file pointers
 	ora	sfile+2	 are != NULL,
@@ -243,25 +244,25 @@ space	equ	dir+4
 	ora	efile+2
 	beq	nulldone
 
-	ldx	#^hehstr	print error message:
-	lda	#hehstr 	' specify a command before redirecting.'
+	ldx	#^spcmdstr	print error message:
+	lda	#spcmdstr	' specify a command before redirecting.'
 	jsr	errputs
 
-nulldone     	jmp   done
+nulldone	jmp	done
 
 ;
 ; Check for null command
 ;
-chknull        ldy   #2	Move command line
-               lda   [argv]	 pointer to
-               sta   dir	  dir (4 bytes).
-               lda   [argv],y
-               sta   dir+2	If pointer == NULL
-               ora   dir
-               beq   nulldone	  all done.
-               lda   [dir]	If first character == '\0',
-               and   #$FF
-               beq   nulldone	  all done.
+chknull	ldy	#2	Move command line
+	lda	[argv]	 pointer to
+	sta	dir	  dir (4 bytes).
+	lda	[argv],y
+	sta	dir+2	If pointer == NULL
+	ora	dir
+	beq	nulldone	  all done.
+	lda	[dir]	If first character == '\0',
+	and	#$FF
+	beq	nulldone	  all done.
 
 ;
 ; check for file
@@ -276,37 +277,37 @@ checkfile	anop
 
 ; Command is not listed in the built-in table. See if it was hashed
 
-               pei   (dir+2)
-               pei   (dir)
-               ph4   hash_table
-               ph4   #hash_paths
-               jsl   search
-               cmp   #0
-               bne   changeit
-               cpx   #0
-               beq   skip
+	pei	(dir+2)
+	pei	(dir)
+	ph4	hash_table
+	ph4	#hash_paths
+	jsl	search
+	cmp	#0
+	bne	changeit
+	cpx	#0
+	beq	skip
 
-changeit       sta   dir
-               stx   dir+2
+changeit	sta	dir
+	stx	dir+2
 
-skip           lock	mutex2
-	pei   (dir+2)
-               pei   (dir)
+skip	lock	mutex2
+	pei	(dir+2)
+	pei	(dir)
 	jsr	c2gsstr
-               sta   GRecPath
-               sta   ptr
-               stx   GRecPath+2
-               stx   ptr+2
+	sta	GRecPath
+	sta	ptr
+	stx	GRecPath+2
+	stx	ptr+2
 
-               GetFileInfo GRec
+	GetFileInfo GRec
 	unlock mutex2
-               jcs   notfound
+	jcs	notfound
 
 ; File type $B5 is a GS/OS Shell application (EXE)
-               if2   GRecFileType,eq,#$B5,doExec
+	if2	GRecFileType,eq,#$B5,doExec
 
 ; File type $B3 is a GS/OS application (S16)
-               if2   @a,eq,#$B3,doExec
+	if2	@a,eq,#$B3,doExec
 
 	ldx	vardirexec
 	bne	ft02
@@ -314,14 +315,14 @@ skip           lock	mutex2
 	jeq	doDir	Target is a directory; change to it.
 
 ; File type $B0 is a source code file (SRC)
-ft02           if2   @a,ne,#$B0,badfile
+ft02	if2	@a,ne,#$B0,badfile
 ; Type $B0, Aux $00000006 is a shell command file (EXEC)
-               if2   GRecAuxType,ne,#6,badfile
-               if2   GRecAuxType+2,ne,#0,badfile
-               jmp   doShell
+	if2	GRecAuxType,ne,#6,badfile
+	if2	GRecAuxType+2,ne,#0,badfile
+	jmp	doShell
 
 
-badfile        ldx	dir+2
+badfile	ldx	dir+2
 	lda	dir
 	jsr	errputs
 	ldx	#^err1	Print error message:
@@ -330,17 +331,17 @@ badfile        ldx	dir+2
 free	pei	(ptr+2)
 	pei	(ptr)
 	jsl	nullfree
-               jmp   done
+	jmp	done
 
 ;
 ; launch an executable
 ;
-doExec	pei   (ptr+2)
-               pei   (ptr)
-               jsl   nullfree
+doExec	pei	(ptr+2)
+	pei	(ptr)
+	jsl	nullfree
 	jsr	prefork
-	fork 	#invoke0
-               jsr	postfork
+	fork	#invoke0
+	jsr	postfork
 	jmp	done
 
 
@@ -417,9 +418,9 @@ invoke0	phk
 
 	jsl	infork
 	bcs	invoke1
-               case  on
-               jsl   _execve	For 2.0.6: call _execve, not execve
-               case  off
+	case	on
+	jsl	_execve	For 2.0.6: call _execve, not execve
+	case	off
 	rtl
 invoke1	pla
 	pla
@@ -430,9 +431,9 @@ invoke1	pla
 ;
 ; Next command is a directory name, so change to that directory
 ;
-doDir          lock	cdmutex
-	mv4   GRecPath,PRecPath
-               SetPrefix PRec
+doDir	lock	cdmutex
+	mv4	GRecPath,PRecPath
+	SetPrefix PRec
 	unlock cdmutex
 	stz	rtnval	Return value: no fork done.
 	jmp	free
@@ -440,11 +441,11 @@ doDir          lock	cdmutex
 ;
 ; Next command is a shell command file: fork a shell script
 ;
-doShell        inc	biflag	;don't free argv...
+doShell	inc	biflag	;don't free argv...
 	jsr	prefork
 
 * int fork2(void *subr, int stack, int prio, char *name, word argc, ...)
-               pea	0
+	pea	0
 	ldy	#2
 	lda	[argv],y
 	pha
@@ -453,12 +454,12 @@ doShell        inc	biflag	;don't free argv...
 	pea	0
 	pea	1024
 	ph4	#exec0
-               case	on
+	case	on
 	jsl	fork2
 	case	off
 
 *	fork	#exec0
-               jsr	postfork
+	jsr	postfork
 	jmp	free
 
 exec0	ph2	_argc	;for argfree
@@ -470,11 +471,11 @@ exec0	ph2	_argc	;for argfree
 	jsl	infork
 	bcs	exec0c
 	signal (#SIGCHLD,#0)
-               PushVariablesGS NullPB
+	PushVariablesGS NullPB
 	pea	1
-               jsl   ShellExec
+	jsl	ShellExec
 	jsl	argfree
-               PopVariablesGS NullPB
+	PopVariablesGS NullPB
 	rtl
 
 exec0c	pla
@@ -497,7 +498,7 @@ NullPB	dc	i2'0'	pCount
 * File name was found in the built-in table
 
 trybuiltin	inc	biflag	It's a built-in. Which type?
-	cmp	#1                 Either fork or don't fork.
+	cmp	#1	Either fork or don't fork.
 	beq	noforkbuiltin	
 
 ;
@@ -505,7 +506,7 @@ trybuiltin	inc	biflag	It's a built-in. Which type?
 ;
 	jsr	prefork
 	fork	#forkbuiltin
-               jsr	postfork
+	jsr	postfork
 	jmp	done
 ;
 ; Control transfers here for a forked built-in command
@@ -516,7 +517,7 @@ forkbuiltin	cop	$7F	Give palloc a chance
 	ph4	_argv
 	jsl	infork
 	bcs	fork0c
-               jsl   builtin
+	jsl	builtin
 	rtl
 
 ; Error reported by infork; clean up stack and return to caller
@@ -619,11 +620,11 @@ prefork	lock	mutex
 postfork	sta	rtnval
 	lda	pipein
 	beq	postfork2
-               sta	CloseRef
+	sta	CloseRef
 	Close CloseParm
 postfork2	lda	pipeout
 	beq	postfork3
-               sta	CloseRef
+	sta	CloseRef
 	Close CloseParm
 postfork3	lda	rtnval
 	cmp	#-1
@@ -646,10 +647,10 @@ postfork4	ldx	jobflag
 	jsl	palloc
 	bra	postfork5
 postfork4a	jsl	pallocpipe
-postfork5	lda   >mutex	;DANGER!!!!! Assumes knowledge of
-               beq   postfork6	;lock/unlock structure!!!!!!!!
+postfork5	lda	>mutex	;DANGER!!!!! Assumes knowledge of
+	beq	postfork6	;lock/unlock structure!!!!!!!!
 	cop	$7F
-               bra   postfork5
+	bra	postfork5
 postfork6	rts
 
 ;
@@ -668,9 +669,9 @@ infork	phk
 	bne	invoke0a
 	tcnewpgrp ttyref
 invoke0a	settpgrp ttyref
-               lda	_bg	;if in background then reset tty to
+	lda	_bg	;if in background then reset tty to
 	and	#$FF
-	beq	invoke0b   	;to the shell process group
+	beq	invoke0b	;to the shell process group
 	tctpgrp (gshtty,gshpid)
 
 invoke0b	ph4	_sfile
@@ -691,7 +692,7 @@ invoke0b	ph4	_sfile
 	bne	invoke0c
 	lda	_pipeout
 	beq	invoke0d
-               screate #0
+	screate #0
 putsem	sta	>$FFFFFF
 	swait @a
 	bra	invoke0d
@@ -712,7 +713,7 @@ invoke0d	anop
 doneinfork	unlock mutex
 	sec
 indone	rtl
-                  
+	   
 mutex	key
 mutex2	key
 cdmutex	key
@@ -734,25 +735,24 @@ _bg	dc	i2'0'
 _jobflag	dc	i2'0'
 _semaphore	dc	i2'0'
 
-str            dc    c'[0]',h'0d00'
+str	dc	c'[0]',h'0d00'
 err1	dc	c': Not executable.',h'0d00'
 err2	dc	c': Command not found.',h'0d00'
-hehstr	dc	c'heh heh, next time you''ll need to specify a command '
-	dc	c'before redirecting.',h'0d00'
+spcmdstr	dc	c'Specify a command before redirecting.',h'0d00'
 deadstr	dc	c'Cannot fork (too many processes?)',h'0d00' ;try a spoon
 
 
 ; Parameter block for GS/OC call GetFileInfo
-GRec           dc    i'4'	pCount (# of parameters)
-GRecPath       ds    4	pathname (input; ptr to GS/OS string)
-               ds    2	access (access attributes)
-GRecFileType   ds    2	fileType (file type attribute)
-GRecAuxType    ds    4	auxType (auxiliary type attribute)
+GRec	dc	i'4'	pCount (# of parameters)
+GRecPath	ds	4	pathname (input; ptr to GS/OS string)
+	ds	2	access (access attributes)
+GRecFileType	ds	2	fileType (file type attribute)
+GRecAuxType	ds	4	auxType (auxiliary type attribute)
 
 
-PRec           dc    i'2'
-PRecNum        dc    i'0'
-PRecPath       ds    4
+PRec	dc	i'2'
+PRecNum	dc	i'0'
+PRecPath	ds	4
 
 CloseParm	dc	i2'1'
 CloseRef	dc	i2'0'

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: stdio.asm,v 1.4 1998/08/03 17:30:24 tribby Exp $
+* $Id: stdio.asm,v 1.5 1998/09/08 16:53:14 tribby Exp $
 *
 **************************************************************************
 *
@@ -77,7 +77,7 @@ puts	START
 
 	tay		Note: lock destroys Acc
 	lock	mutex	Wait for others to leave, and lock.
-	sty	getchar+1          Save low-order bytes of address.
+	sty	getchar+1	Save low-order bytes of address.
 	txa
 
 	short	a	SWITCH TO SINGLE-BYTE MEMORY MODE.
@@ -102,12 +102,12 @@ getchar	lda	>$FFFFFF,x	Get next character from string.
 _flush	sty	index	Save length of stream.
 	phx		Hold source string offset on stack.
 	long	a	SWITCH TO FULL-WORD MEMORY MODE.
-               Write	WriteParm	Write the stream to stdout
+	Write	WriteParm	Write the stream to stdout
 	Flush	flushparm	 and flush it.
 	short	a	SWITCH TO SINGLE-BYTE MEMORY MODE.
 	plx		Restore source string offset to X-reg.
 	ldy	#0	Set stream length to 0.
-               bra	getchar	Continue copying characters.
+	bra	getchar	Continue copying characters.
 
 ; Arrive here when null character is encountered.
 done	sty	index	Save stream length in global.
@@ -116,7 +116,7 @@ exit	long	a	SWITCH TO FULL-WORD MEMORY MODE.
 	unlock mutex	Allow others through.
 	rts		Return to caller.
 
-	END                 
+	END	              
 
 
 **************************************************************************
@@ -129,12 +129,12 @@ flush	START
 
 	using	stdout
 	
-               lock	mutex
+	lock	mutex
 	lda	index
 	beq	skip
-               Write	WriteParm
+	Write	WriteParm
 	Flush	flushparm
-               stz	index            
+	stz	index            
 skip	unlock mutex
 
 	rts	
@@ -175,9 +175,9 @@ errputchar	START
 
 	using	stderr
 	
-               tay		;lock destroys Acc
+	tay		;lock destroys Acc
 	lock	errmutex
-               tya
+	tya
 	and	#$FF
 	ldx	errindex
 	sta	errstream,x
@@ -187,7 +187,7 @@ errputchar	START
 	cpx	#256
 	bcc	done
 _flush	stx	errindex
-               Write	errWriteParm
+	Write	errWriteParm
 	ldx	#0
 done	stx	errindex
 	unlock errmutex
@@ -206,16 +206,16 @@ errputs	START
 
 	using	stderr
 
-               tay		;lock destroys Acc
+	tay		;lock destroys Acc
 	lock	errmutex
-               sty	getchar+1
+	sty	getchar+1
 	txa
 
 	short	a
 	sta	getchar+3
 
 	ldy	errindex
-               ldx	#0
+	ldx	#0
 
 getchar	lda	>$FFFFFF,x
 	beq	done
@@ -230,18 +230,18 @@ getchar	lda	>$FFFFFF,x
 _flush	sty	errindex
 	phx
 	long	a
-               Write	errWriteParm
+	Write	errWriteParm
 	short	a
 	plx
 	ldy	#0
-               bra	getchar
+	bra	getchar
 
 done	sty	errindex
 	long	a
 	unlock errmutex
 	rts
 
-	END                 
+	END	              
 
 **************************************************************************
 *
@@ -253,9 +253,9 @@ errflush	START
 
 	using	stderr
 	
-               lock	errmutex
-               Write	errWriteParm
-               stz	errindex            
+	lock	errmutex
+	Write	errWriteParm
+	stz	errindex	 
 	unlock errmutex
 
 	rts	
@@ -301,7 +301,7 @@ getchar	START
 readloop	Read	inReadParm
 	bcc	okread
 	ldy	#-1	;return EOF on ALL errors
-               jmp	done2
+	jmp	done2
 
 okread	stz	inindex
 	lda	insize

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: alias.asm,v 1.5 1998/08/03 17:30:25 tribby Exp $
+* $Id: alias.asm,v 1.6 1998/09/08 16:53:05 tribby Exp $
 *
 **************************************************************************
 *
@@ -26,7 +26,7 @@
 *
 * unalias	subroutine (4:argv,2:argc)
 *	Returns with status=0 in Accumulator
-*                                        
+*			 
 * initalias	jsr/rts with no parameters
 *
 * expandalias	subroutine (4:cmd)
@@ -37,7 +37,7 @@
 *
 * removealias	subroutine (4:aliasname)
 *	return
-*                                      
+*		                  
 * findalias	subroutine (4:aliasname),space
 *	return 4:value
 *
@@ -170,9 +170,9 @@ setalias	ldy	#4+2	;put alias name on stack
 
 	add2	argv,#8,argv
 
-	dec2  argc
+	dec2	argc
 
-buildalias     lda   argc
+buildalias	lda	argc
 	beq	setit
 
 	pei	(arg+2)
@@ -184,7 +184,7 @@ buildalias     lda   argc
 	pha
 	lda	[argv]
 	pha
-               jsr   catcstr
+	jsr	catcstr
 	stx	arg+2
 	sta	arg
 	jsl	nullfree
@@ -194,7 +194,7 @@ buildalias     lda   argc
 	pei	(arg+2)
 	pei	(arg)
 	ph4	#spacestr
-               jsr   catcstr
+	jsr	catcstr
 	stx	arg+2
 	sta	arg
 	jsl	nullfree
@@ -285,7 +285,7 @@ done	lda	space
 
 	lda	#0
 
-	rtl     
+	rtl	  
 
 Usage	dc	c'Usage: unalias name ...',h'0d00'
 
@@ -315,7 +315,7 @@ yahaha	sta	AliasTable,x
 
 	rts
 
-	END                       
+	END		 
 
 ;=========================================================================
 ;
@@ -324,7 +324,7 @@ yahaha	sta	AliasTable,x
 ;=========================================================================
 
 expandalias	START
-               
+	
 outbuf	equ	0
 sub	equ	outbuf+4
 word	equ	sub+4
@@ -343,7 +343,8 @@ space	equ	buf+4
 	stx	word+2
 	sta	word
 	lda	#0
-	sta	[buf]	;In case we're called with empty string
+	sta	[buf]	In case we're called with empty string
+	sta	[word]
 ;
 ; eat leading spaces
 ;
@@ -427,7 +428,7 @@ next	lda	[cmd]
 	if2	@a,eq,#';',nextalias
 	if2	@a,eq,#'&',nextalias
 	if2	@a,eq,#'|',nextalias
-               if2	@a,eq,#'\',backstabber
+	if2	@a,eq,#'\',backstabber
 	if2	@a,eq,#"'",singquoter
 	if2	@a,eq,#'"',doubquoter
 	bra	next
@@ -484,7 +485,7 @@ done	ldx	word+2
 ;=========================================================================
 
 addalias	START
-               
+	
 	using	AliasData
 
 tmp	equ	0
@@ -535,7 +536,7 @@ replace	ldy	#8+2
 	pha
 	jsl	nullfree
 	pei	(aliasval+2)
-	pei   (aliasval)
+	pei	(aliasval)
 	jsr	cstrlen
 	inc	a
 	pea	0
@@ -566,7 +567,7 @@ notfound	ph4	#4*3
 	lda	AliasTable+2,x
 	sta	[ptr],y
 	pei	(aliasname+2)
-	pei   (aliasname)
+	pei	(aliasname)
 	jsr	cstrlen
 	inc	a
 	pea	0
@@ -585,7 +586,7 @@ notfound	ph4	#4*3
 	pei	(tmp)
 	jsr	copycstr
 	pei	(aliasval+2)
-	pei   (aliasval)
+	pei	(aliasval)
 	jsr	cstrlen
 	inc	a
 	pea	0
@@ -608,7 +609,7 @@ notfound	ph4	#4*3
 	sta	AliasTable,x
 	lda	ptr+2
 	sta	AliasTable+2,x
-                             
+		        
 done	return
 
 	END
@@ -644,8 +645,8 @@ space	equ	ptr+4
 	adc	#AliasTable
 	sta	oldptr
 
-searchloop     ora2  ptr,ptr+2,@a
-	beq   done
+searchloop	ora2	ptr,ptr+2,@a
+	beq	done
 
 	ldy	#4+2
 	lda	[ptr],y
@@ -688,7 +689,7 @@ foundit	ldy	#2
 	pei	(ptr+2)
 	pei	(ptr)
 	jsl	nullfree
-                             
+		        
 done	return
 
 	END
@@ -721,8 +722,8 @@ space	equ	value+4
 	lda	AliasTable+2,x
 	sta	ptr+2
 
-searchloop     ora2  ptr,ptr+2,@a
-	beq   done
+searchloop	ora2	ptr,ptr+2,@a
+	beq	done
 
 	ldy	#4+2
 	lda	[ptr],y
@@ -817,34 +818,34 @@ done	return 4:value
 ;
 ;=========================================================================
 
-hashalias    	PRIVATE
+hashalias	PRIVATE
 
-hashval        equ   0
-space          equ   hashval+2
+hashval	equ	0
+space	equ	hashval+2
 
-               subroutine (4:p),space
-                                    
-               lda   #11
-               sta   hashval
+	subroutine (4:p),space
+		               
+	lda	#11
+	sta	hashval
 
-               ldy   #0
-loop           asl   hashval
-               lda   [p],y
-               and   #$FF
-               beq   done
-               clc
-               adc   hashval
-               sta   hashval
-               iny
-               bra   loop
-done           UDivide (hashval,#VTABSIZE),(@a,@a)
+	ldy	#0
+loop	asl	hashval
+	lda	[p],y
+	and	#$FF
+	beq	done
+	clc
+	adc	hashval
+	sta	hashval
+	iny
+	bra	loop
+done	UDivide (hashval,#VTABSIZE),(@a,@a)
 
-               asl2  a                  ;Make it an index.
-               sta   hashval
+	asl2	a	;Make it an index.
+	sta	hashval
 
-               return 2:hashval
+	return 2:hashval
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -857,6 +858,6 @@ AliasData	DATA
 AliasNum	dc	i2'0'
 AliasPtr	dc	i4'0'
 
-AliasTable     ds    VTABSIZE*4
+AliasTable	ds	VTABSIZE*4
 
-	END                  
+	END	               

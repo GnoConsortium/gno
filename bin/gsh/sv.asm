@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: sv.asm,v 1.5 1998/08/03 17:30:25 tribby Exp $
+* $Id: sv.asm,v 1.6 1998/09/08 16:53:14 tribby Exp $
 *
 **************************************************************************
 *
@@ -22,7 +22,7 @@
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/sv.mac
-                         
+		    
 dummysv	start		; ends up in .root
 	end
 
@@ -35,7 +35,7 @@ dummysv	start		; ends up in .root
 **************************************************************************
 
 sv_alloc	START
-               
+	
 ptr	equ	0
 space	equ	ptr+4
 
@@ -81,7 +81,7 @@ init	sta	[ptr],y	Set all entries
 **************************************************************************
 
 sv_add	START
-               
+	
 p	equ	0
 base	equ	p+4
 space	equ	base+4
@@ -107,7 +107,7 @@ space	equ	base+4
 	pea	0
 	pha
 	~NEW		Allocate memory for it.
-	sta	p                          Store address in p/p+1.
+	sta	p		Store address in p/p+1.
 	stx	p+2
 
 	pei	(string+2)		Copy the string into
@@ -115,7 +115,7 @@ space	equ	base+4
 	phx
 	pha
 	jsr	copycstr
-               bra	doit	else
+	bra	doit	else
 
 asis	mv4	string,p		Just copy address to p/p+1.
 
@@ -260,7 +260,7 @@ foocol	anop
 
 ;
 ; find the index for each column...
-;                                  
+;		              
 	lda	#0
 	tax
 	clc
@@ -476,7 +476,7 @@ nextloop	inc	i
 	jmp	forloop
 ;
 ; swap(v, left, last)
-;                            
+;		        
 endloop	lda	left
 	asl	a
 	asl	a
@@ -526,7 +526,7 @@ endloop	lda	left
 	pha
 	pei	(right)
 	jsl	_qsort
-                     
+		
 exit	return
 
 	END

@@ -1,6 +1,43 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Sep  7 98    [dmt] Changes to this point checked-in to master archive.
+
+Sep  7 98    [dmt] In "gettoken" (cmd.asm), decrement buf (pointer to
+	     command line) when EOL is reached; otherwise if the character
+	     following the command in the buffer is non-zero, the garbage
+	     after the real command will be interpreted as another command.
+	     Test case:  "> /tmp/list" would cause "not found" error message.
+
+Sep  6 98    [dmt] Added startup protocol as requested by Devin Reed
+	     (PR#78) and Steve Reeves (PR#85, PR#86):
+		For login shells (command line starts with '-'),
+		   If $PATH doesn't start with ':' or contain a space,
+		      change all ":" to " ".
+		   source /etc/glogin
+		   source $HOME/glogin
+	     ($HOME/gshrc is sourced afterward for both login and non-login).
+	     In rehash built-in command, don't the print number of hashed
+	     until all initialization is completed.
+	     Restored commented-out PushVariablesGS at start of "shell" in
+	     shell.asm to keep subshells from changing parent's environment.
+
+Aug  4 98    [dmt] Fixed defects in wordmatch (edit.asm) related to
+	     recognizing commands versus filenames during tab and ctrl-D
+	     filename completion. Suppose there is a file "filename" in the
+	     current directory and you enter one of the following:
+		command >& filen
+		command >filen
+	     and press tab. Instead of getting filename completion, you
+	     would get a beep. In the first case, gsh thought the "&"
+	     was putting the command in the background and filen was the
+	     beginning of a command name rather than a filename.  In the
+	     second, gsh included the ">" in the filename match pattern.
+
+Aug  3 98    [dmt] Entabbed all the asm files (saved >36,000 bytes).
+
+Aug  3 98    [dmt] Changes to this point checked-in to master archive.
+
 Aug  2 98    [dmt] Remove alloc256/free256 and associated data. Replace
 	     with fixed 64-byte buffer for command filename (hash.asm)
 	     and allocation of 261-byte buffer via ~NEW for shell

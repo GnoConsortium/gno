@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: history.asm,v 1.5 1998/08/03 17:30:20 tribby Exp $
+* $Id: history.asm,v 1.6 1998/09/08 16:53:10 tribby Exp $
 *
 **************************************************************************
 *
@@ -23,7 +23,7 @@
 * Where historyRec is:
 *
 *   [+0] NextHistory: pointer to historyRec
-*   [+4] HistoryCmd:  string of characters
+*   [+4] HistoryCmd:	 string of characters
 *
 * Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
 *              |     |                  |       |       |       |
@@ -32,7 +32,7 @@
 *
 * Interfaces defined in this file:
 *
-* InsertHistory	
+* InsertHistory 	
 *
 * PrevHistory	
 *
@@ -55,8 +55,8 @@ dummyhistory	start		; ends up in .root
 
 	setcom 60
 
-histNext       gequ  0
-histCmd        gequ  4
+histNext	gequ	0
+histCmd	gequ	4
 
 ;=========================================================================
 ;
@@ -64,10 +64,10 @@ histCmd        gequ  4
 ;
 ;=========================================================================
 
-InsertHistory  START
-               
-               using HistoryData
-               using global
+InsertHistory	START
+	
+	using HistoryData
+	using global
 
 ptr2	equ	0
 ptr	equ	ptr2+4
@@ -80,26 +80,26 @@ space	equ	histvalptr+4
 	pei	(cmd+2)
 	pei	(cmd)
 	jsr	cstrlen
-               sta   len                 
-               pea   0
+	sta	len	 
+	pea	0
 	clc
 	adc	#4+1
-               pha
-               ~NEW
-               sta   ptr
-               stx   ptr+2
-               ora   ptr+2
-               beq   putdone
+	pha
+	~NEW
+	sta	ptr
+	stx	ptr+2
+	ora	ptr+2
+	beq	putdone
 
-               inc   lasthist
-               inc   numhist
+	inc	lasthist
+	inc	numhist
 
-               lda   historyptr         ;Set up linked list pointers
-               sta   [ptr]
-               ldy   #histNext+2
-               lda   historyptr+2
-               sta   [ptr],y
-               mv4   ptr,historyptr
+	lda	historyptr	;Set up linked list pointers
+	sta	[ptr]
+	ldy	#histNext+2
+	lda	historyptr+2
+	sta	[ptr],y
+	mv4	ptr,historyptr
 
 	pei	(cmd+2)
 	pei	(cmd)
@@ -141,53 +141,53 @@ pushaddr	phx		Push address onto stack.
 	pea	0	Push signedFlag = 0 (unsigned)
 	Tool	$280b	Dec2Int.
 	pla		Get result.
-               sta   size
-               beq   alldone
+	sta	size
+	beq	alldone
 ;
 ; Follow linked list until we reach size histories
 ;
-               mv4   historyptr,ptr
-               ldy   #histNext+2
-follow         lda   [ptr]
-               tax
-               ora   [ptr],y
-               beq   alldone            ;not enough
-               dec   size
-               beq   prune
-               lda   [ptr],y
-               sta   ptr+2
-               stx   ptr
-               bra   follow
+	mv4	historyptr,ptr
+	ldy	#histNext+2
+follow	lda	[ptr]
+	tax
+	ora	[ptr],y
+	beq	alldone	;not enough
+	dec	size
+	beq	prune
+	lda	[ptr],y
+	sta	ptr+2
+	stx	ptr
+	bra	follow
 ;
 ; we have enough, start pruning
 ;
-prune          lda   [ptr]
-               sta   ptr2
-               lda   [ptr],y
-               sta   ptr2+2
-               lda   #0
-               sta   [ptr]
-               sta   [ptr],y              ;terminate last history
+prune	lda	[ptr]
+	sta	ptr2
+	lda	[ptr],y
+	sta	ptr2+2
+	lda	#0
+	sta	[ptr]
+	sta	[ptr],y	  ;terminate last history
 ;
 ; Dispose remaining
 ;
-dispose        lda	ptr2
+dispose	lda	ptr2
 	ora	ptr2+2
 	beq	alldone
 	dec	numhist
-               lda   [ptr2]
-               sta   ptr
-               lda   [ptr2],y
-               sta   ptr+2
-               pei   (ptr2+2)
-               pei   (ptr2)
-               jsl   nullfree
-               lda   ptr
-               sta   ptr2
-               lda   ptr+2
-               sta   ptr2+2
-               ldy   #histNext+2
-               bra   dispose
+	lda	[ptr2]
+	sta	ptr
+	lda	[ptr2],y
+	sta	ptr+2
+	pei	(ptr2+2)
+	pei	(ptr2)
+	jsl	nullfree
+	lda	ptr
+	sta	ptr2
+	lda	ptr+2
+	sta	ptr2+2
+	ldy	#histNext+2
+	bra	dispose
 
 alldone	pei	(histvalptr+2)
 	pei	(histvalptr)
@@ -195,9 +195,9 @@ alldone	pei	(histvalptr+2)
 
 goback	return
 
-size           ds    2
+size	ds	2
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -206,23 +206,23 @@ size           ds    2
 ;
 ;=========================================================================
 
-PrevHistory    START
+PrevHistory	START
 
-               using HistoryData
-               using global
+	using HistoryData
+	using global
 	using	termdata
 
-               ora2  historyptr,historyptr+2,@a  ;If no history, then skip
-               jeq   ctl5a
+	ora2	historyptr,historyptr+2,@a	 ;If no history, then skip
+	jeq	ctl5a
 
-               ldx   cmdloc             ;Move cursor to beginning of line
+	ldx	cmdloc	;Move cursor to beginning of line
 	jsr	moveleft
 
 	lda	cdcap
 	ora	cdcap
 	beq	ctl5b0
 	tputs (cdcap,#0,#outc)
-               bra   ctl5g
+	bra	ctl5g
 
 ctl5b0	ldx	cmdlen	;clear line
 ctl5b	dex
@@ -235,47 +235,47 @@ ctl5b	dex
 ctl5c	ldx	cmdlen
 	jsr	moveleft
 
-ctl5g          ora2  currenthist,currenthist+2,@a
-               bne   ctl5i              ;If not set up for current hist then
-               lda   historyptr+2       ;Set up at start.
-               ldx   historyptr
-               ldy   #2
-               bra   ctl5j
+ctl5g	ora2	currenthist,currenthist+2,@a
+	bne	ctl5i	;If not set up for current hist then
+	lda	historyptr+2	;Set up at start.
+	ldx	historyptr
+	ldy	#2
+	bra	ctl5j
 
-ctl5i          mv4   currenthist,0      ;Otherwise move to previous history
-               stz   cmdlen
-               stz   cmdloc
-               ldy   #HistNext+2
-               lda   [0]
-               tax
-               lda   [0],y
+ctl5i	mv4	currenthist,0	;Otherwise move to previous history
+	stz	cmdlen
+	stz	cmdloc
+	ldy	#HistNext+2
+	lda	[0]
+	tax
+	lda	[0],y
 
-ctl5j          sta   0+2                ;Save some pointers
-               stx   0
-               sta   currenthist+2
-               stx   currenthist
-               ora   0                  ;If ptr is 0 then at end, quit
-               beq   ctl5a
+ctl5j	sta	0+2	;Save some pointers
+	stx	0
+	sta	currenthist+2
+	stx	currenthist
+	ora	0	;If ptr is 0 then at end, quit
+	beq	ctl5a
 
-               ldx   #0                 ;Display and store command
-               iny2
-ctl5h          lda   [0],y
+	ldx	#0	;Display and store command
+	iny2
+ctl5h	lda	[0],y
 	and	#$FF
-               sta   cmdline,x
+	sta	cmdline,x
 	beq	ctl5ha
-               inx
-               iny
-               bra   ctl5h
-ctl5ha         stx	cmdlen
+	inx
+	iny
+	bra	ctl5h
+ctl5ha	stx	cmdlen
 	stx	cmdloc
 
 	ldx	#^cmdline
 	lda	#cmdline
 	jsr	puts
 
-ctl5a          rts
+ctl5a	rts
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -284,37 +284,37 @@ ctl5a          rts
 ;
 ;=========================================================================
 
-NextHistory    START
+NextHistory	START
 
-               using HistoryData
-               using global
+	using HistoryData
+	using global
 	using	termdata
 
-               ora2  historyptr,historyptr+2,@a  ;No hist, then skip
-               jeq   ctl6a
+	ora2	historyptr,historyptr+2,@a	 ;No hist, then skip
+	jeq	ctl6a
 
-               stz   4          ;Walk through linked list searching
-               stz   4+2        ; for hist prior to last hist.
-               mv4   historyptr,0
-ctl6i          if2   0,ne,currenthist,ctl6j
-               if2   0+2,eq,currenthist+2,ctl6k
-ctl6j          mv4   0,4
-               ldy   #HistNext+2
-               lda   [0]
-               tax
-               lda   [0],y
-               sta   0+2
-               stx   0
-               bra   ctl6i
+	stz	4          ;Walk through linked list searching
+	stz	4+2        ; for hist prior to last hist.
+	mv4	historyptr,0
+ctl6i	if2	0,ne,currenthist,ctl6j
+	if2	0+2,eq,currenthist+2,ctl6k
+ctl6j	mv4	0,4
+	ldy	#HistNext+2
+	lda	[0]
+	tax
+	lda	[0],y
+	sta	0+2
+	stx	0
+	bra	ctl6i
 
-ctl6k          ldx   cmdloc             ;Move cursor to left
+ctl6k	ldx	cmdloc	;Move cursor to left
 	jsr	moveleft
 
 	lda	cdcap
 	ora	cdcap
 	beq	ctl6b0
 	tputs (cdcap,#0,#outc)
-               bra   ctl6g
+	bra	ctl6g
 
 ctl6b0	ldx	cmdlen	;clear line
 ctl6b	dex
@@ -327,21 +327,21 @@ ctl6b	dex
 ctl6c	ldx	cmdlen
 	jsr	moveleft
 
-ctl6g          stz   cmdlen             ;Get hist info.
-               stz   cmdloc
-               mv4   4,currenthist
-               ora2  4,4+2,@a
-               beq   ctl6a              ;Whoops, back to end, quit
+ctl6g	stz	cmdlen	;Get hist info.
+	stz	cmdloc
+	mv4	4,currenthist
+	ora2	4,4+2,@a
+	beq	ctl6a	;Whoops, back to end, quit
 
-               ldx   #0                 ;Output the new command
-               ldy	#4
-ctl6h          lda   [4],y
+	ldx	#0	;Output the new command
+	ldy	#4
+ctl6h	lda	[4],y
 	and	#$ff
-               sta   cmdline,x
+	sta	cmdline,x
 	beq	ctl6ha
-               iny
-               inx
-               bra   ctl6h
+	iny
+	inx
+	bra	ctl6h
 ctl6ha	stx	cmdlen
 	stx	cmdloc
 
@@ -349,9 +349,9 @@ ctl6ha	stx	cmdlen
 	lda	#cmdline
 	jsr	puts
 
-ctl6a          rts
+ctl6a	rts
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -359,15 +359,15 @@ ctl6a          rts
 ;
 ;=========================================================================
 
-SaveHistory    START
+SaveHistory	START
 
-               using HistoryData
-               using global
+	using HistoryData
+	using global
 
 svhisvalptr	equ	0
 space	equ	svhisvalptr+4
 
-               subroutine ,space
+	subroutine ,space
 
 	lda	historyFN
 	sta	DestroyParm+2
@@ -409,28 +409,28 @@ pushaddr	phx		Push address onto stack.
 ;
 ; Create and write history to file
 ;
-               Destroy DestroyParm
-               Create CreateParm
-               jcs   done
-               Open  OpenParm
-               bcs   done
-               mv2   OpenRef,(WriteRef,WriteCRRef,CloseRef)
+	Destroy DestroyParm
+	Create CreateParm
+	jcs	done
+	Open	OpenParm
+	bcs	done
+	mv2	OpenRef,(WriteRef,WriteCRRef,CloseRef)
 
-loop1          mv4   historyptr,0
-               mv2   size,count
-               ldy   #histNext+2
-loop2          lda   0
-               ora   0+2
-               beq   next
-               lda   [0]
-               tax
-               dec   count
-               beq   write
-               lda   [0],y
-               sta   0+2
-               stx   0
-               bra   loop2
-write          clc
+loop1	mv4	historyptr,0
+	mv2	size,count
+	ldy	#histNext+2
+loop2	lda	0
+	ora	0+2
+	beq	next
+	lda	[0]
+	tax
+	dec	count
+	beq	write
+	lda	[0],y
+	sta	0+2
+	stx	0
+	bra	loop2
+write	clc
 	lda	0
 	adc	#4
 	tax
@@ -441,15 +441,15 @@ write          clc
 	pha
 	phx
 	jsr	cstrlen
-               sta   WriteReq
-               Write WriteParm
-               bcs   doneclose
-               Write WriteCR
-               bcs   doneclose
-next           dec   size
-               bne   loop1
+	sta	WriteReq
+	Write WriteParm
+	bcs	doneclose
+	Write WriteCR
+	bcs	doneclose
+next	dec	size
+	bne	loop1
 
-doneclose      Close CloseParm
+doneclose	Close CloseParm
 
 done	pei	(svhisvalptr+2)	Free $SAVEHISTORY value buffer
 	pei	(svhisvalptr)
@@ -458,38 +458,38 @@ done	pei	(svhisvalptr+2)	Free $SAVEHISTORY value buffer
 goback	return
 
 
-DestroyParm    dc    i2'1'
-               dc    a4'historyFN'
+DestroyParm	dc	i2'1'
+	dc	a4'historyFN'
 
-CreateParm     dc    i2'3'
-               dc    a4'historyFN'
-               dc    i2'$C3'
-               dc    i2'0'
+CreateParm	dc	i2'3'
+	dc	a4'historyFN'
+	dc	i2'$C3'
+	dc	i2'0'
 
-OpenParm       dc    i2'2'
-OpenRef        ds    2
-               dc    a4'historyFN'
+OpenParm	dc	i2'2'
+OpenRef	ds	2
+	dc	a4'historyFN'
 
-WriteParm      dc    i2'4'
-WriteRef       ds    2
-WriteBuf       dc    a4'buffer'
-WriteReq       ds    4
-               ds    4
+WriteParm	dc	i2'4'
+WriteRef	ds	2
+WriteBuf	dc	a4'buffer'
+WriteReq	ds	4
+	ds	4
 
-WriteCR        dc    i2'4'
-WriteCRRef     ds    2
-               dc    a4'CRBuf'
-               dc    i4'1'
-               ds    4
-CRBuf          dc    i1'13'
+WriteCR	dc	i2'4'
+WriteCRRef	ds	2
+	dc	a4'CRBuf'
+	dc	i4'1'
+	ds	4
+CRBuf	dc	i1'13'
 
-CloseParm      dc    i2'1'
-CloseRef       ds    2
+CloseParm	dc	i2'1'
+CloseRef	ds	2
 
-size           ds    2
-count          ds    2
+size	ds	2
+count	ds	2
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -497,65 +497,65 @@ count          ds    2
 ;
 ;=========================================================================
 
-ReadHistory    START
+ReadHistory	START
 
-               using HistoryData
-               using global
+	using HistoryData
+	using global
 
 	lda	historyFN
 	sta	OpenParm+4
-               lda   historyFN+2
+	lda	historyFN+2
 	sta	OpenParm+6
 
-               lda   #0
-               sta   historyptr
-               sta   historyptr+2
+	lda	#0
+	sta	historyptr
+	sta	historyptr+2
 
-               Open  OpenParm
-               bcs   done
-               mv2   OpenRef,(ReadRef,NLRef,CloseRef)
-               NewLine NLParm
-               bcs   doneclose
+	Open	OpenParm
+	bcs	done
+	mv2	OpenRef,(ReadRef,NLRef,CloseRef)
+	NewLine NLParm
+	bcs	doneclose
 
-loop           anop
-               Read  ReadParm
-               bcs   doneclose
-               ldy   ReadTrans
-               beq   doneclose
-               dey
+loop	anop
+	Read	ReadParm
+	bcs	doneclose
+	ldy	ReadTrans
+	beq	doneclose
+	dey
 	lda	#0
 	sta	buffer,y
 	ph4	#buffer
-               jsl   InsertHistory
-               bra   loop
+	jsl	InsertHistory
+	bra	loop
 
-doneclose      Close CloseParm
+doneclose	Close CloseParm
 
-done           rts
+done	rts
 
-OpenParm       dc    i2'2'
-OpenRef        ds    2
-               dc    a4'historyFN'
+OpenParm	dc	i2'2'
+OpenRef	ds	2
+	dc	a4'historyFN'
 
-NLParm         dc    i2'4'
-NLRef          ds    2
-               dc    i2'$7F'
-               dc    i2'1'
-               dc    a4'NLTable'
-NLTable        dc    i1'13'
+NLParm	dc	i2'4'
+NLRef	ds	2
+	dc	i2'$7F'
+	dc	i2'1'
+	dc	a4'NLTable'
+NLTable	dc	i1'13'
 
-ReadParm       dc    i2'4'
-ReadRef        ds    2
-               dc    a4'buffer'
-               dc    i4'1024'
-ReadTrans      ds    4
+ReadParm	dc	i2'4'
+ReadRef	ds	2
+	dc	a4'buffer'
+	dc	i4'1024'
+ReadTrans	ds	4
 
-CloseParm      dc    i2'1'
-CloseRef       ds    2
+CloseParm	dc	i2'1'
+CloseRef	ds	2
 
-size           ds    2
+size	ds	2
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -578,61 +578,61 @@ InitHistory	START
 ;
 ;=========================================================================
 
-PrintHistory   START
+PrintHistory	START
 
-               using HistoryData
-               using global
+	using HistoryData
+	using global
 
-ptr            equ   0
-space          equ   ptr+4
+ptr	equ	0
+space	equ	ptr+4
 
-               subroutine (2:argc,4:argv),space
+	subroutine (2:argc,4:argv),space
 
-               lda   historyptr
-               ora   historyptr+2
-               beq   done
+	lda	historyptr
+	ora	historyptr+2
+	beq	done
 
-               lda   numhist
-               sta   num
-loop1          mv4   historyptr,ptr
-               lda   num
-               bmi   done
-               sta   count
-loop2          lda   count
-               beq   print
-               ldy   #histNext+2
-               lda   [ptr]
-               tax
-               lda   [ptr],y
-               sta   ptr+2
-               stx   ptr
-               ora   ptr
-               beq   next
-               dec   count
-               bra   loop2
+	lda	numhist
+	sta	num
+loop1	mv4	historyptr,ptr
+	lda	num
+	bmi	done
+	sta	count
+loop2	lda	count
+	beq	print
+	ldy	#histNext+2
+	lda	[ptr]
+	tax
+	lda	[ptr],y
+	sta	ptr+2
+	stx	ptr
+	ora	ptr
+	beq	next
+	dec	count
+	bra	loop2
 
-print          sub2  lasthist,num,@a
-               Int2Dec (@a,#numbstr,#4,#0)
+print	sub2	lasthist,num,@a
+	Int2Dec (@a,#numbstr,#4,#0)
 	ldx	#^numbstr
 	lda	#numbstr
 	jsr	puts
-               clc
-               ldx   ptr+2
-               lda   ptr
-               adc   #4
-ok             jsr	puts
+	clc
+	ldx	ptr+2
+	lda	ptr
+	adc	#4
+ok	jsr	puts
 	jsr	newline
 
-next           dec   num
-               bra   loop1
+next	dec	num
+	bra	loop1
 
-done           return 2:#0
+done	return 2:#0
 
-numbstr        dc    c'0000:  ',h'00'
-num            ds    2
-count          ds    2
+numbstr	dc	c'0000:  ',h'00'
+num	ds	2
+count	ds	2
 
-               END
+	END
 
 ;=========================================================================
 ;
@@ -651,4 +651,4 @@ savehistStr	gsstr	'SAVEHIST'
 histName	dc	c'/history',i1'0'
 historyFN	ds	4
 
-               END
+	END

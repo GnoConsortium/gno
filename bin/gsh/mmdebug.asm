@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: mmdebug.asm,v 1.3 1998/08/03 17:30:23 tribby Exp $
+* $Id: mmdebug.asm,v 1.5 1998/12/21 23:57:07 tribby Exp $
 *
 **************************************************************************
 *
@@ -65,7 +65,7 @@ newh	anop
 	stx	hand	 preserving contents of
 	plx		  possible error code
 	stx	hand+2	   in accumulator.
-                  
+	   
 	bcc	deref	If there is a MM error,
 	brk	$A2	 allocation error #2.
 foul	stz	ptr
@@ -130,13 +130,13 @@ ckptr	lda	[hand]	Dereference the
 	sta	checkptr	 found handle.
 	ldy	#2
 	lda	[hand],y
-               sta	checkptr+2
+	sta	checkptr+2
 
 	cmp	ptr+2	If the pointer isn't
 	bne	errD3	 the first byte
 	lda	checkptr	  of the handle,
 	cmp	ptr	   there is a problem.
-	beq   chkid
+	beq	chkid
 errD3	brk	$D3
 	bra	goback
 

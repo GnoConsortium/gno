@@ -1970,5 +1970,5 @@ skip&syscnt	anop
 	MACRO
 &lab	~DISPOSE
 &lab	anop
-	jml	~DISPOSE
+	jml   ~DISPOSE
 	MEND

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: builtin.asm,v 1.5 1998/08/03 17:30:26 tribby Exp $
+* $Id: builtin.asm,v 1.6 1998/09/08 16:53:05 tribby Exp $
 *
 **************************************************************************
 *
@@ -25,12 +25,12 @@
 *
 *   builtin	subroutine (2:argc,4:argv)
 *	Returns completion status in Accumulator
-*                    
+*		
 *   IsBuiltin	subroutine (4:name)
 *	return 2:tbl
 *
 * Remainder are interfaces to builtin commands with interface
-* 	subroutine (4:argv,2:argc)
+*	subroutine (4:argv,2:argc)
 *	returns status in accumulator
 *   cd	(chdir is entry as an alternate name)
 *   clear
@@ -173,7 +173,7 @@ space	equ	tbl+4
 	subroutine (4:name),space
 
 	ld4	builtintbl,tbl
-builtinloop    ldy   #2
+builtinloop	ldy	#2
 	lda	[tbl]
 	ora	[tbl],y
 	beq	nofile
@@ -193,7 +193,7 @@ foundit	ldy	#8	Get the fork/nofork flag
 	bra	foundbuiltin
 
 nofile	lda	#-1	Set not-found return value.
-foundbuiltin   sta   tbl
+foundbuiltin	sta	tbl
 
 	return 2:tbl
 
@@ -211,33 +211,33 @@ BuiltinData	DATA
 ; command. Third value is fork flag (0 to fork, 1 for no fork).
 ; TABLE MUST BE SORTED BY COMMAND NAME.
 ;
-builtintbl     dc    a4'aliasname,alias',i2'0'
+builtintbl	dc	a4'aliasname,alias',i2'0'
 	dc	a4'bgname,bg',i2'1'
 	dc	a4'bindkeyname,bindkey',i2'0'
-               dc    a4'cdname,cd',i2'1'
-               dc    a4'chdirname,chdir',i2'1'
-               dc    a4'clearname,clear',i2'1'		Changed to unforked
+	dc	a4'cdname,cd',i2'1'
+	dc	a4'chdirname,chdir',i2'1'
+	dc	a4'clearname,clear',i2'1'		Changed to unforked
 	dc	a4'cmdname,cmdbi',i2'0'
 	dc	a4'dirsname,dirs',i2'0'
-               dc    a4'echoname,echo',i2'0'
+	dc	a4'echoname,echo',i2'0'
 	dc	a4'editname,edit',i2'1'
-               dc    a4'exitname,exit',i2'1'
-               dc    a4'exportname,export',i2'1'
+	dc	a4'exitname,exit',i2'1'
+	dc	a4'exportname,export',i2'1'
 	dc	a4'fgname,fg',i2'1'
 	dc	a4'hashname,hashbi',i2'0'
-               dc    a4'hname,PrintHistory',i2'0'
+	dc	a4'hname,PrintHistory',i2'0'
 	dc	a4'jobsname,jobs',i2'1'
-               dc    a4'killname,kill',i2'1'
+	dc	a4'killname,kill',i2'1'
 	dc	a4'popdname,popd',i2'1'
-               dc    a4'pfxname,prefix',i2'1'
-               dc    a4'psname,psbi',i2'0'
+	dc	a4'pfxname,prefix',i2'1'
+	dc	a4'psname,psbi',i2'0'
 	dc	a4'pushdname,pushd',i2'1'
-               dc    a4'pwdname,pwd',i2'1'
-               dc    a4'rehashname,rehash',i2'1'
-               dc    a4'setname,set',i2'0'
+	dc	a4'pwdname,pwd',i2'1'
+	dc	a4'rehashname,rehash',i2'1'
+	dc	a4'setname,set',i2'0'
 	dc	a4'setbugname,setdebug',i2'0'
 	dc	a4'setenvname,setenv',i2'0'
-	dc	a4'sourcename,source',i2'1'	Changed to unforked
+	dc	a4'sourcename,source',i2'1' 	Changed to unforked
 	dc	a4'stopname,stop',i2'1'
 	dc	a4'tsetname,tset',i2'1'
 	dc	a4'unaliasname,unalias',i2'1'
@@ -246,18 +246,18 @@ builtintbl     dc    a4'aliasname,alias',i2'0'
 	dc	a4'whichname,which',i2'0'
 	dc	i4'0,0'
 
-aliasname      dc    c'alias',h'00'
+aliasname	dc	c'alias',h'00'
 bgname	dc	c'bg',h'00'
 bindkeyname	dc	c'bindkey',h'00'
-chdirname      dc    c'chdir',h'00'
-cdname         dc    c'cd',h'00'
-clearname      dc    c'clear',h'00'
+chdirname	dc	c'chdir',h'00'
+cdname	dc	c'cd',h'00'
+clearname	dc	c'clear',h'00'
 cmdname	dc	c'commands',h'00'
 dirsname	dc	c'dirs',h'00'
 echoname	dc	c'echo',h'00'
 editname	dc	c'edit',h'00'
 exitname	dc	c'exit',h'00'
-exportname     dc    c'export',h'00'
+exportname	dc	c'export',h'00'
 fgname	dc	c'fg',h'00'
 hashname	dc	c'hash',h'00'
 hname	dc	c'history',h'00'
@@ -268,17 +268,17 @@ popdname	dc	c'popd',h'00'
 psname	dc	c'ps',h'00'
 pushdname	dc	c'pushd',h'00'
 pwdname	dc	c'pwd',h'00'
-rehashname     dc    c'rehash',h'00'
+rehashname	dc	c'rehash',h'00'
 setbugname	dc	c'setdebug',h'00'
-setname        dc    c'set',h'00'
+setname	dc	c'set',h'00'
 setenvname	dc	c'setenv',h'00'
 sourcename	dc	c'source',h'00'
 stopname	dc	c'stop',h'00'
 tsetname	dc	c'tset',h'00'
-unaliasname    dc    c'unalias',h'00'
-unhashname     dc    c'unhash',h'00'
-unsetname      dc    c'unset',h'00'
-whichname      dc    c'which',h'00'
+unaliasname	dc	c'unalias',h'00'
+unhashname	dc	c'unhash',h'00'
+unsetname	dc	c'unset',h'00'
+whichname	dc	c'which',h'00'
 
 	END
 
@@ -327,8 +327,8 @@ end	equ	argv+4
 ;
 ; Illegal parameters: print usage string
 ;
-showusage      inc	status	Return status = 1.
-	lda   [argv]
+showusage	inc	status	Return status = 1.
+	lda	[argv]
 	tax
 	ldy	#2
 	lda	[argv],y
@@ -386,7 +386,7 @@ paramcd	anop
 	if2	@a,ne,#'-',setprefix
 	jmp	showusage
 
-setprefix      pei   (dpg+2)
+setprefix	pei	(dpg+2)
 	pei	(dpg)
 	jsr	c2gsstr
 	sta	PRecPath
@@ -515,7 +515,7 @@ exit	lda	space
 
 	lda	#0
 
-	rtl     
+	rtl	  
 
 Usage	dc	c'Usage: clear',h'0d00'
 
@@ -572,7 +572,7 @@ end	equ	argv+4
 ; First argument begins with "-"; only legal value is -n
 
 	lda	[ptr],y	Get second
-	and	#$FF                 character.
+	and	#$FF	  character.
 	if2	@a,eq,#'n',gotn	If != 'n', it's a bad one.
 
 showusage	ldx	#^Usage	Incorrect parameter usage:
@@ -608,7 +608,7 @@ putloop	lda	[ptr]	Get first
 	lda	[ptr]	 to the next
 	and	#$FF	  character.
 	beq	doneput	If 0, done with this argument.
-	if2	@a,ne,#'b',esc02   Check for escape codes: "b"
+	if2	@a,ne,#'b',esc02	Check for escape codes: "b"
 	ldx	#1
 	jsr	moveleft			moveleft
 	bra	didit
@@ -678,7 +678,7 @@ exit	jsr	flush	Print the buffer.
 
 	lda	#0
 
-	rtl     
+	rtl	  
 
 Usage	dc	c'Usage: echo [-n] [strings...]',h'0d00'
 
@@ -721,7 +721,7 @@ end	equ	argv+4
 wait	lock	pwdmutex	
 
 	pea	0
-               jsl	getpfxstr	Get value of prefix 0.
+	jsl	getpfxstr	Get value of prefix 0.
 	sta	ptr
 	stx	ptr+2
 
@@ -757,7 +757,7 @@ exit	lda	space	Deallocate stack space
 
 	lda	#0	Return status always 0.
 
-	rtl     
+	rtl	  
 
 pwdmutex	key
 
@@ -834,7 +834,7 @@ loop	add2	argv,#4,argv
 ;
 ; was it a built-in?
 ;
-chkbuiltin     pei   (file+2)
+chkbuiltin	pei	(file+2)
 	pei	(file)
 	jsl	IsBuiltin	
 	cmp	#-1
@@ -846,7 +846,7 @@ foundbuiltin	ldx	#^builtstr
 ;
 ; See if it was hashed
 ;
-tryhash        pei   (file+2)
+tryhash	pei	(file+2)
 	pei	(file)
 	ph4	hash_table
 	ph4	#hash_paths
@@ -885,7 +885,7 @@ showcwd	pei	(ptr+2)
 	jsl	nullfree
 
 	pea	0
-               jsl	getpfxstr	Get value of prefix 0.
+	jsl	getpfxstr	Get value of prefix 0.
 	sta	ptr
 	stx	ptr+2
 
@@ -940,7 +940,7 @@ exit	lda	space
 
 	lda	#0
 
-	rtl     
+	rtl	  
 
 whicherr	dc	c'Usage: which [file ...]',h'0d00'
 builtstr	dc	c'Shell Built-in Command',h'00'
@@ -952,8 +952,8 @@ pwdmutex	key
 GRec	dc	i'4'
 GRecPath	ds	4
 	ds	2
-GRecFileType   ds    2
-GRecAuxType    ds    4
+GRecFileType	ds	2
+GRecAuxType	ds	4
 
 	END
 
@@ -1072,7 +1072,7 @@ showone	ldy	#1*4+2	Put pointer to
 	jsr	cstrlen	Get length of argument.
 	tax
 
-	Dec2Int (numstr,@x,#0),@a	Convert to integer.
+	Dec2Int (numstr,@x,#0),@a 	Convert to integer.
 	cmp	#32	If prefix num >= 32,
 	bcc	getpfx
 	jsr	newline		just print blank line.
@@ -1119,7 +1119,7 @@ setprefix	ldy	#1*4+2	Put pointer to
 
 	Dec2Int (numstr,@x,#0),PRecNum	Convert to integer string.
 
-               lda	PRecNum
+	lda	PRecNum
 	cmp	#32	If prefix num >= 32,
 	bcs	done		nothing to do.
 
@@ -1145,7 +1145,7 @@ setprefix	ldy	#1*4+2	Put pointer to
 	ErrorGS Err
 	bra	done
 
-ok	if2	GRecFT,eq,#$F,ok2  If filetype != $F,
+ok	if2	GRecFT,eq,#$F,ok2	If filetype != $F,
 	ldx	#^direrr		print error message
 	lda	#direrr		 'Not a directory'
 	jsr	errputs
@@ -1175,7 +1175,7 @@ done	unlock mutex
 
 	lda	#0
 
-	rtl     
+	rtl	  
 
 mutex	key
 
@@ -1185,7 +1185,7 @@ usage	dc	c'Usage: prefix prefixnum prefixname',h'0d00'
 bootstr	dc	c' *: ',h'00'
 pfxstr	dc	c'00: ',h'00'
 dirErr	dc	c'prefix: Not a directory',h'0d00'
-                       
+		  
 ;
 ; Parameter block for GS/OS GetFileInfo call
 ;
@@ -1278,7 +1278,7 @@ exit	lda	space
 
 	lda	#0
 
-	rtl     
+	rtl	  
 
 Usage	dc	c'Usage: ',h'00'
 
@@ -1373,7 +1373,7 @@ loop	lda	[argv]
 	and	#$FF
 	if2	@a,eq,#'-',turnoff
 	if2	@a,eq,#'+',turnon
-	ldx   mode
+	ldx	mode
 	bne	showusage
 	ldx	argc
 	dex	
@@ -1511,7 +1511,7 @@ showusage	ldx	#^usage
 	jmp	return
 
 ok	getuid
-               sta	myuid
+	sta	myuid
 	kvm_open             
 	sta	ps
 	stx	ps+2
@@ -1730,7 +1730,7 @@ statetbl	dc	c'defunct '
 	dc	c'waiting '
 	dc	c'paused  '
 	dc	c'unknown '
-                                
+		           
 	END
 
 **************************************************************************
@@ -1870,7 +1870,7 @@ exit	return 2:retval
 usage	dc	c'usage: source file [arguments...]',h'0d00'
 
 	END
-                  
+	   
 **************************************************************************
 *
 * COMMANDS: builtin command

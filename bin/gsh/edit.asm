@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: edit.asm,v 1.5 1998/08/03 17:30:28 tribby Exp $
+* $Id: edit.asm,v 1.6 1998/09/08 16:53:08 tribby Exp $
 *
 **************************************************************************
 *
@@ -44,14 +44,14 @@ TIOCSETP	gequ	$80067409
 TIOCGETK	gequ	$40027414
 TIOCSETK	gequ	$80027413
 TIOCGLTC	gequ	$40067474
-TIOCSLTC       gequ	$80067475
+TIOCSLTC	gequ	$80067475
 
-cmdbuflen      gequ  1024
+cmdbuflen	gequ	1024
 
 ; editor key commands
 
 undefined_char	gequ	0	;<- DO NOT CHANGE THIS DEFINITION
-raw_char	gequ	1                  ;<- DO NOT CHANGE THIS DEFINITION
+raw_char	gequ	1	;<- DO NOT CHANGE THIS DEFINITION
 map_char	gequ	2
 backward_char	gequ	3
 forward_char	gequ	4
@@ -73,26 +73,28 @@ kill_end_of_line gequ 19
 toggle_cursor	gequ	20
 delete_char	gequ	21
 
+WORDGS_SIZE	gequ	256	Size of buffer for word search
+
 **************************************************************************
 *
 * get a command line from the user
 *
 **************************************************************************
 
-GetCmdLine     START
+GetCmdLine	START
 
-               using global
-               using HistoryData
+	using global
+	using HistoryData
 	using	pdata
 	using	keybinddata
 	using	termdata
 	using	vardata
 
 	stz	signalled
-               stz   cmdlen
-               stz   cmdloc
-               stz   currenthist
-               stz   currenthist+2
+	stz	cmdlen
+	stz	cmdloc
+	stz	currenthist
+	stz	currenthist+2
 
 	ioctl	(#1,#TIOCGETP,#oldsgtty)
 	ioctl	(#1,#TIOCGETP,#newsgtty)
@@ -111,7 +113,7 @@ GetCmdLine     START
 	long	m
 	ioctl (#1,#TIOCSLTC,#newltc)
 
-cmdloop        lda	#keybindtab
+cmdloop	lda	#keybindtab
 	sta	0
 	lda	#^keybindtab
 	sta	2
@@ -132,20 +134,20 @@ nextchar2	jsr	cursoroff
 	bne	findcmd
 
 eof	ldx	cmdlen
-               bne   findcmd
+	bne	findcmd
 	lda	varignore
 	bne	findcmd
-               jsr	cursoron
+	jsr	cursoron
 	ioctl	(#1,#TIOCSETP,#oldsgtty)
 	ioctl (#1,#TIOCSETK,#oldttyk)
-               ioctl (#1,#TIOCSLTC,#oldltc)
+	ioctl (#1,#TIOCSLTC,#oldltc)
 	sec
-               rts
+	rts
 
 findcmd	asl	a
 	sta	addidx+1
 	asl	a
-addidx         adc	#0
+addidx	adc	#0
 	tay
 	lda	[0],y	;get the type of key this is
 	asl	a
@@ -194,65 +196,65 @@ cmdleadin	pla		;kill return address
 	stx	0
 	jmp	nextchar
 
-;-------------------------------------------------------------------------                        
+;-------------------------------------------------------------------------		          
 ;
 ; Insert or overwrite an alphanum character
 ;
 ;-------------------------------------------------------------------------
 
-cmdraw         lda   cmdlen
-               cmp   #cmdbuflen
-               bcc   cmIns0
+cmdraw	lda	cmdlen
+	cmp	#cmdbuflen
+	bcc	cmIns0
 	jmp	beep
 
-cmIns0         lda   insertflag
-               beq   cmOver             ;Do overstrike mode
-               short a
-               ldy   cmdlen
-cmIns1         cpy   cmdloc
-               beq   cmins2
-               bcc   cmIns2
-               lda   cmdline-1,y
-               sta   cmdline,y
-               dey
-               bra   cmIns1
-cmIns2         long  a
-               inc   cmdlen
+cmIns0	lda	insertflag
+	beq	cmOver	;Do overstrike mode
+	short a
+	ldy	cmdlen
+cmIns1	cpy	cmdloc
+	beq	cmins2
+	bcc	cmIns2
+	lda	cmdline-1,y
+	sta	cmdline,y
+	dey
+	bra	cmIns1
+cmIns2	long	a
+	inc	cmdlen
 ;
 ; Place character in string and output
 ;
-cmOver         lda   4
-               ldy   cmdloc             ;Do overstrike mode
-               short a
-               sta   cmdline,y
-               long  a
-               iny
-               sty   cmdloc
+cmOver	lda	4
+	ldy	cmdloc	;Do overstrike mode
+	short a
+	sta	cmdline,y
+	long	a
+	iny
+	sty	cmdloc
 	jsr	putchar
-               ldy   cmdloc
-               cpy   cmdlen
-               bcc   cmdov2 
-               beq   cmdov2 
-               sty   cmdlen
+	ldy	cmdloc
+	cpy	cmdlen
+	bcc	cmdov2 
+	beq	cmdov2 
+	sty	cmdlen
 ;
 ; Redraw shifted text
 ;
-cmdov2         lda   insertflag
-               cmp   #0
+cmdov2	lda	insertflag
+	cmp	#0
 	bne	cmdov2a
 	rts
-cmdov2a        ldx   #0
-cmdov3         if2   @y,eq,cmdlen,cmdov4
-               lda   cmdline,y
-               iny
-               inx
-               phx
-               phy
+cmdov2a	ldx	#0
+cmdov3	if2	@y,eq,cmdlen,cmdov4
+	lda	cmdline,y
+	iny
+	inx
+	phx
+	phy
 	jsr	putchar
-               ply
-               plx
-               bra   cmdov3
-cmdov4         jmp	moveleft
+	ply
+	plx
+	bra	cmdov3
+cmdov4	jmp	moveleft
 
 ;-------------------------------------------------------------------------
 ;
@@ -269,13 +271,13 @@ cmdsig	stz	signalled
 ;
 ;-------------------------------------------------------------------------
 
-cmdnewline     pla		;pull off return address
+cmdnewline	pla		;pull off return address
 	sec
 	lda	cmdlen
 	sbc	cmdlen
 	tax
 	jsr	moveright
-           	ldx   cmdlen	;strip trailing space
+	ldx	cmdlen	;strip trailing space
 	beq	retdone
 fix	dex
 	lda	cmdline,x
@@ -283,16 +285,16 @@ fix	dex
 	if2	@a,eq,#' ',fix
 fix0	inx
 	stx	cmdlen
-               stz   cmdline,x          ;terminate string
-               txy
-               beq   retdone
+	stz	cmdline,x	;terminate string
+	txy
+	beq	retdone
 	ph4	#cmdline
-               jsl   InsertHistory
+	jsl	InsertHistory
 retdone	ioctl	(#1,#TIOCSETP,#oldsgtty)
 	ioctl (#1,#TIOCSETK,#oldttyk)
-               ioctl (#1,#TIOCSLTC,#oldltc)
+	ioctl (#1,#TIOCSLTC,#oldltc)
 	clc
-               rts
+	rts
 
 ;-------------------------------------------------------------------------
 ;
@@ -300,11 +302,11 @@ retdone	ioctl	(#1,#TIOCSETP,#oldsgtty)
 ;
 ;-------------------------------------------------------------------------
 
-cmdleft        lda   cmdloc
-               bne   ctl0a
+cmdleft	lda	cmdloc
+	bne	ctl0a
 	jmp	beep
-ctl0a          dec   a
-               sta   cmdloc
+ctl0a	dec	a
+	sta	cmdloc
 	ldx	#1
 	jmp	moveleft
 
@@ -314,13 +316,13 @@ ctl0a          dec   a
 ;
 ;-------------------------------------------------------------------------
 
-cmdright       ldy   cmdloc
-               if2   @y,ne,cmdlen,ctl1a
+cmdright	ldy	cmdloc
+	if2	@y,ne,cmdlen,ctl1a
 	jmp	beep
-ctl1a          lda   cmdline,y
+ctl1a	lda	cmdline,y
 	jsr	putchar
-               inc   cmdloc
-               rts
+	inc	cmdloc
+	rts
 
 ;-------------------------------------------------------------------------
 ;
@@ -350,29 +352,29 @@ cmdclrline	ldx	cmdloc
 ;
 ;-------------------------------------------------------------------------
 
-cmdclreol      lda	cdcap
+cmdclreol	lda	cdcap
 	ora	cdcap+2
 	beq	ctl4a0
 	tputs (cdcap,#1,#outc)
-               bra   ctl4g
+	bra	ctl4g
 
-ctl4a0         sub2	cmdlen,cmdloc,@a
-	inc   a
-         	tax
-               tay
-               phx
-ctl4a          phy
+ctl4a0	sub2	cmdlen,cmdloc,@a
+	inc	a
+	tax
+	tay
+	phx
+ctl4a	phy
 	lda	#' '
 	jsr	putchar
-               ply
-               dey
-               bne   ctl4a
-               plx
-          	jsr	moveleft
+	ply
+	dey
+	bne	ctl4a
+	plx
+	jsr	moveleft
 
-ctl4g          lda   cmdloc
-               sta   cmdlen
-               rts
+ctl4g	lda	cmdloc
+	sta	cmdlen
+	rts
 
 ;-------------------------------------------------------------------------
 ;
@@ -408,20 +410,20 @@ cmdclearscrn	jsr	clearscrn
 ;
 ;-------------------------------------------------------------------------
 
-cmdcursor      eor2  insertflag,#1,insertflag
+cmdcursor	eor2	insertflag,#1,insertflag
 	rts
 
 ;-------------------------------------------------------------------------
-;                                           
+;			    
 ; delete character to left
 ;
 ;-------------------------------------------------------------------------
 
-cmdbackdel     lda   cmdloc
-               bne   ctldel2
+cmdbackdel	lda	cmdloc
+	bne	ctldel2
 	jmp	beep
-ctldel2        dec   a
-               sta   cmdloc
+ctldel2	dec	a
+	sta	cmdloc
 	ldx	#1
 	jsr	moveleft	;fall through to cmddelchar
 
@@ -431,36 +433,36 @@ ctldel2        dec   a
 ;
 ;-------------------------------------------------------------------------
 
-cmddelchar     ldy   cmdloc
-               if2   @y,ne,cmdlen,cmdoa2a
-               rts
-cmdoa2a        short a
-cmdoa2aa       if2   @y,eq,cmdlen,cmdoa2b
-               lda   cmdline+1,y
-               sta   cmdline,y
-               iny
-               bra   cmdoa2aa
-cmdoa2b        lda   #' '
-               sta   cmdline-1,y
-               sta   cmdline,y
-               long  a
-               ldy   cmdloc
-               ldx   #0
-cmdoa2c        if2   @y,eq,cmdlen,cmdoa2e
-               bcs   cmdoa2d
-cmdoa2e        lda   cmdline,y
-               iny
-               inx
-               phx
-               phy
+cmddelchar	ldy	cmdloc
+	if2	@y,ne,cmdlen,cmdoa2a
+	rts
+cmdoa2a	short a
+cmdoa2aa	if2	@y,eq,cmdlen,cmdoa2b
+	lda	cmdline+1,y
+	sta	cmdline,y
+	iny
+	bra	cmdoa2aa
+cmdoa2b	lda	#' '
+	sta	cmdline-1,y
+	sta	cmdline,y
+	long	a
+	ldy	cmdloc
+	ldx	#0
+cmdoa2c	if2	@y,eq,cmdlen,cmdoa2e
+	bcs	cmdoa2d
+cmdoa2e	lda	cmdline,y
+	iny
+	inx
+	phx
+	phy
 	jsr	putchar
-               ply
-               plx
-               bra   cmdoa2c   
+	ply
+	plx
+	bra	cmdoa2c   
 
-cmdoa2d        jsr	moveleft
-        	dec   cmdlen
-               rts
+cmdoa2d	jsr	moveleft
+	dec	cmdlen
+	rts
 
 ;-------------------------------------------------------------------------
 ;
@@ -468,7 +470,7 @@ cmdoa2d        jsr	moveleft
 ;
 ;-------------------------------------------------------------------------
 
-cmdbegin       ldx	cmdloc
+cmdbegin	ldx	cmdloc
 	stz	cmdloc
 	jmp	moveleft
 
@@ -478,12 +480,12 @@ cmdbegin       ldx	cmdloc
 ;
 ;-------------------------------------------------------------------------
 
-cmdend         if2   cmdloc,eq,cmdlen,cmdoa4a
+cmdend	if2	cmdloc,eq,cmdlen,cmdoa4a
 	ldx	#1
 	jsr	moveright
-               inc   cmdloc
-               bra   cmdend
-cmdoa4a        rts
+	inc	cmdloc
+	bra	cmdend
+cmdoa4a	rts
 
 ;-------------------------------------------------------------------------
 ;
@@ -491,12 +493,12 @@ cmdoa4a        rts
 ;
 ;-------------------------------------------------------------------------
 
-cmdleftword    lda   cmdloc
-               bne   cmdoa5a   
-               jsr	beep
-cmdoa5z        rts
-cmdoa5a        dec   a
-               sta   cmdloc
+cmdleftword	lda	cmdloc
+	bne	cmdoa5a   
+	jsr	beep
+cmdoa5z	rts
+cmdoa5a	dec	a
+	sta	cmdloc
 cmdoa5b	ldx	#1
 	jsr	moveleft
 	ldy	cmdloc
@@ -526,9 +528,9 @@ cmdoa5c	ldy	cmdloc
 
 cmdrightword	if2	cmdloc,ne,cmdlen,cmdoa6a
 	jsr	beep
-cmdoa6z        rts
-cmdoa6a        inc   a
-               sta   cmdloc
+cmdoa6z	rts
+cmdoa6a	inc	a
+	sta	cmdloc
 cmdoa6b	ldx	#1
 	jsr	moveright
 	ldy	cmdloc
@@ -568,7 +570,7 @@ newttyk	dc	i2'OAMAP+OA2META+VT100ARROW'
 oldltc	ds	6
 newltc	ds	6
 
-               END        
+	END	     
 
 ;=========================================================================
 ;
@@ -639,7 +641,7 @@ meepmeep	jmp	beep
 t1	dec	a
 	bne	t2
 t1b	mv4	matchbuf,p
-               ldy	wordlen
+	ldy	wordlen
 t1a	lda	[p],y
 	and	#$FF
 	jeq	completed
@@ -656,18 +658,18 @@ t2	jsl	dofignore
 	lda	nummatch
 	beq	meepmeep
 	dec	a
-	beq   t1b
+	beq	t1b
 	mv4	matchbuf,p
 	lda	char
 	sta	oldchar
-               ldy	wordlen
+	ldy	wordlen
 	lda	[p],y
 	and	#$FF
 	sta	char2
 	jsr	tolower
 	sta	char
 	lda	#0
-t3	pha    
+t3	pha	 
 	asl	a
 	asl	a
 	tay
@@ -680,7 +682,7 @@ t3	pha
 	and	#$FF
 	jsr	tolower
 	cmp	char
-               bne	honk
+	bne	honk
 	pla
 	inc	a
 	cmp	nummatch
@@ -747,7 +749,7 @@ space	equ	gsbuf+4
 	clc
 	lda	gsbuf	Text begins after
 	adc	#4	 four bytes of
-	bcc   storevar	  length words.
+	bcc	storevar	  length words.
 	inx
 storevar	sta	var	Store pointer to
 	stx	var+2	 c-string in var.
@@ -783,7 +785,7 @@ eatspace	lda	[var],y
 
 yummy	sty	varpos
 	ldx	#0
-eatstuff       lda	[var],y
+eatstuff	lda	[var],y
 	and	#$FF
 	beq	gotstuff
 	cmp	#' '
@@ -846,48 +848,48 @@ insertcmd	START
 
 	sta	tmp
 
-               short a
-               ldy   cmdlen
-cmIns1         cpy   cmdloc
-               beq   cmins2
-               bcc   cmIns2
-               lda   cmdline-1,y
-               sta   cmdline,y
-               dey
-               bra   cmIns1
-cmIns2         long  a
-               inc   cmdlen
+	short a
+	ldy	cmdlen
+cmIns1	cpy	cmdloc
+	beq	cmins2
+	bcc	cmIns2
+	lda	cmdline-1,y
+	sta	cmdline,y
+	dey
+	bra	cmIns1
+cmIns2	long	a
+	inc	cmdlen
 ;
 ; Place character in string and output
 ;
-cmOver         lda   tmp
-               ldy   cmdloc             ;Do overstrike mode
-               short a
-               sta   cmdline,y
-               long  a
-               iny
-               sty   cmdloc
+cmOver	lda	tmp
+	ldy	cmdloc	;Do overstrike mode
+	short a
+	sta	cmdline,y
+	long	a
+	iny
+	sty	cmdloc
 	jsr	putchar
-               ldy   cmdloc
-               cpy   cmdlen
-               bcc   cmdov2 
-               beq   cmdov2 
-               sty   cmdlen
+	ldy	cmdloc
+	cpy	cmdlen
+	bcc	cmdov2 
+	beq	cmdov2 
+	sty	cmdlen
 ;
 ; Redraw shifted text
 ;
-cmdov2         ldx   #0
-cmdov3         if2   @y,eq,cmdlen,cmdov5
-               lda   cmdline,y
-               iny
-               inx
-               phx
-               phy
+cmdov2	ldx	#0
+cmdov3	if2	@y,eq,cmdlen,cmdov5
+	lda	cmdline,y
+	iny
+	inx
+	phx
+	phy
 	jsr	putchar
-               ply
-               plx
-               bra   cmdov3
-cmdov5         jmp	moveleft
+	ply
+	plx
+	bra	cmdov3
+cmdov5	jmp	moveleft
 
 tmp	ds	2
 
@@ -926,12 +928,12 @@ loop	cpy	nummatch
 	inx
 	inx
 	iny
-               bra	loop
+	bra	loop
 
 done	dec	nummatch
 	rts
 
-               END
+	END
 	
 ;=========================================================================
 ;
@@ -971,77 +973,95 @@ loop	pha
 ;=========================================================================
 
 wordmatch	START
-               
+	
 	using	global
 	using	hashdata
 	using BuiltInData
 
-	lda	#'/'
+	lda	#'/'	Default separator is "/".
 	sta	sepstyle
 
-	ldx	#0	;for left counter
-	ldy	cmdloc
-	beq	atstart
-	lda	cmdline,y	;if current char is space then
-	and	#$FF               ;char to left must be non-space
-	cmp	#' '
-	bne	findstart2
-	lda	cmdline-1,y
-	and	#$FF
+	ldx	#0	Keep track of left moves in X-reg.
+	ldy	cmdloc	Y-reg = position on line.
+	beq	atstart	If 0, can't go any further.
+	lda	cmdline,y	If current
+	and	#$FF	 character is
+	cmp	#' '	  space, and
+	bne	findstart2	   the one before
+	lda	cmdline-1,y	    it is also a
+	and	#$FF	     space,
 	cmp	#' '
 	bne	findstart
-	jmp	beep
+	jmp	beep		beep at the user.
 ;
-; move backwards to find start of word to expand
+; Move backwards to find start of word to expand
 ;
-findstart	inx
-	dey
-	beq	atstart
-findstart2	lda	cmdline-1,y
-	and	#$FF
-	cmp	#';'
-	beq	atstart
-	cmp	#'|'
+findstart	inx		Count # of times we've moved left.
+	dey		Decrement the buffer index.
+	beq	atstart	Done if all the way to start.
+findstart2	lda	cmdline-1,y	Get the previous
+	and	#$FF	 character.
+	cmp	#';'	Compare against shell
+	beq	atstart	 characters that
+	cmp	#'|'	  indicate a word break.
 	beq	atstart
 	cmp	#'&'
 	beq	atstart
+	cmp	#'>'
+	beq	atstart
+	cmp	#'<'
+	beq	atstart
 	cmp	#' '
-	bne	findstart
+	bne	findstart	Stay in loop until one is found.
 ;
-; isolate the word
+; Y-reg points to start, X-reg contains number of positions to cursor.
+; Search forward to isolate the current word.
 ;
 atstart	sty	startpos
-	stx	dir+1
+	stx	dir+1	Ugh! Self-modifying code!!
 	ldx	#0
-isolate	cpy	cmdlen
-	beq   gotiso
-	lda	cmdline,y
-	and	#$FF
-	cmp	#' '
-	beq	gotiso	
+
+isolate	cpy	cmdlen	If at end of line,
+	beq	gotiso	 cannot go any further.
+	lda	cmdline,y	Isolate the next character.
+	and	#$FF	Compare against shell
+	cmp	#' '	 characters that
+	beq	gotiso	  indicate a word break.
 	cmp	#';'
 	beq	gotiso
 	cmp	#'|'
 	beq	gotiso
 	cmp	#'&'
 	beq	gotiso
-	sta	wordgs_text,x
-	iny
-	inx
-	bra	isolate
-gotiso	lda	#0
-	sta	wordgs_text,x
-	stx	wordlen
-	sty	cmdloc
+	cmp	#'>'
+	beq	gotiso
+	cmp	#'<'
+	beq	gotiso
+	sta	wordgs_text,x	Accumulate chars in comparison buffer.
+	iny		Bump character index.
+	inx		Bump number of chars in word.
+	cmp	#WORDGS_SIZE-2	If we haven't filled the buffer,
+	bcc	isolate	 keep accumulating characters.
+	jmp	beep	Otherwise, beep at the user.
+;
+; We've isolated the word in wordgs_text. X-reg = # of characters
+; and Y-reg is the column number of the final character.
+;
+gotiso	lda	#0	Terminate string with
+	sta	wordgs_text,x	 null byte.
+	stx	wordlen	Save length and
+	sty	cmdloc	 position on input line.
 	txa
-	sec
-dir	sbc	#0
+	sec		Subtract the number of
+dir	sbc	#0-0	 character to original cursor.
 	beq	nomove
 	tax
-	jsr	moveright
+	jsr	moveright	Move cursor to end of word.
 nomove	anop
+
 ;
-; start finding matches
+; Look for a match: either a command (if word is in first position),
+; a filename in the current directory, or a variable name.
 ;
 	stz	nummatch
 ;
@@ -1049,41 +1069,58 @@ nomove	anop
 ; accurate...it should serve its purpose well at least.
 ;
 	lda	#1
-	sta	cmdflag	;first, assume it's a command
-	ldy	startpos
-	beq	gotflag
-	dey
-	beq	gotflag
+	sta	cmdflag	Assume it's a command (flag=1).
+	ldy	startpos	If starting position
+	beq	gotflag	 is 0
+	dey		  or 1,
+	beq	gotflag	   it's a command.
 
-flagskip	lda	cmdline,y
-	and	#$FF
-	cmp	#' '
-	bne	chkflag
-	dey
+flagskip	lda	cmdline,y	Keep fetching previous
+	and	#$FF	 characters until
+	cmp	#' '	  a non-space is
+	bne	chkflag	   found, or we run
+	dey		    back to the beginning.
 	bpl	flagskip
 	bra	gotflag
+
+;
+; We've got the first non-space character before the word in question.
+; If it's a meta- character indicating the end of a command, this must
+; be the beginning of a new command. Otherwise it's an argument.
+;
 chkflag	cmp	#';'
 	beq	gotflag
 	cmp	#'|'
 	beq	gotflag
+; NOTE: & can be a command terminator, but also part of >& or >>&
 	cmp	#'&'
-	beq	gotflag
-	stz	cmdflag
+	bne	isarg	Not "&"; must be an argument.
+	cpy	#0	If at start of line (unusual for &!)
+	beq	gotflag	 it must be a command.
+	lda	cmdline-1,y	Get character in front of "&".
+	cmp	#'&>'	Anything except '>'
+	bne	gotflag	 means we've got a command.
 
+isarg	stz	cmdflag	Argument: cmdflag = 0.
+
+;
+; Now that we've established whether we're looking for a command or an
+; argument, see if we're looking for a file name or a variable name
+;
 gotflag	anop
-;
-; Check if the first character is '$', if so, match for variables ONLY
-;
 	lda	wordgs_text
 	and	#$FF
 	cmp	#'$'
 	jne	filem
 
+;
+; The first character is '$': match for variables ONLY
+;
 	ld2	1,idxIndex
-varloop	ReadIndexedGS idxParm
+varloop	ReadIndexedGS idxParm	Get next variable name.
 	lda	NameLen
 	beq	vardone
-	cmp	wordlen	;if shorter than word skip
+	cmp	wordlen	If shorter than word, skip
 	jcc	nextvar
 ;
 ; Scan this variable name to see if it matches wordgs_text
@@ -1101,7 +1138,7 @@ varscan	lda	wordgs_text,x
 ;
 ; We have a match between the variable name and word being typed
 ;
-goodvar	stz	sepstyle	Don't use ":" or "/"
+goodvar	stz	sepstyle	Don't use ":" or "/" separator.
 
 gv02a	anop
 	lda	nummatch	Get the number of matches.
@@ -1143,7 +1180,8 @@ nextvar	inc	idxIndex
 vardone	rts		Return from wordmatch
 
 ;
-; Match by file names; start by moving wordgs_text + trailing "*" to a GS/OS string
+; Match by file name wildcard; start by moving
+; wordgs_text + trailing "*" to a GS/OS string
 ;
 filem	lda	#1
 	sta	iwFlags
@@ -1198,7 +1236,7 @@ initit	InitWildcardGS iwparm
 filematch	anop
 	NextWildcardGS nwparm
 	ldy	NameLen	Get length of name.
-	jeq	filemdone
+	jeq	filemdone	If 0, there's no more to search.
 	cpy	wordlen
 	beq	filematch
 
@@ -1294,10 +1332,10 @@ filemdone	anop
 ;
 ; let's now look at the hashed files
 ;
-p	equ	0
-q	equ	4
+p	equ	0	Direct page
+q	equ	4	 locations.
 
-	ldy	wordlen            ;remove '*' from above
+	ldy	wordlen	;remove '*' from above
 	lda	#0
 	sta	wordgs_text,y
 
@@ -1336,14 +1374,14 @@ hashloop	lda	[p],y
 	ldy	#0
 hl	lda	wordgs_text,y
 	and	#$FF
-               beq	hl0
+	beq	hl0
 	jsr	tolower
 	eor	[q],y
 	and	#$FF
 	bne	nexthash0
 	iny
 	bra	hl
-hl0            inx
+hl0	inx
 	lda	nummatch
 	asl	a
 	asl	a
@@ -1375,7 +1413,7 @@ bilup	lda	[p]
 	ldy	#2
 	ora	[p],y
 	beq	bidone
-               lda	[p]
+	lda	[p]
 	sta	q
 	lda	[p],y
 	sta	q+2
@@ -1388,13 +1426,13 @@ bilup	lda	[p]
 	ldy	#0
 bl	lda	wordgs_text,y
 	and	#$FF
-               beq	bl0
+	beq	bl0
 	eor	[q],y
 	and	#$FF
 	bne	binext
 	iny
 	bra	bl
-bl0            inx
+bl0	inx
 	lda	nummatch
 	asl	a
 	asl	a
@@ -1413,10 +1451,11 @@ bl0            inx
 	inc	nummatch
 	jsr	copycstr
 binext	add2	p,#10,p
-               bra	bilup
+	bra	bilup
 bidone	anop
 
 done	rts		Return from wordmatch.
+
 
 startpos	ds	2
 cmdflag	ds	2
@@ -1425,7 +1464,7 @@ cmdflag	ds	2
 ; GS/OS string holding match word + wildcard "*"
 ;
 wordgsbuf	ds	2
-wordgs_text	ds	256
+wordgs_text	ds	WORDGS_SIZE
 
 ;
 ; Parameter block for shell InitWildcardGS call (p 414 in ORCA/M manual)
@@ -1481,7 +1520,7 @@ sepstyle	ds	2
 keybinddata	DATA
 
 keybindtab	dc	i2'undefined_char',i4'0'		;^@
-	dc	i2'beginning_of_line',i4'0'        ;^A
+	dc	i2'beginning_of_line',i4'0' 	;^A
 	dc	i2'backward_char',i4'0'		;^B
 	dc	i2'undefined_char',i4'0'		;^C
 	dc	i2'list_choices',i4'0'		;^D
@@ -1498,7 +1537,7 @@ keybindtab	dc	i2'undefined_char',i4'0'		;^@
 	dc	i2'undefined_char',i4'0'		;^O
 	dc	i2'up_history',i4'0'		;^P
 	dc	i2'undefined_char',i4'0'		;^Q
-	dc	i2'redisplay',i4'0'		;^R
+	dc	i2'redisplay',i4'0' 		;^R
 	dc	i2'undefined_char',i4'0'		;^S
 	dc	i2'undefined_char',i4'0'		;^T
 	dc	i2'kill_whole_line',i4'0'		;^U
@@ -1512,13 +1551,13 @@ keybindtab	dc	i2'undefined_char',i4'0'		;^@
 	dc	i2'undefined_char',i4'0'		;^]
 	dc	i2'undefined_char',i4'0'		;^^
 	dc	i2'undefined_char',i4'0'		;^_
-              	dc	95i2'raw_char,0,0'			;' ' .. '~'
+	dc	95i2'raw_char,0,0'			;' ' .. '~'
 	dc	i2'backward_delete_char',i4'0'	;^? (DEL)
 
 defescmap	dc	4i2'undefined_char,0,0'		;^@ .. ^C
 	dc	i2'list_choices',i4'0'		;^D
 	dc	3i2'undefined_char,0,0'		;^E .. ^G
-               dc	i2'backward_word',i4'0'		;^H
+	dc	i2'backward_word',i4'0'		;^H
 	dc	i2'complete_word',i4'0'		;^I
 	dc	2i2'undefined_char,0,0'		;^J, ^K
 	dc	i2'clear_screen',i4'0'		;^L
@@ -1538,7 +1577,7 @@ defescmap	dc	4i2'undefined_char,0,0'		;^@ .. ^C
 	dc	i2'undefined_char,0,0'		;^Z
 	dc	i2'complete_word',i4'0'		;^[
 	dc	16i2'undefined_char,0,0'		;^\ .. +
-	dc	i2'beginning_of_line',i4'0'        ; ,
+	dc	i2'beginning_of_line',i4'0' 	; ,
 	dc	i2'undefined_char,0,0'		; 
 	dc	i2'end_of_line',i4'0'		; .
 	dc	19i2'undefined_char,0,0'		; .+1 .. A
@@ -1570,7 +1609,7 @@ vt100key	dc	65i2'undefined_char,0,0'		;^@ ... @
 **************************************************************************
 
 bindkeyfunc	START
-               
+	
 	using	keybinddata
 
 p	equ	0
@@ -1603,7 +1642,7 @@ loop	lda	len
 	clc
 addb	adc	#0
 	tay
-    	lda	[tbl],y
+	lda	[tbl],y
 	cmp	#lead_in
 	beq	next
 	phy
@@ -1613,7 +1652,7 @@ addb	adc	#0
 	stx	p+2
 	ldy	#128*6-2
 	lda	#0
-zap            sta	[0],y
+zap	sta	[0],y
 	dey
 	dey
 	bpl	zap
@@ -1678,7 +1717,7 @@ done	return
 **************************************************************************
 
 bindkey	START
-               
+	
 str	equ	0
 func	equ	str+4
 arg	equ	func+2
@@ -1788,7 +1827,7 @@ foundit	pla
 	jsl	nullfree
 
 exit	return
-                  
+	   
 usage	dc	c'Usage: bindkey [-l] function string',h'0d00'
 errstr	dc	c': undefined function',h'0d00'
 
@@ -1812,7 +1851,7 @@ liststr	dc	c'  backward-char        - move cursor left',h'0d'
 	dc	c'  toggle-cursor        - toggle between insert and overwrite cursor',h'0d'
 	dc	c'  undefined-char       - this key does nothing',h'0d'
 	dc	c'  up-history           - replace command line with previous history',h'0d'
-               dc	h'00'
+	dc	h'00'
 
 nametbl	dc	i4'func1,func2,func3,func4,func5,func6,func7,func8'
 	dc	i4'func9,func10,func11,func12,func13,func14,func15'
@@ -1854,7 +1893,7 @@ functbl	dc	i'backward_char'
 	dc	i'kill_whole_line'
 	dc	i'list_choices'
 	dc	i'newline_char'
-               dc	i'raw_char'
+	dc	i'raw_char'
 	dc	i'redisplay'	
 	dc	i'toggle_cursor'
 	dc	i'undefined_char'
@@ -1942,7 +1981,7 @@ numloop	asl	ch
 	sbc	#'0'
 	clc
 	adc	ch
-               sta	ch
+	sta	ch
 	iny
 	dex
 	beq	casebreak0

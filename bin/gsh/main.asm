@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: main.asm,v 1.6 1998/08/03 17:30:22 tribby Exp $
+* $Id: main.asm,v 1.7 1998/09/08 16:53:11 tribby Exp $
 *
 **************************************************************************
 *
@@ -29,8 +29,8 @@
 
 ; Segment for direct-page and stack
 
-stack    data  STACK		; ends up in main.root
-         kind  $12
+stack    data	STACK		; ends up in main.root
+         kind	$12
 
 ; Define direct-page/stack and fill it with question marks it can be
 ; examined for how much is used.
@@ -60,7 +60,7 @@ init	START
 
 
 MAIN	START
-               
+	
 	using	global
 
 p	equ	0
@@ -85,7 +85,7 @@ argloop	dec	argc	Decrement argument count.
 	beq	go_start	If none left, ready to start working.
 	clc
 	lda	argv	Point to next
-               adc	#4	 argument pointer.
+	adc	#4	 argument pointer.
 	sta	argv
 	ldy	#2
 	lda	[argv]	Set arg to point to
@@ -116,7 +116,7 @@ cmd0	lda	[arg],y
 	sta	[p],y
 	iny
 	bra	cmd0
-cmd1           lda	#' '
+cmd1	lda	#' '
 	sta	[p],y
 	sec		;inc a
 	tya
@@ -126,7 +126,7 @@ cmd1           lda	#' '
 	beq	cmd2
 	clc
 	lda	argv
-               adc	#4
+	adc	#4
 	sta	argv
 	ldy	#2
 	lda	[argv]
@@ -166,7 +166,7 @@ nextarg	cpy	#1
 	jmp	argloop
 
 ; Option = "-c": execute shell commands found in file named by next argument
-parsec         clc
+parsec	clc
 	lda	argv
 	adc	#4
 	sta	argv
