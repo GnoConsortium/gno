@@ -1,0 +1,9 @@
+Name:    rlogin
+Version: 1.0 (November 1997)
+Shell:   GNO & GS/TCP
+Author:  Derek Taubert (from FreeBSD 2.1.0 code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+ Remote login.
