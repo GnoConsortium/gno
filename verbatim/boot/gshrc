@@ -3,7 +3,7 @@
 # GNO 2.0.6 gshrc file (for the bootstrap disk).
 # This file is parsed whenever a gsh shell is started.
 #
-# $Id: gshrc,v 1.3 1999/01/18 01:59:52 gdr-ftp Exp $
+# $Id: gshrc,v 1.4 1999/01/28 05:34:38 gdr-ftp Exp $
 #
 ###
 
@@ -40,7 +40,7 @@ echo "= Don't worry about the fact that this disk contains a v2.0.4 kernel;"
 echo "= a more recent one will be installed.  See Problem Report #62 at"
 echo "= http://www.gno.org/~gno/bugs.html for details."
 echo "="
-echo '= $Id: gshrc,v 1.3 1999/01/18 01:59:52 gdr-ftp Exp $'
+echo '= $Id: gshrc,v 1.4 1999/01/28 05:34:38 gdr-ftp Exp $'
 echo "====================================================================="
 echo " "
 echo " "
@@ -48,5 +48,5 @@ echo "Please read the file README.install on the /gno.boot disk.  You can"
 echo "do this by issuing the command:"
 echo "        more README.install"
 echo "The vi editor is also available.  A vi tutorial is available from"
-echo "http://www.jaws.umn.edu/~tobkin/vi"
+echo 'http://www.jaws.umn.edu/~tobkin/vi'
 echo " "
