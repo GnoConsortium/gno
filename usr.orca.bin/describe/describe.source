@@ -1,5 +1,6 @@
 #=============================================================================
-# List of shell applications for GNO/ME               Last revision: 22 Oct 95
+# List of shell applications for GNO/ME and ORCA/Shell
+# Last revision: 28 Jan 96
 #=============================================================================
 #
 #     About this file
@@ -21,14 +22,11 @@
 #
 #      Online home of describe
 #      ~~~~~~~~~~~~~~~~~~~~~~~
-#  http://www.webzone1.co.uk/www/thesonkpage/describe.htm
+#  http://webzone1.co.uk/www/thesonkpage/describe.htm
 #  ftp://ftp.cco.caltech.edu/pub/apple2/shellutils/
 #
 #    Updates and corrections may be submitted through the web page,
 #  or sent by email to sbehrens@contech.demon.co.uk.
-#
-#    If you have trouble connecting to www.webzone1.co.uk,
-#  try webzone1.co.uk or 194.72.60.96.
 #
 #      To obtain the version number of a file: 
 #      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -39,6 +37,17 @@
 #  NB: "Author" may mean who is maintaing the current port, and may not
 #  actually mean the original author of the program.
 #==============================================================================
+
+Name:    apropos
+Version: 3.0 (24 Jul 95)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu
+
+   Locate commands by keyword.  Bundled with catman, makewhatis, man,
+and whatis in the manpack30.shk archive.
 
 Name:    argv0
 Version: 1.0
@@ -62,6 +71,16 @@ FTP:     ...
    Formats AppleWorks (Classic) Word Processor files for display.  Handles
 most options--including underline, boldface, margins, centering--on all
 terminal types.
+
+Name:    awk
+Version: 1.0
+Shell:   GNO/ME
+Author:  Ported by Jawaid Bazyar
+Contact: bazyar@netcom.com
+Where:   /usr/local/bin
+FTP:     grind.isca.uiowa.edu
+
+   A port of AT&T's AWK string processing language.
 
 Name:    bc
 Version: 1.01
@@ -118,6 +137,16 @@ FTP:     ftp://ftp.cco.caltech.edu/pub/apple2/shellutils
 
    Unpacks files that were packed with Zoo 2.1 or earlier.
 
+Name:    cal
+Version: x
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:
+
+   Prints a calendar for the current month or any month.
+
 Name:    calls
 Version: 2.0 (16 Dec 93)
 Shell:   GNO/ME
@@ -130,15 +159,16 @@ FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu.
 functions within a program.  It's more flexible than Orca shell version. 
 Requires cpp.
 
-Name:    cal
-Version: x
+Name:    catman
+Version: 1.0 (24 Jul 95)
 Shell:   GNO/ME
-Author:  Phillip Vandry
-Contact: vandry@CAM.ORG
-Where:   /usr/bin
-FTP:
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /usr/sbin
+FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu
 
-   Prints a calendar for the current month or any month.
+   Preformat manual reference pages.  Bundled with apropos,
+makewhatis, man, and whatis in the manpack30.shk archive.
 
 Name:    cclean
 Version: 1.02
@@ -174,15 +204,17 @@ FTP:     ...
 for replies, etc..
 
 Name:    chmod
-Version: 1.0
+Version: 2.1
 Shell:   GNO/ME
-Author:  James Brookes
-Contact: jamesb@ecst.csuchico.edu
+Author:  Leslie M. Barstow III
+Contact: wdphoenix@delphi.com
 Where:   /bin
-FTP:     ...
+FTP:     grind.isca.uiowa.edu
 
-   chmod allows the user to modify file permissions on a particular file;
-including the read, write, destroy, backup, and invisible bits.
+   chmod allows you to change the permissions on a file.  This is an
+enhanced version which allows you to change options ala UNIX or using
+the Apple specific flags (UNIX values are translated into Apple
+equivalents).
 
 Name:    copycat
 Version: 1.4.1
@@ -215,6 +247,16 @@ FTP:
 
 A simple dialup utility.
 
+Name:    cut
+Version: 1.0
+Shell:   GNO/ME
+Author:  Jason Perez
+Contact: jperez@ee.tamu.edu
+Where:   /usr/local/bin
+FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu
+
+   Cuts out selected fields of each line of a file.
+
 Name:    date
 Version: 1.2
 Shell:   GNO/ME
@@ -226,7 +268,7 @@ FTP:     ...
    Shows the date and time (optionally, continuously).
 
 Name:    descc
-Version: 1.0.2
+Version: 1.0.3
 Shell:   ORCA/Shell, GNO/ME
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
@@ -236,7 +278,7 @@ FTP:     ftp.cco.caltech.edu
    Compile a source file into a 'describe' database file.
 
 Name:    describe
-Version: 1.0.2
+Version: 1.0.3
 Shell:   ORCA/Shell, GNO/ME
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
@@ -249,7 +291,7 @@ contact, where the utility is, as well as where the utility can be FTPd
 from on the InterNet.
 
 Name:    descu
-Version: 1.0.2
+Version: 1.0.3
 Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
 Contact: gdr@myrias.ab.ca
@@ -257,16 +299,6 @@ Where:   /usr/sbin
 FTP:     ftp.cco.caltech.edu
 
    Update a 'describe' source file.
-
-Name:    dialup
-Version: 1.1
-Shell:   GNO/ME
-Author:  Phillip Vandry
-Contact: vandry@CAM.ORG
-Where:   /usr/sbin
-FTP:     ...
-
-   Run from inittab to handle modems on dialup lines.
 
 Name:    dial
 Version: 1.0
@@ -278,6 +310,26 @@ FTP:     ...
 
    Uses your modem to dial telephone numbers stored in a database by name,
 or looks up the numbers and reports without dialing.
+
+Name:    dialup
+Version: 1.1
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/sbin
+FTP:     ...
+
+   Run from inittab to handle modems on dialup lines.
+
+Name:    diff
+Version: 1.0 (12 Dec 94)
+Author:  Ported by Devin Reade
+Contact: <gdr@myrias.ab.ca>
+Where:   /usr/bin
+FTP:     cco.caltech.edu, grind.isca.uiowa.edu.
+
+   Show differences in files.  This is a port based on GNU diff v2.6.  Some
+less-used features have been temporarily disabled for v1.0.
 
 Name:    dmake
 Version: 1.0 (4 Jul 94)
@@ -342,6 +394,16 @@ FTP:
 
    Evaluates matehmatical expressions; prints result in normal and
 scientific notation. Uses C like syntax.
+
+Name:    figlet
+Version: 2.0
+Shell:   GNO/ME
+Author:  Ported by Jawaid Bazyar
+Contact: bazyar@csn.org
+Where:   /usr/local/bin
+FTP:     grind.isca.uiowa.edu
+
+   Creates styled large characters out of ordinary screen characters.
 
 Name:    finger
 Version: 1.1 
@@ -426,6 +488,16 @@ FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu
 GNU zip -- compress or expand files.  Ported from the Free Software
 Foundation's gzip.  Also has functionality of gunzip and gzcat.
 
+Name:    init
+Version: 1.0
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     ...
+
+   Sends commands to the init daemon.
+
 Name:    initd
 Version: 1.4
 Shell:   GNO/ME
@@ -436,16 +508,6 @@ FTP:     ...
 
    Starts and kills processes, maintains the system run level, and runs
 syslogd (log daemon)
-
-Name:    init
-Version: 1.0
-Shell:   GNO/ME
-Author:  Phillip Vandry
-Contact: vandry@CAM.ORG
-Where:   /usr/bin
-FTP:     ...
-
-   Sends commands to the init daemon.
 
 Name:    joinpara
 Version: 1.0 (16 Dec 93)
@@ -503,6 +565,17 @@ Where:   /usr/sbin
 FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu
 
    Generates the whatis database used by apropos(1) and whatis(1).
+
+Name:    man
+Version: 3.0 (24 Jul 95)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu
+
+   Display manual reference pages.  Bundled with apropos, catman,
+makewhatis, and whatis in the manpack30.shk archive.
 
 Name:    martian
 Version: 1.0
@@ -577,17 +650,6 @@ FTP:     ftp://ftp.cco.caltech.edu/pub/apple2/shellutils/
 
    Merges a FIDO nodediff into a FIDO nodelist
 
-Name:    newuserv
-Version: 1.0
-Shell:   GNO/ME
-Author:  James Brookes
-Contact: jamesb@ecst.csuchico.edu
-Where:   /usr/sbin
-FTP:     ...
-
-   Create a home directory with basic gshrc for new user, and add user
-to /var/adm/newuser/newusers file for validation by the system operator.
-
 Name:    newuser
 Version: 1.0
 Shell:   GNO/ME
@@ -598,6 +660,17 @@ FTP:     ...
 
    Create a home directory with basic gshrc for a new user, and add user
 into /etc/passwd file for immediate access.
+
+Name:    newuserv
+Version: 1.0
+Shell:   GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/sbin
+FTP:     ...
+
+   Create a home directory with basic gshrc for new user, and add user
+to /var/adm/newuser/newusers file for validation by the system operator.
 
 Name:    occ
 Version: 1.13
@@ -620,6 +693,27 @@ FTP:     ...
 
    Shows the current process or a specified process and climbs up to the top
 level process.
+
+Name:    patch
+Version: 1.0 (12 Nov 95)
+Shell:   GNO/ME
+Author:  Ported by Devin Reade.
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu
+ 
+   Apply diffs to an original file.  This is based on BSD patch v2.0pl12u8.
+
+Name:    pbmtoiw
+Version: 1.0
+Shell:   GNO/ME
+Author:  Thomas Okken
+Contact: thomas@animal.hobby.nl, tommasso@hacktic.nl
+Where:   /usr/bin
+FTP:     grind.isca.uiowa.edu
+
+   Reads a portable bitmap and converts it to graphics codes for the
+Apple Imagewriter printer.
 
 Name:    phone
 Version: 1.0.1
@@ -661,6 +755,17 @@ Where:   /usr/local/bin or /usr/games
 FTP:     ftp://ftp.cco.caltech.edu/pub/apple2/shellutils
 
    Creates random names by a set of certain rules.
+
+Name:    rot13
+Version: 1.0
+Shell:   ORCA/Shell, GNO/ME
+Author:  Leslie M. Barstow III
+Contact: wdphoenix@delphi.com
+Where:   /usr/local/bin
+FTP:     grind.isca.uiowa.edu
+
+   rot13 allows you to encrypt and decrypt rot13 text, which is usually
+used in Usenet News to hide spoilers and provocative material.
 
 Name:    rsound
 Version: 1.1a
@@ -814,6 +919,17 @@ FTP:     ftp://ftp.cco.caltech.edu/pub/apple2/shellutils/
 
    Uncompresses PowerPacker(tm) documents, which are created by them Amigoids.
 
+Name:    uptime
+Version: 1.0
+Shell:   GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/bin
+FTP:     ...
+
+   Reports the time, amount of time the system has been up, number of
+users, and system load averages for the last 1, 5, and 15 minutes.
+
 Name:    uptimed
 Version: 1.0
 Shell:   GNO/ME
@@ -825,16 +941,26 @@ FTP:     ...
    Keeps track of system load averages for the uptime utility over the last
 1, 5 and 15 minutes.
 
-Name:    uptime
+Name:    wall
 Version: 1.0
 Shell:   GNO/ME
-Author:  James Brookes
-Contact: jamesb@ecst.csuchico.edu
+Author:  Phil Vandry
+Contact: vandry@CAM.ORG
 Where:   /usr/bin
 FTP:     ...
 
-   Reports the time, amount of time the system has been up, number of
-users, and system load averages for the last 1, 5, and 15 minutes.
+   Sends a message to the terminal of every logged on user.
+
+Name:    whatis
+Version: 3.0 (24 Jul 95)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu
+
+   Locate commands by name.  Bundled with apropos, catman, makewhatis,
+and man in the manpack30.shk archive.
 
 Name:    whereis
 Version: v1.1 (2 Jan 93)
@@ -910,7 +1036,8 @@ Author:  Dave J. Roberts
 Contact: dave@mary.iia.org
 Where:   /usr/X/bin
 FTP:     ftp.cco.caltech.edu, grind.isca.uiowa.edu 
-         
+
+  Graphical login prompt for GNO/ME, X11-style
 
 Name:    zsh
 Version: 2.0 
@@ -922,3 +1049,8 @@ FTP:
  
 zsh is a program used to put a user's account in suspension.
 It prints a message and then exits.
+
+
+
+
+

@@ -10,7 +10,7 @@
  * Copyright 1995 by Devin Reade for James Brookes' describe(1) utility.
  * See the included README file and man page for details.
  *
- * $Id: descu.c,v 1.2 1996/01/22 02:40:49 gdr Exp $
+ * $Id: descu.c,v 1.3 1996/01/28 17:39:29 gdr Exp $
  */
 
 #pragma optimize -1
@@ -28,7 +28,7 @@
 #include <getopt.h>
 #include "desc.h"
 
-#define _VERSION_     "v1.0.2"
+#define _VERSION_     "v1.0.3"
 #define MAX_BUFFER    65534
 #define SLOTS_QUANTUM 20
 #define REJECT_FILE   "descu.rej"
@@ -315,15 +315,15 @@ int my_stricmp (const char *cs, const char *ct)
     if (a > b) return 1;
     cs++; ct++;
   }
-  if (*cs == *ct) return 0;
-  else if (*cs) return -1;
-  else return 1;
+  if (*cs == *ct) return 0; /* cs and ct of same length */
+  else if (*cs) return 1; /* cs longer than ct */
+  else return -1; /* cs shorter than ct */
 }
 
 /*
- * ns_strcmp (no-space string compare) -- compare two strings, ignoring
- *         a leading NAME_SHORT and whitespace, and ignoring trailing
- *         whitespace.
+ * ns_stricmp (no-space string compare) -- compare two strings
+ *    case-insensitive, ignoring a leading NAME_SHORT and whitespace,
+ *    and ignoring trailing whitespace.
  *
  *         Returns zero if strings are equal, -1 if a<b, 1 if a>b.
  *         The following are therefore equal:
@@ -331,13 +331,14 @@ int my_stricmp (const char *cs, const char *ct)
  *           "Name:  test     "
  *         The following are inequal:
  *           "Name: one"
- *           "Name: One"
+ *           "Name: two"
  */
 
-int ns_strcmp (char *a, char *b) {
+int ns_stricmp (char *a, char *b) {
   char *p;
+  char ca, cb;
   size_t len;
-  
+
   /* strip NAME_SHORT and leading space */
   len = strlen(NAME_SHORT);
   a+=len;
@@ -359,14 +360,14 @@ int ns_strcmp (char *a, char *b) {
   *(p+1) = '\0';
 
   /* do the string comparison */
-  while (*a && *b) {
-    if (*a < *b) return -1;
-    if (*a > *b) return 1;
+  while ((ca = tolower(*a)) && (cb = tolower(*b))) {
+    if (ca < cb) return -1;
+    if (ca > cb) return 1;
     a++; b++;
   }
-  if (*a == *b) return 0;
-  else if (*a) return -1;
-  else return 1;
+  if (*a == *b) return 0; /* a and b of same length */
+  else if (*a) return 1; /* a longer than b */
+  else return -1; /* a shorter than b */
 }
 
 
@@ -480,7 +481,7 @@ int main(int argc, char **argv) {
 
   /* first stage; merge while we have two arrays */
   while ((i<array1SlotsUsed) && (j<array2SlotsUsed)) {
-    compare = ns_strcmp (entryArray1[i]->name, entryArray2[j]->name);
+    compare = ns_stricmp (entryArray1[i]->name, entryArray2[j]->name);
     if (compare < 0) {
       fprintf(outfp,"%s\n%s\n",entryArray1[i]->name,entryArray1[i]->data);
       i++;

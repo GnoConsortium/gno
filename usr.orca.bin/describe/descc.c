@@ -1,6 +1,10 @@
 /*                                                                        */
 /* descc - compile info file into describe database file                  */
 /*                                                                        */
+/*	v1.0.3  -  No changes, but changed version number to keep         */
+/*                 in line with descu.                                    */
+/*                 Soenke Behrens [Sun Jan 28 1996]                       */
+/*                                                                        */
 /*      v1.0.2  -  One bug removed. Recompiled to accomodate new          */
 /*                 SHELL line and DESCDB environment var                  */
 /*                 Soenke Behrens [Sun Oct 22 1995]                       */
@@ -42,7 +46,7 @@
 #include <assert.h>
 #include "desc.h"
 
-#define _VERSION_ "v1.0.2"
+#define _VERSION_ "v1.0.3"
 
 /* prototypes */
 
@@ -50,6 +54,7 @@ void usage(char *callname);
 void version(char *callname);
 void puke(int error,int lines);
 int  mygets(char *buffer, int2 *lines, FILE *FInPtr);
+char *strdup (const char *str);
 
 int Vflag;
 

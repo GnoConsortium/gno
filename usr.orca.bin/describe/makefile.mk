@@ -5,9 +5,9 @@
 
 # Use -DSTACK_CHECK in CFLAGS to show stack usage.
 
-CFLAGS	+= -O -w -v -I/usr/include -s768
+CFLAGS	+= -O -v -I/usr/include -s768
 LDFLAGS	+= -v
-LDLIBS	+= -l/usr/lib/lgetopt -l/usr/lib/stack
+LDLIBS	+= 
 BINDIR	= /usr/local/bin
 SBINDIR	= /usr/sbin
 MANDIR	= /usr/man
@@ -17,30 +17,22 @@ build:  describe descc descu
 
 descc:	descc.o basename.o descc.r
 	@purge
-	$(CC) $(LDFLAGS) $< -o $@ $(LDLIBS)
+	$(CC) $(LDFLAGS) descc.o basename.o -o $@ $(LDLIBS)
 	copyfork descc.r descc
 
 describe: describe.o basename.o describe.r
 	@purge
-	$(CC) $(LDFLAGS) $< -o $@ $(LDLIBS)
+	$(CC) $(LDFLAGS) describe.o basename.o -o $@ $(LDLIBS)
 	copyfork describe.r describe
 
-descu:	descu.o basename.o descu.r
+descu:	descu.o basename.o vaend.o descu.r
 	@purge
-	$(CC) $(LDFLAGS) $< -o $@ $(LDLIBS)
+	$(CC) $(LDFLAGS) descu.o basename.o vaend.o -o $@ $(LDLIBS)
 	copyfork descu.r descu
 
-basename.o: basename.c
-	$(CC) -c $(CFLAGS) basename.c
-
-descc.o: descc.c desc.h
-	$(CC) -c $(CFLAGS) descc.c
-
-describe.o: describe.c desc.h
-	$(CC) -c $(CFLAGS) describe.c
-
-descu.o: descu.c desc.h
-	$(CC) -c $(CFLAGS) descu.c
+descc.o:: desc.h
+describe.o:: desc.h
+descu.o:: desc.h
 
 install:
 	$(RM) -f /usr/local/bin/descc

@@ -16,13 +16,14 @@
 #include <getopt.h>
 #include "desc.h"
 
-#define _VERSION_ "v1.0.2"
+#define _VERSION_ "v1.0.3"
 
 /* prototypes */
 
 void usage(char *callname);
 void print_entry(FILE *FInPtr, long int index);
 void myprintf(char *string, int wordwrap_size);
+char *strdup (const char *str);
 
 int Vflag;
 

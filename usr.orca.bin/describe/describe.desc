@@ -1,5 +1,5 @@
 Name:    describe
-Version: 1.0.2
+Version: 1.0.3
 Shell:   ORCA/Shell, GNO/ME
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
@@ -10,4 +10,3 @@ FTP:     ftp.cco.caltech.edu
 database; giving utility name, version, intended shell, author, author's
 contact, where the utility is, as well as where the utility can be FTPd
 from on the InterNet.
-
