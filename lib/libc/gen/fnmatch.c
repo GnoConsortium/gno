@@ -38,7 +38,7 @@
  * This implementation uses recursion.  It should be rewritten to avoid
  * it due to stack limitations on the IIgs.
  *
- * $Id: fnmatch.c,v 1.2 1997/09/21 06:05:00 gdr Exp $
+ * $Id: fnmatch.c,v 1.3 1999/11/22 05:41:12 stever Exp $
  *
  * This file is formatted for tab stops every 8 characters.
  */
@@ -56,29 +56,120 @@ static char sccsid[] = "@(#)fnmatch.c	8.2 (Berkeley) 4/16/94";
  * Compares a filename or pathname to a pattern.
  */
 
+#include <ctype.h>
 #include <fnmatch.h>
 #include <string.h>
+#include <stdio.h>
+
+#ifndef __GNO__
+#include "collate.h"
+#else
 #include <stdlib.h>
-#include <ctype.h>
 #include <err.h>
+#endif
 
 #define	EOS	'\0'
 
-static const char *rangematch __P((const char *, int, int));
-static void _fnmatch_map (const char *, const char *, char **, char **, int);
+#define RANGE_MATCH     1
+#define RANGE_NOMATCH   0
+#define RANGE_ERROR     (-1)
 
+static int rangematch __P((const char *, char, int, char **));
+
+#ifndef __STDC__
+int
+fnmatch(pattern, string, flags)
+	const char *pattern, *string;
+	int flags;
+#else
+
+#ifdef __GNO__
+static int fnm(const char *pattern, const char *string, int flags);
+
+/* Wrapper to handle differing pathname separators */
 int
 fnmatch(const char *opattern, const char *ostring, int flags)
 {
-	const char *stringstart;
-	char c, test;
-	char *pattern, *string;
+	char *pattern;
+	char *string;
+	char *p;
+	int i;
+	int result;
 
-	_fnmatch_map(ostring, opattern, &string, &pattern, flags);
+	if (flags & FNM_PATHNAME) {
+
+		/*
+		 * Create copies of opattern and ostring
+		 */
+		pattern = malloc(strlen(opattern) + 1);
+		string = malloc(strlen(ostring) + 1);
+		if (pattern == NULL || string == NULL) {
+			err (1, "fnmatch could not allocate internal buffer");
+			/*NOTREACHED*/
+		}
+		strcpy(pattern, opattern);
+		strcpy(string, ostring);
+
+		/*
+		 * If either pattern or string contain _both_ a ':' and a '/',
+		 * then we leave them exactly as they are.  Otherwise, all
+		 * colons are mapped to '/'.
+		 */
+		if (!((strchr(pattern, ':') && strchr(pattern, '/')) ||
+		     (strchr(string,  ':') && strchr(string,  '/')))) {
+			for (i=0; i<2; i++) {
+				switch (i) {
+				case 0:
+					p = pattern;
+					break;
+				case 1:
+					p = string;
+					break;
+				}
+				while (*p) {
+					if (*p == ':') {
+						*p = '/';
+					}
+					p++;
+				}
+			}
+		}
+	}
+	else {
+		pattern = opattern;
+		string = ostring;
+	}
+
+	/* Call the real fnmatch() */
+	result = fnm(pattern, string, flags);
+
+	if (flags & FNM_PATHNAME) {
+		free(pattern);
+		free(string);
+	}
+
+	return result;
+}
+
+static int
+fnm(const char *pattern, const char *string, int flags)
+
+#else /* not GNO */
+int
+fnmatch(const char *pattern, const char *string, int flags)
+#endif
+
+#endif
+{
+	const char *stringstart;
+	char *newp;
+	char c, test;
 
 	for (stringstart = string;;)
 		switch (c = *pattern++) {
 		case EOS:
+			if ((flags & FNM_LEADING_DIR) && *string == '/')
+				return (0);
 			return (*string == EOS ? 0 : FNM_NOMATCH);
 		case '?':
 			if (*string == EOS)
@@ -105,7 +196,8 @@ fnmatch(const char *opattern, const char *ostring, int flags)
 			/* Optimize for pattern with * at end or before /. */
 			if (c == EOS)
 				if (flags & FNM_PATHNAME)
-					return (strchr(string, '/') == NULL ?
+					return ((flags & FNM_LEADING_DIR) ||
+					    strchr(string, '/') == NULL ?
 					    0 : FNM_NOMATCH);
 				else
 					return (0);
@@ -127,11 +219,22 @@ fnmatch(const char *opattern, const char *ostring, int flags)
 		case '[':
 			if (*string == EOS)
 				return (FNM_NOMATCH);
-			if (*string == '/' && flags & FNM_PATHNAME)
+			if (*string == '/' && (flags & FNM_PATHNAME))
 				return (FNM_NOMATCH);
-			if ((pattern =
-			    rangematch(pattern, *string, flags)) == NULL)
+			if (*string == '.' && (flags & FNM_PERIOD) &&
+			    (string == stringstart ||
+			    ((flags & FNM_PATHNAME) && *(string - 1) == '/')))
 				return (FNM_NOMATCH);
+
+			switch (rangematch(pattern, *string, flags, &newp)) {
+			case RANGE_ERROR:
+				goto norm;
+			case RANGE_MATCH:
+				pattern = newp;
+				break;
+			case RANGE_NOMATCH:
+				return (FNM_NOMATCH);
+			}
 			++string;
 			break;
 		case '\\':
@@ -143,15 +246,32 @@ fnmatch(const char *opattern, const char *ostring, int flags)
 			}
 			/* FALLTHROUGH */
 		default:
-			if (c != *string++)
+		norm:
+			if (c == *string)
+				;
+			else if ((flags & FNM_CASEFOLD) &&
+				 (tolower((unsigned char)c) ==
+				  tolower((unsigned char)*string)))
+				;
+			else
 				return (FNM_NOMATCH);
+			string++;
 			break;
 		}
 	/* NOTREACHED */
 }
 
-static const char *
-rangematch(const char *pattern, int test, int flags)
+#ifndef __STDC__
+static int
+rangematch(pattern, test, flags, newp)
+	const char *pattern;
+	char test;
+	int flags;
+	char **newp;
+#else
+static int
+rangematch(const char *pattern, char test, int flags, char **newp)
+#endif
 {
 	int negate, ok;
 	char c, c2;
@@ -163,91 +283,56 @@ rangematch(const char *pattern, int test, int flags)
 	 * consistency with the regular expression syntax.
 	 * J.T. Conklin (conklin@ngai.kaleida.com)
 	 */
-	if (negate = (*pattern == '!' || *pattern == '^'))
+	if ( (negate = (*pattern == '!' || *pattern == '^')) )
 		++pattern;
 
-	for (ok = 0; (c = *pattern++) != ']';) {
+	if (flags & FNM_CASEFOLD)
+		test = tolower((unsigned char)test);
+
+	/*
+	 * A right bracket shall lose its special meaning and represent
+	 * itself in a bracket expression if it occurs first in the list.
+	 * -- POSIX.2 2.8.3.2
+	 */
+	ok = 0;
+	c = *pattern++;
+	do {
 		if (c == '\\' && !(flags & FNM_NOESCAPE))
 			c = *pattern++;
 		if (c == EOS)
-			return (NULL);
+			return (RANGE_ERROR);
+
+		if (c == '/' && (flags & FNM_PATHNAME))
+			return (RANGE_NOMATCH);
+
+		if (flags & FNM_CASEFOLD)
+			c = tolower((unsigned char)c);
+
 		if (*pattern == '-'
 		    && (c2 = *(pattern+1)) != EOS && c2 != ']') {
 			pattern += 2;
 			if (c2 == '\\' && !(flags & FNM_NOESCAPE))
 				c2 = *pattern++;
 			if (c2 == EOS)
-				return (NULL);
+				return (RANGE_ERROR);
+
+			if (flags & FNM_CASEFOLD)
+				c2 = tolower((unsigned char)c2);
+
+#ifndef __GNO__
+			if (__collate_load_error ?
+			    c <= test && test <= c2 :
+			       __collate_range_cmp(c, test) <= 0
+			    && __collate_range_cmp(test, c2) <= 0
+			   )
+#else
 			if (c <= test && test <= c2)
+#endif
 				ok = 1;
 		} else if (c == test)
 			ok = 1;
-	}
-	return (ok == negate ? NULL : pattern);
-}
+	} while ((c = *pattern++) != ']');
 
-static void
-_fnmatch_map (const char *opath, const char *orex, char **npath, char **nrex,
-	      int flags) {
-	static char *path = NULL;
-	static char *rex = NULL;
-	char *p;
-	int i;
-	
-	/*
-	 * create copies of opath and orex; this depends on an
-	 * ANSI implementation of realloc (accepts NULL pointer)
-	 */
-	path = realloc(path, strlen(opath) + 1);
-	rex = realloc(rex, strlen(orex) + 1);
-	if (path == NULL || rex == NULL) {
-		err (1, "fnmatch could not allocate internal buffer");
-		/*NOTREACHED*/
-	}
-	strcpy(path, opath);
-	strcpy(rex, orex);
-
-	/* fold case if necessary */
-	if (flags & FNM_CASEFOLD) {
-		for (p = path; *p != '\0'; p++) {
-			if (isupper(*p)) {
-				*p = _tolower(*p);
-			}
-		}
-		for (p = rex; *p != '\0'; p++) {
-			if (isupper(*p)) {
-				*p = _tolower(*p);
-			}
-		}
-	}
-
-	/*
-	 * If either pattern or string contain _both_ a ':' and a '/',
-	 * then we leave them exactly as they are.  Otherwise, all colons
-	 * are mapped to '/'.
-	 */
-	if (!((strchr(path, ':') && strchr(path, '/')) ||
-	     (strchr(rex,  ':') && strchr(rex,  '/')))) {
-		for (i=0; i<2; i++) {
-			switch (i) {
-			case 0:
-				p = path;
-				break;
-			case 1:
-				p = rex;
-				break;
-			}
-			while (*p) {
-				if (*p == ':') {
-					*p = '/';
-				}
-				p++;
-			}
-		}
-	}
-
-	/* give the caller pointers to our buffer */	     
-	*npath = path;
-	*nrex = rex;
-	return;
+	*newp = (char *)pattern;
+	return (ok == negate ? RANGE_NOMATCH : RANGE_MATCH);
 }
