@@ -1,0 +1,245 @@
+SANE Glue Code for ORCA/C 2.1 or later
+Written in 1997 by Soenke Behrens
+
+Legal Stuff
+===========
+
+This library and the accompanying source code are hereby placed
+into the Public Domain. There is no warranty, express or implied,
+on the performance of the library or source code. The author is not
+liable for any damage that may occur as a direct or indirect result
+of using the library or source code.
+
+Installation
+============
+
+In GNO/ME, run "dmake install".
+This will copy a changed sane.h to /lang/orca/include and the library
+lsaneglue to 13.
+If, on your system, includes are kept in a different directory (say
+13/orcacdefs), either copy the files manually or edit the file
+"makefile" to use a different path.
+
+In ORCA/Shell, copy the changed include file and the library
+manually.
+
+Afterwards, use a directory ordering utility such as ProSel-16
+to make sure lsaneglue comes _before_ ORCALIB.
+
+Documentation, Use
+==================
+
+lsaneglue is a library that contains code to let you call
+SANE functions directly from ORCA/C. To avoid namespace
+conflicts with math.h, it was necessary to change sane.h.
+Thus, all SANE functions are now prefixed with "s_" (e.g.
+"annuity" became "s_annuity", and "sin" became "s_sin").
+This lets you choose easily between the SANE and ISO/C
+implementations of the same function.
+
+Below you will find a brief overview over the functions in
+lsaneglue. This overview does not replace, however, proper
+documentation. To fully understand SANE, you will need the
+"Apple Numerics Manual, 2nd Edition" by Apple Computer, Inc.,
+ISBN 0-201-17738-2, published by Addison-Wesley Publishing
+Company, Inc.
+SANE is also introduced in the "Apple IIgs Toolbox Reference,
+Volume 2", Chapter 18.
+
+I find the functions to control the SANE environment (rounding
+direction, halts &c.), the functions to spot NaNs (classification
+functions) as well as the functions that give you a good pi, NaN
+and INF particularly useful.
+
+Brief SANE function overview
+============================
+
+There is one function in lsaneglue that has nothing to do with
+SANE:
+
+int findfpcp(void);
+
+This function will find an FPE or NC card and return the slot number
+(or -1 if card not found). You can use the output of this function
+for the ORCA/C setfpeslot(), which is used when having ORCA/C
+create code for the FPE/NC directly (#pragma float 1 1).
+
+Now for the SANE interface functions.
+I will give the prototype of the function, and a one-line description
+on the following line. Page numbers refer to Apple Numerics Manual.
+
+NB: Use the file "sane.h" itself as reference for constants used
+  to set/test exceptions, rounding direction, rounding precision,
+  number classes, ordering relations, formatting styles and NAN codes.
+ 
+void		s_num2dec(DecForm *f, extended x, Decimal *d);
+  Convert x to SANE decimal record. Pg 28
+
+extended	s_dec2num(Decimal *d);
+  Convert SANE decimal record to extended. Pg 28f
+
+void		s_str2dec(char *s, short *ix, Decimal *d, short *vp);
+  Convert string s to SANE decimal record. Pg 30f
+
+void		s_dec2str(DecForm *f, Decimal *d, char *s);
+  Convert SANE decimal record d to string. Pg 31ff
+
+extended	s_fabs(extended x);
+  Get the absolute of x (make sign positive). Pg 49
+
+extended	s_fneg(extended x);
+  Reverse sign of x. Pg 49
+
+extended	s_remainder(extended x, extended y, short *quo);
+  Get the remainder of x and y. Pg 46f
+
+extended	s_sqrt(extended x);
+  Compute square root of x. Pg 46
+
+extended	s_rint(extended x);
+  Round x to integer in current rounding direction. Pg 47
+
+extended	s_scalb(short n, extended x);
+  Return (x times 2^n). Pg 50
+
+extended	s_logb(extended x);
+  Compute binary exponent of normalized x. Pg 50
+
+extended	s_copysign(extended x, extended y);
+  Return y with sign of x. Pg 49
+
+extended	s_nextfloat(extended x, extended y);
+  Return next float number after x in direction of y. Pg 50
+
+extended	s_nextdouble(extended x, extended y);
+  Return next double number after x in direction of y. Pg 50
+
+extended	s_nextextended(extended x, extended y);
+  Return next extended number after x in direction of y. Pg 50
+
+extended	s_log2(extended x);
+  Return base-2 logarithm of x. Pg 62
+
+extended	s_log(extended x);
+  Return base-e (natural) logarithm of x. Pg 62
+
+extended	s_log1(extended x);
+  Return base-e (natural) logarithm of (x+1). Pg 62
+
+extended	s_exp2(extended x);
+  Return base-2 exponantial of x (2^x). Pg 63f
+
+extended	s_exp(extended x);
+  Return base-e (natural) exponantial of x (x^e). Pg 63f
+
+extended	s_exp1(extended x);
+  Return base-e (natural) exponantial of x, minus 1 (x^e - 1). Pg 63f
+
+extended	s_power(extended x, extended y);
+  Return x^y. Pg 63f
+
+extended	s_ipower(extended x, short i);
+  Return x^i. Pg 63f
+
+extended	s_compound(extended r, extended n);
+  Compute compound (1+r)^n. Pg 64f
+
+extended	s_annuity(extended r, extended n);
+  Compute annuity (1-(1+r)^n)/r. Pg 65
+
+extended	s_tan(extended x);
+  Return tangent of x. Pg 67f
+
+extended	s_sin(extended x);
+  Return sine of x. Pg 67
+
+extended	s_cos(extended x);
+  Return cosine of x. Pg 67
+
+extended	s_atan(extended x);
+  Return arctangent of x. Pg 67f
+
+extended	s_randomx(extended *x);
+  Return pseudorandom integer value with seed x. Pg 67
+
+numclass	s_classfloat(extended x);
+  Return classification of float x. Pg 44
+
+numclass	s_classdouble(extended x);
+  Return classification of double x. Pg 44
+
+numclass	s_classcomp(extended x);
+  Return classification of comp x. Pg 44
+
+numclass	s_classextended(extended);
+  Return classification of extended x. Pg 44
+
+int		s_signnum(extended x);
+  Return sign of x: 0 if positive, 1 if negative. Pg 44
+
+void		s_setexception(exception e, long b);
+  Clear or set SANE exceptions. Pg 54ff
+
+long		s_testexception(exception e);
+  Check whether SANE exception is currently set. Pg 54ff
+
+void		s_sethalt(exception e, long b);
+  Clear or set SANE exception halts. Pg 54ff
+
+long		s_testhalt(exception e);
+  Check whether SANE exception halt is currently set. Pg 54ff
+
+void		s_setround(rounddir r);
+  Set SANE rounding direction. Pg 52f
+
+rounddir	s_getround(void);
+  Get SANE rounding direction. Pg 52f
+
+void		s_setprecision(roundpre p);
+  Set SANE rounding precision. Pg 53
+
+roundpre	s_getprecision(void);
+  Get SANE rounding precision. Pg 53
+
+void		s_setenvironment(environment e);
+  Set SANE environment word. Pg 57
+
+void		s_getenvironment(environment *e);
+  Get SANE environment word. Pg 57
+
+void		s_procentry(environment *e);
+  Save SANE environment word, then default it. Pg 57
+
+void		s_procexit(environment e);
+  Restore SANE environment word, then signal exceptions. Pg 57
+
+haltvector	s_gethaltvector(void);
+  Get SANE halt vector. Pg 54
+
+void		s_sethaltvector(haltvector v);
+  Set SANE halt vector. Pg 54
+
+relop		s_relation(extended x, extended y);
+  Return relation of x to y. Pg 49
+
+extended	s_nan(unsigned char c);
+  Return NaN(c).
+
+extended	s_inf(void);
+  Return +INF (Infinity).
+
+extended	s_pi(void);
+  Return pi constant (3.141592653589793238512808959)
+
+
+Errors in SANE toolkit
+======================
+
+The fclass functions should return the sign of the passed number
+in n-bit and Y. They do not report the sign at all, though, which
+has to be considered a bug. s_signnum() has been rewritten to not
+rely on fclassx any more.
+
+Soenke Behrens
+September 1997
+sbehrens@bigfoot.com
