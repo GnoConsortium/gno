@@ -9,7 +9,7 @@
  * Unless otherwise specified, see the respective man pages for details
  * about these routines.
  *
- * $Id: syscall.c,v 1.5 1997/10/30 04:46:53 gdr Exp $
+ * $Id: syscall.c,v 1.6 1997/12/21 20:13:19 gdr Exp $
  *
  * This file is formatted with tab stops every 3 columns.
  */
@@ -46,6 +46,7 @@ segment "libc_sys__";
 #include <fcntl.h>
 #include <stdarg.h>
 #include <sys/mount.h>
+#include <misctool.h>
 
 /*
  * This is the maximum file name length allowed to be returned by GS/OS
@@ -643,6 +644,8 @@ getpgrp (void) {
  * gettimeofday
  *
  * IIgs HACK!  HACK!  HACK!  We need a real gettimeofday!
+ * The implementation for settimeofday is a start, but we're not currently
+ * handling timezones properly.
  */
  
 int
@@ -901,6 +904,90 @@ rmdir (const char *path) {
       result = -1;
    }
    return result;
+}
+
+/*
+ * settimeofday
+ *
+ * This implementation is not complete; it doesn't currently handle
+ * timezone information.
+ */
+
+#define SECS_PER_YEAR	31536000	/* number of seconds in 365 days */
+
+int
+settimeofday (struct timeval *tp, struct timezone *notused)
+{
+	Byte month, day, curYear, hour, minute, second;
+	long mytime;
+	int i, year;
+	HexTime hextime;
+	int monthanddays[12] = { 31,28,31,30,31,30,31,31,30,31,30,31};
+
+	if (geteuid() != 0) {
+		/* not superuser */
+		errno = EPERM;
+		return -1;
+	}
+	if (tp == NULL) {
+		/* No time specified */
+		return 0;
+	}
+
+	mytime = tp->tv_sec; 
+
+	/* Since microseconds cannot be set, tv_usec is ignored. */
+
+	year = 1970;
+	for (i = 1970; i < 2155; i++) {
+		mytime -= SECS_PER_YEAR;
+		if (mytime < 0) {
+			break;
+		}
+		if ((year % 4 == 0) && (year != 2100)) {
+			/* leap year */
+      			mytime -= 86400;
+			if (mytime < 0) {
+				mytime += 86400;
+				i=2155;
+				break;
+			} 
+		}
+		year++;
+	}
+
+	hextime.curYear = (Byte) year - 1900;
+	mytime += SECS_PER_YEAR;		/* add the last subtraction back in */
+  
+	if ((year % 4 == 0) && (year != 2100)) {
+		monthanddays[1] = 29;
+	}
+
+	hextime.month = (Byte) 0;
+	for (i = 0; i < 12; i++) {
+		mytime -= (monthanddays[i]) * 86400;
+		if (mytime < 0) {
+			mytime += monthanddays[i] * 86400;
+			i=12;
+			break;
+		} 
+		hextime.month++; 
+	}
+
+	hextime.day = (Byte) mytime / 86400;
+	mytime = mytime % 86400;
+
+	hextime.hour = (Byte) mytime / 3600;
+	mytime = mytime % 3600;
+
+	hextime.minute = (Byte) mytime / 60;
+	mytime = mytime % 60;
+
+	hextime.second = (Byte) mytime;
+
+	WriteTimeHex(hextime);
+
+	return 0;
 }
 
 /*
