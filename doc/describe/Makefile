@@ -1,13 +1,13 @@
 #
-# $Id: Makefile,v 1.4 1998/01/17 21:33:10 gdr Exp $
+# $Id: Makefile,v 1.5 1998/02/18 00:29:26 gdr-ftp Exp $
 #
 # Devin Reade, January 1998
 #
 
 # What is the current version of describe, descc, and descu?  (They're
 # in lockstep.)
-VERSION_SHORT	= 105
-VERSION_LONG	= 1.0.5
+VERSION_SHORT	= 106
+VERSION_LONG	= 1.0.6
 
 
 ###################################################################

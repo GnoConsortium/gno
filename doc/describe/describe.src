@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Sat Jan 17 21:29:17 1998
+# Last revision: Wed Feb 18 00:27:39 1998
 #
-# $Id: describe.src,v 1.4 1998/02/05 20:49:57 gdr-ftp Exp $
+# $Id: describe.src,v 1.5 1998/02/18 00:29:28 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -481,12 +481,12 @@ FTP:     -
 Shows the date and time (optionally, continuously).
 
 Name:    descc
-Version: 1.0.5
+Version: 1.0.6
 Shell:   ORCA/Shell, GNO/ME
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
 Where:   /usr/sbin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, ftp.gno.org
+FTP:     ftp.gno.org
 
 Compile a source file into a 'describe' database file.
 
@@ -501,12 +501,12 @@ FTP:     ftp.gno.org, ground.isca.uiowa.edu
 Shell-based binscii decoder.
 
 Name:    describe
-Version: 1.0.5
+Version: 1.0.6
 Shell:   ORCA/Shell, GNO/ME
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
 Where:   /usr/bin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, ftp.gno.org
+FTP:     ftp.gno.org
 
 Print a multi-line description obtained from the compiled 'describe'
 database; giving utility name, version, intended shell, author, author's
@@ -514,12 +514,12 @@ contact, where the utility is, as well as where the utility can be FTPd
 from on the InterNet.
 
 Name:    descu
-Version: 1.0.5
+Version: 1.0.6
 Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
 Contact: gdr@myrias.ab.ca
 Where:   /usr/sbin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, ftp.gno.org
+FTP:     ftp.gno.org
 
 Update a 'describe' source file.
 
