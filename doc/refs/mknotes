@@ -1,0 +1,93 @@
+#! /usr/bin/perl
+
+#
+# This script creates the README.install notes for the gno.boot disk
+# from the relevent information in the file ./intro.tex.  It also reads
+# in the file ../../verbatim/boot/README.install, and writes its results
+# out to the same file.
+#
+# $Id: mknotes,v 1.1 1999/01/18 01:46:07 gdr-ftp Exp $
+#
+
+$texfile = "./intro.tex";
+$notes = "../../verbatim/boot/README.install";
+
+#
+# First read in the beginning of the README.install file.  This part we
+# leave as is.
+#
+open (fp, "< $notes") || die("couldn't read $notes: $!");
+while (<fp>) {
+    $output .= $_;
+    if (m,\s*You should now do the following steps:\s*,) {
+	last;
+    }
+}
+close(fp);
+
+$started = 0;
+$itemcount = 1;
+open (fp, "< $texfile") || die("couldn't read $texfile: $!");
+while (<fp>) {
+
+    # handle the beginning and end of our install notes section
+    if ($started == 0) {
+	if (m,^\s*%%\s+README.install-start\s*$,) {
+	    $started = 1;
+	}
+	next;
+    }
+    if (m,^\s*%%\s+README.install-end\s*$,) {
+	last;
+    }
+
+    # don't print TeX comments.
+    if (m,^\s*\\begin\{comment\}\s*,) {
+	$incomment = 1;
+	next;
+    }
+    if (m,^\s*\\end\{comment\}\s*,) {
+	$incomment = 0;
+	next;
+    }
+    if ($incomment) {
+	next;
+    }
+
+    # handle the paragraphs of our notes
+    if (m,^\s*\\item\s*$,) {
+	$firstline=1;
+	next;
+    }
+    if (m,^\s*\\begin\{verbatim\}\s*$,) {
+	$verbatim=1;
+	next;
+    }
+    if (m,^\s*\\end\{verbatim\}\s*$,) {
+	$verbatim=0;
+	next;
+    }
+    if ($verbatim) {
+	$output .= "\t";  # indent verbatim sections
+    }
+    if ($firstline) {
+	$firstline = 0;
+	$buffer = sprintf("\t%2d.  ", $itemcount++);
+	$output .= $buffer;
+    } else {
+	$output .= "\t     ";
+    }
+    s,\\htlink\{([^\}]+)\},$1,g;    # show URLs as plain text
+    s,\s*\\bf\s*, ,g;               # strip formatting commands
+    s,\\rm,,g;
+    s,\\,,g;                        # strip '\' from "\_"
+    s,\`\`,\",g;                    # translate TeX-style quotes
+    s,\'\',\",g;
+    $output .= $_;
+}
+close(fp);
+
+# write out the results
+open (fp, "> $notes") || die("couldn't read $notes: $!");
+print fp $output;
+close(fp);

@@ -2,7 +2,7 @@
 #
 # Devin Reade, November 1997.
 #
-# $Id: mkhtmlman,v 1.7 1998/02/19 03:04:05 gdr-ftp Exp $
+# $Id: mkhtmlman,v 1.8 1999/01/18 01:46:07 gdr-ftp Exp $
 
 man2html=/usr/local/bin/man2html
 TMPDIR=${TMPDIR:-/tmp}
@@ -43,6 +43,9 @@ for section in 1 2 3 4 5 6 7 8; do
     [ -d $dest ] || mkdir -p $dest
 
     for F in 00.DUMMY `find $MANDIRS -type f -name '*.'$section -print \
+	| grep -v .AppleDouble \
+	| grep -v .finderinfo \
+	| grep -v .resource \
 	| grep -v libcurses/PSD.doc \
 	| grep -v bin/gsh/updates1.1 \
 	| grep -v sed/tests` ; do

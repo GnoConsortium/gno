@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.10 1998/10/14 03:14:01 gdr-ftp Exp $
+# $Id: Makefile,v 1.11 1999/01/18 01:46:06 gdr-ftp Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -107,7 +107,7 @@ UPLOADS	= \
 #
 # targets
 #
-all:	dvi ps h man
+all:	dvi ps h man notes
 dvi:	$(DVI)
 ps:	ps_ltr ps_a4
 ps_ltr:	$(PS_LTR)
@@ -127,6 +127,9 @@ intro.bbl: gno.bib
 	bibtex intro
 
 upload:	all $(UPLOADS)
+
+# keeps intro.tex in sync with ../../verbatim/boot/README.install
+notes:;	./mknotes
 
 htmld.tar.gz:	h
 	tar -cf - $(HTMLD) | gzip --best > $@

@@ -1,7 +1,7 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.8 1998/10/31 20:23:29 gdr-ftp Exp $
+% $Id: intro.tex,v 1.9 1999/01/18 01:46:06 gdr-ftp Exp $
 % 
 
 \documentclass{report}
@@ -998,11 +998,11 @@ prior to doing a new installation.
 \section{Planning Your System}
 
 The install scripts assumes that your \em new\rm distribution will be installed
-on to the two volumes \bf /gno \rm (ProDOS) and \bf /gno-hfs \rm (HFS).
+on to the two volumes \bf /gno \rm (ProDOS) and \bf /gno-hfs \rm (HFS 
+or AppleShare).
 It also assumes these volumes already exist and are \em empty\rm.
 You may use other volume names,
 but you will have to edit certain files before you run your distribution.
-
 
 \begin{tabular}{ll}
 boot disk (used only for installation)	& 800k \\
@@ -1011,11 +1011,26 @@ binary distribution (extracted)		& 12.1 MB \\
 complete GNO source			& 15.0 MB \\
 \end{tabular}
 
+Before you start, you should also ensure that your system meets the
+minimum hardware requirements, as documented in \bf Overview\rm.
+
+In order to install GNO, you will need some way to download the NuFX
+archive files to your GS.  You will also need GShrinkIt, which is available
+from 
+\hturl{ftp://ftp.gno.org/pub/apple2/gs.specific/archivers/gshk11.bsc}.
+
+Part of the GNO installation still requires use of a text editor.  The
+GNO boot disk ships with \bf vi\rm installed;
+if you do not know how to use \bf vi\rm (or you need a refresher), see 
+\hturl{http://www.jaws.umn.edu/~tobkin/vi}
+for a good tutorial and quick reference guide.
 
 \section{Downloading and Extracting the Binary Distribution}
 
-Your first step is of course to download the distribution.  You should
-have the following NuFX archives:
+Your first step is of course to download the distribution.
+The distribution is available from 
+\hturl{ftp://ftp.gno.org/pub/apple2/gs.specific/gno/base}.
+You should have the following NuFX archives:
 
 \begin{itemize}
 
@@ -1029,8 +1044,8 @@ fashion.
 \item{\bf gno.01.shk\rm, \bf gno.02.shk\rm, ... \bf gno.16.shk\rm}
 These disk archives contain the main portion of the GNO distribution.
 They must be placed in a single temporary subdirectory on a hard drive,
-Zip disk, or other large capacity storage device.  They should not yet be
-extracted.
+Zip disk, Appleshare volume, or other large capacity storage device.
+They should not yet be extracted.
 
 \item{\bf gnohfs.shk\rm}
 This archive consists of files that do not conform to ProDOS naming 
@@ -1038,8 +1053,21 @@ conventions.  While it is possible to run GNO without any HFS partitions
 at all, it is recommended that you have available to GNO a small amount
 of space on an HFS partition.  If you use the \bf namespace\rm(5) facility,
 it is unnecessary to dedicate an entire HFS partition to GNO.
+Note that Appleshare volumes may be used in lieu of HFS volumes.
 
 \end{itemize}
+
+Next, using GShrinkIt or a similar program, extract the contents of the
+file gnoboot.shk onto an 800k floppy named \bf gno.boot\rm.  
+The name of the floppy is critical.  While you may use a hard drive 
+partition for \bf gno.boot\rm, this is likely a waste of hard drive space
+since \bf gno.boot\rm will only be used while installing GNO, not while
+running it.
+
+It should also be possible to use a RAM disk for \bf gno.boot\rm, but
+this has not been verified.  If you have successfully installed from a
+RAM disk, please let Devin Reade know, along with any observations
+you may have.
 
 You should now do the following steps:
 
@@ -1054,56 +1082,93 @@ below with the appropriate name.
 \begin{enumerate}
 
 \item
+From your program launcher (typically the Finder), run the program
+\bf /gno.boot/kern\rm.  This is the GNO kernel.  It will come up in 
+single user mode and you will be logged in as root running a \bf gsh\rm
+shell session.
+
+Note that the boot disk currently uses the version 2.0.4 GNO kernel; this
+is a temporary measure due to a bug with using newer kernels in single user
+mode.  When GNO gets installed to your hard drive, you will have a newer
+kernel.
+
+\item
+As per the instructions shown on the boot screen, you should now read the
+file /gno.boot/README.install.  The contents of that file, however, are
+identical to the numerated instructions below; you need only read one or
+the other set.
+
+%% README.install-start
+\item
 Set your DOWNLOAD\_DIR environment variable to the directory
-into which you placed the above NuFX (*.shk) files.
-For example, if the files gnohfs.shk, gno.01.shk, gno.02.shk 
-(and so forth) were in /download, you would type:
+into which you placed the above NuFX (*.shk) files. For example,
+if the files gnohfs.shk, gno.01.shk, gno.02.shk (and so forth)
+were in /download, you would type:
 
 \begin{verbatim}
 	setenv DOWNLOAD_DIR /download
 \end{verbatim}
 
+Ensure that you use slashes (\bf/\rm) rather than colons (\bf:\rm) as the
+pathname delimiter.  Do not use a trailing slash.
+
 \item
-Assuming your distribution is to be installed onto the /gno partition,
-issue the commands:
+Install the majority of the GNO base distribution files by
+changing directory into your destination directory and running
+the \bf installboot1\rm script. Assuming that you will be installing
+to the partition \bf/gno\rm, the commands would be:
 
 \begin{verbatim}
 	cd /gno
 	/gno.boot/installboot1
 \end{verbatim}
 
-This will install the majority of the GNO binaries.
+This step takes quite a while, even with an accelerated IIgs.
+Have patience.
 
 \item
-There are a small number of recommended files that do not follow ProDOS
-naming conventions.  To install these files, issue the commands:
+There are a small number of recommended files that do not follow
+ProDOS naming conventions.  If you wish to install these files,
+make sure that you have an HFS or Appleshare disk online. Change
+directories to that disk (or subdirectory) and run \bf installboot2\rm.
+Assuming that the HFS disk is \bf/gno-hfs\rm, the commands are:
 
 \begin{verbatim}
 	cd /gno-hfs
 	/gno.boot/installboot2
 \end{verbatim}
 
-This assumes that /gno-hfs is an HFS partition.  If you would like to 
-use on your HFS partition a single subdirectory for GNO, then you could
-create and cd into /some-partition/gno-hfs instead.
-
-This step is optional.  It is possible to use the GNO binary distribution
-without an HFS partition, but some information will be missing.
+This step is optional.  It is possible to use the GNO binary
+distribution without an HFS partition, but some information
+will be missing.
 
 \item
 You should now edit the file /gno/etc/namespace.  If your
 files were extracted onto a volume other than /gno, you will
-have to replace all the ":gno:" strings with the appropriate
-path.
+have to replace all the ``:gno:'' strings with the appropriate
+path.  Similarily, you will have to replace ``:gno-hfs:'' if
+that is not the name of your HFS (or Appleshare) partition
+where you ran the \bf installboot2\rm script.
 
+The \bf gno.boot\rm disk includes the \bf vi\rm utility to do these edits.
+You can also edit the namespace file with any other text editor
+of your choosing, as long as it is done before you try to run
+your new GNO distribution.
+
+A vi tutorial and quick reference guide may be found at
+\hturl{http://www.jaws.umn.edu/~tobkin/vi}.
+
+\begin{comment}
 You may want to put /usr onto a different partition; it will
 get fairly large over time.
 
 If you have a RAM disk, you should consider having it renamed
 to /tmp using renram5(8) or mktmp(8), in which case its entry
 should be removed from the namespace file.
-	    
-See the kernel reference manual for a description of this file.
+
+\end{comment}	    
+See the kernel reference manual for a description of the
+namespace file.
 
 \item
 If you are not short of disk space, you should create .so links
@@ -1112,17 +1177,29 @@ explanation.)  You can do this by executing the following
 commands:
 
 \begin{verbatim}
-    	cd /gno/usr/man
-    	mkso -v -H /gno-hfs/man mkso.data
+	cd /gno/usr/man
+	mkso -v -H /gno-hfs/man mkso.data
 \end{verbatim}
-	    	
+
+If you installed GNO somewhere other than /gno and /gno-hfs, then
+edit the above lines accordingly.  If you did not install files
+onto an HFS (or Appleshare) partition at all, then execute the
+following commands instead:
+
+\begin{verbatim}
+	cd /gno/usr/man
+	mkso -v mkso.data
+\end{verbatim}
+
 \item
 You should now return to your program launcher (the Finder,
 ProSEL-16, or whatever you used to start /gno.boot/kern) by
-typing "exit" at the prompt.  To startup up your new version
+typing ``exit'' at the prompt.  To startup up your new version
 of GNO, you should then launch /gno/kern.  You will then see
-a "login:" prompt.  Enter "root" as the user name; you will
+a ``login:'' prompt.  Enter ``root'' as the user name; you will
 not yet need a password.
+
+%% README.install-end
 
 \end{enumerate}
 
