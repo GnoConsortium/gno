@@ -1,0 +1,183 @@
+ERR	curses.h	/^#define	ERR	(0)			\/\* Error return\. \*\/$/
+FALSE	curses.h	/^#define	FALSE	(0)$/
+HARDTABS	cr_put.c	/^#define	HARDTABS	8$/
+MAXRETURNSIZE	tscroll.c	/^#define	MAXRETURNSIZE	64$/
+OK	curses.h	/^#define	OK	(1)			\/\* Success return\. \*\/$/
+OXTABS	tty.c	/^#define	OXTABS	XTABS$/
+SGTTY	curses.h	/^typedef struct termios SGTTY;$/
+SYNCH_IN	addbytes.c	/^#define	SYNCH_IN	{y = win->cury; x = win->curx;}$/
+SYNCH_OUT	addbytes.c	/^#define	SYNCH_OUT	{win->cury = y; win->curx = x;}$/
+TFILE	ctrace.c	/^#define	TFILE	"__curses\.out"$/
+THRESH	refresh.c	/^#define THRESH		(int) win->maxy \/ 4$/
+TRUE	curses.h	/^#define	TRUE	(1)$/
+VW_BUFSIZ	printw.c	/^#define VW_BUFSIZ 512$/
+WINDOW	curses.h	/^} WINDOW;$/
+_BSD_VA_LIST_	curses.h	/^#define _BSD_VA_LIST_ char \*$/
+_CURSES_H_	curses.h	/^#define	_CURSES_H_$/
+__CLEAROK	curses.h	/^#define	__CLEAROK	0x040		\/\* Clear on next refres/
+__CTRACE	ctrace.c	/^__CTRACE(fmt, va_alist)$/
+__ENDLINE	curses.h	/^#define	__ENDLINE	0x001		\/\* End of screen\. \*\//
+__FLUSH	curses.h	/^#define	__FLUSH		0x002		\/\* Fflush(stdout) after /
+__FORCEPAINT	curses.h	/^#define __FORCEPAINT	0x04		\/\* Force a repaint of/
+__FULLLINE	curses.h	/^#define __FULLLINE      0x200           \/\* Line /
+__FULLWIN	curses.h	/^#define	__FULLWIN	0x004		\/\* Window is a screen\./
+__IDLINE	curses.h	/^#define	__IDLINE	0x008		\/\* Insert\/delete sequen/
+__ISDIRTY	curses.h	/^#define	__ISDIRTY	0x01		\/\* Line is dirty\. \*\/$/
+__ISPASTEOL	curses.h	/^#define __ISPASTEOL	0x02		\/\* Cursor is past end /
+__LDATA	curses.h	/^} __LDATA;$/
+__LDATASIZE	curses.h	/^#define __LDATASIZE	(sizeof(__LDATA))$/
+__LEAVEOK	curses.h	/^#define __LEAVEOK	0x100		\/\* If curser left \*\/$/
+__LINE	curses.h	/^} __LINE;$/
+__SCROLLOK	curses.h	/^#define	__SCROLLOK	0x020		\/\* Scrolling ok\. \*\//
+__SCROLLWIN	curses.h	/^#define	__SCROLLWIN	0x010		\/\* Last char will scr/
+__STANDOUT	curses.h	/^#define	__STANDOUT	0x01  		\/\* Added characters a/
+__WSTANDOUT	curses.h	/^#define __WSTANDOUT	0x080		\/\* Standout window \*/
+__cputchar	putchar.c	/^__cputchar(int ch)$/
+__hash	cur_hash.c	/^__hash(unsigned char \*s, int len)$/
+__id_subwins	id_subwins.c	/^__id_subwins(WINDOW \*orig)$/
+__makenew	newwin.c	/^__makenew(int nl, int nc, int by, int bx, int sub)/
+__mvcur	cr_put.c	/^__mvcur(int ly, int lx, int y, int x, int in_refre/
+__restore_stophandler	tstp.c	/^__restore_stophandler(void)$/
+__set_scroll_region	tty.c	/^__set_scroll_region(int top, int bot, int ox, int /
+__set_stophandler	tstp.c	/^__set_stophandler(void)$/
+__set_subwin	newwin.c	/^__set_subwin(WINDOW \*orig, WINDOW \*win)$/
+__startwin	tty.c	/^__startwin(void)$/
+__stop_signal_handler	tstp.c	/^__stop_signal_handler(int signo, int code)$/
+__swflags	newwin.c	/^__swflags(WINDOW \*win)$/
+__touchline	touchwin.c	/^__touchline(WINDOW \*win, int y, int sx, int ex, i/
+__touchwin	touchwin.c	/^__touchwin(WINDOW \*win)$/
+__tscroll	tscroll.c	/^__tscroll(const char \*cap, int n1, int n2)$/
+__waddbytes	addbytes.c	/^__waddbytes(WINDOW \*win, const char \*bytes, int /
+__waddch	addch.c	/^__waddch(WINDOW \*win, __LDATA \*dp)$/
+__winwrite	printw.c	/^__winwrite(void \*cookie, const char \*buf, int n)/
+_begx	curses.h	/^#define _begx   begx$/
+_begy	curses.h	/^#define _begy   begy$/
+_curx	curses.h	/^#define _curx   curx$/
+_cury	curses.h	/^#define _cury   cury$/
+_maxx	curses.h	/^#define _maxx   maxx$/
+_maxy	curses.h	/^#define _maxy   maxy$/
+_putchar	_putchar.c	/^_putchar(int ch)$/
+_puts	curses.h	/^#define	_puts(s)	tputs(s, 0, __cputchar)$/
+_tty	curses.h	/^#define _tty __baset$/
+addbytes	curses.h	/^#define	addbytes(s, n)			__waddbytes(stdscr, s, n,/
+addch	curses.h	/^#define	addch(ch)			waddch(stdscr, ch)$/
+addnstr	curses.h	/^#define	addnstr(s, n)			waddnstr(stdscr, s, n)$/
+addstr	curses.h	/^#define	addstr(s)			__waddbytes(stdscr, s, strlen(/
+baudrate	curses.h	/^#define	baudrate()	(cfgetospeed(&__baset))$/
+bool	curses.h	/^#define	bool	char$/
+box	box.c	/^box(WINDOW \*win, int vert, int hor)$/
+cbreak	tty.c	/^cbreak(void)$/
+clear	curses.h	/^#define	clear()				wclear(stdscr)$/
+clearok	curses.h	/^#define	clearok(w, bf) \\$/
+clrtobot	curses.h	/^#define	clrtobot()			wclrtobot(stdscr)$/
+clrtoeol	curses.h	/^#define	clrtoeol()			wclrtoeol(stdscr)$/
+crmode	curses.h	/^#define	crmode()	cbreak()$/
+delch	curses.h	/^#define	delch()				wdelch(stdscr)$/
+deleteln	curses.h	/^#define	deleteln()			wdeleteln(stdscr)$/
+delwin	delwin.c	/^delwin(WINDOW \*win)$/
+domvcur	refresh.c	/^domvcur(int oy, int ox, int ny, int nx)$/
+echo	tty.c	/^echo(void)$/
+endwin	tty.c	/^endwin(void)$/
+erase	curses.h	/^#define	erase()				werase(stdscr)$/
+erasechar	curses.h	/^#define	erasechar()	(__baset\.c_cc\[VERASE\])$/
+fgoto	cr_put.c	/^fgoto(int in_refresh)$/
+flushok	curses.h	/^#define	flushok(w, bf) \\$/
+fullname	fullname.c	/^fullname(char \*bp, char \*def)$/
+getcap	setterm.c	/^getcap(char \*name)$/
+getch	curses.h	/^#define	getch()				wgetch(stdscr)$/
+getstr	curses.h	/^#define	getstr(s)			wgetstr(stdscr, s)$/
+gettmode	tty.c	/^gettmode(void)$/
+getyx	curses.h	/^#define	getyx(w, y, x) \\$/
+idlok	idlok.c	/^idlok(WINDOW \*win, int bf)$/
+inch	curses.h	/^#define	inch()				winch(stdscr)$/
+initscr	initscr.c	/^initscr(void)$/
+insch	curses.h	/^#define	insch(ch)			winsch(stdscr, ch)$/
+insertln	curses.h	/^#define	insertln()			winsertln(stdscr)$/
+killchar	curses.h	/^#define	killchar()	(__baset\.c_cc\[VKILL\])$/
+leaveok	curses.h	/^#define	leaveok(w, bf) \\$/
+longname	longname.c	/^longname(char \*bp, char \*def)$/
+makech	refresh.c	/^makech(WINDOW \*win, int wy)$/
+max	curses.h	/^#define	max(a,b)	(a > b ? a : b)$/
+min	curses.h	/^#define	min(a,b)	(a < b ? a : b)$/
+move	curses.h	/^#define	move(y, x)			wmove(stdscr, y, x)$/
+mvaddbytes	curses.h	/^#define	mvaddbytes(y, x, s, n)		mvwaddbytes(stdscr/
+mvaddch	curses.h	/^#define	mvaddch(y, x, ch)		mvwaddch(stdscr, y, x, /
+mvaddnstr	curses.h	/^#define	mvaddnstr(y, x, s, n)		mvwaddnstr(stdscr, /
+mvaddstr	curses.h	/^#define	mvaddstr(y, x, s)		mvwaddstr(stdscr, y, x,/
+mvcur	cr_put.c	/^mvcur(int ly, int lx, int y, int x)$/
+mvdelch	curses.h	/^#define	mvdelch(y, x)			mvwdelch(stdscr, y, x)$/
+mvgetch	curses.h	/^#define	mvgetch(y, x)			mvwgetch(stdscr, y, x)$/
+mvgetstr	curses.h	/^#define	mvgetstr(y, x, s)		mvwgetstr(stdscr, y, x,/
+mvinch	curses.h	/^#define	mvinch(y, x)			mvwinch(stdscr, y, x)$/
+mvinsch	curses.h	/^#define	mvinsch(y, x, c)		mvwinsch(stdscr, y, x, c/
+mvprintw	printw.c	/^mvprintw(y, x, fmt, va_alist)$/
+mvscanw	scanw.c	/^mvscanw(y, x, fmt, va_alist)$/
+mvwaddbytes	curses.h	/^#define	mvwaddbytes(w, y, x, s, n) \\$/
+mvwaddch	curses.h	/^#define	mvwaddch(w, y, x, ch) \\$/
+mvwaddnstr	curses.h	/^#define	mvwaddnstr(w, y, x, s, n) \\$/
+mvwaddstr	curses.h	/^#define	mvwaddstr(w, y, x, s) \\$/
+mvwdelch	curses.h	/^#define	mvwdelch(w, y, x) \\$/
+mvwgetch	curses.h	/^#define	mvwgetch(w, y, x) \\$/
+mvwgetstr	curses.h	/^#define	mvwgetstr(w, y, x, s) \\$/
+mvwin	mvwin.c	/^mvwin(WINDOW \*win, int by, int bx)$/
+mvwinch	curses.h	/^#define	mvwinch(w, y, x) \\$/
+mvwinsch	curses.h	/^#define	mvwinsch(w, y, x, c) \\$/
+mvwprintw	printw.c	/^mvwprintw(win, y, x, fmt, va_alist)$/
+mvwscanw	scanw.c	/^mvwscanw(win, y, x, fmt, va_alist)$/
+newwin	newwin.c	/^newwin(int nl, int nc, int by, int bx)$/
+nl	tty.c	/^nl(void)$/
+nocbreak	tty.c	/^nocbreak(void)$/
+nocrmode	curses.h	/^#define	nocrmode()	nocbreak()$/
+noecho	tty.c	/^noecho(void)$/
+nonl	tty.c	/^nonl(void)$/
+noraw	tty.c	/^noraw(void)$/
+overlay	overlay.c	/^overlay(WINDOW \*win1, WINDOW \*win2)$/
+overwrite	overwrite.c	/^overwrite(WINDOW \*win1, WINDOW \*win2)$/
+plod	cr_put.c	/^plod(int cnt, int in_refresh)$/
+plodput	cr_put.c	/^plodput(int c)$/
+printw	printw.c	/^printw(fmt, va_alist)$/
+quickch	refresh.c	/^quickch(WINDOW \*win)$/
+raw	tty.c	/^raw(void)$/
+refresh	curses.h	/^#define	refresh()			wrefresh(stdscr)$/
+reg	curses.h	/^#define	reg	register$/
+resetty	tty.c	/^resetty(void)$/
+savetty	tty.c	/^savetty(void)$/
+scanw	scanw.c	/^scanw(fmt, va_alist)$/
+scroll	scroll.c	/^scroll(WINDOW \*win)$/
+scrolln	refresh.c	/^scrolln(int starts, int startw, int curs, int bot,/
+scrollok	curses.h	/^#define	scrollok(w, bf) \\$/
+setterm	setterm.c	/^setterm(char \*type)$/
+standend	curses.h	/^#define	standend()			wstandend(stdscr)$/
+standout	curses.h	/^#define	standout()			wstandout(stdscr)$/
+subwin	newwin.c	/^subwin(WINDOW \*orig, int nl, int nc, int by, int /
+tabcol	cr_put.c	/^tabcol(int col, int ts)$/
+touchline	touchwin.c	/^touchline(WINDOW \*win, int y, int sx, int ex)$/
+touchoverlap	toucholap.c	/^touchoverlap(WINDOW \*win1, WINDOW \*win2)$/
+touchwin	touchwin.c	/^touchwin(WINDOW \*win)$/
+tstp	tstp.c	/^void tstp(void) { __stop_signal_handler(SIGTSTP, 0/
+unctrl	curses.h	/^#define	unctrl(c)		__unctrl\[(c) & 0xff\]$/
+unctrllen	curses.h	/^#define	unctrllen(ch)		__unctrllen\[(ch) & 0xff\]$/
+vwprintw	printw.c	/^vwprintw(WINDOW \*win, const char \*fmt, va_list a/
+vwscanw	scanw.c	/^vwscanw(WINDOW \*win, const char \*fmt, va_list ap/
+waddbytes	curses.h	/^#define	waddbytes(w, s, n)		__waddbytes(w, s, n, 0/
+waddch	addch.c	/^waddch(WINDOW \*win, int ch)$/
+waddnstr	addnstr.c	/^waddnstr(WINDOW \*win, const char \*s, int n)$/
+waddstr	curses.h	/^#define	waddstr(w, s)			__waddbytes(w, s, strlen(s/
+wclear	clear.c	/^wclear(WINDOW \*win)$/
+wclrtobot	clrtobot.c	/^wclrtobot(WINDOW \*win)$/
+wclrtoeol	clrtoeol.c	/^wclrtoeol(WINDOW \*win)$/
+wdelch	delch.c	/^wdelch(WINDOW \*win)$/
+wdeleteln	deleteln.c	/^wdeleteln(WINDOW \*win)$/
+werase	erase.c	/^werase(WINDOW \*win)$/
+wgetch	getch.c	/^wgetch(WINDOW \*win)$/
+wgetstr	getstr.c	/^wgetstr(WINDOW \*win, char \*str)$/
+winch	curses.h	/^#define	winch(w) \\$/
+winsch	insch.c	/^winsch(WINDOW \*win, int ch)$/
+winsertln	insertln.c	/^winsertln(WINDOW \*win)$/
+wmove	move.c	/^wmove(WINDOW \*win, int y, int x)$/
+wprintw	printw.c	/^wprintw(win, fmt, va_alist)$/
+wrefresh	refresh.c	/^wrefresh(WINDOW \*win)$/
+wscanw	scanw.c	/^wscanw(win, fmt, va_alist)$/
+wstandend	standout.c	/^wstandend(WINDOW \*win)$/
+wstandout	standout.c	/^wstandout(WINDOW \*win)$/
+zap	setterm.c	/^zap(void)$/

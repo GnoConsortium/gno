@@ -44,11 +44,8 @@ static char sccsid[] = "@(#)insch.c	8.2 (Berkeley) 5/4/94";
  *	Do an insert-char on the line, leaving (cury, curx) unchanged.
  */
 int
-winsch(win, ch)
-	register WINDOW *win;
-	int ch;
+winsch(WINDOW *win, int ch)
 {
-
 	register __LDATA *end, *temp1, *temp2;
 
 	end = &win->lines[win->cury]->line[win->curx];
@@ -72,3 +69,4 @@ winsch(win, ch)
 			return (ERR);
 	return (OK);
 }
+

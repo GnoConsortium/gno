@@ -42,13 +42,14 @@ static char sccsid[] = "@(#)tstp.c	8.3 (Berkeley) 5/4/94";
 
 #include "curses.h"
 
+#pragma debug 0
+#pragma databank 1
 /*
  * stop_signal_handler --
  *	Handle stop signals.
  */
 void
-__stop_signal_handler(signo)
-	int signo;
+__stop_signal_handler(int signo, int code)
 {
 	struct termios save;
 	sigset_t oset, set;
@@ -102,14 +103,15 @@ __stop_signal_handler(signo)
 	/* Reset the signals. */
 	(void)sigprocmask(SIG_SETMASK, &oset, NULL);
 }
+#pragma databank 0
 
-static void (*otstpfn)() = SIG_DFL;
+static void (*otstpfn)(int, int) = SIG_DFL;
 
 /*
  * Set the TSTP handler.
  */
 void
-__set_stophandler()
+__set_stophandler(void)
 {
 	otstpfn = signal(SIGTSTP, __stop_signal_handler);
 }
@@ -118,11 +120,12 @@ __set_stophandler()
  * Restore the TSTP handler.
  */
 void
-__restore_stophandler()
+__restore_stophandler(void)
 {
 	(void)signal(SIGTSTP, otstpfn);
 }
 
 /* For compatibility */
 
-void tstp() { __stop_signal_handler(SIGTSTP); }
+void tstp(void) { __stop_signal_handler(SIGTSTP, 0); }
+

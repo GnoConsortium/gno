@@ -52,6 +52,8 @@ static char sccsid[] = "@(#)printw.c	8.3 (Berkeley) 5/4/94";
 
 static int __winwrite __P((void *, const char *, int));
 
+#pragma debug 0
+/* assume at least #pragma optimize 8 */
 /*
  * printw --
  *	Printf on the standard screen.
@@ -167,10 +169,7 @@ mvwprintw(win, y, x, fmt, va_alist)
  * Internal write-buffer-to-window function.
  */
 static int
-__winwrite(cookie, buf, n)
-	void *cookie;
-	register const char *buf;
-	int n;
+__winwrite(void *cookie, const char *buf, int n)
 {
 	register WINDOW *win;
 	register int c;
@@ -186,15 +185,28 @@ __winwrite(cookie, buf, n)
  *	This routine actually executes the printf and adds it to the window.
  */
 int
-vwprintw(win, fmt, ap)
-	WINDOW *win;
-	const char *fmt;
-	va_list ap;
+vwprintw(WINDOW *win, const char *fmt, va_list ap)
 {
+#ifndef __GNO__
 	FILE *f;
 
 	if ((f = funopen(win, NULL, __winwrite, NULL, NULL)) == NULL)
 		return (ERR);
 	(void)vfprintf(f, fmt, ap);
 	return (fclose(f) ? ERR : OK);
+#else
+#define VW_BUFSIZ 512
+	static char buf[VW_BUFSIZ];	/* pray this is large enough */
+	int len, n;
+
+	len = vsprintf(buf, fmt, ap);
+	if (len == -1)
+		return ERR;
+	if (len >= VW_BUFSIZ) {
+		asm {brk 0xc0}
+	}
+	n = __winwrite(win, buf, (int)len);
+	return ((n != len) ? ERR : OK);
+#endif
 }
+

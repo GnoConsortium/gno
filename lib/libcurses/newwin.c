@@ -50,8 +50,7 @@ void	 __set_subwin __P((WINDOW *, WINDOW *));
  *	Allocate space for and set up defaults for a new window.
  */
 WINDOW *
-newwin(nl, nc, by, bx)
-	register int nl, nc, by, bx;
+newwin(int nl, int nc, int by, int bx)
 {
 	register WINDOW *win;
 	register __LINE *lp;
@@ -87,9 +86,7 @@ newwin(nl, nc, by, bx)
 }
 
 WINDOW *
-subwin(orig, nl, nc, by, bx)
-	register WINDOW *orig;
-	register int by, bx, nl, nc;
+subwin(WINDOW *orig, int nl, int nc, int by, int bx)
 {
 	int i;
 	__LINE *lp;
@@ -124,8 +121,7 @@ subwin(orig, nl, nc, by, bx)
  * This code is shared with mvwin().
  */
 void
-__set_subwin(orig, win)
-	register WINDOW *orig, *win;
+__set_subwin(WINDOW *orig, WINDOW *win)
 {
 	int i;
 	__LINE *lp, *olp;
@@ -151,9 +147,7 @@ __set_subwin(orig, win)
  *	Set up a window buffer and returns a pointer to it.
  */
 static WINDOW *
-__makenew(nl, nc, by, bx, sub)
-	register int by, bx, nl, nc;
-	int sub;
+__makenew(int nl, int nc, int by, int bx, int sub)
 {
 	register WINDOW *win;
 	register __LINE *lp;
@@ -230,8 +224,7 @@ __makenew(nl, nc, by, bx, sub)
 }
 
 void
-__swflags(win)
-	register WINDOW *win;
+__swflags(WINDOW *win)
 {
 	win->flags &=
 	    ~(__ENDLINE | __FULLLINE | __FULLWIN | __SCROLLWIN | __LEAVEOK);
@@ -247,3 +240,4 @@ __swflags(win)
 			win->flags |= __SCROLLWIN;
 	}
 }
+

@@ -40,8 +40,7 @@ static char sccsid[] = "@(#)longname.c	8.1 (Berkeley) 6/4/93";
  *	Fill in "def" with the long name of the terminal.
  */
 char *
-longname(bp, def)
-	register char *bp, *def;
+longname(char *bp, char *def)
 {
 	register char *cp;
 
@@ -54,3 +53,4 @@ longname(bp, def)
 	}
 	return (def);
 }
+

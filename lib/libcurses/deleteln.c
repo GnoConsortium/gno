@@ -44,8 +44,7 @@ static char sccsid[] = "@(#)deleteln.c	8.2 (Berkeley) 5/4/94";
  *	Delete a line from the screen.  It leaves (cury, curx) unchanged.
  */
 int
-wdeleteln(win)
-	register WINDOW *win;
+wdeleteln(WINDOW *win)
 {
 	register int y, i;
 	register __LINE *temp;
@@ -80,3 +79,4 @@ wdeleteln(win)
 		__id_subwins(win);
 	return (OK);
 }
+

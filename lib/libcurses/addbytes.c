@@ -45,11 +45,7 @@ static char sccsid[] = "@(#)addbytes.c	8.4 (Berkeley) 5/4/94";
  *	Add the character to the current position in the given window.
  */
 int
-__waddbytes(win, bytes, count, so)
-	register WINDOW *win;
-	register const char *bytes;
-	register int count;
-	int so;
+__waddbytes(WINDOW *win, const char *bytes, int count, int so)
 {
 	static char blanks[] = "        ";
 	register int c, newx, x, y;
@@ -155,3 +151,4 @@ newline:			if (y == win->maxy - 1) {
 	SYNCH_OUT;
 	return (OK);
 }
+

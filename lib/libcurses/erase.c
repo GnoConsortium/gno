@@ -42,10 +42,8 @@ static char sccsid[] = "@(#)erase.c	8.2 (Berkeley) 5/4/94";
  *	Erases everything on the window.
  */
 int
-werase(win)
-	register WINDOW *win;
+werase(WINDOW *win)
 {
-
 	register int minx, y;
 	register __LDATA *sp, *end, *start, *maxx;
 
@@ -70,3 +68,4 @@ werase(win)
 	}
 	return (OK);
 }
+

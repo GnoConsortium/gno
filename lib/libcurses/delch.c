@@ -44,8 +44,7 @@ static char sccsid[] = "@(#)delch.c	8.2 (Berkeley) 5/4/94";
  *	Do an insert-char on the line, leaving (cury, curx) unchanged.
  */
 int
-wdelch(win)
-	register WINDOW *win;
+wdelch(WINDOW *win)
 {
 	register __LDATA *end, *temp1, *temp2;
 
@@ -61,3 +60,4 @@ wdelch(win)
 	__touchline(win, win->cury, win->curx, win->maxx - 1, 0);
 	return (OK);
 }
+

@@ -42,9 +42,7 @@ static char sccsid[] = "@(#)mvwin.c	8.2 (Berkeley) 5/4/94";
  *	Relocate the starting position of a window.
  */
 int
-mvwin(win, by, bx)
-	register WINDOW *win;
-	register int by, bx;
+mvwin(WINDOW *win, int by, int bx)
 {
 	register WINDOW *orig;
 	register int dy, dx;
@@ -75,3 +73,4 @@ mvwin(win, by, bx)
 	__touchwin(win);
 	return (OK);
 }
+

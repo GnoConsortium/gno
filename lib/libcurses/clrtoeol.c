@@ -42,8 +42,7 @@ static char sccsid[] = "@(#)clrtoeol.c	8.2 (Berkeley) 5/4/94";
  *	Clear up to the end of line.
  */
 int
-wclrtoeol(win)
-	register WINDOW *win;
+wclrtoeol(WINDOW *win)
 {
 	register int minx, x, y;
 	register __LDATA *end, *maxx, *sp;
@@ -76,8 +75,4 @@ wclrtoeol(win)
 	/* Update firstch and lastch for the line. */
 	return (__touchline(win, y, x, win->maxx - 1, 0));
 }
-
-
-
-
 

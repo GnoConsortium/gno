@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1992, 1993
+ * Copyright (c) 1981, 1993, 1994
  *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,31 +32,34 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)cur_hash.c	8.1 (Berkeley) 6/4/93";
+static char sccsid[] = "@(#)id_subwins.c	8.2 (Berkeley) 5/4/94";
 #endif	/* not lint */
 
-#include <sys/types.h>
-
+#include "curses.h"
 
 /*
- * __hash() is "hashpjw" from the Dragon Book, Aho, Sethi & Ullman, p.436.
+ * __id_subwins --
+ *	Re-sync the pointers to lines for all the subwindows.
  */
-u_int
-__hash(s, len)
-	unsigned char *s;
-	int len;
+void
+__id_subwins(WINDOW *orig)
 {
-        register u_int	h, g, i;
+	register WINDOW *win;
+	register int oy, realy, y;
 
-	h = 0;
-	i = 0;
-        while (i < len) {
-		h = (h << 4) + s[i];
-                if (g = h & 0xf0000000) {
-                        h = h ^ (g >> 24);
-                        h = h ^ g;
-                }
-		i++;
+	realy = orig->begy + orig->cury;
+	for (win = orig->nextp; win != orig; win = win->nextp) {
+		/*
+		 * If the window ends before our current position, don't need
+		 * to do anything.
+		 */
+		if (win->begy + win->maxy <= realy)
+			continue;
+
+		oy = orig->cury;
+		for (y = realy - win->begy; y < win->maxy; y++, oy++)
+			win->lines[y]->line =
+				&orig->lines[oy]->line[win->ch_off];
 	}
-        return h;
 }
+

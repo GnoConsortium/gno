@@ -42,8 +42,7 @@ static char sccsid[] = "@(#)getch.c	8.2 (Berkeley) 5/4/94";
  *	Read in a character from the window.
  */
 int
-wgetch(win)
-	register WINDOW *win;
+wgetch(WINDOW *win)
 {
 	register int inp, weset;
 
@@ -75,3 +74,4 @@ wgetch(win)
 		nocbreak();
 	return (inp);
 }
+

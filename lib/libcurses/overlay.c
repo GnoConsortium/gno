@@ -44,10 +44,8 @@ static char sccsid[] = "@(#)overlay.c	8.2 (Berkeley) 5/4/94";
  *	Writes win1 on win2 non-destructively.
  */
 int
-overlay(win1, win2)
-	register WINDOW *win1, *win2;
+overlay(WINDOW *win1, WINDOW *win2)
 {
-
 	register int x, y, y1, y2, endy, endx, starty, startx;
 	register __LDATA *sp, *end;
 
@@ -80,3 +78,4 @@ overlay(win1, win2)
 	}
 	return (OK);
 }
+

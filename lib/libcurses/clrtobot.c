@@ -42,8 +42,7 @@ static char sccsid[] = "@(#)clrtobot.c	8.2 (Berkeley) 5/4/94";
  *	Erase everything on the window.
  */
 int
-wclrtobot(win)
-	register WINDOW *win;
+wclrtobot(WINDOW *win)
 {
 	register int minx, startx, starty, y;
 	register __LDATA *sp, *end, *maxx;
@@ -73,3 +72,4 @@ wclrtobot(win)
 	}
 	return (OK);
 }
+

@@ -49,8 +49,7 @@ static char sccsid[] = "@(#)cr_put.c	8.3 (Berkeley) 5/4/94";
 
 /* Stub function for the users. */
 int
-mvcur(ly, lx, y, x)
-	int ly, lx, y, x;
+mvcur(int ly, int lx, int y, int x)
 {
 	return (__mvcur(ly, lx, y, x, 0));
 }
@@ -68,8 +67,7 @@ static int outcol, outline, destcol, destline;
  * the lack thereof and rolling up the screen to get destline on the screen.
  */
 int
-__mvcur(ly, lx, y, x, in_refresh)
-	int ly, lx, y, x, in_refresh;
+__mvcur(int ly, int lx, int y, int x, int in_refresh)
 {
 #ifdef DEBUG
 	__CTRACE("mvcur: moving cursor from (%d, %d) to (%d, %d)\n",
@@ -85,8 +83,7 @@ __mvcur(ly, lx, y, x, in_refresh)
 }
 
 static void
-fgoto(in_refresh)
-	int in_refresh;
+fgoto(int in_refresh)
 {
 	register int c, l;
 	register char *cgp;
@@ -184,8 +181,7 @@ fgoto(in_refresh)
 static int plodcnt, plodflg;
 
 static void
-plodput(c)
-	int c;
+plodput(int c)
 {
 	if (plodflg)
 		--plodcnt;
@@ -194,8 +190,7 @@ plodput(c)
 }
 
 static int
-plod(cnt, in_refresh)
-	int cnt, in_refresh;
+plod(int cnt, int in_refresh)
 {
 	register int i, j, k, soutcol, soutline;
 
@@ -419,8 +414,7 @@ out:	if (plodflg) {
  * the case where col > COLS, even if ts does not divide COLS.
  */
 static int
-tabcol(col, ts)
-	int col, ts;
+tabcol(int col, int ts)
 {
 	int offset;
 
@@ -431,3 +425,4 @@ tabcol(col, ts)
 		offset = 0;
 	return (col + ts - (col % ts) + offset);
 }
+

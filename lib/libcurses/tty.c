@@ -72,7 +72,7 @@ static int useraw;
  *	Do terminal type initialization.
  */
 int
-gettmode()
+gettmode(void)
 {
 	useraw = 0;
 
@@ -124,7 +124,7 @@ gettmode()
 }
 
 int
-raw()
+raw(void)
 {
 	useraw = __pfast = __rawmode = 1;
 	curt = &rawt;
@@ -133,7 +133,7 @@ raw()
 }
 
 int
-noraw()
+noraw(void)
 {
 	useraw = __pfast = __rawmode = 0;
 	curt = &__baset;
@@ -142,9 +142,8 @@ noraw()
 }
 
 int
-cbreak()
+cbreak(void)
 {
-
 	__rawmode = 1;
 	curt = useraw ? &rawt : &cbreakt;
 	return (!__noterm && tcsetattr(__tty_fileno, __tcaction ?
@@ -152,9 +151,8 @@ cbreak()
 }
 
 int
-nocbreak()
+nocbreak(void)
 {
-
 	__rawmode = 0;
 	curt = useraw ? &rawt : &__baset;
 	return (!__noterm && tcsetattr(__tty_fileno, __tcaction ?
@@ -162,7 +160,7 @@ nocbreak()
 }
 
 int
-echo()
+echo(void)
 {
 	rawt.c_lflag |= ECHO;
 	cbreakt.c_lflag |= ECHO;
@@ -174,7 +172,7 @@ echo()
 }
 
 int
-noecho()
+noecho(void)
 {
 	rawt.c_lflag &= ~ECHO;
 	cbreakt.c_lflag &= ~ECHO;
@@ -186,7 +184,7 @@ noecho()
 }
 
 int
-nl()
+nl(void)
 {
 	rawt.c_iflag |= ICRNL;
 	rawt.c_oflag |= ONLCR;
@@ -201,7 +199,7 @@ nl()
 }
 
 int
-nonl()
+nonl(void)
 {
 	rawt.c_iflag &= ~ICRNL;
 	rawt.c_oflag &= ~ONLCR;
@@ -216,7 +214,7 @@ nonl()
 }
 
 void
-__startwin()
+__startwin(void)
 {
 	(void)fflush(stdout);
 	(void)setvbuf(stdout, NULL, _IOFBF, 0);
@@ -228,8 +226,7 @@ __startwin()
 }
 
 void
-__set_scroll_region(top, bot, ox, oy)
-int top, bot, ox, oy;
+__set_scroll_region(int top, int bot, int ox, int oy)
 {
 	if (SC != NULL && RC != NULL)
 		tputs(SC, 0, __cputchar);
@@ -243,7 +240,7 @@ int top, bot, ox, oy;
 }
 
 int
-endwin()
+endwin(void)
 {
 	__restore_stophandler();
 
@@ -273,14 +270,15 @@ endwin()
  */
 static struct termios savedtty;
 int
-savetty()
+savetty(void)
 {
 	return (!__noterm && tcgetattr(__tty_fileno, &savedtty) ? ERR : OK);
 }
 
 int
-resetty()
+resetty(void)
 {
 	return (!__noterm && tcsetattr(__tty_fileno, __tcaction ?
 	    TCSASOFT | TCSADRAIN : TCSADRAIN, &savedtty) ? ERR : OK);
 }
+

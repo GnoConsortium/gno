@@ -42,8 +42,7 @@ static char sccsid[] = "@(#)toucholap.c	8.2 (Berkeley) 5/4/94";
  *	Touch, on win2, the part that overlaps with win1.
  */
 int
-touchoverlap(win1, win2)
-	register WINDOW *win1, *win2;
+touchoverlap(WINDOW *win1, WINDOW *win2)
 {
 	register int y, endy, endx, starty, startx;
 

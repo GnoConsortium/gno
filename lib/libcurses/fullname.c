@@ -41,8 +41,7 @@ static char sccsid[] = "@(#)fullname.c	8.1 (Berkeley) 6/4/93";
  *	This is assumed to be the last name in the list of aliases.
  */
 char *
-fullname(bp, def)
-	register char *bp, *def;
+fullname(char *bp, char *def)
 {
 	register char *cp;
 
@@ -58,3 +57,4 @@ fullname(bp, def)
 	}
 	return (def);
 }
+

@@ -52,6 +52,7 @@ int     __usecs = 0;                    /*
 					 * region (used only if insert/delete
 					 * line capabilities absent)
 					 */
+#ifndef __GNO__
 char    AM, BS, CA, DA, DB, EO, HC, IN, MI, MS, NC, NS, OS, PC,
 	UL, XB, XN, XT, XS, XX;
 char	*AL, *BC, *BT, *CD, *CE, *CL, *CM, *CR, *CS, *DC, *DL,
@@ -62,6 +63,18 @@ char	*AL, *BC, *BT, *CD, *CE, *CL, *CM, *CR, *CS, *DC, *DL,
 	*VE, *al, *dl, *sf, *sr,
 	*AL_PARM, *DL_PARM, *UP_PARM, *DOWN_PARM, *LEFT_PARM,
 	*RIGHT_PARM;
+#else
+char    AM, BS, CA, DA, DB, EO, HC, IN, MI, MS, NC, NS, OS,
+	UL, XB, XN, XT, XS, XX;
+char	*AL, *BT, *CD, *CE, *CL, *CM, *CR, *CS, *DC, *DL,
+	*DM, *DO, *ED, *EI, *K0, *K1, *K2, *K3, *K4, *K5, *K6,
+	*K7, *K8, *K9, *HO, *IC, *IM, *IP, *KD, *KE, *KH, *KL,
+	*KR, *KS, *KU, *LL, *MA, *ND, *NL, *RC, *SC, *SE, *SF,
+	*SO, *SR, *TA, *TE, *TI, *UC, *UE, *US, *VB, *VS,
+	*VE, *al, *dl, *sf, *sr,
+	*AL_PARM, *DL_PARM, *UP_PARM, *DOWN_PARM, *LEFT_PARM,
+	*RIGHT_PARM;
+#endif
 /*
  * Public.
  *
@@ -78,3 +91,4 @@ char	*Def_term = "unknown";		/* Default terminal type. */
 char	 GT;				/* Gtty indicates tabs. */
 char	 NONL;				/* Term can't hack LF doing a CR. */
 char	 UPPERCASE;			/* Terminal is uppercase only. */
+

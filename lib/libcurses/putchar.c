@@ -31,7 +31,7 @@
  * SUCH DAMAGE.
  */
 
-#if !defined(lint) && !defined(__GNO__)
+#ifndef lint
 static char sccsid[] = "@(#)putchar.c	8.2 (Berkeley) 5/4/94";
 #endif	/* not lint */
 
@@ -40,17 +40,9 @@ static char sccsid[] = "@(#)putchar.c	8.2 (Berkeley) 5/4/94";
 void
 __cputchar(int ch)
 {
-
 #ifdef DEBUG
 	__CTRACE("__cputchar: %s\n", unctrl(ch));
 #endif
 	(void)putchar(ch);
-}
-
-int
-_putchar(int ch)
-{
-	__cputchar(ch);
-	return 0;
 }
 

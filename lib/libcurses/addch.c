@@ -43,9 +43,7 @@ static char sccsid[] = "@(#)addch.c	8.2 (Berkeley) 5/4/94";
  *
  */
 int
-waddch(win, ch)
-	WINDOW *win;
-	int ch;
+waddch(WINDOW *win, int ch)
 {
 	__LDATA buf;
 
@@ -55,12 +53,11 @@ waddch(win, ch)
 }
 
 int
-__waddch(win, dp)
-	WINDOW *win;
-	__LDATA *dp;
+__waddch(WINDOW *win, __LDATA *dp)
 {
 	char buf[2];
 
 	buf[0] = dp->ch;
 	return (__waddbytes(win, buf, 1, dp->attr & __STANDOUT));
 }
+

@@ -32,34 +32,15 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)id_subwins.c	8.2 (Berkeley) 5/4/94";
+static char sccsid[] = "@(#)_putchar.c	8.2 (Berkeley) 5/4/94";
 #endif	/* not lint */
 
 #include "curses.h"
 
-/*
- * __id_subwins --
- *	Re-sync the pointers to lines for all the subwindows.
- */
-void
-__id_subwins(orig)
-	register WINDOW *orig;
+int
+_putchar(int ch)
 {
-	register WINDOW *win;
-	register int oy, realy, y;
-
-	realy = orig->begy + orig->cury;
-	for (win = orig->nextp; win != orig; win = win->nextp) {
-		/*
-		 * If the window ends before our current position, don't need
-		 * to do anything.
-		 */
-		if (win->begy + win->maxy <= realy)
-			continue;
-
-		oy = orig->cury;
-		for (y = realy - win->begy; y < win->maxy; y++, oy++)
-			win->lines[y]->line =
-				&orig->lines[oy]->line[win->ch_off];
-	}
+	__cputchar(ch);
+	return 0;
 }
+

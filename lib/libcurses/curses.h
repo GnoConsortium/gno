@@ -76,9 +76,11 @@
 #undef B57600
 #undef B115200
 
-#include <termios.h>
 #include <sys/ioctl.h>
+#include <termios.h>
+#ifndef __GNO__
 #include <sys/ioctl_compat.h>           /* For sgttyb and related */
+#endif
 
 #define	bool	char
 #define	reg	register
@@ -163,7 +165,7 @@ typedef struct {
 #define __ISPASTEOL	0x02		/* Cursor is past end of line */
 #define __FORCEPAINT	0x04		/* Force a repaint of the line */
 	u_int flags;
-	u_int hash;			/* Hash value for the line. */
+	u_long hash;			/* Hash value for the line. */
 	size_t *firstchp, *lastchp;	/* First and last chngd columns ptrs */
 	size_t firstch, lastch;		/* First and last changed columns. */
 	__LDATA *line;			/* Pointer to the line text. */
@@ -346,7 +348,7 @@ int	 __waddbytes __P((WINDOW *, const char *, int, int));
 /* Private functions. */
 #ifdef _CURSES_PRIVATE
 void	 __CTRACE __P((const char *, ...));
-u_int	 __hash __P((char *, int));
+u_long	 __hash __P((char *, int));
 void	 __id_subwins __P((WINDOW *));
 int	 __mvcur __P((int, int, int, int, int));
 void	 __restore_stophandler __P((void));
@@ -354,7 +356,7 @@ void	 __set_stophandler __P((void));
 void	 __set_subwin __P((WINDOW *, WINDOW *));
 void     __set_scroll_region __P((int, int, int, int));
 void	 __startwin __P((void));
-void	 __stop_signal_handler __P((int));
+void	 __stop_signal_handler __P((int, int));
 void	 __swflags __P((WINDOW *));
 int	 __touchline __P((WINDOW *, int, int, int, int));
 int	 __touchwin __P((WINDOW *));

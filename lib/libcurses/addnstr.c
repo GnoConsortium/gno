@@ -46,10 +46,7 @@ static char sccsid[] = "@(#)addnstr.c	8.2 (Berkeley) 5/4/94";
  *	entire string.
  */
 int
-waddnstr(win, s, n)
-	WINDOW *win;
-	const char *s;
-	int n;
+waddnstr(WINDOW *win, const char *s, int n)
 {
 	size_t len;
 	const char *p;
@@ -60,3 +57,4 @@ waddnstr(win, s, n)
 		len = strlen(s);
 	return (waddbytes(win, s, len));
 }
+

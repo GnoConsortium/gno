@@ -1,4 +1,4 @@
-/*-
+/*
  * Copyright (c) 1992, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -32,48 +32,30 @@
  */
 
 #ifndef lint
-static char sccsid[] = "@(#)ctrace.c	8.2 (Berkeley) 10/5/93";
-#endif /* not lint */
+static char sccsid[] = "@(#)cur_hash.c	8.1 (Berkeley) 6/4/93";
+#endif	/* not lint */
 
-#ifdef DEBUG
-#include <stdio.h>
+#include <sys/types.h>
 
-#ifdef __STDC__
-#include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
-#ifndef TFILE
-#define	TFILE	"__curses.out"
-#endif
-
-static FILE *tracefp;			/* Curses debugging file descriptor. */
-
-#pragma debug 0
-/* assume at least #pragma optimize 8 */
-void
-#ifdef __STDC__
-__CTRACE(const char *fmt, ...)
-#else
-__CTRACE(fmt, va_alist)
-	char *fmt;
-	va_dcl
-#endif
+/*
+ * __hash() is "hashpjw" from the Dragon Book, Aho, Sethi & Ullman, p.436.
+ */
+u_long
+__hash(unsigned char *s, int len)
 {
-	va_list ap;
-#ifdef __STDC__
-	va_start(ap, fmt);
-#else
-	va_start(ap);
-#endif
-	if (tracefp == NULL)
-		tracefp = fopen(TFILE, "w");
-	if (tracefp == NULL)
-		return;
-	(void)vfprintf(tracefp, fmt, ap);
-	va_end(ap);
-	(void)fflush(tracefp);
+	u_long	h, g, i;
+
+	h = 0;
+	i = 0;
+        while (i < len) {
+		h = (h << 4) + s[i];
+                if (g = h & 0xf0000000) {
+                        h = h ^ (g >> 24);
+                        h = h ^ g;
+                }
+		i++;
+	}
+        return h;
 }
-#endif
 

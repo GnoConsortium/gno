@@ -50,9 +50,9 @@ static char sccsid[] = "@(#)ex1.c	8.1 (Berkeley) 6/4/93";
 #define YSIZE 10
 #define XSIZE 20
 
-int quit();
+void quit(int sig, int code);
 
-main()
+int main(int argc, char *argv[])
 {
 	int i, j, c;
 	size_t len;
@@ -76,7 +76,7 @@ main()
 		c = getchar();
 		switch(c) {
 		case 'q':		/* Quit on 'q' */
-			quit();
+			quit(0, 0);
 			break;
 		case 's':		/* Go into standout mode on 's' */
 			standout();
@@ -94,9 +94,9 @@ main()
 	}
 }
 
-
-int
-quit()
+#pragma databank 1
+void
+quit(int sig, int code)
 {
 	erase();		/* Terminate by erasing the screen */
 	refresh();
@@ -106,7 +106,17 @@ quit()
 	putchar('\n');
 	exit(0);
 }
+#pragma databank 0
 
+#ifdef __GNO__
+int tcsetattr(int fd, int action, const struct termios *tt)
+{
+	return 0;
+}
 
-
+int tcgetattr(int fd, struct termios *tt)
+{
+	return 0;
+}
+#endif
 

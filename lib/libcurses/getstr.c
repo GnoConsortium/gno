@@ -42,9 +42,7 @@ static char sccsid[] = "@(#)getstr.c	8.2 (Berkeley) 5/4/94";
  *	Get a string starting at (cury, curx).
  */
 int
-wgetstr(win, str)
-	register WINDOW *win;
-	register char *str;
+wgetstr(WINDOW *win, char *str)
 {
 	int c;
 
@@ -55,3 +53,4 @@ wgetstr(win, str)
   		return (ERR);
 	return (OK);
 }
+

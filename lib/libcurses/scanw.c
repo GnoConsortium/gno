@@ -47,6 +47,8 @@ static char sccsid[] = "@(#)scanw.c	8.3 (Berkeley) 5/4/94";
 
 #include "curses.h"
 
+#pragma debug 0
+/* assume at least #pragma optimize 8 */
 /*
  * scanw --
  *	Implement a scanf on the standard screen.
@@ -162,14 +164,11 @@ mvwscanw(win, y, x, fmt, va_alist)
  *	This routine actually executes the scanf from the window.
  */
 int
-vwscanw(win, fmt, ap)
-	WINDOW *win;
-	const char *fmt;
-	va_list ap;
+vwscanw(WINDOW *win, const char *fmt, va_list ap)
 {
-
-	char buf[1024];
+	static char buf[1024];
 
 	return (wgetstr(win, buf) == OK ?
 	    vsscanf(buf, fmt, ap) : ERR);
 }
+

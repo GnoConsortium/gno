@@ -45,8 +45,7 @@ static char sccsid[] = "@(#)overwrite.c	8.2 (Berkeley) 5/4/94";
  *	Writes win1 on win2 destructively.
  */
 int
-overwrite(win1, win2)
-	register WINDOW *win1, *win2;
+overwrite(WINDOW *win1, WINDOW *win2)
 {
 	register int x, y, endy, endx, starty, startx;
 
@@ -74,3 +73,4 @@ overwrite(win1, win2)
 	}
 	return (OK);
 }
+

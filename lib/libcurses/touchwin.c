@@ -42,9 +42,7 @@ static char sccsid[] = "@(#)touchwin.c	8.2 (Berkeley) 5/4/94";
  *	Touch a given line.
  */
 int
-touchline(win, y, sx, ex)
-	WINDOW *win;
-	register int y, sx, ex;
+touchline(WINDOW *win, int y, int sx, int ex)
 {
 	return (__touchline(win, y, sx, ex, 1));
 }
@@ -55,8 +53,7 @@ touchline(win, y, sx, ex)
  *	Make it look like the whole window has been changed.
  */
 int
-touchwin(win)
-	register WINDOW *win;
+touchwin(WINDOW *win)
 {
 	register int y, maxy;
 
@@ -71,8 +68,7 @@ touchwin(win)
 
 
 int
-__touchwin(win)
-	register WINDOW *win;
+__touchwin(WINDOW *win)
 {
 	register int y, maxy;
 
@@ -86,10 +82,7 @@ __touchwin(win)
 }
 
 int
-__touchline(win, y, sx, ex, force)
-	register WINDOW *win;
-	register int y, sx, ex;
-	int force;
+__touchline(WINDOW *win, int y, int sx, int ex, int force)
 {
 #ifdef DEBUG
 	__CTRACE("touchline: (%0.2o, %d, %d, %d, %d)\n", win, y, sx, ex, force);
@@ -116,5 +109,4 @@ __touchline(win, y, sx, ex, force)
 #endif
 	return (OK);
 }
-
 

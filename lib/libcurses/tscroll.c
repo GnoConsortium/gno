@@ -61,9 +61,7 @@ static char sccsid[] = "@(#)tscroll.c	8.4 (Berkeley) 7/27/94";
  * all other characters are ``self-inserting''.
  */
 char *
-__tscroll(cap, n1, n2)
-	const char *cap;
-	int n1, n2;
+__tscroll(const char *cap, int n1, int n2)
 {
 	static char result[MAXRETURNSIZE];
 	int c, n, increment = 0;
@@ -140,3 +138,4 @@ one:			*dp++ = n % 10 | '0';
 
 err:	return("curses: __tscroll failed");
 }
+

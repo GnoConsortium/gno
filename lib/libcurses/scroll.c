@@ -42,8 +42,7 @@ static char sccsid[] = "@(#)scroll.c	8.3 (Berkeley) 5/4/94";
  *	Scroll the window up a line.
  */
 int
-scroll(win)
-	register WINDOW *win;
+scroll(WINDOW *win)
 {
 	register int oy, ox;
 
@@ -69,3 +68,4 @@ scroll(win)
 	}
 	return (OK);
 }
+

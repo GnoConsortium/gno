@@ -43,9 +43,7 @@ static char sccsid[] = "@(#)idlok.c	8.2 (Berkeley) 5/4/94";
  *	given window.
  */
 void
-idlok(win, bf)
-	WINDOW *win;
-	int bf;
+idlok(WINDOW *win, int bf)
 {
 	if (bf)
 		win->flags |= __IDLINE;

@@ -42,8 +42,7 @@ static char sccsid[] = "@(#)clear.c	8.2 (Berkeley) 5/4/94";
  *	Clear the window.
  */
 int
-wclear(win)
-	register WINDOW *win;
+wclear(WINDOW *win)
 {
 	if (werase(win) == OK) {
 		win->flags |= __CLEAROK;
@@ -51,3 +50,4 @@ wclear(win)
 	}
 	return (ERR);
 }
+

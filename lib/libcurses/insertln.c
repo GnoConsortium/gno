@@ -44,10 +44,8 @@ static char sccsid[] = "@(#)insertln.c	8.2 (Berkeley) 5/4/94";
  *	Do an insert-line on the window, leaving (cury, curx) unchanged.
  */
 int
-winsertln(win)
-	register WINDOW *win;
+winsertln(WINDOW *win)
 {
-
 	register int y, i;
 	register __LINE *temp;
 
@@ -80,3 +78,4 @@ winsertln(win)
 		__id_subwins(win);
 	return (OK);
 }
+

@@ -35,6 +35,7 @@
 static char sccsid[] = "@(#)refresh.c	8.4 (Berkeley) 8/4/94";
 #endif /* not lint */
 
+#include <stdlib.h>		/* abort() */
 #include <string.h>
 
 #include "curses.h"
@@ -53,8 +54,7 @@ static void     scrolln __P((int, int, int, int, int));
  *	win.
  */
 int
-wrefresh(win)
-	register WINDOW *win;
+wrefresh(WINDOW *win)
 {
 	register __LINE *wlp;
 	register int retval;
@@ -125,7 +125,7 @@ wrefresh(win)
 		__CTRACE("#####################################\n");
 		for (i = 0; i < curscr->maxy; i++) {
 			__CTRACE("C: %d:", i);
-			__CTRACE(" 0x%x \n", curscr->lines[i]->hash);
+			__CTRACE(" 0x%lx \n", curscr->lines[i]->hash);
 			for (j = 0; j < curscr->maxx; j++)
 				__CTRACE("%c",
 			           curscr->lines[i]->line[j].ch);
@@ -137,7 +137,7 @@ wrefresh(win)
 			if (i < win->begy || i > win->begy + win->maxy - 1)
 				continue;
 			__CTRACE("W: %d:", i - win->begy);
-			__CTRACE(" 0x%x \n", win->lines[i - win->begy]->hash);
+			__CTRACE(" 0x%lx \n", win->lines[i - win->begy]->hash);
 			__CTRACE(" 0x%x ", win->lines[i - win->begy]->flags);
 			for (j = 0; j < win->maxx; j++)
 				__CTRACE("%c",
@@ -220,9 +220,7 @@ wrefresh(win)
  *	Make a change on the screen.
  */
 static int
-makech(win, wy)
-	register WINDOW *win;
-	int wy;
+makech(WINDOW *win, int wy)
 {
 	static __LDATA blank = {' ', 0};
 	register int nlsp, clsp;		/* Last space in lines. */
@@ -420,8 +418,7 @@ makech(win, wy)
  *	Do a mvcur, leaving standout mode if necessary.
  */
 static void
-domvcur(oy, ox, ny, nx)
-	int oy, ox, ny, nx;
+domvcur(int oy, int ox, int ny, int nx)
 {
 	if (curscr->flags & __WSTANDOUT && !MS) {
 		tputs(SE, 0, __cputchar);
@@ -438,16 +435,15 @@ domvcur(oy, ox, ny, nx)
  */
 
 static void
-quickch(win)
-	WINDOW *win;
+quickch(WINDOW *win)
 {
 #define THRESH		(int) win->maxy / 4
 
 	register __LINE *clp, *tmp1, *tmp2;
 	register int bsize, curs, curw, starts, startw, i, j;
 	int n, target, cur_period, bot, top, sc_region;
-	__LDATA buf[1024];
-	u_int blank_hash;
+	static __LDATA buf[1024];
+	u_long blank_hash;
 
 	/*
 	 * Find how many lines from the top of the screen are unchanged.
@@ -539,7 +535,7 @@ quickch(win)
 		__CTRACE("#####################################\n");
 		for (i = 0; i < curscr->maxy; i++) {
 			__CTRACE("C: %d:", i);
-			__CTRACE(" 0x%x \n", curscr->lines[i]->hash);
+			__CTRACE(" 0x%lx \n", curscr->lines[i]->hash);
 			for (j = 0; j < curscr->maxx; j++)
 				__CTRACE("%c",
 			           curscr->lines[i]->line[j].ch);
@@ -551,7 +547,7 @@ quickch(win)
 			if (i < win->begy || i > win->begy + win->maxy - 1)
 				continue;
 			__CTRACE("W: %d:", i - win->begy);
-			__CTRACE(" 0x%x \n", win->lines[i - win->begy]->hash);
+			__CTRACE(" 0x%lx \n", win->lines[i - win->begy]->hash);
 			__CTRACE(" 0x%x ", win->lines[i - win->begy]->flags);
 			for (j = 0; j < win->maxx; j++)
 				__CTRACE("%c",
@@ -692,8 +688,7 @@ quickch(win)
  *	Scroll n lines, where n is starts - startw.
  */
 static void
-scrolln(starts, startw, curs, bot, top)
-	int starts, startw, curs, bot, top;
+scrolln(int starts, int startw, int curs, int bot, int top)
 {
 	int i, oy, ox, n;
 
@@ -848,3 +843,4 @@ scrolln(starts, startw, curs, bot, top)
 		__mvcur(top, 0, oy, ox, 1);
 	}
 }
+

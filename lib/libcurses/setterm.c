@@ -81,8 +81,7 @@ static char	tspace[2048];		/* Space for capability strings */
 char *ttytype;
 
 int
-setterm(type)
-	register char *type;
+setterm(char *type)
 {
 	static char genbuf[1024];
 	static char __ttytype[1024];
@@ -172,7 +171,7 @@ setterm(type)
  *	Gets all the terminal flags from the termcap database.
  */
 static void
-zap()
+zap(void)
 {
 	register char *namp, ***sp;
 	register char **fp;
@@ -180,6 +179,7 @@ zap()
 #ifdef DEBUG
 	register char	*cp;
 #endif
+
 	tmp[2] = '\0';
 
 	namp = "ambsdadbeohcinmimsncnsosulxbxnxtxsxx";
@@ -229,8 +229,8 @@ zap()
  *	Return a capability from termcap.
  */
 char *
-getcap(name)
-	char *name;
+getcap(char *name)
 {
 	return (tgetstr(name, &aoftspace));
 }
+

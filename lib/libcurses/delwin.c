@@ -44,10 +44,8 @@ static char sccsid[] = "@(#)delwin.c	8.2 (Berkeley) 5/4/94";
  *	Delete a window and release it back to the system.
  */
 int
-delwin(win)
-	register WINDOW *win;
+delwin(WINDOW *win)
 {
-
 	register WINDOW *wp, *np;
 
 	if (win->orig == NULL) {
@@ -78,3 +76,4 @@ delwin(win)
 	free(win);
 	return (OK);
 }
+

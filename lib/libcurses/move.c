@@ -42,11 +42,8 @@ static char sccsid[] = "@(#)move.c	8.2 (Berkeley) 5/4/94";
  *	Moves the cursor to the given point.
  */
 int
-wmove(win, y, x)
-	register WINDOW *win;
-	register int y, x;
+wmove(WINDOW *win, int y, int x)
 {
-
 #ifdef DEBUG
 	__CTRACE("wmove: (%d, %d)\n", y, x);
 #endif
@@ -60,3 +57,4 @@ wmove(win, y, x)
 	win->lines[y]->flags &= ~__ISPASTEOL;
 	return (OK);
 }
+
