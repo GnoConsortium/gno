@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: cmd.asm,v 1.11 1999/02/08 17:26:50 tribby Exp $
+* $Id: cmd.asm,v 1.12 1999/11/30 17:53:27 tribby Exp $
 *
 **************************************************************************
 *
@@ -89,6 +89,8 @@ BADFD	gequ	-2
 **************************************************************************
 
 gettoken	START
+
+	using	vardata
 
 buf	equ	1
 state	equ	buf+4
@@ -198,7 +200,7 @@ neut5	cmp	#' '	;space
 	cmp	#9	;tab
 	jeq	loop
 	if2	@a,ne,#'>',neut6
-	lda	#GTGT
+	ldx	#GTGT
 	bra	neut10
 
 neut4	if2	@a,ne,#13,neut4a	;return
@@ -219,21 +221,26 @@ neut4c	lda	[buf]
 neut4d	jmp	loop
 
 neut6	if2	@a,ne,#'"',neut7
-startquote	lda	#INQUOTE
-	bra	neut10
+startquote	ldx	#INQUOTE
+	bra	chkkeep
 neut7	if2	@a,ne,#"'",neut8
-startsingle	lda	#SINGQUOTE
-	bra	neut10
+startsingle	ldx	#SINGQUOTE
+chkkeep	ldy	varkeepquote	; Is KEEPQUOTE env var set?
+	beq	neut10	;   NO:  just set the state
+	bra	neut9a	;   YES: save quote character
+
 neut8	if2	@a,ne,#'\',neut9
 	lda	[buf]
 	and	#$FF
 	incad	buf
 	if2	@a,eq,#13,neut10a
-neut9	sta	[word]	;default
-	incad	word
-	lda	#INWORD
-neut10	sta	state
-neut10a	jmp	loop
+
+neut9	ldx	#INWORD	; Default
+
+neut9a	sta	[word]	; Save character in buffer
+	incad	word	;  and increment pointer.
+neut10	stx	state	; Set current state.
+neut10a	jmp	loop	; Check next character.
 
 ;
 ; CASE GTGT
@@ -256,23 +263,28 @@ gtgt3	incad	buf
 ;
 ; CASE INQUOTE
 ;
-case_inquote	if2	ch,ne,#'\',quote2	;is it a quoted character?
-	lda	[buf]
-	incad	buf
+case_inquote	if2	ch,ne,#'\',quote2	; If it's a quoted character,
+	lda	[buf]	;  load up the next character
+	incad	buf	;   and bump the pointer.
 putword	sta	[word]
 	incad	word
 	jmp	loop
-quote2	if2	@a,ne,#'"',putword
-	ld2	INWORD,state
-	jmp	loop
+quote2	if2	@a,ne,#'"',putword 
+	bra	chkkeep2
 
 ;
 ; CASE SINGLEQUOTE
 ;
 case_single	anop
 	if2	ch,ne,#"'",putword
-	ld2	INWORD,state
-	jmp	loop
+
+; For both ' and ": if KEEPQUOTE env var is set, save quote char in result.
+chkkeep2	ldy	varkeepquote
+	beq	nokeep	
+	sta	[word]
+	incad	word
+nokeep	ld2	INWORD,state	; Always: set state to INWORD
+	jmp	loop	;  and get the next character.
 ;
 ; CASE INWORD
 ;
@@ -294,7 +306,7 @@ case_inword	if2	ch,eq,#000,endword
 	incad	buf
 	and	#$FF
 	if2	@a,eq,#13,word2
-	bra	putword
+	jmp	putword
 word2	jmp	loop
 endword	dec	buf
 finiword	lda	#0
@@ -334,6 +346,8 @@ errstr2	dc	c"gsh: Missing ending '.",h'0d00'
 
 command	START
 	
+	using	vardata
+
 pipefds	equ	1
 errappend	equ	pipefds+4
 errfile	equ	errappend+2
@@ -473,7 +487,9 @@ chkchar	if2	@a,eq,#' ',qneeded
 	beq	appword	Done if null character.
 	bra	chkchar
 
-qneeded	inc	needq	Quotes needed.
+qneeded	lda	varkeepquote	If env var KEEPQUOTE is set,
+	bne	appword	 required quotes are already in place.
+	inc	needq	Otherwise, quotes are needed.
 
 ;
 ; Append word to command line (optionally, with quotes)
@@ -494,7 +510,7 @@ nospace	lda	needq	If special char is in parameter,
 	beq	noquote
 	lda	[word]
 	and	#$FF
-	cmp	#'"'	 and it doesn't start with '"',
+	cmp	#'"'	  and param doesn't start with '"',
 	bne	doquote
 	stz	needq
 	bra	noquote
@@ -1199,6 +1215,7 @@ mutex	key
 **************************************************************************
 
 execute	START
+	using	vardata
 
 exebuf	equ	1
 pipesem	equ	exebuf+4
@@ -1322,7 +1339,6 @@ found_end	anop
 	sta	end_char	Save the ending character.
 
 	tya		Get number of bytes in command.
-	jeq	goback	If none, just skip it.
 
 	clc		Add command length to
 	adc	cmdstrt	 starting address to
@@ -1330,6 +1346,9 @@ found_end	anop
 	lda	#0
 	adc	cmdstrt+2
 	sta	cmdend+2
+
+	cpy	#0	If number of bytes in command
+	jeq	chk_cmd	 = 0, just skip it.
 
 	lda	end_char	Get the termination character.
 	beq	expand	If it's not a null byte,
@@ -1402,15 +1421,14 @@ expalias	ldx	ptr_glob+2
 	ora	exebuf+2
 	jeq	errexit
 
-* >> Temporary debug code: echo expanded command if echo is set.
-	using	vardata
-	ldy	varecho
-	beq	noecho
+; echo expanded command if echox is set.
+	ldy	varechox
+	beq	noechox
 	ldx	exebuf+2
 	lda	exebuf
 	jsr	puts
 	jsr	newline
-noecho	anop
+noechox	anop
 
 *   command	subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,
 *		4:pipesem,4:stream,4:awaitstatus)

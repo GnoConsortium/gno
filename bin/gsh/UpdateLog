@@ -1,6 +1,34 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Nov 26 99  [dmt] Cleanup tests directory and update its Makefile.
+
+Nov 22 99  [dmt] Add environment variable flags $ECHOX and $KEEPQUOTE
+	   that modify the behavior of gsh. [shellvar.asm, cmd.asm]
+	   If set, $ECHOX causes gsh to echo a single expanded command.
+	   (In previous versions of gsh 2.0, this was temporary code
+	   that was executed whenever $ECHO was set.)
+	   If set, $KEEPQUOTE tells gsh to use the user's original
+	   single and double quotes, rather than removing them and
+	   adding double quotes as needed. This resolves PR#50 and,
+	   if a child program re-parses its parameters, also resolves
+	   PR#34 (gsh messes up nested quotes).
+
+Nov 18 99  [dmt] Fix PR#123: command line parsing ended if a ";"
+	   delimited a null command (echo "Test 1" ; ; echo "Test2"
+	   would only echo the first string). Modified cmd.asm
+
+Sep  6 99  [dmt] Add comments to ioctl calls in edit.asm.
+
+Sep  1 99  [dmt] Added signal handler for SIGTTIN (signal #21, background
+	   read attempted from control terminal) that prints a message
+	   and quits the shell. This was needed because gsh will sometimes
+	   receive such a signal, go into the "suspended" state, and never
+	   return to "running" state.
+
+Feb 11 99  [dmt] Changes to this point checked-in to master archive.
+	   Released as version 2.0d10 (displays as 2.0d?)
+
 Feb  2 99  [dmt] Changed maxline_size from 1024 to 4096.
 	   Recode copy loop in expandalias to be more efficient.
 
@@ -26,7 +54,7 @@ Jan 30 99  [dmt] Add check for output buffer overflow when globbing, and
 	   to truly eat leading blanks (per comments), and to check for
 	   buffer overflow (alias.cmd). (Also tightened up the code.)
 
-Jan 13 98  [dmt] Changes to this point checked-in to master archive.
+Jan 13 99  [dmt] Changes to this point checked-in to master archive.
 	   Released as version 2.0d9
 
 Jan 12 99  [dmt] Add debug routine DB~CHKBNK, which causes BRK B0 if

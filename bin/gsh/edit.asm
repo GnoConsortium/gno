@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: edit.asm,v 1.11 1999/01/14 17:44:24 tribby Exp $
+* $Id: edit.asm,v 1.12 1999/11/30 17:53:27 tribby Exp $
 *
 **************************************************************************
 *
@@ -96,22 +96,38 @@ GetCmdLine	START
 	stz	currenthist
 	stz	currenthist+2
 
+;
+; Get current state of tty
+;
 	ioctl	(#1,#TIOCGETP,#oldsgtty)
+	ioctl (#1,#TIOCGETK,#oldttyk)
+	ioctl (#1,#TIOCGLTC,#oldltc)
+
+;
+; Set tty to return on character-by-character mode (CBREAK) and
+;         map CR into LF; output LF as CR-LF (CRMOD)
+;
 	ioctl	(#1,#TIOCGETP,#newsgtty)
 	lda	#CBREAK+CRMOD
 	sta	sg_flags
 	ioctl	(#1,#TIOCSETP,#newsgtty)
 
-	ioctl (#1,#TIOCGETK,#oldttyk)
+;
+; Set ttyk bit fields to OAMAP+OA2META+VT100ARROW
+;
 	ioctl (#1,#TIOCSETK,#newttyk)
 
-	ioctl (#1,#TIOCGLTC,#oldltc)
+;
+; Set tty to disable "delayed stop process signal" special character
+; (default value of ^Y)
+;
 	ioctl (#1,#TIOCGLTC,#newltc)
 	short	m
 	lda	#-1
-	sta	newltc+1
+	sta	t_dsuspc
 	long	m
 	ioctl (#1,#TIOCSLTC,#newltc)
+
 
 cmdloop	lda	#keybindtab
 	sta	0
@@ -149,8 +165,8 @@ eof	ldx	cmdlen
 	lda	varignore
 	bne	findcmd
 reterr	jsr	cursoron
-	ioctl	(#1,#TIOCSETP,#oldsgtty)
-	ioctl (#1,#TIOCSETK,#oldttyk)
+	ioctl	(#1,#TIOCSETP,#oldsgtty)	; Restore original
+	ioctl (#1,#TIOCSETK,#oldttyk)	;  tty settings.
 	ioctl (#1,#TIOCSLTC,#oldltc)
 	sec
 	rts
@@ -302,8 +318,8 @@ fix0	inx
 	beq	retdone
 	ph4	#cmdline
 	jsl	InsertHistory
-retdone	ioctl	(#1,#TIOCSETP,#oldsgtty)
-	ioctl (#1,#TIOCSETK,#oldttyk)
+retdone	ioctl	(#1,#TIOCSETP,#oldsgtty)	; Restore original
+	ioctl (#1,#TIOCSETK,#oldttyk)	;  tty settings.
 	ioctl (#1,#TIOCSLTC,#oldltc)
 	clc
 	rts
@@ -564,23 +580,44 @@ cmdoa6c	ldy	cmdloc
 	jsr	moveright
 	bra	cmdoa6c
 
-oldsgtty	dc	i1'0'
-	dc	i1'0'
-	dc	i1'0'
-	dc	i1'0'
-	dc	i2'0'
+;
+; sgtty data structures for current values and new values:
+;
+oldsgtty	dc	i1'0'	sg_ispeed: input baud rate
+	dc	i1'0'	sg_ospeed: output baud rate
+	dc	i1'0'	sg_erase: line-edit erase char
+	dc	i1'0'	sg_kill: line-edit kill char
+	dc	i2'0'	sg_flags: various state settings
 
 newsgtty	dc	i1'0'
 	dc	i1'0'
 	dc	i1'0'
 	dc	i1'0'
-sg_flags	dc	i2'0'
+sg_flags	dc	i2'0'	sg_flags set to	CBREAK+CRMOD
+                                                        
 
+;
+; ttyk bit map for current value and new value:
+;
 oldttyk	dc	i2'0'
 newttyk	dc	i2'OAMAP+OA2META+VT100ARROW'
 
-oldltc	ds	6
-newltc	ds	6
+;
+; ltchars data structures for current values and new values:
+;
+oldltc	dc	i1'0'	t_suspc: stop process signal (^Z)
+	dc	i1'0'	t_dsuspc: delayed stop process sig (^Y)
+	dc	i1'0'	t_rprntc: reprint line (^R)
+	dc	i1'0'	t_flushc: flush output (^O)
+	dc	i1'0'	t_werasc: word erase (^W)
+	dc	i1'0'	t_lnextc: literal next char (^V)
+
+newltc	dc	i1'0'
+t_dsuspc	dc	i1'0'
+	dc	i1'0'
+	dc	i1'0'
+	dc	i1'0'
+	dc	i1'0'
 
 	END	     
 

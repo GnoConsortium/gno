@@ -7,7 +7,7 @@
 *   Tim Meekins
 *   Derek Taubert
 *
-* $Id: shellvar.asm,v 1.8 1999/02/08 17:26:51 tribby Exp $
+* $Id: shellvar.asm,v 1.9 1999/11/30 17:53:27 tribby Exp $
 *
 **************************************************************************
 *
@@ -696,9 +696,27 @@ up9	anop
 	pei	(var)
 	ph4	#oldpmodename
 	jsr	cmpdcstr
-	bne	done
+	bne	up10
 	lda	flag
 	sta	varoldpmode
+	jmp	done	
+
+up10	pei	(var+2)
+	pei	(var)
+	ph4	#varechoxname
+	jsr	cmpdcstr
+	bne	up11
+	lda	flag
+	sta	varechox
+	jmp	done	
+
+up11	pei	(var+2)
+	pei	(var)
+	ph4	#keepquotename
+	jsr	cmpdcstr
+	bne	done
+	lda	flag
+	sta	varkeepquote
 		     
 done	return      
 
@@ -800,6 +818,8 @@ pushdsilname	dc	c'pushdsilent',h'00'
 termname	dc	c'term',h'00'
 ignorename	dc	c'ignoreeof',h'00'
 oldpmodename	dc	c'oldpathmode',h'00'
+varechoxname	dc	c'echox',h'00'
+keepquotename	dc	c'keepquote',h'00'
 
 ; Table of flag values (must be in same order as string addresses)
 evvaltbl	anop
@@ -811,6 +831,8 @@ varnobeep	dc	i2'0'
 varpushdsil	dc	i2'0'
 varignore	dc	i2'0'
 varoldpmode	dc	i2'0'
+varechox	dc	i2'0'
+varkeepquote	dc	i2'0'
 
 evvaltblsz	dc	i2'evvaltblsz-evvaltbl'	# bytes in table
 

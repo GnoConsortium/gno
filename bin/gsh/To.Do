@@ -1,15 +1,27 @@
-Last updated: Dec. 27, 1998  By: Dave Tribby
+Last updated: Nov. 26, 1999  By: Dave Tribby
 
 For more bug reports, see http://www.gno.org/~gno/bugs.html
 
 Completed items are reported in file UpdateLog.
 
 
-Allow redirection of built-in commands' I/O even if they aren't forked.
+Determine why gsh gets SIGTTIN (background read attempted signal) when
+it executes a very quickly executing child program.  Currently gsh
+quits in order to avoid waiting forever, but that may not always be a
+good strategy.
 
 Rather than have each built-in command always be either forked or
 non-forked, check dynamically and only fork when it's really necessary
-(background or piped).
+(background or piped). Something like this:
+  If process is in background (&) or piped (|), then fork.
+  Otherwise: if redirecting I/O, then
+                copy file descriptor(s)
+                open new stdin, stdout, and/or stderr
+  Execute process.
+  If I/O was redirected, then
+                close redirected file(s)
+                reconnect stdin, stdout, and/or stderr
+Note: routine "command" sets srcfile and dstfile.
 
 Identify limits built into gsh and how they can be changed; for example,
 command line cannot expand to > 1024 characters.

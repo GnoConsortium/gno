@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shell.asm,v 1.10 1999/02/08 17:26:51 tribby Exp $
+* $Id: shell.asm,v 1.11 1999/11/30 17:53:27 tribby Exp $
 *
 **************************************************************************
 *
@@ -35,6 +35,8 @@
 *
 * signal18	subroutine (4:fubar)
 *
+* signal21	subroutine (4:fubar)
+*
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/shell.mac
@@ -47,6 +49,7 @@ dummyshell	start		; ends up in .root
 SIGINT	gequ	 2
 SIGTSTP	gequ	18
 SIGCHLD	gequ	20
+SIGTTIN	gequ	21
 
 cmdbuflen	gequ	1024
 
@@ -109,6 +112,7 @@ fastskip1	anop
 	signal (#SIGINT,#signal2)
 	signal (#SIGTSTP,#signal18)
 	signal (#SIGCHLD,#pchild)
+	signal (#SIGTTIN,#signal21)
 ;
 ; Set entry point for users calling system
 ;
@@ -634,5 +638,33 @@ signal18	START
 	return           
 
 msg	dc	c'^Z',h'0d0a00'
+
+	END
+
+;=========================================================================
+;
+; SIGTTIN handler
+;
+;=========================================================================
+
+;
+; Work-around for kernel problem: if background read error signal
+; is received, gsh will hang forever.  Instead, quit.
+;
+
+signal21	START
+
+	using	global
+
+	subroutine (4:fubar),0
+
+	WriteCString #bg_msg	Print message.
+
+	Quit	QuitParm
+
+QuitParm	dc	i'0'
+;	return           
+
+bg_msg	dc	c'gsh: SIGTTIN received!!',h'0d0a00'
 
 	END
