@@ -1,61 +1,60 @@
 #
 # Makefile for udl
-# Copyright (c) 1993-1994 Soenke Behrens
-# For use with dmake
+# Copyright (c) 1993-1996 Soenke Behrens
 #
-# $Id: Makefile.gs,v 1.7 1995/02/13 19:47:23 gdr Exp $
+# This makefile should be used with dmake.
 #
-# Define the following as necessary:
+# $Id: Makefile.gs,v 1.8 1996/01/22 01:01:30 gdr Exp $
 #
-#	HAS_ATEXIT if your system has atexit()
-#
-#	_POSIX_C_SOURCE and _POSIX_SOURCE if your compiler is Posix compliant
-#
-#	READDIR_RETURNS_DOT if your direct readdir() function will return
-#	entries for "." and "..".  SunOS4 is known to do this.
-#
-#	BROKEN_REALLOC if your realloc() doesn't behave like malloc() when
-#	passed a NULL pointer as the first argument.
-#
-#	GNO if you are compiling on the IIgs.  This will allow for both
-#	':' and '/' as pathname separators.
-#
-#	OVERFLOW_CHECK  Udl uses one recursive subroutine.  Define this if
-#	you want to check for stack overflows for this routine (independent
-#	of any compiler flags).  Strongly recommended.
-#
-#	CHECK_STACK if you want stack usage to be displayed (IIgs only).
-#	You will also have to specify -l/usr/lib/stack in LDFLAGS.
+
+# Where do we put the binaries and man page?
+
+BINDIR	= /usr/local/bin
+MANDIR	= /usr/local/man
+
+# OS-dependant macros.  See the README for an explanation of these.
 
 DEFINES = -DGNO -D_POSIX_C_SOURCE -D_POSIX_SOURCE -DHAS_ATEXIT \
 	  -DOVERFLOW_CHECK
-#CFLAGS	= $(DEFINES) -O -w -v -s2048
-#LDFLAGS	= -v -l/usr/lib/gnulib -s2048
-CFLAGS	= $(DEFINES) -O -v -s2048
-LDFLAGS	= -v -s2048
+
+# Use optimization and a 2k stack.
+
+CFLAGS	= $(DEFINES) -O -w -s2048
+LDFLAGS	= -s2048
+
+# Depending on how you have your libraries set up, you may not need
+# this next line.  In that case, just comment it out.
+
+LDLIBS	= -l/usr/lib/gnulib
 
 #
 # You should not have to modify anything beyond this point
 #
 
-udl: udl.o udluse.o udl.r common.o globals.o
-	-$(RM) udl
-	cp udl.r udl
-	chtyp -texe udl
-	$(CC) $(LDFLAGS) -o udl udl.o udluse.o common.o globals.o
+OBJS	= udl.o udluse.o common.o globals.o
 
-udl.o: udl.gs.c common.h
-	$(CC) -c $(CFLAGS) -o udl.o udl.gs.c
+udl: $(OBJS) udl.r help/udl
+	$(CC) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $@
+	copyfork udl.r $@ -r
+
+udl.o: udlgs.c common.h
+	$(CC) -c $(CFLAGS) -o udl.o udlgs.c
 
 install:
-	cp -f udl /usr/local/bin
-	cp -f udl.1 /usr/man/man1
+	cp -f udl   $(BINDIR)
+	cp -f udl.1 $(MANDIR)
 
-docs: udl.1
-	nroff -man udl.1 >help/udl
+help:
+	mkdir $@
+
+help/udl: udl.1 help
+	nroff -man udl.1 > $@
 
 clean:
-	$(RM) *.o udl
+	-$(RM) *.o *.root udl.r
+
+clobber: clean
+	-$(RM) -rf udl help
 
 dist:
 	@echo "Sorry, automatic packing not supported yet"

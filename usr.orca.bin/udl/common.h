@@ -4,7 +4,7 @@
  *
  * Header file for routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.h,v 1.7 1995/02/13 19:47:29 gdr Exp $
+ * $Id: common.h,v 1.8 1996/01/22 01:01:33 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -83,9 +83,8 @@ extern void cleanup (void);
 extern void usage (void);
 extern void build_file_list(char *file, short recurse);
 extern void add_to_pathList(char *thisdir, char *file);
-extern char *mktemp(const char *base);
 extern char *get_path(const char *name);
-
+extern char *Mktemp(const char *base);
 extern int needsgno(void);
 
 /* not strictly necessary, but it cuts down on warnings from gcc */

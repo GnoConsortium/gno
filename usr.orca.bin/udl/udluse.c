@@ -4,7 +4,7 @@
  *
  * Usage strings.
  *
- * $Id: udluse.c,v 1.7 1995/02/13 19:47:38 gdr Exp $
+ * $Id: udluse.c,v 1.8 1996/01/22 01:01:36 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -14,7 +14,7 @@
 #endif
 
 char use1 [] =
-"udl 1.14 by Soenke Behrens, Devin Reade\n"
+"udl 1.15 by Soenke Behrens, Devin Reade\n"
 "Usage: udl -u|g|m [-Rvp] file1 [file2 ...]\n\n"
 "Options:\n"
 "  -u   Convert file to use LF as EOL character.\n"

@@ -1,0 +1,22 @@
+#include "Types.Rez"
+
+resource rVersion (0x1, purgeable1, nocrossbank) {
+	{ 1, 1, 5,		/* version 1.1.4 */
+	  release,		/* development|alpha|beta|final|release */
+	  0			/* non-final release number */
+	},
+	verBritain,
+        "udl",
+	"Copyright 1993-1996,\n"
+	"S" $"9A" "nke Behrens, Devin Reade"
+};
+
+resource rComment (0x1) {
+	"Text File Conversion Program\n"
+	"Converts files between CR, CR/LF, and LF.\n"
+	"(Apple, MS-DOS, and Unix)"
+};
+
+resource rComment (0x2) {
+	"Requires ORCA/Shell or GNO/ME"
+};

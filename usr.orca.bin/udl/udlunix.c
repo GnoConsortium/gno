@@ -4,7 +4,7 @@
  *
  * Unix specific routines.
  *
- * $Id: udlunix.c,v 1.7 1995/02/13 19:47:36 gdr Exp $
+ * $Id: udlunix.c,v 1.8 1996/01/22 01:01:35 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -15,6 +15,7 @@ extern char *strdup(const char *);
 
 int main(int argc,char *argv[]) {
   FILE *infile, *outfile;
+  char *p;
   int Tunix = FALSE;
   int Messy = FALSE;
   int GS = FALSE;
@@ -162,7 +163,7 @@ int main(int argc,char *argv[]) {
     }
    
     infile = tryopen(current_file,"rwb");
-    tempfile = mktemp(strcat(get_path(current_file), "udltmpXX"));
+    tempfile = Mktemp(strcat(get_path(current_file), "udltmpXX"));
     outfile = tryopen(tempfile,"wb");
     
     if (careful) {

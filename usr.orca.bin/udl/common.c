@@ -4,7 +4,7 @@
  *
  * Routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.c,v 1.7 1995/02/13 19:47:27 gdr Exp $
+ * $Id: common.c,v 1.8 1996/01/22 01:01:32 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -813,7 +813,10 @@ void add_to_pathList(char *thisdir, char *file) {
   return;
 }
 
-/* mktemp()  construct a unique file name
+/* Mktemp()  construct a unique file name
+ *
+ * This routine is slightly different than the Unix standard one,
+ * thus the capitalization.
  *
  * Inputs:
  *   base  Template to construct the name upon. It should
@@ -823,12 +826,12 @@ void add_to_pathList(char *thisdir, char *file) {
  *      base may contain a full or partial path.
  *
  * Outputs:
- *   mktemp() returns a pointer to a dynamically allocated string
+ *   Mktemp() returns a pointer to a dynamically allocated string
  *   containing a unique file name.
  *
  */
 
-char *mktemp(const char *base)
+char *Mktemp(const char *base)
 {
     static char id[16] = "AAAAAAAAAAAAAAA";
     char *p1,*p2,*st;
@@ -874,7 +877,7 @@ char *mktemp(const char *base)
       if (stat(st,&tstat) == 0)
       {
     	free (st);
-    	st = mktemp (base);
+    	st = Mktemp (base);
       }
 #ifdef GNO
     } else { /* ORCA/Shell doesn't like stat one little bit */
@@ -883,10 +886,10 @@ char *mktemp(const char *base)
       {
       	fclose(fp);
       	free (st);
-      	st = mktemp (base);
+      	st = Mktemp (base);
       } else if ((fp = fopen(st,"a")) == NULL) {
       	free(st);
-      	st = mktemp (base);
+      	st = Mktemp (base);
       } else {
       	fclose(fp);
       }

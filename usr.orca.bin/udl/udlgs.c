@@ -4,7 +4,7 @@
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.7 1995/02/13 19:47:34 gdr Exp $
+ * $Id: udlgs.c,v 1.9 1996/02/04 01:34:29 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Reade
  */
@@ -265,7 +265,7 @@ int main(int argc,char *argv[]) {
     }
 
     infile = tryopen(current_file,"rwb");
-    tempfile = mktemp(strcat(get_path(current_file), "udltmpXX"));
+    tempfile = Mktemp(strcat(get_path(current_file), "udltmpXX"));
     outfile = tryopen(tempfile,"wb");
 
     if (careful) {
