@@ -1,0 +1,9 @@
+Name:    inetd
+Version: 1.0 (October 1997)
+Shell:   GNO & GS/TCP
+Author:  Derek Taubert (from BSDi code)
+Contact: taubert@geeks.org
+Where:   /usr/bin
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+ Internet services daemon
