@@ -1,0 +1,53 @@
+# Tests for lseg command; invoked by command file "fulltests"
+#   Written by Dave Tribby (September 1997)
+#   $Id: dotests,v 1.1 1997/09/28 16:41:37 gdr Exp $
+
+# Location of the lseg command to be tested
+set testcmd="../lseg"
+
+# Record starting time
+echo -n "Testing command $testcmd beginning at"
+date
+
+set src="procs"
+set cmp="out.${src}"
+set dest="/tmp/$cmp"
+echo "Listing segments in files " ${src}*
+$testcmd ${src}* > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="outd.${src}"
+set dest="/tmp/$cmp"
+echo "Listing segments (decimal) in files " ${src}*
+$testcmd -d ${src}* > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set src="omf1format"
+set cmp="out.omf1"
+set dest="/tmp/$cmp"
+echo "Listing segments in an OMF version 1 file"
+$testcmd $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+
+echo "***** Error Messages *****"
+
+set dest="/tmp/err.cond"
+
+echo ""
+set src="badname"
+echo "Expected error: $src: no such file or directory"
+$testcmd $src > $dest
+echo "  Error completion status = $status (expected: 1)"

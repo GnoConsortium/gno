@@ -1,0 +1,6 @@
+File                 Type               Size     Stack  Name
+-------------------- ------------------ -------- ------ ----------------
+omf1format           Code               0x008DCE        "main      "
+omf1format           Code               0x000086        "~globals  "
+omf1format           Code               0x00A4A9        "~arrays   "
+omf1format           Code               0x001000        "DIRECT    "
