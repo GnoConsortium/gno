@@ -2,7 +2,7 @@
  * Floating point conversion routines.
  * Devin Reade, 1997.
  *
- * $Id: cvt.c,v 1.2 1997/09/21 06:20:37 gdr Exp $
+ * $Id: cvt.c,v 1.3 1998/03/24 16:20:30 gdr-ftp Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
@@ -16,15 +16,30 @@ segment "libc_stdlb";
 #include <sane.h>
 #include <math.h>
 
-char *
-ecvt (double number, size_t ndigits, int *decpt, int *sign)
+static char *
+_cvt (double number, size_t ndigits, int *decpt, int *sign, short style)
 {
 	static DecForm convert;
 	static Decimal d;
-
-	convert.style = FLOATDECIMAL;
+	int i;
+	char *p;
+	
+	convert.style = style;
 	if (ndigits > SIGDIGLEN) {
 		ndigits = SIGDIGLEN;
+	}
+	if (!number) {
+		/*
+		 * special case zero, for which SANE doesn't give the
+		 * documented format.
+		 */
+		p = d.sig.text;
+		for (i=0; i<ndigits; i++) {
+			*p++ = '0';
+		}
+		*p = '\0';
+		*decpt = *sign = 0;
+		return d.sig.text;
 	}
 	convert.digits = ndigits;
 	s_num2dec(&convert, number, &d);
@@ -35,21 +50,13 @@ ecvt (double number, size_t ndigits, int *decpt, int *sign)
 }
 
 char *
-fcvt (double number, size_t ndigits, int *decpt, int *sign)
-{
-	static DecForm convert;
-	static Decimal d;
+ecvt (double number, size_t ndigits, int *decpt, int *sign) {
+	return _cvt (number, ndigits, decpt, sign, FLOATDECIMAL);
+}
 
-	convert.style = FIXEDDECIMAL;
-	if (ndigits > SIGDIGLEN) {
-		ndigits = SIGDIGLEN;
-	}
-	convert.digits = ndigits;
-	s_num2dec(&convert, number, &d);
-	*decpt = (int)d.sig.length + d.exp;
-	*sign = d.sgn;
-	*(d.sig.text + (int)d.sig.length) = '\0'; /* depends on d.sig.unused */
-        return d.sig.text;
+char *
+fcvt (double number, size_t ndigits, int *decpt, int *sign) {
+	return _cvt (number, ndigits, decpt, sign, FIXEDDECIMAL);
 }
 
  /*	__dtoa:	These are the comments from the BSD implementation of
@@ -120,15 +127,20 @@ mode0:					/* this label doesn't belong here */
 		goto mode0;	/* TEMP KLUDGE */
 	}
 
-	/* truncate trailing zeros */
-	p = result;
-	while (*p) p++;
-	p--;
-	while ((p > result) && (*p == '0')) {
-		*p-- = '\0';
+	/* special case the exponent for 0.0 */
+	if (*decpt == 0) {
+		*decpt = 1;
 	}
+
+	/* truncate trailing zeros */
 	if (rve != NULL) {
-		*rve = p + 1;
+		p = result;
+		while (*p) p++;
+		--p;
+		while ((p > result) && (*p == '0')) {
+			--p;
+		}
+		*rve = p+1;
 	}
 
 	/* set decimal point for NaNs and Infinities */
