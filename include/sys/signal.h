@@ -36,13 +36,13 @@
  * SUCH DAMAGE.
  *
  *	@(#)signal.h	8.2 (Berkeley) 1/21/94
- * $Id: signal.h,v 1.2 1997/02/28 04:56:45 gdr Exp $
+ * $Id: signal.h,v 1.3 1997/07/28 02:55:56 gdr Exp $
  */
 
 #ifndef	_SYS_SIGNAL_H_
 #define	_SYS_SIGNAL_H_
 
-#define NSIG	31		/* counting 0; could be 32 (mask is 1-31) */
+#define NSIG	32		/* counting 0; could be 33 (mask is 1-32) */
 
 #if !defined(_ANSI_SOURCE) && !defined(_MACHINE_SIGNAL_H_)
 #include <machine/signal.h>	/* sigcontext; codes for SIGILL, SIGFPE */
