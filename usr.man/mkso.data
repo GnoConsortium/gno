@@ -1,15 +1,12 @@
-#
-# The first column is the "real" man page; the second is the .so link.
-#
-# $Id: mkso.data,v 1.2 1997/05/03 18:55:16 gdr Exp $
-#
+# 0
+# 1  The first column is the "real" man page; the second is the .so link.
+# 2
+# 3  $Id: mkso.data,v 1.3 1997/07/28 02:23:03 gdr Exp $
+# 4
 man2/alarm.2		man2/alarm10.2
+man2/chdir.2		man2/fchdir.2
 man2/chmod.2		man2/fchmod.2
 man2/dup.2		man2/dup2.2
-man2/execl.2		man2/execle.2
-man2/execl.2		man2/execlp.2
-man2/execl.2		man2/execv.2
-man2/execl.2		man2/execvp.2
 man2/execve.2		man2/_execve.2
 man2/fork.2		man2/fork2.2
 man2/fork.2		man2/vfork.2
@@ -88,6 +85,10 @@ man3/err.3		man3/vwarn.3
 man3/err.3		man3/vwarnx.3
 man3/err.3		man3/warn.3
 man3/err.3		man3/warnx.3
+man3/execl.2		man3/execle.2
+man3/execl.2		man3/execlp.2
+man3/execl.2		man3/execv.2
+man3/execl.2		man3/execvp.2
 man3/exit.3		man2/_exit.2
 man3/exit.3		man3/rexit.3
 man3/fopen.3		man3/fdopen.3
@@ -132,6 +133,44 @@ man3/popen.3		man3/pclose.3
 man3/progname.3		man3/__prognameGS.3
 man3/pwcache.3		man3/group_from_gid.3
 man3/pwcache.3		man3/user_from_uid.3
+man3/queue.3		man3/CIRCLEQ_ENTRY.3
+man3/queue.3		man3/CIRCLEQ_HEAD.3
+man3/queue.3		man3/CIRCLEQ_INIT.3
+man3/queue.3		man3/CIRCLEQ_INSERT_AFTER.3
+man3/queue.3		man3/CIRCLEQ_INSERT_BEFORE.3
+man3/queue.3		man3/CIRCLEQ_INSERT_HEAD.3
+man3/queue.3		man3/CIRCLEQ_INSERT_TAIL.3
+man3/queue.3		man3/CIRCLEQ_REMOVE.3
+man3/queue.3		man3/LIST_ENTRY.3
+man3/queue.3		man3/LIST_HEAD.3
+man3/queue.3		man3/LIST_INIT.3
+man3/queue.3		man3/LIST_INSERT_AFTER.3
+man3/queue.3		man3/LIST_INSERT_BEFORE.3
+man3/queue.3		man3/LIST_INSERT_HEAD.3
+man3/queue.3		man3/LIST_REMOVE.3
+man3/queue.3		man3/SLIST_ENTRY.3
+man3/queue.3		man3/SLIST_HEAD.3
+man3/queue.3		man3/SLIST_INIT.3
+man3/queue.3		man3/SLIST_INSERT_AFTER.3
+man3/queue.3		man3/SLIST_INSERT_HEAD.3
+man3/queue.3		man3/SLIST_REMOVE.3
+man3/queue.3		man3/SLIST_REMOVE_HEAD.3
+man3/queue.3		man3/STAILQ_ENTRY.3
+man3/queue.3		man3/STAILQ_HEAD.3
+man3/queue.3		man3/STAILQ_INIT.3
+man3/queue.3		man3/STAILQ_INSERT_AFTER.3
+man3/queue.3		man3/STAILQ_INSERT_HEAD.3
+man3/queue.3		man3/STAILQ_INSERT_TAIL.3
+man3/queue.3		man3/STAILQ_REMOVE.3
+man3/queue.3		man3/STAILQ_REMOVE_HEAD.3
+man3/queue.3		man3/TAILQ_ENTRY.3
+man3/queue.3		man3/TAILQ_HEAD.3
+man3/queue.3		man3/TAILQ_INIT.3
+man3/queue.3		man3/TAILQ_INSERT_AFTER.3
+man3/queue.3		man3/TAILQ_INSERT_BEFORE.3
+man3/queue.3		man3/TAILQ_INSERT_HEAD.3
+man3/queue.3		man3/TAILQ_INSERT_TAIL.3
+man3/queue.3		man3/TAILQ_REMOVE.3
 man3/setjmp.3		man3/_longjmp.3
 man3/setjmp.3		man3/_setjmp.3
 man3/setjmp.3		man3/longjmp.3
@@ -146,6 +185,8 @@ man3/strcasecmp.3	man3/strncasecmp.3
 man3/strerror.3		man3/errno.3
 man3/strerror.3		man3/perror.3
 man3/stty.3		man3/gtty.3
+man3/sys_siglist.3	man3/psignal.3
+man3/sys_signame.3	man3/psignal.3
 man3/syslog.3		man3/closelog.3
 man3/syslog.3		man3/openlog.3
 man3/syslog.3		man3/setlogmask.3
