@@ -1,18 +1,18 @@
 /*
- * $Id: tee.rez,v 1.1 1996/09/03 03:56:08 gdr Exp $
+ * $Id: tee.rez,v 1.2 1997/10/30 03:32:46 gdr Exp $
  */
 
 #include "Types.Rez"
 
 resource rVersion (0x1, purgeable3, nocrossbank) {
 
-	{ 1, 2, 0,	/* version 1.2.0 */
+	{ 1, 3, 0,	/* version 1.3.0 */
 	  release,	/* development|alpha|beta|final|release */
           0		/* non-final release number */
         },
-        verBritain,	/* close enough */
+        verUS,
         "tee",
         "pipe fitting\n"
-        "Devin Reade <gdr@myrias.com>\n"
+        "Devin Reade <gdr@eddore.myrias.com>\n"
         "Canada"
 };

@@ -1,9 +1,10 @@
 Name:    tee
-Version: 1.2 (8 Sep 96)
+Version: 1.3 (5 Oct 97)
+Shell:   GNO
 Author:  Devin Reade
-Contact: <gdr@myrias.ab.ca>
+Contact: <gdr@eddore.myrias.com>
 Where:   /bin/tee
-FTP:     cco.caltech.edu, grind.isca.uiowa.edu.
+FTP:     cco.caltech.edu, grind.isca.uiowa.edu, trenco.myrias.com
 
 Tee copies stdin to stdout, by default without buffering.  It also makes
 a copy of the data to a specified file(s).  It is useful when you want to

@@ -1,5 +1,5 @@
 /*
- * $Id: test.c,v 1.2 1996/02/11 05:47:04 gdr Exp $
+ * $Id: test.c,v 1.3 1997/10/30 03:35:21 gdr Exp $
  */
 
 /*-
@@ -38,6 +38,7 @@
  * SUCH DAMAGE.
  */
 
+#ifndef __GNO__
 #ifndef lint
 char copyright[] =
 "@(#) Copyright (c) 1992 The Regents of the University of California.\n\
@@ -48,6 +49,8 @@ char copyright[] =
 static char sccsid[] = "@(#)test.c	5.4 (Berkeley) 2/12/93";
 #endif /* not lint */
 
+#endif	/* ! __GNO__ */
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
@@ -56,6 +59,16 @@ static char sccsid[] = "@(#)test.c	5.4 (Berkeley) 2/12/93";
 #include <stdio.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <err.h>
+
+#if defined(__STACK_CHECK__)
+#include <gno/gno.h>
+#endif
+
+#ifdef __ORCAC__	/* these are picked up in <types.h> */
+#undef true
+#undef false
+#endif
 
 #include "operators.h"
 
@@ -68,11 +81,6 @@ static char sccsid[] = "@(#)test.c	5.4 (Berkeley) 2/12/93";
 #define	BOOLEAN	2
 
 #define	IS_BANG(s) (s[0] == '!' && s[1] == '\0')
-
-#ifdef CHECK_STACK
-void begin_stack_check(void);
-int  end_stack_check(void);
-#endif
 
 /*
  * This structure hold a value.  The type keyword specifies the type of
@@ -107,19 +115,12 @@ static int	posix_binary_op __P((char **));
 static int	posix_unary_op __P((char **));
 static void	syntax __P((void));
 
-#ifdef CHECK_STACK
-#define RETURN(val) \
-{ \
-	int i; \
-  i = (val); \
-  printf("DEBUG: test returning %d\n\n",i); \
-  printf("stack usage: %d bytes\n",end_stack_check()); \
-  return i; \
+#ifdef __STACK_CHECK__
+static void
+printStack(void) {
+	printf("stack usage: %d bytes\n", _endStackCheck());
 }
-#else
-#define RETURN(val) return val
 #endif
-
 
 int
 main(int argc, char *argv[])
@@ -132,18 +133,18 @@ main(int argc, char *argv[])
 	char  c, **ap, *opname, *p;
 	int binary, nest, op, pri, ret_val, skipping;
 
-#ifdef CHECK_STACK
-  begin_stack_check();
+#ifdef __STACK_CHECK__
+	_beginStackCheck();
+	atexit(printStack);
 #endif
 
 	if ((p = argv[0]) == NULL) {
-		err("test: argc is zero.\n");
-		exit(2);
+		errx(2, "argc is zero");
 	}
 
 	if (*p != '\0' && p[strlen(p) - 1] == '[') {
 		if (strcmp(argv[--argc], "]"))
-			err("missing ]");
+			errx(1, "missing ]");
 		argv[argc] = NULL;
 	}
 	ap = argv + 1;
@@ -158,42 +159,42 @@ main(int argc, char *argv[])
 	 */
 	switch(argc - 1) {
 	case 0:				/* % test */
-		RETURN(1);
+		return 1;
 		break;
 	case 1:				/* % test arg */
 		/* MIPS machine returns NULL of '[ ]' is called. */
-		RETURN((argv[1] == NULL || *argv[1] == '\0') ? 1 : 0);
+		return (argv[1] == NULL || *argv[1] == '\0') ? 1 : 0;
 		break;
 	case 2:				/* % test op arg */
 		opname = argv[1];
 		if (IS_BANG(opname)) {
-			RETURN((*argv[2] == '\0') ? 0 : 1);
-     } else {
+			return (*argv[2] == '\0') ? 0 : 1;
+		} else {
 			ret_val = posix_unary_op(&argv[1]);
 			if (ret_val >= 0) {
-				RETURN(ret_val);
-        }
+				return ret_val;
+			}
 		}
 		break;
 	case 3:				/* % test arg1 op arg2 */
 		if (IS_BANG(argv[1])) {
 			ret_val = posix_unary_op(&argv[1]);
 			if (ret_val >= 0) {
-				RETURN(!ret_val);
-        }
+				return !ret_val;
+			}
 		} else if (lookup_op(argv[2], andor_op) < 0) {
 			ret_val = posix_binary_op(&argv[1]);
 			if (ret_val >= 0) {
-				RETURN(ret_val);
-        }
+				return ret_val;
+			}
 		}
 		break;
 	case 4:				/* % test ! arg1 op arg2 */
 		if (IS_BANG(argv[1]) && lookup_op(argv[3], andor_op) < 0) {
 			ret_val = posix_binary_op(&argv[2]);
 			if (ret_val >= 0) {
-				RETURN(!ret_val);
-        }
+				return !ret_val;
+			}
 		}
 		break;
 	default:
@@ -268,8 +269,7 @@ main(int argc, char *argv[])
 					            /* OP_STRING or OP_FILE */
 					if (valsp->type == INTEGER) {
 						if ((p = malloc(32)) == NULL)
-							err("%s",
-							    strerror(errno));
+							err(1, "malloc failed");
 #ifdef SHELL
 #error "gdr: is this supposed to be %ld ? "
 						fmtstr(p, 32, "%d", 
@@ -324,7 +324,7 @@ main(int argc, char *argv[])
 		opsp->op = op;
 		opsp->pri = pri;
 	}
-done:	{ RETURN(expr_is_false(&valstack[0])); }
+done:	{ return expr_is_false(&valstack[0]); }
 }
 
 static int
@@ -364,7 +364,7 @@ expr_operator(int op, struct value *sp, struct filestat *fs)
 			goto false;
 		else
 			goto true;
-#ifdef GNO
+#ifdef __GNO__
 	case ISREAD:
 		i = S_IREAD;
 		goto filebit;	/* true if (stat.st_mode & i) != 0 */
@@ -374,7 +374,7 @@ expr_operator(int op, struct value *sp, struct filestat *fs)
 	case ISEXEC:
 		i = S_IEXEC;
 		goto filebit;	/* true if (stat.st_mode & i) != 0 */
-#else               
+#else	/* ! __GNO__ */
 	case ISREAD:
 		i = S_IROTH;
 		goto permission;
@@ -389,7 +389,7 @@ permission:
 		else if (fs->stat.st_gid == getegid())
 			i <<= 3;
 		goto filebit;	/* true if (stat.st_mode & i) != 0 */
-#endif /* not GNO */
+#endif /* not __GNO__ */
 	case ISFILE:
 		i = S_IFREG;
 		goto filetype;
@@ -561,22 +561,22 @@ chk_atol(char *v)
 	errno = 0;
 	r = strtol(v, &p, 10);
 	if (errno != 0)
-		err("\"%s\" -- out of range.", v);
+		errx(1, "\"%s\" -- out of range.", v);
 	while (isspace(*p))
 		p++;
 	if (*p != '\0')
-		err("illegal operand \"%s\" -- expected integer.", v);
+		errx(1, "illegal operand \"%s\" -- expected integer.", v);
 	return (r);
 }
 
 static void
 syntax(void)
 {
-	err("syntax error");
+	errx(1, "syntax error");
 }
 
 static void
 overflow(void)
 {
-	err("expression is too complex");
+	errx(1, "expression is too complex");
 }

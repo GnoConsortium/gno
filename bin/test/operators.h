@@ -1,14 +1,6 @@
 /*
- * $Id: operators.h,v 1.1 1996/02/10 08:27:31 gdr Exp $
+ * $Id: operators.h,v 1.2 1997/10/30 03:35:21 gdr Exp $
  */
-
-#ifndef __P
-#ifdef __STDC__
-#define __P(a) a
-#else
-#define __P(a) ()
-#endif
-#endif
 
 #define NOT 0
 #define ISBLOCK 1
@@ -51,6 +43,3 @@ extern char *const binary_op[];
 extern char *const andor_op[];
 extern const char op_priority[];
 extern const char op_argflag[];
-
-extern void err __P((const char *, ...));
-      

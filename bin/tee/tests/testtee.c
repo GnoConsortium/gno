@@ -4,7 +4,7 @@
  *
  * Usage:  ./testtee | ./tee [-b]
  *
- * $Id: testtee.c,v 1.1 1996/09/09 06:12:16 gdr Exp $
+ * $Id: testtee.c,v 1.1 1997/10/30 03:32:59 gdr Exp $
  */
 
 #include <stdio.h>

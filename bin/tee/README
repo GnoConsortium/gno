@@ -1,30 +1,29 @@
-tee v1.2 for Gno
+$Id: README,v 1.4 1997/10/30 03:32:45 gdr Exp $
 
-The tee that ships with Gno (and hereforth designated v1.0) seems to have
-fully buffered output, making it next to useless.  This version of tee
-has no buffering on stdin/stdout by default, so you see the output as
+tee v1.3 for GNO
+
+The tee that shiped with GNO v2.0.4 (and hereforth designated v1.0) seems
+to have fully buffered output, making it next to useless.  This version of
+tee has no buffering on stdin/stdout by default, so you see the output as
 it's being read.  This version also allows multiple output files, appending,
 and ignoring of SIGINT.
-
-To install copy tee to /bin and tee.1 to /usr/man/man1, or just type
-"dmake install".
 
 This program contains material from the Orca/C Run-Time Libraries,
 copyright 1987-1994 by Byte Works, Inc.  Used with Permission.
 
 Devin Reade
-<gdr@myrias.ab.ca>
-
-$Id: README,v 1.3 1996/09/09 06:12:14 gdr Exp $
+<gdr@eddore.myrias.com>
 
 Change Log
 ==========
 
-v1.0	Designated as the version shipped with GNO v2.0.4
+v1.3	Slight changes to incorporate it into the GNO v2.0.6.
+
+v1.2	Added -b (line buffering) option.  STDIN_FILENO is no longer
+	directly read; stdio is used.
 
 v1.1    Rewrite from scratch by Devin Reade.  Default changed from
 	full buffering to no buffering.  Added options for multiple
 	output files, appending and ignoring of SIGINT.
 
-v1.2	Added -b (line buffering) option.  STDIN_FILENO is no longer
-	directly read; stdio is used.
+v1.0	Designated as the version shipped with GNO v2.0.4
