@@ -2,7 +2,7 @@
 # List of shell applications for GNO/ME and ORCA/Shell
 # Last revision: Sat Jan 17 21:29:17 1998
 #
-# $Id: describe.src,v 1.3 1998/01/23 07:00:06 gdr-ftp Exp $
+# $Id: describe.src,v 1.4 1998/02/05 20:49:57 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -941,15 +941,16 @@ This program converts Amiga sounds to Apple IIGS sounds by adding $80 to
 each byte.
 
 Name:    gzip
-Version: 1.2.4 (Gno)
+Version: 1.0.4
 Shell:   GNO/ME
 Author:  Joseph Lee
-Contact: eaiu410@ea.oac.uci.edu
+Contact: nugundam@netcom.com
 Where:   /usr/local/bin
 FTP:     apple2.caltech.edu, ground.isca.uiowa.edu 
 
 GNU zip -- compress or expand files.  Ported from the Free Software
-Foundation's gzip.  Also has functionality of gunzip and gzcat.
+Foundation's gzip, version 1.2.4.  Also has functionality of gunzip
+and gzcat.
 
 Name:    hplist
 Version: 1.0 (18 Nov 91)
@@ -2132,7 +2133,7 @@ Name:    uptime
 Version: 1.2
 Shell:   GNO
 Author:  Joseph Lee
-Contact: -
+Contact: nugundam@netcom.com
 Where:   /usr/bin
 FTP:     -
 
@@ -2185,7 +2186,7 @@ Name:    vsc
 Version: 1.6.5b47
 Shell:   GNO, ORCA
 Author:  Joseph Lee
-Contact: -
+Contact: nugundam@netcom.com
 Where:   /usr/local/bin
 FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
