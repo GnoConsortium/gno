@@ -1,38 +1,18 @@
 ###
 #
 # GNO 2.0.6 gshrc file
+# This file is parsed whenever a gsh shell is started.
 #
-# $Id: gshrc,v 1.4 1998/04/24 04:15:29 gdr-ftp Exp $
+# $Id: gshrc,v 1.5 1999/01/18 02:01:29 gdr-ftp Exp $
 #
 ###
-
-#
-# Setup the other prefixes to emulate ORCA for the benefit of utilities
-# If you're using ORCA 2.0 stuff, be sure to set prefixes 13-17 also
-#
-
-prefix 31 \*
-
-prefix	13	/lib
-prefix	14	/tmp          
-prefix	15	/lang/orca/shell
-prefix	16	/lang/orca/languages
-prefix	17	/lang/orca/utilities
-
-prefix 2 13
-prefix 3 14
-prefix 4 15
-prefix 5 16
-prefix 6 17
 
 #
 # Initializes our environment
 #
 
-# gsh reads its path backward!
 set path=". /usr/orca/utilities /usr/bin /bin /usr/local/bin"
 export path
-rehash
 
 # other shell items
 set	prompt="%C> "
@@ -40,14 +20,10 @@ set	term=gnocon
 set	nonewline=1
 export	prompt term nonewline
 
-setenv EDITOR	/lang/orca/shell/editor
 setenv history	25
 setenv savehist	25
-setenv MANPATH /man:/usr/man:/usr/local/man:/usr/orca/man
 setenv PAGER	less
 setenv	LESS	-e
-setenv TMACDIR		/usr/lib/tmac
-setenv MAKESTARTUP	/usr/lib/startup.mk
 
 # Set environment variables for cc
 setenv CCEMULATE 1
@@ -63,7 +39,6 @@ setenv	iwiiTypeFace	condensed
 alias /bin/rm	"cp -p rm"
 alias /bin/mv   "cp -p mv"
 alias cp 	"cp -i"
-alias df	/bin/df
 alias fcat	"melt -c"
 alias gunzip	\'gzip -d\'
 # these aliases are broken
