@@ -1,0 +1,31 @@
+/*
+ * $Id: libnetdb.rez,v 1.1 1998/02/15 19:27:20 gdr-ftp Exp $
+ */
+
+#define LIB	"libnetdb for GNO"
+#define PORTED	"Ported from 4.4BSD by Derek Taubert.\n"
+
+#include "Types.rez"
+#include "/src/gno/build.tools/builddate.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 2, 0, 6,	/* Version 2.0.6 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	LIB,
+	PORTED
+	BUILD_DATE
+};
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	LIB "\n"
+        PORTED
+	BUILD_DATE
+};
