@@ -1,0 +1,76 @@
+$Id: deviations,v 1.1 1997/02/28 05:42:26 gdr Exp $
+
+These are deviations from POSIX 1003.1:
+======================================
+
+Feature:	full implementation
+Header:		(various)
+	Not all functions and system calls specified by POSIX 1003.1 are
+	implemented.
+
+Feature:	non-compliant limits/constants
+Header:		(various)
+
+	Value			POSIX		GNO		Header File
+	-------------------------------------------------------------------
+	STDIN_FILENO		0		1		unistd.h
+	STDOUT_FILENO		1		2		unistd.h
+	STDERR_FILENO		2		3		unistd.h
+	_POSIX_LINK_MAX		8		1		limits.h
+
+Feature:	alarm(2)
+Header:		unistd.h
+	POSIX specifies that both the single argument and return type
+	should be unsigned int.  GNO uses unsigned long for both.
+
+Feature:	fork(2)
+Header:		unistd.h
+	POSIX specifies an empty argument list, and both child and parent
+	process resume execution at the point where fork() returns but in
+	different address spaces.  The GNO implementation takes a pointer
+	to a function at which the child process begins execution, and child
+	and parent share the address space.
+
+Feature:	getpgrp(2)
+Header:		unistd.h
+	POSIX specifies a pid_t return type.  GNO implementation returns
+	an int.
+
+These are deviations from the BSD implementations:
+=================================================
+
+Feature:	POSIX compliance
+Header:		sys/unistd.h
+	BSD is POSIX2 compliant, GNO is not.  (_POSIX2_VERSION is undefined)
+
+Feature:	vfork(2)
+Header:		unistd.h
+	See the notes on fork(2) in the section on POSIX deviations.
+
+Feature:	machine types
+Header:		<sys/types.h>, <sys/ansi.h>
+	BSD uses "long long" and "unsigned long long" for quad_t and u_quad_t,
+	respectively.  GNO uses structures.
+
+Type			BSD			GNO		Header File
+-------------------------------------------------------------------------------
+quad_t			long long		(structure)	sys/types.h
+u_quad_t		unsigned long long	(structure)	sys/types.h
+pid_t			long			short		sys/types.h
+off_t			quad_t			long		sys/types.h
+dev_t			unsigned long		unsigned short	sys/types.h
+uid_t			unsigned long		unsigned short	sys/types.h
+gid_t			unsigned long		unsigned short	sys/types.h
+_BSD_PTRDIFF_T_		int			long		machine/ansi.h
+_BSD_SIZE_T_		unsigned int		unsigned long	machine/ansi.h
+_BSD_SSIZE_T_		int			long		machine/ansi.h
+_BSD_OFF_T_		long long		long		machine/ansi.h
+_BSD_PID_T_		long			short		machine/ansi.h
+_BSD_WCHAR_T_		int			long		machine/ansi.h
+_BSD_RUNE_T_		int			long		machine/ansi.h
+
+Value			BSD			GNO		Header File
+-------------------------------------------------------------------------------
+_BSD_CLK_TCK_		128			60		machine/ansi.h
+_BSD_CLOCKS_PER_SEC_	128			60		machine/ansi.h
+LINK_MAX		32767			1		sys/syslimits.h
