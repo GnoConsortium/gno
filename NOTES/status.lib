@@ -1,4 +1,4 @@
-$Id: status.lib,v 1.2 1997/08/08 05:06:45 gdr Exp $
+$Id: status.lib,v 1.3 1997/09/21 22:29:52 gdr Exp $
 
 Key for Code Status column:
 	R == reviewed
@@ -9,6 +9,9 @@ The man page column info specifies in which chapter the manual page
 resides.  If it is blank, it is not yet written.  "2U" indicates
 undocumented system calls in undocumented.2.  If these should be documented,
 Derek, please write a man page for them or tell me what should be in there.
+
+Letters in square brackets ("[]") following function names indicate 
+that you should read the respective note following this table.
 
 function		file			code	man	header
 						status	page
@@ -24,7 +27,7 @@ GOfree			libc/gno/gsstring.c	T	3	gno/gno.h
 GOinit			libc/gno/gsstring.c	T	3	gno/gno.h
 InstallNetDriver	libc/sys/trap.asm	C	2U	gno/gno.h
 SetGNOQuitRec		libc/sys/trap.asm	C	2U	gno/gno.h
-WriteGString		libc/gno/gnomisc.c
+WriteGString		libc/gno/gnomisc.c	C
 __C2GS			libc/gno/gsstring.c	C	3	gno/gno.h
 __C2GSMALLOC		libc/gno/gsstring.c	T	3	gno/gno.h
 __GS2C			libc/gno/gsstring.c	C	3	gno/gno.h
@@ -48,6 +51,8 @@ buildPath		libc/sys/exec.c		C	3	gno/gno.h
 environInit		libc/gen/environ.c	T	3	stdlib.h
 environPop		libc/gen/environ.c	T	3	stdlib.h
 environPush		libc/gen/environ.c	T	3	stdlib.h
+fsetbinary		(macro)			T	3	stdio.h
+fsettext		(macro)			T	3	stdio.h
 isRootPath		libc/sys/exec.c		C	3	gno/gno.h
 kernStatus		(inline)		T	2	gno/gno.h
 kernVersion		(inline)		T	2	gno/gno.h
@@ -70,7 +75,11 @@ __crypt_f		libc/gen/crypta.asm	C	na	na
 __crypt_rotate		libc/gen/crypta.asm	C	na	na
 __crypt_transpose	libc/gen/crypta.asm	C	na	na
 __mb_cur_max	[var]	libc/locale/table.c	C		stdlib.h
+__srget			libc/stdio/rget.c	C	na	stdio.h
+__svfscanf		libc/stdio/vfscanf	C	na	stdio.h
+__swbuf			libc/stdio/wbuf.c	C	na	stdio.h
 _execve			libc/sys/trap.asm	C	2	unistd.h
+_getlogin		libc/gen/getlogin.c	T	na	unistd.h
 _getpgrp		libc/sys/trap.asm	C	2	unistd.h
 _longjmp		libc/gen/setjmp.asm	C	3	setjmp.h
 _setjmp			libc/gen/setjmp.asm	C	3	setjmp.h
@@ -78,20 +87,22 @@ accept			libc/sys/trap.asm	C	2	sys/socket.h
 access			libc/sys/syscall.c	C	2	unistd.h
 alarm			libc/sys/trap.asm	C	2	unistd.h
 alarm10			libc/sys/trap.asm	C	2	unistd.h
-alphasort		libc/gen/scandir.c	T	3	dirent.h
 alphacasesort		libc/gen/scandir.c	T	3	dirent.h
+alphasort		libc/gen/scandir.c	T	3	dirent.h
 basename		libc/gen/basename.c	T	3	unistd.h
 bcopy			libc/gen/bmem.c		C	3	string.h
 bind			libc/sys/trap.asm	C	2	sys/socket.h
 bzero			libc/gen/bmem.c		C	3	string.h
 chdir			libc/sys/syscall.c	C	3	unistd.h
 chmod			libc/sys/syscall.c	C	2	sys/stat.h
+clearerr		libc/stdio/clrerr.c	C	3	stdio.h
 close			libc/sys/syscall.c	C	2	unistd.h
 closedir		libc/gen/dirent.c	T	3	dirent.h
 closelog		libc/gen/syslog.asm	C	3	sys/syslog.h
 connect			libc/sys/trap.asm	C	2	sys/socket.h
 creat			libc/sys/syscall.c	T	2	sys/fcntl.h
 crypt			libc/gen/crypt.c	C	3	unistd.h
+ctermid			libc/stdio/				stdio.h
 dirfd			(macro)			T	3	dirent.h
 dirname			libc/gen/basename.c	T	3	unistd.h
 dup			libc/sys/trap.asm	C	2	unistd.h
@@ -111,20 +122,45 @@ execve			libc/sys/exec.c		T	3	unistd.h
 execvp			libc/sys/exec.c		T	3	unistd.h
 fchdir			libc/sys/syscall.c	C	3	unistd.hf
 fchmod			libc/sys/syscall.c	C	2	sys/stat.h
+fclose			libc/stdio/fclose.c	T(1)	3	stdio.h
+fcntl			libc/sys/syscall.c	T	2	sys/fcntl.h
 fdopen			libc/stdio/fdopen.c	T	3	stdio.h
+feof			libc/stdio/feof.c	C	3	stdio.h
+ferror			libc/stdio/ferror.c	C	3	stdio.h
+fflush			libc/stdio/fflush.c	C	3	stdio.h
+fgetc			libc/stdio/fgetc.c	C	3	stdio.h
 fgetln			libc/stdio/fgetln.c	C	3	stdio.h
+fgetpos			libc/stdio/fgetpos.c	C	3	stdio.h
+fgets			libc/stdio/fgets.c	C	3	stdio.h
+fileno			libc/stdio/fileno.c	C	3	stdio.h
 fnmatch			libc/gen/fnmatch.c	T	3	fnmatch.h
+fopen			libc/stdio/fopen.c	C	3	stdio.h
 fork			libc/sys/trap.asm	C	2	unistd.h
 fork2			libc/sys/trap.asm	C	2	unistd.h
+forkpty		[A]	libutil/pty.c				libutil.h
+fprintf			libc/stdio/fprintf.c	C	3	stdio.h
+fpurge			libc/stdio/fpurge.c	C	3	stdio.h
+fputc			libc/stdio/fputc.c	C	3	stdio.h
+fputs			libc/stdio/fputs.c	C	3	stdio.h
+fread			libc/stdio/fread.c	T(1)	3	stdio.h
+freopen			libc/stdio/freopen.c	C	3	stdio.h
+fscanf			libc/stdio/fscanf.c	C	3	stdio.h
+fseek			libc/stdio/fseek.c	C	3	stdio.h
+fsetpos			libc/stdio/fsetpos.c	C	3	stdio.h
 fstat			libc/sys/trap.asm	C	2	sys/stat.h
 fstatfs			libc/sys/syscall.c	C	2	sys/mount.h
 fsync			libc/sys/syscall.c	C	2	unistd.h
+ftell			libc/stdio/ftell.c	C	3	stdio.h
 ftruncate		libc/sys/syscall.c	C	2	unistd.h
 fts_children		libc/gen/fts.c		R	3	fts.h
 fts_close		libc/gen/fts.c		R	3	fts.h
 fts_open		libc/gen/fts.c		R	3	fts.h
 fts_read		libc/gen/fts.c		R	3	fts.h
 fts_set			libc/gen/fts.c		R	3	fts.h
+funopen			libc/stdio/funopen.c	T	3	stdio.h
+fwrite			libc/stdio/fvwrite.c	T(1)	3	stdio.h
+getc			libc/stdio/getc.c	C	3	stdio.h
+getchar			libc/stdio/getchar.c	C	3	stdio.h
 getcwd			libc/gen/getcwd.c	T	3	unistd.h
 getdtablesize		libc/sys/syscall.c	C	2	unistd.h
 getegid			libc/sys/trap.asm	C	2	unistd.h
@@ -135,6 +171,7 @@ getgrent		libc/gen/getgrent.c	T	3	grp.h
 getgrgid		libc/gen/getgrent.c	T	3	grp.h
 getgrnam		libc/gen/getgrent.c	T	3	grp.h
 gethostname		libc/gen/hostname.c	C	3	unistd.h
+getlogin		libc/gen/getlogin.c	T	2	unistd.h
 getopt			libc/stdlib/getopt.c	C	3	stdlib.h
 getopt_restart		libc/stdlib/getopt.c	C	3	stdlib.h
 getpass			libc/gen/getpass.c	C	3	unistd.h
@@ -145,6 +182,7 @@ getppid			libc/sys/trap.asm	C	2	unistd.h
 getpwent		libc/gen/getpwent.c	T	3	pwd.h
 getpwnam		libc/gen/getpwent.c	T	3	pwd.h
 getpwuid		libc/gen/getpwent.c	T	3	pwd.h
+gets			libc/stdio/gets.c	C	3	stdio.h
 getsockname		libc/sys/trap.asm	C	2	sys/socket.h
 getsockopt						2	sys/socket.h
 getsubopt		libc/stdlib/getsubopt.c	C	3	stdlib.h
@@ -152,6 +190,7 @@ gettimeofday		libc/sys/syscall.c	C	2	sys/time.h
 getttyent		libc/gen/getttyent.c	C	3	ttyent.h
 getttynam		libc/gen/getttyent.c	C	3	ttyent.h
 getuid			libc/sys/trap.asm	C	2	unistd.h
+getw			libc/stdio/getw.c	C	3	stdio.h
 getwd			libc/gen/getcwd.c	T	3	unistd.h
 group_from_gid		libc/gen/pwcache.c	C	3	na
 gtty			libc/gen/compat.c	C	3	sgtty.h
@@ -168,6 +207,10 @@ kvmgetproc		libc/sys/trap.asm	C	2U	gno/gno.h
 kvmnextproc		libc/sys/trap.asm	C	2U	gno/gno.h
 kvmsetproc		libc/sys/trap.asm	C	2U	gno/gno.h
 listen			libc/sys/trap.asm	C	2	sys/socket.h
+login			libutil/login.c		C	na	libutil.h
+login_tty		libutil/logintty.c	C	na	libutil.h
+logout		[B]	libutil/logout.c		na	libutil.h
+logwtmp		[B, C]	libutil/logwtmp.c		na	libutil.h
 longjmp			libc/gen/setjmp.asm	C	3	setjmp.h
 lseek			libc/sys/syscall.c	C	2	unistd.h
 lstat			libc/sys/trap.asm	C	2	sys/stat.h
@@ -177,6 +220,7 @@ mktemp			libc/stdio/mktemp.c	C	3	unistd.h
 open			libc/sys/syscall.c	C	2	sys/fcntl.h
 opendir			libc/gen/dirent.c	T	3	dirent.h
 openlog			libc/gen/syslog.asm	C	3	sys/syslog.h
+openpty		[A]	libutil/pty.c				libutil.h
 optarg		[var]	libc/stdlib/getopt.c	C	3	stdlib.h
 opterr		[var]	libc/stdlib/getopt.c	C	3	stdlib.h
 optind		[var]	libc/stdlib/getopt.c	C	3	stdlib.h
@@ -194,30 +238,41 @@ pipe			libc/sys/trap.asm	C	2	unistd.h
 popen			libc/gen/popen.c	C	3	stdio.h
 preceive		libc/sys/trap.asm	C	2	sys/ports.h
 preset			libc/sys/trap.asm	C	2	sys/ports.h
+printf			libc/stdio/printf.c	C	3	stdio.h
 procreceive		libc/sys/trap.asm	C	2	gno/gno.h
 procrecvclr		libc/sys/trap.asm	C	2	gno/gno.h
 procrecvtim		libc/sys/trap.asm	C	2	gno/gno.h
 procsend		libc/sys/trap.asm	C	2	gno/gno.h
 psend			libc/sys/trap.asm	C	2	sys/ports.h
 psignal			libc/gen/psignal.c	R	3	signal.h
+putc			libc/stdio/putc.c	C	3	stdio.h
+putchar			libc/stdio/putchar.c	C	3	stdio.h
 putenv			libc/gen/environ.c	T	3	stdlib.h
+puts			libc/stdio/puts.c	C	3	stdio.h
+putw			libc/stdio/putw.c	C	3	stdio.h
 raise			libc/sys/syscall.c	C	3	signal.h
 read			libc/sys/syscall.c	C	2	unistd.h
 readdir			libc/gen/dirent.c	T	3	dirent.h
 recv			libc/sys/trap.asm	C	2	sys/socket.h
 recvfrom		libc/sys/trap.asm	C	2	sys/socket.h
 recvmsg		( missing from kernel )			2	sys/socket.h
+remove			libc/stdio/remove.c	C	3	stdio.h
+rename			libc/sys/syscall.c	T	2	stdio.h
+rewind			libc/stdio/rewind.c	T(1)	3	stdio.h
 rewinddir		libc/gen/dirent.c	T	3	dirent.h
 rindex			libc/string/str.c	C	3	string.h
 scandir			libc/gen/scandir.c	T	3	dirent.h
+scanf			libc/stdio/scanf.c	C	3	stdio.h
 scount			libc/sys/trap.asm	C	2	gno/gno.h
-screate			libc/sys/trap.asm	C	2	gno/gno.h
+screate			libc/sys/trap.asm	T	2	gno/gno.h
 sdelete			libc/sys/trap.asm	C	2	gno/gno.h
 seekdir			libc/gen/dirent.c	T	3	dirent.h
 select			libc/sys/trap.asm	C	2	unistd.h
 send			libc/sys/trap.asm	C	2	sys/socket.h
 sendmsg		( missing from kernel )			2	sys/socket.h
 sendto			libc/sys/trap.asm	C	2	sys/socket.h
+setbuf			libc/stdio/setbuf.c	C	3	stdio.h
+setbuffer		libc/stdio/setbuffer.c	C	3	stdio.h
 setegid			libc/sys/trap.asm	C	2	unistd.h
 setenv			libc/gen/environ.c	T	3	stdlib.h
 seteuid			libc/sys/trap.asm	C	2	unistd.h
@@ -227,10 +282,13 @@ setgroupent		libc/gen/getgrent.c	T	3	grp.h
 sethostname		libc/gen/hostname.c	C	3	unistd.h
 setjmp			libc/gen/setjmp.asm	C	3	setjmp.h
 setkey			libc/gen/crypt.c	C	3	unistd.h
+setlinebuf		libc/stdio/setbuffer.c	C	3	stdio.h
+setlogin		libc/gen/getlogin.c	T	2	unistd.h
 setlogmask		libc/gen/syslog.asm	C	3	sys/syslog.h
 setpassent		libc/gen/getpwent.c		3	pwd.h
 setpgid			libc/sys/trap.asm	C	2	unistd.h
 setpgrp			libc/sys/trap.asm	C	2	unistd.h
+setproctitle	[A]	libutil/setproc.c			libutil.h
 setpwent		libc/gen/getpwent.c	T	3	pwd.h
 setregid		libc/sys/trap.asm	C	2	unistd.h
 setreuid		libc/sys/trap.asm	C	2	unistd.h
@@ -240,17 +298,22 @@ setsockopt		libc/sys/trap.asm	C	2	sys/socket.h
 settimeofday						2	sys/time.h
 setttyent		libc/gen/getttyent.c	C	3	ttyent.h
 setuid			libc/sys/trap.asm	C	2	unistd.h
+setvbuf			libc/stdio/setvbuf.c	C	3	stdio.h
 shutdown		libc/sys/trap.asm	C	2	sys/socket.h
 sigblock		libc/sys/trap.asm	C	2	signal.h
 siglongjmp						3	setjmp.h
 sigmask			(macro)			C	2	sys/signal.h
 signal			libc/sys/trap.asm	C	2	sys/signal.h
 sigpause		libc/sys/trap.asm	C	2	signal.h
+sigprocmask		libc/sys/syscall.c			signal.h
 sigsetjmp						3	setjmp.h
 sigsetmask		libc/sys/trap.asm	C	2	signal.h
 sleep			libc/gen/sleep.c	T    	3	unistd.h
+snprintf		libc/stdio/snprintf.c	C	3	stdio.h
 socket			libc/sys/trap.asm	C	2	sys/socket.h
-ssignal			libc/sys/trap.asm	C	2	gno/gno.h
+sprintf			libc/stdio/sprintf.c	C	3	stdio.h
+sscanf			libc/stdio/sscanf.c	C	3	stdio.h
+ssignal			libc/sys/trap.asm	T	2	gno/gno.h
 stat			libc/sys/trap.asm	C	2	sys/stat.h
 statfs			libc/sys/syscall.c	C	2	sys/mount.h
 strcasecmp		libc/str/case.c		T	3	string.h
@@ -262,7 +325,7 @@ strncasecmp		libc/str/case.c		C	3	string.h
 strsep			libc/string/str.c	C	3	string.h
 stty			libc/gen/compat.c	C	3	sgtty.h
 suboptarg	[var]	libc/stdlib/getsubopt.c	C	3	stdlib.h
-swait			libc/sys/trap.asm	C	2	gno/gno.h
+swait			libc/sys/trap.asm	T	2	gno/gno.h
 sys_errlist 	[var]	libc/stdio/perror.c	T	3	stdio.h
 sys_nerr    	[var]	libc/stdio/perror.c	T	3	stdio.h
 sys_siglist	[var]	libc/gen/siglist.c	R	3	signal.h
@@ -271,12 +334,13 @@ syslog			libc/gen/syslog.asm	C	3	sys/syslog.h
 telldir			libc/gen/dirent.c	T	3	dirent.h
 tempnam			libc/stdio/tempnam.c	C	3	stdio.h
 times			libc/sys/trap.asm	C	2	sys/times.h
-tmpfile			orcalib/stdio.asm	T	3	stdio.h
-tmpnam			orcalib/stdio.asm	T	3	stdio.h
+tmpfile			libc/stdio/tmpfile.c	T(1)	3	stdio.h
+tmpnam			libc/stdio/tmpnam.c	C	3	stdio.h
 truncate		libc/sys/syscall.c	C	2	unistd.h
 ttyname			libc/gen/tty.c		C	3	unistd.h
 ttyslot			libc/gen/tty.c		C	3	unistd.h
 umask			libc/sys/syscall.c	C	2	sys/stat.h
+ungetc			libc/stdio/ungetc.c	C	3	stdio.h
 unlink			libc/sys/syscall.c	T	2	unistd.h
 unsetenv		libc/gen/environ.c	T	3	stdlib.h
 user_from_uid		libc/gen/pwcache.c	C	3	na
@@ -285,6 +349,13 @@ utimes			libc/gen/utime.c	T	2	utime.h
 verr			libc/gen/err.c		T	3	err.h
 verrx			libc/gen/err.c		T	3	err.h
 vfork			libc/sys/trap.asm	C	2	unistd.h
+vfprintf		libc/stdio/vfprintf.c	C	3	stdio.h
+vfscanf			libc/stdio/vfscanf.c	C	3	stdio.h
+vprintf			libc/stdio/vprintf.c	C	3	stdio.h
+vscanf			libc/stdio/fscanf.c	C	3	stdio.h
+vsnprintf		libc/stdio/vsnprintf.c	C	3	stdio.h
+vsprintf		libc/stdio/vsprintf.c	C	3	stdio.h
+vsscanf			libc/stdio/vsscanf.c	C	3	stdio.h
 vsyslog			libc/gen/syslog.asm	C	3	sys/syslog.h
 vwarn			libc/gen/err.c		T	3	err.h
 vwarnx			libc/gen/err.c		T	3	err.h
@@ -295,114 +366,154 @@ waitpid			libc/sys/syscall.c	C	2	sys/wait.h
 warn			libc/gen/err.c		T	3	err.h
 warnx			libc/gen/err.c		T	3	err.h
 write			libc/sys/syscall.c	C	2	unistd.h
+zopen			libc/stdio/				stdio.h
 
-login			libutil/login.c		C		libutil.h
-login_tty		libutil/logintty.c	C		libutil.h
+Notes:
+	[var]	symbol is a variable, not a fuction
+	[A]	function needs to be modified before use
+	[B]	these sets of routines rely on a modified utmp/wtmp file
+		structure.  Therefore a large list of routines and programs
+		have to be updated all at once (see the TO.DO file).
+	[C]	logwtmp() is a stub at the moment.  It can be called, but
+		will not modify the utmp/wtmp files.
 
+Library Sources Currently Compiling:
+-----------------------------------
 
-Files Currently Compiling:
--------------------------
+	- This list is exclusive of modified or standard ORCA libraries
+	- Where the filename appears with no other information, the
+	  file is present but not yet part of the build.
 
 DATA	OPTIMIZE DEBUG	MEMORY	SEGMENT	TESTING	NAME
 BANK			MODEL		COMPLETE
 ==============================================================
-	0	0	0	Y	Y	libc/gen/basename.c
-	0	0	0	Y	N	libc/gen/bmem.c
-	0	0	0	Y	N	libc/gen/compat.c
-	0	0	0	N	N	libc/gen/crypt.c
+	78	0	0	Y	Y	libc/gen/basename.c
+	78	0	0	Y	N	libc/gen/bmem.c
+	78	0	0	Y	N	libc/gen/compat.c
+	78	0	0	N	N	libc/gen/crypt.c
 	na	na		N	N	libc/gen/crypta.asm
-	0	0	0	Y	Y	libc/gen/dirent.c
+	78	0	0	Y	Y	libc/gen/dirent.c
 	8	0	0	Y	Y	libc/gen/err.c
-	0	0	0	Y	Y	libc/gen/fnmatch.c
-	0	0	0	Y	Y	libc/gen/getcwd.c
-	0	0	0	Y	Y	libc/gen/getgrent.c
-	0	0	0	Y	N	libc/gen/getpass.c
-	0	0	0	Y	Y	libc/gen/getpwent.c
-	0	0	0	Y	N	libc/gen/getttyent.c
-	0	0	0	Y	N	libc/gen/hostname.c
-	0	0	0	Y	N	libc/gen/oldlog.c
-	0	0	0	Y	N	libc/gen/popen.c
-	0	0	0	Y	N	libc/gen/psignal.c
-	0	0	0	Y	N	libc/gen/pwcache.c
-	0	0	0	Y	Y	libc/gen/scandir.c
+	78	0	0	Y	Y	libc/gen/fnmatch.c
+	78	0	0	Y	Y	libc/gen/fts.c
+	78	0	0	Y	Y	libc/gen/getcwd.c
+	78	0	0	Y	Y	libc/gen/getgrent.c
+	78	0	0	Y	N	libc/gen/getlogin.c
+	78	0	0	Y	N	libc/gen/getpass.c
+	78	0	0	Y	Y	libc/gen/getpwent.c
+	78	0	0	Y	N	libc/gen/getttyent.c
+	78	0	0	Y	N	libc/gen/hostname.c
+	78	0	0	Y	N	libc/gen/oldlog.c
+	78	0	0	Y	N	libc/gen/popen.c
+	78	0	0	Y	N	libc/gen/psignal.c
+	78	0	0	Y	N	libc/gen/pwcache.c
+	78	0	0	Y	Y	libc/gen/scandir.c
 	na	na		N	N	libc/gen/setjmp.asm
-	0	0	0	Y	N	libc/gen/siglist.c
-	0	0	0	Y	Y	libc/gen/sleep.c
+	78	0	0	Y	N	libc/gen/siglist.c
+	78	0	0	Y	Y	libc/gen/sleep.c
 	na	na		Y	N	libc/gen/syslog.asm
-	0	0	0	Y	N	libc/gen/tty.c
-	0	0	0	Y	Y	libc/gen/utime.c
+	78	0	0	Y	N	libc/gen/tty.c
+	78	0	0	Y	Y	libc/gen/utime.c
 
 	na	na		N	N	libc/gno/gnocmd.asm
-	0*	0	0 (1)	Y	Y	libc/gno/gnomisc.c
-	0 (79)	0	0 (1)	Y	Y	libc/gno/gsstring.c
-	0	0 (25)	0 (1)	Y	N	libc/gno/map.c
+	78	0	0 (1)	Y	Y	libc/gno/gnomisc.c
+	78 (79)	0	0 (1)	Y	Y	libc/gno/gsstring.c
+	78	0	0 (1)	Y	N	libc/gno/map.c
 	na	na		N	N	libc/gno/parsearg.asm
 	na	na		Y	Y	libc/gno/stack.asm
 
-	0	0	0	Y	N	libc/locale/table.c	[stub]
+	78	0	0	Y	N	libc/locale/table.c	[stub]
 
-	0	0	0	Y	Y	libc/stdio/fdopen.c
-	0	0	0	Y	N	libc/stdio/fgetln.c
-	0	0	0	Y	N	libc/stdio/mktemp.c
-1	0	0	0	Y	Y	libc/stdio/perror.c
-	0	0	0	Y	N	libc/stdio/tempnam.c
+	78	0	0	Y	N	libc/stdio/clrerr.c
+	78	0	0	Y	N	libc/stdio/fclose.c
+	78	0	0	Y	N	libc/stdio/fdopen.c
+	78	0	0	Y	N	libc/stdio/feof.c
+	78	0	0	Y	N	libc/stdio/ferror.c
+	78	0	0	Y	N	libc/stdio/fflush.c
+	78	0	0	Y	N	libc/stdio/fgetc.c
+	78	0	0	Y	N	libc/stdio/fgetln.c
+	78	0	0	Y	N	libc/stdio/fgetpos.c
+	78	0	0	Y	N	libc/stdio/fgets.c
+	78	0	0	Y	N	libc/stdio/fileno.c
+	78	0	0	Y	N	libc/stdio/findfp.c
+	78	0	0	Y	N	libc/stdio/flags.c
+	78	0	0	Y	N	libc/stdio/fopen.c
+	78	0	0	Y	N	libc/stdio/fprintf.c
+	78	0	0	Y	N	libc/stdio/fpurge.c
+	78	0	0	Y	N	libc/stdio/fputc.c
+	78	0	0	Y	N	libc/stdio/fputs.c
+	78	0	0	Y	N	libc/stdio/fread.c
+	78	0	0	Y	N	libc/stdio/freopen.c
+	78	0	0	Y	N	libc/stdio/fscanf.c
+	78	0	0	Y	N	libc/stdio/fseek.c
+	78	0	0	Y	N	libc/stdio/fsetpos.c
+	78	0	0	Y	N	libc/stdio/ftell.c
+	78	0	0	Y	N	libc/stdio/funopen.c
+	78	0	0	Y	N	libc/stdio/fvwrite.c
+	78	0	0	Y	N	libc/stdio/fwalk.c
+	78	0	0	Y	N	libc/stdio/fwrite.c
+	78	0	0	Y	N	libc/stdio/getc.c
+	78	0	0	Y	N	libc/stdio/getchar.c
+	78	0	0	Y	N	libc/stdio/gets.c
+	78	0	0	Y	N	libc/stdio/getw.c
+	78	0	0	Y	N	libc/stdio/makebuf.c
+	78	0	0	Y	N	libc/stdio/mktemp.c
+	78	0	0	Y	N	libc/stdio/perror.c
+	78	0	0	Y	N	libc/stdio/printf.c
+	78	0	0	Y	N	libc/stdio/putc.c
+	78	0	0	Y	N	libc/stdio/putchar.c
+	78	0	0	Y	N	libc/stdio/puts.c
+	78	0	0	Y	N	libc/stdio/putw.c
+	78	0	0	Y	N	libc/stdio/refill.c
+	78	0	0	Y	N	libc/stdio/remove.c
+	78	0	0	Y	N	libc/stdio/rewind.c
+	78	0	0	Y	N	libc/stdio/rget.c
+	78	0	0	Y	N	libc/stdio/scanf.c
+	78	0	0	Y	N	libc/stdio/setbuf.c
+	78	0	0	Y	N	libc/stdio/setbuffer.c
+	78	0	0	Y	N	libc/stdio/setvbuf.c
+	78	0	0	Y	N	libc/stdio/snprintf.c
+	78	0	0	Y	N	libc/stdio/sprintf.c
+	78	0	0	Y	N	libc/stdio/sscanf.c
+	78	0	0	Y	N	libc/stdio/stdio.c
+	78	0	0	Y	N	libc/stdio/tempnam.c
+	78	0	0	Y	N	libc/stdio/tmpfile.c
+	78	0	0	Y	N	libc/stdio/tmpnam.c
+	78	0	0	Y	N	libc/stdio/ungetc.c
+	78	0	0	Y	N	libc/stdio/vfprintf.c
+	78	0	0	Y	N	libc/stdio/vfscanf.c
+	78	0	0	Y	N	libc/stdio/vprintf.c
+	78	0	0	Y	N	libc/stdio/vscanf.c
+	78	0	0	Y	N	libc/stdio/vsnprintf.c
+	78	0	0	Y	N	libc/stdio/vsprintf.c
+	78	0	0	Y	N	libc/stdio/vsscanf.c
+	78	0	0	Y	N	libc/stdio/wbuf.c
+	78	0	0	Y	N	libc/stdio/wsetup.c
 
-1	0	0	0	Y	Y	libc/stdlib/environ.c
-	0	0	0	Y	N	libc/stdlib/getopt.c
-	0	0	0	Y	N	libc/stdlib/getsubopt.c
+	78	0	0	Y	N	libc/stdlib/cvt.c
+1	78	0	0	Y	Y	libc/stdlib/environ.c
+	na	na		Y	Y	libc/stdlib/fpspecnum.asm
+	78	0	0	Y	N	libc/stdlib/getopt.c
+	78	0	0	Y	N	libc/stdlib/getsubopt.c
 
-	0	0	0	Y	N	libc/string/case.c
-	0	0	0	Y	N	libc/string/str.c
+						libc/stdtime/asctime.c
+						libc/stdtime/difftime.c
+						libc/stdtime/localtime.c
+						libc/stdtime/strftime.c
 
-	0+8	0	0	Y		libc/sys/exec.c
-	0+8	0	0	Y		libc/sys/syscall.c
+	78	0	0	Y	N	libc/string/case.c
+	78	0	0	Y	N	libc/string/str.c
+	78	0	0	Y	Y	libc/string/strerror.c
+
+	78	0	0	Y		libc/sys/exec.c
+	78	0	0	Y		libc/sys/syscall.c
 	na	na		Y	N	libc/sys/trap.asm
 
 	0	0	0	Y	N	libutil/login.c
 	0	0	0	Y	N	libutil/logintty.c
+						libutil/logout.c
+	0	0	0	Y	N	libutil/logwtmp.c
+						libutil/pty.c
+						libutil/setproc.c
 
 NOTES:	()	tested at a previous level
-
-
-NEED TO WRITE OR DUPLICATE MAN PAGES FOR
-----------------------------------------
-	login		libc(3)
-	login_tty
-	regexp		libc(3)
-	termcap		libc(3)
-	queue		3
-	tty		4
-	grp		5
-	passwd		5
-	termcap		5
-	ms		7
-	man		7
-	cron		8
-	runover		8			(obsolete?)
-	dialup		8
-
-PUT IN NEXT RELEASE
--------------------
-fcntl								(sys/fcntl.h)
-
-
-The following have their macro version in ctype.h (except isblank()),
-but should have library versions as well:
-
-isalnum
-isalpha
-isascii
-isblank
-iscntrl
-iscsym
-iscsymf
-isdigit
-isgraph
-islower
-isodigit
-isprint
-ispunct
-isspace
-isupper
-isxdigit
-
