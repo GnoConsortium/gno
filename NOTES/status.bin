@@ -11,7 +11,7 @@
 *									*
 * Devin Reade, 10 April 1998.						*
 *									*
-* $Id: status.bin,v 1.18 1999/01/09 21:28:35 gdr-ftp Exp $		*
+* $Id: status.bin,v 1.19 1999/01/11 01:29:48 gdr-ftp Exp $		*
 *									*
 *************************************************************************
 
@@ -253,7 +253,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/fold			Y	.	.	Y	.	.	.	Y
 /usr/bin/ftp			N	Y	dt	Y	.	Y	.	Y	RI
 /usr/bin/getopt
-/usr/bin/getvers		Y	Y	dave
+/usr/bin/getvers		Y	Y	dave	Y	T	Y	Y	Y	RI
 /usr/bin/gothic			Y
 /usr/bin/gunzip			N	Y
 /usr/bin/gzip			N	Y
@@ -303,7 +303,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/size
 /usr/bin/sort			Y	Y	gdr	Y						# supercedes msort/dsort?
 /usr/bin/sscii			Y
-/usr/bin/sum			Y	Y	dave	Y	Y	Y	Y	Y	RI
+/usr/bin/sum			Y	Y	dave	Y	Y	Y	Y	Y	RI	(cksum)
 /usr/bin/sx			Y	Y
 /usr/bin/sz			Y	Y
 /usr/bin/talk			N	Y	dt
@@ -319,7 +319,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/uuencode
 /usr/bin/wall			N	Y	dt	Y	T	Y	Y	Y	RI
 /usr/bin/whatis			N	Y	gdr	Y	T	Y	Y	Y	RI	(man)
-/usr/bin/whereis		N	Y	gdr	Y	T	Y	Y	Y	R
+/usr/bin/whereis		N	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/which
 /usr/bin/who			Y	Y	dt	Y	T	Y	Y	Y	RI
 /usr/bin/whois			N	Y	dt	Y	T	Y	.	Y	RI
@@ -374,7 +374,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/man/man8/intro.8		Y	Y	gdr	.	.	-	.	.	Y
 /usr/sbin			Y	Y	gdr	dir	-	-	-	-	Y
 /usr/sbin/catman		N	Y	gdr	Y	T	Y	Y	Y	RI	(man)
-/usr/sbin/cron			Y	Y	sr	Y				Y
+/usr/sbin/cron			Y	Y	sr	Y	.	.	.	Y
 /usr/sbin/descc			N	Y	gdr	Y	T	Y	Y	Y	RI	(describe)
 /usr/sbin/descu			N	Y	gdr	Y	T	Y	Y	Y	RI	(describe)
 /usr/sbin/getty			Y	Y	gdr	Y	T	Y	Y	Y	RI
