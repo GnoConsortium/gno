@@ -2,7 +2,7 @@
  * gno/gno.h	This collection of declarations are for routines that
  *		reside in libc, but are Apple IIgs or GNO specific.
  *
- * $Id: gno.h,v 1.3 1998/03/28 16:46:59 gdr-ftp Exp $
+ * $Id: gno.h,v 1.4 1998/03/28 18:36:43 gdr-ftp Exp $
  */
 
 #ifndef _GNO_GNO_H_
@@ -60,6 +60,11 @@ void		_beginStackCheck __P((void));
 int		_endStackCheck __P((void));
 unsigned int	_getStackBottom __P((void));
 void		_reportStack __P((void));
+#ifdef __STACK_CHECK__
+#define		__REPORT_STACK	_reportStack
+#else
+#define		__REPORT_STACK()
+#endif
 
 /* String Conversions */
 #define		GIfree(a) free(a)
