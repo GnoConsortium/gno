@@ -1,7 +1,7 @@
 #
 # Makefile for nroff(1).
 #
-# $Id: makefile.mk,v 1.2 1997/03/20 06:40:50 gdr Exp $
+# $Id: Makefile.unix,v 1.1 1997/10/30 04:04:34 gdr Exp $
 #
 
 IIGS		= TRUE	# TRUE or FALSE

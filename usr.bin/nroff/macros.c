@@ -19,7 +19,7 @@
  *	- Heavily hacked up to conform to "real" nroff by Bill Rosenkranz
  *      - Heavily modified by Devin Reade to avoid memory trashing bugs.
  *
- * $Id: macros.c,v 1.2 1997/03/20 06:40:50 gdr Exp $
+ * $Id: macros.c,v 1.3 1997/10/30 04:04:34 gdr Exp $
  */
 
 #ifdef __ORCAC__
@@ -31,7 +31,12 @@ segment "macros____";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef __GNO__
+#include <err.h>
+#else
 #include "unix/err.h"
+#endif
 
 #ifdef sparc
 #include "unix/sunos.h"

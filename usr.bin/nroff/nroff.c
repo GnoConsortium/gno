@@ -22,12 +22,11 @@
  *	- Heavily hacked up to conform to "real" nroff by Bill Rosenkranz
  *      - Heavily modified by Devin Reade to avoid memory trashing bugs.
  *
- * $Id: nroff.c,v 1.2 1997/03/20 06:40:50 gdr Exp $
+ * $Id: nroff.c,v 1.3 1997/10/30 04:04:35 gdr Exp $
  */
 
 #ifdef __ORCAC__
 segment "main______";
-#pragma stacksize 6144
 #pragma optimize 79
 #endif
 
@@ -107,9 +106,9 @@ static char    *version = "(GNO) v1.2, 5 Mar 97 gdr";
  *
  *************************************************************************/
 
-#ifdef CHECK_STACK
+#ifdef __STACK_CHECK__
 static void
-stackCleanup (void) {
+printStack (void) {
     fprintf(stderr, "stack usage: %d bytes\n", _endStackCheck());
 }
 #endif
@@ -126,9 +125,9 @@ main (int argc, char *argv[]) {
     char	       *ps;
 
 #ifdef __GNO__
-#ifdef CHECK_STACK
+#ifdef __STACK_CHECK__
     _beginStackCheck();
-    atexit(stackCleanup);
+    atexit(printStack);
 #endif
     if (argc > 0) {
 	progname = __prognameGS();
@@ -991,7 +990,7 @@ processFile (void) {
     }
 }
 
-#pragma optimize 8
+#pragma optimize 78
 #pragma debug 0
 
 void
