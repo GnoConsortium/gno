@@ -11,7 +11,7 @@
 *									*
 * Devin Reade, 10 April 1998.						*
 *									*
-* $Id: status.bin,v 1.14 1998/04/28 06:15:07 gdr-ftp Exp $		*
+* $Id: status.bin,v 1.15 1998/06/02 13:11:02 gdr-ftp Exp $		*
 *									*
 *************************************************************************
 
@@ -106,7 +106,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /bin/fgrep			Y	Y	evan
 /bin/freeze			Y	Y
 /bin/grep			Y	Y	evan
-/bin/gsh			Y	Y	.	Y
+/bin/gsh			Y	Y	dave	Y		Y	Y	Y		# still uses old termcap
 /bin/head			Y	Y	dave	Y	T	Y	Y	Y	RI
 /bin/hostname			N	Y	dt
 /bin/info			Y	.	lb							# rename to something else
@@ -287,9 +287,9 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/rb			Y	Y
 /usr/bin/removerez		N	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/reset			Y
-/usr/bin/rlogin			N	Y	dt	Y	[G]	Y	.	Y	RI
+/usr/bin/rlogin			N	Y	dt	Y	T	Y	.	Y	RI
 /usr/bin/rot13			N	Y	lb
-/usr/bin/rsh			N	Y	dt	Y	[G]	Y	.	Y	RI
+/usr/bin/rsh			N	Y	dt	Y	T	Y	.	Y	RI
 /usr/bin/rx			Y	Y
 /usr/bin/rz			Y	Y
 /usr/bin/sb			Y
