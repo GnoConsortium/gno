@@ -1,5 +1,5 @@
 .\"
-.\" $Id: ports.2,v 1.1 1997/02/27 07:32:14 gdr Exp $
+.\" $Id: ports.2,v 1.2 1998/01/25 18:02:12 gdr-ftp Exp $
 .\"
 .\" .TH "PORTS IPC" 2 GNO "System Calls" "16 December 1996"
 .TH "PORTS IPC" 2 "16 December 1996" GNO "System Calls"
@@ -71,13 +71,14 @@ If no port is associated with
 -1 is returned and errno is set.  Names are only unbound from a port
 when that port is deleted.
 .LP
-.BR psend is used to send a 32-bit datum to a port.  If the port is full
+.BR psend 
+is used to send a 32-bit datum to a port.  If the port is full
 (that is, if there are more unread messages in the port than are specified
 in the 
 .BR pcreate 
 call), then the sending process blocks until a message is read from the
 port.  Messages are retrieved from a port using the 
-.BR preceie
+.BR preceive
 call.
 .BR pgetcount
 returns the number of messages in the port that have not been received;
