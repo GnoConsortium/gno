@@ -4,10 +4,11 @@
  * Version 1.1 and later by Devin Reade <gdr@myrias.ab.ca>
  *
  * tee originally appeared with Gno v1.x, but was fully buffered.
- * This is a complete re-write which uses full buffering for the
- * output file, but _no_ buffering on stdin and stdout.
+ * This is a complete re-write which by default uses full buffering
+ * for the output file, but _no_ buffering on stdin and stdout.
+ * This buffering behavior can be changed slightly by the -b flag.
  *
- * $Id: tee.c,v 1.2 1996/09/03 03:56:07 gdr Exp $
+ * $Id: tee.c,v 1.3 1996/09/09 06:12:16 gdr Exp $
  */
 
 #include <sys/types.h>
@@ -50,17 +51,19 @@ int
 main(int argc, char **argv)
 {
   int c, b_flag;
-  char *mode, buf;
+  char *mode;
   FILE *fp, *fp2;
+  int characters;
+  
   extern int optind;
-
+  
   /*
    * initialization 
    */
   STACKSTART;
   mode = "w+";
   b_flag = 0;
-
+  
   /*
    * parse the command line 
    */
@@ -70,17 +73,17 @@ main(int argc, char **argv)
       /* append to instead of truncate output file */
       mode = "a+";
       break;
-
+      
     case 'b':
       /* do line buffering */
       b_flag++;
       break;
-
+      
     case 'i':
       /* ignore SIGINT */
       signal(SIGINT, SIG_IGN);
       break;
-
+      
     case 'V':
       /* FALLTHROUGH */
     default:
@@ -91,6 +94,7 @@ main(int argc, char **argv)
   if ((argc - optind) < 1) {
     USAGE;
   }
+  
   /*
    * open the output file 
    */
@@ -98,48 +102,29 @@ main(int argc, char **argv)
     perror("opening master file");
     STACKEND(1);
   }
+
   /*
    * loop until done with the first file 
    */
   if (b_flag) {
     /* line buffering */
-    int done = 0;
-
-    while (!done) {
-      c = fread(buf2, sizeof(char), BUFFERSIZE, stdin);
-
-      if (c == 0) {
-	if (ferror(stdin)) {
-	  fclose(fp);
-	  STACKEND(1);
-	  /* NOTREACHED */
-	}
-	done = 1;
-      }
-      fwrite(buf2, sizeof(char), c, stdout);
-      fwrite(buf2, sizeof(char), c, fp);
-    }
+    setvbuf(stdin,  NULL, _IOLBF, 1024);
+    setvbuf(stdout, NULL, _IOLBF, 1024);
+    characters = BUFFERSIZE;
   } else {
     /* no buffering */
-    int done = 0;
-
-    while (!done) {
-      switch (read(STDIN_FILENO, &buf, 1)) {
-      case -1:
-	fclose(fp);
-	STACKEND(1);
-	/* NOTREACHED */
-      case 0:
-	done = 1;
-	break;
-      default:
-	write(STDOUT_FILENO, &buf, 1);
-	fputc(buf, fp);
-	break;
-      }
-    }
+    setvbuf(stdin,  NULL, _IONBF, 0);
+    setvbuf(stdout, NULL, _IONBF, 0);
+    characters = 2;  /* a value of 2 gives one character reads */
   }
 
+  /* poll until EOF seen on input or an error occurs */
+  while (fgets(buf2, characters, stdin) != NULL &&
+         fputs(buf2, stdout) != EOF &&
+         fputs(buf2, fp) != EOF);
+  fflush(fp);
+  fflush(stdout);
+  
   /*
    * make additional copies if necessary 
    */
@@ -150,31 +135,33 @@ main(int argc, char **argv)
   }
   while (argc > optind) {
     size_t count;
-
+    
     /* rewind the master file */
     rewind(fp);
-
+    
     /* open the new file */
     if ((fp2 = fopen(argv[optind], mode)) == NULL) {
       perror("opening duplicate file");
       fclose(fp);
       STACKEND(1);
     }
+    
     /* make the copy */
     while (!feof(fp) && !(ferror(fp))) {
       count = fread(buf2, sizeof(char), BUFFERSIZE, fp);
-
+      
       if (count > 0) {
-	fwrite(buf2, sizeof(char), count, fp2);
-
-	if (ferror(fp2)) {
-	  perror("writing duplicate file");
-	  fclose(fp);
-	  fclose(fp2);
-	  STACKEND(1);
-	}
+        fwrite(buf2, sizeof(char), count, fp2);
+	
+        if (ferror(fp2)) {
+          perror("writing duplicate file");
+          fclose(fp);
+          fclose(fp2);
+          STACKEND(1);
+        }
       }
     }
+    
     fclose(fp2);
     if (ferror(fp)) {
       perror("reading master file");
