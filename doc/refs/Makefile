@@ -5,7 +5,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.2 1997/11/24 05:46:28 gdr Exp $
+# $Id: Makefile,v 1.3 1997/11/30 06:45:15 gdr Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -43,13 +43,20 @@ MINDEX		= index.html
 	HTML_ROOT	= http://trenco.myrias.com/~gno
 	GIFDIR		= http://trenco.myrias.com/icons
 .END
-FTP_ROOT	= ftp://trenco.myrias.com/pub/apple2/gno
+FTP_ROOT	= ftp://trenco.myrias.com/pub/apple2/apple.16bit/gno
 
 
 # Where can the FAQ be located?
 #FAQ		= http://web.cs.ualberta.ca/~glyn/FAQ.csa2g
 FAQ		= http://trenco.myrias.com/~gno/FAQ.html
 FAQLOG		= http://trenco.myrias.com/~gno/FAQ-log
+FAQ_TEXT	= $(FTP_ROOT)/doc/faq/CURRENT
+FAQLOG_TEXT	= $(FTP_ROOT)/doc/faq/LOG
+
+FTP_INTRO	= $(FTP_ROOT)/doc/refs/intro
+FTP_KERN	= $(FTP_ROOT)/doc/refs/kern
+FTP_GSH		= $(FTP_ROOT)/doc/refs/gsh
+
 
 # Where can the old v2.0.4 docs be found?
 #OLD_HTML	= http://web.cs.ualberta.ca/~glyn/GNOv2.0.4Docs
@@ -69,14 +76,15 @@ CONTACT2	= '<br>Document Version: '
 # Some more programs and flags
 GETDATE		= ./getdate -date
 GETVERS		= ./getdate -version
-DVIPS_FLAGS	= -tletter
+DVIPS_FLAGS	=
 LATEX_FLAGS	=
 TEX2HTML_FLAGS	= -info "" -local_icons -dir $(HTMLD) -up_url $(MINDEX)
 TEXINPUTS	= ':/usr/local/lib/latex2html'
 
-DVI	= kern.dvi # intro.dvi
-PS	= kern.ps  # intro.ps
-HTML	= $(HTMLD)/kern.html # $(HTMLD)/intro.html
+DVI	= intro.dvi    kern.dvi
+PS_LTR	= intro.ltr.ps kern.ltr.ps
+PS_A4	= intro.a4.ps  kern.a4.ps
+HTML	= $(HTMLD)/intro.html $(HTMLD)/kern.html
 
 .PRECIOUS: $(DVI)
 
@@ -89,33 +97,55 @@ MKSO	= $(MANORG)/mkso.data
 MANUAL_GARBAGE	= top.html
 TEX_GARBAGE	= *.err *.aux *.log *.dvi *.toc *.idx *.ilg *.ind
 DVIPS_GARBAGE	= *.ps *.djc
+BIB_GARBAGE	= *.blg *.bbl
 
 UPLOADS	= htmld.tar.gz \
-	kern.dvi.Z kern.ps.Z
+	intro.dvi.Z intro.ltr.ps.Z intro.a4.ps.Z \
+	kern.dvi.Z  kern.ltr.ps.Z  kern.a4.ps.Z
 
 #
 # targets
 #
-all:	h dvi ps man
+all:	dvi ps h man
 dvi:	$(DVI)
-ps:	$(PS)
+ps:	ps_ltr ps_a4
+ps_ltr:	$(PS_LTR)
+ps_a4:	$(PS_A4)
 h:	$(HTML) $(HTMLD)/index.html $(HTMLD)/unaval.html top.html cleanhtml
+bib:	intro.bbl
+
+intro.bbl: gno.bib
+	bibtex intro
 
 upload:	man $(UPLOADS)
 
 htmld.tar.gz:	h
 	tar -cf - $(HTMLD) | gzip --best > $@
 
-kern.dvi.Z: kern.dvi;	compress -c $< > $@
-kern.ps.Z:  kern.ps;	compress -c $< > $@
+intro.dvi.Z:	intro.dvi;	compress -c $< > $@
+intro.ltr.ps.Z:	intro.ltr.ps;	compress -c $< > $@
+intro.a4.ps.Z:	intro.a4.ps;	compress -c $< > $@
+
+kern.dvi.Z:	kern.dvi;	compress -c $< > $@
+kern.ltr.ps.Z:	kern.ltr.ps;	compress -c $< > $@
+kern.a4.ps.Z:	kern.a4.ps;	compress -c $< > $@
+
+gsh.dvi.Z:	gsh.dvi;	compress -c $< > $@
+gsh.ltr.ps.Z:	gsh.ltr.ps;	compress -c $< > $@
+gsh.a4.ps.Z:	gsh.a4.ps;	compress -c $< > $@
 
 $(HTMLD)/index.html: $(MINDEX)
 	@echo "making $@"; \
 	[ -d $(HTMLD) ] || mkdir -p $(HTMLD); \
 	perl -p -e 's,%%HTML_ROOT%%,$(HTML_ROOT),g;' \
 		-e 's,%%FTP_ROOT%%,$(FTP_ROOT),g;' \
+		-e 's,%%FTP_INTRO%%,$(FTP_INTRO),g;' \
+		-e 's,%%FTP_KERN%%,$(FTP_KERN),g;' \
+		-e 's,%%FTP_GSH%%,$(FTP_GSH),g;' \
 		-e 's,%%FAQ%%,$(FAQ),g;' \
 		-e 's,%%FAQLOG%%,$(FAQLOG),g;' \
+		-e 's,%%FAQ_TEXT%%,$(FAQ_TEXT),g;' \
+		-e 's,%%FAQLOG_TEXT%%,$(FAQLOG_TEXT),g;' \
 		-e 's,%%OLD_HTML%%,$(OLD_HTML),g;' \
 		-e 's,%%GIFDIR%%,$(GIFDIR),g;' \
 		< $< > $@
@@ -149,7 +179,7 @@ man:	mansetup
 mansetup: newer
 
 clean:
-	-rm -rf *~ $(TEX_GARBAGE) $(DVIPS_GARBAGE) $(UPLOADS)
+	-rm -rf *~ $(TEX_GARBAGE) $(BIB_GARBAGE) $(DVIPS_GARBAGE) $(UPLOADS)
 
 clobber: clean
 	-rm -rf $(MANUAL_GARBAGE) $(HTMLD) $(PSD) $(DVID) newer
@@ -171,24 +201,22 @@ $(HTMLD)/%.html: %.tex
 $(HTMLD)/%.gif: GIF/%.gif
 	ln $< $@
 
-#$(PSD)/%.ps: %.ps
-#	@true; [ -d $(PSD) ] || mkdir $(PSD)
-#	rm -f $@
-#	ln $*.ps $@
+%.ltr.ps: %.dvi
+	$(DVIPS) -tletter $(DVIPS_FLAGS) -o $@ $<
 
-#$(DVID)/%.dvi: %.dvi
-#	@true; [ -d $(DVID) ] || mkdir $(DVID)
-#	rm -f $@
-#	ln $< $@
-
-%.ps: %.dvi
-	$(DVIPS) $(DVIPS_FLAGS) -o $@ $<
+%.a4.ps: %.dvi
+	$(DVIPS) -ta4 $(DVIPS_FLAGS) -o $@ $<
 
 %.dvi: %.tex
 	@for i in 1 2 3; do \
 		echo "****** latex pass $$i"; \
 		TEXINPUTS=$(TEXINPUTS) $(LATEX) $(LATEX_FLAGS) $<; \
+		if [ "$*" = intro ]; then \
+			echo "****** running bibtex"; \
+			bibtex $*; \
+		fi; \
 		$(MAKEINDEX) $*; \
 	done; \
 	echo "****** latex passes done"
+
 
