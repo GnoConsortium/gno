@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.5 1998/02/18 00:29:26 gdr-ftp Exp $
+# $Id: Makefile,v 1.6 1999/01/29 07:03:56 gdr-ftp Exp $
 #
 # Devin Reade, January 1998
 #
@@ -38,11 +38,11 @@ RELEASE_DB	= desc.db.shk
 HEAD		= head.html
 TAIL		= tail.html
 FINAL_DIR	= /home/gno/public_html/describe
-FINAL_HTML	= $(FINAL_DIR)/dbase.html \
-		  $(FINAL_DIR)/index.html \
-		  $(FINAL_DIR)/program.html \
-		  $(FINAL_DIR)/submit.html \
-		  $(FINAL_DIR)/view.html
+HTML		= dbase.html \
+		  index.html \
+		  program.html \
+		  submit.html \
+		  view.html
 
 # Directories for generated files
 GEN		= $(FINAL_DIR)/gen
@@ -51,11 +51,15 @@ ENTRY		= $(FINAL_DIR)/entry
 # Directory for scratch files
 TDIR		= ./tmp
 
-default:	xref web readme
-web:		$(FINAL_DIR) $(FINAL_HTML)
-readme:		$(README_OUT)
+default:	setup xref web readme
+readme:		setup $(README_OUT)
+readme-install:	$(RELDIR)/$(RELEASE_README)
+xref:		setup $(XREF)
+release:	setup default readme-install \
+			$(RELDIR)/$(RELEASE_SRC) \
+			$(RELDIR)/$(RELEASE_DB)
 
-xref:	$(GEN) $(ENTRY)
+$(XREF): $(DB_SRC)
 	./mkindex < $(DB_SRC) > $(XREF)
 	./mkgen $(XREF)
 	chmod 644 $(GEN)/*
@@ -65,16 +69,10 @@ OWNER	= -ogdr -ga2ftp
 MODE_F	= -m444
 MODE_X	= -m775
 
-release:	default $(RELDIR)/$(RELEASE_README) $(RELDIR)/$(RELEASE_SRC) \
-		$(RELDIR)/$(RELEASE_DB)
-
-clobber:;	rm -rf *~ $(XREF) $(TDIR) $(README_OUT)
-nuke:;		rm -rf $(FINAL_DIR)/*
-
-$(RELDIR)/$(RELEASE_README):	$(RELDIR) $(README_OUT)
+$(RELDIR)/$(RELEASE_README):	$(README_OUT)
 	install $(OWNER) $(MODE_F) $(README_OUT) $@
 
-$(RELDIR)/$(RELEASE_SRC):	$(RELDIR) $(TDIR) $(DB_SRC)
+$(RELDIR)/$(RELEASE_SRC):	$(DB_SRC)
 	@echo "installing $@"; \
 	cp $(DB_SRC) $(TDIR); \
 	udl -g $(TDIR)/$(DB_SRC); \
@@ -84,7 +82,7 @@ $(RELDIR)/$(RELEASE_SRC):	$(RELDIR) $(TDIR) $(DB_SRC)
 	nulib cf $(RELEASE_SRC) $(DB_SRC); \
 	install $(OWNER) $(MODE_F) $(RELEASE_SRC) $@
 
-$(RELDIR)/$(RELEASE_DB):	$(RELDIR) $(TDIR) $(DB_SRC)
+$(RELDIR)/$(RELEASE_DB):	$(DB_SRC)
 	@echo "installing $@"; \
 	/usr/local/sbin/descc $(DB_SRC); \
 	cp /usr/lib/describe.db $(TDIR); \
@@ -94,43 +92,41 @@ $(RELDIR)/$(RELEASE_DB):	$(RELDIR) $(TDIR) $(DB_SRC)
 	nulib cf $(RELEASE_DB) describe.db; \
 	install $(OWNER) $(MODE_F) $(RELEASE_DB) $@
 
-$(RELDIR):;	@[ -d $(RELDIR) ] || install -d $(OWNER) $(MODE_X) $(RELDIR)
-$(TDIR):;	@[ -d $(TDIR) ] || install -d $(OWNER) $(MODE_X) $(TDIR)
-
-$(FINAL_DIR):;	@[ -d $(FINAL_DIR) ]	|| install -d -m755 $(FINAL_DIR)
-$(GEN):;	@[ -d $(GEN) ]		|| install -d -m755 $(GEN)
-$(ENTRY):;	@[ -d $(ENTRY) ]	|| install -d -m755 $(ENTRY)
-
-#
-# Implicit rules.
-#
-
-$(FINAL_DIR)/%.html: %.html
-	@echo "creating $@"; \
-	tmpfile=/tmp/desc.build.$$; \
-	trap "rm -f $$tmpfile" 0 1 2 15; \
-	cat $(HEAD) $< $(TAIL) > $$tmpfile; \
-	htmldate="`./getdate -printdate < $$tmpfile`"; \
+web:	setup
+	@tmpfile1=/tmp/desc.build.$$$$a; \
+	tmpfile2=/tmp/desc.build.$$$$b; \
+	trap "rm -f $$tmpfile1 $$tmpfile2" 0 1 2 15; \
 	dbdate="`./getdate -describe < $(DB_SRC)`"; \
-	sed \
-		-e 's/%%WARNING%%/$(WARNING)/;' \
-		-e 's/%%VERSION_SHORT%%/$(VERSION_SHORT)/;' \
-		-e 's/%%VERSION_LONG%%/$(VERSION_LONG)/;' \
-		-e "s/%%LAST_UPDATE%%/$$htmldate/;" \
-		-e "s/%%DATE%%/$$dbdate/;" \
-		< $$tmpfile > $@; \
-		chmod 644 $@
+	for f in $(HTML); do \
+		rm -f $$tmpfile1; \
+		cat $(HEAD) $$f $(TAIL) > $$tmpfile1; \
+		htmldate="`./getdate -printdate < $$tmpfile1`"; \
+		rm -f $$tmpfile2; \
+		sed \
+			-e 's/%%WARNING%%/$(WARNING)/;' \
+			-e 's/%%VERSION_SHORT%%/$(VERSION_SHORT)/;' \
+			-e 's/%%VERSION_LONG%%/$(VERSION_LONG)/;' \
+			-e "s/%%LAST_UPDATE%%/$$htmldate/;" \
+			-e "s/%%DATE%%/$$dbdate/;" \
+			< $$tmpfile1 > $$tmpfile2; \
+		cmp -s $(FINAL_DIR)/$$f $$tmpfile2; \
+		if [ $$? -ne 0 ]; then \
+			echo "creating $(FINAL_DIR)/$$f"; \
+			mv $$tmpfile2 $(FINAL_DIR)/$$f; \
+			chmod 644 $(FINAL_DIR)/$$f; \
+		fi; \
+	done; \
+	rm -f $$tmpfile1 $$tmpfile2
 
 $(README_OUT):	$(README_IN) $(DB_SRC)
 	@echo "making $@"; \
 	dbdate="`./getdate -describe < $(DB_SRC)`"; \
 	sed -e "s,%%DATE%%,$$dbdate,;" < $(README_IN) > $@
 
-# Additional dependancies.
+setup:
+	@for d in $(GEN) $(ENTRY) $(FINAL_DIR) $(ENTRY) $(RELDIR) $(TDIR); do \
+		[ -d $$d ] || install -d -m755 $$d; \
+	done
 
-$(FINAL_DIR)/dbase.html::	$(HEAD) $(TAIL)
-$(FINAL_DIR)/index.html::	$(HEAD) $(TAIL)
-$(FINAL_DIR)/program.html::	$(HEAD) $(TAIL)
-$(FINAL_DIR)/submit.html::	$(HEAD) $(TAIL)
-$(FINAL_DIR)/view.html::	$(HEAD) $(TAIL)
-
+clobber:;	rm -rf *~ $(XREF) $(TDIR) $(README_OUT)
+nuke:;		rm -rf $(FINAL_DIR)/*
