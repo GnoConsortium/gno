@@ -1,15 +1,10 @@
-Name:    <prog>
+Name:    wc
 Version: 2.0 (August 1997)
 Shell:   GNO
 Author:  Dave Tribby (from FreeBSD code)
 Contact: tribby@cup.hp.com
-Where:   /bin/<prog>
+Where:   /bin/wc
 FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
 
- <description>
+ Prints word, line, and byte counts for files.
   
-/*
- * Resources for version and comment
- */
-#define PROG "wc"
-#define DESC "Word, line, and byte count."
