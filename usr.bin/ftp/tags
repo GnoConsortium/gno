@@ -1,0 +1,152 @@
+ACCOUNT	ruserpass.c	/^#define	ACCOUNT 4$/
+DEFAULT	ruserpass.c	/^#define	DEFAULT	1$/
+GAVSIZ	glob.c	/^#define	GAVSIZ		(NCARGS\/6)$/
+Gcat	glob.c	/^static void Gcat (char \*s1, char \*s2)$/
+Gmatch	glob.c	/^static int Gmatch (char \*s, char \*p)$/
+HASHBYTES	ftp.c	/^#define HASHBYTES 1024$/
+ID	ruserpass.c	/^#define	ID	10$/
+LOGIN	ruserpass.c	/^#define	LOGIN	2$/
+MACDEF	ruserpass.c	/^#define MACDEF  5$/
+MACH	ruserpass.c	/^#define	MACH	11$/
+Mmain	main.c	/^main (int argc, char \*\*argv)$/
+PASSWD	ruserpass.c	/^#define	PASSWD	3$/
+QUOTE	glob.c	/^#define	QUOTE 0200$/
+TRIM	glob.c	/^#define	TRIM 0177$/
+UC	ftp.c	/^#define	UC(b)	(((unsigned int)b)&0xff)$/
+_PATH_TMP	pathnames.h	/^#define	_PATH_TMP	"\/tmp\/ftpXXXXXX"$/
+abort_remote	ftp.c	/^void abort_remote (FILE \*din)$/
+abortpt	ftp.c	/^void abortpt (int sig, int code)$/
+abortrecv	ftp.c	/^void abortrecv (int sig, int code)$/
+abortsend	ftp.c	/^void abortsend (int sig, int code)$/
+account	cmds.c	/^void account (int argc, char \*\*argv)$/
+acollect	glob.c	/^static void acollect (char \*as)$/
+addpath	glob.c	/^static void addpath (char c)$/
+amatch	glob.c	/^static int amatch (char \*s, char \*p)$/
+another	cmds.c	/^int another (int \*pargc, char \*\*\*pargv, char /
+any	glob.c	/^int any (int c, char \*s)$/
+blkcpy	glob.c	/^char \*\*blkcpy (char \*\*oav, char \*\*bv)$/
+blkfree	glob.c	/^void blkfree (char \*\*av0)$/
+blklen	glob.c	/^int blklen (char \*\*av)$/
+cd	cmds.c	/^void cd (int argc, char \*\*argv)$/
+cdup	cmds.c	/^void cdup (int argc, char \*\*argv)$/
+changetype	cmds.c	/^void changetype (int newtype, int show)$/
+cmd	ftp.var.c	/^struct cmd {$/
+cmdabort	ftp.c	/^void cmdabort (int sig, int code)$/
+cmdscanner	main.c	/^cmdscanner (int top)$/
+collect	glob.c	/^static void collect (char \*as)$/
+command	ftp.c	/^int command (char \*string, \.\.\.)$/
+comvars	ftp.c	/^static struct comvars {$/
+confirm	cmds.c	/^int confirm (char \*cmd, char \*file)$/
+copyblk	glob.c	/^char \*\*copyblk (char \*\*v)$/
+dataconn	ftp.c	/^FILE \*dataconn (char \*lmode)$/
+delete	cmds.c	/^void delete (int argc, char \*\*argv)$/
+digit	glob.c	/^int digit (char c)$/
+disconnect	cmds.c	/^void disconnect (int argc, char \*\*argv)$/
+do_chmod	cmds.c	/^void do_chmod (int argc, char \*\*argv)$/
+do_umask	cmds.c	/^void do_umask (int argc, char \*\*argv)$/
+domacro	domacro.c	/^void domacro (int argc, char \*\*argv)$/
+domap	cmds.c	/^char \*domap (char \*name)$/
+doproxy	cmds.c	/^void doproxy (int argc, char \*\*argv)$/
+dotrans	cmds.c	/^char \*dotrans (char \*name)$/
+empty	ftp.c	/^int empty (struct fd_set \*mask, int sec)$/
+eq	glob.c	/^#define	eq(a,b)		(strcmp(a, b)==0)$/
+execbrc	glob.c	/^static int execbrc (char \*p, char \*s)$/
+expand	glob.c	/^static void expand (char \*as)$/
+fatal	cmds.c	/^void fatal (char \*msg)$/
+ftpglob	glob.c	/^char \*\*ftpglob (char \*v)$/
+ftpsetdebug	cmds.c	/^void ftpsetdebug (int argc, char \*\*argv)$/
+get	cmds.c	/^void get (int argc, char \*\*argv)$/
+getcmd	main.c	/^getcmd (char \*name)$/
+gethdir	glob.c	/^int gethdir (char \*home)$/
+getit	cmds.c	/^int getit (int argc, char \*\*argv, int restartit,/
+getlogin	ftp.c	/^char \*getlogin (void)$/
+getreply	ftp.c	/^int getreply (int expecteof)$/
+gettimeofday	ftp.c	/^int gettimeofday(struct timeval \*tp, struct timez/
+ginit	glob.c	/^static void ginit (char \*\*agargv)$/
+globulize	cmds.c	/^int globulize (char \*cpp\[\])$/
+gunique	ftp.c	/^char \*gunique (char \*local)$/
+help	main.c	/^help (int argc, char \*\*argv)$/
+hookup	ftp.c	/^char \*hookup (char \*host, int port)$/
+idle	cmds.c	/^void idle (int argc, char \*\*argv)$/
+initconn	ftp.c	/^int initconn (void)$/
+intr	main.c	/^intr (int sig, int code)$/
+isdir	glob.c	/^#define	isdir(d)	((d\.st_mode & S_IFMT) == S_IFDIR/
+lcd	cmds.c	/^void lcd (int argc, char \*\*argv)$/
+letter	glob.c	/^int letter (char c)$/
+login	ftp.c	/^int login (char \*host)$/
+lostpeer	main.c	/^lostpeer (int sig, int code)$/
+ls	cmds.c	/^void ls (int argc, char \*\*argv)$/
+mabort	cmds.c	/^void mabort (int sig, int code)$/
+macdef	cmds.c	/^void macdef (int argc, char \*\*argv)$/
+macel	ftp.var.c	/^struct macel {$/
+makeargv	main.c	/^makeargv (void)$/
+makedir	cmds.c	/^void makedir (int argc, char \*\*argv)$/
+match	glob.c	/^static int match (char \*s, char \*p)$/
+matchdir	glob.c	/^static void matchdir (char \*pattern)$/
+mdelete	cmds.c	/^void mdelete (int argc, char \*\*argv)$/
+mget	cmds.c	/^void mget (int argc, char \*\*argv)$/
+mls	cmds.c	/^void mls (int argc, char \*\*argv)$/
+modtime	cmds.c	/^void modtime (int argc, char \*\*argv)$/
+mput	cmds.c	/^void mput (int argc, char \*\*argv)$/
+newer	cmds.c	/^void newer (int argc, char \*\*argv)$/
+nz	ftp.c	/^#define	nz(x)	((x) == 0 ? 1 : (x))$/
+onoff	cmds.c	/^char \*onoff (int bool)$/
+proxabort	cmds.c	/^void proxabort (int sig, int code)$/
+proxtrans	ftp.c	/^void proxtrans (char \*cmd, char \*local, char \*r/
+psabort	ftp.c	/^void psabort (int sig, int code)$/
+pswitch	ftp.c	/^void pswitch (int flag)$/
+ptransfer	ftp.c	/^void ptransfer(char \*direction, long bytes, struc/
+put	cmds.c	/^void put (int argc, char \*\*argv)$/
+pwd	cmds.c	/^void pwd (int argc, char \*\*argv)$/
+quit	cmds.c	/^void quit (int argc, char \*\*argv)$/
+quote	cmds.c	/^void quote (int argc, char \*\*argv)$/
+quote1	cmds.c	/^void quote1 (char \*initial, int argc, char \*\*ar/
+recvrequest	ftp.c	/^void recvrequest (char \*cmd, char \*local, char /
+reget	cmds.c	/^void reget (int argc, char \*\*argv)$/
+remglob	cmds.c	/^char \*remglob (char \*\*argv, int doswitch)$/
+removedir	cmds.c	/^void removedir (int argc, char \*\*argv)$/
+renamefile	cmds.c	/^void renamefile (int argc, char \*\*argv)$/
+reset	cmds.c	/^void reset (int argc, char \*\*argv)$/
+restart	cmds.c	/^void restart (int argc, char \*\*argv)$/
+rmthelp	cmds.c	/^void rmthelp (int argc, char \*\*argv)$/
+rmtstatus	cmds.c	/^void rmtstatus (int argc, char \*\*argv)$/
+rscan	glob.c	/^static void rscan (char \*\*t, int (\*f)(char))$/
+ruserpass	ruserpass.c	/^int ruserpass (char \*host, char \*\*aname, char /
+sendrequest	ftp.c	/^void sendrequest (char \*cmd, char \*local, char /
+setascii	cmds.c	/^void setascii (int argc, char \*\*argv)$/
+setbell	cmds.c	/^void setbell (int argc, char \*\*argv)$/
+setbinary	cmds.c	/^void setbinary (int argc, char \*\*argv)$/
+setcase	cmds.c	/^void setcase (int argc, char \*\*argv)$/
+setcr	cmds.c	/^void setcr (int argc, char \*\*argv)$/
+setform	cmds.c	/^void setform (int argc, char \*\*argv)$/
+setglob	cmds.c	/^void setglob (int argc, char \*\*argv)$/
+sethash	cmds.c	/^void sethash (int argc, char \*\*argv)$/
+setmode	cmds.c	/^void setmode (int argc, char \*\*argv)$/
+setnmap	cmds.c	/^void setnmap (int argc, char \*\*argv)$/
+setntrans	cmds.c	/^void setntrans (int argc, char \*\*argv)$/
+setpeer	cmds.c	/^void setpeer (int argc, char \*\*argv)$/
+setport	cmds.c	/^void setport (int argc, char \*\*argv)$/
+setprompt	cmds.c	/^void setprompt (int argc, char \*\*argv)$/
+setrunique	cmds.c	/^void setrunique (int argc, char \*\*argv)$/
+setstruct	cmds.c	/^void setstruct (int argc, char \*\*argv)$/
+setsunique	cmds.c	/^void setsunique (int argc, char \*\*argv)$/
+settenex	cmds.c	/^void settenex (int argc, char \*\*argv)$/
+settrace	cmds.c	/^void settrace (int argc, char \*\*argv)$/
+settype	cmds.c	/^void settype (int argc, char \*\*argv)$/
+setverbose	cmds.c	/^void setverbose (int argc, char \*\*argv)$/
+shell	cmds.c	/^void shell (int argc, char \*\*argv)$/
+site	cmds.c	/^void site (int argc, char \*\*argv)$/
+sizecmd	cmds.c	/^void sizecmd (int argc, char \*\*argv)$/
+slurpstring	main.c	/^slurpstring (void)$/
+sort	glob.c	/^static void sort (void)$/
+status	cmds.c	/^void status (int argc, char \*\*argv)$/
+strend	glob.c	/^static char \*strend (char \*cp)$/
+strspl	glob.c	/^static char \*strspl (char \*cp, char \*dp)$/
+syst	cmds.c	/^void syst (int argc, char \*\*argv)$/
+tglob	glob.c	/^static int tglob (char c)$/
+token	ruserpass.c	/^static int token (void)$/
+toktab	ruserpass.c	/^static struct toktab {$/
+tvadd	ftp.c	/^void tvadd (struct timeval \*tsum, struct timeval /
+tvsub	ftp.c	/^void tvsub (struct timeval \*tdiff, struct timeval/
+types	cmds.c	/^struct	types {$/
+user	cmds.c	/^void user (int argc, char \*\*argv)$/

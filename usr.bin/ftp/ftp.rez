@@ -1,0 +1,31 @@
+/*
+ * Resources for ftp version and comment
+ *
+ * $Id: ftp.rez,v 1.1 1998/01/24 08:21:21 taubert Exp $
+ */
+#define PROG "ftp"
+#define DESC "File transfer program."
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 0, 0,	/* Version 1.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	PROG,	/* Program name */
+        DESC " Released with GNO/ME and GS/TCP."
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG " v1.0 (October 1997)\n"
+	"GNO utility: " DESC "\n"
+	"Ported from BSDi code by Derek Taubert."
+};
