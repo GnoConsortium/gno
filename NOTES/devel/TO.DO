@@ -1,9 +1,34 @@
 *******
 * soon
 *
-* $Id: TO.DO,v 1.7 1997/12/22 01:20:23 gdr Exp $
+* $Id: TO.DO,v 1.8 1998/10/31 19:14:49 gdr-ftp Exp $
 *
 *******
+
+When building the binary release, include all the system stuff like
+GNOSnooper, et al.
+
+We need a namespace(5) manual page.  Here is a "bugs" entry for it:
+	Apropos of building a bootable system, I've also encountered another
+	bug.  One cannot use a "partition" defined in /etc/namespace as the
+	home directory for any user.  For example, one cannot use "/root" as
+	root's home directory unless it is a real volume.  The symptoms of 
+	this are:
+	        1.  You will get a error about "Device not found"
+	        2.  The user's gshrc file will not have been sourced.
+
+Make the source *.shk archive on trenco use proper file types.
+
+The header files <curses.h>, <sys/termios.h>, and <sys/ioctl.compat.h>
+have conflicting definitions for FLUSHO.
+
+newuser, newuserv:
+	- update to use /home vice /user or maybe a conf file
+	- check out behavior of 'adduser', see if there's anything
+	  missing
+
+vfscanf.c:
+	After a reasonable time, disable the assert calls.
 
 Finish index in kernel reference manual.
 
@@ -12,24 +37,13 @@ bytes for _assertStack(3).  Determine what is necessary.  If the
 number of bytes left is less than this value, then print out
 an abbreviated error message rather than calling errx.
 
-Verify if cp or gshk is corrupting the "fudgeinstall" script.
-
 Add implementations for Tilghman:
 	strftime(3)
 
-Incorporate Tilghman's setttimeofday(2) routine.
-
-Update funopen, fropen, fwopen, fsettext man pages:
-	If a user wants binary mode, he has to call fsetbinary
-	on the resulting file pointer; this info is not carried
-	over from the previous file pointer.
-
-Create a src/gno/build.tools/dupfile script for duplicating binary
+Create a src/gno/build.tools/mklink script for duplicating binary
 files at user install time.  Current packages that need this:
 	compress/zcat
 	sum/cksum
-
-Complete mkso util
 
 As a group:
 	Update utmp.5, libutil (logout, logwtmp), last(1), login(1), who(1),
@@ -39,8 +53,6 @@ Add to relevent util man pages:
 	.SH ATTRIBUTIONS
 	This command was ported from FreeBSD source code
 	for distribution with GNO/ME 2.0.6.
-
-Use __STACK_CHECK__ macro for stack checking code.
 
 stdio:
 	- add %b modifier to fprintf implementation (ORCA/C compatibility)
@@ -56,9 +68,6 @@ Use result of _setModeEmulation(3) in appropriate calls.  These include
 	stat	- unnecessary
 	fstat	- unnecessary
 	lstat	- unnecessary
-
-clean up <gno/kerntool.h> -- some require errno args, some don't.  Some
-	can't be specified here, but most traps can.
 
 check up on the type of nlink_t, used in stat(2)
 
@@ -109,6 +118,8 @@ NEED TO WRITE OR DUPLICATE MAN PAGES FOR
 * defer
 *******
 
+investigate using dynamic libraries (RTLs)
+
 libc/sys/syscall.c:
 	for unlink, if file is open, then register a call to unlink
 	(non-recursive) the file via atexit(3)
@@ -146,12 +157,3 @@ Verify that the setdebug(2) macros in gno/gno.h are correct.
 Add implementations for execle; the final
 envp can't appear in the prototype, but it can be found since it is 
 the last argument after the first NULL pointer.
-
-
-man(1) implementation: create a database in the user's home directory
-	that contains a list of all man pages and their locations, based
-	on MANPATH.  Keep a magic number the file to see if MANPATH has
-	changed.  *maybe* check the date of the file against the
-	modification date of the respective directories and generate a
-	warning if the db is out-of-date.
-

@@ -11,7 +11,7 @@
 *									*
 * Devin Reade, 10 April 1998.						*
 *									*
-* $Id: status.bin,v 1.16 1998/06/26 01:29:37 gdr-ftp Exp $		*
+* $Id: status.bin,v 1.17 1998/10/31 19:14:49 gdr-ftp Exp $		*
 *									*
 *************************************************************************
 
@@ -30,8 +30,9 @@ dt	Derek Taubert		<taubert@geeks.org>
 evan	Evan Day		<day@ENGR.ORST.EDU>
 gdr	Devin Reade		<gdr@trenco.gno.org>
 lb	Leslie Barstow		<phoenix@faerealm.faerealm.com>
+ma	Marlin Allred		<Marlin.Allred@unisys.com>		(not on gno-devel)
 matt	Matt Ackeret		<mattack@vax.area.com>
-mober	Scott Moberly		<smoberly@s-cwis.unomaha.edu>		(not part of gno-devel)
+mober	Scott Moberly		<smoberly@s-cwis.unomaha.edu>		(not on gno-devel)
 sonk	Soenke Behrens		<sbehrens@bigfoot.com>
 sr	Steve Reeves		<stever@gate.net>
 tl	Tilghman Lesher		<lesherjt@vuse.vanderbilt.edu>
@@ -223,7 +224,6 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/biff
 /usr/bin/bison			Y	N
 /usr/bin/cal			Y	.	.	Y	.	.	.	Y
-/usr/bin/calendar		N	.	.	Y	.	.	.	Y
 /usr/bin/catrez			N	Y	dave	Y	T	Y	Y	Y	RI
 /usr/bin/cclean			N	Y	sonk
 /usr/bin/cksum			N	Y	dave	Y	Y	Y	Y	Y	RI
@@ -328,6 +328,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/bin/yankit			Y	Y
 /usr/bin/zsh			N	Y	lb								# renamed to nosh
 /usr/games			Y	Y	gdr	dir	-	-	-	-	Y
+/usr/games/calendar		N	Y	ma	Y	T	Y	Y	Y	
 /usr/games/wump			Y
 /usr/include			Y	Y	gdr	dir	-	-	-	-	Y
 /usr/lib			Y	Y	gdr	dir	-	-	-	-	Y
@@ -389,6 +390,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /usr/sbin/newuserv		N	.	.	Y	.	.	.	Y
 /usr/sbin/nogetty		Y	Y	.	Y	.	.	.	Y
 /usr/sbin/runover		Y	Y
+/usr/sbin/syslogd		Y	Y	gdr	Y	.	Y	.	Y	.	# still alpha; needs work
 /usr/sbin/uptimed		Y
 /usr/spool			Y	N	-	dir	-	-	-	-	-
 /var/adm			Y	Y	gdr	dir	-	-	-	-	Y

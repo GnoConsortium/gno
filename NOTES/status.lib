@@ -1,4 +1,4 @@
-$Id: status.lib,v 1.6 1997/12/02 05:28:37 gdr Exp $
+$Id: status.lib,v 1.7 1998/10/31 19:14:49 gdr-ftp Exp $
 
 Key for Code Status column:
 	R == reviewed
@@ -76,8 +76,12 @@ rexit			libc/sys/syscall.c	C	3	stdlib.h
 setdebug		libc/sys/trap.asm	T	2	gno/gno.h
 setsystemvector		libc/sys/trap.asm	C	2U	gno/gno.h
 settpgrp		libc/sys/trap.asm	C	2	gno/gno.h
+sprintmt		libc/gno/sprintmt.c	T	3	gno/gno.h
+syslogmt		libc/gen/syslog.c	T	3	sys/syslog.h
 tcnewpgrp		libc/sys/trap.asm	C	2	gno/gno.h
 tctpgrp			libc/sys/trap.asm	C	2	gno/gno.h
+vsprintmt		libc/gno/sprintmt.c	T	3	gno/gno.h
+vyslogmt		libc/gen/syslog.c	T	3	sys/syslog.h
 ~GNO_COMMAND		libc/gno/gnocmd.asm	C	3	na
 ~GNO_FREEARG		libc/gno/parsearg.asm	C	3	na
 ~GNO_PARSEARG		libc/gno/parsearg.asm	C	3	na
@@ -113,7 +117,7 @@ chmod			libc/sys/syscall.c	C	2	sys/stat.h
 clearerr		libc/stdio/clrerr.c	C	3	stdio.h
 close			libc/sys/syscall.c	C	2	unistd.h
 closedir		libc/gen/dirent.c	T	3	dirent.h
-closelog		libc/gen/syslog.asm	C	3	sys/syslog.h
+closelog		libc/gen/syslog.c	C	3	sys/syslog.h
 connect			libc/sys/trap.asm	C	2	sys/socket.h
 creat			libc/sys/syscall.c	T	2	sys/fcntl.h
 crypt			libc/gen/crypt.c	C	3	unistd.h
@@ -235,7 +239,7 @@ mkstemp			libc/stdio/mktemp.c	C	3	unistd.h
 mktemp			libc/stdio/mktemp.c	C	3	unistd.h
 open			libc/sys/syscall.c	C	2	sys/fcntl.h
 opendir			libc/gen/dirent.c	T	3	dirent.h
-openlog			libc/gen/syslog.asm	C	3	sys/syslog.h
+openlog			libc/gen/syslog.c	C	3	sys/syslog.h
 openpty		[A]	libutil/pty.c				libutil.h
 optarg		[var]	libc/stdlib/getopt.c	C	3	stdlib.h
 opterr		[var]	libc/stdlib/getopt.c	C	3	stdlib.h
@@ -269,6 +273,7 @@ putw			libc/stdio/putw.c	C	3	stdio.h
 raise			libc/sys/syscall.c	C	3	signal.h
 read			libc/sys/syscall.c	C	2	unistd.h
 readdir			libc/gen/dirent.c	T	3	dirent.h
+readv			libc/sys/syscall.c	C	2	sys/uio.h
 recv			libc/sys/trap.asm	C	2	sys/socket.h
 recvfrom		libc/sys/trap.asm	C	2	sys/socket.h
 recvmsg		( missing from kernel )			2	sys/socket.h
@@ -306,7 +311,7 @@ setkey			libc/gen/crypt.c	C	3	unistd.h
 setlinebuf		libc/stdio/setbuffer.c	C	3	stdio.h
 setlocale							(locale.h)
 setlogin		libc/gen/getlogin.c	T	2	unistd.h
-setlogmask		libc/gen/syslog.asm	C	3	sys/syslog.h
+setlogmask		libc/gen/syslog.c	C	3	sys/syslog.h
 setpassent		libc/gen/getpwent.c		3	pwd.h
 setpgid			libc/sys/trap.asm	C	2	unistd.h
 setpgrp			libc/sys/trap.asm	C	2	unistd.h
@@ -352,7 +357,7 @@ sys_errlist 	[var]	libc/stdio/perror.c	T	3	stdio.h
 sys_nerr    	[var]	libc/stdio/perror.c	T	3	stdio.h
 sys_siglist	[var]	libc/gen/siglist.c	R	3	signal.h
 sys_signame	[var]	libc/gen/siglist.c	R	3	signal.h
-syslog			libc/gen/syslog.asm	C	3	sys/syslog.h
+syslog			libc/gen/syslog.c	C	3	sys/syslog.h
 telldir			libc/gen/dirent.c	T	3	dirent.h
 tempnam			libc/stdio/tempnam.c	C	3	stdio.h
 times			libc/sys/trap.asm	C	2	sys/times.h
@@ -378,7 +383,7 @@ vscanf			libc/stdio/fscanf.c	C	3	stdio.h
 vsnprintf		libc/stdio/vsnprintf.c	C	3	stdio.h
 vsprintf		libc/stdio/vsprintf.c	C	3	stdio.h
 vsscanf			libc/stdio/vsscanf.c	C	3	stdio.h
-vsyslog			libc/gen/syslog.asm	C	3	sys/syslog.h
+vsyslog			libc/gen/syslog.c	C	3	sys/syslog.h
 vwarn			libc/gen/err.c		T	3	err.h
 vwarnx			libc/gen/err.c		T	3	err.h
 wait			libc/sys/trap.asm	C	2	sys/wait.h
@@ -388,6 +393,7 @@ waitpid			libc/sys/syscall.c	C	2	sys/wait.h
 warn			libc/gen/err.c		T	3	err.h
 warnx			libc/gen/err.c		T	3	err.h
 write			libc/sys/syscall.c	C	2	unistd.h
+writev			libc/sys/syscall.c	T	2	sys/uio.h
 zopen			libc/stdio/				stdio.h
 
 Notes:
@@ -433,7 +439,8 @@ BANK			MODEL		COMPLETE
 	na	na		N	N	libc/gen/setjmp.asm
 	78	0	0	Y	N	libc/gen/siglist.c
 	78	0	0	Y	Y	libc/gen/sleep.c
-	na	na		Y	N	libc/gen/syslog.asm
+	na	na		Y	N	libc/gen/syslog.c
+	na	na		Y	N	libc/gen/syslog2.asm	[superceded by syslog.c]
 	78	0	0	Y	N	libc/gen/tty.c
 	78	0	0	Y	Y	libc/gen/utime.c
 
@@ -443,6 +450,8 @@ BANK			MODEL		COMPLETE
 	78	0	0 (1)	Y	N	libc/gno/map.c
 	na	na		N	N	libc/gno/parsearg.asm
 	na	na		Y	Y	libc/gno/stack.asm
+	78	0	0	Y	Y	libc/gno/stack2.c
+	78	0	1	Y		libc/gno/vsprintmt.c
 
 	78	0	0	Y	N	libc/locale/table.c	[stub]
 
