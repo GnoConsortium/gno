@@ -31,7 +31,7 @@
 .\"
 .\"     @(#)gettimeofday.2	8.1 (Berkeley) 6/4/93
 .\"
-.TH GETTIMEOFDAY 2 "22 January 1997" GNO "System Calls"
+.TH GETTIMEOFDAY 2 "19 December 1997" GNO "System Calls"
 .SH NAME
 .BR gettimeofday ,
 .BR settimeofday
@@ -93,14 +93,16 @@ A -1 return value indicates an error occurred, and in this
 case an error code is stored into the global variable
 .IR errno .
 .SH BUGS
-For GNO,
-.BR settimeofday
-is not currently implemented.  
+The GNO implementation does not set or make use of the time zone
+information pointed to by
+.IR tzp ,
+nor the
+.BR tv_usec
+field.  The
 .BR gettimeofday
-is a minimal implementation that stores into \fItp\fR->sec the
-value returned by
-.BR time (2).
-The \fItp\fR->usec field is set to zero.
+call always returns zero in the
+.BR tv_usec 
+field.
 .SH SEE ALSO
 .BR date (1),
 .BR adjtime (2),
