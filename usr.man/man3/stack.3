@@ -1,6 +1,6 @@
 .\" Man page by Devin Reade.
 .\"
-.\" $Id: stack.3,v 1.1 1997/02/27 07:32:25 gdr Exp $
+.\" $Id: stack.3,v 1.2 1997/12/08 15:39:11 gdr Exp $
 .\"
 .TH STACK 3 "11 December 1996" GNO "Library Routines"
 .SH NAME
@@ -8,16 +8,23 @@
 .BR _endStackCheck
 \- report stack usage
 .SH SYNOPSIS
-.nf
 #include <gno/gno.h>
-
-void _beginStackCheck(void);
-int  _endStackCheck(void);
-.nf
+.sp 1
+void \fB_assertStack\fR (unsigned int \fIneeded\fR, int \fIline\fR,
+const char *\fIfile\fR);
+.br
+void \fB_beginStackCheck\fR (void);
+.br
+int  \fB_endStackCheck\fR (void);
+.br
+unsigned int \fB_getStackBottom\fR (void);
 .SH DESCRIPTION
-These routines are intended to determine the required stack usage
+The
+.BR _beginStackCheck
+and
+.BR _endStackCheck
+routines are intended to determine the required stack usage
 for a program during the development cycle.
-.LP
 .BR _beginStackCheck
 should be called as soon as possible after the program starts.
 .BR _endStackCheck
@@ -31,38 +38,131 @@ bound for the argument to
 .BR -s
 flag, or the
 .I stacksize
-pragma for Orca/C.
+pragma for ORCA/C.
+.LP
+The 
+.BR _getStackBottom
+routine returns the lowest direct page address which can legally be used
+for the stack.  (The stack on the 65816 grows downward.)  This routine is
+used internally in libc and should not normally be needed by an application.
+.LP
+The
+.BR _assertStack
+routine ensures that there are at least
+.I needed
+bytes left unused on the stack.  If this is not the case, then
+.BR _assertStack
+prints an appropriate error message and calls
+.BR exit (3)
+with a value of 1.
+This routine is intended for use when you have a function that is 
+either directly or indirectly recursive, and you do not want to 
+use the ORCA/C stack checking mechanism for every function in 
+your source file.  The 
+.IR needed
+number of bytes is usually determined either through code inspection
+or empirically
+.RB ( lseg (1)
+is a good tool for assisting in this determination).  Either way, 
+you should probably make
+.IR needed
+slightly larger than the value you expect to need.
+.LP
+If
+.IR file
+is non-NULL, then 
+.BR _assertStack
+will also print out the 
+.I file
+name and 
+.I line
+number as specified.  These values are available in any C program
+as the macros 
+.BR __FILE__ 
+and 
+.BR __LINE__ ,
+respectively.
+.SH CAVEAT
+The
+.BR _assertStack 
+routine itself uses stack space, especially when printing out error
+messages.  Ensure you allow at least 100 bytes extra to allow for this.
 .SH EXAMPLE
-An easy way to use these set of routines is to make use of the 
+An easy way to use the first two routines is to make use of the 
 .BR atexit (3)
 function, so that you don't have to determine all the possible exit
-points of your program.
+points of your program.  The GNO base sources make use of the 
+macro __STACK_CHECK__ to control whether or not this check is done.
+You may want to use the same macro.
 .nf
 
   #include <stdio.h>
   #include <gno/gno.h>
 
+  #ifdef __STACK_CHECK__
   void cleanup (void) {
     fprintf(stderr,"Stack Usage: %d bytes\n", _endStackCheck());
   }
+  #endif
 
   void main (int argc, char **argv) {
 
+  #ifdef __STACK_CHECK__
     _beginStackCheck();
     atexit(cleanup);
+  #endif
 
     ... <program continues> ...
 
 .fi
-.SH AUTHOR
+The 
+.BR _assertStack
+routine is typically used in the following manner:
+.nf
+
+  #include <gno/gno.h>
+
+  int recurse (int arg) {
+    int i, j;
+
+    /* 
+     * The value 350 was determined through code
+     * inspection or with the help of lseg(1).
+     */
+    _assertStack(350, __LINE__, __FILE__);
+
+    ... <routine continues> ...
+
+    i = recurse(j);
+
+    ... <routine continues> ...
+    return i;
+  }
+
+.fi
+.SH AUTHORS
 Phillip Vandry <vandry@cam.org>
+Devin Reade <gdr@myrias.com>
 .SH HISTORY
-These routines first appeared as stand-along object file, under the names
+The
+.BR _beginStackCheck
+and
+.BR _endStackCheck
+routines first appeared as stand-along object file, under the names
 .BR begin_stack_check
 and
 .BR end_stack_check .
 They were first incorporated into GNO in v2.0.6.
+.LP
+The
+.BR _getMinStack 
+and 
+.BR _assertStack
+routines first appeared in GNO v2.0.6.
 .SH "SEE ALSO"
+.BR lseg (1),
 .BR occ (1),
-.BR atexit (1),
-Orca/C Reference Manual, Chapter 12.
+.BR atexit (3),
+.BR exit (3).
+.br
+The ORCA/C Reference Manual, Chapter 12.
