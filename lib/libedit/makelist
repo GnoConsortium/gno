@@ -56,7 +56,7 @@ case $FLAG in
 -h)
     OIFS="$IFS"
     IFS=".$IFS"
-    set - $FILES
+    set -- $FILES
     IFS="$OIFS"
     hdr="_h_`basename $1`_$2"
     cat $FILES | $AWK '

@@ -42,7 +42,11 @@
 #ifndef _h_el_tty
 #define _h_el_tty
 
+#ifdef linux
+#include "../../include/histedit.h"
+#else
 #include "histedit.h"
+#endif
 #include <termios.h>
 
 /* Define our own since everyone gets it wrong! */

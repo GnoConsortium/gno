@@ -42,7 +42,11 @@
 #ifndef _h_el_hist
 #define _h_el_hist
 
+#ifdef linux
+#include "../../include/histedit.h"
+#else
 #include "histedit.h"
+#endif
 
 typedef const HistEvent *	(*hist_fun_t) __P((ptr_t, int, ...));
 

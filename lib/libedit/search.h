@@ -42,7 +42,11 @@
 #ifndef _h_el_search
 #define _h_el_search
 
+#ifdef linux
+#include "../../include/histedit.h"
+#else
 #include "histedit.h"
+#endif
 
 typedef struct el_search_t {
     char *patbuf;		/* The pattern buffer		*/

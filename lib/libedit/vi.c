@@ -45,6 +45,7 @@ static char sccsid[] = "@(#)vi.c	8.1 (Berkeley) 6/4/93";
 #include "el.h"
 
 private el_action_t cv_action __P((EditLine *, int));
+protected el_action_t cv_paste __P((EditLine *el, int c));
 
 /* cv_action():
  *	Handle vi actions.
@@ -104,9 +105,7 @@ cv_action(el, c)
  *	Paste previous deletion before or after the cursor
  */
 protected el_action_t
-cv_paste(el, c)
-    EditLine *el;
-    int c;
+cv_paste(EditLine *el, int c)
 {
     char *ptr;
     c_undo_t *un = &el->el_chared.c_undo;

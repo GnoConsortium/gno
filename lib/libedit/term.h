@@ -42,7 +42,11 @@
 #ifndef _h_el_term
 #define _h_el_term
 
+#ifdef linux
+#include "../../include/histedit.h"
+#else
 #include "histedit.h"
+#endif
 
 typedef struct {	/* Symbolic function key bindings	*/
     char       *name;	/* name of the key			*/

@@ -42,7 +42,11 @@
 #ifndef _h_el_refresh
 #define _h_el_refresh
 
+#ifdef linux
+#include "../../include/histedit.h"
+#else
 #include "histedit.h"
+#endif
 
 typedef struct {
     coord_t 	 r_cursor;	/* Refresh cursor position	*/

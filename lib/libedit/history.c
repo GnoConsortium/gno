@@ -51,7 +51,11 @@ static char sccsid[] = "@(#)history.c	8.1 (Berkeley) 6/4/93";
 #include <varargs.h>
 #endif
 
+#ifdef linux
+#include "unix/histedit.h"
+#else
 #include "histedit.h"
+#endif
 
 typedef const HistEvent *	(*history_gfun_t) __P((ptr_t));
 typedef const HistEvent *	(*history_efun_t) __P((ptr_t, const char *));

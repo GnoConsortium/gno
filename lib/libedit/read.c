@@ -46,10 +46,15 @@ static char sccsid[] = "@(#)read.c	8.1 (Berkeley) 6/4/93";
 #include <sys/errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 extern int errno;
 #include "el.h"
 
 #define OKCMD -1
+
+#ifndef MIN
+#define MIN(a,b) ((a)<(b) ? (a) : (b))
+#endif
 
 private int read__fixio		__P((int, int));
 private int read_preread	__P((EditLine *));
@@ -131,8 +136,7 @@ read__fixio(fd, e)
  *	Try to read the stuff in the input queue;
  */
 private int
-read_preread(el)
-    EditLine *el;
+read_preread(EditLine *el)
 {
     int    chrs = 0;
 
@@ -153,7 +157,12 @@ read_preread(el)
 	if (chrs > 0) {
 	    buf[chrs] = '\0';
 	    el->el_chared.c_macro.nline = strdup(buf);
+#if 0
+	    /* gdr: original version */
 	    el_push(el->el_chared.c_macro.nline);
+#else
+	    el_push(el, el->el_chared.c_macro.nline);
+#endif
 	}
     }
 #endif  /* FIONREAD */
@@ -245,9 +254,7 @@ read_getcmd(el, cmdnum, ch)
  *	Read a character
  */
 public int
-el_getc(el, cp)
-    EditLine *el;
-    char *cp;
+el_getc(EditLine *el, char *cp)
 {
     int num_read;
     unsigned char tcp;
@@ -301,20 +308,23 @@ el_getc(el, cp)
 
 
 public const char *
-el_gets(el, nread)
-    EditLine *el;
-    int *nread;
+el_gets(EditLine *el, int *nread)
 {
     int retval;
     el_action_t  cmdnum = 0;
     int     num;		/* how many chars we have read at NL */
     char    ch;
+#if 1
+    /* gdr: this wasn't here in the original.  cut&paste from above */
+    c_macro_t *ma = &el->el_chared.c_macro;
+#endif
 
     if (el->el_flags & HANDLE_SIGNALS)
 	sig_set(el);
 
     re_clear_display(el);		/* reset the display stuff */
     ch_reset(el);
+
 
 #ifdef FIONREAD
     if (el->el_tty.t_mode == EX_IO && ma->level < 0) {

@@ -42,7 +42,11 @@
 #ifndef _h_el_prompt
 #define _h_el_prompt
 
+#ifdef linux
+#include "../../include/histedit.h"
+#else
 #include "histedit.h"
+#endif
 
 typedef char * (*el_pfunc_t) __P((EditLine*));
 

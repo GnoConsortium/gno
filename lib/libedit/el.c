@@ -54,6 +54,10 @@ static char sccsid[] = "@(#)el.c	8.2 (Berkeley) 1/3/94";
 #endif
 #include "el.h"
 
+#ifdef linux
+extern char *fgetln __P((FILE *, size_t *));
+#endif
+
 /* el_init():
  *	Initialize editline and set default parameters.
  */

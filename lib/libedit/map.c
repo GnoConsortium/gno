@@ -1213,6 +1213,10 @@ map_print_all_keys(el)
 /* map_bind():
  *	Add/remove/change bindings
  */
+
+/* don't shadow stdlib.h decl */
+#define REMOVE localRemove
+
 protected int
 map_bind(el, argc, argv)
     EditLine *el;
@@ -1220,7 +1224,7 @@ map_bind(el, argc, argv)
     char **argv;
 {
     el_action_t *map;
-    int     ntype, remove;
+    int     ntype, REMOVE;
     char   *p;
     char    inbuf[EL_BUFSIZ];
     char    outbuf[EL_BUFSIZ];
@@ -1235,7 +1239,7 @@ map_bind(el, argc, argv)
 
     map = el->el_map.key;
     ntype = XK_CMD;
-    key = remove = 0;
+    key = REMOVE = 0;
     for (argc = 1; (p = argv[argc]) != NULL; argc++)
 	if (p[0] == '-')
 	    switch (p[1]) {
@@ -1256,7 +1260,7 @@ map_bind(el, argc, argv)
 		break;
 
 	    case 'r':
-		remove = 1;
+		REMOVE = 1;
 		break;
 
 	    case 'v':
@@ -1293,7 +1297,7 @@ map_bind(el, argc, argv)
 	    return -1;
 	}
 
-    if (remove) {
+    if (REMOVE) {
 	if (key) {
 	    (void) term_clear_arrow(el, in);
 	    return -1;

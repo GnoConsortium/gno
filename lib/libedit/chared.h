@@ -45,7 +45,11 @@
 #include <ctype.h>
 #include <string.h>
 
+#ifdef linux
+#include "../../include/histedit.h"
+#else
 #include "histedit.h"
+#endif
 
 #define EL_MAXMACRO 10
 

@@ -51,8 +51,10 @@ static char sccsid[] = "@(#)term.c	8.2 (Berkeley) 4/30/95";
 #include <unistd.h>
 #include <termcap.h>
 #include <sys/types.h>
+#include <sys/ioctl.h>
 
 #include "el.h"
+#include "term.h"
 
 /*
  * IMPORTANT NOTE: these routines are allowed to look at the current screen
@@ -187,8 +189,7 @@ private FILE *term_outfile = NULL;	/* XXX: How do we fix that? */
  *	Set the terminal capability flags
  */
 private void
-term_setflags(el)
-    EditLine *el;
+term_setflags(EditLine *el)
 {
     EL_FLAGS = 0;
     if (el->el_tty.t_tabs)
@@ -1249,7 +1250,13 @@ term_echotc(el, argc, argv)
     }
 #endif
     else if (strcmp(*argv, "baud") == 0) {
-	(void) fprintf(el->el_outfile, "%ld\n", el->el_tty.t_speed);
+	(void) fprintf(el->el_outfile, 
+#if defined(linux) || defined(__GNO__)
+		       "%d\n",
+#else
+		       "%ld\n", 
+#endif
+		       el->el_tty.t_speed);
 	return 0;
     }
     else if (strcmp(*argv, "rows") == 0 || strcmp(*argv, "lines") == 0) {

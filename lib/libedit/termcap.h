@@ -47,6 +47,10 @@ char *tgetstr	__P((char *, char **));
 int   tgetflag	__P((char *));
 int   tgetnum	__P((char *));
 char *tgoto	__P((char *, int, int));
-char *tputs	__P((char *, int, void (*)(int)));
+#if 0
+char *tputs	__P((char *, int, void (*)(int)));	/* original */
+#else
+char *tputs	__P((char *, int, int (*)(int)));
+#endif
 
 #endif /* _h_termcap */

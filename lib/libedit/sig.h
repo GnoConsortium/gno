@@ -44,7 +44,11 @@
 
 #include <signal.h>
 
+#ifdef linux
+#include "../../include/histedit.h"
+#else
 #include "histedit.h"
+#endif
 
 /*
  * Define here all the signals we are going to handle
@@ -59,6 +63,10 @@
     _DO(SIGTERM)	\
     _DO(SIGCONT)	\
     _DO(SIGWINCH)
+
+#ifdef linux
+typedef void (*sig_t) __P((int));
+#endif
 
 typedef sig_t *el_signal_t;
 
