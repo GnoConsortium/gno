@@ -6,20 +6,46 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: cmd.asm,v 1.2 1998/04/24 15:38:09 gdr-ftp Exp $
+* $Id: cmd.asm,v 1.3 1998/06/30 17:25:17 tribby Exp $
 *
 **************************************************************************
 *
 * CMD.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Command line parsing routines.
+*
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+*   gettoken	subroutine (4:word,4:stream)
+*	Returns value of token in Accumulator
+*
+*   command	subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,
+*		4:pipesem,4:stream)
+*	Returns next token in Accumulator
+*
+*   argfree	subroutine (2:argc,4:argv)
+*
+*   ShellExec	subroutine (4:path,2:argc,4:argv,2:jobflag)
+*	Returns completion status in Accumulator
+*                                                      
+*   execute	subroutine (4:cmdline,2:jobflag)
+*	Returns completion status in Accumulator
+*
+*   system	Defined for libc; interface in <stdlib.h>
+*	int system (char *command)
 *
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/cmd.mac
 
-dummy	start		; ends up in .root
+dummycmd	start		; ends up in .root
 	end
 
 	setcom 60
@@ -83,7 +109,7 @@ INQUOTE        equ   2                  ;parsing a quoted string
 INWORD         equ   3                  ;parsing a word
 SINGQUOTE      equ   4                  ;single quote string
 ;
-; start in the neutral state
+; Start in the neutral state
 ;
                ld2   NEUTRAL,state
 	lda	[stream]
@@ -92,27 +118,29 @@ SINGQUOTE      equ   4                  ;single quote string
 	lda	[stream],y
 	sta	buf+2
 ;
-; the main loop
+; Main loop: get character and take action based upon state.
 ;
 loop           lda   [buf]
                inc   buf
-               and2  @a,#$FF,ch
+               and2  @a,#$FF,ch	ch = next character.
                bne   switch
 
+; End of string detected. Action depends upon current state.
+
                if2   state,ne,#INWORD,loop2
-               jmp   endword
+               jmp   endword	state INWORD: end the word.
 
 loop2          if2   @a,ne,#GTGT,loop3
 	dec	buf
-	lda	#T_GT
+	lda	#T_GT	state GTGT: return single GT.
 	jmp	done
 
-loop3	if2	@a,eq,#INQUOTE,error1
-	if2	@a,eq,#SINGQUOTE,error2
-	lda   #T_EOF
+loop3	if2	@a,eq,#INQUOTE,error1	INQUOTE: error.
+	if2	@a,eq,#SINGQUOTE,error2    SINGQUOTE: error.
+	lda   #T_EOF	must be NEUTRAL: return EOF.
                jmp   done
 
-error1	ldx	#^errstr1
+error1	ldx	#^errstr1	Report string errors.
 	lda	#errstr1
 	bra	error0
 error2	ldx	#^errstr2
@@ -134,9 +162,18 @@ statetbl       dc    a2'case_neutral'
                dc    a2'case_single'
 ;
 ; CASE NEUTRAL
-;
+;  Check for special characters:
+;     ; & | < creturn EOF -- set token value and go to done
+;     space tab -- ignore and stay in loop
+;     > -- Change state to GTGT and stay in loop
+;     # -- Eat characters to creturn or lf, then stay in loop
+;     " -- Change state to INQUOTE and stay in loop
+;     ' -- Change state to SINGQUOTE and stay in loop
+;     \ -- Get next character, change state to INWORD, and stay in loop
+;  All other characters: change state to INWORD and stay in loop
+
 case_neutral   if2   ch,ne,#';',neut1
-               lda   #T_SEMI
+               lda   #T_SEMI	
                jmp   done
 neut1          if2   @a,ne,#'&',neut2
                lda   #T_AMP
@@ -147,6 +184,7 @@ neut2          if2   @a,ne,#'|',neut3
 neut3          if2   @a,ne,#'<',neut4
                lda   #T_LT
                jmp   done
+
 neut5          cmp	#' '	;space
 	jeq	loop
 	cmp	#9	;tab
@@ -154,12 +192,14 @@ neut5          cmp	#' '	;space
                if2   @a,ne,#'>',neut6
                lda   #GTGT
                bra   neut10
+
 neut4          if2   @a,ne,#13,neut4a   ;return
                lda   #T_NL
                jmp   done
-neut4a         if2   @a,ne,#0,neut4b    ;EOF
+neut4a         if2   @a,ne,#0,neut4b    ;EOF [Is this possible?? DMT]
                lda   #T_EOF
                jmp   done
+
 neut4b	if2	@a,ne,#'#',neut5	;comment
 neut4c	lda	[buf]
 	and	#$7F
@@ -169,6 +209,7 @@ neut4c	lda	[buf]
 	if2	@a,eq,#10,neut4d
                bra   neut4c
 neut4d	jmp	loop
+
 neut6          if2   @a,ne,#'"',neut7
 startquote     lda   #INQUOTE
                bra   neut10
@@ -185,6 +226,7 @@ neut9	sta   [word]             ;default
                lda   #INWORD
 neut10         sta   state
 neut10a        jmp   loop
+
 ;
 ; CASE GTGT
 ;
@@ -316,11 +358,11 @@ end            equ   waitpid+4
                phd
                tcd
 
-               ph4   #1024
-               jsl   ~NEW
+               ph4   #1024	Allocate 1024 bytes
+               jsl   ~NEW	 and pointer in cmdline.
                sta   cmdline
                stx   cmdline+2
-               lda   #0
+               lda   #0	Initialize to null C string.
                sta   [cmdline]
 
 	jsl	alloc1024
@@ -366,6 +408,7 @@ toktbl         dc    a2'loop'
                dc    a2'tok_nl'
                dc    a2'tok_eof'
 	dc	a2'tok_error'
+
 ;
 ; Parse a word token
 ;
@@ -535,13 +578,14 @@ tok_semi       anop
 tok_nl         anop
 tok_eof        anop
 
-               lda   argc	;terminate the argv list
+               lda   argc
                bne	nonnull
 	lda	#0
                sta   [waitpid]
 	lda	#T_NULL
 	jmp	exit
-nonnull        asl2  a
+
+nonnull        asl2  a	;terminate the argv list
                tay
                lda   #0
                sta   [argv],y
@@ -594,9 +638,9 @@ run2           phx
 	cmp	#-1
 	beq	exit
 
-           	if2   token,ne,#T_BAR,run3
+           	if2   token,ne,#T_BAR,run3	If next token is "|",
 
-	pei   (waitpid+2)
+	pei   (waitpid+2)		  recursively call command.
                pei   (waitpid)
                pei	(pipefds)
 	pei	(jobflag)
@@ -738,7 +782,8 @@ RRec           equ   CRec+4
 NRec           equ   RRec+4
 ORec           equ   NRec+4
 ptr            equ   ORec+4
-space          equ   ptr+4
+status	equ	ptr+4
+space          equ   status+2
 jobflag	equ	space+3
 argv           equ   jobflag+2
 argc           equ   argv+4
@@ -754,11 +799,7 @@ end            equ   path+4
                phd
                tcd
 
-wait           ldy   mutex
-               beq   wait0
-               cop   $7F
-               bra   wait
-wait0          inc   mutex
+	lock	mutex
 ;
 ; set the variables 0..argc
 ;
@@ -809,7 +850,7 @@ setit          ph4	setparm
                cmp   argc
                jcc   parmloop
 
-skipvar        dec   mutex
+skipvar        unlock mutex
 
                ph4   #4                 ;Close parms
                jsl   ~NEW
@@ -858,11 +899,12 @@ skipvar        dec   mutex
                ph2   #$2010             ;OPEN
                jsl   $E100B0
                bcc   ok
-               sta   Err
-               Error Err
+               sta   ErrError
+               ErrorGS Err
                jmp   done
-awshit         sta   Err
-               Error Err
+
+awshit         sta   ErrError
+               ErrorGS Err
                jmp   almostdone
 
 ok             ldy   #2                 ;Copy file ref num
@@ -926,12 +968,16 @@ ReadLoop       anop
 noecho         lda   [data]
                and   #$FF
                if2   @a,eq,#'#',ReadLoop
+
+*   execute	subroutine (4:cmdline,2:jobflag)
                pei   (data+2)
                pei   (data)
 *	ph2	#0
 *	ph2	#1
 	pei	(jobflag)
                jsl   execute
+	sta	status
+
 	lda	exitamundo
 	bne	almostdone
                bra   ReadLoop
@@ -975,17 +1021,21 @@ exit1a         anop
 	clc
 	adc	#end-4
 	tcs
+
+	lda	status	Pass back status value.
                rtl
 
 NLTable        dc    h'0d'
 
-Err            ds    2
+; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
+Err	dc	i2'1'	pCount
+ErrError	ds	2	Error number
 
 setparm        ds    4
                ds    4
 num            dc    c'000',h'00'
 
-mutex          dc    i'0'
+mutex          key
 
                END
 
@@ -1004,7 +1054,11 @@ waitstatus     equ   ptr2+4
 ptr            equ   waitstatus+2
 pid            equ   ptr+4
 term           equ   pid+2
-space          equ   term+2
+cmdstrt        equ   term+2
+cmdend	equ	cmdstrt+4
+end_char	equ	cmdend+4
+inquote        equ   end_char+2
+space          equ   inquote+2
 jobflag	equ	space+3	;set if not a job
 cmdline	equ   jobflag+2
 end	equ   cmdline+4
@@ -1018,26 +1072,165 @@ end	equ   cmdline+4
 	phd
 	tcd
 
+; ---------------------------------------------------------------
+
+; New code for gsh 2.0 (Dave Tribby):  within execute, loop through
+; the command line to separate each command and expand it separately,
+; rather than passing multiple commands to the next level.  This is
+; done so that commands that depend upon each other will work, e.g.
+;    set testnum=2 ; echo "This is test $testnum"
+
+;
+; Find beginning and end of next command in the command line
+;
+	lda	cmdline	Initialize cmdstrt to
+	sta	cmdstrt	 beginning of cmdline.
+	lda	cmdline+2
+	sta	cmdstrt+2
+
+; Remove leading whitespace
+
+chkws	lda	[cmdstrt]	Get next character.
+	and	#$FF
+	jeq	goback	If at end of line, nothing to do!
+	cmp	#" "	If it's a space
+	beq	bump_strt
+	cmp	#9	 or a tab,
+	bne	found_start
+bump_strt	inc	cmdstrt	   bump the start pointer
+	bne	chkws	    and look for more whitespace.
+	inc	cmdstrt+2
+	bra	chkws
+
+; Initialize pointer to end of command
+
+found_start	anop
+
+; Scan the command line for next semi-colon. Need to account for
+; quoted strings, backslash-escaped characters, and comments.
+
+; Take advantage of 65816's BIT command for the "in quotes" flag. Use
+; $8000 for single-quote bit and $4000 for double-quote bit. After
+;	bit inquote
+; can do a bmi to check for $8000 set and bvs for $4000 set. Can
+; check for either with  lda inquote  followed by beq or bne.
+
+	stz	inquote	Clear the "in quotes" flag.
+
+               ldy	#$FFFF	Clear index into cmdstrt
+
+find_end	anop
+	iny
+	lda	[cmdstrt],y	Get next character.
+	and	#$FF               If at end of string,
+	beq	found_end	 all done looking.
+; Check for special characters
+	cmp	#"'"
+	beq	s_quote
+	cmp	#'"'
+	beq	d_quote
+	cmp	#'\'
+	beq	b_slash
+; "#" and ";" are special only if we aren't in a quoted string
+	ldx	inquote
+	bne	find_end
+	cmp	#"#"
+	beq	found_end
+	cmp	#";"
+	beq	found_end
+; Not a special character. Keep looking.
+	bra	find_end
+
+
+; "'" found
+s_quote	bit	inquote	Check the "in quotes" flag.
+	bvs	find_end	In double quotes...keep looking.
+	lda	inquote	Toggle the single_quote
+	eor	#$8000	 bit in the "in quotes" flag.
+	sta	inquote
+	bra	find_end	Keep looking.
+
+; '"' found
+d_quote	bit	inquote	Check the "in quotes" flag.
+	bmi	find_end	In single quotes...keep looking.
+	lda	inquote	Toggle the double_quote
+	eor	#$4000	 bit in the "in quotes" flag.
+	sta	inquote
+	bra	find_end	Keep looking.
+
+; "\" found: accept next character without examining it in detail
+b_slash	iny		Bump index.
+	lda	[cmdstrt],y	Get next character.
+	and	#$FF               If not at end of string,
+	bne	find_end	 keep looking.
+
+;
+; Found a ";", "#", or null byte.
+;
+found_end	anop
+	sta	end_char	Save the ending character.
+
+	tya		Get number of bytes in command.
+	jeq	goback	If none, just skip it.
+
+	clc		Add command length to
+	adc	cmdstrt	 starting address to
+	sta	cmdend	  get ending address.
+	lda	#0
+	adc	cmdstrt+2
+	sta	cmdend+2
+
+	lda	end_char	Get the termination character.
+	beq	expand	If it's not a null byte,
+	lda	#0
+	short	m
+	sta	[cmdend]	  store null byte in string.
+	long	m
+
+; Continue with command-line expansions for the single command
+
+expand	anop
+
+; ---------------------------------------------------------------
+
 	stz	pipesem
 	stz	waitstatus
 
-               pei   (cmdline+2)
-               pei   (cmdline)
+; Expand $ (environment variables) and ~ in the raw command line
+               pei   (cmdstrt+2)
+               pei   (cmdstrt)
                jsl   expandvars
+
+; Expand wildcard characters in the modified command line
                phx
                pha
                sta   ptr
                stx   ptr+2
                jsl   glob
+
+; Expand aliases in the modified command line
                phx                 
                pha
 	sta	ptr2
 	stx	ptr2+2
                jsl   expandalias
+
                phx            
                pha
                sta   exebuf
                stx   exebuf+2
+
+* >> Temporary debug code: echo expanded command if echo is set.
+	using	vardata
+               lda   varecho
+               beq   noecho
+	ldx	exebuf+2
+	lda	exebuf
+	jsr	puts
+               jsr   newline
+noecho         anop
+
+
                ldx   ptr+2
                lda   ptr
                jsl   free1024
@@ -1053,27 +1246,31 @@ end	equ   cmdline+4
                pla
                stz   term
 	lda	#0
-               jmp   ouch
+               jmp   chk_cmd
 
-loop	pea	0       	;Bank 0
+
+*   command	l_subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,
+*		4:pipesem,4:stream)
+loop	pea	0       	;Bank 0		waitpid (hi)
                tdc
                clc
                adc   #pid
-               pha
-               pea   0
-	pei	(jobflag)
-	pea	0
-	pea	0       	;Bank 0
+               pha				waitpid (low)
+               pea   0			inpipe
+	pei	(jobflag)			jobflag
+	pea	0			inpipe2
+	pea	0       	;Bank 0		pipesem (hi)
                tdc
                clc
                adc   #pipesem
-               pha
-	pea	0       	;Bank 0
+               pha				pipesem (low)
+	pea	0       	;Bank 0		stream (hi)
                tdc
                clc
                adc   #exebuf
-               pha
+               pha				stream (low)
                jsl   command  
+
                sta   term
 	bmi	noerrexit
 
@@ -1118,23 +1315,48 @@ otherwait	ldx	#0
 jobwait	jsl	pwait
 	sta	waitstatus
 
+; If command detected EOF terminator, all done
 nowait         if2   term,eq,#T_EOF,noerrexit
-               lda   [exebuf]
+               lda   [exebuf]	If not at end of line,
                and   #$FF
-               beq   exit
-               jmp   loop
+               beq   exit	
+               jmp   loop	  process the next command.
 
 noerrexit	stz	waitstatus	;non-forked builtins cannot return an error
+
 exit           jsl   nullfree
 	lda	term	;make sure we return -1 if error
-	bmi	ouch
+	bmi	chk_cmd
 
 	lda	waitstatus
 	xba
 	and	#$FF
-ouch	tay
-	lda	space+1
-	sta	end-2
+
+;
+; Is there another command waiting in the buffer?
+;
+chk_cmd	ldx	end_char	Was the original ending character
+	cpx	#";"	 a semi-colon?
+	bne	goback	NO -- all done.
+
+; Set cmdstrt to point to the character beyond cmdend
+	lda	cmdend
+	ldx	cmdend+2
+	ina
+	bne	set_strt
+	inx
+set_strt	sta	cmdstrt
+	stx	cmdstrt+2
+
+	jmp	chkws	Parse the next command.
+
+;
+; All done.
+;
+goback	tay		Hold return status in Y-reg.
+
+	lda	space+1	Set up stack
+	sta	end-2	 for rtl.
 	lda	space
 	sta	end-3
 	pld
@@ -1143,7 +1365,8 @@ ouch	tay
 	adc	#end-4
 	tcs
 
-               tya
+               tya		Restore return status from Y-reg.
+
 	rtl
 
                END
@@ -1161,11 +1384,22 @@ space	equ	retval+2
 
 	subroutine (4:str),space	        ;need the phk/plb
 
-	pei	(str+2)
+	lda	str	If user passes a
+	ora	str+2	 null pointer,
+	bne	makecall
+	ina		  return 1 to caller.
+
+;
+; Let execute(str) do the work
+;
+makecall	pei	(str+2)
 	pei	(str)
 	ph2	#1	;tells execute we're called by system
 	jsl	execute
-	sta	retval
+;
+; Set status and go back to the caller
+;
+setrtn	sta	retval
 
 	return 2:retval
 

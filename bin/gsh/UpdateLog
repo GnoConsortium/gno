@@ -1,6 +1,105 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Jun 28 98    [dmt] Added InitVar routine to shellvar.asm to read values
+	     of all environment variables tracked in vardata.
+
+Jun 25 98    [dmt] Added 2.0 versions of shell calls to gsh.mac (e.g.
+	     ErrorGS, ReadVariableGS). Replaced old calls with new ones
+	     for the following: ERROR to ErrorGS in builtin.asm, cmd.asm
+	     dir.asm, shellvar.asm; Push[Pop]Variables to Push[Pop]VariabesGS
+	     in invoke.asm, shellvar.asm, shell.asm; ReadVariable to
+	     ReadVariableGS in builtin.asm and dir.asm.
+
+Jun 23 98    [dmt] Made clear built-in a non-forked command.
+
+Jun 21 98    [dmt] Added loop to execute(), in cmd.asm, to extract a single
+	     command from the input line before sending it to command(). It
+	     removes leading blanks and tabs and terminates the string at
+	     the first ";" or "#".  After command() has finished, execute()
+	     loops again if the previous command was terminated with a ";".
+	     This change fixed both problems in bug report #12:
+	     a)	All commands separated by ";" were evaluated before any
+		were executed, so the following wouldn't work:
+			set t_num=1 ; echo "Test number $t_num"
+	     b) Odd things randomly happened when tab was the first
+		character of multiple consecutive lines.
+
+Jun 20 98    [dmt] Changed pointer arithmetic from dec or inc to acd or sbc
+	     to allow for boundary condition in shell.asm.
+	     In ShellExec (cmd.asm), save status from call to execute and
+	     pass back to caller in Accumulator.
+	     Modify table of builtins so that source is unforked; this
+	     fixes bug reports #7 and #8: prefix does not work from a
+	     sourced file.
+
+Jun 18 98    [dmt] In cmd.asm, modified system() to check for null pointer,
+	     since that is documented in the ORCA/C manual as legal.
+
+Jun 15 98    [dmt] Fixed bug report #3: when wildcards were expanded, if
+	     nothing was found gsh printed "No match." and terminated, even
+	     if there were more arguments to parse.  Now gsh prints a message
+	     "No match: <pattern> ignored" to stderr for each <pattern> that
+	     does not match any filename. These changes were in expand.asm.
+	     Changed mutual exclusion in cmd.asm and shellvar.asm to use
+	     lock/unlock/key macros. That should be all of 'em.
+                                                               
+Jun 14 98    [dmt] Fixed bug report #47: when ~ is parsed and next character
+	     is a delimiter ("/" or ":") and first character of $HOME does
+	     not match that delimiter, replace the delimiters in $HOME to
+	     match the user's value. Changed three "ora addr" to "ora addr+2"
+	     (alias.asm: ora ptr; edit.asm and history.asm: ora cdcap).
+	     Changed mutual exclusion in expand.asm to use lock/unlock macros.
+
+Jun 13 98    [dmt] Wrote script to test built-in commands; found many that
+	     returned status=227. Updated exit, setdebug, ps, hash, commands,
+	     history, dirs, pushd, popd, jobs, fg, bg, and stop to return
+	     status of 0 (modified "return" to add "2:#0").
+
+Jun 12 98    [dmt] Squeezed about 80 bytes out of orca.o (edit built-in),
+	     mainly by removing "invalid path name" error msg, since I
+	     couldn't force ExpandPath to report the error and the editor
+	     handles it fine.  Also tightened "whileloop" by using Y-reg
+	     to index off of two pointers. Added lots of comments.
+
+Jun 10 98    [dmt] The boolean shell environment variables (echo, pushdsilent,
+	     etc.) would not work if they were set using UPPER CASE names.
+	     Added routine cmpdcstr in shellutil.asm to downshift characters
+	     while comparing two c strings, then called it from updatevars
+	     in shellvar.asm to compare env variable names.
+
+Jun  9 98    [dmt] Modified echo command (in builtin.asm) so it doesn't append
+	     a blank to the end of everything it prints. Added comments to code.
+
+Jun  8 98    [dmt] Added breakpoint option to setdebug (in builtin.asm) to
+	     allow turning on conditional brk instructions for debugging.
+	     Made "check4debug" a global word that reflects the current debug
+	     state, and added "breakpoint" macro (in gsh.mac) to generate code.
+	     Changed "2.0.4" to "2.0.6" within gnostr (in shell.asm).
+
+Jun  6 98    [dmt] All the macros were extracted, compared, and collated in
+	     alphabetical order into the file gsh.mac.  Six macros used by
+	     other macros had to be moved to the end of the file.
+
+	     Added direct-page/stack data segment (size 2K) to main.asm.
+	     It is initialized to be filled with "?" characters, so that
+	     it can be examined to see how much space is being used.
+
+Jun  5 98    [dmt] Determined that the current sources have only two
+	     differences from the gsh distributed with GNO/2.0.4:
+		  In main.asm between (argloop and cmd3) the code
+			ph4  #1024
+			jsl  ~NEW
+		  formerly was
+			pea  1024
+			jsl  ~NEW
+
+		  In jobs.asm (after dokill) the error check after
+			kill (pid,signum)
+		  was not present.
+
+Jun  1 98    [dmt] Changed to execvp to _execve in invoke.asm. gsh works!
+
 24 Apr 98    [gdr] Fitted gsh sources into into GNO builds.  While gsh
 	     assembles and links (abeit using the v2.0.4 termcap library),
 	     it does not currently run -- it just crashes.  The changes

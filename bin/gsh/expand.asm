@@ -6,27 +6,31 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: expand.asm,v 1.2 1998/04/24 15:38:17 gdr-ftp Exp $
+* $Id: expand.asm,v 1.3 1998/06/30 17:25:27 tribby Exp $
 *
 **************************************************************************
 *
 * EXPAND.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
-* Command line expansion routines.
+* Command line expansion routines for wildcards and env vars
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/expand.mac
 
-dummy	start		; ends up in .root
+dummyexpand	start		; ends up in .root
 	end
 
 	setcom 60
 
 **************************************************************************
 *
-* glob the command line
+* glob the command line and expand filename wildcard characters
 *
 **************************************************************************
 
@@ -52,7 +56,9 @@ space          equ   buf+4
 ;
 	lda	varnoglob
                beq   doglob
-               jsl	alloc1024	;create a tmp output buffer buffer
+
+; Allocate a buffer, copy the command line into it, and return.
+               jsl	alloc1024
                sta   buf
                stx   buf+2
                pei   (cmd+2)
@@ -64,7 +70,7 @@ space          equ   buf+4
 ;
 ; noglob isn't set, so now we can actually start.
 ;
-doglob         jsl	alloc1024	;create an output buffer buffer
+doglob         jsl	alloc1024	;create an output buffer
                sta   buf
                sta   ptr
                stx   buf+2
@@ -72,29 +78,38 @@ doglob         jsl	alloc1024	;create an output buffer buffer
                jsl	alloc1024	;create a word buffer
                sta   wordbuf
                stx   wordbuf+2
+
 ;
-; strip some white space
+; Find the beginning of the next word
 ;
-skipit         jsr   getbyte
+findword	jsr   g_getbyte	Get character from command line.
                jeq   alldone
-               if2   @a,eq,#' ',whitestuff
-               if2   @a,eq,#009,whitestuff
-               if2   @a,eq,#013,whitestuff
-               if2   @a,eq,#010,whitestuff
-	if2	@a,eq,#';',whitestuff
-	if2	@a,eq,#'&',whitestuff
-	if2	@a,eq,#'|',whitestuff
-	if2	@a,eq,#'>',whitestuff
-	if2	@a,eq,#'<',whitestuff
+               if2   @a,eq,#' ',passthru
+               if2   @a,eq,#009,passthru
+               if2   @a,eq,#013,passthru
+               if2   @a,eq,#010,passthru
+	if2	@a,eq,#';',passthru
+	if2	@a,eq,#'&',passthru
+	if2	@a,eq,#'|',passthru
+	if2	@a,eq,#'>',passthru
+	if2	@a,eq,#'<',passthru
+
+; It's not a simple pass-through character. See what needs to happen.
+
                stz   shallweglob
                ldy   #0
                bra   grabbingword
-whitestuff     jsr   putbyte
-               bra   skipit
+
+; For pass-through characters, just copy to output buffer.
+
+passthru	jsr   g_putbyte
+               bra   findword
+
+
 ;
 ; single out the next word [y is initialized above]
 ;
-grabword       jsr   getbyte
+grabword       jsr   g_getbyte
 grabbingword   if2   @a,eq,#"'",grabsingle
                if2   @a,eq,#'"',grabdouble
                if2   @a,eq,#'\',grabslash
@@ -112,35 +127,48 @@ grabbingword   if2   @a,eq,#"'",grabsingle
                if2   @a,eq,#']',grabglob
                if2   @a,eq,#'*',grabglob
                if2   @a,eq,#'?',grabglob
-grabnext       sta   [wordbuf],y
-               iny
-               bra   grabword
-grabglob       ldx   #1
-               stx   shallweglob
-               bra   grabnext
-grabslash      sta   [wordbuf],y
-               iny
-               jsr   getbyte
-               beq   procword
-               bra   grabnext
-grabsingle     sta   [wordbuf],y
-               iny
-               jsr   getbyte
-               beq   procword
-               if2   @a,eq,#"'",grabnext
-               bra   grabsingle
-grabdouble     sta   [wordbuf],y
-               iny
-               jsr   getbyte
-               beq   procword
-               if2   @a,eq,#'"',grabnext
-               bra   grabdouble
+
+; Default action (also completion of some of the other special cases)
+grabnext       sta   [wordbuf],y	Save character in word buffer
+               iny		 and bump its index.
+               bra   grabword	Get next character of word.
+
+; "[", "]", "*", "?"
+grabglob       ldx   #1	Set "shallweglob"
+               stx   shallweglob	 flag.
+               bra   grabnext	Store char in word buf & get next.
+
+; "\"
+grabslash      sta   [wordbuf],y	Save "\" in word buffer
+               iny		 and bump its index.
+               jsr   g_getbyte	Get next character in cmd line.
+               beq   procword	If null byte, word is terminated.
+               bra   grabnext	Store char in word buf & get next.
+
+; '"'
+grabsingle     sta   [wordbuf],y	Save char in word buffer
+               iny		 and bump its index.
+               jsr   g_getbyte	Get next character in cmd line.
+               beq   procword	If null byte, word is terminated.
+               if2   @a,eq,#"'",grabnext If "'", store and grab next char.
+               bra   grabsingle	Save new char and stay in this loop.
+
+; "'"
+grabdouble     sta   [wordbuf],y	Save char in word buffer
+               iny		 and bump its index.
+               jsr   g_getbyte	Get next character in cmd line.
+               beq   procword	If null byte, word is terminated.
+               if2   @a,eq,#'"',grabnext If '"', store and grab next char.
+               bra   grabdouble	Save new char and stay in this loop.
+
+
 ;
-; we've grabbed the next word, now process the word
+; The complete word is in the buffer. Time to process it.
 ;
-procword       dec   cmd
-               lda   #0
-               sta   [wordbuf],y
+procword       dec   cmd	Decrement cmd line pointer.
+               lda   #0	Terminate word buffer with
+               sta   [wordbuf],y	 a null byte.
+
 ;
 ; Shall we glob? Shall we scream? What happened, to our postwar dream?
 ;
@@ -150,16 +178,17 @@ procword       dec   cmd
                lda   shallweglob
                bne   globword
 ;
-; we didn't glob this word, so flush the word buffer
+; we didn't glob this word, so copy the word buffer to the output buffer
 ;
 skipdeglob     ldy   #0
 flushloop      lda   [wordbuf],y
                and   #$FF
                beq   doneflush
-               jsr   putbyte
+               jsr   g_putbyte
                iny
                bra   flushloop
-doneflush      jmp   skipit
+doneflush      jmp   findword
+
 ;
 ; Hello, boys and goils, velcome to Tim's Magik Shoppe
 ;
@@ -183,7 +212,7 @@ doneflush      jmp   skipit
 ; Expand out the quoted stuff, and keep an eye out for that ubiquitous last
 ; filename separator... then we can isolate him!
 ;
-globword       stz   filesep
+globword       stz   filesep	
 	jsl	alloc1024
                sta   eptr
                stx   eptr+2
@@ -255,13 +284,9 @@ copyback       lda   [wordbuf],y
 ; We now have enough to call _InitWildCard!!!
 ; [ let's mutex the rest so we don't have to fix _InitWC and _NextWC ;-) ]
 ;
-wait2          lda   mutex
-               beq   wait2a
-               cop   $7F
-               bra   wait2
-wait2a         inc   mutex
+	lock	glob_mutex
 ;
-; start 'em up
+; Call shell routine InitWildcard to initialize the filename pattern
 ;
                stz   count
                mv4   exppath,initWCparm
@@ -276,57 +301,52 @@ wait2a         inc   mutex
                sta   nWCparm
                stx   nWCparm+2
 ;
-; start the expansion dudes!
+; Call shell routine NextWildcard to get the next name that matches.
 ;
 WCloop         Next_Wildcard nWCparm
                lda   [gname]
                and   #$FF
                beq   nomore
-               inc   count
 ;
-; get that owiginal path outta here!
+; Keep count of how many paths are expanded
+;
+               inc   count	
+
+;
+; Copy the original path (up to file separator) to output buffer
 ;
                ldy   #0
 outtahere      if2   @y,eq,filesep,globout
                lda   [wordbuf],y
-               jsr   putspecial
+               jsr   g_putspecial
                iny
                bra   outtahere
 ;
-; now get that newly globbed file outta here
+; Copy the expanded filename to output buffer
 ;
 globout        lda   [gname]
                and   #$FF
                tax
                ldy   #1
 globoutta      lda   [gname],y
-               jsr   putspecial
+               jsr   g_putspecial
                iny
                dex
                bne   globoutta
 ;
-; well well well, one down, how many to go?
+; Place blank as separator after name and see if more are expanded.
 ;
                lda   #' '
-               jsr   putbyte
+               jsr   g_putbyte
                bra   WCloop
+
 ;
-; no more left, whatta we gonna do now!
+; All of the names (if any) from this pattern have been expanded.
 ;
 nomore         anop
+
 ;
-; no match
-;
-               lda   count
-               bne   yesmore
-	ldx	#^nomatch
-	lda	#nomatch
-	jsr	puts
-	lda	#0
-	sta	[buf]
-yesmore        anop
-;
-; throw em away (we should probably alloc once, not each word... )
+; Deallocate path buffers (we should probably alloc once, not each word... )
 ;
                pei   (gname+2)
                pei   (gname)
@@ -334,31 +354,54 @@ yesmore        anop
                ldx   exppath+2
                lda   exppath
                jsl   free1024
-               dec   mutex
-	lda	count
-	beq	alldone2
-               jmp   skipit
+	unlock glob_mutex
+
+	lda	count	If somehing was expanded,
+               jne   findword	 go find the next word.
+
+; Nothing was expanded from the wildcard.  If we wanted to act like
+; ksh, we could pass the original text by doing a "jmp skipdeglob".
+; Since passing a bad filename can mess up some programs, we will
+; print an error message for this name and continue processing others.
+
+	ldx	#^nomatch
+	lda	#nomatch
+	jsr	errputs
+
+	ldx	wordbuf+2
+	lda	wordbuf
+	jsr	errputs
+
+	ldx	#^ignored
+	lda	#ignored
+	jsr	errputs
+
+               jmp   findword	Go find the next word.
+
 ;
 ; Goodbye, cruel world, I'm leaving you today, Goodbye, goodbye.
 ;
-alldone        jsr   putbyte
-alldone2	ldx   wordbuf+2
+alldone        jsr   g_putbyte
+	ldx   wordbuf+2
                lda   wordbuf
                jsl   free1024
 
 bye            return 4:buf
+
+
 ;
-; get a byte from the original command-line
+; Subroutine of glob: get a byte from the original command-line
 ;
-getbyte        lda   [cmd]
+g_getbyte	lda   [cmd]
                inc   cmd
                and   #$FF
                rts
+
 ;
-; put special characters. Same as putbyte, but if it is a special
-; shell character then quote it.
+; Subroutine of glob: put special characters. Same as g_putbyte, but
+; if it is a special shell character then quote it.
 ;
-putspecial     and   #$7F
+g_putspecial	and   #$7F
 	if2	@a,eq,#' ',special
 	if2	@a,eq,#'.',special
 	if2	@a,eq,#013,special
@@ -368,33 +411,38 @@ putspecial     and   #$7F
 	if2	@a,eq,#'<',special
 	if2	@a,eq,#'>',special
 	if2	@a,eq,#'|',special
-	bra	putbyte
+	bra	g_putbyte
 special	pha
 	lda	#'\'
-	jsr	putbyte
-	pla
+	jsr	g_putbyte
+	pla		; fall through to g_putbyte...
 ;
-; store a byte into the new command-line
+; Subroutine of glob: store a byte into the new command-line
 ;
-putbyte        short a
+g_putbyte        short a
                sta   [ptr]
                long  a
                inc   ptr
                rts
 
-mutex          dc    i'0'
 
-InitWCParm     ds    4
-               dc    i2'%00000001'
-nWCparm        ds    4
+glob_mutex	key
 
-nomatch        dc    c'No match.',h'0d00'
+; Parameter block for InitWildcard shell call (ORCA/M pp 414-415)
+InitWCParm     ds    4	Path name, with wildcard
+               dc    i2'%00000001'	Flags (this bit not documented!!!)
+
+; Parameter block for NextWildcard shell call (ORCA/M pp 417-418)
+nWCparm        ds    4	Pointer to returned path name
+
+nomatch	dc	c'No match: ',h'00'
+ignored	dc	c' ignored',h'0d00'
 
                END
 
 **************************************************************************
 *
-* Expand variables not in single quotes
+* Expand $variables and tildes not in single quotes
 *
 * * Add error checking if out buf gets too big (> 1024)
 * * Get rid of fixed buffers
@@ -404,9 +452,9 @@ nomatch        dc    c'No match.',h'0d00'
 expandvars     START
 
 ptr            equ   1
-;ptr            equ   0
 buf            equ   ptr+4
-space          equ   buf+4
+dflag          equ   buf+4
+space          equ   dflag+2
 cmd            equ   space+3
 end            equ   cmd+4
 
@@ -419,61 +467,55 @@ end            equ   cmd+4
                phd
                tcd
 
+	stz	dflag	Delimiter flag = FALSE.
+
 	jsl	alloc1024
                sta   buf
                sta   ptr
                stx   buf+2
                stx   ptr+2
 
-loop           jsr   getbyte
+loop           jsr   e_getbyte
                jeq   done
                if2   @a,eq,#"'",quote
                if2   @a,eq,#'$',expand
                if2   @a,eq,#'~',tilde
                if2   @a,eq,#'\',slasher
-               jsr   putbyte
+               jsr   e_putbyte
                bra   loop
 
-slasher        jsr   putbyte
-               jsr   getbyte
-               jsr   putbyte
+slasher        jsr   e_putbyte
+               jsr   e_getbyte
+               jsr   e_putbyte
                bra   loop
 
-quote          jsr   putbyte
-               jsr   getbyte
+quote          jsr   e_putbyte
+               jsr   e_getbyte
                jeq   done
                if2   @a,ne,#"'",quote
-               jsr   putbyte
+               jsr   e_putbyte
                bra   loop
 
-tilde          anop
-wait2          lda   mutex
-               beq   wait2a
-               cop   $7F
-               bra   wait2
-wait2a         inc   mutex
-
-               short a
-               lda   #'h'
-               sta   name
-               lda   #'o'
-               sta   name+1
-               lda   #'m'
-               sta   name+2
-               lda   #'e'
-               sta   name+3
-               long  a
-               ldx   #4
-               jmp   getval
 ;
-; expand the variable since a '$' was encountered.
+; Tilde expansion: use the contents of $home, but make sure the
+; path delimiter(s) match what the user wants (either "/" or ":")
+;
+tilde          anop
+	lock	exp_mutex
+
+               lda   #"oh"	Strangely enough,
+               sta   name	 this spells "home"!
+               lda   #"em"
+               sta   name+2
+	sta	dflag	Delimiter flag = TRUE.
+               ldx   #4
+	jmp	getval
+
+;
+; Expand an environment variable since a '$' was encountered.
 ;
 expand         anop
-wait1          lda   mutex
-               beq   wait1a
-               cop   $7F
-               bra   wait1
-wait1a         inc   mutex
+	lock	exp_mutex
 
                lda   #0
                sta   name
@@ -493,29 +535,32 @@ nameloop       lda   [cmd]
                if2   @a,cc,#'a',getval
                if2   @a,cc,#'z'+1,inname
                bra   getval
-inname         jsr   getbyte
+inname         jsr   e_getbyte
                sta   name,x
                inx
                bra   nameloop
+
 ;
 ; expand in braces {}
 ;
-braceexpand    jsr   getbyte
+braceexpand    jsr   e_getbyte
 	ldx	#0
 braceloop      lda   [cmd]
 	and	#$FF
 	beq	getval
-	jsr	getbyte
+	jsr	e_getbyte
 	if2	@a,eq,#'}',getval
 	sta	name,x
 	inx
 	bra	braceloop
+
 ;
 ; get text from standard input
 ;
-stdinexpand    jsr   getbyte
+stdinexpand    jsr   e_getbyte
 	ReadLine (#value+1,#255,#13,#1),@a
-	bra	storeval2
+	bra	chklen
+
 ;
 ; get a value for this variable
 ;
@@ -529,24 +574,77 @@ getval         lda   #0
 	stx	parm+2
                Read_Variable parm
 	jsl	nullfree
+
+	lda	value	Get length
+chklen	and	#$FF	 byte.
+	beq	expanded           If 0, nothing to do
+	tax		Save length in X-reg.
+	lda	dflag	If delimiter flag isn't set,
+	beq	storeval	 go store the variable value
+
+; Check to see if delimiters in the variable need to be switched
+	lda	value	Set up length
+	and	#$FF	 byte in
+	tax		  X-reg and
+	lda	[cmd]	Get next command line
+	and	#$FF	 character.
+	cmp	#"/"	If it's a slash, see if
+	beq	chkvarslash	 variable needs to convert to slash.
+	cmp	#":"	If it's not a colon,
+	bne	storeval	 no need to convert.
+	lda	value+1	Get first character of value.
+	and	#$FF
+	cmp	#"/"	If it's not a slash,
+	bne	storeval	 no need to convert.
+
+; Convert variable from "/" to ":" delimiter
+	short m
+chk_s	lda	value,x
+	cmp	#"/"
+	bne	bump_s
+	lda	#":"
+	sta	value,x
+bump_s	dex
+	bpl	chk_s
+	long	m
+	bra	storeval
+
+chkvarslash	anop
+	lda	value+1	Get first character of value.
+	and	#$FF
+	cmp	#":"	If it's not a colon,
+	bne	storeval	 no need to convert.
+
+; Convert variable from ":" to "/" delimiter
+	short m
+chk_c	lda	value,x
+	cmp	#":"
+	bne	bump_c
+	lda	#"/"
+	sta	value,x
+bump_c	dex
+	bpl	chk_c
+	long	m
+
 ;
 ; store the variable value in the out buffer
 ;
-storeval       lda	value
-storeval2	and	#$FF
-	beq	expanded
-	tay
-	ldx   #0
+storeval	anop
+	lda	value	Get length
+	and	#$FF	 byte.
+	tay		Save length in Y-reg.
+	ldx   #0	Use X-reg in index value.
 putval         lda   value+1,x
-               jsr   putbyte
+               jsr   e_putbyte
                inx
 	dey	
                bne   putval
 
-expanded       dec   mutex
+expanded       unlock exp_mutex
+	stz	dflag	Delimiter flag = FALSE.
                jmp   loop
 
-done           jsr   putbyte
+done           jsr   e_putbyte
 
                ldx   buf+2
                ldy   buf
@@ -564,20 +662,21 @@ done           jsr   putbyte
                tya
                rtl
 
-getbyte        lda   [cmd]
+e_getbyte	lda   [cmd]
                inc   cmd
                and   #$FF
                rts
 
-putbyte        short a
+e_putbyte	short a
                sta   [ptr]
                long  a
                inc   ptr
                rts
 
-mutex          dc    i'0'
+exp_mutex	key
 
-parm           dc    a4'name'
+; Parameter block for ReadVariable shell call
+parm           dc    a4'name'	
                dc    a4'value'
 
 name           ds    256

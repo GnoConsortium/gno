@@ -1,7 +1,7 @@
 #
 # makefile for building gsh.  This is for use with dmake.
 #
-# $Id: Makefile,v 1.4 1998/06/09 16:22:50 tribby Exp $
+# $Id: Makefile,v 1.5 1998/06/30 17:25:01 tribby Exp $
 #
 # Devin Reade, February 1998.
 #
@@ -41,8 +41,9 @@ SRCS	= $(MAINSRC) \
 # ltermcap library from GNO v2.0.4.
 #
 # LDADD	= -ltermcap
-###LDLIBS	+= -l/trenco3/lib.206/ltermcap
-LDLIBS	+= -l/h1/orca/libraries/ltermcap
+LDLIBS	+= -l/trenco3/lib.206/ltermcap
+###LDLIBS	+= -l/h1/orca/libraries/ltermcap
+###LDLIBS	+= -l/usr/lib/libtermcap
 
 # Make sure our macro files get built before trying to assemble source files.
 # LOCAL_SETUP	= macros
@@ -59,14 +60,14 @@ LOCAL_MACRO_SRC	= gsh.mac
 MACRO_SRC = \
 	$(LOCAL_MACRO_SRC)
 
-# Everything should be in gsh.mac. If usefule, the following could be added
+# Everything should be in gsh.mac. If useful, the following could be added
 #	/usr/ainclude/m16.gno \
 #	$(ORCA_DIST)/libraries/orcainclude/m16.orca \
 #	$(ORCA_DIST)/libraries/orcainclude/m16.gs.os \
 #	$(ORCA_DIST)/libraries/orcainclude/m16.tools \
 #	$(ORCA_DIST)/libraries/orcainclude/m16.shell \
 #	$(ORCA_DIST)/libraries/ainclude/m16.pascal \
-	$(ORCA_DIST)/libraries/ainclude/m16.debug
+#	$(ORCA_DIST)/libraries/ainclude/m16.debug
 
 MACROS	= \
 	$(OBJ_DIR)main.mac \

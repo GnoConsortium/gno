@@ -1,26 +1,42 @@
-***********************************************************************
+*************************************************************************
 *
 * The GNO Shell Project
 *
 * Developed by:
 *   Jawaid Bazyar
 *   Tim Meekins
-* Modified by Dave Tribby for GNO/ME 2.0.6
 *
-* $Id: invoke.asm,v 1.3 1998/05/11 19:18:43 tribby Exp $
+* $Id: invoke.asm,v 1.4 1998/06/30 17:25:40 tribby Exp $
 *
 **************************************************************************
 *
 * INVOKE.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Command invocation routines.
+*
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+*  redirect	subroutine (4:sfile,4:dfile,4:efile,2:app,2:eapp,2:pipein,
+*		2:pipeout,2:pipein2,2:pipeout2)
+*	returns with carry set/clear to indicate failure/success
+*
+*  invoke	subroutine (2:argc,4:argv,4:sfile,4:dfile,4:efile,2:app,
+*		2:eapp,2:bg,4:cmd,2:jobflag,2:pipein,2:pipeout,
+*		2:pipein2,2:pipeout2,4:pipesem)
+*	return 2:val
 *
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/invoke.mac
 
-dummy	start		; ends up in .root
+dummyinvoke	start		; ends up in .root
 	end
 
 	setcom 60
@@ -87,8 +103,8 @@ end	equ	sfile+4
 	jsl	nullfree
 	plp
 	bcc	execa
-	ldx	#^err1
-	lda	#err1
+	ldx	#^err1	Print error message:
+	lda	#err1	 'Error redirecting standard input.'
 	jmp	badbye
 ;
 ; standard output
@@ -117,8 +133,8 @@ execa	ora2	dfile,dfile+2,@a
 	jsl	nullfree
 	plp
 	bcc	execb
-	ldx	#^err2
-	lda	#err2
+	ldx	#^err2	Print error message:
+	lda	#err2	 'Error redirecting standard output.'
 	jmp	badbye
 ;                   
 ; standard error
@@ -141,14 +157,17 @@ execb	ora2	efile,efile+2,@a
 	jsr	c2pstr
 	ld2	2,RedirectDev
 	mv2	eapp,RedirectApp
+
+; Make shell call to recirect I/O
 	Redirect RedirectParm
+
 	php
 	ph4	RedirectFile
 	jsl	nullfree
 	plp
 	bcc	execc
-	ldx	#^err3
-	lda	#err3
+	ldx	#^err3	Print error message:
+	lda	#err3	 'Error redirecting standard error.'
 	jmp	badbye
 ;                         
 ; is input piped in?
@@ -190,14 +209,17 @@ exit	lda	space
 	adc	#end-4
 	tcs
 
-	cpy	#1
+	cpy	#1	Clear/set carry for success/failure.
 
 	rtl     
 
+; Parameter block for shell call to redirect I/O (ORCA/M manual p.425)
 RedirectParm	anop
-RedirectDev    ds    2
-RedirectApp    ds    2
-RedirectFile   ds    4
+RedirectDev    ds    2	Dev num (0=stdin,1=stdout,2=errout)
+RedirectApp    ds    2	Append flag (0=delete)
+RedirectFile   ds    4	File name (GS/OS input string)
+
+; Parameter block for GS/OS call to close a file
 CloseParm	dc	i'1'
 CloseRef	dc	i'0'
 
@@ -232,36 +254,37 @@ space          equ   dir+4
 	ld2	-1,val
 	stz	biflag	;not a built-in
 
-               lda   argc
-               bne   chknull
+               lda   argc	Get number of arguments.
+               bne   chknull	If != 0 continue with processing.
 
-	lda	sfile
-	ora	sfile+2
+	lda	sfile	If any of the file pointers
+	ora	sfile+2	 are != NULL,
 	ora	dfile
 	ora	dfile+2
 	ora	efile
 	ora	efile+2
 	beq	nulldone
 
-	ldx	#^hehstr
-	lda	#hehstr
+	ldx	#^hehstr	print error message:
+	lda	#hehstr 	' specify a command before redirecting.'
 	jsr	errputs
 
 nulldone     	jmp   done
+
 ;
 ; Check for null command
 ;
-chknull        ldy   #2
-               lda   [argv]
-               sta   dir
+chknull        ldy   #2	Move command line
+               lda   [argv]	 pointer to
+               sta   dir	  dir (4 bytes).
                lda   [argv],y
-               sta   dir+2
+               sta   dir+2	If pointer == NULL
                ora   dir
-               beq   gonull
-               lda   [dir]
+               beq   nulldone	  all done.
+               lda   [dir]	If first character == '\0',
                and   #$FF
-               bne   checkfile
-gonull         jmp   done
+               beq   nulldone	  all done.
+
 ;
 ; check for file
 ;
@@ -272,6 +295,8 @@ checkfile	anop
 	jsl	IsBuiltin	;check builtin first
 	cmp	#-1
 	jne	trybuiltin
+
+; Command is not listed in the built-in table
 
                pei   (dir+2)
                pei   (dir)
@@ -299,26 +324,36 @@ skip           lock	mutex2
 	unlock mutex2
                jcs   notfound
 
+; File type $B5 is a GS/OS Shell application (EXE)
                if2   GRecFileType,eq,#$B5,doExec
+
+; File type $B3 is a GS/OS application (S16)
                if2   @a,eq,#$B3,doExec
+
 	ldx	vardirexec
 	bne	ft02
 	cmp	#$0F
-	jeq	doDir
+	jeq	doDir	Target is a directory; change to it.
+
+; File type $B0 is a source code file (SRC)
 ft02           if2   @a,ne,#$B0,badfile
+; Type $B0, Aux $00000006 is a shell command file (EXEC)
                if2   GRecAuxType,ne,#6,badfile
                if2   GRecAuxType+2,ne,#0,badfile
                jmp   doShell
+
+
 badfile        ldx	dir+2
 	lda	dir
 	jsr	errputs
-	ldx	#^err1
-	lda	#err1
+	ldx	#^err1	Print error message:
+	lda	#err1	 'Not executable.'
 	jsr	errputs
 free	pei	(ptr+2)
 	pei	(ptr)
 	jsl	nullfree
                jmp   done
+
 ;
 ; launch an executable
 ;
@@ -330,10 +365,11 @@ doExec	pei   (ptr+2)
                jsr	postfork
 	jmp	done
 
+
 invoke0	phk
 	plb
 ;
-; make a a copy of cmd
+; make a copy of cmd
 ;
 	pha
 	pha
@@ -367,7 +403,7 @@ invoke0	phk
 	phx		;_cmd
 	pha
 ;
-; make a a copy of dir
+; make a copy of dir
 ;
 	pha
 	pha
@@ -403,9 +439,8 @@ invoke0	phk
 
 	jsl	infork
 	bcs	invoke1
-* Change for GNO 2.0.6: call _execve instead of execve
                case  on
-               jsl   _execve
+               jsl   _execve	For 2.0.6: call _execve, not execve
                case  off
 	rtl
 invoke1	pla
@@ -413,8 +448,9 @@ invoke1	pla
 	pla
 	pla
 	rtl
+
 ;
-; do path (it was a directory entry so change to that directory)
+; Next command is a directory name, so change to that directory
 ;
 doDir          lock	cdmutex
 	mv4   GRecPath,PRecPath
@@ -422,8 +458,9 @@ doDir          lock	cdmutex
 	unlock cdmutex
 	stz	val
 	jmp	free
+
 ;
-; fork a shell script
+; Next command is a shell command file: fork a shell script
 ;
 doShell        inc	biflag	;don't free argv...
 	jsr	prefork
@@ -455,12 +492,13 @@ exec0	ph2	_argc	;for argfree
 	jsl	infork
 	bcs	exec0c
 	signal (#SIGCHLD,#0)
-               PushVariables 0
+               PushVariablesGS NullPB
 	pea	1
                jsl   ShellExec
 	jsl	argfree
-               PopVariables 0
+               PopVariablesGS NullPB
 	rtl
+
 exec0c	pla
 	pla
 	pla
@@ -470,29 +508,49 @@ exec0c	pla
 	pla
 	pla
 	rtl
-; 
-; file not found, so try a builtin.
+
+; Null parameter block used for shell calls PushVariables
+; (ORCA/M manual p.420) and PopVariablesGS (p. 419)
+NullPB	dc	i2'0'	pCount
+
+*
+* ---------------------------------------------------------------
+*
+* File name was found in the built-in table
+
+trybuiltin	inc	biflag	It's a built-in. Which type?
+	cmp	#1                 Either fork or don't fork.
+	beq	noforkbuiltin	
+
 ;
-trybuiltin	inc	biflag	;it's a built-in
-	cmp	#1
-	beq	noforkbuiltin
+; It's a forked builtin
+;
 	jsr	prefork
 	fork	#forkbuiltin
                jsr	postfork
 	jmp	done
+;
+; Control transfers here for a forked built-in command
+;
+forkbuiltin	cop	$7F	Give palloc a chance
 
-forkbuiltin	cop	$7F	;give palloc a chance
 	ph2	_argc
 	ph4	_argv
 	jsl	infork
 	bcs	fork0c
                jsl   builtin
 	rtl
+
+; Error reported by infork; clean up stack and return to caller
 fork0c	pla
 	pla
 	pla
 	rtl
 
+
+;
+; It's a non-forked builtin
+;
 noforkbuiltin	anop
 	pei	(argc)
 	pei	(argv+2)
@@ -500,6 +558,11 @@ noforkbuiltin	anop
 	jsl	builtin
 	stz	val
 	bra	done
+
+*
+* ---------------------------------------------------------------
+*
+* Command was not found as built-in or as a file
 
 notfound	pei	(ptr+2)
 	pei	(ptr)
@@ -509,8 +572,8 @@ notfound	pei	(ptr+2)
 	tax	
 	lda	[argv]
 	jsr	errputs
-	ldx	#^err2
-	lda	#err2
+	ldx	#^err2	Print error message:
+	lda	#err2	 'Command not found.'
 	jsr	errputs
 	lda	pipein
 	beq	notfound0
@@ -525,6 +588,7 @@ notfound	pei	(ptr+2)
 	kill	(@a,#9)
 	sigpause #0
 notfound0	anop
+
 
 done	cop	$7F
 	lda	biflag
@@ -568,6 +632,7 @@ prefork	lock	mutex
 	lda	pipesem+1
 	sta	putsem+2
 	rts
+
 ;
 ; stuff to do right after forking
 ;
@@ -583,11 +648,12 @@ postfork2	lda	pipeout
 postfork3	lda	val
 	cmp	#-1
 	bne	postfork4	
-	ldx	#^deadstr
-	lda	#deadstr
+	ldx	#^deadstr	Print error message:
+	lda	#deadstr	 'Cannot fork (too many processes?)'
 	jsr	errputs
 	unlock mutex
 	jmp	done
+
 postfork4	ldx	jobflag
 	dex
 	beq	postfork5
@@ -605,6 +671,7 @@ postfork5	lda   >mutex	;DANGER!!!!! Assumes knowledge of
 	cop	$7F
                bra   postfork5
 postfork6	rts
+
 ;
 ; stuff to do in fork
 ;
@@ -694,11 +761,14 @@ hehstr	dc	c'heh heh, next time you''ll need to specify a command '
 	dc	c'before redirecting.',h'0d00'
 deadstr	dc	c'Cannot fork (too many processes?)',h'0d00' ;try a spoon
 
-GRec           dc    i'4'
-GRecPath       ds    4
-               ds    2
-GRecFileType   ds    2
-GRecAuxType    ds    4
+
+; Parameter block for GS/OC call GetFileInfo
+GRec           dc    i'4'	pCount (# of parameters)
+GRecPath       ds    4	pathname (input; ptr to GS/OS string)
+               ds    2	access (access attributes)
+GRecFileType   ds    2	fileType (file type attribute)
+GRecAuxType    ds    4	auxType (auxiliary type attribute)
+
 
 PRec           dc    i'2'
 PRecNum        dc    i'0'

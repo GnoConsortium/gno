@@ -6,20 +6,40 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shell.asm,v 1.2 1998/04/24 15:38:37 gdr-ftp Exp $
+* $Id: shell.asm,v 1.3 1998/06/30 17:25:52 tribby Exp $
 *
 **************************************************************************
 *
 * SHELL.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * This is the main routines for the shell.
+*
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+* shell	subroutine (0:dummy)
+*  NOTE: gnoloop is an entry defined in shell.
+*              
+* AppendHome	subroutine (4:str)
+*	return 4:outPtr
+*
+* DoLogin	jsr with no parameters
+*
+* signal2	subroutine (4:fubar)
+*
+* signal18	subroutine (4:fubar)
 *
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/shell.mac
 
-dummy	start		; ends up in .root
+dummyshell	start		; ends up in .root
 	end
 
 	setcom 60
@@ -30,6 +50,11 @@ SIGCHLD	gequ	20
 
 cmdbuflen      gequ  1024
 
+**************************************************************************
+*
+* shell: entry point for acting upon commands
+*
+**************************************************************************
                case  on
 shell          start
                case  off
@@ -44,18 +69,20 @@ space	equ	p+4
 
 	subroutine (0:dummy),space
 
-               tsc
-               sta   cmdcontext
-	tdc
-	sta	cmddp
+	tsc		Save stack pointer
+	sta	cmdcontext	 in cmdcontext
+	tdc		  and direct page reg
+	sta	cmddp	   ind cmddp.
 
 *               PushVariables 0
 
-	Open	ttyopen
-	bcc	settty
+	Open	ttyopen	Open tty,
+	bcc	settty	 checking for error.
 	ErrWriteCString #ttyerr
 	jmp	quit
+
 ttyerr	dc	c'gsh: Failed opening tty.',h'0d00'
+
 
 settty	mv2	ttyref,gshtty
 	tcnewpgrp gshtty
@@ -65,8 +92,8 @@ settty	mv2	ttyref,gshtty
 
 	jsr	InitTerm
 
-	lda	FastFlag
-	bne	fastskip1
+	lda	FastFlag	If FastFlag is set,
+	bne	fastskip1	 skip copyright message.
                lda	gshpid	; only print the copyright msg
 	cmp	#2	; if not using login
 	bne	fastskip1
@@ -75,32 +102,44 @@ settty	mv2	ttyref,gshtty
 	jsr	puts
 fastskip1	anop
 
+;
+; Set up signal handlers
+;
 	signal (#SIGINT,#signal2)
 	signal (#SIGTSTP,#signal18)
 	signal (#SIGCHLD,#pchild)
+;
+; Set entry point for users calling system
+;
 	setsystemvector #system
+
 ;
 ; Initialize some stuff
 ;
-	lda	FastFlag
+	jsr	initalias	Set all AliasTable entries to 0.
+	jsr	InitDStack	Zero out directory stack.
+	jsr	InitVars	Set value of all env var flags.
+	lda	FastFlag	If fast startup flag isn't set,
 	bne	fastskip2
-               jsr	InitHistory
-	jsr   ReadHistory	;Read in history from disk
-fastskip2	jsr	initalias	;initialize alias
-	jsr	InitDStack	;initialize directory stack
-	lda	FastFlag
-	bne	fastskip3
-               jsr   DoLogin            ;Read gshrc
+	jsr	InitHistory	 Init: historyFN->"$HOME/history",
+	jsr   ReadHistory	  read in history from disk,
+               jsr   DoLogin               and read $HOME/gshrc.
 	jsr	newline
-fastskip3      anop
+fastskip2      anop
 	lda	didReadTerm
 	bne	didit
 	jsr	readterm
 didit	jsl   hashpath	;hash $path
 
+;
+; Check for command-line arguments -c and -e
+;
 	lda	CmdFlag
 	beq	cmdskip
 
+;
+; The -c flag is set: execute remaining arguments as a command file and exit.
+;
 	mv4	CmdArgV,p
 	ldy	#2
 	lda	[p],y
@@ -117,6 +156,9 @@ didit	jsl   hashpath	;hash $path
 cmdskip	lda	ExecFlag
 	beq	execskip
 
+;
+; The -e flag is set: execute remaining arguments as a command and exit.
+;
 	ph4	ExecCmd
 	ph2	#0
 	jsl	Execute
@@ -124,35 +166,47 @@ cmdskip	lda	ExecFlag
 
 execskip       anop
 
+****************************************************************
+*
+* Main loop for reading and executing commands
+*
+****************************************************************
+
 	stz	lastabort
 
 gnoloop        entry
 
-	phk
-	plb
+;
+; Set the fundamental registers.
+;
+	phk		Copy Program Bank register
+	plb		 into Data Bank register.
+               lda   cmdcontext	Set Stack Pointer and
+               tcs		 Direct Page register
+	lda	cmddp	  to values saved when
+	tcd		   entering shell.
 
-               lda   cmdcontext	;dare you to make a mistake
-               tcs
-	lda	cmddp
-	tcd
-
-               jsl   WritePrompt
-               jsr   GetCmdLine
+               jsl   WritePrompt	Print prompt.
+               jsr   GetCmdLine	Get response.
                bcs   done
 	jsr	newline
-               lda   cmdlen
+
+               lda   cmdlen	Check for empty string.
                beq   gnoloop
-	jsr	cursoron
+	jsr	cursoron	
 	jsr	newlineX
 	jsr	flush
+
                ph4   #cmdline
 	ph2	#0
                jsl   execute
+
 	lda	exitamundo
 	bne	done1
                jsr   newlineX
 	stz	lastabort
                bra   gnoloop
+
 ;
 ; shut down gsh
 ;
@@ -164,22 +218,28 @@ done1	ora2  pjoblist,pjoblist+2,@a
 	bne	donekiller
 	inc	lastabort
 	stz	exitamundo
-	ldx	#^stopstr
-	lda	#stopstr
+	ldx	#^stopstr	Print message:
+	lda	#stopstr	 "There are stopped jobs"
 	jsr	puts
 	jsr	newlineX
-	bra	gnoloop
+	bra	gnoloop	Continue getting commands.
+
 donekiller	jsl	jobkiller
 done2	lda	FastFlag
 	bne	fastskip5
 	jsr   SaveHistory
 fastskip5	jsr   dispose_hash
 
-quit	PopVariables 0
+quit	PopVariablesGS NullPB
 	Quit  QuitParm
+
 QuitParm       dc    i'0'
 
-gnostr         dc    h'0d',c'GNO/Shell 2.0.4',h'0d'
+; Null parameter block used for shell calls PushVariables
+; (ORCA/M manual p.420) and PopVariablesGS (p. 419)
+NullPB	dc	i2'0'	pCount
+
+gnostr         dc    h'0d',c'GNO/Shell 2.0.6',h'0d'
                dc    c'Copyright 1991-1993, Procyon, Inc. & Tim Meekins. '
                dc    c'ALL RIGHTS RESERVED',h'0d'
                dc    h'0d00'
@@ -205,40 +265,69 @@ lastabort	ds	2
 ;
 ;=========================================================================
 
+DoLogin        START
 
-* Appends a C string to the value of the $HOME variable.  If $HOME is
+	ph4	#gshrcName
+               jsl   AppendHome
+	phx		Save pointer to GS/OS input
+	pha		 string for later.
+
+	clc		Adjust the pointer
+	adc	#2	 to skip the length word
+	bcc	no_ovf	  so it's a C string.
+	inx
+no_ovf	phx
+	pha
+
+*   ShellExec	subroutine (4:path,2:argc,4:argv,2:jobflag)
+;			(ptr to $HOME/gshrc is on stack)
+	lda	#0
+	pha		argc = 0
+	pha		argv = NULL
+	pha
+	pha		jobflag = 0
+	jsl	ShellExec
+
+; Dispose $HOME/gshrc string
+	pla		Get address of
+	plx		 GS/OS input string.
+	sec		Subtract two bytes to get
+	sbc	#2	 addr of original output buffer.
+	bcs	no_undf
+	dex
+no_undf	jsl	free256
+	rts
+
+gshrcName	dc	c'/gshrc',h'00'
+
+               END
+
+
+* Append a C string to the value of the $HOME variable.  If $HOME is
 * not set, then it appends the C string to the string '@/'.  Returns
-* a pointer to a GC string.  Call DisposeHome/AX to deallocate the
-* string.
-
-DisposeHome	START
-	dec	a
-	dec	a
-	jsl	free256
-	rtl
-	END
+* a pointer to a GC string.
 
 AppendHome	START
 outPtr	equ	0
 len	equ	4
 	subroutine (4:str),6
 
-	jsl	alloc256
-               stx	outPtr1+2
-	sta	outPtr1
-               stx	outPtr+2
-	sta	outPtr
+	jsl	alloc256	Allocate memory for
+               stx	outPtr1+2	 GS/OS output buffer
+	sta	outPtr1	  that will hold the
+               stx	outPtr+2	   value of $HOME and
+	sta	outPtr	    the final result.
 
-	pei	(str+2)
+	pei	(str+2)	
 	pei	(str)
 	jsr	cstrlen
 	sta	len
 
-               lda	#256
-	sta	[outPtr]
+               lda	#255	Max len is 255 (leave room
+	sta	[outPtr]	 for C string terminator).
 
-	GSOS 	$014B,rvbl	;ReadVariable
-               bcs	doAtSign
+	ReadVariableGS rvbl	ReadVariable $HOME
+               bcs	doAtSign	If error, use @/
 
 	ldy	#2
 	lda	[outPtr],y
@@ -252,6 +341,9 @@ len	equ	4
 	long	m
 	bra	doAppend
 
+;
+; $HOME is null string or not defined. Use @
+;
 doAtSign	lda	atSign
                ldy	#4
 	sta	[outPtr],y
@@ -270,9 +362,10 @@ lp	lda	[outPtr],y
 	beq	foundSep
                iny
 	bra	lp
-noSep	lda	#':'
 
-foundSep	sta	[str]
+noSep	lda	#':'	No separator found; use ":".
+
+foundSep	sta	[str]	Store separator at end of string.
 	long	m
 
 	pei	(str+2)
@@ -286,50 +379,33 @@ foundSep	sta	[str]
 	jsl	strcat
 	case	off
 
-	inc	outPtr
-	inc	outPtr
-               lda	[outPtr]
+	clc		Add 2 bytes to address of
+	lda	outPtr	 GS/OS output buffer to
+	adc	#2	  get address if GS/OS
+	bcc	no_ovf	   input string.
+	inc	outPtr+2
 	clc
-	adc	len
-	sta	[outPtr]           ; adjust GS/OS string length
+no_ovf	sta	outPtr
+
+               lda	[outPtr]	Adjust string length
+	clc		 to include appended
+	adc	len	  string (parameter).
+	sta	[outPtr]
+
 	return 4:outPtr
 
 atSign	dc	c'@',i1'0'
-rvbl           dc	i2'3'
-	dc	a4'in'
-outPtr1	dc	a4'0'
-	dc	i2'0'	; value of 'Export' flag
+
+; Parameter block for Shell call ReadVariable (p 423 in ORCA/M reference)
+rvbl           dc	i2'3'	pCount
+	dc	a4'in'	address of variable's name
+outPtr1	dc	a4'0'	pointer to result buffer
+	dc	i2'0'	value of 'Export' flag (returned)
 
 in	dosin	'HOME'
 
 	END
 
-DoLogin        START
-
-	ph4	#gshrcName
-               jsl   AppendHome
-	phx		; saved pointer for later
-	pha
-	phx
-	inc	a
-	inc	a	; adjust to the C string
-	pha
-
-	lda	#0
-	pha
-	pha
-	pha
-	pea	0
-	jsl	shellexec
-
-	pla
-	plx
-	jsl	DisposeHome
-	rts
-
-gshrcName	dc	c'/gshrc',h'00'
-
-               END
 
 ;=========================================================================
 ;

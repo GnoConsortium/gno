@@ -6,18 +6,53 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: builtin.asm,v 1.3 1998/06/30 17:25:12 tribby Exp $
+*
 **************************************************************************
 *
 * BUILTIN.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Builtin command searching and execution.
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
+*
+* Interfaces defined in this file:
+*
+*   builtin	subroutine (2:argc,4:argv)
+*	Returns completion status in Accumulator
+*                    
+*   IsBuiltin	subroutine (4:name)
+*	return 2:tbl
+*
+* Remainder are interfaces to builtin commands with interface
+* 	subroutine (4:argv,2:argc)
+*	returns status in accumulator
+*   cd	(chdir is entry as an alternate name)
+*   clear
+*   echo
+*   pwd
+*   which
+*   prefix
+*   rehash	(unhash is entry as an alternate name)
+*   df
+*   exit
+*   setdebug
+*   psbi	(command name is "ps")
+*   hashbi	(command name is "hash")
+*   source
+*   cmdbi	(command name is "commands")
+*
+**************************************************************************
+
 
 	mcopy /obj/gno/bin/gsh/builtin.mac
 
-dummy	start		; ends up in .root
+dummybuiltin	start		; ends up in .root
 	end
 
 	setcom 60
@@ -34,7 +69,7 @@ p_space	gequ	p_command+4	;space for structure
 
 **************************************************************************
 *
-* Find a builtin command
+* Find and execute a builtin command
 *
 **************************************************************************
 
@@ -103,7 +138,7 @@ ourproc	jsl	>$FFFFFF	;might want to mutex this!!!!!!
 	pei	(argv)
 	jsl	argfree
 
-done	ldy	val
+done	anop
 	lda	space
 	sta	end-3
 	lda	space+1
@@ -114,6 +149,8 @@ done	ldy	val
 	adc	#end-4
 	tcs
 	tya
+
+	lda	val
 	rtl
 
 	END
@@ -121,6 +158,9 @@ done	ldy	val
 **************************************************************************
 *
 * Is it a built-in?
+*
+* Return value is: -1 if not a built-in, 0 if forked built-in,
+*	    1 if non-forked built-in.
 *
 **************************************************************************
 
@@ -149,11 +189,11 @@ builtinloop    ldy   #2
 	bpl	nofile
 	add2	tbl,#10,tbl
 	bra	builtinloop
-foundit	ldy	#8
-	lda	[tbl],y
+foundit	ldy	#8	Get the fork/nofork flag
+	lda	[tbl],y	 and use it as return value.
 	bra	foundbuiltin
 
-nofile	lda	#-1
+nofile	lda	#-1	Set not-found return value.
 foundbuiltin   sta   tbl
 
 	return 2:tbl
@@ -169,14 +209,15 @@ foundbuiltin   sta   tbl
 BuiltinData	DATA
 ;
 ; First address is a pointer to the name, the second is a pointer to the
-; command. MUST BE SORTED.
+; command. Third value is fork flag (0 to fork, 1 for no fork).
+; TABLE MUST BE SORTED BY COMMAND NAME.
 ;
 builtintbl     dc    a4'aliasname,alias',i2'0'
 	dc	a4'bgname,bg',i2'1'
 	dc	a4'bindkeyname,bindkey',i2'0'
                dc    a4'cdname,cd',i2'1'
                dc    a4'chdirname,chdir',i2'1'
-               dc    a4'clearname,clear',i2'0'
+               dc    a4'clearname,clear',i2'1'		Changed to unforked
 	dc	a4'cmdname,cmdbi',i2'0'
                dc    a4'dfname,df',i2'0'
 	dc	a4'dirsname,dirs',i2'0'
@@ -198,7 +239,7 @@ builtintbl     dc    a4'aliasname,alias',i2'0'
                dc    a4'setname,set',i2'0'
 	dc	a4'setbugname,setdebug',i2'0'
 	dc	a4'setenvname,setenv',i2'0'
-	dc	a4'sourcename,source',i2'0'
+	dc	a4'sourcename,source',i2'1'	Changed to unforked
 	dc	a4'stopname,stop',i2'1'
 	dc	a4'tsetname,tset',i2'1'
 	dc	a4'unaliasname,unalias',i2'1'
@@ -256,8 +297,9 @@ whichname      dc    c'which',h'00'
 cd	START
 chdir	ENTRY
 
-dir	equ	1
-space	equ	dir+4
+dpg	equ	1	Direct page pointer.
+buf	equ	dpg+4	Buffer address to be freed.
+space	equ	buf+4
 argc	equ	space+3
 argv	equ	argc+2
 end	equ	argv+4
@@ -273,12 +315,18 @@ end	equ	argv+4
 
 	lock	cdmutex
 
-	lda	argc
-	dec	a
-	beq	cdhome
-	dec	a
-	jeq	normalcd
+	stz	buf	Clear the pointer to
+	stz	buf+2	 allocated buffer.
 
+	lda	argc	Number of parameters
+	dec	a	 determines type of cd...
+	beq	cdhome	  either to $HOME
+	dec	a	   or to the directory
+	jeq	paramcd	    on the command line.
+
+;
+; Illegal parameters: print usage string
+;
 showusage      lda   [argv]
 	tax
 	ldy	#2
@@ -296,87 +344,100 @@ cdusage	ldx	#^Usage
 	lda	#Usage
 	jsr	errputs
 	jmp	exit
+
 ;
-; set prefix to home
+; Set prefix to $home
 ;
-cdhome	jsl	alloc256
-	sta	dir
-	stx	dir+2
+cdhome	ph4	#256	Allocate 256 bytes for result buf.
+	jsl	~NEW
+	sta	buf
+	stx	buf+2
 	sta	ReadName
 	stx	ReadName+2
-	ora	ReadName+2
+	ora	ReadName+2	If both address bytes are 0,
 	bne	madeit
 	lda	#$201
-	jmp	ohshit
-madeit	Read_Variable ReadVar
-	lda	[dir]
-	and	#$FF
-	beq	nohome
-	ph4	ReadName
-	jsr	p2cstr
-	sta	dir
-	stx	dir+2
-	ph4	@xa
-	lda	ReadName
-	ldx	ReadName+2
-	jsl	free256
-	pl4	ReadName
-	bra	setprefix
+	jmp	ohshit		we have a problem...
 
-nohome	ldx	dir+2
-	lda	dir
-	jsl	free256
-	jmp	exit
+madeit	lda	#256	Set length of GS/OS result buffer
+	sta	[buf]
+
+	ReadVariableGS ReadVar	Read value of $home
+
+	clc		Calculate address
+	lda	buf	 of GS/OS input string
+	adc	#2	  (2 bytes from start of
+	sta	PRecPath	   result buffer).
+	sta	GRecPath
+	lda	buf+2
+	adc	#0
+	sta	PRecPath+2
+	sta	GRecPath+2
+
+	ldy	#2
+	lda	[buf],y	Get string length word.
+	beq	done	If 0, bail out.
+
+	bra	getinfo
+
 ;
-; set prefix to specified path
+; Set prefix to path specified on command line
 ;
-normalcd	stz	ReadName
-	stz	ReadName+2
+paramcd	anop
 
 	ldy	#4
 	lda	[argv],y
-	sta	dir
+	sta	dpg
 	iny2
 	lda	[argv],y
-	sta	dir+2 
+	sta	dpg+2 
 
-	lda	[dir]
+	lda	[dpg]
 	and	#$FF
 	if2	@a,ne,#'-',setprefix
 	jmp	showusage
 
-setprefix      pei   (dir+2)
-	pei	(dir)
+setprefix      pei   (dpg+2)
+	pei	(dpg)
 	jsr	c2gsstr
 	sta	PRecPath
 	sta	GRecPath
+	sta	buf
 	stx	PRecPath+2
 	stx	GRecPath+2
+	stx	buf+2
 
-	GetFileInfo GRec
+;
+; Get file information to determine whether target is a valid directory
+;
+getinfo	GetFileInfo GRec
 	bcc	ok
-ohshit	sta	Err
-	Error Err
+ohshit	sta	ErrError
+	ErrorGS Err
 	bra	done
 
 ok	if2	GRecFT,eq,#$F,ok2
-	ldx	dir+2
-	lda	dir
+	ldx	dpg+2
+	lda	dpg
 	jsr	errputs
 	ldx	#^direrr
 	lda	#direrr
 	jsr	errputs
 	bra	done
 
+;
+; Everything looks OK. Set prefix 0 to the indicated value
+;
 ok2	SetPrefix PRec
 	bcs	ohshit
-done	ph4	PRecPath
+
+;
+; Deallocate buffer (if necessary), unlock mutex, cleanup stack, and leave
+;
+done	ora2	buf,buf+2,@a
+	beq	exit
+	ph4	buf
 	jsl	nullfree
-	ora2	ReadName,ReadName+2,@a
-	beq	whoaboy
-	ph4	ReadName
-	jsl	nullfree
-whoaboy	anop
 
 exit	unlock cdmutex
 
@@ -394,22 +455,31 @@ exit	unlock cdmutex
 
 	rtl
 
-cdmutex	key
+cdmutex	key		Mutual exclusion key
 
-PRec	dc	i'2'
-PRecNum	dc	i'0'
-PRecPath	ds	4
+; Parameter block for GS/OS SetPrefix call
+PRec	dc	i'2'	pCount
+PRecNum	dc	i'0'	prefixNum (0 = current directory)
+PRecPath	ds	4	Pointer to input prefix path
 
-GRec	dc	i'3'
-GRecPath	ds	4
-GRecAcc	ds	2
-GRecFT	ds	2
+; Parameter block for GS/OS GetFileInfo call
+GRec	dc	i'3'	pCount
+GRecPath	ds	4	Pointer to input pathname
+GRecAcc	ds	2	access (result)
+GRecFT	ds	2	fileType (result)
 
-ReadVar	dc	a4'home'
-ReadName	ds	4
-home	str	'home'
+; Parameter block for shell ReadVariableGS call (p 423 in ORCA/M manual)
+ReadVar	anop
+	dc	i2'3'	pCount
+	dc	a4'home'	Pointer to name
+ReadName	ds	4	GS/OS Output buffer ptr: value
+	ds	2	export flag
 
-Err	ds	2
+home	gsstr	'home'	Env variable name
+
+; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
+Err	dc	i2'1'	pCount
+ErrError	ds	2	Error number
 
 Usage	dc	c'Usage: cd [pathname]',h'0d00'
 Usage2	dc	c'Usage: chdir [pathname]',h'0d00'
@@ -483,7 +553,7 @@ Usage	dc	c'Usage: clear',h'0d00'
 echo	START
 
 val	equ	1
-nl	equ	val+2
+nl	equ	val+2	flag: was -n option set?
 ptr	equ	nl+2
 space	equ	ptr+4
 argc	equ	space+3
@@ -492,6 +562,8 @@ end	equ	argv+4
 
 ;	 subroutine (4:argv,2:argc),space
 
+* Add space on stack for local variables
+
 	tsc
 	sec
 	sbc	#space-1
@@ -499,71 +571,78 @@ end	equ	argv+4
 	phd
 	tcd
 
-	stz	nl
-	if2	argc,lt,#2,loop
-	ldy	#4
-	lda	[argv],y
-	sta	ptr
-	iny2
-	lda	[argv],y
-	sta	ptr+2
-	ldy	#1
-	lda	[ptr]
-	and	#$FF
-	if2	@a,ne,#'-',loop
-	lda	[ptr],y
-	and	#$FF
-	if2	@a,ne,#'n',showusage
-	iny
-	lda	[ptr],y
-	and	#$FF
-	bne	showusage
-	inc	nl
-	add2	argv,#4,argv
-	dec	argc
-	bra	loop
+	stz	nl	Clear the -n flag.
+	dec	argc	Decrement argument counter.
+	jeq	done	Done if no more arguments.
 
-showusage	ldx	#^Usage
-	lda	#Usage
+	ldy	#4
+	lda	[argv],y	Set ptr to
+	sta	ptr	 point to the
+	iny2		  text of the
+	lda	[argv],y	   first
+	sta	ptr+2	    argument.
+	ldy	#1	
+	lda	[ptr]	Get first
+	and	#$FF	  character.
+	if2	@a,ne,#'-',loop	If != '-', handle as regular param.
+
+
+; First argument begins with "-"; only legal value is -n
+
+	lda	[ptr],y	Get second
+	and	#$FF                 character.
+	if2	@a,eq,#'n',gotn	If != 'n', it's a bad one.
+
+showusage	ldx	#^Usage	Incorrect parameter usage:
+	lda	#Usage	 display the usage string.
 	jsr	errputs
 	jmp	exit
 
-loop	add2	argv,#4,argv
-	dec	argc
-	jeq	done
+gotn	iny
+	lda	[ptr],y	Get third
+	and	#$FF	  character.
+	bne	showusage	If != 0, it's a bad one.
+	inc	nl	Set the -n flag.
+	add2	argv,#4,argv	Bump argument pointer.
+	dec	argc	Decrement argument counter.
+	jeq	done	Done if no more arguments.
+
+* Beginning of main processing loop of echo parameters.
+
+loop	add2	argv,#4,argv	Bump argument pointer.
 	ldy	#2
-	lda	[argv],y
+	lda	[argv],y	Set ptr to argv (next argument)
 	sta	ptr+2
 	lda	[argv]
 	sta	ptr
-putloop	lda	[ptr]
-	and	#$FF
-	cmp	#0
-	jeq	doneput
-	cmp	#'\'
-	jne	putit
-	inc	ptr
-	lda	[ptr]
-	and	#$FF
-	jeq	doneput
-	if2	@a,ne,#'b',esc02
+putloop	lda	[ptr]	Get first
+	and	#$FF	 character.
+	cmp	#0	If 0,
+	jeq	doneput	  done with this argument.
+	cmp	#'\'	If != "\"
+	jne	putit	  go save in print buffer.
+	inc	ptr	Escape character found; point
+	lda	[ptr]	 to the next
+	and	#$FF	  character.
+	beq	doneput	If 0, done with this argument.
+	if2	@a,ne,#'b',esc02   Check for escape codes: "b"
 	ldx	#1
-	jsr	moveleft
+	jsr	moveleft			moveleft
 	bra	didit
-esc02	if2	@a,ne,#'f',esc03
-	jsr	clearscrn
+esc02	if2	@a,ne,#'f',esc03		"f"
+	jsr	clearscrn			clearscreen
 	bra	didit
-esc03	if2	@a,ne,#'n',esc04
-	lda	#13
+esc03	if2	@a,ne,#'n',esc04		"n"
+	lda	#13			print newline
 	bra	putit
-esc04	if2	@a,ne,#'r',esc05
-	lda	#13
+esc04	if2	@a,ne,#'r',esc05		"r"
+	lda	#13			print newline
 	bra	putit
-esc05	if2	@a,ne,#'t',esc06
-	lda	#9
+esc05	if2	@a,ne,#'t',esc06		"t"
+	lda	#9			print tab
 	bra	putit
-esc06	if2	@a,ne,#'0',putit
-	stz	val
+esc06	if2	@a,ne,#'0',putit		"0"
+	stz	val			decode numeric value
 	ldy	#1
 escloop	lda	[ptr],y
 	and	#$FF
@@ -581,19 +660,29 @@ escloop	lda	[ptr],y
 	pla
 	inc	ptr
 	bra	escloop
-putval	lda	val
-putit	jsr	putchar
-didit	inc	ptr
-	jmp	putloop
-doneput	lda	#' '
-	jsr	putchar
-	jmp	loop
 
-done	lda	nl
+putval	lda	val	Get numeric escape code.
+
+putit	jsr	putchar	Save character in accumulator.
+didit	inc	ptr	Point to next char in arg
+	jmp	putloop	 and go process it.
+
+doneput	dec	argc	Decrement argument counter.
+	beq	done	Done if no more arguments.
+	bmi	done	 (or if there were no arguments!)
+	lda	#' '	Add a blank
+	jsr	putchar	 between arguments.
+	jmp	loop	Get next argument.
+
+done	lda	nl	If "-n" flag isn't set,
 	bne	exit
-	jsr	newline
+	jsr	newline	  add a newline.
 
-exit	jsr	flush
+exit	jsr	flush	Print the buffer.
+
+
+* Clear parameters from stack and return from subroutine.
+
 	lda	space
 	sta	end-3
 	lda	space+1
@@ -638,53 +727,54 @@ end	equ	argv+4
 	phd
 	tcd
 
-	lda	argc
-	dec	a
+	dec	argc	If an argument was provided,
 	beq	wait
 
-	ldx	#^Usage
+	ldx	#^Usage	  print the usage string.
 	lda	#Usage
 	jsr	errputs
 	bra	exit
 
 wait	lock	pwdmutex	
 
-	jsl	alloc256
+	jsl	alloc256	Allocate buffer for GetPrefix.
 	sta	gpptr
 	stx	gpptr+2
 	sta	ptr
 	stx	ptr+2
 
-	lda	#256
+	lda	#256	Set max return len.
 	sta	[ptr]
 
-	GetPrefix gpparm
-	bcc	ok
-
-awshit	sta	err
-	Error err
+	GetPrefix gpparm	Get value of prefix 0 via GetPrefix.
+	bcc	ok	If there was an error,
+awshit	sta	errError		Save the value
+	ErrorGS err		 and report it.
 	bra	done
 
-ok	ldy	#2
+ok	ldy	#2	Get GS/OS string length word.
 	lda	[ptr],y
-	xba
-	sta	[ptr],y
+	xba		Swap the bytes and store back,
+	sta	[ptr],y	 so it can be used as a p-string.
 
-	ldx	ptr+2
+	ldx	ptr+2	Load X/A with addr 3 bytes beyond ptr.
 	lda	ptr
 	clc
 	adc	#3
-	jsr	putp
-	jsr	newline
+	bcc	doputp
+	inx
+doputp	anop
+	jsr	putp	Print the p-string
+	jsr	newline	 and add a newline.
 
-done	ldx	ptr+2
+done	ldx	ptr+2	Free the buffer.
 	lda	ptr
 	jsl	free256
 
 	unlock pwdmutex
 
-exit	lda	space
-	sta	end-3
+exit	lda	space	Deallocate stack space
+	sta	end-3	 and return to the caller.
 	lda	space+1
 	sta	end-2
 	pld
@@ -693,17 +783,20 @@ exit	lda	space
 	adc	#end-4
 	tcs
 
-	lda	#0
+	lda	#0	Return status always 0.
 
 	rtl     
 
 pwdmutex	key
 
-gpparm	dc	i'2'
-	dc	i'0'
-gpptr	ds	4
+; Parameter block for GS/OS call GetPrefix
+gpparm	dc	i'2'	Parameter count
+	dc	i'0'	Prefix number
+gpptr	ds	4	Pointer to result buffer
 
-err	ds	2
+; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
+err	dc	i2'1'	pCount
+errError	ds	2	Error number
 
 Usage	dc	c'Usage: pwd',h'0d00'
 
@@ -1481,7 +1574,7 @@ space	equ	0
 
 	inc	exitamundo
 
-	return
+	return 2:#0
 
 	END
 
@@ -1554,7 +1647,7 @@ turnnext	sta	newdebug
 
 done	setdebug newdebug
 	mv2	newdebug,globaldebug
-return	return
+return	return 2:#0
 
 findflag	inc	arg
 	ldy	#0
@@ -1598,17 +1691,21 @@ usage	dc	c'Usage: setdebug (value | [+|-]flag ... )',h'0d0d'
 	dc	c'       pathtrace  - Trace GS/OS pathnames',h'0d'
 	dc	c'       sigtrace   - Trace signals',h'0d'
 	dc	c'       systrace   - Trace system calls',h'0d'
+* >> Next line is temporary
+	dc	c'       breakpoint - Coded brk instructions',h'0d'
 	dc	h'00'
 
 errstr	dc	c': Unknown flag',h'0d0d00'
 
-nametbl	dc	a4'str01,str02,str03,str04,str05,str06,0'
+nametbl	dc	a4'str01,str02,str03,str04,str05,str06,str07,0'
 str01	dc	c'gsostrace',h'00'
 str02	dc	c'pathtrace',h'00'
 str03	dc	c'gsoserrors',h'00'
 str04	dc	c'sigtrace',h'00'
 str05	dc	c'systrace',h'00'
 str06	dc	c'gsosblocks',h'00'
+* >> Next line is temporary; Also: remove str07 in nametbl
+str07	dc	c'breakpoint',h'00'
 
 bittbl	dc	i2'%000001'
 	dc	i2'%000010'
@@ -1616,6 +1713,11 @@ bittbl	dc	i2'%000001'
 	dc	i2'%001000'
 	dc	i2'%010000'
 	dc	i2'%100000'
+* >> Next line is temporary
+	dc	i2'%10000000'
+
+* >> Next line is temporary
+check4debug	ENTRY
 
 globaldebug	dc	i2'0'
 
@@ -1847,7 +1949,7 @@ skip	jmp	loop
 
 done	kvm_close ps
 
-return	return
+return	return 2:#0
 
 usage	dc	c'Usage: ps',h'0d00'
 kvmerrstr	dc	c'ps: error in kvm_open()',h'0d00'
@@ -1950,7 +2052,7 @@ doneprint	pei	(sv+2)
 	pei	(sv)
 	jsl	sv_dispose
 
-exit	return
+exit	return 2:#0
 
 	END
 
@@ -1970,29 +2072,31 @@ space	equ	retval+2
 
 	subroutine (4:argv,2:argc),space
 
-	stz	retval
-
-	dec	argc
+	dec	argc	If no filename was provided,
 	bne	ok
 
-	ldx	#^usage
+	ldx	#^usage	  Print usage string.
 	lda	#usage
 	jsr	errputs
-	lda	#1
+	lda	#1	  Return error status.
 	sta	retval
 	bra	exit
 
-ok	add2	argv,#4,argv
+ok	stz	retval
 
-	ldy	#2
+	add2	argv,#4,argv
+
+*   ShellExec	subroutine (4:path,2:argc,4:argv,2:jobflag)
+
+	ldy	#2	path is filename argument
 	lda	[argv],y
 	pha
 	lda	[argv]
 	pha
-	pei	(argc)
-	pei	(argv+2)
+	pei	(argc)	reuse argc
+	pei	(argv+2)	reuse argv
 	pei	(argv)
-	pea	0
+	pea	0	jobflag = 0
 	jsl	ShellExec
 	sta	retval
 
@@ -2005,7 +2109,7 @@ usage	dc	c'usage: source file [arguments...]',h'0d00'
 **************************************************************************
 *
 * COMMANDS: builtin command
-* syntax: hash
+* syntax: commands
 *
 * display builtin commands
 *
@@ -2060,6 +2164,6 @@ doneprint	pei	(sv+2)
 	pei	(sv)
 	jsl	sv_dispose
 
-exit	return
+exit	return 2:#0
 
 	END

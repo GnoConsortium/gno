@@ -6,20 +6,38 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: dir.asm,v 1.2 1998/04/24 15:38:12 gdr-ftp Exp $
+* $Id: dir.asm,v 1.3 1998/06/30 17:25:20 tribby Exp $
 *
 **************************************************************************
 *
 * DIR.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Directory stack management
+*
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+* InitDStack	
+*
+* dirs	
+*
+* pushd	
+*
+* popd	
+*
+* path2tilde	
 *
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/dir.mac
 
-dummy	start		; ends up in .root
+dummydir	start		; ends up in .root
 	end
 
 	setcom 60
@@ -97,7 +115,7 @@ showshort	jsl	dotods
 	pea	1
 	jsl	showdir
 
-exit	return
+exit	return 2:#0
 
 usingstr	dc	c'usage: dirs [-l]',h'0d00'
 
@@ -258,7 +276,7 @@ done	lda	varpushdsil
 	pea	1
 	jsl	showdir
 
-exit	return
+exit	return 2:#0
 
 usagestr	dc	c'usage: pushd [+n | dir]',h'0d00'
 err1	dc	c'pushd: No other directory',h'0d00'
@@ -386,7 +404,7 @@ gototop	lda	tods
 	pea	1
 	jsl	showdir
 
-exit	return    
+exit	return 2:#0
 
 usingstr	dc	c'Usage: popd [+n]',h'0d00'
 err1	dc	c'popd: Directory stack empty',h'0d00'
@@ -421,8 +439,8 @@ space	equ	retval+2
 
 	GetFileInfo GRec
 	bcc	ok
-ohshit	sta	Err
-	Error Err
+ohshit	sta	ErrError
+	ErrorGS Err
 	inc	retval
 	bra	done
 
@@ -448,16 +466,21 @@ done	ph4	PRecPath
 
 mutex	key
 
-PRec	dc	i'2'
-PRecNum	dc	i'0'
-PRecPath	ds	4
+; Parameter block for GS/OS SetPrefix call
+PRec	dc	i'2'	pCount
+PRecNum	dc	i'0'	prefixNum (0 = current directory)
+PRecPath	ds	4	Pointer to input prefix path
 
-GRec	dc	i'3'
-GRecPath	ds	4
-GRecAcc	ds	2
-GRecFT	ds	2
+; Parameter block for GS/OS GetFileInfo call
+GRec	dc	i'3'	pCount
+GRecPath	ds	4	Pointer to input pathname
+GRecAcc	ds	2	access (result)
+GRecFT	ds	2	fileType (result)
 
-Err	ds	2
+; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
+Err	dc	i2'1'	pCount
+ErrError	ds	2	Error number
+
 dirErr	dc	c': Not a directory',h'0d00'
                             
 	END
@@ -625,34 +648,40 @@ space	equ	home+4
 	sta	ptr
 	stx	ptr+2
 
-	jsl	alloc256
+	jsl	alloc256	Allocate 256 byte GS/OS result buf.
 	sta	home
 	stx	home+2
-	sta	varparm+4
-	stx	varparm+6
-	Read_Variable varparm
+	sta	ReadName
+	stx	ReadName+2
+	lda	#256	Set buffer length word.
+	sta	[home]
+	ReadVariableGS ReadVar	Read $home environment variable.
 
-	ldy	#0
-	lda	[home]
-	and	#$FF
-	beq	copyrest
-	tax
-checkhome      lda   [path],y
-	and	#$FF
-	beq	notfound2
-	jsr	tolower
-	jsr	toslash
-	pha
-	iny	
+	ldy	#2	Get result length word.
 	lda	[home],y
-	and	#$FF
-	jsr	tolower
-	jsr	toslash
-	cmp	1,s
-	bne	notfound
-	pla
-	dex
-               bne   checkhome
+	beq	notfound2	If 0, just copy the rest.
+	tax		Use X to count down HOME chars.
+	ldy	#0	path index is based from 0.
+checkhome      lda   [path],y
+	and	#$FF	Isolate character in parameter,
+	beq	notfound2	 checking for end of string,
+	jsr	tolower	  converting to lower-case
+	jsr	toslash	   and changing ":" to "/".
+	pha		Hold that character on the stack.
+	iny4		$home has 4 bytes of length info
+	lda	[home],y	 that need to be indexed over.
+	dey2		Take back 3 of the offset,
+	dey		 nudging Y ahead by 1.
+	and	#$FF	Isolate $home character,
+	jsr	tolower	 converting to lower-case
+	jsr	toslash	  and changing ":" to "/".
+	cmp	1,s	If the parameter character !=,
+	bne	notfound	 there is no match.
+	pla		Pop the parameter character off stack.
+	dex		Decrement $home length counter.
+               bne   checkhome	If more, stay in loop.
+
+; All the characters matched $home.
 	cmp	#'/'
 	beq	found
       	lda   [path],y
@@ -696,9 +725,13 @@ skipshorten	ldx	home+2
 
 	return 4:newpath
 
-varparm	dc	i4'homename'
-	ds	4
+; Parameter block for shell ReadVariableGS call (p 423 in ORCA/M manual)
+ReadVar	anop
+	dc	i2'3'	pCount
+	dc	a4'homename'	Pointer to name
+ReadName	ds	4	GS/OS Output buffer ptr: value
+	ds	2	export flag
 
-homename	str	'home'
+homename	gsstr	'home'	Env variable name
 
 	END

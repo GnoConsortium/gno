@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shellutil.asm,v 1.2 1998/04/24 15:38:39 gdr-ftp Exp $
+* $Id: shellutil.asm,v 1.3 1998/06/30 17:25:55 tribby Exp $
 *
 **************************************************************************
 *
@@ -15,11 +15,14 @@
 *
 * Utility functions used by the shell. Mainly string functions.
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/shellutil.mac
 
-dummy	start		; ends up in .root
+dummyshellutil	start		; ends up in .root
 	end
 
 	setcom 60
@@ -399,6 +402,66 @@ done           rep	#$21
 
 ;=========================================================================
 ;
+; Compare two downshifted c strings. Return 0 if ==, -1 if <, +1 >
+;
+;=========================================================================
+
+cmpdcstr        START
+
+hold           equ   1
+space          equ   hold+2
+q              equ   space+2
+p              equ   q+4
+end            equ   p+4
+
+               tsc
+               sec
+               sbc   #space-1
+               tcs
+               phd
+               tcd
+
+               ldx   #0
+               
+               ldy   #0
+strloop        lda   [q],y
+               and   #$FF
+               jsr   tolower
+               sta   hold
+               lda   [p],y
+               and   #$FF
+               beq   strchk
+               jsr   tolower
+               cmp   hold
+               bne   notequal
+               iny
+               bra   strloop
+
+strchk         lda   hold
+               beq   done
+
+lessthan	dex
+	bra	done
+
+notequal	bcc	lessthan
+	inx
+
+done           anop
+               lda   space
+               sta   end-2
+               pld
+               tsc
+               clc
+               adc   #end-3
+               tcs
+
+               txa
+               rts
+
+               END
+
+;=========================================================================
+;
 ; Convert a c string to a GS/OS string (don't forget to dispose when done)
 ;
 ;=========================================================================
@@ -528,6 +591,12 @@ done           ldx   new+2
 ;=====================================================================
 
 nullfree	START
+
+	lda	6,s
+	and	#$FF80
+	beq	notbad
+	brk	$db
+notbad	anop
 
 	lda	4,s
 	ora	6,s

@@ -7,20 +7,24 @@
 *   Tim Meekins
 *   Derek Taubert
 *
-* $Id: shellvar.asm,v 1.2 1998/04/24 15:38:41 gdr-ftp Exp $
+* $Id: shellvar.asm,v 1.3 1998/06/30 17:25:57 tribby Exp $
 *
 **************************************************************************
 *
 * SHELLVAR.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Routines for handling variables in the shell
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/shellvar.mac
 
-dummy	start		; ends up in .root
+dummyshellvar	start		; ends up in .root
 	end
 
 	setcom 60
@@ -94,29 +98,24 @@ showvars	anop
 	ldx	varbuf+2
 	lda	varbuf
 	jsl	free256
-svwhoops	ld2	$201,Err
-	Error Err
+svwhoops	ld2	$201,ErrError
+	ErrorGS Err
 	jmp	exit
 
 startshow      lda	#254
 	sta	[valbuf]
-	sta	[varbuf]
-	lda   setmutex
-	beq	wait0
-	cop	$7F
-	bra	startshow
-wait0	inc	setmutex
-	mv4	varbuf,idxParm+2
-	mv4	valbuf,idxParm+6
-	ld2	1,idxParm+10
-showloop	GSOS 	$0148,idxParm	;ReadIndexed 2.0
+	lock	setmutex
+	mv4	varbuf,idxName
+	mv4	valbuf,idxValue
+	ld2	1,idxIndex
+showloop	ReadIndexedGS idxParm
 	ldy	#2
 	lda	[varbuf],y
 	and	#$FF
 	beq	showdone
 	xba
 	sta	[varbuf],y
-	ldy	idxParm+12
+	ldy	idxExport
 	beq	noexp
 	xba
                tax
@@ -152,10 +151,10 @@ noexp	ldx	varbuf+2
 	adc	#3
 	jsr	putp
 	jsr	newline
-	inc	idxParm+10
+	inc	idxIndex
 	bra	showloop
 
-showdone	dec	setmutex
+showdone	unlock setmutex
 	ldx	varbuf+2
 	lda	varbuf
 	jsl	free256
@@ -166,11 +165,7 @@ showdone	dec	setmutex
 ;
 ; set variables
 ;
-setvar	lda	setmutex
-	beq	wait1
-	cop	$7F
-	bra	setvar
-wait1	inc	setmutex
+setvar	lock	setmutex
 	lda	argc
 	jeq	doneset
 	ldy	#2
@@ -292,12 +287,12 @@ unix0	short	a
 	jsl	updatevars
 	jsl	nullfree
 
-nextvar	dec	setmutex
+nextvar	unlock setmutex
 skipvar	add2	argv,#4,argv
 	dec	argc
 	jmp	setvar
 
-doneset	dec	setmutex
+doneset	unlock setmutex
 
 exit	lda	space
 	sta	end-3
@@ -316,24 +311,29 @@ varParm	ds	4
 	ds	4
 	ds	2
 
-idxParm	dc	i2'4'
-	ds	4
-	ds	4
-	ds	2
-	ds	2
+; Parameter block for shell Read_Indexed call (p 421 in ORCA/M manual)
+idxParm	anop
+	dc	i2'4'	pCount
+idxName	ds	4	Name (pointer to GS/OS result buf)
+idxValue	ds	4	Value (pointer to GS/OS result buf)
+idxIndex	ds	2	Index number
+idxExport	ds	2	Export flag
 
-setmutex	dc	i'0'
+
+setmutex	key
 showeq	dc	c' = ',h'00'
 Usage	dc	c'Usage:',h'0d'
-          dc	 c'  set                 - displays all variables',h'0d'
-          dc	 c'  set ... [var]       - displays the value of var',h'0d'
-          dc	 c'  set [var value]...  - sets var to value',h'0d'
-          dc	 c'  set [var=value]...  - sets var to value',h'0d'
-          dc	 h'00'
+	dc	c'  set                 - displays all variables',h'0d'
+	dc	c'  set ... [var]       - displays the value of var',h'0d'
+	dc	c'  set [var value]...  - sets var to value',h'0d'
+	dc	c'  set [var=value]...  - sets var to value',h'0d'
+	dc	h'00'
 error1	dc	c'set: Variable not specified',h'0d00'
 error2	dc	c'set: Variable not defined',h'0d00'
 
-Err	ds	2
+; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
+Err	dc	i2'1'	pCount
+ErrError	ds	2	Error number
 
 	END
 
@@ -406,19 +406,15 @@ showvars	anop
 	ldx	varbuf+2
 	lda	varbuf
 	jsl	free256
-svwhoops	ld2	$201,Err
-	Error Err
+svwhoops	ld2	$201,ErrError
+	ErrorGS Err
 	jmp	exit
 
-startshow      lda   setmutex
-	beq	wait0
-	cop	$7F
-	bra	startshow
-wait0	inc	setmutex
+startshow	lock setmutex
 	mv4	varbuf,varParm+0
 	mv4	valbuf,varParm+4
 	ld2	1,varParm+8
-	PushVariables 0
+	PushVariablesGS NullPB
 showloop	Read_Indexed varParm
 	lda	[varbuf]
 	and	#$FF
@@ -451,8 +447,8 @@ upperfoo	iny
 	inc	varParm+8
 	bra	showloop
 
-showdone	PopVariables 0
-	dec	setmutex
+showdone	PopVariablesGS NullPB
+	unlock setmutex
 	ldx	varbuf+2
 	lda	varbuf
 	jsl	free256
@@ -463,11 +459,7 @@ showdone	PopVariables 0
 ;
 ; set variables
 ;
-setvar	lda	setmutex
-	beq	wait1
-	cop	$7F
-	bra	setvar
-wait1	inc	setmutex
+setvar	lock	setmutex
 	lda	argc
 	jeq	doneset
 	ldy	#2
@@ -532,9 +524,9 @@ showonevar     jsl	alloc256
 	pha
 	sta	varParm
 	stx	varParm+2
-	PushVariables 0
+	PushVariablesGS NullPB
 	Read_Variable varParm
-	PopVariables 0
+	PopVariablesGS NullPB
 	lda	[valbuf]
 	and	#$FF
 	beq	notthere
@@ -580,7 +572,7 @@ unix0	short	a
 	pha
 	sta	varParm+4
 	stx	varParm+4+2
-	pei	(arg+2)
+	pei	(arg+2)   
 	pei	(arg)
 	pea	1
 	pei	(arg+2)   
@@ -598,12 +590,12 @@ unix0	short	a
 	jsl	updatevars
 	jsl	nullfree
 
-nextvar	dec	setmutex
+nextvar	unlock setmutex
 skipvar	add2	argv,#4,argv
 	dec	argc
 	jmp	setvar
 
-doneset	dec	setmutex
+doneset	unlock setmutex
 
 exit	lda	space
 	sta	end-3
@@ -625,18 +617,24 @@ varParm	ds	4
 exportparm     ds    4
 	dc	i'1'
                              
-setmutex	dc	i'0'
+setmutex	key
 showeq	dc	c' = ',h'00'
 Usage	dc	c'Usage:',h'0d'
-          dc	 c'  setenv                 - displays all variables',h'0d'
-          dc	 c'  setenv ... [var]       - displays the value of var',h'0d'
-          dc	 c'  setenv [var value]...  - sets var to value',h'0d'
-          dc	 c'  setenv [var=value]...  - sets var to value',h'0d'
-          dc	 h'00'
+	dc	 c'  setenv                 - displays all variables',h'0d'
+	dc	 c'  setenv ... [var]       - displays the value of var',h'0d'
+	dc	 c'  setenv [var value]...  - sets var to value',h'0d'
+	dc	 c'  setenv [var=value]...  - sets var to value',h'0d'
+	dc	 h'00'
 error1	dc	c'setenv: Variable not specified',h'0d00'
 error2	dc	c'setenv: Variable not defined',h'0d00'
 
-Err	ds	2
+; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
+Err	dc	i2'1'	pCount
+ErrError	ds	2	Error number
+
+; Null parameter block used for shell calls PushVariables
+; (ORCA/M manual p.420) and PopVariablesGS (p. 419)
+NullPB	dc	i2'0'	pCount
 
 	END
 
@@ -674,11 +672,7 @@ loop	add2	argv,#4,argv
 	dec	argc
 	beq	done
 
-wait	lda	expmutex
-	beq	wait0
-	cop	$7F
-	bra	wait
-wait0	inc	expmutex
+wait	lock	expmutex
 
 	ldy	#2
 	lda	[argv],y
@@ -693,7 +687,7 @@ wait0	inc	expmutex
 	Export exportparm
 	jsl	nullfree
 
-	dec	expmutex
+	unlock expmutex
 
 	bra	loop
 
@@ -711,7 +705,7 @@ done	lda	space
 
 	rtl     
 
-expmutex	dc	i'0'
+expmutex	key
 
 exportparm     ds    4
 	dc	i'1'
@@ -755,11 +749,7 @@ loop	add2	argv,#4,argv
 	dec	argc
 	beq	done
 
-wait	lda	unsmutex
-	beq	wait0
-	cop	$7F
-	bra	wait
-wait0	inc	unsmutex
+	lock	unsmutex
 
 	ldy	#2
 	lda	[argv],y
@@ -779,7 +769,7 @@ wait0	inc	unsmutex
 	jsl	nullfree
 	jsl	updatevars
 
-	dec	unsmutex
+	unlock unsmutex
 
 	bra	loop
 
@@ -797,7 +787,7 @@ done	lda	space
 
 	rtl     
 
-unsmutex	dc	i'0'
+unsmutex	key
 
 unsetparm      ds    4
 
@@ -808,8 +798,6 @@ Usage	dc	c'Usage: unset var ...',h'0d00'
 ;====================================================================
 ;
 ; update shell variable flags
-;
-; CHANGE TO JUST DO A READVARIABLES ON THE PASSED VAR
 ;
 ;====================================================================
 
@@ -824,7 +812,7 @@ space	equ	0
 	pei	(var+2)
 	pei	(var)
 	ph4	#varechoname
-	jsr	cmpcstr
+	jsr	cmpdcstr
 	bne	up2
 	lda	flag
 	sta	varecho
@@ -833,7 +821,7 @@ space	equ	0
 up2	pei	(var+2)
 	pei	(var)
 	ph4	#direxecname
-	jsr	cmpcstr
+	jsr	cmpdcstr
 	bne	up3
 	lda	flag
 	sta	vardirexec
@@ -842,7 +830,7 @@ up2	pei	(var+2)
 up3	pei	(var+2)
 	pei	(var)
 	ph4	#newlinename
-	jsr	cmpcstr
+	jsr	cmpdcstr
 	bne	up4
 	lda	flag
 	sta	varnewline
@@ -851,7 +839,7 @@ up3	pei	(var+2)
 up4	pei	(var+2)
 	pei	(var)
 	ph4	#noglobname
-	jsr	cmpcstr
+	jsr	cmpdcstr
 	bne	up5
 	lda	flag
 	sta	varnoglob
@@ -860,7 +848,7 @@ up4	pei	(var+2)
 up5	pei	(var+2)
 	pei	(var)
 	ph4	#nobeepname
-	jsr	cmpcstr
+	jsr	cmpdcstr
 	bne	up6
 	lda	flag
 	sta	varnobeep
@@ -869,7 +857,7 @@ up5	pei	(var+2)
 up6	pei	(var+2)
 	pei	(var)
 	ph4	#pushdsilname
-	jsr	cmpcstr
+	jsr	cmpdcstr
 	bne	up7
 	lda	flag
 	sta	varpushdsil
@@ -878,7 +866,7 @@ up6	pei	(var+2)
 up7	pei	(var+2)
 	pei	(var)
 	ph4	#termname
-	jsr	cmpcstr
+	jsr	cmpdcstr
 	bne	up8
 	jsr	readterm
 	jmp	done
@@ -886,7 +874,7 @@ up7	pei	(var+2)
 up8	pei	(var+2)
 	pei	(var)
 	ph4	#ignorename
-	jsr	cmpcstr
+	jsr	cmpdcstr
 	bne	up9
 	lda	flag
 	sta	varignore
@@ -895,6 +883,83 @@ up8	pei	(var+2)
 up9	anop	
                          
 done	return      
+
+	END
+
+;====================================================================
+;
+; Update all shell variable flags from environment
+;
+;====================================================================
+
+InitVars	START
+
+	using	vardata
+
+	lock gvmutex	Mutual exclusion lock.
+
+	ldx	#0	Use X-reg to index value table.
+loop	phx		Hold onto value table index.
+	txa
+	asl	a	Double the value array index
+	tax		 to get addr table index.
+	lda	evstrtbl,x	Store address of variable name
+	sta	RVname	 in ReadVariableGS parameter block.
+	lda	evstrtbl+2,x
+	sta	RVname+2
+	stz	RVexpflag	Clear export flag.
+
+	ReadVariableGS ReadVar	Read the value of the named variable.
+
+	plx		Restore value table index.
+	lda	RBlen	If variable length != 0
+	bne	set	 it is set.
+	lda	RVexpflag	It could be exported with len = 0.
+set	sta	evvaltbl,x	Save flag in variable.
+	inx2		Bump index.
+	cpx	evvaltblsz	If not at end,
+               bcc	loop	 stay in loop.
+
+	unlock gvmutex	Mutual exclusion unlock.
+
+	rts
+
+gvmutex	key		Key for mutual exclusion.
+
+; Parameter block for shell ReadVariableGS call (p 423 in ORCA/M manual)
+ReadVar	anop
+	dc	i2'3'	pCount
+RVname	ds	4	Pointer to name
+RVresult	dc	a4'ResultBuf'	GS/OS Output buffer ptr
+RVexpflag	ds	2	export flag
+
+; GS/OS result buffer for testing whether a variable is defined.
+; It doesn't have enough room for > 1 byte to be returned, but we
+; only need to get the length of the value.
+ResultBuf	dc	i2'5'	Only five bytes total.
+RBlen	ds	2	Value's length returned here.
+	ds	1	Only 1 byte for value.
+
+; GS/OS strings
+echostr	gsstr	'echo'
+nodirexecstr	gsstr	'nodirexec'
+nonewlinestr	gsstr	'nonewline'
+noglobstr	gsstr	'noglob'
+nobeepstr	gsstr	'nobeep'
+pushdsilentstr	gsstr	'pushdsilent'
+termstr	gsstr	'term'
+ignoreofstr	gsstr	'ignoreeof'
+
+; Table of GS/OS string addresses
+evstrtbl	anop
+	dc	a4'echostr'
+	dc	a4'nodirexecstr'
+	dc	a4'nonewlinestr'
+	dc	a4'noglobstr'
+	dc	a4'nobeepstr'
+	dc	a4'pushdsilentstr'
+	dc	a4'termstr'
+	dc	a4'ignoreofstr'
 
 	END
 
@@ -915,12 +980,16 @@ pushdsilname	dc	c'pushdsilent',h'00'
 termname	dc	c'term',h'00'
 ignorename	dc	c'ignoreeof',h'00'
 
-varecho	dc	i'0'
-vardirexec	dc	i'0'
-varnewline	dc	i'0'
-varnoglob	dc	i'0'
-varnobeep	dc	i'0'
-varpushdsil	dc	i'0'
-varignore	dc	i'0'
+; Table of flag values (must be in same order as string addresses)
+evvaltbl	anop
+varecho	dc	i2'0'
+vardirexec	dc	i2'0'
+varnewline	dc	i2'0'
+varnoglob	dc	i2'0'
+varnobeep	dc	i2'0'
+varpushdsil	dc	i2'0'
+varignore	dc	i2'0'
+
+evvaltblsz	dc	i2'evvaltblsz-evvaltbl'	# bytes in table
 
 	END

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: history.asm,v 1.2 1998/04/24 15:38:23 gdr-ftp Exp $
+* $Id: history.asm,v 1.3 1998/06/30 17:25:37 tribby Exp $
 *
 **************************************************************************
 *
@@ -24,11 +24,32 @@
 *   [+0] NextHistory: pointer to historyRec
 *   [+4] HistoryCmd:  string of characters
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+* InsertHistory	
+*
+* PrevHistory	
+*
+* NextHistory	
+*
+* SaveHistory	
+*
+* ReadHistory	
+*
+* InitHistory	
+*
+* PrintHistory	
+*
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/history.mac
 
-dummy	start		; ends up in .root
+dummyhistory	start		; ends up in .root
 	end
 
 	setcom 60
@@ -491,16 +512,16 @@ size           ds    2
 InitHistory	START
 	using	HistoryData
 
-	ph4	#histName
-	jsl	AppendHome
-	stx	historyFN+2
-	sta	historyFN
+	ph4	#histName	Create string
+	jsl	AppendHome	 $HOME/history
+	stx	historyFN+2	Store pointer to it
+	sta	historyFN	 in historyFN
 	rts
 	END
 
 ;=========================================================================
 ;
-; Print History
+; Print History (this is the history command)
 ;
 ;=========================================================================
 
@@ -552,7 +573,7 @@ ok             jsr	puts
 next           dec   num
                bra   loop1
 
-done           return
+done           return 2:#0
 
 numbstr        dc    c'0000:  ',h'00'
 num            ds    2

@@ -4,6 +4,20 @@
 ; because of use by other macros:  bgt, ble, p16, ph2, pl2, tool
 ; ----------------------------------------------------------------------
 
+; New, experimental macros
+
+********************
+*	breakpoint
+********************
+	MACRO
+&lab	breakpoint	&flag
+	lda	check4debug
+	and	#$80
+	beq	*+4
+	brk	&flag
+	MEND
+
+
 ********************
 *	add2
 ********************
@@ -222,7 +236,7 @@
 	macro
 &l	dosin	&adr
 &l	dc	i"l:~&sysname&syscnt"
-~&sysname&syscnt	dc	c"&adr"
+~&sysname&syscnt dc c"&adr"
 	mend
 
 ********************
@@ -290,6 +304,14 @@
 	mend
 
 ********************
+*	ErrorGS
+********************
+	macro
+&l	ErrorGS &p
+&l	ShellGS $0145,&p
+	mend
+
+********************
 *	ErrWriteCString
 ********************
 	macro
@@ -321,6 +343,14 @@
 	macro
 &lab	EXPORT	&a1
 &lab	p16	$116,&a1
+	mend
+
+********************
+*	ExportGS
+********************
+	macro
+&l	EsportGS &p
+&l	ShellGS $0156,&p
 	mend
 
 ********************
@@ -487,6 +517,14 @@
 	MACRO
 &lab	INIT_WILDCARD	&a1
 &lab	p16	$109,&a1
+	mend
+
+***********************
+*	InitWildcardGS
+***********************
+	macro
+&l	InitWildcardGS &p
+&l	ShellGS $0149,&p
 	mend
 
 ********************
@@ -917,6 +955,14 @@ pastName&SYSCNT	anop
 &lab	p16	$10A,&a1
 	mend
 
+***********************
+*	NextWildcardGS
+***********************
+	macro
+&l	NextWildcardGS &p
+&l	ShellGS $014A,&p
+	mend
+
 ********************
 *	Open
 ********************
@@ -1105,6 +1151,14 @@ pastName&SYSCNT	anop
 &lab	p16	$117,&a1
 	mend
 
+***********************
+*	PopVariablesGS	
+***********************
+	macro
+&l	PopVariablesGS	 &p
+&l	ShellGS $0157,&p
+	mend
+
 ********************
 *	PtrToHand
 ********************
@@ -1122,6 +1176,14 @@ pastName&SYSCNT	anop
 	MACRO
 &lab	PushVariables	&a1
 &lab	p16	$118,&a1
+	mend
+
+************************
+*	PushVariablesGS	
+************************
+	macro
+&l	PushVariablesGS	 &p
+&l	ShellGS $0158,&p
 	mend
 
 ********************
@@ -1147,12 +1209,29 @@ pastName&SYSCNT	anop
 &lab	READ_INDEXED	&a1
 &lab	p16	$108,&a1
 	mend
+
+**********************
+*	ReadIndexedGS	
+**********************
+	macro
+&l	ReadIndexedGS	 &p
+&l	ShellGS $0148,&p
+	mend
+
 ********************
 *	READ_VARIABLE
 ********************
 	MACRO
 &lab	READ_VARIABLE	&a1
 &lab	p16	$10B,&a1
+	mend
+
+***********************
+*	ReadVariableGS	
+***********************
+	macro
+&l	ReadVariableGS	 &p
+&l	ShellGS $014B,&p
 	mend
 
 ********************
@@ -1191,6 +1270,14 @@ pastName&SYSCNT	anop
 	macro
 &lab	REDIRECT	&a1
 &lab	p16	$110,&a1
+	mend
+
+********************
+*	RedirectGS	
+********************
+	macro
+&l	RedirectGS	 &p
+&l	ShellGS $0150,&p
 	mend
 
 ********************
@@ -1273,11 +1360,11 @@ pastName&SYSCNT	anop
 	MEND
 
 ********************
-*	SET_LINFOGS
+*	SetLInfoGS	
 ********************
 	macro
-&lab	SET_LINFOGS	&a1
-&lab	p16	$142,&a1
+&l	SetLInfoGS	 &p
+&l	ShellGS $0142,&p
 	mend
 
 ********************
@@ -1286,6 +1373,14 @@ pastName&SYSCNT	anop
 	macro
 &lab	Set_Variable	&a1
 &lab	p16	$106,&a1
+	mend
+
+********************
+*	SetGS	
+********************
+	macro
+&l	SetGS	 &p
+&l	ShellGS $0146,&p
 	mend
 
 ********************
@@ -1672,6 +1767,14 @@ pastName&SYSCNT	anop
 	mend
 
 ********************
+*	UnsetVariableGS	
+********************
+	macro
+&l	UnsetVariableGS	 &p
+&l	ShellGS $0155,&p
+	mend
+
+********************
 *	Volume
 ********************
 	macro
@@ -1758,6 +1861,25 @@ pastName&SYSCNT	anop
 	dc	i4'&a2'
 	mend
 
+***********************************************
+*	ShellGS: Jump into OS for a shell call
+***********************************************
+	MACRO
+&lab	ShellGS	&a1,&a2
+&lab	jsl	$E100A8
+	dc	i2'&a1'
+	dc	i4'&a2'
+	mend
+
+********************
+*	GSOS
+********************
+	MACRO
+&lab	GSOS	&a1,&a2
+&lab	jsl	$E100A8
+	dc	i2'&a1'
+	dc	i4'&a2'
+	mend
 
 ********************
 *	ph2

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: stdio.asm,v 1.2 1998/04/24 15:38:43 gdr-ftp Exp $
+* $Id: stdio.asm,v 1.3 1998/06/30 17:26:00 tribby Exp $
 *
 **************************************************************************
 *
@@ -19,11 +19,14 @@
 * stderr buffer size: 256 bytes
 * stdin  buffer size: 128 bytes
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/stdio.mac
 
-dummy	start		; ends up in .root
+dummystdio	start		; ends up in .root
 	end
 
 	setcom 60
@@ -39,23 +42,24 @@ putchar	START
 
 	using	stdout
 	
-               tay		;lock destroys Acc
-	lock	mutex
-               tya
-	and	#$FF
-	ldx	index
-	sta	stream,x	;we're still in long mode, note extra
-	inx                      ; length of stream by one :)
-	cmp	#13
-	beq	_flush
-	cpx	#512
-	bcc	done
-_flush	stx	index
-               Write	WriteParm
-	ldx	#0
-done	stx	index
-	unlock mutex
-	rts
+	tay		Note: lock destroys Acc
+	lock	mutex	Wait for others to leave, and lock.
+	tya
+	and	#$FF	Isolate the single character.
+	ldx	index	Get num of chars already in stream.
+	sta	stream,x	Store this char + null byte.
+	inx		Bump length of stream by one.
+	cmp	#13	If character was newline,
+	beq	_flush	 go write the stream.
+	cpx	#512	If length < 512,
+	bcc	done	 all done.
+_flush	stx	index	Save current length.
+	Write	WriteParm	Write the stream.
+	ldx	#0	Set new length to 0.
+
+done	stx	index	Save stream length in global.
+	unlock mutex	Allow others through.
+	rts		Return to caller.
 
 	END
 
@@ -70,44 +74,46 @@ puts	START
 
 	using	stdout
 
-               tay		;lock destroys Acc
-	lock	mutex
-               sty	getchar+1
+	tay		Note: lock destroys Acc
+	lock	mutex	Wait for others to leave, and lock.
+	sty	getchar+1          Save low-order bytes of address.
 	txa
 
-	short	a
-	sta	getchar+3
-       	ora   getchar+2
-       	ora   getchar+1
-       	beq   exit
+	short	a	SWITCH TO SINGLE-BYTE MEMORY MODE.
+	sta	getchar+3	Store high-order byte of address.
+	ora	getchar+2	If string address
+	ora	getchar+1	 is 00/0000,
+	beq	exit	  don't do the write.
 
-	ldy	index
-               ldx	#0
+	ldy	index	Get current number of chars in stream.
+	ldx	#0	Clear source string offset.
 
-getchar	lda	>$FFFFFF,x
-	beq	done
-	sta	stream,y
-	iny
-	inx
-	cmp	#13
-	beq	_flush
-	cpy	#512
-	bcc	getchar
+getchar	lda	>$FFFFFF,x	Get next character from string.
+	beq	done	Done when we see a null byte.
+	sta	stream,y	Store in output stream.
+	iny		Bump the stream and
+	inx		 string pointers.
+	cmp	#13	If newline was encountered,
+	beq	_flush	 go write & flush the stream.
+	cpy	#512	If stream length < 512,
+	bcc	getchar	 continue copying characters.
 
-_flush	sty	index
-	phx
-	long	a
-               Write	WriteParm
-	Flush	flushparm
-	short	a        
-	plx
-	ldy	#0
-               bra	getchar
+_flush	sty	index	Save length of stream.
+	phx		Hold source string offset on stack.
+	long	a	SWITCH TO FULL-WORD MEMORY MODE.
+               Write	WriteParm	Write the stream to stdout
+	Flush	flushparm	 and flush it.
+	short	a	SWITCH TO SINGLE-BYTE MEMORY MODE.
+	plx		Restore source string offset to X-reg.
+	ldy	#0	Set stream length to 0.
+               bra	getchar	Continue copying characters.
 
-done	sty	index
-exit	long	a
-	unlock mutex
-	rts
+; Arrive here when null character is encountered.
+done	sty	index	Save stream length in global.
+
+exit	long	a	SWITCH TO FULL-WORD MEMORY MODE.
+	unlock mutex	Allow others through.
+	rts		Return to caller.
 
 	END                 
 
@@ -122,47 +128,52 @@ putp	START
 
 	using	stdout
 
-               tay		;lock destroys Acc
-	lock	mutex
-               sty	getchar+1
+	tay		Note: lock destroys Acc
+	lock	mutex	Wait for others to leave, and lock.
+	sty	getchar+1          Save low-order bytes of address.
 	sty	cmpchar+1
 	txa
 
-	short	a
-	sta	getchar+3
+	short	a	SWITCH TO SINGLE-BYTE MEMORY MODE.
+	sta	getchar+3	Store high-order byte of address.
 	sta	cmpchar+3
+	ora	getchar+2	If string address
+	ora	getchar+1	 is 00/0000,
+	beq	exit	  don't do the write.
 
-	ldy	index
-               ldx	#1
-	bra	next
+	ldy	index	Get current number of chars in stream.
+	ldx	#1	Skip len byte in source string offset.
+	bra	chklen	See if there are characters to copy.
 
-getchar	lda	>$FFFFFF,x
-	sta	stream,y
-	iny
-	inx
-	cmp	#13
-	beq	_flush
-next	txa
-cmpchar	cmp	>$FFFFFF
+getchar	lda	>$FFFFFF,x	Get next character from string.
+	sta	stream,y	Store in output stream.
+	iny		Bump the stream and
+	inx		 string pointers.
+	cmp	#13	If newline was encountered,
+	beq	_flush	 go write & flush the stream.
+chklen	txa
+cmpchar	cmp	>$FFFFFF	If we have copied all the chars,
 	beq	check2
-               bcs	done
-check2	cpy	#512
-	bcc	getchar
+               bcs	done	 all done.
+check2	cpy	#512	If stream length < 512,
+	bcc	getchar	 continue copying characters.
 
-_flush	sty	index
-	phx
-	long	a
-               Write	WriteParm
-	Flush	flushparm
-	short	a        
-	plx
-	ldy	#0
-               bra	next
+_flush	sty	index	Save length of stream.
+	phx		Hold source string offset on stack.
+	long	a	SWITCH TO FULL-WORD MEMORY MODE.
+               Write	WriteParm	Write the stream to stdout
+	Flush	flushparm	 and flush it.
+	short	a	SWITCH TO SINGLE-BYTE MEMORY MODE.
+	plx		Restore source string offset to X-reg.
+	ldy	#0	Set stream length to 0.
+               bra	chklen
 
-done	sty	index
-	long	a
-	unlock mutex
-	rts
+; Arrive here when null character is encountered.
+done	sty	index	Save stream length in global.
+
+exit	long	a	SWITCH TO FULL-WORD MEMORY MODE.
+	unlock mutex	Allow others through.
+	rts		Return to caller.
 
 	END                 
 

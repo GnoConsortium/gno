@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: sv.asm,v 1.2 1998/04/24 15:38:45 gdr-ftp Exp $
+* $Id: sv.asm,v 1.3 1998/06/30 17:26:02 tribby Exp $
 *
 **************************************************************************
 *
@@ -15,11 +15,14 @@
 *
 * String Vector routines.
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/sv.mac
                          
-dummy	start		; ends up in .root
+dummysv	start		; ends up in .root
 	end
 
 	setcom 60

@@ -6,20 +6,24 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: prompt.asm,v 1.2 1998/04/24 15:38:35 gdr-ftp Exp $
+* $Id: prompt.asm,v 1.3 1998/06/30 17:25:50 tribby Exp $
 *
 **************************************************************************
 *
 * PROMPT.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * This displays the command-line prompt
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/prompt.mac
 
-dummy	start		; ends up in .root
+dummyprompt	start		; ends up in .root
 	end
 
 	setcom 60

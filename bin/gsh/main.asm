@@ -6,11 +6,17 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: main.asm,v 1.5 1998/07/20 16:23:08 tribby Exp $
+*
 **************************************************************************
 *
 * MAIN.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/main.mac
@@ -24,22 +30,32 @@
 stack    data  STACK		; ends up in main.root
          kind  $12
 
-; Define direct-page/stack in 256-byte (1-page) chunks.
-; Fill them with question marks so they can be examined for use.
+; Define direct-page/stack and fill it with question marks it can be
+; examined for how much is used.
 
 	dc	128c'??'	;  256 bytes
 	dc	128c'??'	;  512 bytes total
 	dc	128c'????'	; 1024 bytes total
-	dc	128c'????'
-	dc	128c'????'	; 2048 bytes total
+	dc	128c'????????'	; 2048 bytes total
 
 	end
 
 **************************************************************************
 
 init	START
+
+; Call the code to emulate C program startup:
+;   store Accumulator in ~USER_ID, X- and Y- registers as ~COMMANDLINE
+;   start up memory manager (~MM_INIT)
+;   parse commandline (via ~GNO_PARSEARG) and push argc and arvg on stack
+
 	jml	~GNO_COMMAND
+
+; Control continues with the entry point "MAIN". When MAIN returns to
+; ~GNO_COMMAND via rtl, it frees argv and argc before doing its own rtl.
+
 	END
+
 
 MAIN	START
 
@@ -61,23 +77,26 @@ ok	stz	FastFlag
 	stz	CmdFlag
 	stz	ExecFlag
 
-argloop	dec	argc
-	jeq	start
+; Parse gsh's command-line arguments.
+
+argloop	dec	argc	Decrement argument count.
+	beq	go_start	If none left, ready to start working.
 	clc
-	lda	argv
-               adc	#4
+	lda	argv	Point to next
+               adc	#4	 argument pointer.
 	sta	argv
 	ldy	#2
-	lda	[argv]
-	sta	arg
+	lda	[argv]	Set arg to point to
+	sta	arg	 the argument text.
 	lda	[argv],y
 	sta	arg+2
-	lda	[arg]
-	and	#$FF
-	cmp	#'-'
-	beq	intoption
+	lda	[arg]	Get first character
+	and	#$FF	 of argument.
+	cmp	#'-'	If it's a "-",
+	beq	intoption	 handle as an option.
 
-; parse remaining args as a command to run
+
+; Parse remaining args as a command to run (in ExecCmd)
 
 	inc	ExecFlag
 	inc	FastFlag
@@ -89,7 +108,7 @@ argloop	dec	argc
 	stx	p+2
 
 cmd3	ldy	#0
-cmd0	lda	[arg],y
+cmd0	lda	[arg],y	
 	and	#$ff
 	beq	cmd1
 	sta	[p],y
@@ -115,7 +134,10 @@ cmd1           lda	#' '
 	bra	cmd3
 cmd2	lda	#0
 	sta	[p]
-	bra	start
+go_start	bra	start
+
+
+; Parse an argument as an option (first character is "-")
 
 intoption	ldy	#1
 optloop	lda	[arg],y
@@ -126,9 +148,12 @@ optloop	lda	[arg],y
 	cmp	#'c'
 	beq	parsec
 
+; Option is not recognized.
 showusage	ErrWriteCString #usage
 	bra	done
 
+
+; Option = "-f": Skip history, gshrc
 optf	inc	FastFlag
 
 nextopt	iny
@@ -138,6 +163,7 @@ nextarg	cpy	#1
 	beq	showusage
 	jmp	argloop
 
+; Option = "-c": execute shell commands found in file named by next argument
 parsec         clc
 	lda	argv
 	adc	#4
@@ -149,6 +175,9 @@ parsec         clc
 	mv4	argv,CmdArgV
 	mv2	argc,CmdArgC
 
+;
+; When preliminary setup is complete, control transfers to here!
+;
 start	case	on
 	jsl	shell
 	case	off

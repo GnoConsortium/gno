@@ -6,16 +6,44 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
+* $Id: alias.asm,v 1.3 1998/06/30 17:25:07 tribby Exp $
+*
 **************************************************************************
 *
 * ALIAS.ASM
 *   By Tim Meekins
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+* alias	
+*
+* unalias	
+*
+* initalias	
+*
+* expandalias	
+*
+* addalias	
+*
+* removealias	
+*
+* findalias	
+*
+* startalias	
+*
+* nextalias	
+*
+*
 **************************************************************************
 
 	mcopy	/obj/gno/bin/gsh/alias.mac
 
-dummy	start		; ends up in root
+dummyalias	start		; ends up in root
 	end
 
 	setcom 60
@@ -255,9 +283,11 @@ initalias	START
 
 	using	AliasData
 
+; Set all entries in AliasTable to 0
+
 	lda	#0
 	ldy	#VTABSIZE
-	tax	#0
+	tax
 yahaha	sta	AliasTable,x
 	inx2
 	sta	AliasTable,x
@@ -446,7 +476,7 @@ space	equ	hashval+4
 	sta	ptr+2
 
 search	lda	ptr
-	ora	ptr
+	ora	ptr+2
 	beq	notfound
 	ldy	#4
 	lda	[ptr],y

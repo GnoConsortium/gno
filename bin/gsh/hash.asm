@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: hash.asm,v 1.2 1998/04/24 15:38:21 gdr-ftp Exp $
+* $Id: hash.asm,v 1.3 1998/06/30 17:25:34 tribby Exp $
 *
 **************************************************************************
 *
@@ -15,11 +15,41 @@
 *
 * Command hashing routines
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
+**************************************************************************
+*
+* Interfaces defined in this file:
+*
+* hash	jsr with params: (2:num, 4:name)
+*
+* dohash	subroutine (4:files)
+*	return 4:table
+*
+* search	subroutine (4:file,4:table,4:paths)
+*	return 4:full_path
+*
+* dispose_table subroutine (4:table)
+*	 return
+*
+* free_files	subroutine (4:files)
+*	return
+* 
+* dir_search	subroutine (4:dir,2:dirNum,4:files)
+*	return
+* 
+* hashpath	jsl with no parameters
+*	no returned value
+*
+* dispose_hash	jsr with no parameters
+*	no returned value
+*                                    
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/hash.mac
 
-dummy	start		; ends up in .root
+dummyhash	start		; ends up in .root
 	end
 
 	setcom 60
@@ -532,6 +562,7 @@ goodopen       jsl   nullfree
                sta   ptr
                stx   DRecName+2
                stx   ptr+2
+
                lda   #254               ;Output buffer size (GT never did this?)
                sta   [ptr]
                GetDirEntry DRec
@@ -606,25 +637,28 @@ done           ldx	DRecName+2
 
 exit           return
 
-ORec           dc    i'3'
-ORecRef        ds    2
-ORecPath       ds    4
-ORecAccess     dc    i'1'               ;read
 
-DRec           dc    i'13'
-DRecRef        ds    2
-DRecFlag       ds    2
-DRecBase       dc    i'0'
-DRecDisp       dc    i'0'
-DRecName       ds    4
-DRecEntry      ds    2
-DRecFileType   ds    2
-DRecEOF        ds    4
-DRecBlockCnt   ds    4
-DRecCreate     ds    8
-DRecMod        ds    8
-DRecAccess     ds    2
-DRecAuxType    ds    4
+; Parameter block for GS/OS Open and Close calls
+ORec           dc    i'3'	pCount (3 for Open, 1 for Close)
+ORecRef        ds    2	refNum
+ORecPath       ds    4	pathname (result buf)
+ORecAccess     dc    i'1'               requested access = read
+
+; Parameter block for GS/OS GetDirEntry call
+DRec           dc    i'13'	pCount
+DRecRef        ds    2	refNum
+DRecFlag       ds    2	flags: extended/not
+DRecBase       dc    i'0'	base: displacement is absolute entry #
+DRecDisp       dc    i'0'	displacement: get tot # active entries
+DRecName       ds    4	name: result buf
+DRecEntry      ds    2	entryNum: entry # whose info is rtrned
+DRecFileType   ds    2	fileType
+DRecEOF        ds    4	eof: # bytes in data fork
+DRecBlockCnt   ds    4	blockCount: # blocks in data fork
+DRecCreate     ds    8	createDateTime
+DRecMod        ds    8	modDateTime
+DRecAccess     ds    2	access attribute
+DRecAuxType    ds    4	auxType
 
                END
 
@@ -646,6 +680,9 @@ pathptr        equ   files+4
 space          equ   pathptr+4
 end            equ   space+3
 
+;
+; Allocate space on stack for direct page variables
+;
                tsc
                sec
                sbc   #space-1
@@ -686,8 +723,8 @@ end            equ   space+3
 ; allocate memory for $path variable
 ;
 	jsl	alloc256
-               sta   pathparm+4
-               stx   pathparm+4+2
+               sta   pathvalue
+               stx   pathvalue+2
 	phx
 	pha
 	phx
@@ -700,8 +737,8 @@ end            equ   space+3
 	jsr	p2cstr
 	stx	pathptr+2
 	sta	pathptr
-	stx	pathparm+6	;for disposal only
-	sta	pathparm+4
+	stx	pathvalue+2	;for disposal only
+	sta	pathvalue
 	pla
 	plx
 	jsl	free256	;pushed earlier
@@ -725,10 +762,16 @@ despace        lda   [pathptr],y
 	if2	@a,eq,#'\',gotquote
                iny
                bra   despace
+
+; Found "\"
 gotquote	iny2
 	bra	despace
+
+; Found null byte
 gotspace0	tyx
 	bra   gotspace3
+
+; Found " ", tab, or creturn
 gotspace1      tyx
                short a
                lda   #0
@@ -740,11 +783,15 @@ gotspace2      iny
                if2   @a,eq,#' ',gotspace2
                if2   @a,eq,#009,gotspace2
                if2   @a,eq,#013,gotspace2
+
 gotspace3      anop
-               clc
-               tya
-               adc   pathptr
+               clc		Bump pathptr by
+               tya		 the number of bytes
+               adc   pathptr	  indicated in Y-reg.
                sta   pathptr
+	lda	pathptr+2
+	adc	#0
+	sta	pathptr+2
 
 	lda	pathnum
 	cmp	#32*4
@@ -759,30 +806,35 @@ numok	pei	(ptr+2)
 	jsr	c2gsstr
 	phx
 	pha	
-	sta	EPParm+2
-	stx	EPParm+4
+	sta	EPinputPath
+	stx	EPinputPath+2
 	ExpandPath EPParm
 	bcc	epok
 
-	ldx	#^eperrstr
-	lda	#eperrstr
+	ldx	#^eperrstr	Print error message:
+	lda	#eperrstr	 "Invalid pathname syntax."
 	jsr	errputs
 	jsl	nullfree
 	jmp	next
 
 epok           jsl	nullfree
 
-	lda	EPParm+6+2
-	sta	ptr+2
-	lda	EPParm+6
-	inc2	a
+	clc		Set ptr to GS/OS string
+	lda	EPoutputPath	 portion of result buffer.
+	adc	#2
 	sta	ptr
-	lda	[ptr]
-	sta	len
-	inc2	a
-	tay
+	lda	EPoutputPath+2
+	adc	#0
+	sta	ptr+2
+
+	lda	[ptr]	Get GS/OS string's length word
+	sta	len	 and store in len.
+
+	inc2	a	Store 0 at end of text
+	tay		 in string.
 	lda	#0	
 	sta   [ptr],y
+
 	pea	0
 	phy
 	jsl	~NEW
@@ -824,7 +876,8 @@ go4it          lda   pathnum
 
 next           jmp   loop
 
-done           ph4   pathparm+4
+
+done           ph4   pathvalue
                jsl   nullfree
 
                lda   hash_print
@@ -842,8 +895,8 @@ noprint        ld2   1,hash_print
                sta   hash_table
                stx   hash_table+2
 
-	lda	EPParm+6
-	ldx	EPParm+6+2
+	lda	EPoutputPath
+	ldx	EPoutputPath+2
 	jsl	free256
 
                pld
@@ -854,16 +907,20 @@ noprint        ld2   1,hash_print
 
                rtl
 
-pathparm       dc    a4'pathvar'
-               ds    4
+; Parameter block for shell call Read_Variable
+pathparm       anop
+	dc    a4'pathvar'	Address of name
+pathvalue	ds    4	Address to store result
+
 pathvar        str   'path'
 
 hashmsg        dc    c'hashed '
 hashnum        dc    c'000 files',h'0d00'
 
-EPParm	dc	i'2'
-	ds	4
-	ds	4
+; Parameter block for GS/OS call ExpandPath
+EPParm	dc	i'2'	pCount = 2
+EPinputPath	ds	4	ptr to inputPath (GS/OS string)
+EPoutputPath	ds	4	ptr to outputPath (Result buffer)
 
 eperrstr	dc	c'rehash: Invalid pathname syntax.',h'0d00'
 toomanyerr	dc	c'rehash: Too many paths specified.',h'0d00'

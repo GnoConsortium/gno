@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: jobs.asm,v 1.2 1998/04/24 15:38:27 gdr-ftp Exp $
+* $Id: jobs.asm,v 1.3 1998/06/30 17:25:43 tribby Exp $
 *
 **************************************************************************
 *
@@ -15,11 +15,14 @@
 *
 * Job control handling routines
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
 
 	mcopy	/obj/gno/bin/gsh/jobs.mac
 
-dummy	start		; ends up in .root
+dummyjobs	start		; ends up in .root
 	end
 
 	setcom 60
@@ -909,7 +912,7 @@ next	inc	count
 	beq	loop
 	bcc	loop
 
-done	return
+done	return 2:#0
 
 Usage	dc	c'Usage: jobs [-l]',h'0d00'
 
@@ -1230,7 +1233,7 @@ nojob	ldx	#^err03
 	lda	#err03
 puterr	jsr	errputs
 
-done	return
+done	return 2:#0
 
 usage	dc	c'Usage: fg [%job | pid]',h'0d00'
 err01	dc	c'fg: No job to foreground.',h'0d00'
@@ -1347,7 +1350,7 @@ nojob	ldx	#^err03
 	lda	#err03
 puterr	jsr	errputs
 
-done	return
+done	return 2:#0
 
 usage	dc	c'Usage: bg [%job | pid]',h'0d00'
 err01	dc	c'bg: No job to background.',h'0d00'
@@ -1435,7 +1438,7 @@ nojob	ldx	#^err03
 	lda	#err03
 puterr	jsr	errputs
 
-done	return
+done	return 2:#0
 
 usage	dc	c'Usage: stop [%job | pid]',h'0d00'
 err01	dc	c'stop: No job to stop.',h'0d00'

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: edit.asm,v 1.2 1998/04/24 15:38:14 gdr-ftp Exp $
+* $Id: edit.asm,v 1.3 1998/06/30 17:25:23 tribby Exp $
 *
 **************************************************************************
 *
@@ -15,11 +15,14 @@
 *
 * The GNO/Shell command-line editor
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/edit.mac
 
-dummy	start		; ends up in .root
+dummyedit	start		; ends up in .root
 	end
 
 	setcom 60
@@ -347,7 +350,7 @@ cmdclrline	ldx	cmdloc
 ;-------------------------------------------------------------------------
 
 cmdclreol      lda	cdcap
-	ora	cdcap
+	ora	cdcap+2
 	beq	ctl4a0
 	tputs (cdcap,#1,#outc)
                bra   ctl4g
@@ -729,10 +732,11 @@ newpos	equ	varpos+2
 wordpos	equ	newpos+2
 
                jsl	alloc256
-	sta	varparms+4
-	stx	varparms+6
+	sta	ReadName
+	stx	ReadName+2
 	phx
 	pha
+
 	Read_Variable varparms
 	jsr	p2cstr
 	sta	var	
@@ -740,8 +744,8 @@ wordpos	equ	newpos+2
 	phx
 	pha
 	jsr	lowercstr
-	lda	varparms+4
-	ldx	varparms+6
+	lda	ReadName
+	ldx	ReadName+2
 	jsl	free256
 
 	lda	[var]
@@ -818,10 +822,13 @@ done	pei	(var+2)
 	jsl	nullfree
 	rts
 
-varparms	dc	a4'fignore'
-	ds	4
+; Parameter block for shell Read_Variable call
+; [predecessor to ReadVariableGS call (p 423 in ORCA/M manual)]
+varparms	anop
+	dc	a4'fignore'	Pointer to name
+ReadName	ds	4	Pointer to result
 
-fignore	str	'fignore'
+fignore	str	'fignore'	Env variable name
 
 	END
 
@@ -1070,10 +1077,9 @@ gotflag	anop
 	cmp	#'$'
 	jne	filem
 
-	ld2	1,varParm+8
+	ld2	1,varIndex
 varloop	Read_Indexed varParm
 	lda	buffer
-	and	#$FF
 	jeq	vardone
 	dec	a
 	cmp	wordlen	;if shorter than word skip
@@ -1149,7 +1155,7 @@ gv01	lda	buffer,y
 	lda	sepstyle
 	sta	[0],y
 
-nextvar	inc	varParm+8
+nextvar	inc	varIndex
 	jmp	varloop
 
 vardone	rts
@@ -1441,10 +1447,13 @@ GFType	dc	i2'0'
 GFAux	dc	i4'0'
 
 
-varParm	dc	i4'buffer'
-	dc	i4'varval'
-	dc	i2'0'
-
+; Parameter block for shell Read_Indexed call
+; [predecessor to ReadIndexedGS call (p 421 in ORCA/M manual)]
+varParm	anop
+	dc	i4'buffer'	Name (pointer to 256-byte p-string)
+	dc	i4'varval'	Value (pointer to 256-byte p-string)
+varIndex	dc	i2'0'	Index number
+	
 	ds	1	;<- don't futz with me!!
 varval	ds	256
 

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: term.asm,v 1.2 1998/04/24 15:38:47 gdr-ftp Exp $
+* $Id: term.asm,v 1.3 1998/06/30 17:26:04 tribby Exp $
 *
 **************************************************************************
 *
@@ -15,11 +15,14 @@
 *
 * Routines for dealing with Termcap under gsh.
 *
+* Note: text set up for tabs at col 16, 22, 41, 49, 57, 65
+*              |     |                  |       |       |       |
+*	^	^	^	^	^	^	
 **************************************************************************
 
 	mcopy /obj/gno/bin/gsh/term.mac
 
-dummy	start		; ends up in .root
+dummyterm	start		; ends up in .root
 	end
 
 	setcom 60
