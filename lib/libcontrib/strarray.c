@@ -5,8 +5,9 @@
  *
  * Devin Reade, September 1997.
  *
- * $Id: strarray.c,v 1.1 1997/10/03 04:49:40 gdr Exp $
+ * $Id: strarray.c,v 1.2 1997/10/30 04:57:25 gdr Exp $
  */
+#include <errno.h>
 #include <string.h>
 #include <stdlib.h>
 #include <err.h>
@@ -123,7 +124,11 @@ LC_StringArrayDelete (LC_StringArray_t array, char *str) {
 void
 LC_StringArrayClear (LC_StringArray_t array) {
   int i;
-  
+
+  if (array == NULL) {
+	   errno = EINVAL;
+	   err(1, "LC_StringArrayClear passed NULL pointer");
+  }
   if (array->lc_used == 0) {
     return;
   }
@@ -138,6 +143,12 @@ LC_StringArrayClear (LC_StringArray_t array) {
   array->lc_alloced = 0;
   array->lc_used    = 0;
   return;
+}
+
+void
+LC_StringArrayDestroy (LC_StringArray_t array) {
+	LC_StringArrayClear(array);
+  free(array);
 }
 
 /*
