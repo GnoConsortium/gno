@@ -1,4 +1,3 @@
-#line 1 ":src:gno:lib:libc:stdio:fscanf.c"
 /*-
  * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
@@ -36,7 +35,7 @@
  */
 
 #ifdef __ORCAC__
-#pragma optimize 72
+#pragma optimize 78	/* bits 3 and 6, minimum */
 #pragma debug 0
 segment "libc_stdio";
 #endif

@@ -1,4 +1,3 @@
-#line 1 ":src:gno:lib:libc:stdio:fflush.c"
 /*-
  * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
