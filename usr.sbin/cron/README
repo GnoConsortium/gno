@@ -1,0 +1,5 @@
+I converted cron to use syslog(). In my /etc/syslog.conf file, LOG_CRON
+messages are configured to go in /var/log/cronlog. I modifed cron as a
+demonstration of this.
+
+- Phillip Vandry

@@ -1,0 +1,9 @@
+echo "Moving files to appropriate places..."
+echo
+mv -vi newuser  /usr/sbin
+mv -vi newuserv /usr/sbin
+mv -vi newuser.1 /usr/man/man1/
+echo
+echo "Make sure the directory /var/adm/newuser exists, and has as"
+echo "template 'gshrc' file in it.  Also required in that directory"
+echo "is the 'newid' file, which holds the next available userid."

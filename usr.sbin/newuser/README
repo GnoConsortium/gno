@@ -1,0 +1,7 @@
+After running the 'install' program, you need to create the files
+/var/adm/newuser/newid and /var/adm/newuser/gshrc.  The latter is simply
+a template gshrc file that all new users will be given.  The former is
+a file with a single integer (1-5 digits) and *nothing else*.  New users
+will be assigned the userid found in this file each time newuser is run,
+and the userid will be automatically incremented by newuser.  So you only
+have to set it up once.

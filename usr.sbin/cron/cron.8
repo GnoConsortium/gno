@@ -1,0 +1,48 @@
+CRON(8)             UNIX Programmer's Manual		  CRON(8)
+
+
+
+NAME
+     cron - clock daemon
+
+SYNOPSIS
+     /usr/sbin/cron
+
+DESCRIPTION
+     Cron executes commands at specified dates and times accord-
+     ing to the instructions in the file /etc/crontab (if it exists).
+     Since cron never exits, it should only be executed once.  This
+     is best done by running cron from the initialization process
+     through the file /etc/inittab; see init(8).
+
+     The crontab file consists of lines of seven fields each.
+     The fields are separated by spaces or tabs.  The first five
+     are integer patterns to specify:
+
+     o+ minute (0-59)
+     o+ hour (0-23)
+     o+ day of the month (1-31)
+     o+ month of the year (1-12)
+     o+ day of the week (1-7 with 1 = Monday)
+
+     Each of these patterns may contain:
+
+     o+ a number in the range above
+     o+ two numbers separated by a minus meaning a range inclusive
+     o+ a list of numbers separated by commas meaning any of the
+       numbers
+     o+ an asterisk meaning all legal values
+
+     The sixth field is a user name: the command will be run with
+     that user's uid and permissions.  The seventh field consists
+     of all the text on a line following the sixth field, includ-
+     ing spaces and tabs; this text is treated as a command which
+     is executed by the Shell at the specified times.  A percent
+     character (``%'') in this field is translated to a new-line
+     character.
+
+     The crontab file is checked by cron every minute, on the
+     minute.
+
+FILES
+     /etc/crontab

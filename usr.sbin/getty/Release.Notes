@@ -1,0 +1,145 @@
+GNO Manual Addendum
+-------------------
+
+This file contains information on parts of GNO that changed after
+the documentation was printed.
+
+Known Bugs
+----------
+The default gshrc file created by the installer generates a $HOME
+directory that uses colon delimiters (e.g., :hd1:gno:user:root).  A bug
+in handling the ~ character causes attempts to, for example, "ls ~/foo"
+to fail, because that gets interpreted as "ls :hd1:gno:user:root/foo",
+where the system interprets "root/foo" as a single filename.  You should
+either change the gshrc file to use '/' delimiters, or use the ':'
+delimiter when also using ~ (i.e., "ls ~:foo")
+
+Getty (2.0.3)
+-------------
+The 'getty' program provided with GNO 2.0.3 and later has a new feature and
+a fixed bug.
+
+o	Getty used to overrun its stack space in ways that were hard to
+	detect; this has been fixed
+o	There is a new type of entry in the gettytab file:
+
+	P|8bit.9600|9600-baud-8bit|8bit:\
+		:sp#9600:p8:tt=vt100:hu#8:
+
+	The 'hu#' entry represents the RS232 signal line that is to be
+	used as carrier detect, and thus will cause a SIGHUP signal to
+	be sent to the processes running on that port.  In this example,
+	'8' indicates a '1' in bit 3 of the following byte:
+
+   		[7]  break/abort
+   		[6]  tx underrun
+  	*	[5]  DSR (input handshake line)
+   		[4]  reserved
+  	*	[3]  DCD (general purpose input line)
+   		[2]  tx buff empty
+   		[1]  reserved
+   		[0]  rx char available
+
+	The only lines that have any meaning are marked with '*'s.  The
+	default line is #5 (value 32) due to the strange wiring of some
+	modem cables. Setting this value to zero (0) turns off hangup
+	checking completely.
+
+How to Control Serial Ports with stty
+-------------------------------------
+
+'stty' is short for 'set tty parameters', and can be used to control
+various aspects of the serial ports and other terminal devices.
+
+stty modifies the parameters of the terminal that stty's standard input
+references; e.g., to modify .ttya parameters, do something like this:
+
+stty ... < .ttya
+
+To set the baud rate, simply enter the baud rate you want on the command line.
+e.g., to set the printer port's baud rate to 19200 baud, do
+
+stty 19200 <.ttyb
+
+The various other parameters that stty supports are described in the tty(4)
+manual page.
+
+How to use the Multi-User package
+---------------------------------
+If you choose to install the multi-user package, the nature of the GNO
+system changes quite a bit.  First off, instead of GNO simply being a shell
+on your IIGS's screen, the console becomes a terminal through which you
+can log into the system.
+
+When you start GNO after installing the MU package, you'll see some intro
+text (terminal name, and name of the computer), and then a 'login' prompt.
+At this prompt, users type in their unique user names (and normally a
+password) to gain entry to your computer.  GNO comes with one user already
+configured : 'root'.  To get into GNO the first time, type 'root' at the
+login prompt.  No password is set by default, so you won't be asked for one.
+If you want to protect entry to your computer with a password, use the 'passwd'
+command to change your password.
+
+% passwd
+
+You'll be prompted for your old password, which is nothing - so hit return.
+Then you type in the new password - twice, to make sure you entered it
+correctly.  This is done because, sensibly, when entering a password the
+keys you type are not echoed on the screen.
+
+Don't forget your password! If you do, you'll have to manually edit the
+/etc/passwd file, and delete the second field; the one right after the username
+and a colon (:), and that looks like gibberish because it's encrypted. Delete
+everything between the two colons to remove the password.
+
+There are two ways to exit GNO with the MU package installed; simply typing
+'exit' at the shell will only return to the login prompt.
+
+'init 5' at the shell will cause GNO to shut down and return to the program
+launcher you used to run GNO (usually the Finder).
+
+'init 0' will shut down GNO and will reboot your computer.
+
+There is a file that contains a log of activity on the system, including
+bad attempts to log in.  This file is /var/adm/syslog.  Typing
+'more /var/adm/syslog' from the shell will display the contents of this file.
+Other applications may also use the syslog file to record notable events.
+
+How to use the line printer daemon
+(or, lpr is your friend)
+----------------------------------
+The print spooling system included with GNO is very versatile because it
+takes advantage of GNO's multitasking capabilities.  Anyone can write a program
+that communicates with lpd (line printer daemon) to spool a print job. At
+this time the communication specification is not yet available; contact Procyon
+for more information.
+
+You must start lpd differently depending on whether you're using the MU package
+or using GNO in single-user mode.  For single-user, simply type
+
+/usr/sbin/lpd &
+
+To start the spooler process.
+
+With MU, simply uncomment (remove the '#') the line in the /etc/inittab file
+corresponding to lpd.  Then, lpd will be started automatically whenever you
+run GNO.  Note that either way you start lpd, it is currently limited to
+using the printer baud rate specified in the IIGS control panel, and to
+using serial printers.  lpd does not work with laser printers hooked up via
+an AppleTalk network.  It also requires you to use the printer port.
+
+There are currently two programs that use lpd; lpr, and FilePort.  lpr is
+the standard UNIX 'print a text file' program.  Typing
+
+lpr file1 file2 ...
+
+will print the text files you list, adding headers and page numbers.
+
+FilePort is a GS/OS printer driver that works with desktop applications.
+To turn it on, use the Control Panel NDA, select 'DC Printer', and choose
+your printer type and 'FilePort' (for 'Port').
+
+From then on, whenever you print from a desktop program in GNO, the output
+will be spooled.  If you wish to print from outside GNO, you will have to
+choose the regular port driver again in the Control Panel NDA (usually
+'Printer').
