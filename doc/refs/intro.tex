@@ -1,7 +1,7 @@
 %
 % GNO Overview
 %
-% $Id: intro.tex,v 1.9 1999/01/18 01:46:06 gdr-ftp Exp $
+% $Id: intro.tex,v 1.10 1999/01/26 07:30:14 gdr-ftp Exp $
 % 
 
 \documentclass{report}
@@ -15,7 +15,6 @@
 
 \title{GNO Overview and Installation}
 \author{Jawaid Bazyar \\ Tim Meekins \\ Devin Reade}
-\date{13 October 1998}
 \maketitle
 
 \bibliographystyle{plain}
@@ -43,7 +42,7 @@
 \parindent=0pt
 \parskip=1pc
 
-The GNO Multitasking Environment is Copyright 1991-1998 by
+The GNO Multitasking Environment is Copyright 1991-1999 by
 Procyon Enterprises Incorporated.
 
 \begin{flushleft}
@@ -52,7 +51,7 @@ Second Edition, August 1996. \\
 Third Edition, November 1997.
 \end{flushleft}
 
-The ORCA/C run-time libraries are Copyright 1987-1998 Byte Works, Inc.,
+The ORCA/C run-time libraries are Copyright 1987-1999 Byte Works, Inc.,
 and distributed with permission.
 
 This product includes software developed by the University of California,
@@ -107,7 +106,7 @@ Then do it.  \bf --- Lazarus Long \rm
 \end{quote}
 
 The {\bf GNO} {\bf M}ultitasking {\bf E}nvironment for the Apple IIgs. \\
-Copyright 1991-1998, Procyon Enterprises Inc. and Tim Meekins.
+Copyright 1991-1999, Procyon Enterprises Inc. and Tim Meekins.
 
 The following people and organizations have contributed to the GNO base
 distribution; many other people have contributed stand-alone packages and
@@ -1081,10 +1080,17 @@ below with the appropriate name.
 
 \begin{enumerate}
 
+% We would like to be using bold face type for some parts of this, but
+% it appears that the current version of tex2html can't handle boldface
+% within an enumerated list.  I've left the pieces that used to be boldfaced
+% on lines by themselves.
+
 \item
 From your program launcher (typically the Finder), run the program
-\bf /gno.boot/kern\rm.  This is the GNO kernel.  It will come up in 
-single user mode and you will be logged in as root running a \bf gsh\rm
+/gno.boot/kern.
+This is the GNO kernel.  It will come up in 
+single user mode and you will be logged in as root running a 
+gsh
 shell session.
 
 Note that the boot disk currently uses the version 2.0.4 GNO kernel; this
@@ -1109,14 +1115,17 @@ were in /download, you would type:
 	setenv DOWNLOAD_DIR /download
 \end{verbatim}
 
-Ensure that you use slashes (\bf/\rm) rather than colons (\bf:\rm) as the
+Ensure that you use slashes (``/'') rather than colons (``:'') as the
 pathname delimiter.  Do not use a trailing slash.
 
 \item
 Install the majority of the GNO base distribution files by
-changing directory into your destination directory and running
-the \bf installboot1\rm script. Assuming that you will be installing
-to the partition \bf/gno\rm, the commands would be:
+changing directory into your destination directory and running the
+installboot1
+script. Assuming that you will be installing
+to the partition 
+/gno,
+the commands would be:
 
 \begin{verbatim}
 	cd /gno
@@ -1130,8 +1139,11 @@ Have patience.
 There are a small number of recommended files that do not follow
 ProDOS naming conventions.  If you wish to install these files,
 make sure that you have an HFS or Appleshare disk online. Change
-directories to that disk (or subdirectory) and run \bf installboot2\rm.
-Assuming that the HFS disk is \bf/gno-hfs\rm, the commands are:
+directories to that disk (or subdirectory) and run 
+installboot2.
+Assuming that the HFS disk is 
+/gno-hfs,
+the commands are:
 
 \begin{verbatim}
 	cd /gno-hfs
@@ -1148,9 +1160,15 @@ files were extracted onto a volume other than /gno, you will
 have to replace all the ``:gno:'' strings with the appropriate
 path.  Similarily, you will have to replace ``:gno-hfs:'' if
 that is not the name of your HFS (or Appleshare) partition
-where you ran the \bf installboot2\rm script.
+where you ran the 
+installboot2
+script.
 
-The \bf gno.boot\rm disk includes the \bf vi\rm utility to do these edits.
+The 
+gno.boot
+disk includes the 
+vi
+utility to do these edits.
 You can also edit the namespace file with any other text editor
 of your choosing, as long as it is done before you try to run
 your new GNO distribution.
