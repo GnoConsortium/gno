@@ -44,7 +44,7 @@
  *
  * Added prototyped headers, surrounded by #ifndef __STDC__
  *
- * $Id: tail.c,v 1.2 1997/09/26 06:22:49 gdr Exp $
+ * $Id: tail.c,v 1.3 1997/10/03 03:55:11 gdr Exp $
  */
 
 #ifndef __GNO__ /* Don't need what strings for GNO */
@@ -77,10 +77,9 @@ static void usage __P((void));
 
 /* Interface to check on how much stack space a C program uses. */
 #if defined(__GNO__)  &&  defined(__STACK_CHECK__)
-#ifndef _STDLIB_H_
-#include <stdlib.h>
-#endif
+#ifndef _GNO_GNO_H_
 #include <gno/gno.h>
+#endif
 static void report_stack(void)
 {
 	fprintf(stderr,"\n ==> %d stack bytes used <== \n", _endStackCheck());
