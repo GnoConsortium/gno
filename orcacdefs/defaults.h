@@ -1,7 +1,7 @@
 /*************************************************
  * Start of GNO v2.0.6 definitions.
  *
- * $Id: defaults.h,v 1.5 1997/09/21 22:24:49 gdr Exp $
+ * $Id: defaults.h,v 1.6 1998/01/25 21:05:28 gdr-ftp Exp $
  */
 
 #define	__appleiigs__
@@ -9,7 +9,7 @@
 
 #pragma path "/usr/include"
 #pragma path "/HFSinclude"
-#pragma path "/lang/orca/include"
+#pragma path "/lang/orca/libraries/orcacdefs"
 
 /*
  * These should be identically equal.  Orca/C headers use one, BSD headers
