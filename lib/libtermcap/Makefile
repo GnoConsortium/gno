@@ -1,7 +1,7 @@
 #
 # This is the makefile for libtermcap, GNO v2.0.6
 #
-# $Id: Makefile,v 1.3 1998/03/08 18:14:53 gdr-ftp Exp $
+# $Id: Makefile,v 1.4 1998/03/08 18:16:03 gdr-ftp Exp $
 #
 
 LIB	= termcap
@@ -22,24 +22,3 @@ local_setup:
 release::
 	$(INSTALL) -d $(HDIR)
 	$(INSTALL) termcap.h $(HDIR)
-
-# LIBDIR	= /usr/lib
-# MANDIR	= /usr/man/man3
-
-# build:	$(LIB)
-
-#$(LIB): $(OBJS) $(LIB).r
-#	$(RM) -f $@
-#	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(OBJS)
-#	$(CATREZ) -d $@ $(LIB).r
-
-#install: beforeinstall $(LIB)
-#	$(INSTALL) -d $(LIBDIR) $(MANDIR)
-#	$(INSTALL) $(LIB) $(LIBDIR)
-#	$(INSTALL) termcap.3 $(MANDIR)
-
-#release: beforeinstall $(LIB)
-#	$(INSTALL) -d $(RELEASE_DIR)$(LIBDIR) $(RELEASE_DIR)$(MANDIR)
-#	$(INSTALL) $(LIB) $(RELEASE_DIR)$(LIBDIR)
-#	$(INSTALL) termcap.3 $(RELEASE_DIR)$(MANDIR)
-
