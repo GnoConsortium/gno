@@ -1,0 +1,146 @@
+ macro
+&lab ~DisposeHandle &p1
+&lab ph4 &p1
+ ldx #$1002
+ jsl $E10000
+ mend
+ macro
+&lab ~NewHandle &p1,&p2,&p3,&p4
+&lab ph4 &p1
+ ph2 &p2
+ ph2 &p2
+ ph4 &p4
+ ldx #$0902
+ jsl $E10000
+ mend
+ macro
+&l long &a,&b
+ lclb &i
+ lclb &m
+&a amid &a,1,1
+&m setb ("&a"="M").or.("&a"="m")
+&i setb ("&a"="I").or.("&a"="i")
+ aif c:&b=0,.a
+&b amid &b,1,1
+&m setb ("&b"="M").or.("&b"="m").or.&m
+&i setb ("&b"="I").or.("&b"="i").or.&i
+.a
+&l rep #&m*32+&i*16
+ aif .not.&m,.b
+ longa on
+.b
+ aif .not.&i,.c
+ longi on
+.c
+ mend
+ macro
+&l ph2 &n1
+ aif "&n1"="*",.f
+ lclc &c
+&l anop
+&c amid &n1,1,1
+ aif "&c"="#",.d
+ aif s:longa=1,.a
+ rep #%00100000
+.a
+ aif "&c"<>"{",.b
+&c amid &n1,l:&n1,1
+ aif "&c"<>"}",.g
+&n1 amid &n1,2,l:&n1-2
+ lda (&n1)
+ pha
+ ago .e
+.b
+ aif "&c"="<",.c
+ lda &n1
+ pha
+ ago .e
+.c
+&n1 amid &n1,2,l:&n1-1
+ pei &n1
+ ago .e
+.d
+&n1 amid &n1,2,l:&n1-1
+ pea &n1
+ ago .f
+.e
+ aif s:longa=1,.f
+ sep #%00100000
+.f
+ mexit
+.g
+ mnote "Missing closing '}'",16
+ mend
+ macro
+&l ph4 &n1
+ aif "&n1"="*",.f
+ lclc &c
+&l anop
+&c amid &n1,1,1
+ aif "&c"="#",.d
+ aif s:longa=1,.a
+ rep #%00100000
+.a
+ aif "&c"<>"{",.b
+&c amid &n1,l:&n1,1
+ aif "&c"<>"}",.g
+&n1 amid &n1,2,l:&n1-2
+ ldy #2
+ lda (&n1),y
+ pha
+ lda (&n1)
+ pha
+ ago .e
+.b
+ aif "&c"<>"[",.c
+ ldy #2
+ lda &n1,y
+ pha
+ lda &n1
+ pha
+ ago .e
+.c
+ aif "&c"<>"<",.c1
+&n1 amid &n1,2,l:&n1-1
+ pei &n1+2
+ pei &n1
+ ago .e
+.c1
+ lda &n1+2
+ pha
+ lda &n1
+ pha
+ ago .e
+.d
+&n1 amid &n1,2,l:&n1-1
+ pea +(&n1)|-16
+ pea &n1
+ ago .f
+.e
+ aif s:longa=1,.f
+ sep #%00100000
+.f
+ mexit
+.g
+ mnote "Missing closing '}'",16
+ mend
+ macro
+&l short &a,&b
+ lclb &i
+ lclb &m
+&a amid &a,1,1
+&m setb ("&a"="M").or.("&a"="m")
+&i setb ("&a"="I").or.("&a"="i")
+ aif c:&b=0,.a
+&b amid &b,1,1
+&m setb ("&b"="M").or.("&b"="m").or.&m
+&i setb ("&b"="I").or.("&b"="i").or.&i
+.a
+&l sep #&m*32+&i*16
+ aif .not.&m,.b
+ longa off
+.b
+ aif .not.&i,.c
+ longi off
+.c
+ mend
