@@ -1928,13 +1928,10 @@ skip&syscnt	anop
 	MACRO
 &lab	~NEW
 &lab	anop
-* -- Portion needed for debug version
-*	jsl	DB~NEW
-*
-* -- Rest is for non-debug version
 	using	memglobal
 	lock	memmutex
-	jsl	~NEW
+*	jsl	DB~NEW	; DEBUG VERSION
+	jsl	~NEW	; NON-DEBUG VERSION
 	unlock memmutex
 	MEND
 
@@ -1945,13 +1942,10 @@ skip&syscnt	anop
 	MACRO
 &lab	~DISPOSE
 &lab	anop
-* -- Portion needed for debug version
-*	jsl   DB~DISPOSE
-*
-* -- Rest is for non-debug version
 	using	memglobal
 	lock	memmutex
-	jsl   ~DISPOSE
+*	jsl   DB~DISPOSE	; DEBUG VERSION
+ 	jsl   ~DISPOSE	; NON-DEBUG VERSION
 	unlock memmutex
 	MEND
 
@@ -1971,9 +1965,11 @@ skip&syscnt	anop
 * lock
 ********************
 	MACRO
-&lab	lock	&a1
-&lab	lda	#1
-	tsb	&a1
+&lab	lock	&key
+&lab	anop
+*	jsr	DB~CHKBNK	; TEMPORARY DEBUG CODE
+	lda	#1
+	tsb	&key
 	beq	*+6
 	cop	$7F
 	bra	*-7
@@ -1983,6 +1979,8 @@ skip&syscnt	anop
 * unlock
 ********************
 	MACRO
-&lab	unlock &a1
-&lab	stz	&a1
+&lab	unlock &key
+&lab	anop
+*	jsr	DB~CHKBNK	; TEMPORARY DEBUG CODE
+	stz	&key
 	MEND

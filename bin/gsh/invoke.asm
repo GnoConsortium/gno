@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: invoke.asm,v 1.10 1998/12/31 18:29:13 tribby Exp $
+* $Id: invoke.asm,v 1.11 1999/01/14 17:44:25 tribby Exp $
 *
 **************************************************************************
 *
@@ -327,10 +327,10 @@ badfile	ldx	cpath+2
 	ldx	#^err1	Print error message:
 	lda	#err1	 'Not executable.'
 	jsr	errputs
-free	pei	(ptr+2)	Free memory used to hold
+	pei	(ptr+2)	Free memory used to hold
 	pei	(ptr)	 GS/OS string with path.
 	jsl	nullfree
-	jmp	done
+	jmp	chkpipe	If pipe was allocated, clean up.
 
 *
 * ---------------------------------------------------------------
@@ -477,7 +477,11 @@ doShell	anop
 	case	off
 
 	jsr	postfork
-	jmp	free
+
+	pei	(ptr+2)	Free memory used to hold
+	pei	(ptr)	 GS/OS string with path.
+	jsl	nullfree
+	jmp	done
 
 ;
 ; Forked shell starts here...

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: edit.asm,v 1.10 1998/12/31 18:29:12 tribby Exp $
+* $Id: edit.asm,v 1.11 1999/01/14 17:44:24 tribby Exp $
 *
 **************************************************************************
 *
@@ -1290,7 +1290,7 @@ filematch	anop
 	cmp	#6		== $00000006?
 	bne	filematch	
 	lda	nwAux+2
-	bne	filematch			No; try next wildcard.
+	jne	filematch			No; try next wildcard.
 	bra	notdir			It's shell cmd file.
 ;
 ; Not looking for a command
@@ -1359,7 +1359,7 @@ q	equ	4	 locations.
 	jeq	endhash
 	ldy	#0
 	ldx	t_size
-eq_endhash	beq	endhash
+eq_endhash	jeq	endhash
 ; 
 ; loop through every hashed file and add it the string vector
 ;

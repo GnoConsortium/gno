@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: cmd.asm,v 1.9 1998/12/31 18:29:12 tribby Exp $
+* $Id: cmd.asm,v 1.10 1999/01/14 17:44:22 tribby Exp $
 *
 **************************************************************************
 *
@@ -128,7 +128,8 @@ SINGQUOTE	equ	4	;single quote string
 ;
 loop	lda	[buf]
 	incad	buf
-	and2	@a,#$FF,ch	ch = next character.
+               and	#$00FF
+	sta	ch	ch = next character.
 	bne	switch
 
 ; End of string detected. Action depends upon current state.

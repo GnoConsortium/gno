@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: main.asm,v 1.7 1998/09/08 16:53:11 tribby Exp $
+* $Id: main.asm,v 1.8 1999/01/14 17:44:25 tribby Exp $
 *
 **************************************************************************
 *
@@ -82,7 +82,7 @@ ok	stz	FastFlag
 ; Parse gsh's command-line arguments.
 
 argloop	dec	argc	Decrement argument count.
-	beq	go_start	If none left, ready to start working.
+	jeq	go_start	If none left, ready to start working.
 	clc
 	lda	argv	Point to next
 	adc	#4	 argument pointer.

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: hash.asm,v 1.8 1998/12/31 18:29:13 tribby Exp $
+* $Id: hash.asm,v 1.9 1999/01/14 17:44:24 tribby Exp $
 *
 **************************************************************************
 *
@@ -644,7 +644,7 @@ loop	lda	entry	If number of processed entries
 
 ; Check for filetype $B0, subtype $0006: Shell command file (EXEC)
 	cmp	#$B0
-	bne	nextfile
+	jne	nextfile
 	lda	DRecAuxType
 	cmp	#$06
 	bne	nextfile
@@ -1146,6 +1146,7 @@ dispose_hash	START
 
 	using hashdata
 
+	lock	hashmutex
 	ora2	hash_table,hash_table+2,@a
 	beq	done
 
@@ -1178,7 +1179,8 @@ next1	ply		Restore path index
 	stz	hash_table
 	stz	hash_table+2
 
-done	rts
+done	unlock hashmutex
+	rts
 
 	END
 

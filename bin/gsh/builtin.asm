@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: builtin.asm,v 1.9 1998/12/31 18:29:11 tribby Exp $
+* $Id: builtin.asm,v 1.10 1999/01/14 17:44:22 tribby Exp $
 *
 **************************************************************************
 *
@@ -1544,7 +1544,7 @@ loop	kvmnextproc ps
 
 	ldy	#2
 	lda	[ps],y	;ps->pid
-	Int2Dec (@a,#pidstr,#4,#0)
+	Int2Dec (@a,#pidstr,#5,#0)
 	ldx	#^pidstr
 	lda	#pidstr
 	jsr	puts
@@ -1714,8 +1714,8 @@ return	return 2:status
 
 usage	dc	c'Usage: ps',h'0d00'
 kvmerrstr	dc	c'ps: error in kvm_open()',h'0d00'
-header	dc	c'  ID  STATE   TT MMID  UID   TIME COMMAND',h'0d00'
-pidstr	dc	c'0000  ',h'00'
+header	dc	c'   ID  STATE   TT MMID  UID   TIME COMMAND',h'0d00'
+pidstr	dc	c'00000  ',h'00'
 userstr	dc	c' 0000 ',h'00'
 puidstr	dc	c'0000 ',h'00'
 timestr	dc	c'000:00 ',h'00'

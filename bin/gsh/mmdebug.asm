@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: mmdebug.asm,v 1.5 1998/12/21 23:57:07 tribby Exp $
+* $Id: mmdebug.asm,v 1.6 1999/01/14 17:44:25 tribby Exp $
 *
 **************************************************************************
 *
@@ -78,20 +78,20 @@ deref	lda	[hand]	Dereference the handle.
 	lda	[hand],y
 	sta	ptr+2
 
-;
-; Fill memory with recognizable pattern
-;
-	lda	#"~~"
-	ldy	size
-dec_index	dey
-	dey
-	bmi	full
-	sta	[ptr],y
-	bra	dec_index
-
-full	short	a	In case size was odd,
-	sta	[ptr]	 be sure the first byte
-	long	a	  gets the pattern.
+*;
+*; Fill memory with recognizable pattern
+*;
+*	lda	#"~~"
+*	ldy	size
+*dec_index	dey
+*	dey
+*	bmi	full
+*	sta	[ptr],y
+*	bra	dec_index
+*
+*full	short	a	In case size was odd,
+*	sta	[ptr]	 be sure the first byte
+*	long	a	  gets the pattern.
 
 goback	return 4:ptr	Return pointer to caller.
 
@@ -154,5 +154,29 @@ okay	DisposeHandle hand	Deallocate the memory.
 	brk	$D5	Deallocate error #5.
 
 goback	return
+
+	END
+
+
+DB~CHKBNK	START
+
+; Verify that data bank = program bank
+; Call with jsr DB~CHKBNK
+	php		Save Status Flags.
+	short	m	Go to 8-bit mode.
+	pha		Save Accumulator.
+	phk		Put Program Bank reg on stack.
+	phb		Copy Data Bank register
+	pla		 into Accumulator.
+	cmp	1,s	Compare DBR (in acc) to PBR (stack)
+	beq	cleanup	If not equal,
+	brk	$B0		complain.
+;
+; Ready to return to the caller
+;
+cleanup	pla		Remove Program Bank reg from stack.
+	pla		Restore original Accumulator and
+	plp		 Status Flags (including 8/16 bit mode)
+	rts
 
 	END

@@ -1,6 +1,25 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Jan 12 99  [dmt] Add debug routine DB~CHKBNK, which causes BRK B0 if
+	   program bank is not the same as data bank (mmdebug.asm).
+	   Modify lock and unlock macros to call DB~CHKBNK (gsh.mac).
+	   Needed to change branch instructions to jump macros in several
+	   files because the code got larger.
+
+Jan 11 99  [dmt] Lock/unlock hashmutex in dispose_hash (hash.asm).
+
+Jan  3 99  [dmt] Allow five digits rather than four when printing process
+	   id number in the ps command (builtin.asm).
+
+Jan  1 99  [dmt] Piping the output of a command to a non-executable
+	   file caused gsh to hang.  Instead of going directly to done
+	   after printing "Not executable" error message, go to chkpipe
+	   in invoke.asm.
+
+Dec 31 98  [dmt] Changes to this point checked-in to master archive.
+	   Released as version 2.0d8
+
 Dec 30 98  [dmt] Added mutual exclusion to ~NEW and ~DISPOSE macros. Lack
 	   of mutex could cause one fork to modify a memory table while
 	   another fork was searching it, leaving one or both processes
