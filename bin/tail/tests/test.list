@@ -1,0 +1,124 @@
+Script started on: Mon Sep 01 15:04:30 1997
+[61] test=> dotests ; exit 
+Testing command ../tail beginning at Mon Sep  1 15:04:40 1997
+Listing last ten lines (default) of file500.txt 
+ ==> 759 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.10l (no differences expected) 
+  Completion status = 0 
+ 
+Listing last ten lines (default) of file500.txt using stdin 
+ ==> 759 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.10l (no differences expected) 
+  Completion status = 0 
+ 
+Listing last ten lines (explicit) of file500.txt 
+ ==> 759 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.10l (no differences expected) 
+  Completion status = 0 
+ 
+Listing last ten lines (obsolescent) of file500.txt 
+ ==> 759 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.10l (no differences expected) 
+  Completion status = 0 
+ 
+Listing last 90 chars of file500.txt 
+ ==> 716 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.90c (no differences expected) 
+  Completion status = 0 
+ 
+Listing last 90 chars (obsolescent) of file500.txt 
+ ==> 716 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.90c (no differences expected) 
+  Completion status = 0 
+ 
+Listing last block of file500.txt 
+ ==> 716 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.1b (no differences expected) 
+  Completion status = 0 
+ 
+Listing last block (obsolescent) of file500.txt 
+ ==> 716 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.1b (no differences expected) 
+  Completion status = 0 
+ 
+Listing file500.txt beginning at line 400 
+ ==> 669 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.p400l (no differences expected) 
+  Completion status = 0 
+ 
+Listing file500.txt beginning at line 400 (obsolescent) 
+ ==> 665 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.p400l (no differences expected) 
+  Completion status = 0 
+ 
+Listing file500.txt beginning at line 400 (obsolescent/explicit) 
+ ==> 665 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.p400l (no differences expected) 
+  Completion status = 0 
+ 
+Listing file500.txt beginning at char 12040 
+ ==> 716 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.p12040c (no differences expected) 
+  Completion status = 0 
+ 
+Listing file500.txt beginning at char 12040 (obsolescent) 
+ ==> 716 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.p12040c (no differences expected) 
+  Completion status = 0 
+ 
+Listing all of file500.txt using -n option 
+ ==> 665 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file file500.txt (no differences expected) 
+  Completion status = 0 
+ 
+Listing all of file500.txt using -b option 
+ ==> 665 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file file500.txt (no differences expected) 
+  Completion status = 0 
+ 
+Listing all of file500.txt using -c option 
+ ==> 665 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file file500.txt (no differences expected) 
+  Completion status = 0 
+ 
+Listing last 3 lines of f*.* 
+ ==> 848 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file multi.out (no differences expected) 
+  Completion status = 0 
+ 
+***** Error Messages ***** 
+ 
+Expected error: illegal option 
+tail: illegal option -- x
+usage: tail [-f] [-b # | -c # | -n #] [file ...]
+       tail [-f] [+|-#[b|c|l]] [file ...]
+ ==> 1895 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: illegal offset 
+tail: illegal offset -- 12x
+ ==> 1912 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: badname: no such file or directory 
+tail: badname: no such file or directory
+ ==> 1919 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+Script done on: Mon Sep 01 15:07:39 1997
