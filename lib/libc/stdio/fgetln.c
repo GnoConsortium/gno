@@ -1,8 +1,17 @@
+/*
+ * fgetln(3) implementation.
+ *
+ * Devin Reade, April 1997
+ *
+ * This file is formatted with tab stops every 8 columns
+ *
+ * $Id: fgetln.c,v 1.2 1997/07/27 23:13:28 gdr Exp $
+ */
+
 #ifdef __ORCAC__
 segment "libc_stdio";
 #endif
 
-#pragma databank 1
 #pragma optimize 0
 #pragma debug 0
 #pragma memorymodel 0
@@ -54,19 +63,3 @@ fgetln (FILE *stream, size_t *len)
   *len = strlen(buffer);
   return buffer;
 }
-
-
-#if 0	/* for testing fgetln */
-
-int 
-main(int argc, char **argv) {
-  char *p;
-  size_t len;
-
-  while ((p = fgetln(stdin, &len)) != NULL) {
-    printf("%d:%s", len, p);
-  }
-  return 0;
-}
-
-#endif
