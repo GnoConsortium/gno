@@ -2,7 +2,7 @@
  *
  * Concatenate resources multiple files into the resource fork of a file
  *            
- *    catrez [-v] [-a] -d destfile file1 [file2 ... ]
+ *    catrez [-va] -d destfile file1 [file2 ... ]
  * where the options mean:
  *    -v   verbose output
  *    -a   append resources to destination rather than overwriting
@@ -11,7 +11,7 @@
  *                                                      
  * Written by Dave Tribby (tribby@cup.hp.com) beginning 5-3-96
  *
- * $Id: catrez.c,v 1.2 1997/09/26 06:32:43 gdr Exp $
+ * $Id: catrez.c,v 1.3 1997/09/30 05:14:48 gdr Exp $
  *
  * ---------------------------------------------------------------------
  */
@@ -225,7 +225,7 @@ Word OpenDestination(void)
    dest_file_id = OpenResourceFile(noPreload+readWriteEnable,
                                            NULL, (Pointer)dest_filename);
    if (error = toolerror())   {
-      printf(rezopenerr, error,dest_filename->text);
+      fprintf(stderr, rezopenerr, error,dest_filename->text);
       exit(2);
       }
                               
@@ -270,7 +270,7 @@ void CopyResources(char *fname)
 
    /* Cannot proceed if resource fork wasn't opened */
    if (error)   {
-      printf(rezopenerr, error,fname);
+      fprintf(stderr, rezopenerr, error,fname);
       status_return = 1;
       return;
       }
@@ -310,7 +310,7 @@ void CopyResources(char *fname)
          /* Load the resource */
          rez_handle = LoadResource(rez_type, rez_ID);
          if (error = toolerror())   {
-            printf("\nError %04X loading type %04X, ID %lX, file %s\n",
+            fprintf(stderr, "\nError %04X loading type %04X, ID %lX, file %s\n",
               error,rez_type,rez_ID,fname);
             status_return = 1;
             continue;
@@ -325,7 +325,7 @@ void CopyResources(char *fname)
          /* Add resource to destination file, ignoring "protected" attribute */
          AddResource(rez_handle, rez_attr & ~resProtected, rez_type, rez_ID);
          if (error = toolerror())   {
-            printf("\nError %04X adding type %04X, ID %lX\n",
+            fprintf(stderr, "\nError %04X adding type %04X, ID %lX\n",
               error,rez_type,rez_ID);
             status_return = 1;
             }            
@@ -333,7 +333,7 @@ void CopyResources(char *fname)
             /* Force it to disk */
             WriteResource(rez_type, rez_ID);
             if (error = toolerror())   {
-               printf("\nError %04X writing type %04X, ID %lX\n",
+               fprintf(stderr, "\nError %04X writing type %04X, ID %lX\n",
                  error,rez_type,rez_ID);
                status_return = 1;
                }            
@@ -342,7 +342,8 @@ void CopyResources(char *fname)
             if (rez_attr & resProtected)   {
               SetResourceAttr(rez_attr, rez_type, rez_ID);
               if (error = toolerror())   {
-                 printf("\nError %04X setting attributes for type %04X, ID %lX\n",
+                 fprintf(stderr,
+                   "\nError %04X setting attributes for type %04X, ID %lX\n",
                    error,rez_type,rez_ID);
                  status_return = 1;
                  }
@@ -352,7 +353,7 @@ void CopyResources(char *fname)
          /* Release the resource from memory */
          ReleaseResource(-1, rez_type, rez_ID);
          if (error = toolerror())   {
-            printf("\nError %04X releasing type %04X, ID %X\n",
+            fprintf(stderr, "\nError %04X releasing type %04X, ID %X\n",
               error,rez_type,rez_ID);
             status_return = 1;
             }
@@ -377,14 +378,13 @@ static void report_stack(void)
 #endif
 
 /*----------------------------------------------------------------------*/
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 /*----------------------------------------------------------------------*/
 {
-int     p_num;		/* Parameter number */
 int	destfileprovided = FALSE;
-char	*illegal_opt="Warning: Illegal option %s ignored\n";
+int	ch;
 char	*usage=
-   "Usage:\n\tcatrez [-v] [-a] -d dest_file file1 [file2 ...]\n";
+   "Usage:\n\tcatrez [-va] -d dest_file file1 [file2 ...]\n";
 
 #if defined(__GNO__) && defined(__STACK_CHECK__)
 _beginStackCheck();
@@ -417,14 +417,11 @@ if (argc < 2)   {
    }
 
 /* Parse the option parameters */
-p_num = 1;
-while ((p_num < argc) && (argv[p_num][0] == '-') )  {
-   if (strlen(argv[p_num]) > 2)
-      printf(illegal_opt, argv[p_num]);
-   else switch ( argv[p_num][1] ) {
+while ((ch = getopt(argc, argv, "avd:")) != EOF) {
+   switch(ch) {
       case 'v':
          verboseflag = TRUE;
-         printf("%s: ", argv[0]);
+         printf("%s: ", *argv);
          printf(prog_version, __DATE__);
          break;             
       case 'a':
@@ -432,31 +429,22 @@ while ((p_num < argc) && (argv[p_num][0] == '-') )  {
          break;
       case 'd':
          destfileprovided = TRUE;
-         p_num++;
-         if (p_num == argc)   {
-            printf("Error: -d option requires a destination filename\n");
-            printf(usage);
-            return 1;
-            }
-         else   {
-            dest_filename = CtoGS(argv[p_num]);
-            }
+         dest_filename = CtoGS(optarg);
          break;
-      default:
-         printf(illegal_opt, argv[p_num]);
       }
-   p_num++;
    }
+argc -= optind;
+argv = argv + optind;
 
 if (!destfileprovided) {
-   printf("Error: No destination filename provided\n");
-   printf(usage);
+   fprintf(stderr, "Error: No destination filename provided\n");
+   fprintf(stderr, usage);
    return 1;
    }
 
-if (p_num == argc) {
-   printf("Error: No source filenames provided\n");
-   printf(usage);
+if (argc < 1) {
+   fprintf(stderr, "Error: No source filenames provided\n");
+   fprintf(stderr, usage);
    return 1;
    }
 
@@ -470,9 +458,8 @@ atexit(AllDone);
 OpenDestination();
 
 /* Open and copy each of the source files */
-while ( (p_num < argc) && !user_break ) {
-   CopyResources(argv[p_num]);
-   p_num++;
+while ( (argc-- > 0) && !user_break ) {
+   CopyResources(*argv++);
    }
 
 /* Cleanup is done in atexit() */

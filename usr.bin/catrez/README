@@ -1,6 +1,6 @@
 catrez -- concatenate resource forks from files
 
-$Id: README,v 1.2 1997/09/26 06:31:15 gdr Exp $
+$Id: README,v 1.3 1997/09/30 05:14:47 gdr Exp $
 
 DESCRIPTION
 ===========
@@ -16,11 +16,9 @@ See the man page for details.
 INSTALLATION
 ============
 
-Method 1:
-
-	dmake install
-
-Method 2:
+catrez is distributed with GNO version 2.0.6, so it should already be
+included in your /usr/bin directory. If it isn't, you can copy the
+executable and manual files from this archive:
 
 	cp catrez   /usr/local/bin
 	cp catrez.1 /usr/man/man1
@@ -30,7 +28,11 @@ OTHER FILES
 ===========
 
 The ORCA/C source file for catrez is included (catrez.c), as well as the
-REZ source code (version.rez) and the "dmake" file (makefile.mk).
+REZ source code (catrez.rez), the "dmake" file (Makefile), and the
+"describe" data base entry (catrez.desc).
+
+Note: Makefile invokes the standard GNO program makefile /src/gno/prog.mk
+
 
 CHANGES
 =======
@@ -43,6 +45,9 @@ v1.0.2	catrez was incorporated into the GNO base distribution.  Changes
 		minor formatting differences to the man page; and
 		addition of a describe entry.
 	(Devin Reade <gdr@eddore.myrias.com>)
+		print error messages on stderr instead of stdout
+		use standard parsing of command-line options
+	(Dave Tribby <tribby@cup.hp.com>)
 
 v1.0.1	Resources with the "protected" attribute set were not copied correctly.
 
@@ -70,12 +75,11 @@ the problem.
 LEGAL
 =====
 
-Copyright 1996 by David M. Tribby
+Copyright 1996-97 by David M. Tribby
 
 This software is provided as freeware (not public domain). You may distribute
 it as long as you don't charge money for it (beyond your media costs), and you
-don't try to claim it for your own. You must also keep this archive intact when
-distributing the software.
+don't try to claim it for your own.
 
 For other distribution information, contact Dave Tribby <tribby@cup.hp.com>.
 
