@@ -1,36 +1,45 @@
 #
-# This is the top-level makefile for libtermcap, GNO v2.0.6
+# This is the makefile for libtermcap, GNO v2.0.6
 #
-# $Id: Makefile,v 1.2 1997/10/03 04:52:59 gdr Exp $
+# $Id: Makefile,v 1.3 1998/03/08 18:14:53 gdr-ftp Exp $
 #
 
-.INCLUDE: ../../paths.mk
-.INCLUDE: ../const.mk                          
-
-LIB	= libtermcap
-OBJS	= termcap.o tgoto.o tputs.o tparm.o tospeed.o
-LIBDIR	= /usr/lib
-MANDIR	= /usr/man/man3
-
-CFLAGS	+= -O78 -Slibtermcap -G25 -v -w
+LIB	= termcap
+SRCS	= termcap.c tgoto.c tputs.c tparm.c tospeed.c
+OPTIMIZE= 78
+CFLAGS	+= -I. -Slibtermcap
 CFLAGS	+= -DCM_N -DCM_GT -DCM_B -DCM_D -I.
 
-build:	$(LIB)
+LOCAL_SETUP	= local_setup
+HDIR		= $(RELEASE_DIR)/usr/include
 
-$(LIB): $(OBJS) $(LIB).r
-	$(RM) -f $@
-	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(OBJS)
-	$(CATREZ) -d $@ $(LIB).r
+.INCLUDE: /src/gno/lib/lib.mk
 
-install: beforeinstall $(LIB)
-	$(INSTALL) -d $(LIBDIR) $(MANDIR)
-	$(INSTALL) $(LIB) $(LIBDIR)
-	$(INSTALL) termcap.3 $(MANDIR)
+# If this target fails, do a manual update.
+local_setup:
+	cmp /usr/include/termcap.h termcap.h
 
-release: beforeinstall $(LIB)
-	$(INSTALL) -d $(RELEASE_DIR)$(LIBDIR) $(RELEASE_DIR)$(MANDIR)
-	$(INSTALL) $(LIB) $(RELEASE_DIR)$(LIBDIR)
-	$(INSTALL) termcap.3 $(RELEASE_DIR)$(MANDIR)
+release::
+	$(INSTALL) -d $(HDIR)
+	$(INSTALL) termcap.h $(HDIR)
 
-beforeinstall:
-	cmp ../../include/termcap.h termcap.h
+# LIBDIR	= /usr/lib
+# MANDIR	= /usr/man/man3
+
+# build:	$(LIB)
+
+#$(LIB): $(OBJS) $(LIB).r
+#	$(RM) -f $@
+#	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $(OBJS)
+#	$(CATREZ) -d $@ $(LIB).r
+
+#install: beforeinstall $(LIB)
+#	$(INSTALL) -d $(LIBDIR) $(MANDIR)
+#	$(INSTALL) $(LIB) $(LIBDIR)
+#	$(INSTALL) termcap.3 $(MANDIR)
+
+#release: beforeinstall $(LIB)
+#	$(INSTALL) -d $(RELEASE_DIR)$(LIBDIR) $(RELEASE_DIR)$(MANDIR)
+#	$(INSTALL) $(LIB) $(RELEASE_DIR)$(LIBDIR)
+#	$(INSTALL) termcap.3 $(RELEASE_DIR)$(MANDIR)
+

@@ -24,7 +24,7 @@
  * SUCH DAMAGE.
  */
 
-/* Don't include a cvs ident string; it interferes with the builds */
+/* $Id: termcap.h,v 1.3 1998/03/08 18:14:55 gdr-ftp Exp $ */
 
 #ifndef _TERMCAP_H_
 #define _TERMCAP_H_
