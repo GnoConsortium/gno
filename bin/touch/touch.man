@@ -1,0 +1,41 @@
+TOUCH(1)                                                          TOUCH(1)
+
+
+NAME
+
+     touch - update modification date of existing file or create new file.
+
+
+SYNOPSIS
+
+     touch file1 [file2 ...]
+
+
+DESCRIPTION
+
+     touch checks each file in the argument list and processes each as follows:
+
+          o  If the file exists, touch sets the modification time and date to
+             the current time/date.  It also sets the backup-needed flag.
+
+          o  If the file does not exist, it creates an empty text file of that
+             name.  The file is unlocked, with the backup-needed flag set.
+
+     Wildcard expansion is not supported outside of GNO/ME, which does its own.
+
+     Invalid filenames cause touch to exit with return code -1, printing the
+     offending filename before exitting.
+
+
+CAVEATS
+
+     The ORCA editor does not seem to like files with length 0.  It appears to
+     attempt to re-create the file, which already exists and is open.  Use vi or
+     echo " " > filename.  Otherwise, the file may be manipulated normally.
+
+
+OTHER
+
+     This program is Copyright 1993 by Leslie M. Barstow III.
+     It may be distributed freely, provided this manpage accompanies it.
+     touch uses routines from the ORCA libraries, Copyright by ByteWorks, Inc.
