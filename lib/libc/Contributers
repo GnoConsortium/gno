@@ -1,7 +1,7 @@
 List of Contributers
 ====================
 
-$Id: Contributers,v 1.4 1997/09/26 06:00:19 gdr Exp $
+$Id: Contributers,v 1.5 1997/10/30 04:28:04 gdr Exp $
 
 The following people and organizations have contributed, knowingly or
 otherwise, to the code in this library.  Some other contributions were
@@ -14,6 +14,7 @@ James Brookes
 Douglas Gwyn
 Tilghman Lesher
 Devin Reade
+Henry Spencer
 Derek Taubert
 Dave Tribby
 Phillip Vandry
