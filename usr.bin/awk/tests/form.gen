@@ -1,0 +1,22 @@
+# form.gen - generate form letters
+#   input:  prototype file letter.text; data lines
+#   output: one form letter per data line
+
+BEGIN {
+    oldfs = FS;
+    FS = ":"
+    while (getline <"letter.text" > 0) # read form letter
+        form[++n] = $0
+    FS = oldfs;
+    # get country name from command-line argument
+    pat = ARGV[1]; ARGV[1] = "-"
+}
+
+$1 ~ pat {   for (i = 1; i <= n; i++) { # read data line for country
+        temp = form[i]
+        for (j = 1; j <= 3; j++)
+            gsub("#" j, $j, temp)
+	gsub("#4", $2/$3, temp)
+        print temp
+    }
+}

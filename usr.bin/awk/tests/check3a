@@ -1,0 +1,16 @@
+# check3 - print check information
+# check3a modified to print in format that prchecks can use
+
+BEGIN { RS = ""; FS = "\n" }
+/(^|\n)check/ {
+    for (i = 1; i <= NF; i++) {
+        split($i, f, "\t")
+        val[f[1]] = f[2]
+    }
+    printf("%5d\t%s\t%s\n",
+        val["check"],
+        sprintf("%.2f", val["amount"]),
+        val["to"])
+    for (i in val)
+        delete val[i]
+}

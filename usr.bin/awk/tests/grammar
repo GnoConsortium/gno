@@ -1,0 +1,10 @@
+Sentence -> Nounphrase Verbphrase
+Nounphrase -> the boy
+Nounphrase -> the girl
+Verbphrase -> Verb Modlist Adverb
+Verb -> runs
+Verb -> walks
+Modlist ->
+Modlist -> very Modlist
+Adverb -> quickly
+Adverb -> slowly

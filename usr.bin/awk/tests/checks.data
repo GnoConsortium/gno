@@ -1,0 +1,30 @@
+check	1021
+to	Champagne Unlimited
+amount	123.10
+date	1/1/87
+
+deposit
+amount	500.00
+date	1/1/87
+
+check	1022
+date	1/2/87
+amount	45.10
+to	Getwell Drug Store
+tax	medical
+
+check	1023
+amount	125.00
+to	International Travel
+date	1/3/87
+
+amount	50.00
+to	Carnegie Hall
+date	1/3/87
+check	1024
+tax	charitable contribution
+
+to	American Express
+check	1025
+amount	75.75
+date	1/5/87

@@ -1,0 +1,1206 @@
+# -------------------------------------------------------------------
+#
+# GNO/ME awk tests
+# Collected/Written by Dave Tribby * March 1998
+# $Id: dotests,v 1.1 1998/04/07 17:06:01 tribby Exp $
+#
+# -------------------------------------------------------------------
+
+# ### ---------------------------------------------------------------
+# ### Note: several test cases are commented-out with "# ###" because
+# ###       they use features such as pipes and the sort utility that
+# ###       are not working or implemented. When those features are
+# ###       available, the test cases should be run.
+# ### ---------------------------------------------------------------
+
+# Location of awk command to be tested
+set testcmd=/obj/gno/usr.bin/awk/awk
+
+# GNO's rm command is implemented under the cp command
+set RM="cp -p rm"
+
+# Use either cmp or diff for comparing files
+set compare="diff"
+
+# Create directory under /tmp to hold results
+$RM -rf /tmp/out >& /tmp/err.list
+mkdir /tmp/out
+
+# Create directory under /tmp to hold commands
+$RM -rf /tmp/cmd >& /tmp/err.list
+mkdir /tmp/cmd
+
+
+# Record starting time
+echo -n "Start testing command $testcmd at"
+date
+
+# -------------------------------------------------------------------
+# sed Regression Tests rewritten to use awk
+# -------------------------------------------------------------------
+
+# Create two data files (/tmp/lines1 and /tmp/lines2)
+
+echo 'BEGIN {'               > /tmp/cmd/mklist.awk
+echo 'for (i=1; i<15; i++)' >> /tmp/cmd/mklist.awk
+echo 'print "l1_"i}'        >> /tmp/cmd/mklist.awk
+$testcmd -f /tmp/cmd/mklist.awk > /tmp/lines1
+
+echo 'BEGIN {'               > /tmp/cmd/mklist.awk
+echo 'for (i=1; i<10; i++)' >> /tmp/cmd/mklist.awk
+echo 'print "l2_"i}'        >> /tmp/cmd/mklist.awk
+$testcmd -f /tmp/cmd/mklist.awk > /tmp/lines2
+
+
+# Create an empty /tmp/null to simulate /dev/null
+$testcmd 'BEGIN{}' > /tmp/null
+
+# ## test_args
+
+set tnum='1.2'
+echo "awk test $tnum"
+## $SED -n 's/^/e1_/p' /tmp/lines1 > /tmp/out/out.$tnum
+echo '{sub("^","e1_");print}' >  /tmp/cmd/cmd.awk
+$testcmd -f /tmp/cmd/cmd.awk /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='1.4'
+echo "awk test $tnum"
+## $SED -n 's/^/e1_/p' </tmp/lines1 > /tmp/out/out.$tnum
+$testcmd '{sub("^","e1_")}{print}' </tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+## echo 's/^/s1_/p' >/tmp/cmd/script1
+## echo 's/^/s2_/p' >/tmp/cmd/script2
+echo '{sub("^","s1_");' >  /tmp/cmd/script1
+echo 'print }'         >> /tmp/cmd/script1
+       
+echo '{sub("^","s1_");' > /tmp/cmd/script12
+echo 'print;'          >> /tmp/cmd/script12
+echo 'sub("^","s2_");' >> /tmp/cmd/script12
+echo 'print'           >> /tmp/cmd/script12
+echo 'print }'         >> /tmp/cmd/script12
+
+set tnum='1.9'
+echo "awk test $tnum"
+## $SED -n -f /tmp/cmd/script1 /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd       -f /tmp/cmd/script1 /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='1.10'
+echo "awk test $tnum"
+## $SED -n -f /tmp/cmd/script1 </tmp/lines1 > /tmp/out/out.$tnum
+$testcmd       -f /tmp/cmd/script1 </tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='1.11'
+echo "awk test $tnum"
+## $SED -n -e 's/^/e1_/p'      /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd '{sub("^","e1_")}{print}' /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='1.12'
+echo "awk test $tnum"
+## $SED -n -e 's/^/e1_/p'      </tmp/lines1 > /tmp/out/out.$tnum
+$testcmd '{sub("^","e1_")}{print}' </tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='1.13'
+echo "awk test $tnum"
+## $SED -e 's/^/e1_/p' -e 's/^/e2_/p' /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd '{sub("^","e1_")}{print}{sub("^","e2_")}{print}{print}' /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='1.14'
+echo "awk test $tnum"
+## $SED -f /tmp/cmd/script1 -f /tmp/cmd/script2 /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd    -f /tmp/cmd/script12                /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='1.16'
+echo "awk test $tnum"
+## $SED -e 's/^/e1_/p'                /tmp/lines1 /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd '{sub("^","e1_")}{print}{print}' /tmp/lines1 /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+echo '#n'          > /tmp/cmd/awk.cmd1
+echo '# A comment' >> /tmp/cmd/awk.cmd1
+echo ''            >> /tmp/cmd/awk.cmd1
+echo '{print}'     >> /tmp/cmd/awk.cmd1
+                   
+set tnum='1.18'
+echo "awk test $tnum"
+## $SED -f /tmp/cmd/awk.cmd1 </tmp/lines1 /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd    -f /tmp/cmd/awk.cmd1 </tmp/lines1             > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+
+# ## test_addr
+echo "Testing address ranges"
+set tnum='2.1'
+echo "awk test $tnum"
+## $SED -n -e '4p'        /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd '{if (NR==4) print}' /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='2.2'
+echo "awk test $tnum"
+## $SED -n -e '20p'        /tmp/lines1 /tmp/lines2 > /tmp/out/out.$tnum
+$testcmd '{if (NR==20) print}' /tmp/lines1 /tmp/lines2 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='2.3'
+echo "awk test $tnum"
+echo '{ s = $0 }'     > /tmp/cmd/printlast.awk
+echo 'END {print s}' >> /tmp/cmd/printlast.awk
+## $SED -n -e '$p'             /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd -f /tmp/cmd/printlast.awk /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='2.4'
+echo "awk test $tnum"
+## $SED -n -e '$p'             /tmp/lines1 /tmp/lines2 > /tmp/out/out.$tnum
+$testcmd -f /tmp/cmd/printlast.awk /tmp/lines1 /tmp/lines2 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+# Should not print anything
+set tnum='2.7'
+echo "awk test $tnum"
+## $SED -n -e '20p'        /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd '{if (NR==20) print}' /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare /tmp/out/out.$tnum /tmp/null
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='2.9'
+echo "awk test $tnum"
+## $SED -n '/l1_7/p' /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd '/l1_7/{print}' /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='2.12'
+echo "awk test $tnum"
+## $SED -n '1,4p'           /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd  '{if (NR < 5) print}' /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='2.13'
+echo "awk test $tnum"
+## $SED -n '1,$p' /tmp/lines1 /tmp/lines2 > /tmp/out/out.$tnum
+$testcmd '{print}'    /tmp/lines1 /tmp/lines2 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='2.17'
+echo "awk test $tnum"
+## $SED -n '/4/,/10/p' /tmp/lines1 /tmp/lines2 > /tmp/out/out.$tnum
+$testcmd '/4/,/10/{print}' /tmp/lines1 /tmp/lines2 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+
+# ## test_group
+echo "Brace and other grouping"
+set tnum='3.1'
+echo "awk test $tnum"
+echo 'NR >= 4 && NR <= 12 {'        >  /tmp/cmd/awk.cmd1
+echo '	sub("^","^")'               >> /tmp/cmd/awk.cmd1
+echo '	sub("$","$")'               >> /tmp/cmd/awk.cmd1
+echo '	sub("_","T") }'             >> /tmp/cmd/awk.cmd1
+echo '{	print        }'             >> /tmp/cmd/awk.cmd1
+## $SED -f /tmp/cmd/awk.cmd1 /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd -f /tmp/cmd/awk.cmd1 /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+# ## test_subst
+echo "Testing substitution commands"
+set tnum='8.1'
+echo "awk test $tnum"
+## $SED -e 's/./X/g' /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd '{gsub(".","X")}{print}' /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+set tnum='8.12'
+echo "awk test $tnum"
+## $SED -e 's/[123]/X/g'          /tmp/lines1 > /tmp/out/out.$tnum
+$testcmd '{gsub("[123]","X")}{print}' /tmp/lines1 > /tmp/out/out.$tnum
+echo "  Completion status = $status"
+echo "Checking results against control file (no differences expected)"
+$compare out/out.$tnum /tmp/out/out.$tnum
+echo "  $tnum comparison status = $status"
+echo ""
+
+# -------------------------------------------------------------------
+# Tests originally written for tr command; modified to test awk
+# -------------------------------------------------------------------
+
+set src="file1.mixed"
+set cmp="file1.UPPER"
+set dest="/tmp/$cmp"
+echo "Upshifting all characters in $src"
+$testcmd '{print toupper($0)}' < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+echo ""
+
+set cmp="file1.novowel"
+set dest="/tmp/$cmp"
+echo "Removing lower-case vowels in $src"
+## $SED -e's/[aeiouy]//g'           < $src > $dest
+echo '{gsub("[aeiouy]",""); print}' > /tmp/cmd/cmd.awk
+$testcmd -f /tmp/cmd/cmd.awk < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+echo ""
+
+set cmp="file1.nolower"
+set dest="/tmp/$cmp"
+echo "Removing lower-case letters and squeezing spaces in $src"
+## $SED -e's/[a-z]//g' -e's/  */ /g'             < $src > $dest
+echo '{gsub("[a-z]",""); gsub("  *"," "); print}' > /tmp/cmd/cmd.awk
+$testcmd -f /tmp/cmd/cmd.awk < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+echo ""
+
+
+# ----------------------------------------------------------------------
+# Tests selected from examples in The AWK Programming Language by
+# Aho, Kernighan, and Weinberger; taken from 
+#     http://plan9.bell-labs.com/who/bwk/
+# ----------------------------------------------------------------------
+
+# Create directory under /tmp to hold results
+$RM -rf /tmp/out2 >& /tmp/err.list
+mkdir /tmp/out2
+
+# ----- Chapter 1 -----
+
+set cmp="out2/ch1p11a.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p11a.awk
+$testcmd -f ch1p11a.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p12.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p12.awk
+$testcmd -f ch1p12.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p13.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p13.awk
+$testcmd -f ch1p13.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p22.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p22.awk
+$testcmd -f ch1p22.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p28.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p28.awk
+$testcmd -f ch1p28.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p30.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p30.awk
+$testcmd -f ch1p30.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p31.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p31.awk
+$testcmd -f ch1p31.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p32.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p32.awk
+$testcmd -f ch1p32.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p33.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p33.awk
+$testcmd -f ch1p33.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p33a.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p33a.awk
+$testcmd -f ch1p33a.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p34.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p34.awk
+$testcmd -f ch1p34.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p40a.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p40a.awk
+$testcmd -f ch1p40a.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p41.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p41.awk
+$testcmd -f ch1p41.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p51.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p51.awk
+$testcmd -f ch1p51.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p63.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p63.awk
+$testcmd -f ch1p63.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p67.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p67.awk
+$testcmd -f ch1p67.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p69.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p69.awk
+$testcmd -f ch1p69.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p78.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p78.awk
+$testcmd -f ch1p78.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch1p79.out"
+set dest="/tmp/$cmp"
+echo Testing ch1p79.awk
+$testcmd -f ch1p79.awk emp.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+# ----- Chapter 2 -----
+
+set cmp="out2/ch2p11.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p11.awk
+$testcmd -f ch2p11.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p20.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p20.awk
+$testcmd -f ch2p20.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+# 20a and 20b should produce the same results as 20
+set dest="/tmp/out2/ch2p20a.out"
+echo Testing ch2p20a.awk
+$testcmd -f ch2p20a.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set dest="/tmp/out2/ch2p20b.out"
+echo Testing ch2p20b.awk
+$testcmd -f ch2p20b.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p21.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p21.awk
+$testcmd -f ch2p21.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p22.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p22.awk
+$testcmd -f ch2p22.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p32.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p32.awk
+$testcmd -f ch2p32.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p34.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p34.awk
+$testcmd -f ch2p34.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p35.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p35.awk
+$testcmd -f ch2p35.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p36.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p36.awk
+$testcmd -f ch2p36.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p39.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p39.awk
+$testcmd -f ch2p39.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p40.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p40.awk
+$testcmd -f ch2p40.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p42.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p42.awk
+$testcmd -f ch2p42.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p44.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p44.awk
+$testcmd -f ch2p44.awk 0 50 10 > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p45.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p45.awk
+$testcmd -f ch2p45.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p46.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p46.awk
+$testcmd -f ch2p46.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p47.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p47.awk
+$testcmd -f ch2p47.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p48.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p48.awk
+$testcmd -f ch2p48.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p52.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p52.awk
+$testcmd -f ch2p52.awk countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+echo Testing ch2p53a.awk
+$testcmd -f ch2p53a.awk countries
+echo "  Completion status = $status"
+set cmp="bigpop"
+set dest="/tmp/out2/$cmp"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+set cmp="smallpop"
+set dest="/tmp/out2/$cmp"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+# ### ------------------------------------------------------------------
+# ### ch2p54.awk does not work due to use of (a) pipe  and (b) sort
+# ### ------------------------------------------------------------------
+# ### set cmp="out2/ch2p54.out"
+# ### set dest="/tmp/$cmp"
+# ### echo Testing ch2p54.awk
+# ### $testcmd -f ch2p54.awk countries > $dest
+# ### echo "  Completion status = $status"
+# ### echo "Checking results against control file $cmp (no differences expected)"
+# ### $compare $cmp $dest
+# ### echo "  comparison status = $status"
+
+set cmp="out2/ch2p60.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p60.awk
+$testcmd -f ch2p60.awk include.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set dest="/tmp/out2/ch2p62.out"
+echo Testing ch2p62.awk
+$testcmd -f ch2p62.awk include.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/ch2p61.out"
+set dest="/tmp/$cmp"
+echo Testing ch2p61.awk
+$testcmd -f ch2p61.awk p1 p2 "param 3" p4 > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+# ----- Chapter 3 -----
+
+
+set cmp="out2/sum3.out"
+set dest="/tmp/$cmp"
+echo Testing sum3
+$testcmd -f sum3 columns.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/percent.out"
+set dest="/tmp/$cmp"
+echo Testing percent
+$testcmd -f percent columns.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/histo.out"
+set dest="/tmp/$cmp"
+set hold="/tmp/out2/holdrand"
+echo Testing genrand.awk and histogram
+$testcmd -f genrand.awk > $hold
+echo "  Completion status = $status"
+$testcmd -f histogram < $hold > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set dest="${dest}2"
+echo Testing histans1.awk
+$testcmd -f histans1.awk < $hold > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/datecvt.out"
+set dest="/tmp/$cmp"
+echo Testing datecvt
+$testcmd -f datecvt date.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/checkfix.out"
+set dest="/tmp/$cmp"
+set hold="/tmp/out2/awk.hold"
+echo Testing check3a/checkfix.ans
+$testcmd -f check3a < checks.data > $hold
+echo "  Completion status = $status"
+$testcmd -f checkfix.ans < $hold  > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/check1.out"
+set dest="/tmp/$cmp"
+echo Testing check1
+$testcmd -f check1 checks.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/bundle.out"
+set dest="/tmp/$cmp"
+echo Testing bundle
+cp bundle unbundle /tmp
+$testcmd -f bundle /tmp/bundle /tmp/unbundle > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+$RM -f /tmp/bundle /tmp/unbundle
+
+echo Testing unbundle
+$testcmd -f unbundle $dest
+echo "  Completion status = $status"
+set cmp="bundle"
+echo "Checking results against original file $cmp (no differences expected)"
+$compare $cmp /tmp/$cmp
+echo "  comparison status = $status"
+set cmp="unbundle"
+echo "Checking results against original file $cmp (no differences expected)"
+$compare $cmp /tmp/$cmp
+echo "  comparison status = $status"
+$RM -f /tmp/bundle /tmp/unbundle
+
+
+set cmp="out2/ny2.out"
+set dest="/tmp/$cmp"
+echo Testing ny2.awk
+$testcmd -f ny2.awk addr.1 > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+# ----- Chapter 4 -----
+
+# ### ------------------------------------------------------------------
+# ### prep1 does not work due to use of (a) pipe  and (b) sort
+# ### ------------------------------------------------------------------
+# ### set cmp="out2/form1.out"
+# ### set dest="/tmp/$cmp"
+# ### echo Testing prep1 and form1
+# ### $testcmd -f prep1 countries | $testcmd -f form1 > $dest
+# ### echo "  Completion status = $status"
+# ### echo "Checking results against control file $cmp (no differences expected)"
+# ### $compare $cmp $dest
+# ### echo "  comparison status = $status"
+
+# ### ------------------------------------------------------------------
+# ### prep2 does not work due to use of (a) pipe  and (b) sort
+# ### ------------------------------------------------------------------
+# ### set cmp="out2/form2.out"
+# ### set dest="/tmp/$cmp"
+# ### echo Testing prep2 and form2
+# ### $testcmd -f prep2 countries | $testcmd -f form2 > $dest
+# ### echo "  Completion status = $status"
+# ### echo "Checking results against control file $cmp (no differences expected)"
+# ### $compare $cmp $dest
+# ### echo "  comparison status = $status"
+
+set cmp="out2/infoG.out"
+set dest="/tmp/$cmp"
+echo "Testing info.awk (Germany)"
+$testcmd -f info.awk Germany < countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/infoUS.out"
+set dest="/tmp/$cmp"
+echo "Testing info.awk (US)"
+$testcmd -f info.awk US < countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/form.gen.out"
+set dest="/tmp/$cmp"
+echo "Testing form.gen (England)"
+$testcmd -f form.gen England < countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/table.out"
+set dest="/tmp/$cmp"
+echo Testing table
+$testcmd -f table numbers.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/table1.out"
+set dest="/tmp/$cmp"
+echo Testing table1
+$testcmd -f table1 numbers.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/avgarea.out"
+set dest="/tmp/$cmp"
+echo "Testing avgarea.awk (from command line)"
+$testcmd '{ area += $3 }; END { print area/NR }' countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/join.out"
+set dest="/tmp/$cmp"
+echo Testing join.awk
+$testcmd -f join.awk countries.sort capitals.sort > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/merge.out"
+set dest="/tmp/$cmp"
+echo Testing merge.awk
+$testcmd -f merge.awk capitals countries > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+
+# ----- Chapter 5 -----
+
+
+set cmp="out2/comb.out"
+set dest="/tmp/$cmp"
+echo "Testing comb.ans"
+echo "5 10" | $testcmd -f comb.ans  > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/bridge.out"
+set dest="/tmp/$cmp"
+echo "Testing bridge.ans"
+$testcmd -f bridge.ans  > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/sentgen.out"
+set dest="/tmp/$cmp"
+echo "Testing sentgen"
+$testcmd -f sentgen sentgen.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+set dest="/tmp/$cmp"
+
+set dest="${dest}2"
+echo "Testing sentgen2"
+$testcmd -f sentgen2 sentgen.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+# ----- Chapter 6 -----
+
+set cmp="out2/sum.list.out"
+set dest="/tmp/$cmp"
+echo "Testing sum.asm (listing)"
+$testcmd -f asm.print sum.asm sum.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+diff $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/sum.out"
+set dest="/tmp/$cmp"
+echo "Testing sum.asm (execution)"
+$testcmd -f asm sum.asm sum.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/sortgen.out"
+set dest="/tmp/$cmp"
+echo "Testing sortgen"
+$testcmd -f sortgen sortgen.in > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+# ### ------------------------------------------------------------------
+# ### This test causes a system halt; perhaps due to use of pipe
+# ### ------------------------------------------------------------------
+# ### set cmp="out2/parser.out"
+# ### set dest="/tmp/$cmp"
+# ### echo "Testing awk.parser"
+# ### $testcmd -f awk.parser parser.in > $dest
+# ### echo "  Completion status = $status"
+# ### echo "Checking results against control file $cmp (no differences expected)"
+# ### $compare $cmp $dest
+# ### echo "  comparison status = $status"
+
+
+# ----------------------------------------------------------------------
+# Additional test cases based upon man page and analysis
+# ----------------------------------------------------------------------
+
+set cmp="out2/printenv.out"
+set dest="/tmp/$cmp"
+setenv TestVal="MixedCase"
+setenv TESTVAL="UPPERONLY"
+setenv testval="loweronly"
+echo "Testing printenv.awk"
+$testcmd -f printenv.awk TestVal badname > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/split1.out"
+set dest="/tmp/$cmp"
+echo "Testing split with default FS"
+echo "f1:f2 f3:f4" | $testcmd '{print $1,$2}' > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/split2.out"
+set dest="/tmp/$cmp"
+echo "Testing split with -F ':'"
+echo "f1:f2 f3:f4" | $testcmd -F':' '{print $1,$2}' > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set dest="/tmp/$cmp.2"
+echo "Testing split with FS = ':'"
+echo "f1:f2 f3:f4" | $testcmd -v FS=':' '{print $1,$2}' > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/array.out"
+set dest="/tmp/$cmp"
+echo "Testing array.awk"
+$testcmd -f array.awk array1.data array2.data > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/factorial.out"
+set dest="/tmp/$cmp"
+echo "Testing recursion with factorial.awk"
+$testcmd -f factorial.awk 10 > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="out2/codesize.out"
+set dest="/tmp/$cmp"
+echo "Testing codesize.awk"
+$testcmd -f codesize.awk codesize.txt > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+set cmp="/tmp/out2/wc1.out"
+wc [d-z]*.awk > $cmp
+set dest="/tmp/out2/wc2.out"
+echo "Testing wc emulation with wc.awk"
+$testcmd -f wc.awk [d-z]*.awk > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+
+# ----------------------------------------------------------------------
+# Syntax error messages
+# ----------------------------------------------------------------------
+echo "***** Syntax Error Messages *****"
+  
+set cmp="out2/extra1.err"
+set dest="/tmp/$cmp"
+echo "Testing error message: extra }"
+$testcmd '{}}' >& $dest
+echo "  Completion status = $status  (expected 2)"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/extra2.err"
+set dest="/tmp/$cmp"
+echo "Testing error message: extra )"
+$testcmd '{)}' >& $dest
+echo "  Completion status = $status  (expected 2)"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/extra3.err"
+set dest="/tmp/$cmp"
+echo "Testing error message: extra ]"
+$testcmd '{]}' >& $dest
+echo "  Completion status = $status  (expected 2)"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+set cmp="out2/return.err"
+set dest="/tmp/$cmp"
+echo "Testing error message: return not in function"
+$testcmd '{return}' >& $dest
+echo "  Completion status = $status  (expected 2)"
+echo "Checking results against control file $cmp (no differences expected)"
+$compare $cmp $dest
+echo "  comparison status = $status"
+
+# -------------------------------------------------------------------
+# Error messages
+# -------------------------------------------------------------------
+echo "***** Error Messages *****"
+
+set dest="/tmp/err.cond"
+
+echo ""
+echo "Expected error: unknown option"
+$testcmd -x < /tmp/null > $dest
+echo "  Error completion status = $status (expected: 2)"
+
+echo ""
+set src="badname"
+echo "Expected error: can't open file $src"
+$testcmd -f $src > $dest
+echo "  Error completion status = $status (expected: 2)"
+
+# Record ending time
+echo -n "Done testing command $testcmd at"
+date
