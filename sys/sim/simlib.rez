@@ -1,0 +1,34 @@
+/*
+ * Resources for version and comment
+ *
+ * $Id: simlib.rez,v 1.1 1999/02/08 05:53:38 gdr-ftp Exp $
+ */
+#define LIB     "libsim"
+#define DESC    "Serial Interrupt Manager library.\n"
+#define GNO_VER "GNO v2.0.6\n"
+
+#include "Types.rez"
+#include "builddate.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 0, 0,	/* Version 1.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	LIB,	/* Program name */
+        DESC GNO_VER
+        BUILD_DATE
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	LIB " v1.0\n"
+	DESC GNO_VER
+	BUILD_DATE
+};

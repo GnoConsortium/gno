@@ -1,7 +1,10 @@
 * Serial Interrupt Manager Permanent INIT file
-
+	setcom 60
 	case	on
 	mcopy	sim.mac
+
+dummysim2 start				; ends up in .root
+	end
 
 ************************************************************************
 
@@ -57,8 +60,10 @@ SIMINIT	START
 	sta	IntVectModem+2
                sta	ExtVect1
                sta	ExtVect1+2
-               sta	ExtVect2
-               sta	ExtVect2+2
+* gdr:	commented out because it seems that the ExtVect2 code was never
+*	finished.
+*	sta	ExtVect2
+*	sta	ExtVect2+2
 	sta	ourSerFlag	no SCC interrupts are handled
 
 * Turn off interrupts while we do the dirty deed
@@ -697,13 +702,14 @@ checkExternal	START
 * check first external vector
 	lda	>ExtVect1
 	ora	>ExtVect1+2
-	beq	checksecond
-	jsl	ExtVect1
-	bcs	gotit
-checksecond	lda	>ExtVect2
-	ora	>ExtVect2+2
-	beq	neither
-	jsl	ExtVect2
+*	beq	checksecond			; originally beq checksecond
+	beq	neither				; rather than beq neither,
+	jsl	ExtVect1			; but the ExtVect2 code seems
+	bcs	gotit				; not to have been finished
+*checksecond	lda	>ExtVect2
+*	ora	>ExtVect2+2
+*	beq	neither
+*	jsl	ExtVect2
 gotit	rts
 neither	clc
 	rts

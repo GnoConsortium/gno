@@ -1,5 +1,9 @@
+	setcom 60
 	mcopy	simlib.mac
 	copy	simequates.equ
+
+dummysim1 start				; ends up in .root
+	end
 
 * High-level access library for SIM tool
 
