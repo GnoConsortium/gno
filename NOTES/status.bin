@@ -1,6 +1,6 @@
 This file lists the status of the various files in the GNO base distribution.
 
-Version: $Id: status.bin,v 1.9 1998/03/06 05:55:30 gdr-ftp Exp $
+Version: $Id: status.bin,v 1.10 1998/03/31 15:22:15 gdr-ftp Exp $
 
 Person Working on Component ("Owner")
 -------------------------------------
@@ -10,6 +10,7 @@ evan	Evan Day
 gdr	Devin Reade
 lb	Leslie Barstow
 matt	Matt Ackeret
+mober	Scott Moberly	(not part of gno-devel)
 sonk	Soenke Behrens
 sr	Steve Reeves
 tl	Tilghman Lesher
@@ -46,10 +47,10 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 -------------------------------------------------------------------------------------------------------
 */system			Y	Y	-	dir	-	-	-	-	-
 */system/Desk.Accs		Y	Y	-	dir	-	-	-	-	-
-*/system/Desk.Accs/gnosnooper	Y	Y	dt
-*/system/Desk.Accs/gsi		Y	[Superceded by TMTerm?]
+*/system/Desk.Accs/gnosnooper	Y	Y	dt	
+*/system/Desk.Accs/gsi		Y									(Superceded by TMTerm?)
 */system/Desk.Accs/tmterm	N	Y	dave
-*/system/Desk.Accs/suspda 	Y	Y	dave
+*/system/Desk.Accs/suspda 	Y	Y	dave	Y				Y
 */system/Drivers		Y	Y	-	dir	-	-	-	-	-
 */system/Drivers/fileport 	Y	Y	dt
 */system/Drivers/fileport.data 	Y	Y	dt
@@ -59,22 +60,22 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /					Y	gdr	dir	-	-	-	-	Y
 /HFSinclude				Y	gdr	dir	-	-	-	-	Y
 /bin				Y	Y	gdr	dir	-	-	-	-	Y
-/bin/aroff			Y	Y
-/bin/binprint			Y
+/bin/aroff			Y	Y		Y				Y
+/bin/binprint			Y			Y				Y
 /bin/cat			Y	Y	dave	Y	T	Y	Y	Y	RI
-/bin/center			Y
+/bin/center			Y			Y				Y
 /bin/chmod				Y	lb
 /bin/chtyp			Y	Y	evan	Y	T	Y	Y	Y	RI
 /bin/cmp			Y	Y	evan	Y	T	Y	Y	Y	RI
 /bin/compress			Y	Y	evan
-/bin/conv			Y			(should be replaced by /usr/bin/udl)
+/bin/conv			Y				(should be replaced by /usr/bin/udl)
 /bin/cp				Y	Y
 /bin/csh
-/bin/date			Y	Y	tl
+/bin/date			Y	Y	tl	
 /bin/dd
 /bin/df					Y	evan	Y	T	Y	Y	Y	RI
 /bin/domainname
-/bin/du				Y	Y	evan
+/bin/du				Y	Y	evan	
 /bin/echo				Y	dt
 /bin/ed
 /bin/egrep			Y	Y	evan
@@ -86,20 +87,20 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /bin/gsh			Y	Y		Y
 /bin/head			Y	Y	dave	Y	T	Y	Y	Y	RI
 /bin/hostname				Y	dt
-/bin/info			Y		lb	(rename to something else)
+/bin/info			Y		lb		(rename to something else)
 /bin/kill				Y	dave	Y	T	Y	Y	Y	RI
-/bin/less			Y	Y
+/bin/less			Y	Y		Y				Y
 /bin/ln					N
-/bin/ls				Y	Y
-/bin/make			Y	O
-/bin/makemake			Y	O
-/bin/mkdir			Y	Y	dt
-/bin/more			Y	Y	matt
+/bin/ls				Y	Y		Y				Y
+/bin/make			Y	Y		Y				Y
+/bin/makemake			Y	Y		Y				Y
+/bin/mkdir			Y	Y	dt	Y				Y
+/bin/more			Y	Y	matt	
 /bin/mv					Y
-/bin/passwd			Y	Y
+/bin/passwd			Y	Y		Y				Y
 /bin/pax				N
-/bin/ps					Y		(replace functionality of /usr/bin/eps)
-/bin/purge			Y	Y
+/bin/ps					Y		Y				Y	  (formerly eps)
+/bin/purge			Y	Y		Y				Y
 /bin/pwd				Y	dave	Y	T	Y	Y	Y	RI
 /bin/rcp				Y	dt	Y	T	Y		Y	RI
 /bin/rm					Y
@@ -109,23 +110,23 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /bin/shutdown			Y
 /bin/sleep			Y	Y	dave	Y	T	Y	Y	Y	RI
 /bin/split			Y	Y	dave	Y	T	Y		Y	RI (test waiting on sed)
-/bin/strings			Y	Y	lb
-/bin/stty			Y	Y
+/bin/strings			Y	Y	lb	
+/bin/stty			Y	Y		Y				Y
 /bin/su				Y	Y
 /bin/sync				Y
 /bin/tail			Y	Y	dave	Y	T	Y	Y	Y	RI
-/bin/tar			Y	Y	tl
+/bin/tar			Y	Y	tl	
 /bin/tee			Y	Y	gdr	Y	T	Y	Y	Y	RI
-/bin/test				Y	gdr	Y	T	Y		Y	RI
-/bin/time			Y	Y	dave
-/bin/touch			Y	Y	dt
+/bin/test				Y	gdr	Y	T	Y	Y	Y	RI
+/bin/time			Y	Y	dave	Y				Y
+/bin/touch			Y	Y	dt	Y				Y
 /bin/tr				Y	Y	dave	Y	T	Y	Y	Y	RI
 /bin/true				Y	gdr	Y	T	Y	Y	Y	RI
 /bin/uncompress			Y	Y
-/bin/uname			N	Y	sr	Y	T			Y
+/bin/uname			N	Y	sr	Y	T	Y	Y	Y	RI
 /bin/uniq			Y	Y	dave	Y	T	Y	Y	Y	RI
-/bin/upper			Y
-/bin/vi				Y	Y
+/bin/upper			Y			Y				Y
+/bin/vi				Y	Y		Y				Y
 /bin/wc				Y	Y	dave	Y	T	Y	Y	Y	RI
 /bin/yes			Y		dave	Y	T	Y	Y	Y	RI
 /dev				Y	Y	gdr	dir	-	-	-	-
@@ -133,7 +134,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /dev/null				Y	dt
 /dev/printer			Y	Y	dt
 /doc					Y	gdr	dir	-	-	-	-
-/etc				Y	Y	gdr	dir	-	-	-	-	Y
+/etc				Y	Y	gdr	dir	-	-	-	-
 /etc/cronlog		(cron)
 /etc/crontab		(cron)
 /etc/freeze.cnf		(freeze)
@@ -180,27 +181,28 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /sbin/initd		(initd)	Y	Y
 /sbin/newfs
 /sbin/ping
-/sbin/renram5				Y	gdr
+/sbin/renram5				Y	gdr	Y	T	Y	Y	Y	RI
 /startinst			Y
 /usr				Y	Y	gdr	dir	-	-	-	-	Y
 /usr/bin			Y	Y	gdr	dir	-	-	-	-	Y
+/usr/bin/alarm			Y			Y				Y
 /usr/bin/apply				N
-/usr/bin/apropos	(man)		Y	gdr	Y
+/usr/bin/apropos	(man)		Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/ar				N
 /usr/bin/asml			N	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/assemble		N	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/at
-/usr/bin/aw30			Y
-/usr/bin/awk				Y	dave
+/usr/bin/aw30			Y			Y				Y
+/usr/bin/awk				Y	dave	Y
 /usr/bin/bang				Y
-/usr/bin/banner			Y
-/usr/bin/basename			Y	gdr
+/usr/bin/banner			Y			Y				Y
+/usr/bin/basename			Y	mober	Y	T	Y	Y	Y	RI
 /usr/bin/biff
 /usr/bin/bison			Y	N
-/usr/bin/cal			Y
-/usr/bin/calendar
+/usr/bin/cal			Y			Y				Y
+/usr/bin/calendar					Y				Y
 /usr/bin/catrez				Y	dave	Y	T	Y	Y	Y	RI
-/usr/bin/cclean				Y	
+/usr/bin/cclean				Y	sonk
 /usr/bin/cjpeg				N		(add on)
 /usr/bin/cksum			N	Y	dave	Y	Y	Y	Y	Y	RI
 /usr/bin/cmpl			Y	Y	gdr	Y	T	Y	Y	Y	RI
@@ -211,23 +213,22 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/bin/compile		Y	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/copycat		Y	Y	tl
 /usr/bin/cpp					gdr	Y				Y
-/usr/bin/ctags				Y	dt	Y	T
+/usr/bin/ctags				Y	dt	Y	T	Y	Y	Y	RI
 /usr/bin/cut				Y	dave	Y	T	Y	Y	Y	RI
 /usr/bin/day			Y
-/usr/bin/describe	(describe)	Y	gdr	Y	T	Y	Y	Y	R
+/usr/bin/describe	(describe)	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/dhrystone		Y	N
 /usr/bin/diff				Y	gdr
-/usr/bin/dirname			Y	gdr
+/usr/bin/dirname			Y	mober	Y	T	Y	Y	Y	RI
 /usr/bin/dmake				Y	gdr
 /usr/bin/env				Y	gdr
-/usr/bin/eps			Y	N		(replace with updated /bin/ps)
 /usr/bin/ffdir			Y
 /usr/bin/file
 /usr/bin/find					gdr
 /usr/bin/finger
 /usr/bin/flex			Y	N
 /usr/bin/fmt				Y	gdr	Y	T	Y	Y	Y	RI
-/usr/bin/fold			Y
+/usr/bin/fold			Y			Y				Y
 /usr/bin/ftp			N	Y	dt	Y		Y		Y	RI
 /usr/bin/getopt
 /usr/bin/getvers		Y	Y	dave
@@ -235,27 +236,27 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/bin/gunzip				Y
 /usr/bin/gzip				Y
 /usr/bin/hear			Y
-/usr/bin/help			Y	Y	gdr	Y	T	-	Y	Y	R
+/usr/bin/help			Y	Y	gdr	Y	T	-	Y	Y	RI
 /usr/bin/hexdump
-/usr/bin/install			Y	gdr	Y	T	Y	Y	Y	R
+/usr/bin/install			Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/join
-/usr/bin/last				Y	dt	Y	[G]
-/usr/bin/launch			Y	Y	tl
-/usr/bin/link	(ie: ld)	Y	Y	gdr	
+/usr/bin/last				Y	dt	Y	[G]	Y	Y	Y	RI
+/usr/bin/launch			Y	Y	tl	
+/usr/bin/link	(ie: ld)	Y	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/locate					gdr
 /usr/bin/logger				Y
 /usr/bin/logname
 /usr/bin/lpq		(lpr)		Y	dt
 /usr/bin/lpr		(lpr)	Y	Y	dt
 /usr/bin/lprm		(lpr)		Y	dt
-/usr/bin/lseg			Y	Y	dave	Y	T	Y	Y	Y	R
+/usr/bin/lseg			Y	Y	dave	Y	T	Y	Y	Y	RI
 /usr/bin/mkdep
 /usr/bin/makedmake				gdr
-/usr/bin/man			Y	Y	gdr	Y
+/usr/bin/man			Y	Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/news			Y	N		(waiting on NNTP/UUCP)
 /usr/bin/nm
 /usr/bin/nosh	(formerly zsh)		Y	lb
-/usr/bin/nroff			Y	Y	gdr	Y	T	Y	Y	Y	R
+/usr/bin/nroff			Y	Y	gdr	Y	T	Y	Y	Y	R	(using termcap)
 /usr/bin/patch				Y	gdr
 /usr/bin/pman			Y
 /usr/bin/pr
@@ -263,10 +264,11 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/bin/printf
 /usr/bin/qtime			Y
 /usr/bin/rb			Y	Y
+/usr/bin/removerez			Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/reset			Y
-/usr/bin/rlogin				Y	dt	Y	[G]
+/usr/bin/rlogin				Y	dt	Y	[G]	Y		Y	RI
 /usr/bin/rot13				Y	lb
-/usr/bin/rsh				Y	dt	Y	[G]
+/usr/bin/rsh				Y	dt	Y	[G]	Y		Y	RI
 /usr/bin/rx			Y	Y
 /usr/bin/rz			Y	Y
 /usr/bin/sb			Y
@@ -274,7 +276,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/bin/sed				Y	dave	Y	Y	Y	Fail	Y	RI
 /usr/bin/see			Y
 /usr/bin/sendmail			N		(waiting on NNTP/UUCP)
-/usr/bin/setvers		Y	Y	dave
+/usr/bin/setvers		Y	Y	dave	
 /usr/bin/shar
 /usr/bin/size
 /usr/bin/sort				Y	gdr	Y	(supercedes msort/dsort)
@@ -286,20 +288,20 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/bin/telnet				Y	dt
 /usr/bin/tftp
 /usr/bin/tset
-/usr/bin/tsort			Y
+/usr/bin/tsort			Y			Y				Y
 /usr/bin/tty
 /usr/bin/unshar			Y	Y
 /usr/bin/unzip			Y
 /usr/bin/uptime			Y	Y
 /usr/bin/uudecode
 /usr/bin/uuencode
-/usr/bin/wall				Y	dt	Y	[G]
-/usr/bin/whatis		(man)		Y	gdr	Y
+/usr/bin/wall				Y	dt	Y	[G]	Y	Y	Y	RI
+/usr/bin/whatis		(man)		Y	gdr	Y	T	Y	Y	Y	RI
 /usr/bin/whereis			Y	gdr	Y	T	Y	Y	Y	R
 /usr/bin/which
-/usr/bin/who			Y	Y	dt	Y				Y
-/usr/bin/whois				Y	dt	Y	[G]
-/usr/bin/write				Y	lb
+/usr/bin/who			Y	Y	dt	Y	T	Y	Y	Y	RI
+/usr/bin/whois				Y	dt	Y	[G]	Y		Y	RI
+/usr/bin/write				Y	lb	
 /usr/bin/xargs
 /usr/bin/yankit			Y	Y
 /usr/bin/zsh				Y	lb	(renamed to nosh)
@@ -321,7 +323,7 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/lib/tmac/tmac.s	(nroff)	Y
 /usr/orca/bin/occ			Y	sonk
 /usr/orca/bin/rc			Y	sonk
-/usr/orca/bin/udl			Y	sonk	Y	T	Y	Y	Y	R
+/usr/orca/bin/udl			Y	sonk	Y	T	Y	Y	Y	RI
 /usr/man			Y	Y	gdr	dir	-	-	-	-	Y
 /usr/man/cat1			Y	Y	gdr	dir	-	-	-	-	Y
 /usr/man/cat2			Y	Y	gdr	dir	-	-	-	-	Y
@@ -348,23 +350,23 @@ Program			[Note]	204	Req	Owner	Source	Man	Compile	Test	Target	Target
 /usr/man/man8			Y	Y	gdr	dir	-	-	-	-	Y
 /usr/man/man8/intro.8		Y	Y	gdr			-			Y
 /usr/sbin			Y	Y	gdr	dir	-	-	-	-	Y
-/usr/sbin/catman	(man)		Y	gdr	Y
-/usr/sbin/cron			Y	Y
-/usr/sbin/descc		(describe)	Y	gdr	Y	T	Y	Y	Y	R
-/usr/sbin/descu		(describe)	Y	gdr	Y	T	Y	Y	Y	R
-/usr/sbin/getty			Y	Y
+/usr/sbin/catman	(man)		Y	gdr	Y	T	Y	Y	Y	RI
+/usr/sbin/cron			Y	Y		Y				Y
+/usr/sbin/descc		(describe)	Y	gdr	Y	T	Y	Y	Y	RI
+/usr/sbin/descu		(describe)	Y	gdr	Y	T	Y	Y	Y	RI
+/usr/sbin/getty			Y	Y		Y				Y
 /usr/sbin/inetd				Y	dt	Y	[G]
-/usr/sbin/login			Y	Y	dt	Y	[G]
+/usr/sbin/login			Y	Y	dt	Y	[G]	Y		Y	RI
 /usr/sbin/lpc		(lpr)		Y	dt
 /usr/sbin/lpd		(lpr)	Y	Y	dt
 /usr/sbin/lptest	(lpr)		Y	dt
-/usr/sbin/makewhatis	(man)		Y	gdr	Y
+/usr/sbin/makewhatis	(man)		Y	gdr	Y	T	Y	Y	Y	RI
 /usr/sbin/mctrl			Y
 /usr/sbin/mktmp
-/usr/sbin/newuser				(maybe replace with adduser?) (update to use /home vice /user, or maybe a conf file)
-/usr/sbin/newuserv				(maybe replace with adduser?) (update to use /home vice /user, or maybe a conf file)
-/usr/sbin/nogetty		Y
-/usr/sbin/runover		Y	Y
+/usr/sbin/newuser					Y				Y
+/usr/sbin/newuserv					Y				Y
+/usr/sbin/nogetty		Y			Y				Y
+/usr/sbin/runover		Y	Y		
 /usr/sbin/uptimed		Y
 /usr/spool			Y	N	-	dir	-	-	-	-	-
 /var/adm				Y	gdr	dir	-	-	-	-	Y
