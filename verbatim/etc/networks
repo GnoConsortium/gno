@@ -1,0 +1,9 @@
+#
+# This file provides symbolic names to network addresses
+#
+# $Id: networks,v 1.1 1999/02/11 21:10:49 gdr-ftp Exp $
+#
+loopback	127.0.0.0
+
+# Modify this as apporpriate.
+# slipnet	192.168.51.1

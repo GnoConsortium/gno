@@ -1,0 +1,9 @@
+#
+# This file provides name to IP mappings in the absence of a DNS.
+#
+# $Id: hosts,v 1.1 1999/02/11 21:10:49 gdr-ftp Exp $
+#
+127.0.0.1	localhost
+
+# Modify this as apporpriate if you have a static IP
+# 192.168.51.2	myGS.example.com myGS

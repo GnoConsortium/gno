@@ -1,7 +1,7 @@
 # See file how.to for an explanation of entries found in this
 # default inittab file
 #
-# $Id: inittab,v 1.1 1998/04/10 17:08:29 gdr-ftp Exp $
+# $Id: inittab,v 1.2 1999/02/11 21:10:49 gdr-ftp Exp $
 #
 # kill, idle, crash, panic defaults, respectively
 kd:s0123456789:runl::k55n6
@@ -23,7 +23,13 @@ su:s:rest::/usr/sbin/runover .ttyco /bin/gsh
 #
 co:12378:rest::/usr/sbin/getty std.19200 .ttyco
 #
-# start TCP/IP processes (GS-TCP)
+# Initialize the printer and modem port line speeds.  Make sure the bps
+# rate matches what you actually need
+#
+# pr:2348:once:i:/usr/sbin/runover .ttyb /bin/stty 38400
+# md:2348:once:i:/usr/sbin/runover .ttya /bin/stty 38400
+#
+# Start TCP/IP processes (GS-TCP)
 # ip:2348:once::/usr/sbin/tcpip
 # id:234:once::/usr/sbin/inetd
 #
