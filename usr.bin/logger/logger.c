@@ -31,6 +31,7 @@
  * SUCH DAMAGE.
  */
 
+#ifndef __GNO__
 #ifndef lint
 static char copyright[] =
 "@(#) Copyright (c) 1983, 1993\n\
@@ -40,6 +41,7 @@ static char copyright[] =
 #ifndef lint
 static char sccsid[] = "@(#)logger.c	8.1 (Berkeley) 6/6/93";
 #endif /* not lint */
+#endif /* not __GNO__ */
 
 #include <errno.h>
 #include <unistd.h>
@@ -47,12 +49,15 @@ static char sccsid[] = "@(#)logger.c	8.1 (Berkeley) 6/6/93";
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#ifdef __GNO__
+#include <gno/gno.h>
+#endif
 
 #define	SYSLOG_NAMES
 #include <syslog.h>
 
-int	decode __P((char *, CODE *));
-int	pencode __P((char *));
+long	decode __P((char *, CODE *));
+long	pencode __P((char *));
 void	usage __P((void));
 
 /*
@@ -62,13 +67,16 @@ void	usage __P((void));
  *	log.
  */
 int
-main(argc, argv)
-	int argc;
-	char *argv[];
+main(int argc, char **argv)
 {
-	int ch, logflags, pri;
-	char *tag, buf[1024];
+	int ch, logflags;
+	long pri;
+	char *tag;
+	static char buf[1024];
 
+#ifdef __GNO__
+	__REPORT_STACK();
+#endif
 	tag = NULL;
 	pri = LOG_NOTICE;
 	logflags = 0;
@@ -80,6 +88,10 @@ main(argc, argv)
 				    optarg, strerror(errno));
 				exit(1);
 			}
+#ifdef __appleiigs__
+			/* if we don't do this, then fgets() crashes */
+			fsettext(stdin);
+#endif
 			break;
 		case 'i':		/* log process id also */
 			logflags |= LOG_PID;
@@ -135,12 +147,11 @@ main(argc, argv)
 /*
  *  Decode a symbolic name to a numeric value
  */
-int
-pencode(s)
-	register char *s;
+long
+pencode(register char *s)
 {
 	char *save;
-	int fac, lev;
+	long fac, lev;
 
 	for (save = s; *s && *s != '.'; ++s);
 	if (*s) {
@@ -166,10 +177,8 @@ pencode(s)
 	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
 }
 
-int
-decode(name, codetab)
-	char *name;
-	CODE *codetab;
+long
+decode(char *name, CODE *codetab)
 {
 	register CODE *c;
 
@@ -184,7 +193,7 @@ decode(name, codetab)
 }
 
 void
-usage()
+usage(void)
 {
 	(void)fprintf(stderr,
 	    "logger: [-is] [-f file] [-p pri] [-t tag] [ message ... ]\n");

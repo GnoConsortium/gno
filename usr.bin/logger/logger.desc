@@ -1,0 +1,9 @@
+Name:    logger
+Version: 1.0 (23 Jun 98)
+Shell:   GNO
+Author:  Ported by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /usr/bin
+FTP:     ftp.gno.org
+
+Log messages to system log files via syslog(3) interface.
