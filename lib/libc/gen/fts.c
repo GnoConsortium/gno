@@ -75,7 +75,7 @@ static u_short   fts_stat __P((FTS *, FTSENT *, int));
 #define ISSET(opt)      (sp->fts_options & opt)
 #define SET(opt)        (sp->fts_options |= opt)
 
-#define CHDIR(sp, path) (!ISSET(FTS_NOCHDIR) && assert(path!=NULL) && chdir(path))
+#define CHDIR(sp, path) (!ISSET(FTS_NOCHDIR) && (assert(path!=NULL), 1) && chdir(path))
 #define FCHDIR(sp, fd)  (!ISSET(FTS_NOCHDIR) && fchdir(fd))
 
 /* fts_build flags */
