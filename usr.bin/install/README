@@ -1,4 +1,4 @@
-$Id: README,v 1.1 1996/09/03 03:54:55 gdr Exp $
+$Id: README,v 1.2 1997/10/30 04:14:21 gdr Exp $
 
 As the describe file says, install(1) is a utility similar to cp(1),
 except that it does a few more things and is intended for use in
@@ -14,3 +14,17 @@ encounter problems or bugs.
 
 Devin Reade
 March 1996
+
+
+CHANGE LOG
+==========
+
+v1.1	August 1997
+	- Incorporated install(1) into base GNO v2.0.6 distribution
+	- Use the GNO v2.0.6 libcontrib library
+	- Symbolic mode arguments now use mode 0000 as a starting point,
+	  rather than the original file mode.  This corresponds to the
+	  usual UNIX usage.
+
+v1.0	March 1996
+	Initial Version

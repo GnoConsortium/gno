@@ -1,60 +1,63 @@
 /*
- * Copyright 1996 Devin Reade <gdr@myrias.com>.
+ * Copyright 1996-1997 Devin Reade <gdr@myrias.com>.
  * All rights reserved.
  *
  * For copying and distribution information, see the file "COPYING"
  * accompanying this file.
  *
- * $Id: inst.c,v 1.2 1996/09/03 03:54:58 gdr Exp $
+ * $Id: inst.c,v 1.3 1997/10/30 04:14:21 gdr Exp $
  */
 
+#define	__USE_DYNAMIC_GSSTRING__
+
+#include <sys/types.h>
+#include <types.h>
+#include <sys/stat.h>
+#include <gno/gno.h>
 #include <stdio.h>
-#include <getopt.h>
 #include <errno.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include <types.h>
 #include <unistd.h>
-#include <sys/stat.h>
 #include <orca.h>
 #include <gsos.h>
-
-extern int _mapErr(int);
+#include <err.h>
 
 #include "contrib.h"
 
 /* actions */
-#define NOCHANGE   0
-#define ASSIGN    1
-#define REMOVE    2
-#define ADD       3
+#define ACTION_CHANGE_MODE	0x0001
+#define	ACTION_CHANGE_OWNER	0x0002
+#define ACTION_CHANGE_GROUP	0x0004
 
 /* permissions */
 #define S_USER    0700
 #define S_GROUP   0070
 #define S_OTHER   0007
-#define S_ALL      0777
+#define S_ALL     0777
 #define S_READ    0444
 #define S_WRITE   0222
 #define S_EXECUTE 0111
 
-#define TYPE_TXT       0x04
-#define TYPE_SRC       0xB0
-#define TYPE_EXEC      0x00000006
-#define TYPE_NONE      0x00000000
-
-#define VERSION "1.0"
+#define VERSION "1.1"
 #define EMAIL   "<gdr@myrias.com>"
 
 char *versionMsg = "Version %s by Devin Reade %s\n";
 int dFlag;
 
-extern int mkdir(const char *);
-extern int needsgno(void);
-extern void begin_stack_check(void);
-extern int end_stack_check(void);
+#ifdef __STACK_CHECK__
+/*
+ * printStack
+ *
+ * prints stack usage (debugging only)
+ */
+static void
+printStack (void) {
+	fprintf(stderr, "stack usage: %d bytes\n", _endStackCheck());
+}
+#endif
 
 /*
  * usage
@@ -81,84 +84,85 @@ usage(void)
 }
 
 /*
- * getmode
+ * translateMode
  *
  * set mode to the value corresponding to the permission bit string
  * <str>.  If the first char of <str> is a digit, then it is assumed
  * to be an octal number.  Otherwise it is assumed to be a string of
- * the form "ug+rx" (in the usual chmod(1) format).  Also sets action
- * to be the type of action to take, whether we're removing, adding,
- * or assigning the permission bits.
+ * the form "ug+rx" (in the usual chmod(1) format).
  *
  * If these assumptions don't hold, then return non-zero.  Returns
- * zero and sets mode on success.
- *
- * Since the IIgs currently doesn't have the concept of "group" and
- * "other" permissions, we take everything from the user permissions.
+ * zero and sets mode on success.  mode may be modified, even on
+ * failure.
  */
 
-int
-getmode(char *str, unsigned long *mode, int *action)
+static int
+translateMode(char *str, mode_t *mode)
 {
-  unsigned long who = 0L;
-  unsigned long perm = 0L;
-  char *p, *q;
+	mode_t who = 0L;
+	mode_t perm = 0L;
+	char *p, *q;
 
-  /* octal number? */
-  if (isdigit(*str)) {
-    *action = ASSIGN;
-    errno = 0;
-    *mode = strtoul(str, NULL, 8);
-    return errno;
-  }
-  /* it's not an absolute octal; treat as a string */
-  if (((p = strchr(str, '+')) == NULL) &&
-      ((p = strchr(str, '-')) == NULL) &&
-      ((p = strchr(str, '=')) == NULL)) {
-    errno = EINVAL;
-    return errno;
-  }
-  switch (*p) {
-  case '+': *action = ADD;     break;
-  case '-': *action = REMOVE;  break;
-  case '=': *action = ASSIGN;  break;
-  default:  assert(0);
-  }
+	/* octal number? */
+	if (isdigit(*str)) {
+		errno = 0;
+		*mode = strtoul(str, NULL, 8);
+		return errno;
+	}
 
-  /*
-   * this condition should really be deduced from the umask, if it
-   * were supported.
-   */
-  if (str == p) {
-    who |= S_USER;
-  }
+	/* it's not an absolute octal; treat as a string */
+	if (((p = strchr(str, '=')) == NULL) &&
+	    ((p = strchr(str, '+')) == NULL) &&
+	    ((p = strchr(str, '-')) == NULL)) {
+		errno = EINVAL;
+		return errno;
+	}
 
-  for (q = str; q < p; q++) {
-    switch (*q) {
-    case 'u': who |= S_USER;   break;
-    case 'g': who |= S_GROUP;  break;
-    case 'o': who |= S_OTHER;  break;
-    case 'a': who |= S_ALL;    break;
-    default:  errno = EINVAL;  return errno;
-    }
-  }
+	/*
+	 * Since we use mode 0000 as our starting point, using '-' in the
+	 * symbolic mode is equivalent to setting the mode to 0000 (absolute).
+	 * Similarly, using '+' and '=' are equivalent.
+	 *
+	 * If '-' was specified, ignore the "ugo" and "rwx" parts of the string.
+	 */
+	if (*p == '-') {
+		*mode = 0000;
+		return 0;
+	}
+	*p++ = '\0';
 
-  for (q = p + 1; *q; q++) {
-    switch (*q) {
-    case 'r': perm |= S_READ;    break;
-    case 'w': perm |= S_WRITE;   break;
-    case 'x': perm |= S_EXECUTE; break;
-    case 's': /* ignored */      break;
-    default:  errno = EINVAL;    return errno;
-    }
-  }
+	if (*str == '\0') {
+		/* this should probably be derived from the umask */
+		who |= S_ALL;
+	} else {
+		for (q = str; *q; q++) {
+			switch (*q) {
+			case 'u':	who |= S_USER;		break;
+			case 'g':	who |= S_GROUP;		break;
+			case 'o':	who |= S_OTHER;		break;
+			case 'a':	who |= S_ALL;		break;
+			default:	errno = EINVAL;		return errno;
+			}
+  		}
+	}
 
-  /* currently: ignore all but user permissions */
-  if (!(who & S_USER)) {
-    *action = NOCHANGE;
-  }
-  *mode = who & perm;
-  return 0;
+	if (*p == '\0') {
+		/* this should probaby be taken from the umask */
+		perm |= S_READ | S_WRITE | S_EXECUTE;
+	} else {
+		for (; *p; p++) {
+			switch (*p) {
+			case 'r':	perm |= S_READ;		break;
+			case 'w':	perm |= S_WRITE;	break;
+			case 'x':	perm |= S_EXECUTE;	break;
+			case 's':	perm |= S_EXECUTE;	break;
+			default:	errno = EINVAL;		return errno;
+			}
+		}
+	}
+
+	*mode = who & perm;
+	return 0;
 }
 
 /*
@@ -179,17 +183,17 @@ mkdirs(int argc, char **argv)
   char *path, *p;
   size_t pathlen;
   int result = 0;
-  int makeit;			/* do we try a mkdir()? */
-  int abortpath;		/* we saw an error; don't both with rest of path */
+  int makeit;		/* do we try a mkdir()? */
+  int abortpath;	/* we saw an error; don't both with rest of path */
   int i, j;
-  int coloncount;
+  int coloncount, isVolume;
 
   /* loop over each of the pathnames in the array */
   for (i = 0; i < argc; i++) {
 
     /* expand to a full pathname */
-    if ((path = expandpath(argv[i])) == NULL) {
-      perror(argv[i]);
+    if ((path = LC_ExpandPath(argv[i])) == NULL) {
+      warn("couldn't expand the pathname of %s (ignored)", argv[i]);
       continue;
     }
     pathlen = strlen(path);
@@ -206,20 +210,25 @@ mkdirs(int argc, char **argv)
       }
       p++;
     }
-    p = path + 1;
 
-    /* skip the volume name */
-    if ((p = strchr(p, ':')) == NULL) {
-      /* only the volume name was given; skip it */
-      free(path);
-      continue;
-    }
-    p++;
-    --coloncount;
+    /* skip the first part if it's a volume or device name */
+    abortpath = 0;
+    if ((*path == ':') || (*path == '.')) {
+      j = 1;
+      p = path + 1;
+      if ((p = strchr(p, ':')) == NULL) {
+        p = path + pathlen;
+        abortpath = 1;
+      } else {
+        p++;
+      }
+    } else {
+      j = 0;                                   
+      p = path;
+    }                                                          
 
     /* create each component in path */
-    abortpath = 0;
-    for (j = 0; !abortpath && j < coloncount; j++) {
+    for (; !abortpath && j < coloncount; j++) {
       if ((p = strchr(p, ':')) == NULL) {
 	p = path + pathlen;
       }
@@ -229,7 +238,7 @@ mkdirs(int argc, char **argv)
 	if (errno == ENOENT) {
 	  makeit = 1;
 	} else {
-	  perror(path);
+          warn("couldn't stat %s", path);
 	  makeit = 0;
 	  abortpath = 1;
 	  result = 1;
@@ -237,7 +246,7 @@ mkdirs(int argc, char **argv)
       } else {
 	makeit = 0;
 	if (statbuf.st_mode & S_IFDIR == 0) {
-	  fprintf(stderr, "%s exists and is not a directory\n", path);
+	  warnx("%s exists and is not a directory\n", path);
 	  abortpath = 1;
 	  result = 1;
 	}			/* else it exists and is a directory */
@@ -245,7 +254,7 @@ mkdirs(int argc, char **argv)
 
       /* go ahead and create the directory */
       if (makeit && mkdir(path)) {
-	perror(path);
+	warn("couldn't create directory %s", path);
 	abortpath = 1;
 	result = 1;
       }
@@ -254,7 +263,6 @@ mkdirs(int argc, char **argv)
 	*p++ = ':';
       }
     }
-    free(path);
   }
   return result;
 }
@@ -269,125 +277,80 @@ mkdirs(int argc, char **argv)
  * _must_ be a directory.
  *
  * Returns zero on success.  On failure, returns the last non-zero errno
- * and prints error conditions to stderr.
+ * and prints error conditions to stderr via the warn(3) routines.
  *
- * If action is not NOCHANGE, this routine will also set file permissions
- * as specified in the install(1) man page.  This may involve changing
- * the file type.
+ * If the ACTION_CHANGE_MODE bit is set in <action>, chmod(2) is invoked
+ * on the resulting file.  ACTION_CHANGE_USER and ACTION_CHANGE_GROUP
+ * are currently ignored.
  */
 
 static int
-copyfiles(int argc, char **argv, int action, unsigned long mode)
+copyfiles(int argc, char **argv, int action, mode_t mode)
 {
-  static FileInfoRecGS inforec;
-  static GSString255 filenameGS;
-  int i, j;
-  int result = 0;
-  char *destination;
-  Word newaccess;
+	static FileInfoRecGS inforec;
+	GSStringPtr src, dest, newname;
+        int total, i, result;
+	unsigned short flags;
 
-  if (argc < 2) {
-    errno = EINVAL;
-    perror("internal error: not enough arguments to copyfiles()");
-    return errno;
-  }
-  if (argc > 2) {
+	static const char *nodup = "couldn't duplicate %s file name \"%s\"";
 
-    /* find out if argv[argc-1] is a directory */
+	assert(argc > 1);
 
-    if (__C2GS(argv[argc - 1], &filenameGS) == NULL) {
-      errno = EINVAL;
-      perror("destination path too long");
-      return errno;
-    }
-    inforec.pCount = 5;
-    inforec.pathname = &filenameGS;
-    GetFileInfoGS(&inforec);
-    if ((errnoGS = toolerror()) != 0) {
-      perrorGS("%s", argv[argc - 1]);
-      errno = _mapErr(errnoGS);
-      return -1;
-    }
-    if ((inforec.storageType != 0x0D) && (inforec.storageType != 0x0F)) {
-      errno = ENOTDIR;
-      perror(argv[argc - 1]);
-      return errno;
-    }
-  }
-  --argc;
-  for (i = 0; i < argc; i++) {
-    if ((destination = copyfile(argv[i], argv[argc])) == NULL) {
-      errnoGS = toolerror();
-      perrorGS("install of %s to %s", argv[i], argv[argc]);
-      result = errno = _mapErr(errnoGS);
-    }
-    if (action == NOCHANGE) {
-      continue;
-    }
+	/* initialization */
+	result = 0;
+	total = argc - 1;
+	flags = LC_COPY_DATA | LC_COPY_REZ | LC_COPY_KEEPBUF;
 
-    /* get the file info for the source file */
-    if (__C2GS(argv[i], &filenameGS) == NULL) {
-      assert(0);
-    }
-    inforec.pCount = 7;
-    inforec.pathname = &filenameGS;
-    GetFileInfoGS(&inforec);
-    if ((errnoGS = toolerror()) != 0) {
-      perrorGS("GetFileInfo for %s failed", argv[i]);
-      result = errno = _mapErr(errnoGS);
-    }
-    /* modify the permissions as necessary */
-    switch (action) {
-    case ASSIGN:
-      newaccess = 0xFFFF;
-      if (!(mode & S_READ))  newaccess &= ~readEnable;
-      if (!(mode & S_WRITE)) newaccess &= ~writeEnable;
-      inforec.access &= newaccess;
+	/* duplicate the destination name */
+	if ((dest = __C2GSMALLOC(argv[argc - 1])) == NULL) {
+		err(1, nodup, "destination", argv[argc - 1]);
+		/*NOTREACHED*/
+	}
 
-      if ((mode & S_EXECUTE) &&
-	  (inforec.fileType == TYPE_TXT) || (inforec.fileType == TYPE_SRC)) {
-	inforec.fileType = TYPE_SRC;
-	inforec.auxType = TYPE_EXEC;
-      }
-      break;
+	/*
+	 * If we're copying more than one file, make sure the last
+	 * is a directory.
+	 */
+	if (argc > 2) {
+		inforec.pCount = 5;
+		inforec.pathname = dest;
+		GetFileInfoGS(&inforec);
+		if (_toolErr != 0) {
+			errno = _mapErr(_toolErr);
+			err(1, "couldn't stat %s", dest->text);
+			/*NOTREACHED*/
+		}
+		if ((inforec.storageType != 0x0D) &&
+		    (inforec.storageType != 0x0F)) {
+			errno = ENOTDIR;
+			errx(1, "%s is not a directory", dest->text);
+		}
+	}
 
-    case ADD:
-      if (mode & S_READ)  inforec.access |= readEnable;
-      if (mode & S_WRITE) inforec.access |= writeEnable;
-
-      if ((mode & S_EXECUTE) &&
-	  (inforec.fileType == TYPE_TXT) || (inforec.fileType == TYPE_SRC)) {
-	inforec.fileType = TYPE_SRC;
-	inforec.auxType = TYPE_EXEC;
-      }
-      break;
-
-    case REMOVE:
-      if (mode & S_READ)  inforec.access &= ~readEnable;
-      if (mode & S_WRITE) inforec.access &= ~writeEnable;
-
-      if ((mode & S_EXECUTE) &&
-	  (inforec.fileType == TYPE_TXT) || (inforec.fileType == TYPE_SRC)) {
-	inforec.fileType = TYPE_TXT;
-	inforec.auxType = TYPE_NONE;
-      }
-      break;
-
-    default:
-      assert(0);
-    }
-
-    /* set the modified file info for the destination file */
-    if (__C2GS(destination, &filenameGS) == NULL) {
-      assert(0);
-    }
-    SetFileInfoGS(&inforec);
-    if ((errnoGS = toolerror()) != 0) {
-      perrorGS("SetFileInfo for %s failed", destination);
-      result = errno = _mapErr(errnoGS);
-    }
-  }
-  return result;
+	/* copy each file */
+	for (i=0; i<total; i++) {
+	        if ((src = __C2GSMALLOC(argv[i])) == NULL) {
+			err(1, nodup, "source", argv[i]);
+			/*NOTREACHED*/
+		}
+		newname = LC_CopyFileGS(src, dest, flags);
+		if (newname == NULL) {
+			result = errno;
+			warn("install of %s to %s failed", argv[i],
+			     argv[argc-1]);
+		} else {
+			if (action & ACTION_CHANGE_MODE) {
+				if (chmod(newname->text, mode) < 0) {
+					result = errno;
+					warn("couldn't change %s to mode %o",
+					     newname->text, mode);
+				}
+			}
+		}
+		GIfree(src);
+	}
+	GIfree(dest);
+	return result;
 }
 
 /*
@@ -397,32 +360,34 @@ copyfiles(int argc, char **argv, int action, unsigned long mode)
 int
 main(int argc, char **argv)
 {
-  unsigned long mode;
+  mode_t newmode;
   int c, nfiles;
-  int action = NOCHANGE;
+  int action = 0;
 
-#ifdef CHECK_STACK
-  begin_stack_check();
+#ifdef __STACK_CHECK__
+  _beginStackCheck();
+  atexit(printStack);
 #endif
 
   if (needsgno() == 0) {
-    fprintf(stderr, "Requires GNO/ME\n");
-    exit(1);
+	errx(1, "requires GNO");
   }
+
   /* initialize */
   dFlag = 0;
-  mode = 0L;
+  newmode = 0L;
 
   /* parse command line */
   while ((c = getopt(argc, argv, "cdg:hm:o:sv")) != EOF) {
     switch (c) {
     case 'v':
-      fprintf(stderr, versionMsg, VERSION, EMAIL);
-      exit(1);
+      errx(1, versionMsg, VERSION, EMAIL);
+      /*NOTREACHED*/
       break;
 
     case 'm':
-      if (getmode(optarg, &mode, &action)) {
+      action |= ACTION_CHANGE_MODE;
+      if (translateMode(optarg, &newmode)) {
 	usage();
       }
       break;
@@ -450,12 +415,10 @@ main(int argc, char **argv)
     if (nfiles < 2) {
       usage();
     }
-    c = copyfiles(nfiles, &argv[optind], action, mode);
+    /* ignore new user and group for now */
+    c = copyfiles(nfiles, &argv[optind], action, newmode);
   }
 
-#ifdef CHECK_STACK
-  fprintf(stderr, "stack usage: %d bytes\n", end_stack_check());
-#endif
 
   return c;
 }
