@@ -51,6 +51,7 @@ install:
 	install -d $(INCDIR) $(LIBDIR)
 	install sane.h $(INCDIR)
 	install $(LIB) $(LIBDIR)
+	chtyp -lcc $(INCDIR)/sane.h
 
 MI_LIBDIR	= $(RELEASE_DIR)/lib
 MI_INCDIR	= $(RELEASE_DIR)/usr/include
@@ -63,6 +64,7 @@ release: $(LIB) sane.h saneglue.3 mkso.data
 	install sane.h $(MI_INCDIR)
 	install saneglue.3 $(MI_MANDIR)
 	install mkso.data $(MI_INSTALL)/mkso.lsaneglue
+	chtyp -lcc $(MI_INCDIR)/sane.h
 
 findfpcp.o:: findfpcp.mac
 saneglue.o:: saneglue.mac
