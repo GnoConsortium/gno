@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Thu Jan  7 08:23:17 1999
+# Last revision: Sun Jan 10 18:19:10 1999
 #
-# $Id: describe.src,v 1.19 1999/01/07 08:36:33 gdr-ftp Exp $
+# $Id: describe.src,v 1.20 1999/01/11 01:27:07 gdr-ftp Exp $
 #=============================================================================
 #
 #  About this file
@@ -1219,6 +1219,16 @@ Where:   /usr/bin
 FTP:     ftp.gno.org, ground.isca.uiowa.edu
 
 Finds regular expressions.
+
+Name:    gsh
+Version: 2.0 (31 December 1998)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ftp.gno.org
+
+The GNO Shell.
 
 Name:    gsify
 Version: 1.0
