@@ -1,0 +1,264 @@
+ MACRO
+&lab tgetent &a1
+&lab ph4 &a1(2)
+ ph4 &a1(1)
+ case on
+ jsl tgetent
+ case off
+ MEND
+ MACRO
+&lab tgetstr &a1
+&lab ph4 &a1(2)
+ ph4 &a1(1)
+ case on
+ jsl tgetstr
+ case off
+ MEND
+ MACRO
+&lab tputs &a1
+&lab ph4 &a1(3)
+ ph2 &a1(2)
+ ph4 &a1(1)
+ case on
+ jsl tputs
+ case off
+ MEND
+ MACRO
+&lab ph2 &parm
+ lclc &char
+&lab anop
+ aif c:&parm=0,.done
+&char amid &parm,1,1
+ aif "&char"="#",.immediate
+ aif "&char"="@",.at
+ aif s:longa=1,.chk
+ rep #%00100000
+.chk
+ aif "&char"<>"{",.absolute
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ lda (&parm)
+ pha
+ ago .shorten
+.absolute
+ lda &parm
+ pha
+ ago .shorten
+.immediate
+&parm amid &parm,2,l:&parm-1
+ pea &parm
+ ago .done
+.at
+&char amid &parm,2,1
+ ph&char
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab ph4 &parm
+ lclc &char
+ lclc &char1
+ lclc &char2
+&lab anop
+&char amid &parm,1,1
+ aif "&char"="#",.immediate
+ aif "&char"="@",.at
+ aif s:longa=1,.chk1
+ rep #%00100000
+.chk1
+ aif "&char"<>"{",.chk2
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ ldy #2
+ lda (&parm),y
+ pha
+ lda (&parm)
+ pha
+ ago .shorten
+.chk2
+ aif "&char"<>"[",.absolute
+ ldy #2
+ lda &parm,y
+ pha
+ lda &parm
+ pha
+ ago .shorten
+.absolute
+ lda &parm+2
+ pha
+ lda &parm
+ pha
+ ago .shorten
+.at
+&char1 amid &parm,2,1
+&char2 setc &char1
+ ph&char1
+ aif l:&parm<3,.chk2a
+&char2 amid &parm,3,1
+.chk2a
+ ph&char2
+ ago .shorten
+.immediate
+&parm amid &parm,2,l:&parm-1
+ pea +(&parm)|-16
+ pea &parm
+ ago .done
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ macro
+&lab MV4 &src,&adr
+&lab lcla &count
+ lda &src
+&count seta 1
+.loop1
+ sta &adr(&count)
+&count seta &count+1
+ aif &count>c:&adr,.part2
+ ago ^loop1
+.part2
+ lda &src+2
+&count seta 1
+.loop2
+ sta &adr(&count)+2
+&count seta &count+1
+ aif &count>c:&adr,.done
+ ago ^loop2
+.done
+ mend
+ MACRO
+&lab subroutine &parms,&work
+&lab anop
+ aif c:&work,.a
+ lclc &work
+&work setc 0
+.a
+ gbla &totallen
+ gbla &worklen
+&worklen seta &work
+&totallen seta 0
+ aif c:&parms=0,.e
+ lclc &len
+ lclc &p
+ lcla &i
+&i seta c:&parms
+.b
+&p setc &parms(&i)
+&len amid &p,2,1
+ aif "&len"=":",.c
+&len amid &p,1,2
+&p amid &p,4,l:&p-3
+ ago .d
+.c
+&len amid &p,1,1
+&p amid &p,3,l:&p-2
+.d
+&p equ &totallen+3+&work
+&totallen seta &totallen+&len
+&i seta &i-1
+ aif &i,^b
+.e
+ tsc
+ sec
+ sbc #&work
+ tcs
+ inc a
+ phd
+ tcd
+ phb
+ phk
+ plb
+ mend
+ MACRO
+&lab return &r
+&lab anop
+ lclc &len
+ aif c:&r,.a
+ lclc &r
+&r setc 0
+&len setc 0
+ ago .h
+.a
+&len amid &r,2,1
+ aif "&len"=":",.b
+&len amid &r,1,2
+&r amid &r,4,l:&r-3
+ ago .c
+.b
+&len amid &r,1,1
+&r amid &r,3,l:&r-2
+.c
+ aif &len<>2,.d
+ ldy &r
+ ago .h
+.d
+ aif &len<>4,.e
+ ldx &r+2
+ ldy &r
+ ago .h
+.e
+ aif &len<>10,.g
+ ldy #&r
+ ldx #^&r
+ ago .h
+.g
+ mnote 'Not a valid return length',16
+ mexit
+.h
+ aif &totallen=0,.i
+ lda &worklen+1
+ sta &worklen+&totallen+1
+ lda &worklen
+ sta &worklen+&totallen
+.i
+ plb
+ pld
+ tsc
+ clc
+ adc #&worklen+&totallen
+ tcs
+ aif &len=0,.j
+ tya
+.j
+ rtl
+ mend
+ MACRO
+&lab Str &string
+&lab dc i1'L:&string'
+ dc c"&string"
+ mend
+ macro
+&lab Set_Variable &a1
+&lab p16 $106,&a1
+ mend
+ MACRO
+&lab p16 &a1,&a2
+&lab jsl $E100A8
+ dc i2'&a1'
+ dc i4'&a2'
+ mend
+ macro
+&lab EXPORT &a1
+&lab p16 $116,&a1
+ mend
+ MACRO
+&lab ioctl &a1
+&lab ph4 &a1(3)
+ ph4 &a1(2)
+ ph2 &a1(1)
+ case on
+ jsl ioctl
+ case off
+ MEND

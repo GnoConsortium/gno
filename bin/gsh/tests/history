@@ -1,0 +1,4 @@
+set term=gno
+ls
+ls -l >.null &
+ls

@@ -1,0 +1,374 @@
+ MACRO
+&lab subroutine &parms,&work
+&lab anop
+ aif c:&work,.a
+ lclc &work
+&work setc 0
+.a
+ gbla &totallen
+ gbla &worklen
+&worklen seta &work
+&totallen seta 0
+ aif c:&parms=0,.e
+ lclc &len
+ lclc &p
+ lcla &i
+&i seta c:&parms
+.b
+&p setc &parms(&i)
+&len amid &p,2,1
+ aif "&len"=":",.c
+&len amid &p,1,2
+&p amid &p,4,l:&p-3
+ ago .d
+.c
+&len amid &p,1,1
+&p amid &p,3,l:&p-2
+.d
+&p equ &totallen+3+&work
+&totallen seta &totallen+&len
+&i seta &i-1
+ aif &i,^b
+.e
+ tsc
+ sec
+ sbc #&work
+ tcs
+ inc a
+ phd
+ tcd
+ phb
+ phk
+ plb
+ mend
+ MACRO
+&lab return &r
+&lab anop
+ lclc &len
+ aif c:&r,.a
+ lclc &r
+&r setc 0
+&len setc 0
+ ago .h
+.a
+&len amid &r,2,1
+ aif "&len"=":",.b
+&len amid &r,1,2
+&r amid &r,4,l:&r-3
+ ago .c
+.b
+&len amid &r,1,1
+&r amid &r,3,l:&r-2
+.c
+ aif &len<>2,.d
+ ldy &r
+ ago .h
+.d
+ aif &len<>4,.e
+ ldx &r+2
+ ldy &r
+ ago .h
+.e
+ aif &len<>10,.g
+ ldy #&r
+ ldx #^&r
+ ago .h
+.g
+ mnote 'Not a valid return length',16
+ mexit
+.h
+ aif &totallen=0,.i
+ lda &worklen+1
+ sta &worklen+&totallen+1
+ lda &worklen
+ sta &worklen+&totallen
+.i
+ plb
+ pld
+ tsc
+ clc
+ adc #&worklen+&totallen
+ tcs
+ aif &len=0,.j
+ tya
+.j
+ rtl
+ mend
+ MACRO
+&lab WriteCString &a1
+&lab ph4 &a1
+ Tool $200c
+ mend
+ MACRO
+&lab tool &a1
+&lab ldx #&a1
+ jsl $e10000
+ mend
+ MACRO
+&lab ph4 &parm
+ lclc &char
+ lclc &char1
+ lclc &char2
+&lab anop
+&char amid &parm,1,1
+ aif "&char"="#",.immediate
+ aif "&char"="@",.at
+ aif s:longa=1,.chk1
+ rep #%00100000
+.chk1
+ aif "&char"<>"{",.chk2
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ ldy #2
+ lda (&parm),y
+ pha
+ lda (&parm)
+ pha
+ ago .shorten
+.chk2
+ aif "&char"<>"[",.absolute
+ ldy #2
+ lda &parm,y
+ pha
+ lda &parm
+ pha
+ ago .shorten
+.absolute
+ lda &parm+2
+ pha
+ lda &parm
+ pha
+ ago .shorten
+.at
+&char1 amid &parm,2,1
+&char2 setc &char1
+ ph&char1
+ aif l:&parm<3,.chk2a
+&char2 amid &parm,3,1
+.chk2a
+ ph&char2
+ ago .shorten
+.immediate
+&parm amid &parm,2,l:&parm-1
+ pea +(&parm)|-16
+ pea &parm
+ ago .done
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab gsos &a1,&a2
+&lab jsl $E100A8
+ dc i2'&a1'
+ dc i4'&a2'
+ mend
+ MACRO
+&lab WriteChar &a1
+&lab ph2 &a1
+ Tool $180c
+ mend
+ MACRO
+&lab Int2Dec &a1
+&lab ph2 &a1(1)
+ ph4 &a1(2)
+ ph2 &a1(3)
+ ph2 &a1(4)
+ Tool $260b
+ mend
+ MACRO
+&lab ph2 &parm
+ lclc &char
+&lab anop
+ aif c:&parm=0,.done
+&char amid &parm,1,1
+ aif "&char"="#",.immediate
+ aif "&char"="@",.at
+ aif s:longa=1,.chk
+ rep #%00100000
+.chk
+ aif "&char"<>"{",.absolute
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ lda (&parm)
+ pha
+ ago .shorten
+.absolute
+ lda &parm
+ pha
+ ago .shorten
+.immediate
+&parm amid &parm,2,l:&parm-1
+ pea &parm
+ ago .done
+.at
+&char amid &parm,2,1
+ ph&char
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab ReadTimeHex &a1
+&lab pha
+ pha
+ pha
+ pha
+ tool $0d03
+ pl2 &a1(1)
+ pl2 &a1(2)
+ pl2 &a1(3)
+ pl2 &a1(4)
+ mend
+ MACRO
+&lab pl2 &parm
+ lclc &char
+&lab anop
+ aif s:longa=1,.start
+ rep #%00100000
+.start
+&char amid &parm,1,1
+ aif "&char"="@",.at
+ aif "&char"<>"{",.absolute
+&char amid &parm,l:&parm,1
+ aif "&char"<>"}",.error
+&parm amid &parm,2,l:&parm-2
+ pla
+ sta (&parm)
+ ago .shorten
+.absolute
+ pla
+ sta &parm
+ ago .shorten
+.at
+&char amid &parm,2,1
+ pl&char
+.shorten
+ aif s:longa=1,.done
+ sep #%00100000
+.done
+ mexit
+.error
+ mnote "Missing Closing '}'",16
+ mend
+ MACRO
+&lab sub2 &arg1,&arg2,&dest
+ lclc &char
+&lab sec
+&char amid &arg1,1,1
+ aif "&char"="@",.at1
+ lda &arg1
+ ago .sub
+.at1
+&char amid &arg1,2,1
+ aif "&char"="x",.x1
+ aif "&char"="X",.x1
+ aif "&char"="y",.y1
+ aif "&char"="Y",.y1
+ ago .sub
+.x1
+ txa
+ ago .sub
+.y1
+ tya
+.sub
+ sbc &arg2
+&char amid &dest,1,1
+ aif "&char"="@",.at2
+ sta &dest
+ ago .b
+.at2
+&char amid &dest,2,1
+ aif "&char"="x",.x2
+ aif "&char"="X",.x2
+ aif "&char"="y",.y2
+ aif "&char"="Y",.y2
+ ago .b
+.x2
+ tax
+ ago .b
+.y2
+ tay
+.b
+ mend
+ MACRO
+&lab if2 &var,&rel,&val,&label
+&lab ago .skip
+ ble
+ bgt
+.skip
+ lclc &char1
+ lclc &char2
+&char1 amid &var,1,1
+&char2 amid &var,2,1
+ aif "&char1"="@",.index
+ lda &var
+.cmp
+ cmp &val
+ ago .branch
+.index
+ aif "&char2"="x",.x1
+ aif "&char2"="X",.x1
+ aif "&char2"="y",.y1
+ aif "&char2"="Y",.y1
+ ago ^cmp
+.x1
+ cpx &val
+ ago .branch
+.y1
+ cpy &val
+.branch
+&char1 amid &rel,1,1
+ aif "&char1"="@",.done
+ b&rel &label
+.done
+ mend
+ MACRO
+&lab bgt &loc
+&lab beq *+4
+ bcs &loc
+ mend
+ MACRO
+&lab ble &loc
+&lab bcc &loc
+ beq &loc
+ mend
+ MACRO
+&lab GetPrefix &a1
+&lab gsos $200A,&a1
+ mend
+ MACRO
+&lab jeq &loc
+&lab bne *+5
+ jmp &loc
+ mend
+ MACRO
+&lab READ_VARIABLE &a1
+&lab p16 $10B,&a1
+ mend
+ MACRO
+&lab p16 &a1,&a2
+&lab jsl $E100A8
+ dc i2'&a1'
+ dc i4'&a2'
+ mend
+ MACRO
+&lab Str &string
+&lab dc i1'L:&string'
+ dc c"&string"
+ mend
+ MACRO
+&lab WriteString &a1
+&lab ph4 &a1
+ Tool $1c0c
+ mend

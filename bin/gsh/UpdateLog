@@ -1,0 +1,158 @@
+GSH 1.1 UPDATES...
+
+ 2/25/92 d01 - fixed a problem with the command-line aborting after certain
+               built-ins are run.
+ 4/03/92 d02 - .ttya and .ttyb are displayed as 'ta' and 'tb' respectively in
+               'ps'.
+             - "USER" field has been renamed to "MMID" in 'ps'.
+         d03 - removed all the extra newlines around 'There are stopped jobs'
+               message.
+             - 'exit' in a shell script aborts the script, instead of quitting
+               gsh itself.
+             - when getting a 'There are stopped jobs' message, a second
+               attempt to exit the shell will result in all jobs being killed
+               and the shell will exit. No commands may appear between the
+               two attempts to exit. This is basically just like csh behaviour.
+         d04 - motd pathname has been changed to '31:etc:motd' where 31 is the
+               location of GNO, not the user directory. eventually motd will
+               be removed from gsh and will be handled by login or something
+               similar.
+ 4/07/92 d05 - ^D and TAB expansion now properly works on */ boot prefix.
+ 4/13/92 d06 - started work on new string vector library.
+             - started new builtin - 'hash' to display all hashed files.
+               Extremely preliminary.
+ 4/14/92 d07 - 'hash' now uses string vectors to build the hash list for
+               displaying
+             - fixed a problem if no files were hashed.
+             - sv_alloc now makes sure there is an extra null at the end
+               of the allocated string vector.
+ 4/20/92 d08 - 'which' puts the filename after the path for commands in
+               the current directory.
+         d09 - wrote a string vector function for printing the string
+               vectors in columns like 'ls'. 'hash' now calls this.
+ 4/21/92 d10 - wrote routine for sorting string vectors...'hash' now sorts the
+               list...
+ 4/23/92 d11 - full directory stack support!! pushd, popd, and dirs!!
+         d12 - 'ps' displays 'nu' for the .null driver under TT field.
+ 4/25/92 d13 - Added '-l' option to 'kill'.
+ 6/22/92 d14 - Began writing custom stdio for the shell using GS/OS output.
+ 6/23/92     - minor optimization to alias hashing.
+             - finished stdout and stderr for gsh.
+         d15 - history file is no longer deleted on gsh start-up
+             - fixed '~' printer used in 'dirs'. /usr2/ was displayed as
+               ~2 if $home was /usr. Looked real dumb :) and was incorrect.
+             - optimizations to job control
+         d16 - echo flushes the stdio when finished.
+ 6/24/92     - fixed bug in system() call vector..make should work better now :)
+             - added a newline after 'pwd'.
+             - wrote 'edit' built-in.
+ 6/26/92 d17 - began work on stdin for gsh. Uses GS/OS, ioctl(), etc...
+             - began rewriting editor. Now uses key translation tables and
+               command jump tables.
+             - editor now accepts multiple character commands.
+ 6/27/92     - further work on editor
+             - started work on termcap support in gsh. most command-line
+               editing uses termcap now.
+ 6/28/92     - continued work on editor and termcap
+             - 'clear' and 'echo' builtins now use termcap.
+             - prompt now uses termcap.
+             - hacked up a quick 'tset' builtin.
+             - wrote keybinding function, termcap arrow keys now bound!
+             - beta test release sent out
+ 6/29/92 d18 - if alias 'precmd' is defined, it is executed before drawing
+               each prompt.
+             - if $pushdsilent is set, then directory stack not displayed
+               after 'pushd' and 'popd'.
+             - termcap optimizations for history mechanism in editor.
+             - termcap optimizations for kill-line and kill-end-of-line.
+             - fixed bug in overwrite mode of editor...required too many
+               returns to end line -> rts's weren't being pulled off the
+               stack :)
+ 6/30/92     - fixed a bug in the 'which' command when displaying files in cwd.
+             - the cursor is now left on when running applications.
+             - added '-c' option to gsh command-line
+             - wrote 'source' built-in
+ 7/04/92     - fixed two bugs in prompt display code.
+ 7/17/92     - fixed puts to not choke on NULL strings.
+ 7/21/92     - Temporarily added Push/PopVariables to the code
+             - ospeed is now set so that padding can be done by termcap.
+               This fixed the dropped characters on my Xerox terminal when
+               doing screen clears.
+             - fixed a bug in 'tset'. Was doing a jsr instead of jsl. oops.
+             - set term can be in gshrc w/o manually doing a tset now.
+             - 'ps' now scans job list to find names of 'forked' processes.
+             - 'ps' nows displays tty numbers, since the ttyname is set
+               in 31/etc/ttys and not necessarily second-guessed by gsh.
+ 7/25/92     - fixed cursor off problems.
+ 8/26/92 d19 - larger number of builtins can be redirected or piped.
+             - Open-Apple is now mapped to meta (ESC).
+             - The editor tells gnocon to translate arrows into VT100 codes.
+             - fixed editor bug clearing entire line.
+             - wrote 'bindkey' built-in.
+ 8/27/92 d20 - faster built-in searching.
+             - wrote 'setenv' builtin.
+ 8/28/92     - termcap optimizations to word completion
+             - word completion now matches variables if word starts with '$'.
+ 8/29/92     - only executuables are expanded if the word is a command. All
+               files are expanded for arguments.
+ 8/30/92     - words to complete no longer need to be separated with spaces,
+               ';','|', and '&' are now also recognized.
+ 9/01/92     - 'cd' no longer reports bad pathname syntax if $home not set.
+             - 'pid' parsing now does syntax checking :)
+             - kill won't allow killing process 0
+             - changed 'jobs' invocation from method 0 to method 1.
+             - word completion will not occur if the word contains an '=',
+               single quote or double quote.
+ 9/03/92     - fixed memory trashing problem in 'source'
+ 9/04/92     - 'ps' only displays processes with the users uid. Be sure to
+               use login, or you'll be the kernel's uid and get to see all
+	of the kernel's processes as your own.
+ 9/10/92     - forgot to 'clc' when alias not found in 'alias foo'.
+ 9/20/92     - fixed open-apple mapping
+             - changed keyboard mapping
+             - tab expands directories as the command
+             - set problem with '-f' fixed
+ 9/21/92     - fixed 'cd' with no arguments.
+             - fixed 'set foo' and 'setenv foo'.
+             - fixed bug again in 'cd'.
+             - 'set' and 'setenv' list exported variable names in upper case
+             - fixed a probelm in puts when passed a null pointer.
+             - fixed pointer bug in '~' compactor
+             - wrote 256 byte buffer pool
+ 9/22/92     - fixed parsing bug when parsing two or more command-lines
+               simultaneously.
+             - wrote 1024 byte buffer pool.
+             - word completion now matches built-ins
+             - wordmatching ignores matches if the suffix is contained in
+               the $fignore variable.
+10/31/92 d21 - fixed bug in piping mechanism.
+11/04/92     - fixed hashing problems.
+11/17/92     - new builtin 'commands' lists all built-in commands. Try aliasing
+               help to this for beginning users.
+01/17/93 b01 - fixed prefix not printing correctly if zero length prefix.
+             - word completion will expand to proper case.
+01/20/93 b02 - removed motd printing from gsh
+02/08/93     - fixed job control setting of terminal when background job
+               completes.
+02/09/93     - ^C & ^Z printing removed from the shell. The kernel will do
+               this now.
+02/17/93 b03 - gshrc is now read as '@:gshrc'
+03/02/93     - 'set' automatically detects changing $term and auto-peforms a
+	tset. manually typing 'tset' is no longer required though it is
+	still included.
+             - prompts can now contain \n,\r,\t,\b.
+03/10/93     - updated automatic variable setting code. works faster now.
+             - optimized low-level string routines
+03/25/93     - fixed NULL commands aborting entire command-lines.
+04/04/93     - history commands can now be greater than 256 characters, though
+	when being read, they are clipped to 1024.
+             - the history file location has been moved to '@:history'
+             - if $ignoreeof is set, then EOF (^D) will not quit the shell.
+             - %U and %u will start and end underlining in prompts.
+04/22/93 b04 - 'df' displays device numbers
+             - gsh now takes commands as command-line input. ie.,
+	'gsh echo hello, world' will start gsh then gsh will run echo.
+             - fixed a nasty shell script bug that basically rendered it useless.
+             - fixed memory trashing in shell scripts.
+             - fixed memory trashing in histories.
+04/26/94 b05 - which no longers displays the command-name first.

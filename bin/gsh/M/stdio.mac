@@ -1,0 +1,92 @@
+ MACRO
+&lab long &stat
+&lab anop
+ lcla &t
+ lcla &len
+ lclc &ch
+&t seta 0
+&len seta l:&stat
+.a
+ aif &len=0,.b
+&ch amid &stat,&len,1
+ aif ("&ch"="x").or.("&ch"="y").or.("&ch"="i"),.i
+ aif ("&ch"="a").or.("&ch"="m"),.m
+.c
+&len seta &len-1
+ ago ^a
+.i
+ longi on
+&t seta &t+16
+ ago ^c
+.m
+ longa on
+&t seta &t+32
+ ago ^c
+.b
+ aif &t=0,.d
+ rep #&t
+.d
+ mend
+ MACRO
+&lab short &stat
+&lab anop
+ lcla &t
+ lcla &len
+ lclc &ch
+&t seta 0
+&len seta l:&stat
+.a
+ aif &len=0,.b
+&ch amid &stat,&len,1
+ aif ("&ch"="x").or.("&ch"="y").or.("&ch"="i"),.i
+ aif ("&ch"="a").or.("&ch"="m"),.m
+.c
+&len seta &len-1
+ ago ^a
+.i
+ longi off
+&t seta &t+16
+ ago ^c
+.m
+ longa off
+&t seta &t+32
+ ago ^c
+.b
+ aif &t=0,.d
+ sep #&t
+.d
+ mend
+ MACRO
+&lab Write &a1
+&lab gsos $2013,&a1
+ mend
+ MACRO
+&lab gsos &a1,&a2
+&lab jsl $E100A8
+ dc i2'&a1'
+ dc i4'&a2'
+ mend
+ MACRO
+&lab unlock &a1
+&lab stz &a1
+ MEND
+ MACRO
+&lab lock &a1
+&lab lda #1
+ tsb &a1
+ beq *+6
+ cop $7F
+ bra *-7
+ MEND
+ MACRO
+&lab key
+&lab dc i2'0'
+ MEND
+ macro
+&lab Read &a1
+&lab gsos $2012,&a1
+ mend
+ macro
+&lab Flush &a1
+&lab gsos $2015,&a1
+ mend

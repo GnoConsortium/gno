@@ -1,0 +1,2 @@
+Removed two references to $E0C000 in shell.asm (signal handlers).
+Bad Timmy!
