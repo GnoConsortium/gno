@@ -11,7 +11,7 @@
  * Copyright 1995-1997 by Devin Reade for James Brookes' describe(1) utility.
  * See the included README file and man page for details.
  *
- * $Id: descu.c,v 1.7 1998/01/17 07:20:07 gdr Exp $
+ * $Id: descu.c,v 1.8 1998/02/07 06:40:08 gdr-ftp Exp $
  */
 
 #include <sys/types.h>
@@ -30,7 +30,6 @@
 #endif
 #include "desc.h"
 
-#define MAX_BUFFER    65534
 #define SLOTS_QUANTUM 64
 #define REJECT_FILE   "descu.rej"
 
@@ -84,13 +83,10 @@ inhale (char *pathname) {
 
   /* create the buffer */
   bytecount = lseek(fd,(off_t) 0,SEEK_END);
-  if (bytecount > MAX_BUFFER) {
-    fprintf(stderr,"descu internal error: cannot handle files greater "
-                   "than %d bytes\n due to a compiler bug.  Sorry.\n",
-                   MAX_BUFFER);
-    exit(-1);
+  if ((bytecount == -1) || (lseek(fd,(off_t) 0, SEEK_SET) == -1)) {
+    perror("lseek failed");
+    exit(1);
   }
-  lseek(fd,(off_t) 0, SEEK_SET);
   if ((buffer = malloc(bytecount+1))==NULL) {
     fprintf(stderr,"error: malloc of %ld-byte buffer failed for file %s:%s\n",
             bytecount+1,pathname,strerror(errno));

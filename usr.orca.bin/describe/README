@@ -1,7 +1,7 @@
-$Id: README,v 1.7 1998/01/17 07:20:06 gdr Exp $
+$Id: README,v 1.8 1998/02/07 06:39:53 gdr-ftp Exp $
 
 This is the README file for the describe package.  This package is
-designated as version 1.0.5, and consists of the following utilities:
+designated as version 1.0.6, and consists of the following utilities:
 
 	describe - show database entries describing the current
                    status of programs
@@ -64,7 +64,7 @@ and descu.8.  I briefly pondered having a describe.5, but alas I was too
 lazy; you can find the file formats as part of descc.8.
 
 Devin Reade
-gdr@myrias.ab.ca
+gdr@trenco.gno.org
 
 INSTALLATION
 ============
@@ -130,6 +130,17 @@ CHANGES
 =======
 
 This details changes to the entire distribution.
+
+v1.0.6	February 1998
+	There used to be a limit of 65k on the size of the describe
+		database source when using descu.  This limit was imposed
+		due to a bug in ORCA/C (it is no longer clear whether
+		this was a bug in malloc(3) or in array indexing code).
+		As of ORCA/C v2.1.x, this bug appears to be fixed, so
+		the limit was lifted.
+	A couple of calls to lseek(2) didn't have their return values
+		checked for errors.  Fixed.
+	Updated email address for Devin Reade.
 
 v1.0.5  January 1998
 	Increased the number of characters in the name field of the
@@ -203,7 +214,8 @@ written by James Brookes <jamesb@ecst.csuchico.edu>.
 The descu utility was written by Devin Reade.
 
 The following people have performed updates as listed:
-	v1.0.5	Devin Reade	<gdr@myrias.com>
+	v1.0.6	Devin Reade	<gdr@trenco.gno.org>
+	v1.0.5	Devin Reade
 	v1.0.4	Devin Reade
 	v1.03	Soenke Behrens	<sbehrens@bigfoot.com>
 	v1.02	Soenke Behrens

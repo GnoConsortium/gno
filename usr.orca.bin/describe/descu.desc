@@ -1,9 +1,9 @@
 Name:    descu
-Version: 1.0.5
+Version: 1.0.6
 Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
-Contact: gdr@myrias.ab.ca
+Contact: gdr@trenco.gno.org
 Where:   /usr/sbin
-FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
+FTP:     ftp.gno.org
 
    Update a 'describe' source file.
