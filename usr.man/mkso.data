@@ -1,7 +1,7 @@
 # 0
 # 1  The first column is the "real" man page; the second is the .so link.
 # 2
-# 3  $Id: mkso.data,v 1.7 1997/12/08 15:15:19 gdr Exp $
+# 3  $Id: mkso.data,v 1.8 1998/10/25 17:17:21 gdr-ftp Exp $
 # 4
 man2/alarm.2		man2/alarm10.2
 man2/chdir.2		man2/fchdir.2
@@ -157,6 +157,7 @@ man3/printf.3		man3/vfprintf.3
 man3/printf.3		man3/vprintf.3
 man3/printf.3		man3/vsnprintf.3
 man3/printf.3		man3/vsprintf.3
+man3/progname.3		man3/__progname.3
 man3/progname.3		man3/__prognameGS.3
 man3/putc.3		man3/fputc.3
 man3/putc.3		man3/putchar.3
@@ -219,6 +220,7 @@ man3/setjmp.3		man3/longjmp.3
 man3/setjmp.3		man3/longjmperror.3
 man3/setjmp.3		man3/siglongjmp.3
 man3/setjmp.3		man3/sigsetjmp.3
+man3/sprintmt.3		man3/vsprintmt.3
 man3/stack.3		man3/_assertStack.3
 man3/stack.3		man3/_beginStackCheck.3
 man3/stack.3		man3/_endStackCheck.3
@@ -234,7 +236,9 @@ man3/sys_signame.3	man3/psignal.3
 man3/syslog.3		man3/closelog.3
 man3/syslog.3		man3/openlog.3
 man3/syslog.3		man3/setlogmask.3
+man3/syslog.3		man3/syslogmt.3
 man3/syslog.3		man3/vsyslog.3
+man3/syslog.3		man3/vsyslogmt.3
 man3/termcap.3		man3/tgetent.3
 man3/termcap.3		man3/tgetflag.3
 man3/termcap.3		man3/tgetnum.3
