@@ -1,27 +1,49 @@
-LSEG(1)			Commands and Applications		LESS(1)
-
-
-
-NAME
-    lseg - list segments in an OMF file
-
-SYNOPSIS
-    lseg file ...
-
-DESCRIPTION
-    lseg lists the segments of an OMF executable file.  While it can
-    list the segments in an intermediate object file, the information
-    isn't as useful.
-
-    lseg is intended for discovering the location of stack segments in
-    existing applications (for editing to smaller sizes), as an
-    aid in determining how to segment large C files whose segments
-    exceed the bank size, and for deciding which segments to recombine
-    after excessive segmentation.
-
-AUTHOR
-    Jawaid Bazyar for GNO/ME 1.0.
-
-BUGS
-    Doesn't detect non-OMF files, and thus can get very confused if you
-    do "lseg *" and one of the files chosen isn't an OMF file.
+.\" Man page by Dave Tribby, September 1997
+.\"
+.\" $Id: lseg.1,v 1.2 1997/09/21 22:05:58 gdr Exp $
+.\"
+.TH LSEG 1 "September 1997" "GNO" "Commands and Applications"
+.SH NAME
+.BR lseg
+\- list segments in an Object Module Format file
+.SH SYNOPSIS
+.BR lseg " file ..."
+.SH DESCRIPTION
+.BR lseg
+lists segments in an OMF (object module format) file. Four kinds
+of files use object module format: object files (the output of an
+assembler or compiler and the input to a linker), library files
+(segments that a linker can extract to resolve references in
+other object files), load files (the output of a linker, ready
+for execution), and run-time library files (segments that can
+be loaded as needed and purged from memory when no longer needed).
+A full description of OMF files is provided in Appendix F of
+.IR "Apple IIGS GS/OS Reference" .
+.PP
+.BR lseg
+prints a report that includes the type and size of each segment
+of each file. Any file that is not a valid OMF file is so noted.
+.PP
+.BR lseg
+can be used on executable files in the following ways: to help discover
+the location of stack segments (for later editing to smaller sizes), as an
+aid in determining how to segment large C files whose segments
+exceed the bank size, and for deciding which segments to recombine
+after excessive segmentation.
+.PP
+For object and library files,
+.BR lseg
+examines each code segment and tries to figure out how
+many bytes of local storage are allocated from the stack at execution
+time. This will be determined only if the startup code matches a recognized
+algorithm, such as those used by ORCA/C. If it can be determined, the
+value is printed at the end of the line preceeded by
+string "Stack bytes:".
+Note that this value does not include parameters passed into the routine,
+nor does it include any other use of the stack by the routine. If a
+segment has an unusually large stack allocation, examine its source code
+and see whether arrays can be made static (if the routine is not
+recursive) or can be allocated from standard memory by
+.IR malloc (3).
+.SH AUTHOR
+Jawaid Bazyar for GNO/ME 1.0; updated by Dave Tribby for GNO/ME 2.0.6.
