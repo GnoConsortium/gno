@@ -1,0 +1,153 @@
+# Tests for cksum command; invoked by command file "fulltests"
+#   Written by Dave Tribby (January 1998)
+#   $Id: dotests,v 1.1 1998/01/16 04:16:16 gdr Exp $
+
+# Location of the cksum command to be tested
+set testcmd="../cksum"
+
+# Record starting time
+echo -n "Testing command $testcmd beginning at"
+date
+
+set src="afile.n afile.r afile2.n afile2.r"
+set cmp="o1.list"
+set dest="/tmp/$cmp"
+echo "Algorithm 1 on files $src"
+$testcmd -o 1 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="o2.list"
+set dest="/tmp/$cmp"
+echo "Algorithm 2 on files $src"
+$testcmd -o 2 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="o3.list"
+set dest="/tmp/$cmp"
+echo "Algorithm 3 on files $src"
+$testcmd -o 3 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="crc.list"
+set dest="/tmp/$cmp"
+echo "CRC algorithm on files $src"
+$testcmd $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+# Run algorithms on a single file, using stdin
+
+set src="afile.r"
+set cmp="$src.o1"
+set dest="/tmp/$cmp"
+echo "Algorithm 1 on file $src from stdin"
+$testcmd -o 1 < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set dest="/tmp/${cmp}B"
+echo "Algorithm 1 on file $src from pipe"
+cat $src | $testcmd -o1 > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="$src.crc"
+set dest="/tmp/$cmp"
+echo "CRC algorithm on file $src from stdin"
+$testcmd < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+
+# Run algorithms on a large file (executable of cksum w/o asm code)
+
+set src="cksum.noasm"
+set cmp="$src.o1"
+set dest="/tmp/$cmp"
+echo "Algorithm 1 on file $src"
+$testcmd -o 1 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="$src.o2"
+set dest="/tmp/$cmp"
+echo "Algorithm 2 on file $src"
+$testcmd -o 2 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="$src.o3"
+set dest="/tmp/$cmp"
+echo "Algorithm 3 on file $src"
+$testcmd -o 3 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="$src.crc"
+set dest="/tmp/$cmp"
+echo "Default (crc) algorithm on file $src"
+$testcmd $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+
+echo "***** Error Messages *****"
+
+set dest="/tmp/err.cond"
+
+echo ""
+echo "Expected error: illegal option"
+$testcmd -x $src > $dest
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+echo "Expected error: illegal argument to -o option"
+$testcmd -o 4 $src > $dest
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+echo "Expected error: option requires an argument -- o"
+$testcmd -o
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+set src="badname"
+echo "Expected error: $src: no such file or directory"
+$testcmd $src > $dest
+echo "  Error completion status = $status (expected: 1)"

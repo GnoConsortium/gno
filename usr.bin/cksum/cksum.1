@@ -1,0 +1,207 @@
+.\" Copyright (c) 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the Institute of Electrical and Electronics Engineers, Inc.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)cksum.1	8.2 (Berkeley) 4/28/95
+.\"	$Id: cksum.1,v 1.1 1998/01/16 04:16:10 gdr Exp $
+.\"
+.TH CKSUM 1 "December 1997" "GNO" "Commands and Applications"
+.SH NAME
+.BR cksum
+\- display file checksums and block counts
+.SH SYNOPSIS
+.BR cksum
+.RB [ "-o 1" " | " 2 " | " 3
+.RI "]  [" file\0 ...]
+.PP
+.BR sum
+.RI [ file\0 ...]
+.SH DESCRIPTION
+The
+.BR cksum
+utility writes to the standard output three whitespace separated
+fields for each input file.
+These fields are a checksum
+.BR CRC ,
+the total number of octets in the file and the file name.
+If no file name is specified, the standard input is used and no file name
+is written.
+.PP
+The
+.BR sum
+utility is identical to the
+.BR cksum
+utility, except that it defaults to using historic algorithm 1,
+described below.
+It is provided for compatibility.
+You can either install the
+.BR sum
+program (which has the same content as the
+.BR cksum
+program file) or create a
+.IR gsh (1)
+alias that invokes
+.BR cksum :
+.nf
+       alias sum "cksum -o 1"
+.fi
+.PP
+The program options are as follows:
+.RS
+.IP \fB-o\fR
+Use historic algorithms instead of the (superior) default one.
+.PP
+.RS
+Algorithm 1 is the algorithm used by historic
+systems as the 
+.BR sum (1)
+algorithm and by historic
+systems as the
+.BR sum 
+algorithm when using the
+.BR -r
+option.
+This is a 16-bit checksum, with a right rotation before each addition;
+overflow is discarded.
+.PP
+.RS
+Algorithm 2 is the algorithm used by historic
+systems as the
+default
+.BR sum 
+algorithm.
+This is a 32-bit checksum, and is defined as follows:
+.nf
+      s = sum of all bytes;
+      r = s % 2^16 + (s % 2^32) / 2^16;
+      cksum = (r % 2^16) + r / 2^16;
+.fi
+.PP
+.RS
+Algorithm 3, a 32-bit checksum, is commonly called the
+.BR "32bit CRC"
+algorithm.
+.PP
+.RS
+Algorithms 1 and 2 write the same fields as
+the default algorithm except the size of the file is
+expressed in blocks.
+For historic reasons, the block size is 1024 for algorithm 1 and 512
+for algorithm 2.
+Partial blocks are rounded up.
+.RE
+.PP
+The default
+.BR CRC
+used is based on the polynomial used for
+.BR CRC
+error checking
+in the networking standard
+POSIX-3.
+The
+.BR CRC
+checksum encoding is defined by the generating polynomial:
+.PP
+.nf
+G(x) = x^32 + x^26 + x^23 + x^22 + x^16 + x^12 +
+     x^11 + x^10 + x^8 + x^7 + x^5 + x^4 + x^2 + x + 1
+.fi
+.PP
+Mathematically, the
+.BR CRC
+value corresponding to a given file is defined by
+the following procedure:
+.PP
+.RS
+The
+.BR n
+bits to be evaluated are considered to be the coefficients of a mod 2
+polynomial M(x) of degree
+.BR n-1 .
+These
+.BR n
+bits are the bits from the file, with the most significant bit being the most
+significant bit of the first octet of the file and the last bit being the least
+significant bit of the last octet, padded with zero bits (if necessary) to
+achieve an integral number of octets, followed by one or more octets
+representing the length of the file as a binary value, least significant octet
+first.
+The smallest number of octets capable of representing this integer are used.
+.PP
+.RS
+M(x) is multiplied by x^32 (i.e., shifted left 32 bits) and divided by
+G(x) using mod 2 division, producing a remainder R(x) of degree <= 31.
+The coefficients of R(x) are considered to be a 32-bit sequence.
+The bit sequence is complemented and the result is the CRC.
+.PP
+.RS
+The default calculation is identical to that given in pseudo-code
+in the
+article "Computation of Cyclic Redundancy Checks Via Table Lookup"
+by
+Dilip V. Sarwate,
+.IR "Communications of the ACM" ", August 1988."
+.RE
+.PP
+The
+.BR cksum
+and
+.BR sum
+utilities exit 0 on success, and >0 if an error occurs.
+.SH VERSION
+This manual page documents
+.BR cksum
+version 2.0.
+.SH ATTRIBUTIONS
+This command was ported from FreeBSD source code
+for distribution with GNO/ME 2.0.6.
+.SH HISTORY
+A version of
+.BR sum
+translated from GNU code in 1991 by Marek Pawlowski was distributed with
+earlier releases of GNO. Unfortunately, as that version reads files it
+translates carriage return characters into new line characters. To use
+.BR cksum
+to calulate a checksum that matches the old
+.BR sum ,
+use
+.IR tr (1)
+to translate the input stream. For example,
+.nf
+          tr '\\r' '\\n' < filename | cksum -o 1
+.fi
+.SH STANDARDS
+The
+.BR cksum
+utility is expected to conform to
+POSIX-2.
