@@ -3,14 +3,10 @@
  * Modified for BSD 4.4 compatibility and dynamically allocated structs
  * by Devin Reade.
  *
- * $Id: getcwd.c,v 1.2 1997/02/28 05:43:29 gdr Exp $
+ * $Id: getcwd.c,v 1.3 1997/09/21 06:05:00 gdr Exp $
  *
  * This file is formatted for tabs every 8 columns.
  */
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #ifdef __ORCAC__
 segment "libc_gen__";

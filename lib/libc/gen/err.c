@@ -1,7 +1,7 @@
 /*
  * This file is formatted with tab stops every 8 columns.
  *
- * $Id: err.c,v 1.1 1997/02/28 05:12:43 gdr Exp $
+ * $Id: err.c,v 1.2 1997/09/21 06:04:59 gdr Exp $
  */
 /*-
  * Copyright (c) 1993
@@ -40,11 +40,8 @@
 segment "libc_gen__";
 #endif
 
-#pragma memorymodel 0
-
-/* need bit 3 for variadic function definitions */
-#pragma optimize 8
-#pragma debug 0
+/* need bit 3 and 6 (minimum) for variadic function definitions */
+#pragma optimize 78
 
 #include <err.h>
 #include <errno.h>

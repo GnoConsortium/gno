@@ -1,7 +1,7 @@
 /*
  * utime, utimes.  Implementation by Devin Reade.
  *
- * $Id: utime.c,v 1.1 1997/02/28 05:12:45 gdr Exp $
+ * $Id: utime.c,v 1.2 1997/09/21 06:05:01 gdr Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
@@ -9,10 +9,6 @@
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #include <sys/types.h>
 #include <sys/time.h>

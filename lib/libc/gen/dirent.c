@@ -3,7 +3,7 @@
  * were by Derek Taubert and Jawaid Bazyar.  Reimplemented from scratch
  * by Devin Reade.
  *
- * $Id: dirent.c,v 1.1 1997/02/28 05:12:43 gdr Exp $
+ * $Id: dirent.c,v 1.2 1997/09/21 06:04:59 gdr Exp $
  *
  * This file is formatted with tab stops every 8 characters.
  */
@@ -11,10 +11,6 @@
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #define __LIBC_DIRENT	/* needed for decls in <dirent.h> */
 

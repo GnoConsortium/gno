@@ -35,10 +35,6 @@
 segment "libc_gen_2";
 #endif
 
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
-
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)fts.c       8.4 (Berkeley) 4/16/94";
 #endif /* LIBC_SCCS and not lint */

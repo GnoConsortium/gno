@@ -2,7 +2,7 @@
  * The sleep(3) code is from BSD 4.3-reno, heavily modified (shorted)
  * for use with GNO.
  *
- * $Id: sleep.c,v 1.1 1997/02/28 05:12:45 gdr Exp $
+ * $Id: sleep.c,v 1.2 1997/09/21 06:05:01 gdr Exp $
  *
  * This file has been formatted for tabs every 8 columns
  */
@@ -10,10 +10,6 @@
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #include <signal.h>
 #include <unistd.h>

@@ -34,16 +34,12 @@
 /*
  * This file is formatted with tab stops every 8 columns.
  *
- * $Id: getgrent.c,v 1.1 1997/02/28 05:12:44 gdr Exp $
+ * $Id: getgrent.c,v 1.2 1997/09/21 06:05:00 gdr Exp $
  */
  
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)getgrent.c	8.2 (Berkeley) 3/21/94";

@@ -30,7 +30,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: siglist.c,v 1.1 1997/07/28 03:12:37 gdr Exp $
+ * $Id: siglist.c,v 1.2 1997/09/21 06:05:01 gdr Exp $
  *
  * This file is formatted for tab stops every 8 columns.
  */
@@ -38,10 +38,6 @@
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)siglist.c	8.1 (Berkeley) 6/4/93";

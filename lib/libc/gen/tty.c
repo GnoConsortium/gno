@@ -34,16 +34,12 @@
 /*
  * This file is formatted with tab stops every 8 columns.
  *
- * $Id: tty.c,v 1.1 1997/02/28 05:12:45 gdr Exp $
+ * $Id: tty.c,v 1.2 1997/09/21 06:05:01 gdr Exp $
  */
  
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)ttyslot.c	5.6 (Berkeley) 2/23/91";
@@ -121,4 +117,3 @@ isatty(int filedes) {
 		return 0;
 	}
 }
-

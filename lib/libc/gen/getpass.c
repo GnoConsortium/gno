@@ -34,7 +34,7 @@
 /*
  * GDR:  This file could probably be cleaned up a bit ...
  *
- * $Id: getpass.c,v 1.1 1997/02/28 05:12:44 gdr Exp $
+ * $Id: getpass.c,v 1.2 1997/09/21 06:05:00 gdr Exp $
  *
  * This file is formatted for tab stops every 8 characters.
  */
@@ -42,10 +42,6 @@
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)getpass.c	5.9 (Berkeley) 5/6/91";

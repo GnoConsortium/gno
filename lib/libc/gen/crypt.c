@@ -5,7 +5,7 @@
  * January 19-22, 1992 by Jawaid Bazyar
  * Copyright 1992-1997, Procyon Inc.
  *
- * $Id: crypt.c,v 1.1 1997/02/28 05:12:43 gdr Exp $
+ * $Id: crypt.c,v 1.2 1997/09/21 06:04:59 gdr Exp $
  *
  * This file is formatted with tab stops every 8 columns.
  */
@@ -13,10 +13,6 @@
 #ifdef __ORCAC__
 /* segment "libc_gen__"; *//* don't segment this until crypt.asm is done */
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #include <stdlib.h>
 #include <string.h>

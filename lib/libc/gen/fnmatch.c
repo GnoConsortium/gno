@@ -38,7 +38,7 @@
  * This implementation uses recursion.  It should be rewritten to avoid
  * it due to stack limitations on the IIgs.
  *
- * $Id: fnmatch.c,v 1.1 1997/02/28 05:12:44 gdr Exp $
+ * $Id: fnmatch.c,v 1.2 1997/09/21 06:05:00 gdr Exp $
  *
  * This file is formatted for tab stops every 8 characters.
  */
@@ -46,10 +46,6 @@
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)fnmatch.c	8.2 (Berkeley) 4/16/94";

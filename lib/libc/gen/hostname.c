@@ -1,15 +1,11 @@
 /*
- * $Id: hostname.c,v 1.1 1997/02/28 05:12:44 gdr Exp $
+ * $Id: hostname.c,v 1.2 1997/09/21 06:05:00 gdr Exp $
  */
 
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
 
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
- 
 #include <sys/param.h>
 #include <unistd.h>
 #include <errno.h>
@@ -80,4 +76,3 @@ gethostname(char *name, int namelen) {
 	DisposeHandle(message);
 	return 0;
 }
-

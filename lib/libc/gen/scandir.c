@@ -34,16 +34,12 @@
 /*
  * This file is formatted for tab stops set every 8 columns.
  *
- * $Id: scandir.c,v 1.1 1997/02/28 05:12:45 gdr Exp $
+ * $Id: scandir.c,v 1.2 1997/09/21 06:05:01 gdr Exp $
  */
  
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
-
-#pragma optimize 0
-#pragma debug 0
-#pragma memorymodel 0
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)scandir.c	8.3 (Berkeley) 1/2/94";
