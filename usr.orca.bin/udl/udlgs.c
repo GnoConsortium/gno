@@ -4,9 +4,9 @@
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.2 1995/02/08 05:05:46 gdr Exp $
+ * $Id: udlgs.c,v 1.3 1995/02/08 05:15:33 gdr Exp $
  *
- * Copyright (c) 1993-1994 Soenke Behrens
+ * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
  */
 
 #include <orca.h>
@@ -258,7 +258,8 @@ int main(int argc,char *argv[]) {
     }
 
     infile = tryopen(current_file,"rwb");
-    outfile = tryopen(tempfile = tmpnam(NULL),"wb");
+    tempfile = mktemp(strcat(get_path(current_file), "udltmpXX"));
+    outfile = tryopen(tempfile,"wb");
     
     if (careful) {
       converted = TRUE; /* always */
@@ -290,13 +291,13 @@ int main(int argc,char *argv[]) {
       }
 
       if (rename (tempfile,current_file) != 0) {
-        copy_file (tempfile,current_file);
-        remove (tempfile);
-        tempfile = NULL;
+	perror ("cannot rename temporary file");
+	exit (EXIT_FAILURE);
       }
     } else
       remove (tempfile);
 
+    free (tempfile); tempfile = NULL;
     SetGSOSType (current_file, theType, theAuxType);
     p++;
   } /* end while */
@@ -338,7 +339,7 @@ int CheckGSOSType(char *name) {
              program_name,name,toolerror());
     exit (EXIT_FAILURE);
   }
-  
+
   if ((fir.fileType != TXT) && (fir.fileType != SRC)) {
     if (verbose && (fir.fileType != DIRECTORY))
       fprintf(stderr,"%s: %s is not of type TXT or "

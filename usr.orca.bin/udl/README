@@ -2,9 +2,9 @@
 udl -	Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
      	and Apple (CR).
 
-	(c) 1993-1994 Soenke Behrens
+	(c) 1993-1995 Soenke Behrens, Devin Glyn Reade
 
-	Version 1.13: $Id: README,v 1.2 1995/02/08 05:05:36 gdr Exp $
+	Version 1.14: $Id: README,v 1.3 1995/02/08 05:15:24 gdr Exp $
 =============================================================================
 
 Udl converts text files between CR, LF and CR/LF (Apple, Unix and MS-DOS).
@@ -50,6 +50,12 @@ v1.13
            implementation, a non-TXT or non-SRC file) is encountered
            unless the -v option is specified.
 
+v1.14
+	(Soenke Behrens, January 1995)
+	udl creates a temporary file in the directory of the
+	source file, not in /tmp. This reduces the likelihood of
+	data loss in the event of a system crash or powerdown.
+
 =========
 Compiling:
 =========
@@ -69,6 +75,13 @@ Also, udl.c assumes that getopt() is declared in <unistd.h> and that
 the function strdup() exists in <string.h>. You might want to change
 these includes if that's not the case.
 
+=======
+Authors
+=======
+
+Original code by Soenke Behrens, sbehrens@contech.demon.co.uk
+Modifications and version-merging by Devin Reade, gdr@myrias.ab.ca
+
 ==========
 Legalities:
 ==========
@@ -77,8 +90,3 @@ This program contains material from the Orca/C Run-Time Libraries,
 copyright 1987-1994 by Byte Works, Inc.  Used with permission.
 
 =============================================================================
-Enjoy,
-
-Soenke
-schaf@meadow.muc.de
-December 1993

@@ -4,9 +4,9 @@
  *
  * Routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.c,v 1.2 1995/02/08 05:05:38 gdr Exp $
+ * $Id: common.c,v 1.3 1995/02/08 05:15:26 gdr Exp $
  *
- * Copyright (c) 1993-1994 Soenke Behrens
+ * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
  */
 
 #include "common.h"
@@ -598,54 +598,6 @@ void my_fwrite (unsigned char *buffer, FILE *outfile, int howmuch) {
 }
 
 /*
- * copy_file() ... copies a file to another, creates the destination file.
- *
- * Inputs:
- *      char *from      Name of file to copy from
- *      char *to        Name of file to create and copy to
- *
- * Output:
- *      None
- */
-
-void copy_file (char *from, char *to) {
-  FILE *fp1, *fp2;
-  unsigned char *buffer;
-  size_t length;
-  
-  if((buffer = malloc(BUFFERSIZE)) == NULL) {
-    fprintf(stderr,"%s: memory allocation failure\n",program_name);
-    exit (EXIT_FAILURE);
-  }
-        
-  fp1 = tryopen (from,"rb");
-  fp2 = tryopen (to,"wb");
-  
-  while (!feof (fp1)) {
-    length = fread(buffer,1,BUFFERSIZE,fp1);
-    if (ferror(fp1)) {
-      fprintf(stderr,"%s: Error while trying to read %s\n",
-              program_name, from);
-      free (buffer);
-      exit (EXIT_FAILURE);
-    }
-
-    if (fwrite(buffer,1,length,fp2) != length) {
-      fprintf(stderr,"%s: Error while trying to write out "
-              "file %s\n",program_name,to);
-      free (buffer);
-      exit (EXIT_FAILURE);
-    }
-  }
-
-  if (fclose (fp1) == EOF || fclose (fp2) == EOF) {
-    perror ("closing files");
-    free (buffer);
-    exit (EXIT_FAILURE);
-  }
-}
-
-/*
  * cleanup() ... called in case of an exit(). Frees memory I allocated.
  *
  * Inputs:
@@ -662,6 +614,7 @@ void cleanup (void) {
   free (current_file);
   free (in_buffer);
   free (out_buffer);
+  free (tempfile);
   if (pathList) {
     p = pathList;
     while(*p) free(*p++);
@@ -846,6 +799,96 @@ void add_to_pathList(char *thisdir, char *file) {
   pathSlotsUsed++;
   pathList[pathSlotsUsed] = NULL;
   return;
+}
+
+/* mktemp()  construct a unique file name
+ *
+ * Inputs:
+ *   base  Template to construct the name upon. It should
+ *      be in the format "nameXXXXXX" where all "X" are replaced
+ *      in such a way that the resulting name is unique. There
+ *      should be at least one, at most 15 "X" in the base name.
+ *      base may contain a full or partial path.
+ *
+ * Outputs:
+ *   mktemp() returns a pointer to a dynamically allocated string
+ *   containing a unique file name.
+ *
+ */
+
+char *mktemp(const char *base)
+{
+    static char id[16] = "AAAAAAAAAAAAAAA";
+    char *p1,*p2,*st;
+
+    if ((st = malloc(strlen(base) + 1)) == NULL)
+    {
+      fprintf(stderr,"%s: memory allocation failure\n", program_name);
+      exit (EXIT_FAILURE);
+    }
+    st = strcpy(st,base);
+    
+    if (*st == '\0')
+    {
+    	free (st);
+    	if ((st = strdup("TXXXXXXX")) == NULL)
+    	{
+          fprintf(stderr,"%s: memory allocation failure\n", program_name);
+          exit (EXIT_FAILURE);
+    	}
+    }
+
+    /* Replace all "X" with part if ID string */
+    for(p1 = st + strlen(st) - 1,p2 = &id[14];
+        p1 >= st && p2 >= id && *p1 == 'X';
+        p1--,p2--)
+            *p1 = *p2;
+
+    /* Update ID string to "count" one further */
+    for(p1 = &id[14];p1 >= id;)
+      if(*p1 == 'Z')
+      {
+        *p1 = 'A';
+        p1--;
+      } else {
+        *p1++;
+        break;
+      }
+
+    /* Make sure the file name does not already exist */
+    if (stat(st,&tstat) == 0)
+    {
+    	free (st);
+    	st = mktemp (base);
+    }
+
+    return st;
+}
+
+/* get_path() ... extract path from filename
+ *
+ * Inputs:
+ *   name  A file name containing a full, partial or no path.
+ *
+ * Outputs:
+ *   Pointer to a string in static memory containing the path
+ *   to the given file, or an empty string if "name" contained
+ *   no path. The string can hold MAXPATHLEN characters.
+ */
+
+char *get_path (const char *name)
+{
+  int i;
+
+  strcpy(filebuffer, name);
+
+  for (i = strlen(filebuffer) - 1; i >= 0 && filebuffer[i] != dirbrk; i--)
+    ; /* empty loop to find end of path in name */
+
+  if (i != 0)
+    ++i;
+  filebuffer[i] = '\0';
+  return filebuffer;
 }
 
 /* End Of File */

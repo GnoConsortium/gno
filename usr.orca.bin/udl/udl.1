@@ -1,13 +1,13 @@
-.\" Copyright (c) 1993-1994 Soenke Behrens
-.\" $Id: udl.1,v 1.2 1995/02/08 05:05:42 gdr Exp $
-.TH UDL 1 "Commands and Applications" "22 November 1994" "Version 1.13"
+.\" Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
+.\" $Id: udl.1,v 1.5 1995/02/08 05:47:53 gdr Exp $
+.TH UDL 1 "Commands and Applications" "28 January 1995" "Version 1.14"
 .SH NAME
 udl - convert text files between different architectures
 .SH SYNOPSIS
 .BR udl
 .BR -u | m | g
 [
-.B -Rv
+.B -Rvp
 ]
 .I file1 
 [
@@ -38,7 +38,7 @@ flag is used.
 .PP
 .B udl
 creates a temporary file the size of the file it is currently working on
-while it's doing its thing.
+during conversion.
 .PP
 When running under Byteworks' ORCA shell, the Orca shell wildcards
 .BR =
@@ -90,12 +90,10 @@ the stack actually overflows.
 .LP
 If you find any other bugs, please send a report to the address given below.
 .SH AUTHOR
-Soenke Behrens, soenke.behrens@conner.com
+Soenke Behrens, sbehrens@contech.demon.co.uk
 .br
 Version 1.13 updated by Devin Reade, gdr@myrias.ab.ca
 .SH VERSION
 This is
 .B udl
-version 1.13.
-.br
-It's 1.5 times faster than 1.1 for Unix<->Apple conversions.
+version 1.14.

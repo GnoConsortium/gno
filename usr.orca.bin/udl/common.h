@@ -4,9 +4,9 @@
  *
  * Header file for routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.h,v 1.2 1995/02/08 05:05:40 gdr Exp $
+ * $Id: common.h,v 1.3 1995/02/08 05:15:28 gdr Exp $
  *
- * Copyright (c) 1993-1994 Soenke Behrens
+ * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
  */
 
 #include <stdio.h>
@@ -23,7 +23,7 @@
 
 #define BUFFERSIZE 0x2000
 #define PATHLIST_QUANTUM 20
-#define UDL_VERSION "Version 1.13"
+#define UDL_VERSION "Version 1.14"
 #define STACKSIZE 2048
 #define BYTES_PER_DEPTH 40
 #define BASESIZE 700
@@ -86,11 +86,12 @@ extern enum file_format get_file_format (unsigned char *buffer);
 extern FILE *tryopen (char *file, char *mode);
 extern int my_fread (FILE *infile, int howmuch);
 extern void my_fwrite (unsigned char *buffer, FILE *outfile, int howmuch);
-extern void copy_file (char *from, char *to);
 extern void cleanup (void);
 extern void usage (void);
 extern void build_file_list(char *file, short recurse);
 extern void add_to_pathList(char *thisdir, char *file);
+extern char *mktemp(const char *base);
+extern char *get_path(const char *name);
 
 extern int needsgno(void);
 
