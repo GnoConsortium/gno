@@ -2,17 +2,20 @@
  * Header file for the describe package.  This file is
  * used by describe(1), descc(8), and descu(8).
  *
- * $Id: desc.h,v 1.5 1997/12/22 00:34:52 gdr Exp $
+ * $Id: desc.h,v 1.6 1998/01/17 07:20:06 gdr Exp $
  */
 
-/* Keep these utilities in lockstep. */
+/*
+ * Keep these utilities in lockstep. Don't forget to change the version
+ * number in the *.rez files and in the manual pages.
+ */
 #define _VERSION_ "v1.0.5"
 
 #define QUOTE_CHAR '#'
 #define DATABASE   "/usr/lib/describe.db"
 
 #define FIELD_LEN        9
-#define NAME_LEN        34
+#define NAME_LEN        36
 #define MAX_LINE_LENGTH 81
 #define FIELD_COUNT      7 /* number of fields below, not including comments */
 

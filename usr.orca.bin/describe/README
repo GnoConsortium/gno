@@ -1,4 +1,4 @@
-$Id: README,v 1.6 1997/12/22 00:34:51 gdr Exp $
+$Id: README,v 1.7 1998/01/17 07:20:06 gdr Exp $
 
 This is the README file for the describe package.  This package is
 designated as version 1.0.5, and consists of the following utilities:
@@ -9,6 +9,11 @@ designated as version 1.0.5, and consists of the following utilities:
 	descc    - the describe source compiler
 
 	descu    - the describe source updater
+
+** NOTE **	The describe database itself is now shipped as a
+		separate file.  You can find the most recent version
+		of the database at the URLs mentioned in the installation
+		section.
 
 ABOUT DESCRIBE AND DESCC
 ========================
@@ -75,29 +80,79 @@ You can either type "dmake install", or do the following:
 	rm /usr/local/bin/descc
 	rm /usr/local/bin/describe
 
-You will also want to do the following, which is NOT done by dmake's
-install target:
-
+After you have done this, type the command
 	rehash
-	/usr/sbin/descc ./describe.src
+so that gsh will be able to locate the new utilities.
 
-Note that the describe database source file (describe.src) included in
-this archive is almost certainly out-of-date.  The most recent version
-of this file can be obtained online at:
+Next, you will need a current copy of the describe database.  As of 
+version 1.0.5, the database is no longer included with the describe
+sources.  Instead, you can get it from one of the following URLs:
 
+	ftp://ftp.gno.org/pub/apple2/gs.specific/gno/doc/desc.src.shk
+	ftp://ftp.gno.org/pub/apple2/gs.specific/gno/doc/desc.db.shk
+	http://www.gno/org/~gno/describe
 	http://www.arrowweb.com/sbehrens/describe.htm
 
-If the above url is unreachable, check the GNO FAQ for a new location.
+The desc.src.shk file contains the describe database "source" file.
+The desc.db.shk file contains a "precompiled" database.
+
+If you downloaded the precompiled database archive, then you can extract
+the contained file, "describe.db", and place it directly in /usr/lib.
+If you select another location, you will have to set your DESC_DB 
+environment variable.  See the describe(1) man page.  If you did
+this step, then you can skip extraction and compilation of the database
+source.
+
+If you downloaded the database source archive (desc.src.shk), it will
+extract to a file called "describe.source".  You can place this file
+anywhere, but the recommended location is in /usr/lib.  Next, issue
+the following command:
+	/usr/sbin/descc /usr/lib/describe.source
+This will create the file /usr/lib/describe.db.
+
+You should periodically download a new copy of the database.  The 
+date the database was updated is visible in the first few lines
+of the describe.source file.
+
+If you have submissions for the database, the web pages mentioned above
+contain directions on how to do the submission.
+
+KNOWN BUGS
+==========
+
+The describe.source file must be sorted (keyed on the "Name" field,
+case insensitive) when being compiled by descc.  Failure to ensure
+this will result describe failing to find certain entries, even if
+they belong in the database.  Using the descu program to update the
+database source ensures that the source is properly sorted.
 
 CHANGES
 =======
 
 This details changes to the entire distribution.
 
-v1.0.5  December 1997
+v1.0.5  January 1998
+	Increased the number of characters in the name field of the
+		nameEntry struct from 34 to 36.  This gives an 8-byte
+		alignment to the offset entry, which provides binary
+		compatibility of the precompiled database file between
+		the IIgs and little-endian 32-bit machines such as
+		Linux boxes.
+
+		*** THIS MEANS THAT THE PRECOMPILED DATABASE IS NO LONGER
+		    BINARY COMPATIBLE WITH EARLIER VERSIONS.
+
 	Updated descu so that the "Last Updated" line in the describe
-	source "header" is updated to reflect the current date and
-	time (GMT, if supported).
+		source "header" is updated to reflect the current date
+		and time (GMT, if supported).
+	Fixed a bug in descu that caused the "header" to be slowly eaten,
+		one character at a time.
+	The describe database source file is no longer part of this
+		archive.  It is available separately from the url, 
+		above.
+	Added a "Known Bugs" section and URLs on where to find the
+		online database to this README.  Modified the installation
+		instructions a bit.
 
 v1.0.4  September 1997
 	This package is now part of the base GNO distribution.

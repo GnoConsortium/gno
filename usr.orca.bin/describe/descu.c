@@ -11,7 +11,7 @@
  * Copyright 1995-1997 by Devin Reade for James Brookes' describe(1) utility.
  * See the included README file and man page for details.
  *
- * $Id: descu.c,v 1.6 1997/12/22 00:34:52 gdr Exp $
+ * $Id: descu.c,v 1.7 1998/01/17 07:20:07 gdr Exp $
  */
 
 #include <sys/types.h>
@@ -565,7 +565,7 @@ int main(int argc, char **argv) {
 	p++;
       }
       time(&t);
-      fprintf(outfp,"%s%s %s%s", header, revisionMagic,
+      fprintf(outfp,"%s%s %s%s\n", header, revisionMagic,
 	      asctime(gmtime(&t)), p);
     } else {
       fprintf(outfp,"%s\n", header);

@@ -1,7 +1,9 @@
 /*                                                                        */
 /* descc - compile info file into describe database file                  */
 /*                                                                        */
-/* $Id: descc.c,v 1.5 1997/09/24 06:34:58 gdr Exp $ */
+/* $Id: descc.c,v 1.6 1998/01/17 07:20:07 gdr Exp $ */
+/*                                                                        */
+/*      v1.0.5 and later - see the README file for a list of changes.     */
 /*                                                                        */
 /*      v1.0.4  -  Changed location of database.  Describe is now         */
 /*                 part of the base GNO distribution.  Version numbers    */
@@ -36,7 +38,7 @@
 /*                                                                        */
 /*      Name Entries                                                      */
 /*                                                                        */
-/*        34 bytes:  Null-terminated string; name of utility              */
+/*        36 bytes:  Null-terminated string; name of utility              */
 /*         4 bytes:  Long Int, offset of record in file.                  */
 /*                                                                        */
 /*      Records                                                           */

@@ -1,5 +1,5 @@
 .\"
-.\" $Id: descc.8,v 1.5 1997/10/30 04:19:10 gdr Exp $
+.\" $Id: descc.8,v 1.6 1998/01/17 07:20:07 gdr Exp $
 .\"
 .TH DESCC 8 "22 September 1997" GNO "System Administration"
 .SH NAME
@@ -13,7 +13,7 @@ descc \- the describe(1) source compiler
 .SH DESCRIPTION
 This manual page documents
 .BR descc
-version 1.0.4.
+version 1.0.5.
 .LP
 .BR descc
 compiles the describe source file
@@ -55,7 +55,7 @@ a complete record:
 .nf
 
 Name:    describe
-Version: 1.0.4
+Version: 1.0.5
 Shell:   GNO, ORCA/Shell
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
@@ -82,7 +82,7 @@ in the following format:
            2 bytes:  Short Int, number of \fBName Entries\fR
 
         Name Entries
-          34 bytes:  NULL-terminated string; name of the utility.
+          36 bytes:  NULL-terminated string; name of the utility.
            4 bytes:  Long Int, offset of the \fBrecord\fR in file.
 
         Records
