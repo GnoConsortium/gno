@@ -126,6 +126,14 @@ interprets
 as GS/OS access bits.  In order to get this behavior with the GNO 
 implementation, mode mapping must be turned off (see
 .BR mapMode (3)).
+.LP
+Under GNO, if UNIX mode mapping is in effect, and the file type 
+is either TXT or SRC, and the 
+.BR S_IXUSR
+bit in
+.IR mode
+is set, then the file is changed into a shell script by setting the
+file type to SRC and the auxilliary file type to EXEC.
 .SH RETURN VALUES
 Upon successful completion, a value of 0 is returned.
 Otherwise, a value of -1 is returned and
