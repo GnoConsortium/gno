@@ -36,7 +36,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)fcntl.h	8.3 (Berkeley) 1/21/94
- * $Id: fcntl.h,v 1.2 1997/02/28 04:56:45 gdr Exp $
+ * $Id: fcntl.h,v 1.3 1997/09/05 05:52:28 gdr Exp $
  */
 
 #ifndef _SYS_FCNTL_H_
@@ -135,6 +135,7 @@
 
 #ifdef __GNO__
 #define	F_DUPFD		1		/* duplicate file descriptor */
+#define	F_GETFL		4		/* get file status flags */
 #else
 #error __GNO__ is not defined
 
