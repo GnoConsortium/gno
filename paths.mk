@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: paths.mk,v 1.5 1998/02/09 08:43:47 taubert Exp $
+# $Id: paths.mk,v 1.6 1998/02/15 19:44:01 gdr-ftp Exp $
 #
 
 # SRC_DIR is the top-level GNO source distribution directory (containing
@@ -24,11 +24,6 @@
 SRC_DIR		= /src
 CWD		= $(PWD:s,:,/,g)
 OBJ_DIR		= /obj$(CWD:s,${SRC_DIR},,)
-
-.SOURCE.a :	$(OBJ_DIR)
-.SOURCE.o :	$(OBJ_DIR)
-.SOURCE.r :	$(OBJ_DIR)
-.SOURCE.root :	$(OBJ_DIR)
 
 # RELEASE_DIR is the directory into which we will put the created
 # distribution files.

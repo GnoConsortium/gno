@@ -1,7 +1,7 @@
 #
 # prog.mk    version 1.1.0  (August 31, 1997)
 #
-# $Id: prog.mk,v 1.5 1998/02/09 08:43:49 taubert Exp $
+# $Id: prog.mk,v 1.6 1998/02/15 19:44:03 gdr-ftp Exp $
 #
 
 # This makefile is intended for use with dmake(1) and occ(1) on Apple IIGS
@@ -59,7 +59,6 @@ STACK	*= 1024
 #   -r: don't create .root file (used on all but main file)
 CFLAGS	+= -r -O$(OPTIMIZE) $(DEFINES) -s$(STACK)
 
-
 # If installation directories were not set, use defaults
 BINDIR	*= /bin
 MANDIR	*= /usr/man
@@ -67,7 +66,9 @@ MANDIR	*= /usr/man
 RELBIN	= $(RELEASE_DIR)$(BINDIR)
 RELMAN	= $(RELEASE_DIR)$(MANDIR)
 
+.IF $(CUSTOM_RULES) == $(NULL)
 .INCLUDE:	/src/gno/binrules.mk
+.END
 
 .IF $(CUSTOM_RELEASE) == $(NULL)
 .INCLUDE:	/src/gno/binrelease.mk
