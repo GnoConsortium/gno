@@ -1,11 +1,13 @@
 /*
  * Resources for version and comment
- * $Id: cksum.rez,v 1.1 1998/01/16 04:16:11 gdr Exp $
+ *
+ * $Id: cksum.rez,v 1.2 1998/02/15 00:25:46 gdr-ftp Exp $
  */
 #define PROG "cksum/sum"
-#define DESC "Display file checksums and block counts"
+#define DESC "Display file checksums and block counts."
 
 #include "Types.rez"
+#include "/src/gno/build.tools/builddate.rez"
 
 /*
  * Version
@@ -16,7 +18,8 @@ resource rVersion (1, purgeable3) {
 	  0 },		/* non-final release number */
 	verUS,	/* Country */
 	PROG,	/* Program name */
-        DESC " Released with GNO/ME."
+        DESC "\nReleased with GNO/ME.\n"
+	BUILD_DATE
 };
 
 
@@ -24,7 +27,8 @@ resource rVersion (1, purgeable3) {
  * Comment
  */
 resource rComment (1, purgeable3) {
-	PROG " v2.0 (December 1997)\n"
+	PROG " v2.0\n"
 	"GNO utility: " DESC "\n"
-	"Ported from FreeBSD code by Dave Tribby."
+	"Ported from FreeBSD code by Dave Tribby.\n"
+	BUILD_DATE
 };

@@ -1,0 +1,9 @@
+# 0
+# 1 The first column is the "real" program; the second is what _should_
+# 2 be the symlink, but for now is a copy.
+# 3 All paths should be relative to the root directory.  This list
+# 4 should be kept sorted.
+# 5
+# 6 $Id: mklink.data,v 1.1 1998/02/15 00:25:47 gdr-ftp Exp $
+# 7
+usr/bin/cksum		usr/bin/sum
