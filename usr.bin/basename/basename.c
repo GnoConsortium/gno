@@ -45,7 +45,9 @@ static char sccsid[] = "@(#)basename.c	8.4 (Berkeley) 5/4/95";
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#ifdef __GNO__
 #include <gno/gno.h>
+#endif
 
 void usage (void);
 
@@ -55,9 +57,9 @@ main(int argc, char **argv)
 	char *p, delimiter = '/';
 	int ch;
 
-#	ifdef STACK_CHECK
-	_beginStackCheck();
-#	endif
+#ifdef __GNO__
+	__REPORT_STACK()
+#endif
 
 	while ((ch = getopt(argc, argv, "")) != -1)
 		switch(ch) {
@@ -148,10 +150,6 @@ main(int argc, char **argv)
 		}
 	}
 	(void)printf("%s\n", p);
-
-#	ifdef STACK_CHECK
-	fprintf(stdout, "stack used: %d\n", _endStackCheck());
-#	endif
 	exit(0);
 }
 
