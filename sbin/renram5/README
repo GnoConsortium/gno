@@ -1,0 +1,12 @@
+This is a quick and dirty program intended to rename /RAM5 at
+boot time.
+
+See the man page for details.
+
+If you decide to launch this program automatically from ProSel-16
+(as I do), ensure you change the file type to S16, otherwise ProSel
+will always prompt you when it is done ... most annoying.
+
+This program is in the public domain.
+
+Devin Reade <gdr@myrias.com> January 1996.

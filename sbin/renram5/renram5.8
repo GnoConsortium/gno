@@ -1,0 +1,52 @@
+.\" $Id: renram5.8,v 1.1 1996/01/29 06:20:11 gdr Exp $
+.\"
+.TH RENRAM5 8 "System Administration" "28 January 1996" "Version 1.0"
+.SH NAME
+renram5 \- rename /RAM5 at boot time
+.SH SYNOPSIS
+.BR renram5
+[
+.B \-d
+] [
+.I oldvolume
+[
+.I newvolume
+]]
+.SH DESCRIPTION
+.BR renram5
+is intended to be run automatically at boot time.  It renames
+the volume
+.I oldvolume
+to
+.IR newvolume ,
+if
+.I newvolume
+does not already exist.  If
+.I oldvolume
+or
+.I newvolume
+aren't specified, they default to
+.BR /RAM5
+and
+.BR /tmp .
+.LP
+If you are running
+.BR renram5
+automatically from ProSel-16 (and perhaps other launchers) you should
+change the filetype to
+.BR S16 .
+This will keep ProSel from prompting after the program is finished.
+When run as a
+.BR S16
+program, no command line arguments are possible.
+.SH OPTIONS
+.IP \fB-d\fP
+Enable debugging information.
+.SH AUTHOR
+Devin Reade, <gdr@myrias.com>
+.LP
+This program is in the public domain.
+.LP
+This program contains material from the ORCA/C Run-Time
+Libraries, copyright 1987-1996 by Byte Words, Inc.
+Used with permission.
