@@ -3,7 +3,9 @@
  *
  * Copyright 1991-1996, Procyon Inc.
  *
- * $Id: kerntool.h,v 1.1 1997/02/28 04:42:06 gdr Exp $
+ * $Id: kerntool.h,v 1.2 1997/09/21 22:51:14 gdr Exp $
+ *
+ * This file is formatted for tab stops every 8 columns.
  */
 
 #ifndef _GNO_KERNTOOL_H_
@@ -41,7 +43,7 @@ pascal int	Kswait(int sem) inline(0x0D03, udispatch);
 pascal int	Kssignal(int sem) inline(0x0E03, udispatch);
 pascal int	Kscreate(int count) inline(0x0F03, udispatch);
 pascal int	Ksdelete(int sem) inline(0x1003, udispatch);
-/* kvm         1103 thru 1503 */
+/* kvm		0x1103 thru 0x1503 */
 pascal void *	Ksignal(int sig, void (*func)()) inline(0x1603, udispatch);
 pascal int	Kwait(union wait *status) inline(0x1703, udispatch);
 pascal int	Ktcnewpgrp(int fdtty) inline(0x1803, udispatch);
