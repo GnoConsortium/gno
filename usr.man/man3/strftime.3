@@ -1,0 +1,214 @@
+.\" Copyright (c) 1989, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the American National Standards Committee X3, on Information
+.\" Processing Systems.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)strftime.3	8.1 (Berkeley) 6/4/93
+.\"
+.TH STRFTIME 3 "4 July 1999" GNO "Library Routines"
+.SH NAME
+.BR strftime
+\- format date and time
+.SH SYNOPSIS
+.br
+#include <time.h>
+.sp 1
+size_t
+\fBstrftime\fR (char *\fIbuf\fR, size_t \fImaxsize\fR, const char *\fIformat\fR, const struct tm *\fItimeptr\fR);
+.SH DESCRIPTION
+The
+.BR strftime 
+function formats the information from
+.I timeptr
+into the buffer
+.I buf
+according to the string pointed to by
+.IR format .
+.LP
+The
+.I format
+string consists of zero or more conversion specifications and
+ordinary characters.
+All ordinary characters are copied directly into the buffer.
+A conversion specification consists of a percent sign 
+.RB ( % )
+and one other character.
+.LP
+No more than
+.I maxsize
+characters will be placed into the array.
+If the total number of resulting characters, including the terminating
+null character, is not more than
+.IR maxsize .
+.BR strftime 
+returns the number of characters in the array, not counting the
+terminating null.
+Otherwise, zero is returned.
+.LP
+Each conversion specification is replaced by the characters as
+follows which are then copied into the buffer.
+.RS
+.IP "\fB\&%A\fR"
+is replaced by national representation of the full weekday name.
+.IP "\fB%a\fR"
+is replaced by national representation of
+the abbreviated weekday name, where the abbreviation
+is the first three characters.
+.IP "\fB\&%B\fR"
+is replaced by national representation of the full month name.
+.IP "\fB%b\fR"
+is replaced by national representation of
+the abbreviated month name, where the abbreviation is
+the first three characters.
+.IP "\fB\&%C\fR"
+is replaced by (year / 100) as decimal number; single
+digits are preceded by a zero.
+.IP "\fB%c\fR"
+is replaced by national representation of time and date
+(the format is similar with produced by
+.BR asctime (3)).
+.IP "\fB\&%D\fR"
+is equivalent to
+.BR %m/%d/%y .
+.IP "\fB%d\fR"
+is replaced by the day of the month as a decimal number (01-31).
+.IP "\fB\&%E*\fR"
+POSIX locale extensions.
+The sequences
+%Ec %EC %Ex %Ey %EY
+%Od %Oe %OH %OI %Om %OM
+%OS %Ou %OU %OV %Ow %OW %Oy
+are supposed to provide alternate
+representations.
+.IP "\fB%e\fR"
+is replaced by the day of month as a decimal number (1-31); single
+digits are preceded by a blank.
+.IP "\fB\&%H\fR"
+is replaced by the hour (24-hour clock) as a decimal number (00-23).
+.IP "\fB%h\fR"
+the same as %b.
+.IP "\fB\&%I\fR"
+is replaced by the hour (12-hour clock) as a decimal number (01-12).
+.IP "\fB%j\fR"
+is replaced by the day of the year as a decimal number (001-366).
+.IP "\fB%k\fR"
+is replaced by the hour (24-hour clock) as a decimal number (0-23);
+single digits are preceded by a blank.
+.IP "\fB%l\fR"
+is replaced by the hour (12-hour clock) as a decimal number (1-12);
+single digits are preceded by a blank.
+.IP "\fB\&%M\fR"
+is replaced by the minute as a decimal number (00-59).
+.IP "\fB%m\fR"
+is replaced by the month as a decimal number (01-12).
+.IP "\fB%n\fR"
+is replaced by a newline.
+.IP "\fB\&%O*\fR"
+the same as %E*.
+.IP "\fB%p
+is replaced by national representation of either
+"ante meridiem"
+or
+"post meridiem"
+as appropriate.
+.IP "\fB\&%R
+is equivalent to
+.Dq Li %H:%M .
+.IP "\fB%r
+is equivalent to
+.BR "%I:%M:%S %p" .
+.IP "\fB\&%S
+is replaced by the second as a decimal number (00-60).
+.IP "\fB%s
+is replaced by the number of seconds since the Epoch, UTC (see
+.BR mktime (3)).
+.IP "\fB\&%T
+is equivalent to
+.Dq Li %H:%M:%S .
+.IP "\fB%t
+is replaced by a tab.
+.IP "\fB\&%U
+is replaced by the week number of the year (Sunday as the first day of
+the week) as a decimal number (00-53).
+.IP "\fB%u
+is replaced by the weekday (Monday as the first day of the week)
+as a decimal number (1-7).
+.IP "\fB\&%V
+is replaced by the week number of the year (the first
+Monday as the first day of week 1) as a
+decimal number (01-53).
+.IP "\fB%v
+is equivalent to
+.BR "%e-%b-%Y" .
+.IP "\fB\&%W
+is replaced by the week number of the year (Monday as the first day of
+the week) as a decimal number (00-53).
+.IP "\fB%w
+is replaced by the weekday (Sunday as the first day of the week)
+as a decimal number (0-6).
+.IP "\fB\&%X
+is replaced by national representation of the time.
+.IP "\fB%x
+is replaced by national representation of the date.
+.IP "\fB\&%Y
+is replaced by the year with century as a decimal number.
+.IP "\fB%y
+is replaced by the year without century as a decimal number (00-99).
+.IP "\fB\&%Z
+is replaced by the time zone name.
+.IP "\fB%+
+is replaced by national representation of the date and time
+(the format is similar with produced by
+.BR date (1)).
+.IP "\fB%%
+is replaced by
+.BR % .
+.RE
+.SH SEE ALSO
+.BR date (1),
+.BR ctime (3),
+.BR printf (1),
+.BR printf (3)
+.SH STANDARDS
+The
+.BR strftime 
+function
+conforms to ANSI/C.
+The
+.B %s
+conversion specification is an extension.
+.SH BUGS
+There is no conversion specification for the phase of the moon.
+.LP
+The GNO version does not currently handle national locales.  The C locale
+is assumed.
