@@ -1,9 +1,9 @@
 .\" This man page has been written to conform with the lenviron v1.1.3
 .\" release for Gno v2.0.3 and later by Devin Reade.  glyn@cs.ualberta.ca
 .\"
-.TH ENVIRON 7 "Miscellaneous" "13 April 1994" "Version 1.1.3"
+.TH ENVIRON 7 "15 April 1998" GNO "Miscellaneous"
 .SH NAME
-environ \- user environment for Gno and Orca
+environ \- user environment
 .SH SYNOPSIS
 #include <stdlib.h>
 .LP
@@ -14,19 +14,19 @@ Under UNIX, an array of strings called the `environment' is made available by
 when a process begins.  By convention these strings have the
 form \fIname=value\fR.
 However, because of the shell variable and environment passing mechanisms
-normally provided for the IIgs (and with Gno and Orca in particular), this
+normally provided for the IIgs (and with GNO and ORCA in particular), this
 method of controlling and accessing the environment has not previously been
-available.  Specifically, under Gno and Orca
+available.  Specifically, under GNO and ORCA
 .BR environ
 is not initialized by the
 .BR exec (3)
 family of calls.  To accomodate this \'feature\', the library call
-.BR initenv (3)
+.BR environInit (3)
 has been provided to properly initialize
 .BR environ .
 .LP
 The following names are used by various commands:
-.TP 20
+.TP 10
 .B PATH
 The sequence of directory prefixes that
 .BR gsh (1),
@@ -74,7 +74,7 @@ The string describing the terminal in
 or the name of the
 .B termcap
 file, see
-.BR termcap (3X),
+.BR termcap (3),
 .BR termcap (5).
 .TP
 .B EXINIT
@@ -122,12 +122,12 @@ locale dependent commands and functions
 (see
 .BR locale (5)).
 .SH GNO IMPLEMENTATION
-The Gno implementation of the environment actually has two sets of shell
+The GNO implementation of the environment actually has two sets of shell
 variables.  The first is the NULL\-terminated array of strings pointed to by
 .BR environ .
 The second is the set of internal shell variables set by such system calls as
 .BR SetGS " and " UnsetVariableGS .
-The latter of these is the one normally used by Orca/C.  Unfortunately, the
+The latter of these is the one normally used by ORCA/C.  Unfortunately, the
 latter implementation makes the porting of some UNIX utilities more
 difficult.  The
 .BR environ
@@ -148,18 +148,18 @@ will remain NULL; its default value.
 .LP
 If, however,
 .BR environ
-is to accessed, then an initial call must be made to
-.BR initenv (3).
+is to be accessed, then an initial call must be made to
+.BR environInit (3).
 This produces the array of strings based on the shell variables defined
 internally, and keeps the array current with further calls to
 .BR putenv "(3), or"
 .BR setenv (3).
 .SH CAVEATS                                                  
-Under the Orca shell, three `extraneous' shell variables are defined:
+Under the ORCA shell, three `extraneous' shell variables are defined:
 .BR STATUS ,
 .BR Command ", and"
 .BR Exit .
-These are reset with every call to the Orca shell and should not, in general,
+These are reset with every call to the ORCA shell and should not, in general,
 be considered to be current.
 .LP
 When one of the
@@ -169,12 +169,14 @@ family of calls is carried out, the environment will not be passed on through
 In order for the next process to use
 .BR environ ,
 it must make another call to
-.BR initenv (3).
+.BR environInit (3).
 Note, however, that child processes will still have residing in the internal
 shell variables all previous modifications to the environment.
 .LP
 In order to conduct an environment context switch, you must invoke the functions
-.BR pushenv " (3) and " popenv (3).
+.BR environPush (3)
+and
+.BR environPop (3).
 This context switch behaves similarily to
 .BR PushVariableGS " or " PopVariableGS ,
 but will result in both internal and external shell variables being saved
@@ -196,28 +198,18 @@ routines may result in memory trashing and unpredicable behavior.
 .B /etc/passwd
 .B etc/termcap
 .fi
-.SH BUGS
-None are known at this time.  Send bug reports to Devin Reade at one of the
-addresses below.  If you cannot contact me at those addresses, look for
-me on the Internet comp.sys.apple2.* newsgroups.
+.SH HISTORY
+This
+.BR environ
+implementation was first made available in the (now deprecated) 
+.IR lenviron
+library.  It was incorporated into 
+.IR libc
+as of GNO v2.0.6.
 .SH AUTHORS
-.nf
-The environ library was created for Orca/Gno by:
-.LP
-.RS
-G. Devin Reade      glyn@cs.ualberta.ca
-                    dreade@gpu.srv.ualberta.ca
-                    glyn@ersys.edmonton.ab.ca
-.RE
-.LP
-It contains code fragments from:
-.LP
-.RS
-Dave Tribby         GEnie: D.TRIBBY
-                    Internet: tribby@cup.hp.com
-James Brookes       jamesb@cscihp.ecst.csuchico.edu
-.RE
-.fi                                 
+The original environ library (and consequently portions of the current
+libc) was created for GNO and ORCA/Shell by Devin Reade.  This implementation
+also contains code fragments from Dave Tribby and James Brookes.
 .LP
 The environ library also contains code is derived from software contributed
 to Berkeley by the American National Standards Committee X3, on
@@ -226,8 +218,10 @@ Information Processing Systems.  Those portions are copyright (c) 1988,
 .SH SEE ALSO
 .BR gsh (1),
 .BR execve (2),
+.BR exec (3),
+.BR execl (3),
 .BR getenv (3),
 .BR system (3),
-.BR termcap (3X),
+.BR termcap (3),
 .BR passwd (5),
 .BR termcap (5)
