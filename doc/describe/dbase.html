@@ -1,0 +1,43 @@
+<!-- $Id: dbase.html,v 1.1 1998/01/14 05:10:05 gdr Exp $ -->
+
+<A HREF="gno/describe/index.html"><IMG src="icons/back.gif"
+ alt="Back to the Describe Database Page"
+ align="right" width="24" height="24" border="0"></A>
+<BR CLEAR=RIGHT>
+
+<H1 ALIGN=CENTER>Obtaining a Current Database</H1>
+
+The describe database last updated on <b>%%DATE%%</b>.
+<p>
+
+The describe database consists of two files.  The first is a specially
+formatted ASCII file, known as the database &quot;source&quot; file.
+It can be manually edited with any text editor, or updated with
+<A HREF="gno/man/man8/descu.8.html">descu</A>(8).
+It doesn't really matter where on your system this file resides, but the path
+<b>/usr/lib/describe.src</b>
+is recommended.
+<p>
+
+The second file is the compiled database file.  This file is compiled
+from the source file by the
+<A HREF="gno/man/man8/descc.8.html">descc</A>(8)
+program.  It is a binary file and not human-readable.  Unless the
+<b>DESCDB</b>
+environment variable has been set, this file <em> must </em> have the
+pathname
+<b>/usr/lib/describe.db</b>.
+<p>
+
+Both files are available here:
+<ul>
+<li>database source file:
+<A HREF="ftp://ftp.gno.org/pub/apple2/gs.specific/gno/doc/desc.src.shk">
+ftp://ftp.gno.org/pub/apple2/gs.specific/gno/doc/desc.src.shk</A>
+<li>precompiled database:
+<A HREF="ftp://ftp.gno.org/pub/apple2/gs.specific/gno/doc.utils/desc.db.shk">
+ftp://ftp.gno.org/pub/apple2/gs.specific/gno/doc.utils/desc.db.shk</A>
+</ul>
+
+Back to the <A HREF="gno/describe/index.html">Describe Database Page</A>.
+<p>

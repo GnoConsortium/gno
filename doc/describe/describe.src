@@ -1,0 +1,2315 @@
+#=============================================================================
+# List of shell applications for GNO/ME and ORCA/Shell
+# Last revision: Tue Jan 13 01:15:33 1998
+#
+# $Id: describe.src,v 1.1 1998/01/14 05:10:07 gdr Exp $
+#=============================================================================
+#
+#     About this file
+#     ~~~~~~~~~~~~~~~
+#     This file is in human readable form, but is intended to be compiled with
+#  the program 'descc' into the 'describe' database.  Just type 'descc
+#  <filename>', where <filename> is the name you saved this file to, and
+#  descc will compile the file into the file /usr/lib/describe.db, or
+#  alternatively into a file named 'describe' in the path given by the
+#  environment variable DESCDB.  Make sure the path that DESCDB points to
+#  or /usr/lib exist first! Information may be later culled from the
+#  file with the command 'describe <utility>'.
+#
+#     While this file may be updated manually, new entries and updates may
+#  also be merged through the use of 'descu'.
+#
+#     This file is sorted lexicographically, ignoring case, based on the
+#  Name field.
+#
+#      Online home of describe
+#      ~~~~~~~~~~~~~~~~~~~~~~~
+#  http://www.arrowweb.com/sbehrens/describe.htm
+#
+#    Updates and corrections may be sent by email to sbehrens@bigfoot.com.
+#
+#      To obtain the version number of a file: 
+#      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  A) use the shell program `getvers',
+#  B) any usage or -v/V flag supplied by the utility author
+#
+#
+#  NB: "Author" may mean who is maintaing the current port, and may not
+#  actually mean the original author of the program.
+#==============================================================================
+Name:    alarm
+Version: 1.0 (Feb 94)
+Shell:   GNO
+Author:  Christopher Neufeld
+Contact: neufeld@physics.utoronto.ca
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a reminder program, typically executed in the background.  The
+program sleeps until the specified alarm time is reached, and then beeps
+the speaker and optionally prints a message.
+
+Name:    amaterm
+Version: 2.0
+Shell:   GNO
+Author:  Sean McAfee
+Contact: mcafee@umich.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+AmaTerm is a GNO-specific terminal emulation program with job control (it
+may be suspended), a simple macro language, and a scrollback buffer.
+
+Name:    apropos
+Version: 3.0 (24 Jul 95)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Locate commands by keyword.  Bundled with catman, makewhatis, man,
+and whatis in the manpack30.shk archive.
+
+Name:    argv0
+Version: 1.0
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Emulates UNIX argv0 (manipulate argv array passed to programs). Runs
+shell scripts with #!/... syntax.  Runs s16 programs with arguments.
+
+Name:    aspdisp
+Version: 1.0
+Shell:   GNO
+Author:  Jason Perez
+Contact: jasonp@norton.sps.mot.com
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+aspdisp prints out AppleWorks v3.0 Spreadsheet files.  The output is
+formatted as near as possible to what it would look like in Appleworks.
+
+Name:    aw30
+Version: 1.0
+Shell:   GNO/ME
+Author:  Robert Hill
+Contact: rhill@eecs.ukans.edu
+Where:   /usr/local/bin
+FTP:     -
+
+Formats AppleWorks (Classic) Word Processor files for display.  Handles
+most options--including underline, boldface, margins, centering--on all
+terminal types.
+
+Name:    awk
+Version: 1.0
+Shell:   GNO/ME
+Author:  Ported by Jawaid Bazyar
+Contact: bazyar@netcom.com
+Where:   /usr/local/bin
+FTP:     ground.isca.uiowa.edu
+
+A port of AT&T's AWK string processing language.
+
+Name:    bang
+Version: 1.0
+Shell:   GNO
+Author:  Jason Perez
+Contact: jasonp@amcu-tx.sps.mot.com
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This utility is used to access the gsh(1) command history buffer.  It has
+similar functionality to the "!" built-in command for csh(1) or bash(1).
+
+Name:    bc
+Version: 1.01
+Shell:   GNO/ME
+Author:  Frank Petroski
+Contact: -
+Where:   /usr/bin
+FTP:     apple2.caltech.edu
+
+GNU bc is an arbitrary precision numeric processing language.  Syntax is
+similar to C, but differs in many substantial areas.  It supports
+interactive execution of statements.  bc is a utility included in the
+POSIX P1003.2/D11 draft standard.  Copyright Free Software Foundation.
+
+Name:    beatbox
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Alvin Tan, Brian Ballweber
+Contact: corey@drift.winternet.com
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is an alpha-level MOD/MED editor and player.  Not for use on ROM-3 
+machines.
+
+Name:    bed
+Version: 1.1.1
+Shell:   GNO/ME
+Author:  Phil Vandry
+Contact: vandry@cam.org
+Where:   /usr/local/bin
+FTP:     ground.isca.uiowa.edu
+
+A binary editor that can handle "infinitely" long lines and null bytes
+in the file.  Intended for editing binary files.
+
+Name:    binprint
+Version: 1.2
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Prints a hex dump of files or standard in
+
+Name:    bison
+Version: 1.19
+Shell:   ORCA/Shell, GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin
+FTP:     ftp://apple2.caltech.edu/pub/apple2/source/
+
+A port of the FSF's yacc replacement. bison is part of the GNU project.
+yacc is a parser generator (also known as "compiler compiler").
+
+Name:    blist
+Version: 1.0
+Shell:   ORCA/Shell, GNO/ME
+Author:  Kelvin W Sherlock
+Contact: ksherloc@mole.uvm.edu
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+List an Applesoft BASIC file.
+
+Name:    booz
+Version: 2.01
+Shell:   ORCA/Shell, GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin
+FTP:     ftp://apple2.caltech.edu/pub/apple2/shellutils
+
+Unpacks files that were packed with Zoo 2.1 or earlier.
+
+Name:    cal
+Version: -
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Prints a calendar for the current month or any month.
+
+Name:    calendar
+Version: 1.0
+Shell:   GNO
+Author:  Christopher Neufeld
+Contact: neufeld@physics.utoronto.ca
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This program consults a calandar database, and prints out entries
+corresponding to today's or tomorrow's entries.  On weekends, "tomorrow"
+extends through Monday.
+
+Name:    calls
+Version: 2.0 (16 Dec 93)
+Shell:   GNO/ME
+Author:  Ported by Devin Reade
+Contact: gdr@myrias.ab.ca
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
+
+A call chart generator, to show the sequence and calling dependancies of
+functions within a program.  It's more flexible than Orca shell version. 
+Requires cpp.
+
+Name:    catman
+Version: 1.0 (24 Jul 95)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /usr/sbin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Preformat manual reference pages.  Bundled with apropos,
+makewhatis, man, and whatis in the manpack30.shk archive.
+
+Name:    catrez
+Version: 1.0
+Shell:   GNO
+Author:  Dave Tribby
+Contact: tribby@cup.hp.com
+Where:   /usr/bin
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+Concatenate resource forks.
+
+Name:    cclean
+Version: 1.02
+Shell:   ORCA/Shell, GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin
+FTP:     Part of occ package
+
+For use with occ. Remove the lines ccprep put into a source file from that
+source file. Part of the occ 1.12 distribution.
+
+Name:    ccprep
+Version: 1.1
+Shell:   ORCA/Shell, GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin
+FTP:     Part of occ package
+
+For use with occ. Puts a "#line 2" statement into source files to
+get around problems with occ 1.12 and ORCA/C 2.03.
+
+Name:    cdaudio
+Version: 1.0
+Shell:   GNO
+Author:  Michael Searl
+Contact: cmoore@acs.ucalgary.ca
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This utility plays audio compact disks.
+
+Name:    chat
+Version: 2.0
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     trenco.myrias.com
+
+Sends strings and waits for strings. Used to send modem commands and wait
+for replies, etc..
+
+Name:    chmod
+Version: 2.1
+Shell:   GNO/ME
+Author:  Leslie M. Barstow III
+Contact: wdphoenix@delphi.com
+Where:   /bin
+FTP:     ground.isca.uiowa.edu
+
+chmod allows you to change the permissions on a file.  This is an
+enhanced version which allows you to change options ala UNIX or using
+the Apple specific flags (UNIX values are translated into Apple
+equivalents).
+
+Name:    cjpeg
+Version: 6
+Shell:   GNO, ORCA
+Author:  Mark Marr-Lyon
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Compress an image file to a JPEG file.  Part of the jpeg tools archive.
+
+Name:    coff
+Version: 1.1
+Shell:   GNO, ORCA, Merlin16+
+Author:  Albert Chin-A-Young
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is an OMF disassembler designed for OMF 1.0 and 2.0 files.  Output is
+similar to the ORCA and APW utility 'dumpobj', although OMF and 65816
+disassemblies are much cleaner and more readable.
+
+Name:    compress
+Version: 4.3
+Shell:   GNO/ORCA
+Author:  Ported by Donald Gloistein
+Contact: -
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+File compression utility.
+
+Name:    conv
+Version: 1.1
+Shell:   GNO, ORCA
+Author:  Jawaid Bazyar, Derek Taubert
+Contact: bazyar@hypermall.com
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Text file converter.  It either converts NL characters to CR characters
+(and back), converts tabs to spaces, or converts characters in a file
+name to lower case.
+
+Name:    copycat
+Version: 1.4.1
+Shell:   GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/bin
+FTP:     -
+
+copycat copies data bidirectionally between the two named ttys.  It
+can be used as a simple dumb terminal program.
+
+Name:    copyfork
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  -
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This utility selectively copies data forks, resource forks, or both.
+The command line syntax is a bit odd.  See also catrez.
+
+Name:    cp
+Version: 1.5
+Shell:   GNO
+Author:  Greg Thompson
+Contact: -
+Where:   /bin/cp
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+cp does file copy operations.  Suitably invoked, it also moves files (mv)
+and deletes files (rm).
+
+Name:    cpp
+Version: 0.1b (16 Aug 92)
+Shell:   GNO, ORCA
+Author:  Doug McIntyre
+Contact: dougm@lakesys.lakesys.com
+Where:   /usr/lib
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a stand-alone C preprocessor based on code from the old
+Decus C compiler.  Two versions may be found in the cppDecus.shk archive,
+an older one with source code, and a newer one without source code.
+
+Name:    cron
+Version: 1.1
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/sbin
+FTP:     -
+
+Runs certain processes at certain times. cron is started by init.
+
+Name:    cu
+Version: 1.0
+Shell:   GNO/ME
+Author:  Dave J. Roberts
+Contact: daver@interactive.net
+Where:   /usr/local/bin
+FTP:     -
+
+A simple dialup utility.
+
+Name:    cut
+Version: 1.0
+Shell:   GNO/ME
+Author:  Jason Perez
+Contact: jperez@ee.tamu.edu
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Cuts out selected fields of each line of a file.
+
+Name:    date
+Version: 1.2
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Shows the date and time (optionally, continuously).
+
+Name:    descc
+Version: 1.0.4
+Shell:   ORCA/Shell, GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/sbin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
+
+Compile a source file into a 'describe' database file.
+
+Name:    descii
+Version: 1.0.2
+Shell:   GNO/ORCA
+Author:  David Empson
+Contact: dempson@actrix.gen.nz
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Shell-based binscii decoder.
+
+Name:    describe
+Version: 1.0.4
+Shell:   ORCA/Shell, GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
+
+Print a multi-line description obtained from the compiled 'describe'
+database; giving utility name, version, intended shell, author, author's
+contact, where the utility is, as well as where the utility can be FTPd
+from on the InterNet.
+
+Name:    descu
+Version: 1.0.4
+Shell:   ORCA/Shell, GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.ab.ca
+Where:   /usr/sbin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
+
+Update a 'describe' source file.
+
+Name:    dial
+Version: 1.0
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Uses your modem to dial telephone numbers stored in a database by name,
+or looks up the numbers and reports without dialing.
+
+Name:    dialup
+Version: 1.3
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/sbin
+FTP:     -
+
+Run from inittab to handle modems on dialup lines.
+
+Name:    diff
+Version: 1.0 (12 Dec 94)
+Shell:   GNO/ME
+Author:  Ported by Devin Reade
+Contact: <gdr@myrias.ab.ca>
+Where:   /usr/bin
+FTP:     cco.caltech.edu, ground.isca.uiowa.edu.
+
+Show differences in files.  This is a port based on GNU diff v2.6.  Some
+less-used features have been temporarily disabled for v1.0.
+
+Name:    djpeg
+Version: 6
+Shell:   GNO, ORCA
+Author:  Mark Marr-Lyon
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Decompress a JPEG file to an image file.  Part of the jpeg tools archive.
+
+Name:    dmake
+Version: 1.0 (4 Jul 94)
+Shell:   GNO/ME
+Author:  Ported by Devin Reade.
+Contact: gdr@myrias.ab.ca
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
+
+A Unix-style make utility for automated compilation.
+
+Name:    dos2gs
+Version: 1.0
+Shell:   GNO, ORCA, APW
+Author:  Delonge & Tucek Software
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+dos2gs will read MS-DOS disks on an Apple IIgs equipped with the
+Applied Engineering PC Transporter card and a 360 KByte TransDrive.
+It will also read PC Transporter MS-DOS Partitions on ProDOS volumes.
+It works under GS/OS rather than under MS-DOS.
+
+Name:    DRWM
+Version: 2.01
+Shell:   GNO/ME
+Author:  Dave J. Roberts
+Contact: dave@mary.iia.org
+Where:   /usr/X/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu 
+
+Davis Rex Window Manager.  A window manager for GNO.
+
+Name:    dsc
+Version: 1.1
+Shell:   GNO, ORCA
+Author:  David Ong Tat-Wee (DOTW)
+Contact: ongtatwe@iscs.nus.sg
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+DOTW's (command line) Sprite Compiler.  DSC takes a $C0 (Apple Preferred
+Format picture) file as input, and generates an ORCA/M compatible 65816
+assembly source codes (in a text file) as output.
+
+Name:    dsort
+Version: 1.0 (14 Jun 94)
+Shell:   GNO/ME
+Author:  Devin Reade.
+Contact: gdr@myrias.ab.ca
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu (in file sorts10.shk)
+
+Sort a text file on disk lexicographically.  Archived together
+with msort.
+
+Name:    dsplit
+Version: 1.0 (19 Dec 93)
+Shell:   GNO/ME
+Author:  Ported by Devin Reade.
+Contact: gdr@myrias.ab.ca
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+A file splitter, with a default output size of 811520 bytes, suitable
+for 800k 3.5" floppies.  It will work with any type of regular (no
+resource fork) file.
+
+Name:    duplex
+Version: 1.0
+Shell:   GNO
+Author:  Phillip Vandry
+Contact: vandry@cam.org
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is part of the "seq" remote login package.  (See "seq".)
+
+Name:    echo
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Brian Tao
+Contact: -
+Where:   /bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a replacement for the shell builtin 'echo'.  This version of echo
+can ring the console bell, clear the screen before printing its arguments,
+delete the last newline or output just a CR as a terminator.
+
+Name:    egrep
+Version: 1.3
+Shell:   GNO/ORCA
+Author:  Jawaid Bazyar, Mike Horwath
+Contact: -
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Finds regular expressions, with an extended regular expression syntax.
+
+Name:    ekill
+Version: 1.0
+Shell:   GNO
+Author:  James Brookes
+Contact: -
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is an extended version of the kill(1) shell builtin, which is used
+for sending signals to processes.
+
+Name:    emacs
+Version: 3.9e
+Shell:   GNO
+Author:  -
+Contact: -
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is MicroEmacs (uemacs), an EMACS text editor clone.
+
+Name:    eps
+Version: 1.0
+Shell:   GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/bin
+FTP:     -
+
+Display extensive process status information.
+
+Name:    evaluate
+Version: 1.0
+Shell:   ORCA
+Author:  Dave Tribby
+Contact: tribby@cup.hp.com
+Where:   17/
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Evaluate is an ORCA/Shell (only) utility for evaluating expressions, and
+setting a shell variable to the value of the result.
+
+Name:    expr
+Version: 1.1
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Evaluates matehmatical expressions; prints result in normal and
+scientific notation. Uses C like syntax.
+
+Name:    fgrep
+Version: 2.1
+Shell:   GNO/ORCA
+Author:  Christopher Neufeld
+Contact: -
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Finds regular expressions.
+
+Name:    figlet
+Version: 2.0
+Shell:   GNO/ME
+Author:  Ported by Jawaid Bazyar
+Contact: bazyar@csn.org
+Where:   /usr/local/bin
+FTP:     ground.isca.uiowa.edu
+
+Creates styled large characters out of ordinary screen characters.
+
+Name:    fill
+Version: 2.7
+Shell:   GNO, ORCA
+Author:  James Brookes
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a simple text filter used for filling paragraphs.
+
+Name:    finger
+Version: 1.1 
+Shell:   GNO/ME
+Author:  Leslie M. Barstow III 
+Contact: wdphoenix@delphi.com 
+Where:   /usr/bin 
+FTP:     - 
+finger is a re-write of the UNIX finger utility.  Its purpose is to provide
+information about a user or users.  It shows their real name, home directory,
+default shell, last login time, and two files that they may create to provide
+further information.
+
+Name:    fish
+Version: 1.0
+Shell:   GNO
+Author:  Jeff Markham
+Contact: markhj01@winternet.com
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+The card game "Go Fish!", ported from NetBSD 1.3.
+
+Name:    flex
+Version: 2.38
+Shell:   ORCA/Shell, GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin
+FTP:     ftp://ground.isca.uiowa.edu/2/apple2/nodak/gs/shell.stuff/
+
+A port of the FSF's lex replacement. flex is part of the GNU project.
+lex is a tokenizer generator, to be used in conjunction with yacc. Note
+that due to the way the FSF writes their code (yuck), flex has some problems
+with ints being 16-bit instead of 32-bit on the GS..
+
+Name:    fmake
+Version: 1.0
+Shell:   ORCA/Shell, GNO/ME
+Author:  Felix Blank
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin
+FTP:     -
+
+fmake is a Unixish make utility. It only understands a small subset of make
+commands, though, barely enough to maintain small projects. Written originally
+by Felix Blank. The need for this utility vanished with the advent of dmake.
+
+Name:    foreach
+Version: 1.0
+Shell:   GNO
+Author:  Sean McAfee
+Contact: mcafee@umich.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This utility provides a limited loop construct to gsh(1).  Used for scripting.
+
+Name:    fortune
+Version: -
+Shell:   -
+Author:  -
+Contact: -
+Where:   -
+FTP:     -
+
+There are three distinct varieties of fortune for GNO.  See "fortune-a",
+"fortune-b", and "fortune-c".
+
+Name:    fortune-a
+Version: 1.0 (12 Sep 94)
+Shell:   GNO, ORCA
+Author:  Greg Thompson
+Contact: -
+Where:   /usr/local/games
+FTP:     trenco.myrias.com
+
+This is a simple shell utility which displays a random fortune.  There are
+multiple ports of fortune(6) available for GNO.  (You should install only one.)
+This port, designated as series "a", was ported by Greg Thompson.
+See also "fortune-b" and "fortune-c".
+
+Name:    fortune-b
+Version: 1.0 (12 Nov 94)
+Shell:   GNO
+Author:  Douglas E. Mitton
+Contact: dmitton@mulberry.com
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu, GEnie A2Pro #4402
+
+This is a simple shell utility which displays a random fortune.  There are
+multiple ports of fortune(6) available for GNO.  (You should install only one.)
+This one was ported from QNX (Quantum UNIX) by Doug Mitton, and is designated
+series "b".  See also "fortune-a" and "fortune-c".
+
+Name:    fortune-c
+Version: 1.2
+Shell:   GNO, ORCA
+Author:  Tilghman Lesher
+Contact: lesherjt@vuse.vanderbilt.edu
+Where:   /usr/local/games
+FTP:     trenco.myrias.com
+
+This is a simple shell utility which displays a random fortune.  There are
+multiple ports of fortune(6) available for GNO.  (You should install only one.)
+This version was written from scratch by Collin Douglas, and is designated
+as series "c".  It was modified, separately, by both David Ong Tat-Wee (v1.1)
+and by Tilghman Lesher (v1.2).  See also "fortune-a" and "fortune-b".
+
+Name:    freeze
+Version: 1.2
+Shell:   GNO/ORCA
+Author:  Michael Frankowski
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Another file compression utility.
+
+Name:    ftn
+Version: 1.1 (11 Oct 94)
+Shell:   GNO/ME
+Author:  Dave J. Roberts.  Version 1.1 changes by Devin Reade.
+Contact: daver@rush.cc.edu, droberts@chaos.bsu.edu
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+A utility to display Apple's DTS File Type Notes.
+
+Name:    getshk
+Version: 2.0
+Shell:   GNO/ORCA
+Author:  Kent Squires
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a front end to yankit(1), which adds more options when extracting
+NuFX files.
+
+Name:    getty
+Version: 2.0.3
+Shell:   GNO
+Author:  Phillip Vandry
+Contact: -
+Where:   /usr/sbin/getty
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Getty sets the terminal mode, speed, and line discipline.  It is usually 
+started by initd(8), and is used in the login process.
+
+Name:    getvers
+Version: 1.2
+Shell:   GNO/ME
+Author:  Ian Schmidt
+Contact: irsman@iastate.edu
+Where:   /usr/bin
+FTP:     pindarus.cs.uiuc.edu
+Gets the rVersion information on a EXE, including name, version, and any
+other information the author wishes to include, printing it to standard out.
+
+Name:    gmail
+Version: 1.1
+Shell:   GNO, ORCA
+Author:  Frank M. Lin
+Contact: fmlin@ccnet.com
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+gmail is an elm-like mail reader.  It uses the GORP (Gregg's Offline Reader
+Protocol) protocol.
+
+Name:    grep
+Version: 1.3
+Shell:   GNO/ORCA
+Author:  Jawaid Bazyar, Mike Horwath
+Contact: -
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Finds regular expressions.
+
+Name:    gsify
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Chris Shepherd
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This program converts Amiga sounds to Apple IIGS sounds by adding $80 to
+each byte.
+
+Name:    gzip
+Version: 1.2.4 (Gno)
+Shell:   GNO/ME
+Author:  Joseph Lee
+Contact: eaiu410@ea.oac.uci.edu
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu 
+
+GNU zip -- compress or expand files.  Ported from the Free Software
+Foundation's gzip.  Also has functionality of gunzip and gzcat.
+
+Name:    hplist
+Version: 1.0 (18 Nov 91)
+Shell:   GNO, ORCA
+Author:  Christopher Neufeld
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This program provides a way to print text files on an HP DeskJet 500
+printer.  The printed text appears in half-height, 20 pitch characters
+in a 2-up landscape format.
+
+Name:    indent
+Version: 1.9.1
+Shell:   GNO/ME
+Author:  Ported by Kelvin W Sherlock
+Contact: ksherloc@mole.uvm.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com
+
+Format C programs in a variety of styles.
+
+Name:    info
+Version: 1.1
+Shell:   GNO, ORCA
+Author:  Greg Thompson
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+info gets the OS file information for the files given on the command
+line, and searches the file type descriptors found in the */Icons
+directory for a description of the file type.  It will also print the
+rComment resource if the file has one.
+
+Name:    inform
+Version: 5.5
+Shell:   GNO
+Author:  Evan Day
+Contact: day@engr.orst.edu
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Inform compiles C-like HLL source files into Z-code format that can be
+run with any infocom interpreter (such as the LTOI interpreters, the
+infotaskforce interpreter, or the zip interpreter).
+
+Name:    infozip
+Version: 1.0
+Shell:   GNO
+Author:  Leslie M. Barstow III 
+Contact: wdphoenix@delphi.com 
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a port of the Zip infocom interpreter, v2.0.  This should not
+be confused with the PC file compression program.
+
+Name:    init
+Version: 1.0
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Sends commands to the init daemon.
+
+Name:    initd
+Version: 1.4
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/sbin
+FTP:     -
+
+Starts and kills processes, maintains the system run level, and runs
+syslogd (log daemon)
+
+Name:    install
+Version: 1.0 (31 Mar 96)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Install is similar to cp(1) in that it copies files.  It will
+also create directory hierarchies, and modify some access bits.
+It is intended for use with Makefiles or other scripts to install
+files into their destination directories.
+
+Name:    javap
+Version: 0.9b
+Shell:   GNO
+Author:  Sean McAfee
+Contact: mcafee@umich.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This program is intended to mirror the functionality of Sun Microsystems' JDK
+Java disassembler, javap.
+
+Name:    jive
+Version: 1.0
+Shell:   GNO
+Author:  Jawaid Bazyar
+Contact: bazyar@hypermall.com
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+A text filter which translates arbitrary text to its "jive" equivalent.
+
+Name:    joinpara
+Version: 1.0 (16 Dec 93)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.ab.ca
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
+
+A filter to strip newlines from the middle of paragraphs, but not
+elsewhere.  Written to ease the importing of text files into word
+processor documents.
+
+Name:    jpegtran
+Version: 6
+Shell:   GNO, ORCA
+Author:  Mark Marr-Lyon
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Lossless transcoding of JPEG files.  Part of the jpeg tools archive.
+
+Name:    last
+Version: 1.1
+Shell:   GNO/ME
+Author:  Steve Reeves
+Contact: Internet: reevess@cse.fau.edu, GEnie: S.REEVES2
+Where:   /usr/bin
+FTP:     ground.isca.uiowa.edu
+
+Displays last logins for specified users or terminals.  It searches
+through the login accounting file "/var/adm/wtmp" for this information.
+It is only useful with GNO's Multi-User package.
+
+Name:    less
+Version: 1.6 (12 May 92)
+Shell:   GNO
+Author:  Mike Horwath, James Brookes, Dave Huang
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+less is text pager that is more fully featured than more(1).  Text pagers
+allow you to view text one screenful at a time.  less also has search
+and edit capabilities.
+
+Name:    line
+Version: 1.0
+Shell:   GNO/ME only!
+Author:  Kelvin Sherlock
+Contact: ksherloc@mole.uvm.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com
+
+Standard unix utility to read a line from standard input
+and display it to standard output.
+
+Name:    list
+Version: 1.1.2
+Shell:   GNO/ME ORCA/Shell
+Author:  Jeff Markham
+Contact: markhj01@visi.com
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Print an AppleSoft BASIC program in human readable form.
+
+Name:    listlib
+Version: 1.0 (9 Sep 96)
+Shell:	 GNO/ME, ORCA/Shell
+Author:  Devin Reade.
+Contact: gdr@eddore.myrias.com
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Creates an object library listing of symbols, indexed by object
+file name.  Requires Byteworks' makelib v2.0 (may work with other
+versions with only slight modifications).
+
+Name:    lpc
+Version: 1.0
+Shell:   GNO
+Author:  Phillip Vandry
+Contact: vandry@cam.org
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+lpc is the controller for the line printer daemon.  See also lpr(1) and lpd(8).
+
+Name:    lpd
+Version: 2.2
+Shell:   GNO
+Author:  Jawaid Bazyar, maintained by Jeff Markham
+Contact: markhj01@winternet.com
+Where:   /usr/sbin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is the line printer daemon.  It controls the printer(s), and
+is itself controlled through lpr(1), and lpc(1).
+
+Name:    lpgen
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Jason Perez
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a print formatting utility simliar to enscript.  It is a desktop
+program (intented to be invoked from a shell) which makes use of the
+GS/OS Print Manager.
+
+Name:    lpr
+Version: 3.3
+Shell:   GNO
+Author:  Jawaid Bazyar, maintained by Jeff Markham
+Contact: markhj01@winternet.com
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is the user interface to the line printer daemon, lpd(8).
+
+Name:    lseg
+Version: 1.1 (September 1997)
+Shell:   GNO
+Author:  Jawaid Bazyar (updated for GNO/ME 2.0.6 by Dave Tribby)
+Contact: tribby@cup.hp.com
+Where:   /usr/bin/lseg
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+List segments in an Object Module Format file.
+
+Name:    machine
+Version: 1.0
+Shell:   GNO
+Author:  Michael Frankowski
+Contact: -
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Prints out the machine type.
+
+Name:    machtype
+Version: 1.4
+Shell:   GNO/ME
+Author:  Ian Schmidt
+Contact: irsman@iastate.edu
+Where:   /usr/bin
+FTP:     pindarus.cs.uiuc.edu
+Gets and prints a wide variety of information on your IIgs system, including
+memory, versions of GNO, GS/OS, and the ROM, accelerator type if any, and more.
+
+Name:    makedmake
+Version: 1.1.1 (16 Jan 94)
+Shell:   GNO/ME
+Author:  Ported by Devin Reade
+Contact: gdr@myrias.ab.ca
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
+
+Calculates program dependencies and generates makefiles for dmake.
+This is a particularily brain-dead port that will likely be superceded.
+(By mkmf?)  Suitable for simple dependancies.
+
+Name:    makewhatis
+Version: 1.2 (24 Jul 95)
+Shell:   GNO/ME
+Author:  Devin Reade.
+Contact: gdr@myrias.com
+Where:   /usr/sbin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Generates the whatis database used by man(1), apropos(1) and whatis(1).
+Bundled with apropos, catman, man, and whatis in the manpack30.shk archive.
+
+Name:    man
+Version: 3.0 (24 Jul 95)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Display manual reference pages.  Bundled with apropos, catman,
+makewhatis, and whatis in the manpack30.shk archive.
+
+Name:    martian
+Version: 1.0
+Shell:   GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin or /usr/local/games
+FTP:     ftp://apple2.caltech.edu/pub/apple2/shellutils/
+
+Creates martian poetry in nroff format.
+
+Name:    mcvert
+Version: 1.0
+Shell:   GNO
+Author:  Mike Searl
+Contact: cmoore@acs.ucalgary.ca
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This program converts between MacBinary, BinHex, and other Mac-related
+file formats.
+
+Name:    mem
+Version: 1.2
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Shows memory usage statistics in different formats.
+
+Name:    mformat
+Version: 1.1
+Shell:   GNO, ORCA
+Author:  Peter Watson
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+mformat is designed to format or erase a disk for use under MS-DOS. It requires
+an MFM-capable drive, such as Apple's FDHD drive with the Apple II 3.5 Drive
+Controller card, or a PC Transporter and TransDrive.
+
+Name:    mi
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Dave Roberts
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+[OBSOLETE].  mi is an early version of rimport.  It allows for mass
+import of data into a resource fork.
+
+Name:    midi2gs
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Dave Tribby
+Contact: tribby@cup.hp.com
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Midi2gs is a shell interface to the MIDI Surgeon program, published in the
+Jan/Feb 1994 issue of GS+ magazine.
+
+Name:    mkdir
+Version: 1.2
+Shell:   GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /bin
+FTP:     -
+
+Make a directory.
+
+Name:    mkfs
+Version: 1.0
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Formats or erases physical devices and creates file systems on them.
+
+Name:    more
+Version: 1.4
+Shell:   GNO
+Author:  Jawaid Bazyar, Derek Taubert, Mike Horwath
+Contact: -
+Where:   /bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+more is a text pager; it allows you to view text one screenful at a time
+
+Name:    mpager
+Version: 1.1.5
+Shell:   GNO
+Author:  Kent Radek
+Contact: goo@cwis.unomaha.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+MPager is a Postscript text formatter.  It will format your text files and
+generate Postscript code that you can then send to your favorite Postscript
+printer.   See also a2ps and nenscript.
+
+Name:    msort
+Version: 1.0 (14 Jun 94)
+Shell:   GNO/ME
+Author:  Devin Reade.
+Contact: gdr@myrias.ab.ca
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu (in file sorts10.shk)
+
+Sort a text file in memory lexicographically.  Archived together
+with dsort.
+
+Name:    mugs
+Version: 3.0
+Shell:   GNO/ME
+Author:  Brian Tao
+Contact: taob@io.org
+Where:   /usr/bin
+FTP:     ionews.io.org:/pub/apple/16bit/GNO
+
+MuGS is a full-screen offline Internet e-mail and Usenet news
+processor.  Utilities for creating message packets on the UNIX system
+and delivering replies are included.  MicroEMACS 3.11c is required.
+
+Name:    ndp
+Version: 1.08
+Shell:   ORCA/Shell, GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin
+FTP:     ftp://apple2.caltech.edu/pub/apple2/shellutils/
+
+Merges a FIDO nodediff into a FIDO nodelist
+
+Name:    nenscript
+Version: 1.1
+Shell:   GNO
+Author:  J.S. Rand
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+nenscript converts text files into their postscript equivalents.
+See also a2ps and mpager.
+
+Name:    news
+Version: 1.2 (14 Oct 93)
+Shell:   GNO
+Author:  Eric Shepherd
+Contact: sheppy@delphi.com
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Displays system news (site specific notifications).  This should not be
+confused with USENET news readers or transport programs.
+
+Name:    newuser
+Version: 1.0
+Shell:   GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/sbin
+FTP:     -
+
+Create a home directory with basic gshrc for a new user, and add user
+into /etc/passwd file for immediate access.
+
+Name:    newuserv
+Version: 1.0
+Shell:   GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /usr/sbin
+FTP:     -
+
+Create a home directory with basic gshrc for new user, and add user
+to /var/adm/newuser/newusers file for validation by the system operator.
+
+Name:    nl
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Jay Krell
+Contact: jay.krell@cornell.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+nl is a shell utility that gives shell access to Nifty List. Its main
+features are the shell's redirectable stdin and stdout, plus an optional
+internal filter to make the output closer to ORCA/M source.
+
+Name:    now
+Version: 1.2
+Shell:   GNO, ORCA
+Author:  Jawaid Bazyar
+Contact: bazyar@hypermall.com
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Prints out various random phrases.  The output of this program may be
+considered to be obscene by some people.
+
+Name:    nroff
+Version: 1.2 (18 Mar 97)
+Shell:   GNO/ME
+Author:  Various.  Maintained by Devin Reade.
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Text Processing Typesetter
+
+This is a bug fix release to fix many memory trashing problems.  It
+also includes the -man package used by the GNO v2.0.6 man pages.
+There are no other added features.
+
+Name:    occ
+Version: 1.13
+Shell:   ORCA/Shell, GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin
+FTP:     ftp://apple2.caltech.edu/pub/apple2/shellutils/
+
+Unixish front-end for ORCA/C. Particularly useful in combination with
+dmake. Requires ORCA/C 2.0.3 (compiler version 2.0.2).
+
+Name:    paranoia
+Version: 1.0
+Shell:   GNO
+Author:  Jason Jeffries
+Contact: jeffries@talon.cup.edu
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+A simple text adventure game, ported from Linux.
+
+Name:    parent
+Version: 1.0
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Shows the current process or a specified process and climbs up to the top
+level process.
+
+Name:    passwd
+Version: 1.0.1
+Shell:   GNO
+Author:  Eric Shepherd
+Contact: sheppy@delphi.com
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This allows a user to change his password.
+
+Name:    patch
+Version: 1.0 (12 Nov 95)
+Shell:   GNO/ME
+Author:  Ported by Devin Reade.
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+Apply diffs to an original file.  This is based on BSD patch v2.0pl12u8.
+
+Name:    pbmtoiw
+Version: 1.0
+Shell:   GNO/ME
+Author:  Thomas Okken
+Contact: thomas@animal.hobby.nl, tommasso@hacktic.nl
+Where:   /usr/bin
+FTP:     ground.isca.uiowa.edu
+
+Reads a portable bitmap and converts it to graphics codes for the
+Apple Imagewriter printer.
+
+Name:    phone
+Version: 1.0.1
+Shell:   GNO/ME
+Author:  Robert Hill
+Contact: rhill@eecs.ukans.edu
+Where:   /usr/bin
+FTP:     -
+
+Based on talk, phone allows two users to interactively chat in a
+split-screen format.
+
+Name:    rattr
+Version: 1.0
+Shell:   GNO
+Author:  Dave Roberts
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Change the attributes of one or more resources.
+
+Name:    rcompact
+Version: 1.0
+Shell:   GNO
+Author:  Dave Roberts
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Compress resource forks so that they use less disk space.
+
+Name:    rcopy
+Version: 1.0
+Shell:   GNO
+Author:  Dave Roberts
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Copy individual resources from one file or another.
+
+Name:    rdial
+Version: 1.2 (16 Aug 95)
+Shell:   GNO/ME
+Author:  Jeremy Rand.
+Contact: jeremy@gate.globalx.net
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com ground.isca.uiowa.edu
+
+Auto redial a system with a login script.
+
+Name:    rdjpgcom
+Version: 6
+Shell:   GNO, ORCA
+Author:  Mark Marr-Lyon
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Display text comments from a JPEG file.  Part of the jpeg tools archive.
+
+Name:    reminder
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Christopher Neufeld
+Contact: neufeld@helios.physics.utoronto.ca
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This provides an alarm clock and a calendar reminder program for the
+GNO/ME shell. The calendar program should also run under the ORCA shell,
+but it hasn't been tested there.
+
+Name:    remote
+Version: 1.0
+Shell:   GNO
+Author:  Phillip Vandry
+Contact: vandry@cam.org
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is part of the "seq" remote login package.  (See "seq".)
+
+Name:    renram5
+Version: 1.0 (28 Jan 96)
+Shell:   ORCA/Shell, GNO/ME
+Author:  Devin Reade.
+Contact: gdr@myrias.com
+Where:   /usr/sbin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Renames /RAM5 to /tmp on boot.
+
+Name:    rimport
+Version: 1.0
+Shell:   GNO
+Author:  Dave Roberts
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Mass import of data into a resource fork.
+
+Name:    rlist
+Version: 1.1
+Shell:   ORCA/Shell, GNO/ME
+Author:  Kelvin W Sherlock
+Contact: ksherloc@mole.uvm.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com
+
+List resources in a GS or Macintosh resource fork
+
+Name:    rmdir
+Version: 1.0 (28 Nov 94)
+Shell:   GNO/ME
+Author:  Devin Reade.
+Contact: gdr@myrias.ab.ca
+Where:   /bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Remove empty directories.
+
+Name:    rndname
+Version: 4.1
+Shell:   ORCA/Shell, GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin or /usr/games
+FTP:     ftp://apple2.caltech.edu/pub/apple2/shellutils
+
+Creates random names by a set of certain rules.
+
+Name:    rose
+Version: 1.0 (Jan 92)
+Shell:   ORCA v2.x, GNO
+Author:  Andy McFadden
+Contact: -
+Where:   17/
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a front end for the Rose editor, for use with GNO and ORCA/Shell
+v2.x.  It fixes a problem with using the Rose editor from these shells, 
+due to Rose expecting "/" as a pathname delimiter instead of ":".  On
+ftp sites, this tends to be archived under the basename "roseedit".
+
+Name:    rot13
+Version: 1.0
+Shell:   ORCA/Shell, GNO/ME
+Author:  Leslie M. Barstow III
+Contact: wdphoenix@delphi.com
+Where:   /usr/local/bin
+FTP:     ground.isca.uiowa.edu
+
+rot13 allows you to encrypt and decrypt rot13 text, which is usually
+used in Usenet News to hide spoilers and provocative material.
+
+Name:    rrm
+Version: 1.0
+Shell:   GNO
+Author:  Dave Roberts
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Remove one or more resources.
+
+Name:    rsound
+Version: 1.1a
+Shell:   GNO/ME
+Author:  Douglas E. Mitton
+Contact: dmitton@mulberry.com
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu, GEnie A2Pro #4762
+
+This is a shell utility which will list and play any installed rSound in
+the '*:system:sounds' directory.
+
+Name:    rtf2text
+Version: 1.0.6
+Shell:   GNO/ME
+Author:  Robert Hill
+Contact: rhill@eecs.ukans.edu
+Where:   /usr/bin
+FTP:     -
+
+Converts RTF (Rich Text Format) files to text.
+
+Name:    rz
+Version: 3.34
+Shell:   GNO
+Author:  Ported by Sean McAfee
+Contact: mcafee@umich.edu
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Zmodem file transfer program.  This is the receiver, and is bundled with
+sz(1), the sender.
+
+Name:    sc
+Version: 1.10
+Shell:   ORCA  (maybe GNO?)
+Author:  Dave Roberts
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a code generator that generates assembly source code intended for 
+scrolling the SHR screen.
+
+Name:    scpp
+Version: 1.1 (15 Feb 94)
+Shell:   GNO/ME
+Author:  Ported by Devin Reade
+Contact: gdr@myrias.ab.ca
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
+
+A selective C preprocessor.  It will only interpret directives that it
+is told to interpret.  This makes scpp useful for making source files easier
+to read by removing unnecessary code (such as that for other architectures).
+
+Name:    scrappy
+Version: 1.1
+Shell:   GNO/ME
+Author:  Kelvin Sherlock
+Contact: ksherloc@mole.uvm.edu
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu, trenco.myrias.com
+
+Copy or paste text to or from the system clipboard.
+
+Name:    sendmail
+Version: 1.1
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/lib/
+FTP:     -
+
+Sends mail from one local user to another, or spools mail for foreign
+destinations.
+
+Name:    seq
+Version: 1.0
+Shell:   GNO
+Author:  Phillip Vandry
+Contact: vandry@cam.org
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a remote login package; it controls the modem such that an incoming
+call gets connected to a local shell.  NOTE:  This is a large security hole.
+
+Name:    setvers
+Version: 1.0.2
+Shell:   GNO/ME
+Author:  Ian Schmidt
+Contact: irsman@iastate.edu
+Where:   /usr/bin
+FTP:     pindarus.cs.uiuc.edu
+Sets the rVersion information on a EXE, including name, version, and any
+other information the author wishes to include.
+
+Name:    splatprep
+Version: 1.0 (1 Dec 95)
+Shell:   ORCA/Shell, GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.ab.ca
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Prepare a C source file for the Splat! debugger.
+
+Name:    split
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Jawaid Bazyar
+Contact: bazyar@hypermall.com
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+The split program splits one file into many smaller pieces, based either
+on a number of lines or a number of bytes per piece.
+
+Name:    ssalarm
+Version: 1.0
+Shell:   GNO, ORCA, APW
+Author:  Parik Rao
+Contact: -
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This program is a simple alarm clock that plays SoundSmith songs.
+
+Name:    sscii
+Version: 1.0
+Shell:   GNO/ORCA
+Author:  Jawaid Bazyar
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+sscii is a shell utility version of Derek Taubert's GScii+ NDA.  It
+encodes binscii, and decodes binscii, UNIX uuencode, Macintosh BinHex,
+and comp.sources.apple2 apack formats.
+
+Name:    ssplay
+Version: 1.0
+Shell:   GNO
+Author:  Dave Roberts
+Contact: daver@rush.cc.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Plays SoundSmith/MegaTracker songs from the shell command line.
+
+Name:    strip8
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  C. Wilson
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Strips the high bit off of characters in a file.
+
+Name:    strypt
+Version: 1.0 (8 Jul 90)
+Shell:   GNO, ORCA
+Author:  Douglas Gwyn
+Contact: -
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This program will encrypt and decrypt an Artworx "Strip Poker II" image
+file for the Apple IIgs.
+
+Name:    stty
+Version: 1.0
+Shell:   GNO
+Author:  -
+Contact: -
+Where:   /bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+stty is used to control terminal characteristics.
+
+Name:    su
+Version: 1.0
+Shell:   GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   /bin
+FTP:     -
+
+Launch a new shell as another user.
+
+Name:    sum
+Version: 1.0
+Shell:   GNO/ORCA
+Author:  Ported by Marek Pawlowski
+Contact: -
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Sum calculates and prints a 16-bit checksum for the named file, and also
+prints the number of blocks in the file.  It is typically used to look for
+bad spots, or to validate a file communicated over some transmission line.
+
+Name:    swi
+Version: 1.2
+Shell:   GNO, ORCA
+Author:  Frank M. Lin
+Contact: -
+Where:   /usr/X/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Simple Window Interface.  It provides a quick way to access NDAs from GNO
+and other text shells.  See also drwm.
+
+Name:    sync
+Version: 1.0
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Causes GS/OS to commit all pending data to disk.
+
+Name:    synthfile
+Version: 1.1
+Shell:   GNO, ORCA
+Author:  Dave Tribby
+Contact: tribby@cup.hp.com
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Synthfile is a program that prints the contents of (and plays) MIDI Synth
+files.
+
+Name:    sz
+Version: 3.34
+Shell:   GNO
+Author:  Ported by Sean McAfee
+Contact: mcafee@umich.edu
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Zmodem file transfer program.  This is the sender, and is bundled with
+rz(1), the receiver.
+
+Name:    tail
+Version: 1.1
+Shell:   GNO, ORCA
+Author:  Sameer Parekh
+Contact: -
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Show the last few lines of a file.
+
+Name:    tar
+Version: 2.0.1
+Shell:   GNO/ORCA
+Author:  Jawaid Bazyar
+Contact: -
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Tape ARchive utility.  This extracts files from a tar archive.  Tar archives
+do not use file compression.
+
+Name:    tee
+Version: 1.2 (8 Sep 96)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: <gdr@myrias.ab.ca>
+Where:   /bin/
+FTP:     apple2.caltech.edu, grind.isca.uiowa.edu.
+
+Tee copies stdin to stdout, by default without buffering.  It
+also makes a copy of the data to a specified file(s).  It is useful
+when you want to watch the output of a process, but also save it.
+
+Name:    test
+Version: 1.0 (9 Feb 96)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+The test utility evaluates string and integer expressions and, if
+it evaluates to true, returns a zero (true) exit status; otherwise it
+returns 1 (false).  Test is used mainly in shell scripts.
+
+Name:    thursday
+Version: 1.0
+Shell:   GNO
+Author:  Ported Dave Roberts
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+thursday is a filter which accepts text on stdin, justifies it, then
+prints the result on stdout.
+
+Name:    timelimit
+Version: 1.2 (10 Jan 96)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu.
+
+Limits the run time of a process; when the time is up, it either sends
+the specified process a series of SIGINTs, or a SIGINT followed by a
+SIGKILL.
+
+Name:    tmterm
+Version: 1.1
+Shell:   GNO
+Author:  Ian Schmidt
+Contact: irsman@iastate.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+TmTerm provides a vt100 GNO console in an NDA window on your GS desktop.
+
+Name:    tn
+Version: 1.1 (11 Oct 94)
+Shell:   GNO/ME
+Author:  Dave J. Roberts.  Version 1.1 changes by Devin Reade.
+Contact: daver@rush.cc.edu, droberts@chaos.bsu.edu
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+A utility to display Apple's DTS Technical Notes.
+
+Name:    touch
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Leslie Barstow
+Contact: wdphoenix@delphi.com
+Where:   /usr/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Touch will set the file modification time to the current (or specified)
+date and time.  It will also create the file if it doesn't already exist.
+
+Name:    tr
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Tom Wyant
+Contact: -
+Where:   /bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Translate characters in a file.
+
+Name:    trace
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Jay Krell
+Contact: jay.krell@cornell.edu
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Trace effectively adds in a DebugStr(3) call to the beginning of a program
+without the need to recompile and relink it.  For use with GSBug.
+
+Name:    udl
+Version: 1.1.5
+Shell:   GNO/ME, ORCA/Shell
+Author:  Soenke Behrens, Devin Reade
+Contact: sbehrens@bigfoot.com, gdr@myrias.ab.ca
+Where:   /usr/local/bin
+FTP:     apple2.caltech.edu, grind.isca.uiowa.edu
+
+Converts text between the CR, LF and CR/LF forms. Also available for Unix
+machines, reasonably fast yet secure.
+
+Name:    uname
+Version: 2.0.2
+Shell:   GNO/ME
+Author:  Ian Schmidt
+Contact: irsman@drift.winternet.com
+Where:   /bin/
+FTP:     ground.isca.uiowa.edu
+Prints the name of the UNIX system (in this case GNO/ME) plus various
+other information such as your hostname if you are running the MU package.
+
+Name:    unarj
+Version: 2.42
+Shell:   ORCA/Shell, GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin
+FTP:     ftp://apple2.caltech.edu/pub/apple2/shellutils/
+
+Unpacks files that were packed with ARJ 2.41 or earlier.
+
+Name:    unpp
+Version: 1.1
+Shell:   ORCA/Shell, GNO/ME
+Author:  Soenke Behrens
+Contact: sbehrens@bigfoot.com
+Where:   /usr/local/bin
+FTP:     ftp://apple2.caltech.edu/pub/apple2/shellutils/
+
+Uncompresses PowerPacker(tm) documents, which are created by them Amigoids.
+
+Name:    unshar
+Version: 1.0
+Shell:   GNO/ORCA
+Author:  Andy McFadden
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Extracts "shar" archives, which are used on UNIX systems for shipping
+sources.  Analogous to the PAFF format.
+
+Name:    unzip
+Version: 0.2b (20 Mar 91)
+Shell:   GNO, ORCA
+Author:  Eric Anderson
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Extracts zip archives, which are common on MS-DOS and MS-Windows platforms.
+
+Name:    uptime
+Version: 1.2
+Shell:   GNO
+Author:  Joseph Lee
+Contact: -
+Where:   /usr/bin
+FTP:     -
+
+Reports the time, amount of time the system has been up, number of
+users, and system load averages for the last 1, 5, and 15 minutes.
+
+Name:    uptimed
+Version: 1.0
+Shell:   GNO/ME
+Author:  Robert Hill
+Contact: rhill@eecs.ukans.edu
+Where:   /usr/sbin
+FTP:     -
+
+Keeps track of system load averages for the uptime utility over the last
+1, 5 and 15 minutes.
+
+Name:    utp
+Version: 2.1.1
+Shell:   GNO, ORCA
+Author:  Frank M. Lin
+Contact: fmlin@netcom.com
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is another newline converter.  It works for UNIX<-->Apple translation.
+See also udl.
+
+Name:    valspeak
+Version: 1.0
+Shell:   GNO
+Author:  Jawaid Bazyar
+Contact: bazyar@hypermall.com
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+A text filter which translates arbitrary text to its "valley girl" equivalent.
+
+Name:    vi
+Version: 2.0.2
+Shell:   GNO
+Author:  Ported by Jawaid Bazyar
+Contact: -
+Where:   /bin
+FTP:     -
+
+This is the Stevie editor, a public domain clone of the UNIX editor 'vi'.
+
+Name:    vsc
+Version: 1.6.5b47
+Shell:   GNO, ORCA
+Author:  Joseph Lee
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Virtual Shape Compiler.  This program compiles sprites into assembly code 
+for use with ORCA/M.
+
+Name:    wall
+Version: 1.0
+Shell:   GNO/ME
+Author:  Phil Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Sends a message to the terminal of every logged on user.
+
+Name:    whatis
+Version: 3.0 (24 Jul 95)
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+Locate commands by name.  Bundled with apropos, catman, makewhatis,
+and man in the manpack30.shk archive.
+
+Name:    whereis
+Version: v1.2
+Shell:   GNO/ME
+Author:  Devin Reade
+Contact: gdr@myrias.ab.ca
+Where:   /usr/bin
+FTP:     apple2.caltech.edu,ground.isca.uiowa.edu.
+
+whereis searches certain directories (/bin, /usr/bin, /usr/man, et cetera) and
+reports the location of source, executables, and man pages.
+
+Name:    wrap
+Version: 1.1
+Shell:   GNO/ME
+Author:  Phillip Vandry
+Contact: vandry@CAM.ORG
+Where:   /usr/bin
+FTP:     -
+
+Word wraps text to a certain length (79 default). Also filters binary
+data and is very fast.
+
+Name:    write
+Version: 2.1 
+Shell:   GNO/ME
+Author:  Leslie M. Barstow III 
+Contact: wdphoenix@delphi.com 
+Where:   /usr/bin 
+FTP:     - 
+write is a simple utility which writes a message to a user, no matter what
+terminal he or she is on.  The format is:  write username [message]
+If you do not input a message, you will be prompted for message lines until
+you enter a blank line.
+
+Name:    wrjpgcom
+Version: 6
+Shell:   GNO, ORCA
+Author:  Mark Marr-Lyon
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Insert text comments into a JPEG file.  Part of the jpeg tools archive.
+
+Name:    xargs
+Version: 0.9 (3 Mar 95)
+Shell:   GNO/ME
+Author:  Jeremy Rand.
+Contact: <u8902848@muss.mcmaster.ca>
+Where:   /usr/local/bin
+FTP:     ground.isca.uiowa.edu
+
+Pass parameters to a command through standard input.
+
+Name:    xbiff
+Version: 1.0
+Shell:   GNO/ME
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   */system/desk.accs/
+FTP:     -
+
+XBiff is an NDA which gives the user a colorful mailbox announcing both
+aurally and visibly when the user has mail.  OA-clicking on the window's
+content region causes a title bar to appear, allowing the window to be moved.
+
+Name:    xclock
+Version: 1.12
+Shell:   GNO/ME
+Author:  Dave J. Roberts
+Contact: dave@mary.iia.org
+Where:   /usr/X/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu 
+graphical analog time display unit
+
+Name:    xload
+Version: 1.0
+Shell:   GNO
+Author:  James Brookes
+Contact: jamesb@ecst.csuchico.edu
+Where:   */system/desk.accs
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+New desk accessory which displays a system load graph.
+
+Name:    xlogin
+Version: 2.30a
+Shell:   GNO/ME
+Author:  Dave J. Roberts
+Contact: dave@iia.org
+Where:   /usr/X/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu 
+
+Graphical login prompt for GNO/ME, X11-style
+
+Name:    yankit
+Version: 1.0.1
+Shell:   GNO, ORCA
+Author:  Any McFAdden
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+Yankit lists and extracts NuFX file archives, created by Shrinkit, gshk,
+and nulib.
+
+Name:    yankits
+Version: 1.0
+Shell:   GNO/ORCA
+Author:  David Empson
+Contact: -
+Where:   /usr/local/bin
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This is a simple program that runs Andy McFadden's yankit(1) utility
+for each filename argument on its command line.  This allows
+multiple NuFX (ShrinkIt) archives to be listed or extracted (individual files
+cannot be extracted from archives, only the whole archive).
+
+Name:    yow
+Version: 1.0
+Shell:   GNO, ORCA
+Author:  Greg Thompson
+Contact: gregt@visix.com
+Where:   /usr/local/games
+FTP:     trenco.myrias.com, ground.isca.uiowa.edu
+
+This program produces random Zippy The Pinhead quotes.
+
+Name:    zsh
+Version: 2.0 
+Shell:   GNO/ME
+Author:  Leslie M. Barstow III 
+Contact: wdphoenix@delphi.com 
+Where:   /bin 
+FTP:     trenco.myrias.com
+zsh is a program used to put a user's account in suspension.
+It prints a message and then exits.
+

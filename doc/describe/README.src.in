@@ -1,0 +1,10 @@
+The describe(8) utility shows current information on various programs.
+Its information is contained in the describe database.  The files
+desc.src.shk and desc.db.shk each contain a copy of the most recently
+released database.
+
+These files were last modified %%DATE%%.
+
+The file desc.src.shk contains the database "source" file, which is ASCII
+and human-readable.  The file desc.db.shk contains the precompiled version
+of the database.

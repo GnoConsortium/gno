@@ -1,0 +1,67 @@
+#! /usr/bin/perl 
+
+$dirroot = "/ftp/pub/apple2/gs.specific";
+$dirlist = "gno orca";
+
+#
+# Get the list of .index.src files.  We will look in here for references
+# to the describe database.
+#
+open(fp, "(cd $dirroot; find $dirlist -name .index.src -print)|") ||
+    die("couldn't get file list");
+@indexfiles = <fp>;
+close(fp);
+
+# extract all the program names from the db source file.
+while(<>) {
+    chop;
+    if (/^Name:\s+(.*)/) {
+	$name = $1;
+	$name =~ s/\s+$//;
+	if ($name =~ /\s+/) {
+	    printf(stderr "%s:%d: Multi-word program name \"%s\".  Skipped.\n",
+		   $ARGV, $., $name);
+	} else {
+	    $name =~ tr/A-Z/a-z/;
+	    $namelist{$name} = ':';
+	}
+    }
+}
+
+
+foreach $f (@indexfiles) {
+    chop($f);
+    if (open(fp, "$dirroot/$f")) {
+	$f2 = $f;
+	$f2 =~ s,/.index.src$,,;
+	while ($_ = <fp>) {
+	    if (/%%describe%%([^%]+)%%/) {
+		$ref = $1;
+		$ref =~ tr/A-Z/a-z/;
+		if (defined($namelist{$ref})) {
+		    ($namelist{$ref} .= "$f2:") 
+			unless ($namelist{$ref} =~ /:$f2:/);
+		} else {
+		    printf(stderr
+			   "%s/%s:%d: Warning: Reference to program (\"%s\") ".
+			   "not in database.  Entry skipped.\n",
+			   $dirroot, $f, $., $ref);
+		}
+	    }
+	}
+    } else {
+	printf("couldn't open %s/%s: file skipped", $dirroot, $f);
+    }
+}
+
+# print out the results.
+@keylist = keys(%namelist);
+foreach $k (@keylist) {
+    $s = $namelist{$k};
+    ($s eq ':') && ($s = ':unsorted:');
+    printf("%s\t%s\n", $k, $s);
+}
+
+
+
+

@@ -1,0 +1,91 @@
+#! /usr/bin/perl
+
+$gnohome_internal = "/home/gno/public_html";
+$gnohome_external = "http://www.gno.org/gno";
+
+$basedir = "/home/gno/public_html/describe/gen";
+$entrydir = "describe/entry";	# relative to $gnohome_*
+
+while (<>) {
+	($name, $classes) = split;
+	$namelist{$name} = $classes;
+}
+
+@keylist = keys(%namelist);
+@sorted = sort(@keylist);
+$currentLetter = '';
+
+foreach $f (@sorted) {
+    # create the describe entry
+    open(pp, "/usr/local/bin/describe $f|")
+	|| die ("couldn't open pipe to 'describe $f'");
+    $filename = "$gnohome_internal/$entrydir/$f.html";
+    open(fp2, "> $filename") || die("couldn't open $filename");
+    printf(fp2
+	   "<html>\n" .
+	   "<!-- This page is auto-generated -->\n" .
+	   "<head>\n" .
+	   "<title>Apple IIgs Describe Database -- " . $f . "</title>\n" .
+	   "</head>\n" .
+	   "<body bgcolor=#ffffff>\n" .
+	   "<h1>Describe Entry for " . $f . "</h1>\n" .
+	   "<pre>\n");
+    while($_ = <pp>) {
+	printf(fp2 "%s", $_);
+    }
+    printf(fp2 "</pre><hr></body></html>\n");
+    close(fp2);
+    close(pp);
+
+    # make the index-by-name page
+    $l = substr($f, 0, 1);
+    if ($l ne $currentLetter) {
+	($currentLetter eq '') || 
+	    (printf(fp "</ul><hr></body></html>\n") && close(fp));
+	$filename = $basedir . '/' . $l . '.html';
+	open(fp, "> $filename") || die("couldn't open $filename");
+	$currentLetter = $l;
+	$cap = $l;
+	$cap =~ tr/a-z/A-Z/;
+	printf(fp
+	       "<html>\n" .
+	       "<!-- This page is auto-generated -->\n" .
+	       "<head>\n" .
+	       "<title>Apple IIgs Describe Database -- Index by " . $cap .
+	       "</title>\n" .
+	       "</head>\n" .
+	       "<body bgcolor=#ffffff>\n" .
+	       "<h1>Describe Entries by Name: " . $cap . "</h1>\n" .
+	       "<ul>\n");
+    }
+    printf(fp "<li><A HREF=\"%s/%s/%s.html\">%s</A>\n", 
+	   $gnohome_external, $entrydir, $f, $f);
+}
+
+($currentLetter eq '') || 
+    (printf(fp "</ul><hr></body></html>\n") && close(fp));
+
+$letters = "a b c d e f g h i j k l m n o p q r s t u v w x y z";
+@letter = split(/\s+/, $letters);
+
+foreach $l (@letter) {
+    $cap = $l;
+    $cap =~ tr/a-z/A-Z/;
+    $filename = "$basedir/$l.html";
+    if (! -f $filename) {
+	open(fp, "> $filename") || die("couldn't open $filename");
+	printf(fp
+	       "<html>\n" .
+	       "<!-- This page is auto-generated -->\n" .
+	       "<head>\n" .
+	       "<title>Apple IIgs Describe Database -- Index by " . $cap .
+	       "</title>\n" .
+	       "</head>\n" .
+	       "<body bgcolor=#ffffff>\n" .
+	       "<H1>Empty Page</H1>\n" .
+	       "There are currently no utilities registered that begin ".
+	       "with " . $cap . ".<p>\n" .
+	       "</body></html>\n");
+	close(fp);
+    }
+}

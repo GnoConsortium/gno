@@ -1,0 +1,99 @@
+<!-- $Id: submit.html,v 1.1 1998/01/14 05:10:17 gdr Exp $ -->
+
+<A HREF="gno/describe/index.html"><IMG src="icons/back.gif"
+ alt="Back to the Describe Database Page"
+ align="right" width="24" height="24" border="0"></A>
+<BR CLEAR=RIGHT>
+
+<H1 ALIGN=CENTER>Making Submissions</H1>
+
+If you have written a shell program for GNO or ORCA/Shell, please take a
+minute and submit a describe entry.  If you don't know what a describe
+entry looks like, see the
+<A HREF="gno/man/man8/descc.8.html">descc</A>(8)
+manual page or look at the describe database source file.  Alternately,
+the file
+<A HREF="pub/apple2/gs.specific/gno/doc/templates10.shk">
+ftp://ftp.gno.org/pub/apple2/gs.specific/gno/doc/templates10.shk</A>
+contains examples of describe entries plus other recommended methods of
+documenting your programs.
+<p>
+
+There are two ways to submit a describe entry:
+<ol>
+<li>Use the <A HREF="gno/describe/submit.html#form">form</A>, below; or
+<li>Email your entry or entries to
+	<A HREF="mailto:describe-submit@trenco.gno.org">
+	describe-submit@trenco.gno.org</A>.
+	Since the recipient of this address is a filter, is is mandatory
+	that your mail conform to the following conventions:
+	<ul>
+	<li>You must have the word &quot;describe&quot; somewhere in the
+		subject line.  The case doesn't matter.
+	<li>The body of your message may only contain one or more describe
+		entries.  All field names (such as &quot;Name:&quot; and
+		&quot;Shell:&quot;) must be at the start of a line.  The
+		last (description) field is ended either at the end of the
+		message, or when the next &quot;Name:&quot; field is found.
+	<li>If your email software appends your .signature file, ensure
+		that your signature is delimited from the body of the message
+		in the standard fashion:  By two dash ('-') characters
+		immediately followed by a newline.
+	<li>Do not use mailers which automaticly insert html formatting
+		information outside of the message headers.
+	</ul>
+	If your email does not conform to these conventions, then it will
+	be ignored by the filter.
+</ol>
+The master database may take a few days before it is updated, regardless
+of which method you use.  This is because a human reviews the entries
+before they are added to the database.  This check is done to avoid
+abuse by malicious individuals.
+<p>
+
+We recommend that you actually include a describe entry in with your
+program files.  (Describe files usually use the suffix &quot;.desc&quot).
+That way, it is easier to remember to update your describe entry when
+you update your program, and you only have to fill out the information 
+once.
+<p>
+
+If you are updating a program that has been around for a while, you 
+might want to check for an existing describe entry before making a 
+submission.  Many programs have entries in the database even though
+none are included in the sources.  (In most cases, the programs predate
+the database.)
+<p>
+
+
+<A NAME="form">
+<!-- http://www.arrowweb.com/cgi-bin/cgi-email/sbehrens/descform.txt -->
+<form action="cgi-bin/describe.cgi" 
+ method="post">
+<table border="5">
+<tr><td>Program name:<td><input type="Text" name="Name">
+<tr><td>Program version:<td><input type="Text" name="Version">
+<tr><td>Shell(s) supported:
+	<td><input type="CheckBox" name="Shell1" value="GNO/ME"> GNO/ME
+<tr><td>
+	<td><input type="CheckBox" name="Shell2" value="ORCA/Shell"> ORCA/Shell
+<tr><td>Author name:<td><input type="Text" name="Author">
+<tr><td>Author email:<td><input type="Text" name="Contact">
+<tr><td>Location (e.g. /usr/local/bin):<td><input type="Text" name="Location">
+<tr><td>FTP site:<td><input type="Text" name="Ftp">
+</TABLE>
+<br>
+Description of program:<br>
+
+<textarea name="Description" cols="62" rows="6"></textarea>
+<p>
+
+Everything in order? Then send it off, and it will be online shortly.
+<p>
+
+<input type="Submit" name="Submit" value="Submit new describe entry">
+<input type="Reset" name="Reset" value="Clear all fields">
+</form>
+
+Back to the <A HREF="gno/describe/index.html">Describe Database Page</A>.
+<p>

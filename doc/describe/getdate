@@ -1,0 +1,67 @@
+#! /usr/bin/perl -s
+#
+# getdate -date 
+#	Extract the date from the RCS Id string in a file on stdin.
+#
+# getdate -version
+#	Extract the RCS version from the RCS Id string in a file on stdin.
+#
+# getdate -describe
+#	Extract the "last modified" date from a describe(1) database 
+#	source file.
+#
+# $Id: getdate,v 1.1 1998/01/14 05:10:10 gdr Exp $
+#
+
+push(@month,
+     "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+     "Oct", "Nov", "Dec" );
+
+# for ($i=0; $i<12; $i++) {
+#     printf("month %d is %s\n", $i, $month[$i]);
+# }
+
+if (defined($date)) {
+    $printdate = 1;
+}
+if (defined($version)) {
+    $printversion = 1;
+}
+if (defined($describe)) {
+    while(<>) {
+	(/^\#\s+Last\s+revision:\s+(.*)/) && printf("%s\n", $1) && last;
+    }
+    exit(0);
+}
+
+while(<>) {
+    if (/\$Id([^\$]*)\$/) {
+	$_ = $1;
+	if (/^:\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+/) {
+	    $file=$1;
+	    $version=$2;
+	    $rawdate=$3;
+	    $time=$4;
+	    if ($rawdate =~ m,(\d+)/(\d+)/(\d+),) {
+		$year = $1;
+		$m = $2;
+		$day = $3;
+		$mon = @month[int($2) - 1];
+		$date = "$day $mon $year";
+	    }
+	} else {
+	    $date = "(unspecified date)";
+	}
+	if ($printdate) {
+	    printf("%s\n", $date);
+	} elsif ($printversion) {
+	    printf("%s\n", $version);
+	} else {
+	    printf("getdate: bad invocation\n");
+	    exit(1);
+	}
+	exit(0);
+    }
+}
+
+exit(1);
