@@ -1,40 +1,55 @@
-.TH VERSION 1
+.\"
+.\"     $Id: getvers.1,v 1.2 1998/04/29 00:41:50 tribby Exp $
+.\"
+.TH GETVERS 1 "April 1998" "GNO" "Commands and Applications"
 .SH NAME
 .LP
 .B getvers
-\- get version number and information stored in rVersion format from
-specified executable file
+\- list information stored in rVersion and rComment resources
 .SH SYNOPSIS
-.LP
-.BR getvers " <  file1 file2 ...filen  >"
+.BR getvers " [" -b "] [" -c "]"
+.RB "[" -q "] file ..."
 .SH DESCRIPTION
-.LP
-.B getvers
-is a program which accepts as input the name(s) of file(s)
-and print the version information stored in the rVersion resource of
-the file(s).  If no rVersion resource is present it will print with the error
-`This file has no version resource' and continue processing other filenames
-provided as input.
+.BR getvers
+print the version information stored in the rVersion resource of
+the specified files. If there is a problem handling a particular
+file (e.g., file does not exist, no resource fork,
+no rVersion resource)
+.BR getvers
+prints an error message and continues processing any remaining files.
 .LP
 To add information to the rVersion resource, you can use the companion
 shell utility
-.BR setvers "."
-.LP
-You can use the companion shell utility
-.BR gv " to list versions in a more compact form."
-.SH BUGS
-.LP
-Little crawly things, also known as insects.
+.BR setvers ,
+or use the
+.BR rez
+resource compiler.
+.PP
+.BR getvers
+returns 1 to its parent program if an error is encountered processing
+any of the files. Otherwise it returns 0.
+.SS OPTIONS
+.BR getvers
+recognizes these options:
+.IP \fB-b\fR
+print a brief listing for each file, leaving off the program
+description and country name.
+.IP \fB-c\fR
+print rComment resource number 1 (the one displayed by Finder in
+file information windows).
+.IP \fB-q\fR
+do not print error information.
 .SH SEE ALSO
-.LP
 .BR setvers "(1)"
-.BR gv "(1)"
+.SH VERSION
+This manual page documents
+.BR getvers
+version 2.0.
 .SH AUTHOR
-.LP
-.nf
-Ian Schmidt, Two Meg Software
-
-internet  irsman@iastate.edu
-BITNET    twbv4@isuvax
-AOL       IRSMan
-.fi
+Originally written by Ian Schmidt, Two Meg Software. Updated by Dave Tribby
+for  GNO/ME 2.0.6.
+.SH HISTORY
+The previous version (1.20) of
+.BR getvers
+was released by Ian Schmidt in May 1993
+as an independent archive compatible with GNO and ORCA.

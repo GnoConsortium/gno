@@ -1,0 +1,6 @@
+ 
+// Special test case for getvers: no rVersion resource (only a comment)
+
+#include "mytypes.rez"
+
+resource rComment (1, purgeable3) {"This resource fork has no rVersion"};

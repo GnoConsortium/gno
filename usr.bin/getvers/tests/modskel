@@ -1,0 +1,13 @@
+# Generate rez file $1.rez with indicated parameters
+# Written by Dave Tribby to test getvers  *  April 1998
+
+echo "Creating $1.rez"
+echo "" > $1.rez
+echo "#define COUNTRY $2"      >> $1.rez
+echo "#define VERSION $3"      >> $1.rez
+echo "#define PROG \"$4\""     >> $1.rez
+echo '#define DESC "'$5'"'     >> $1.rez
+echo '#define COMMENT "'$6'"'  >> $1.rez
+cat rezskel >> $1.rez
+
+chtyp -l rez $1.rez

@@ -1,0 +1,23 @@
+US.r: product 2.0
+00-0F:
+Country: United States
+
+Russia.r: product 99.9.9a99
+20-2F: !"#$%&'()*+,-./
+Country: Russia
+
+Yugo.r: getvers 0.0f0
+40-4F:@ABCDEFGHIJKLMNO
+Country: Bosnia/Herzegovena/Yugoslavia/Croatia
+
+Ireland.r: getvers 3.2.1
+60-6F:`abcdefghijklmno
+Country: Ireland
+
+Thai.r: getvers 1.2.3d4
+80-8F:AACENOUaaaaaacee
+Country: Thailand
+
+Portugal.r: Super Graphics Destroyer 2.0
+(C) 1991 Pretty as a Picture, Inc.
+Country: Portugal

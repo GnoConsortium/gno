@@ -1,0 +1,29 @@
+/*
+ * Resources for getvers version and comment
+ */
+#define PROG "getvers"
+#define DESC "Print contents of resource version."
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 2, 0, 0,	/* Version 2.0.0 */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	PROG,	/* Program name */
+        DESC " Released with GNO/ME."
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG " v2.0 (April 1998)\n"
+	"GNO utility: " DESC "\n"
+	"Originally by Ian Schmidt; updated by Dave Tribby."
+};

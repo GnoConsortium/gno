@@ -1,0 +1,66 @@
+/*
+ * Subset of resource types needed for testing getvers. Taken from:
+ *  Types.Rez - 3/4/92
+ *  Rez Resource templates for standard IIGS system types
+ *
+ *  Copyright Apple Computer, Inc. 1988-1992
+ *  All Rights Reserved.
+ *
+ */
+
+/* Resource Types */
+#define rVersion            $8029
+#define rComment            $802A
+
+/* Definitions and Std Ref Descriptors */
+
+#Define NIL                 0
+#Define RefIsPtr            $0000
+#Define RefIsPointer        $0000   /* spelling variant */
+#Define RefIsHandle         $0001
+#Define RefIsResource       $0002
+
+
+// Equates for the country code of an rVersion resource
+
+#define Region      verUS, verFrance, verBritain, verGermany,           \
+                    verItaly, verNetherlands, verBelgiumLux,            \
+                    verFrBelgiumLux = 6, verSweden, verSpain,           \
+                    verDenmark, verPortugal, verFrCanada, verNorway,    \
+                    verIsrael, verJapan, verAustralia, verArabia,       \
+                    verArabic=16, verFinland, verFrSwiss, verGrSwiss,   \
+                    verGreece, verIceland, verMalta, verCyprus,         \
+                    verTurkey, verYugoslavia, verYugoCroatian = 25,     \
+                    verIndia = 33, verIndiaHindi = 33, verPakistan,     \
+                    verLithuania = 41, verPoland, verHungary,           \
+                    verEstonia, verLatvia, verLapland, verFaeroeIsl,    \
+                    verIran, verRussia, verIreland = 50, verKorea,      \
+                    verChina, verTaiwan, verThailand                    \
+
+
+/*********************************************************/
+/* The Resource Definitions.
+/*********************************************************/
+
+
+/*------------------- rVersion ------------------*/
+type rVersion {
+    ReverseBytes {
+        hex byte;                                       // Major revision in BCD
+        hex bitstring[4];                               // Minor vevision in BCD
+        hex bitstring[4];                               // Bug version
+        hex byte    development = 0x20,                 // Release stage
+                    alpha = 0x40,
+                    beta = 0x60,
+                    final = 0x80, /* or */ release = 0xA0;
+        hex byte;                                       // Non-final release #
+    };
+    integer     Region;                                 // Region code
+    pstring;                                            // Short version number
+    pstring;                                            // Long version number
+};
+
+/*------------------- rComment ------------------*/
+type rComment {
+    string;
+};

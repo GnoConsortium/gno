@@ -1,0 +1,246 @@
+ MACRO
+&lab _HomeResourceFile
+&lab ldx #$151E
+ jsl $E10000
+ MEND
+ MACRO
+&lab _LoadResource
+&lab ldx #$0E1E
+ jsl $E10000
+ MEND
+ MACRO
+&lab _OpenResourceFile
+&lab ldx #$0A1E
+ jsl $E10000
+ MEND
+ MACRO
+&lab _ResourceShutDown
+&lab ldx #$031E
+ jsl $E10000
+ MEND
+ MACRO
+&lab _ResourceStartUp
+&lab ldx #$021E
+ jsl $E10000
+ MEND
+ MACRO
+&lab _VersionString
+&lab ldx #$3903
+ jsl $E10000
+ MEND
+ macro
+&l long &a,&b
+ lclb &i
+ lclb &m
+&a amid &a,1,1
+&m setb ("&a"="M").or.("&a"="m")
+&i setb ("&a"="I").or.("&a"="i")
+ aif c:&b=0,.a
+&b amid &b,1,1
+&m setb ("&b"="M").or.("&b"="m").or.&m
+&i setb ("&b"="I").or.("&b"="i").or.&i
+.a
+&l rep #&m*32+&i*16
+ aif .not.&m,.b
+ longa on
+.b
+ aif .not.&i,.c
+ longi on
+.c
+ mend
+ macro
+&l short &a,&b
+ lclb &i
+ lclb &m
+&a amid &a,1,1
+&m setb ("&a"="M").or.("&a"="m")
+&i setb ("&a"="I").or.("&a"="i")
+ aif c:&b=0,.a
+&b amid &b,1,1
+&m setb ("&b"="M").or.("&b"="m").or.&m
+&i setb ("&b"="I").or.("&b"="i").or.&i
+.a
+&l sep #&m*32+&i*16
+ aif .not.&m,.b
+ longa off
+.b
+ aif .not.&i,.c
+ longi off
+.c
+ mend
+ macro
+&l dw &adr
+&l dc i1"l:~&SYSNAME&SYSCNT"
+~&SYSNAME&SYSCNT dc c"&adr"
+ mend
+ macro
+&l ph4 &n1
+&l anop
+ aif "&n1"="*",.f
+ lclc &c
+&c amid &n1,1,1
+ aif "&c"="#",.d
+ aif s:longa=1,.a
+ rep #%00100000
+.a
+ aif "&c"<>"{",.b
+&c amid &n1,l:&n1,1
+ aif "&c"<>"}",.g
+&n1 amid &n1,2,l:&n1-2
+ ldy #2
+ lda (&n1),y
+ pha
+ lda (&n1)
+ pha
+ ago .e
+.b
+ aif "&c"<>"[",.c
+ ldy #2
+ lda &n1,y
+ pha
+ lda &n1
+ pha
+ ago .e
+.c
+ aif "&c"<>"<",.c1
+&n1 amid &n1,2,l:&n1-1
+ pei &n1+2
+ pei &n1
+ ago .e
+.c1
+ lda &n1+2
+ pha
+ lda &n1
+ pha
+ ago .e
+.d
+&n1 amid &n1,2,l:&n1-1
+ pea +(&n1)|-16
+ pea &n1
+ ago .f
+.e
+ aif s:longa=1,.f
+ sep #%00100000
+.f
+ mexit
+.g
+ mnote "Missing closing '}'",16
+ mend
+ macro
+&l pl4 &n1
+ lclc &c
+&l anop
+ aif s:longa=1,.a
+ rep #%00100000
+.a
+&c amid &n1,1,1
+ aif "&c"<>"{",.b
+&c amid &n1,l:&n1,1
+ aif "&c"<>"}",.f
+&n1 amid &n1,2,l:&n1-2
+ pla
+ sta (&n1)
+ ldy #2
+ pla
+ sta (&n1),y
+ ago .d
+.b
+ aif "&c"<>"[",.c
+ pla
+ sta &n1
+ ldy #2
+ pla
+ sta &n1,y
+ ago .d
+.c
+ pla
+ sta &n1
+ pla
+ sta &n1+2
+.d
+ aif s:longa=1,.e
+ sep #%00100000
+.e
+ mexit
+.f
+ mnote "Missing closing '}'",16
+ mend
+ macro
+&l ph2 &n1
+&l anop
+ aif "&n1"="*",.f
+ lclc &c
+&c amid &n1,1,1
+ aif "&c"="#",.d
+ aif s:longa=1,.a
+ rep #%00100000
+.a
+ aif "&c"<>"{",.b
+&c amid &n1,l:&n1,1
+ aif "&c"<>"}",.g
+&n1 amid &n1,2,l:&n1-2
+ lda (&n1)
+ pha
+ ago .e
+.b
+ aif "&c"="<",.c
+ lda &n1
+ pha
+ ago .e
+.c
+&n1 amid &n1,2,l:&n1-1
+ pei &n1
+ ago .e
+.d
+&n1 amid &n1,2,l:&n1-1
+ pea &n1
+ ago .f
+.e
+ aif s:longa=1,.f
+ sep #%00100000
+.f
+ mexit
+.g
+ mnote "Missing closing '}'",16
+ mend
+ macro
+&l pl2 &n1
+ lclc &c
+&l anop
+ aif s:longa=1,.a
+ rep #%00100000
+.a
+&c amid &n1,1,1
+ aif "&c"<>"{",.b
+&c amid &n1,l:&n1,1
+ aif "&c"<>"}",.f
+&n1 amid &n1,2,l:&n1-2
+ pla
+ sta (&n1)
+ ago .d
+.b
+ pla
+ sta &n1
+.d
+ aif s:longa=1,.e
+ sep #%00100000
+.e
+ mexit
+.f
+ mnote "Missing closing '}'",16
+ mend
+ MACRO
+&lab _CloseResourceFile
+&lab ldx #$0B1E
+ jsl $E10000
+ MEND
+ MACRO
+&lab _StringToText
+&lab ldx #$3B03
+ jsl $E10000
+ MEND
+ MACRO
+&lab _GetHandleSize
+&lab ldx #$1802
+ jsl $E10000
+ MEND

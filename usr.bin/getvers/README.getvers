@@ -1,18 +1,48 @@
-=============
-GetVers v1.20
-=============
+============
+GetVers v2.0
+============
+$Id: README.getvers,v 1.2 1998/04/29 00:41:47 tribby Exp $
 
-Another quality Two Meg Software shell utility by Ian Schmidt.
-Copyright (c) 1993 Two Meg Software.
-All Rights Reserved.
+This version of GetVers was created by Dave Tribby from a disassembly of
+v1.20: "Another quality Two Meg Software shell utility by Ian Schmidt.
+Copyright (c) 1993 Two Meg Software. All Rights Reserved."
 
-Like most Two Meg shell utilities, this one's in 100% assembly for minimum size
-and maximum speed.
+In the spirit of Two Meg shell utilities, getvers is still in 100% assembly,
+"for minimum size and maximum speed."
 			
 GetVers is the companion for the 'SetVers' utility.  Given a filename or
 list of filenames, it prints out the version information for each one.
 
-*New and Improved!*
+== Improvements for each version ==
+
+GetVers 2.0 changes:
+
+ * Packaged in standard GNO format, including Makefile, rez file,
+   man page update, and desc entry.  Also: test cases created.
+
+ * Two new options: -b for brief (no description or country) and
+                    -c to print rComment resource #1
+                    -q to skip printing of error information
+
+ * New countries: India, Pakistan, Lithuania, Poland, Hungary, Estonia,
+   Latvia, Lapland, Faeroe Islands, Iran, and Russia.
+
+ * Continue processing multiple files even when one has an error.
+
+ * Stack/DP segment is 512 bytes, initialized to "?" characters so
+   that.
+
+ * Strings that might contain non-printable characters are translated
+   via StringToText.
+
+ * Meaningful error messages are printed when file errors are encountered,
+   and remaining files are processed.
+
+ * Resources are locked after they are loaded.
+
+ * A resource file is closed before the next one is opened, removing any
+   of the file's resources from memory.
+
 
 GetVers 1.20 now uses System 6.0's VersionString call so it can correctly
 report versions for all valid rVersion resources.
@@ -25,31 +55,30 @@ information for.  This means GNO and TMSH users can use the * and other regexp
 operators to create version reports for a whole list of files (sorry, wildcards
 the Orca way is too much of a pain in the butt :)
 
+
 Usage
 -----
-
-getvers file1 [file2 file3...filen]
+getvers [-b] [-c] [-q] file ...
 
 GetVers will print a usage message if called with no arguments.  Otherwise it
 processes all the arguments and generates a version printout for each one.
 
-No flags are defined in GetVers 1.2.
 		
 Bugs
 ----
-Console output under GNO 1.0 is screwed up.  This is a GNO bug; GNO 1.1
-solves this.
+Console output under GNO 1.0 is screwed up.  This is a GNO bug fixed in later
+versions.
 
-Big Thanks To
--------------
+
+Big Thanks [from Ian Schmidt] To
+--------------------------------
 The Apple Brigade: Jim "Huh?" Murphy, Matt "Missed Manners" Deatherage, and
 David "Mr Tangent" Lyons.  Also Jawaid `zaB' Bazyar and James `Abe' Brookes.
 
-Author
-------
-
+Original Author
+---------------
 Ian Schmidt, Two Meg Software
 
-irsman@iastate.edu
-irsman@aol.com
-twbv4@isuvax.bitnet
+Updated by
+----------
+Dave Tribby, tribby@cup.hp.com

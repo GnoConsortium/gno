@@ -1,0 +1,9 @@
+Name:    getvers
+Version: 2.0 (April 1998)
+Shell:   GNO or ORCA
+Author:  Dave Tribby (original by Ian Schmidt)
+Contact: tribby@cup.hp.com
+Where:   /usr/bin
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+ Print information from rVersion and rComment resources

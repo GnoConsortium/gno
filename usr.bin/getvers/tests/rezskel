@@ -1,0 +1,16 @@
+
+#include "mytypes.rez"
+
+/* Version */
+resource rVersion (1, purgeable3) {
+	{ VERSION },	/* x.y.z development|alpha|beta|final|release
+	  		   non-final release number */
+	COUNTRY,
+	PROG,
+        DESC
+};
+
+/* Comment */
+resource rComment (1, purgeable3) {
+        COMMENT
+};
