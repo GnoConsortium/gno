@@ -1,7 +1,7 @@
 /*************************************************
  * Start of GNO v2.0.6 definitions.
  *
- * $Id: defaults.h,v 1.1 1997/02/28 04:42:19 gdr Exp $
+ * $Id: defaults.h,v 1.2 1997/02/28 04:56:19 gdr Exp $
  */
 
 #define	__appleiigs__
@@ -11,7 +11,7 @@
  * __ORCAC_VERSION should be:
  *	undefined	for Orca/C earlier than v2.1.0
  *	210		for Orca/C v2.1.0 - v2.1.1b1
- *	210		for Orca/C v2.1.1b2 and higher
+ *	211		for Orca/C v2.1.1b2 and higher
  * Note that if you have Orca/C v2.0.x or earlier, it doesn't even
  * include this file by default.
  */
