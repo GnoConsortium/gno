@@ -1,13 +1,13 @@
 #
-# $Id: Makefile,v 1.1 1998/01/14 05:10:01 gdr Exp $
+# $Id: Makefile,v 1.2 1998/01/17 08:29:21 gdr Exp $
 #
 # Devin Reade, January 1998
 #
 
 # What is the current version of describe, descc, and descu?  (They're
 # in lockstep.)
-VERSION_SHORT	= 103
-VERSION_LONG	= 1.0.3
+VERSION_SHORT	= 105
+VERSION_LONG	= 1.0.5
 
 
 ###################################################################
@@ -65,7 +65,11 @@ OWNER	= -ogdr -ga2ftp
 MODE_F	= -m444
 MODE_X	= -m775
 
-release:	$(RELDIR)/$(RELEASE_README) $(RELDIR)/$(RELEASE_SRC)
+release:	default $(RELDIR)/$(RELEASE_README) $(RELDIR)/$(RELEASE_SRC) \
+		$(RELDIR)/$(RELEASE_DB)
+
+clobber:
+	rm -rf $(XREF) $(TDIR) $(README_OUT)
 
 $(RELDIR)/$(RELEASE_README):	$(RELDIR) $(README_OUT)
 	install $(OWNER) $(MODE_F) $(README_OUT) $@
@@ -76,8 +80,19 @@ $(RELDIR)/$(RELEASE_SRC):	$(RELDIR) $(TDIR) $(DB_SRC)
 	udl -g $(TDIR)/$(DB_SRC); \
 	rm -f $@; \
 	cd $(TDIR); \
+	rm -f $(RELEASE_SRC); \
 	nulib cf $(RELEASE_SRC) $(DB_SRC); \
 	install $(OWNER) $(MODE_F) $(RELEASE_SRC) $@
+
+$(RELDIR)/$(RELEASE_DB):	$(RELDIR) $(TDIR) $(DB_SRC)
+	@echo "installing $@"; \
+	/usr/local/sbin/descc $(DB_SRC); \
+	cp /usr/lib/describe.db $(TDIR); \
+	cd $(TDIR); \
+	NULIBOPT=type=BIN; export NULIBOPT; \
+	rm -f $(RELEASE_DB); \
+	nulib cf $(RELEASE_DB) describe.db; \
+	install $(OWNER) $(MODE_F) $(RELEASE_DB) $@
 
 $(RELDIR):;	@[ -d $(RELDIR) ] || install -d $(OWNER) $(MODE_X) $(RELDIR)
 $(TDIR):;	@[ -d $(TDIR) ] || install -d $(OWNER) $(MODE_X) $(TDIR)
