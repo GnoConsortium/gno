@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: builtin.asm,v 1.3 1998/06/30 17:25:12 tribby Exp $
+* $Id: builtin.asm,v 1.4 1998/07/20 16:23:01 tribby Exp $
 *
 **************************************************************************
 *
@@ -39,7 +39,6 @@
 *   which
 *   prefix
 *   rehash	(unhash is entry as an alternate name)
-*   df
 *   exit
 *   setdebug
 *   psbi	(command name is "ps")
@@ -138,7 +137,8 @@ ourproc	jsl	>$FFFFFF	;might want to mutex this!!!!!!
 	pei	(argv)
 	jsl	argfree
 
-done	anop
+done	ldy	val	Y-reg = return value.
+
 	lda	space
 	sta	end-3
 	lda	space+1
@@ -148,9 +148,9 @@ done	anop
 	clc
 	adc	#end-4
 	tcs
-	tya
 
-	lda	val
+	tya		Accumulator = return value.
+
 	rtl
 
 	END
@@ -219,7 +219,6 @@ builtintbl     dc    a4'aliasname,alias',i2'0'
                dc    a4'chdirname,chdir',i2'1'
                dc    a4'clearname,clear',i2'1'		Changed to unforked
 	dc	a4'cmdname,cmdbi',i2'0'
-               dc    a4'dfname,df',i2'0'
 	dc	a4'dirsname,dirs',i2'0'
                dc    a4'echoname,echo',i2'0'
 	dc	a4'editname,edit',i2'1'
@@ -256,7 +255,6 @@ cdname         dc    c'cd',h'00'
 clearname      dc    c'clear',h'00'
 cmdname	dc	c'commands',h'00'
 dirsname	dc	c'dirs',h'00'
-dfname         dc    c'df',h'00'
 echoname	dc	c'echo',h'00'
 editname	dc	c'edit',h'00'
 exitname	dc	c'exit',h'00'
@@ -299,7 +297,8 @@ chdir	ENTRY
 
 dpg	equ	1	Direct page pointer.
 buf	equ	dpg+4	Buffer address to be freed.
-space	equ	buf+4
+status	equ	buf+4	Status returned from command.
+space	equ	status+2
 argc	equ	space+3
 argv	equ	argc+2
 end	equ	argv+4
@@ -318,6 +317,8 @@ end	equ	argv+4
 	stz	buf	Clear the pointer to
 	stz	buf+2	 allocated buffer.
 
+	stz	status	Assume good status.
+
 	lda	argc	Number of parameters
 	dec	a	 determines type of cd...
 	beq	cdhome	  either to $HOME
@@ -327,7 +328,8 @@ end	equ	argv+4
 ;
 ; Illegal parameters: print usage string
 ;
-showusage      lda   [argv]
+showusage      inc	status	Return status = 1.
+	lda   [argv]
 	tax
 	ldy	#2
 	lda	[argv],y
@@ -336,11 +338,11 @@ showusage      lda   [argv]
 	lda	[argv],y	
 	and	#$FF
 	beq	cdusage
-	ldx	#^Usage2
+	ldx	#^Usage2	Print chdir usage
 	lda	#Usage2
 	jsr	errputs
 	jmp	exit
-cdusage	ldx	#^Usage
+cdusage	ldx	#^Usage	Print cd usage
 	lda	#Usage
 	jsr	errputs
 	jmp	exit
@@ -348,21 +350,13 @@ cdusage	ldx	#^Usage
 ;
 ; Set prefix to $home
 ;
-cdhome	ph4	#256	Allocate 256 bytes for result buf.
-	jsl	~NEW
-	sta	buf
-	stx	buf+2
-	sta	ReadName
-	stx	ReadName+2
-	ora	ReadName+2	If both address bytes are 0,
-	bne	madeit
-	lda	#$201
-	jmp	ohshit		we have a problem...
-
-madeit	lda	#256	Set length of GS/OS result buffer
-	sta	[buf]
-
-	ReadVariableGS ReadVar	Read value of $home
+cdhome	anop
+	ph4	#home	Get value of $HOME
+	jsl	getenv
+	sta	buf	If GS/OS result buffer
+	stx	buf+2	 wasn't allocated,
+	ora	buf+2
+	jeq	exit	   there's no more to do.
 
 	clc		Calculate address
 	lda	buf	 of GS/OS input string
@@ -373,10 +367,6 @@ madeit	lda	#256	Set length of GS/OS result buffer
 	adc	#0
 	sta	PRecPath+2
 	sta	GRecPath+2
-
-	ldy	#2
-	lda	[buf],y	Get string length word.
-	beq	done	If 0, bail out.
 
 	bra	getinfo
 
@@ -434,12 +424,12 @@ ok2	SetPrefix PRec
 ;
 ; Deallocate buffer (if necessary), unlock mutex, cleanup stack, and leave
 ;
-done	ora2	buf,buf+2,@a
-	beq	exit
-	ph4	buf
+done	ph4	buf
 	jsl	nullfree
 
 exit	unlock cdmutex
+
+	ldy	status	Put return status in Y-reg
 
 	lda	space
 	sta	end-3
@@ -451,7 +441,7 @@ exit	unlock cdmutex
 	adc	#end-4
 	tcs
 
-	lda	#0
+	tay		Put return status in Accumulator.
 
 	rtl
 
@@ -467,13 +457,6 @@ GRec	dc	i'3'	pCount
 GRecPath	ds	4	Pointer to input pathname
 GRecAcc	ds	2	access (result)
 GRecFT	ds	2	fileType (result)
-
-; Parameter block for shell ReadVariableGS call (p 423 in ORCA/M manual)
-ReadVar	anop
-	dc	i2'3'	pCount
-	dc	a4'home'	Pointer to name
-ReadName	ds	4	GS/OS Output buffer ptr: value
-	ds	2	export flag
 
 home	gsstr	'home'	Env variable name
 
@@ -607,8 +590,9 @@ gotn	iny
 	dec	argc	Decrement argument counter.
 	jeq	done	Done if no more arguments.
 
-* Beginning of main processing loop of echo parameters.
-
+;
+; Beginning of main processing loop of echo parameters.
+;
 loop	add2	argv,#4,argv	Bump argument pointer.
 	ldy	#2
 	lda	[argv],y	Set ptr to argv (next argument)
@@ -621,7 +605,7 @@ putloop	lda	[ptr]	Get first
 	jeq	doneput	  done with this argument.
 	cmp	#'\'	If != "\"
 	jne	putit	  go save in print buffer.
-	inc	ptr	Escape character found; point
+	incad	ptr	Escape character found; point
 	lda	[ptr]	 to the next
 	and	#$FF	  character.
 	beq	doneput	If 0, done with this argument.
@@ -658,13 +642,13 @@ escloop	lda	[ptr],y
 	adc	1,s
 	sta	val
 	pla
-	inc	ptr
+	incad	ptr
 	bra	escloop
 
 putval	lda	val	Get numeric escape code.
 
 putit	jsr	putchar	Save character in accumulator.
-didit	inc	ptr	Point to next char in arg
+didit	incad	ptr	Point to next char in arg
 	jmp	putloop	 and go process it.
 
 doneput	dec	argc	Decrement argument counter.
@@ -1270,266 +1254,6 @@ Usage	dc	c'Usage: ',h'00'
 
 **************************************************************************
 *
-* DF: builtin command
-* syntax: df
-*
-* displays volumes and free space
-*
-**************************************************************************
-
-df	START
-
-	using	FSTData
-
-space	equ	1
-argc	equ	space+3
-argv	equ	argc+2
-end	equ	argv+4
-
-	tsc
-	phd
-	tcd
-
-	lock	mutex
-
-	lda	argc
-	dec	a
-	beq	showall
-
-	ldx	#^Usage
-	lda	#Usage
-	jsr	errputs
-	bra	exit
-
-showall	ldx	#^hdr
-	lda	#hdr
-	jsr	puts
-	ld2	1,DIDevNum
-allloop	DInfo	DIParm
-	bcs	exit
-	jsr	showdev
-	inc	DIDevNum
-	bra	allloop
-
-exit	unlock mutex
-	lda	space
-	sta	end-3
-	lda	space+1
-	sta	end-2
-	pld
-	tsc
-	clc
-	adc	#end-4
-	tcs
-
-	lda	#0
-
-	rtl     
-
-showdev        lda	#'.'
-	jsr	putchar
-	lda	#'d'
-	jsr	putchar
-	lda	DIdevnum
-	cmp	#10
-	bcs	dev10
-	clc
-	adc	#'0'
-	jsr	putchar
-	lda	#' '
-	jsr	putchar
-	bra	endnum
-dev10          UDivide (DIdevnum,#10),(@a,@x)
-	phx
-	clc
-	adc	#'0'
-	jsr	putchar
-	pla
-	clc
-	adc	#'0'
-	jsr	putchar
-endnum	lda	#' '
-	jsr	putchar
-
-	Volume VolParm
-	jcc	okdev
-	lda	DIid
-	cmp	#$20
-	bcc	okdid
-	lda	#0
-okdid	asl2	a
-	tay
-	ldx	idtbl+2,y
-	lda	idtbl,y
-	jsr	puts
-	short	a
-	ldy	devname
-	lda	#' '
-dev5	cpy	#17
-	bcs	dev6
-	sta	devname+2,y
-	iny
-	bra	dev5
-dev6	lda	#16
-	sta	devname+1
-	long	a
-	ldx	#^devname+1
-               lda	#devname+1
-	jsr	putp
-	lda	#' '
-	jsr	putchar
-	
-	jmp	newline
-
-okdev	ldy	volname
-	short	a
-	lda	#' '
-dev1	cpy	#17
-	bcs	dev2
-	sta	volname+2,y
-	iny
-	bra	dev1
-dev2	lda	#16
-	sta	volname+1
-	ldy	devname
-	lda	#' '
-dev3	cpy	#17
-	bcs	dev4
-	sta	devname+2,y
-	iny
-	bra	dev3
-dev4	lda	#16
-	sta	devname+1
-	long	a
-
-	ldx	#^volname+1
-	lda	#volname+1
-	jsr	putp
-	lda	#' '
-	jsr	putchar
-	ldx	#^devname+1
-	lda	#devname+1
-	jsr	putp
-	lda	#' '
-	jsr	putchar
-	Long2Dec (VolFree,#numbuf,#7,#0)
-	ldx	#^numbuf
-	lda	#numbuf
-	jsr	puts
-	Long2Dec (VolTot,#numbuf,#7,#0)
-	ldx	#^numbuf
-	lda	#numbuf
-	jsr	puts
-;
-; [(total - free) * 100] / total
-;
-	lda	VolFree
-	ora	VolFree+2
-               beq   put100
-	clc			;why clc, need to investigate :)
-	lda	VolTot
-	sbc	VolFree
-	tax
-	lda	VolTot+2
-	sbc	VolFree+2
-	LongMul (@ax,#100),(@ax,@y)
-	LongDivide (@xa,VolTot),(@ax,@y)
-	Long2Dec (@xa,#capbuf+3,#3,#0)
-	ldx	#^capbuf
-	lda	#capbuf
-	jsr	puts
-	bra	putsys
-
-put100	ldx	#^cap100buf
-	lda	#cap100buf
-	jsr	puts
-	             
-putsys	lda	VolSysID
-	cmp	#$E
-	bcc	oksys
-	lda	#0
-oksys	asl2	a
-	tay
-	ldx	FSTtable+2,y
-	lda	FSTtable,y
-	jsr	puts
-	jmp	newline
-
-hdr  dc c'.d## Volume           Device           Free    Total   Capacity  System',h'0d'
-     dc c'---- ---------------- ---------------- ------- ------- --------  -----------',h'0d00'
-
-Usage	dc	c'Usage: df',h'0d00'
-numbuf	dc	c'        ',h'00'
-capbuf	dc	c'      %   ',h'00'
-cap100buf      dc    c'   100%   ',h'00'
-
-mutex	key
-
-DIParm	dc	i2'8'
-DIDevNum	ds	2
-	dc	a4'devbuf'
-	dc	i2'0'
-	dc	i4'0'
-	dc	i2'0'
-	dc	i2'0'
-	dc	i2'0'
-DIid	dc	i2'0'
-
-VolParm	dc	i2'5'
-	dc	a4'devname'
-	dc	a4'volbuf'
-VolTot	ds	4
-VolFree	ds	4
-VolSysID	ds	2
-
-devbuf	dc	i'35'
-devname	ds	33
-volbuf	dc	i'260'
-volname	ds	258
-
-idtbl	dc	a4'id00,id01,id02,id03,id04,id05,id06,id07,id08'
-	dc	a4'id09,id0a,id0b,id0c,id0d,id0e,id0f,id10,idff'
-	dc	a4'id12,id13,id14,id15,id16,id17,id18,id19,id1a'
-	dc	a4'id1b,id1c,id1d,id1e,id1f'
-	dc	a4'idff'
-
-idff	dc	c'<unknown>        ',h'00'
-id00	dc	c'Apple 5.25 Drive ',h'00'
-id01	dc	c'Profile 5MB      ',h'00'
-id02	dc	c'Profile 10MB     ',h'00'
-id03	dc	c'Apple 3.5 Drive  ',h'00'
-id04	dc	c'SCSI             ',h'00'
-id05	dc	c'SCSI Hard Drive  ',h'00'
-id06           dc	c'SCSI Tape Drive  ',h'00'
-id07	dc	c'SCSI CD-ROM      ',h'00'
-id08           dc	c'SCSI Printer     ',h'00'
-id09           dc	c'Serial Modem     ',h'00'
-id0a           dc	c'Console Driver   ',h'00'
-id0b	dc	c'Serial Printer   ',h'00'
-id0c	dc	c'Serial LaserWrit ',h'00'
-id0d	dc	c'AppleTalk LaserW ',h'00'
-id0e	dc	c'RAM Disk         ',h'00'
-id0f	dc	c'ROM Disk         ',h'00'
-id10	dc	c'File Server      ',h'00'
-id12	dc	c'Apple Desktop Bu ',h'00'
-id13	dc	c'Hard Drive       ',h'00'
-id14	dc	c'Floppy Drive     ',h'00'
-id15	dc	c'Tape Drive       ',h'00'
-id16	dc	c'Character dev dr ',h'00'
-id17	dc	c'MFM-encoded      ',h'00'
-id18	dc	c'AppleTalk net    ',h'00'
-id19           dc	c'Sequential dev   ',h'00'
-id1a           dc	c'SCSI Scanner     ',h'00'
-id1b          	dc	c'Scanner          ',h'00'
-id1c           dc	c'LaserWriter SC   ',h'00'
-id1d	dc	c'AppleTalk Main   ',h'00'
-id1e	dc	c'AppleTalk fsd    ',h'00'
-id1f	dc	c'AppleTalk RPM    ',h'00'
-
-	END
-
-**************************************************************************
-*
 * FST descriptions
 *
 **************************************************************************
@@ -1572,7 +1296,7 @@ space	equ	0
 
 	subroutine (4:argv,2:argc),space
 
-	inc	exitamundo
+	inc	exit_requested
 
 	return 2:#0
 
@@ -1649,7 +1373,7 @@ done	setdebug newdebug
 	mv2	newdebug,globaldebug
 return	return 2:#0
 
-findflag	inc	arg
+findflag	incad	arg
 	ldy	#0
 findloop	phy
 	lda	nametbl,y
@@ -1997,60 +1721,69 @@ space	equ	p+4
 
 	subroutine (4:argv,2:argc),space
 
-	ph2	t_size
-	jsl	sv_alloc
+	ph2	t_size	Get size of hash table.
+	jsl	sv_alloc	Allocate a string vector array.
 	sta	sv
 	stx	sv+2
 
-	lda	hash_table
-	ora	hash_table+2
-	beq	exit
-	mv4	hash_table,p
-	lda	hash_numexe
-	beq	doneadd
-	ldy	#0
-	ldx	t_size
-	beq	doneadd
+	lda	hash_table	If no hash table
+	ora	hash_table+2	 has been allocated,
+	beq	exit	  exit.
+
+	mv4	hash_table,p	Move address to dir pg variable.
+	lda	hash_numexe	Get the number of executable files.
+	beq	doneadd	Done if 0.
 ; 
 ; loop through every hashed file and add it the string vector
 ;
-addloop	lda	[p],y
-	sta	q
+	ldy	#0	Y is index into the next entry.
+	ldx	t_size	X is the number of entries left.
+	beq	doneadd
+addloop	lda	[p],y	Get next hash table entry.
+	sta	q	
 	iny
 	iny
 	lda	[p],y
 	sta	q+2
 	iny
 	iny
-	ora	q
-	beq	skip
-	phy
+	ora	q	If this entry isn't used,
+	beq	skip	 skip to the next one.
+
+	phy		Hold the Y and X regs on stack.
 	phx	
-	pei	(sv+2)
-	pei	(sv)
-	pei	(q+2)
+	pei	(sv+2)	Insert string in table entry
+	pei	(sv)	 into the string vector.
+	clc
 	lda	q
-	inc	a
-	inc	a
+	adc	#2	(Note: tn_name in hash.asm == 2)
+	tax
+	lda	q+2
+	adc	#0
 	pha
-	pea	1
+	phx
+	pea	1	(allocflag: 1 = allocate memory)
 	jsl	sv_add
-	plx
+	plx		Restore X and Y regs from stack.
 	ply
 skip	dex
 	bne	addloop
+;
+; Files have all been added to the string vector
+;
 doneadd	anop
 
-doneprint	pei	(sv+2)
-	pei	(sv)
-	jsl	sv_sort
 	pei	(sv+2)
 	pei	(sv)
-	jsl	sv_colprint			
+	jsl	sv_sort	Sort the string vector.
 
 	pei	(sv+2)
 	pei	(sv)
-	jsl	sv_dispose
+	jsl	sv_colprint	Print the string vector in columns.
+
+	pei	(sv+2)
+	pei	(sv)
+	jsl	sv_dispose	Dispose of the string vector memory.
 
 exit	return 2:#0
 
@@ -2153,7 +1886,7 @@ addloop	lda	builtintbl,x
 	bra	addloop
 doneadd	anop
 
-doneprint	pei	(sv+2)
+	pei	(sv+2)
 	pei	(sv)
 	jsl	sv_sort
 	pei	(sv+2)

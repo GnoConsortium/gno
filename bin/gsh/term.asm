@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: term.asm,v 1.3 1998/06/30 17:26:04 tribby Exp $
+* $Id: term.asm,v 1.4 1998/07/20 16:23:11 tribby Exp $
 *
 **************************************************************************
 *
@@ -32,7 +32,7 @@ TIOCGETP	gequ	$40067408
 **************************************************************************
 *
 * Initialize the system for termcap - checks to see if $TERM exists
-* and is set, if not, sets to GNOCON
+* and is set, if not, sets to GNOCON; and allocate termcap buffers.
 *
 **************************************************************************
 
@@ -40,26 +40,55 @@ InitTerm	START
 
 	using	termdata
 
-	Set_Variable setparm
-	Export expparm
+;
+; See if $TERM exists
+;
+	ReadVariableGS dummyresult
+
+	lda	term_len	Get length of $TERM
+	bne	allocate	If 0,
+	SetGS	SetPB		set to default ("gnocon")
+
+allocate	anop		Allocate termcap buffers.
+
 	ph4	#1024
 	jsl	~NEW
                sta	bp
 	stx	bp+2
+
 	ph4	#1024
 	jsl	~NEW
 	sta	areabuf
 	stx	areabuf+2
-	rts
 
-setparm	dc	i4'termname'	;default term type
-	dc	i4'termval'
+	rts		Return to caller.
 
-expparm	dc	i4'termname'
-	dc	i2'1'
+;
+; Parameter block for shell ReadVariableGS call (p 423 in ORCA/M manual)
+;
+ReadVarPB	anop
+	dc	i2'3'	pCount
+	dc	i4'term'	Name  (pointer to GS/OS string)
+	dc	i4'dummyresult'	GS/OS Output buffer ptr
+	ds	2	export flag
+;
+; GS/OS result buffer for getting length of TERM env var.
+;
+dummyresult	dc	i2'5'	Only five bytes total.
+term_len	ds	2	Value's length returned here.
+	ds	1	Only 1 byte for value.
 
-termname	str	'term'
-termval	str	'gnocon'
+;
+; Parameter block for shell SetGS calls (p 427 in ORCA/M manual)
+;
+SetPB	anop
+	dc	i2'3'	pCount
+	dc	i4'term'	Name  (pointer to GS/OS string)
+	dc	i4'gnocon'	Value (pointer to GS/OS string)
+	dc	i2'1'	Export flag
+
+term	gsstr	'term'
+gnocon	gsstr	'gnocon'
 
 	END
 
@@ -83,31 +112,38 @@ down_history	equ	6
 
 	ph4	#termname
 	jsl	getenv
-	phx
-	pha
+	phx		Push allocated buffer on stack
+	pha		 for later call to nullfree.
+	clc		Add 4 to GS/OS result buffer
+	adc	#4	 to get pointer to text.
+	bcc	val_addr_set
+	inx
+val_addr_set	sta	hold_term_val
+	stx	hold_term_val+2
 	tgetent (bp,@xa)	;xa is pushed first
 	beq	noentry
 	dec	a
 	beq	ok
 
-	jsl	nullfree
+	jsl	nullfree	Free buffer allocated by getenv.
 	stz	termok
 	ldx	#^error1
 	lda	#error1
 	jmp	errputs
 
-noentry	jsl	nullfree
+noentry	anop
 	stz	termok
 	ldx	#^error2
-	lda	#error2
-	jsr	errputs
-	ph4	#termname
-	jsl	getenv
-	jsr	errputs
+	lda	#error2	Print error message:
+	jsr	errputs	  'Termcap entry not found for '
+	lda	hold_term_val	Get text from buffer allocated
+	ldx	hold_term_val+2	 by getenv
+	jsr	errputs	  and print it.
+	jsl	nullfree	Free buffer allocated by getenv.
 	lda	#13
 	jmp	errputchar
 
-ok	jsl	nullfree
+ok	jsl	nullfree	Free buffer allocated by getenv.
 	lda	#1
 	sta	termok
 	mv4	areabuf,area          
@@ -183,7 +219,7 @@ ok	jsl	nullfree
 
 	rts 
 
-termname	dc	c'term',h'00'
+termname	gsstr	'term'
 error1	dc	c'Error reading termcap file!',h'0d0d00'
 error2	dc	c'Termcap entry not found for ',h'00'
 isid	dc	c'is',h'00'
@@ -210,6 +246,10 @@ sg_ospeed	dc	i1'0'
 	dc	i1'0'
 	dc	i1'0'
 sg_flags	dc	i2'0'
+
+; Hold the address of the value of $TERM
+hold_term_val	ds	4
+
 	END
                              
 **************************************************************************

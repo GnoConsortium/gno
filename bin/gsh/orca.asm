@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: orca.asm,v 1.3 1998/06/30 17:25:48 tribby Exp $
+* $Id: orca.asm,v 1.5 1998/08/03 17:30:22 tribby Exp $
 *
 **************************************************************************
 *
@@ -120,9 +120,7 @@ doloop         short	m	Between parameters:
 	sta	[strPtr]	 character in strPtr.
 	long	m
 	inc	sLen	Bump string length
-	inc	strPtr	 and pointer.
-               bne	nodelimit
-	inc	strPtr+2
+	incad	strPtr	 and pointer.
 
 nodelimit	anop
                lda	pnum	Get parameter number
@@ -229,10 +227,17 @@ doloopend      inc	pnum	pnum++
                ph4   #defedit	  use default value.
 	bra	execit
 
-goteditvar	anop
-	pei	(editcommand+2)
-	pei	(editcommand)
-execit	ph2	#0	;tells execute we're called by system
+goteditvar	anop		Add 4 to value returned by getenv
+	ldx	editcommand+2	 to get address of text portion.
+	clc
+	lda	editcommand
+	adc	#4
+	bcc	nobump
+	inx
+nobump	anop
+	phx		Push address onto stack.
+	pha
+execit	ph2	#0	Tells execute we're called by system
 	jsl	execute
                sta	retval
 
@@ -295,12 +300,13 @@ gl_sfile	dc	i4'0'	source file name (GS/OS string)
 	dc	i1'0'	max err level found (compile/link)
 	dc	i1'0'	operations flags (compile/link)
 	dc	i1'0'	keep flag (compile)
-	dc	i4'0'	minus flags (see ASML)
+	dc	i4'0'	minus flags (see ASML command descr)
 	dc	i4'$08000000'	plus flags [+E] (see ASML)
 	dc	i4'0'	origin (link)
 
 nullparm	dc	i2'0'
 
-editorvar	dc	c'editor',h'00'	Name of editor environment variable
+editorvar	gsstr	'editor'	Name of editor environment variable
+
 defedit	dc	c'4:editor',h'00'	Default value for editor
 	END

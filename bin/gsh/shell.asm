@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shell.asm,v 1.3 1998/06/30 17:25:52 tribby Exp $
+* $Id: shell.asm,v 1.4 1998/07/20 16:23:09 tribby Exp $
 *
 **************************************************************************
 *
@@ -201,7 +201,7 @@ gnoloop        entry
 	ph2	#0
                jsl   execute
 
-	lda	exitamundo
+	lda	exit_requested
 	bne	done1
                jsr   newlineX
 	stz	lastabort
@@ -217,7 +217,7 @@ done1	ora2  pjoblist,pjoblist+2,@a
                lda	lastabort
 	bne	donekiller
 	inc	lastabort
-	stz	exitamundo
+	stz	exit_requested
 	ldx	#^stopstr	Print message:
 	lda	#stopstr	 "There are stopped jobs"
 	jsr	puts
@@ -227,7 +227,7 @@ done1	ora2  pjoblist,pjoblist+2,@a
 donekiller	jsl	jobkiller
 done2	lda	FastFlag
 	bne	fastskip5
-	jsr   SaveHistory
+	jsl   SaveHistory
 fastskip5	jsr   dispose_hash
 
 quit	PopVariablesGS NullPB
@@ -303,9 +303,13 @@ gshrcName	dc	c'/gshrc',h'00'
                END
 
 
-* Append a C string to the value of the $HOME variable.  If $HOME is
-* not set, then it appends the C string to the string '@/'.  Returns
-* a pointer to a GC string.
+;=========================================================================
+;
+; Append a C string to the value of the $HOME variable.  If $HOME is
+; not set, then it appends the C string to the string '@/'.  Returns
+; a pointer to a GS/OS input string.
+;
+;=========================================================================
 
 AppendHome	START
 outPtr	equ	0
@@ -318,9 +322,9 @@ len	equ	4
                stx	outPtr+2	   value of $HOME and
 	sta	outPtr	    the final result.
 
-	pei	(str+2)	
-	pei	(str)
-	jsr	cstrlen
+	pei	(str+2)	Get length of
+	pei	(str)	 string to be
+	jsr	cstrlen	  appended.
 	sta	len
 
                lda	#255	Max len is 255 (leave room
@@ -370,10 +374,13 @@ foundSep	sta	[str]	Store separator at end of string.
 
 	pei	(str+2)
 	pei	(str)
-	pei	(outPtr+2)
+	ldx	outPtr+2
 	lda	outPtr
 	clc
 	adc	#4
+	bcc	pushptr
+	inx
+pushptr	phx
 	pha
 	case	on
 	jsl	strcat
@@ -384,25 +391,28 @@ foundSep	sta	[str]	Store separator at end of string.
 	adc	#2	  get address if GS/OS
 	bcc	no_ovf	   input string.
 	inc	outPtr+2
-	clc
 no_ovf	sta	outPtr
 
                lda	[outPtr]	Adjust string length
 	clc		 to include appended
 	adc	len	  string (parameter).
 	sta	[outPtr]
-
+;
+; NOTE: The returned value points to a GS/OS string, two bytes offset
+;       from the allocated memory for a GS/OS result buffer. When the
+;       memory is deallocated, the address must be adjusted back.
+;
 	return 4:outPtr
 
 atSign	dc	c'@',i1'0'
 
 ; Parameter block for Shell call ReadVariable (p 423 in ORCA/M reference)
 rvbl           dc	i2'3'	pCount
-	dc	a4'in'	address of variable's name
+	dc	a4'home'	address of variable's name
 outPtr1	dc	a4'0'	pointer to result buffer
 	dc	i2'0'	value of 'Export' flag (returned)
 
-in	dosin	'HOME'
+home	gsstr	'HOME'
 
 	END
 
@@ -420,9 +430,8 @@ GSOSDP         ds    2
 cmdloc         ds    2
 cmdlen         ds    2
 cmdline        ds    cmdbuflen
-buffer         ds    256
+buffer	ds	256
 wordlen	ds	2
-wordpbuf	ds	1
 wordbuf	ds	256
 nummatch	ds	2
 matchbuf	ds	512*4
@@ -430,7 +439,7 @@ cmdcontext     ds    2
 cmddp	ds	2
 gshtty	ds	2
 gshpid         ds	2
-exitamundo     dc    i'0'               ;!=0 if exit
+exit_requested	dc    i'0'               ;!=0 if exit
 signalled	dc	i'0'
 
 FastFlag	dc	i'0'

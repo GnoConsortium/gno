@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: dir.asm,v 1.3 1998/06/30 17:25:20 tribby Exp $
+* $Id: dir.asm,v 1.4 1998/07/20 16:23:03 tribby Exp $
 *
 **************************************************************************
 *
@@ -693,7 +693,7 @@ checkhome      lda   [path],y
      
 found	lda	#'~'
 	sta	[ptr]
-	inc	ptr
+	incad	ptr
                bra   copyrest
 
 notfound	pla
@@ -706,7 +706,7 @@ copyloop	lda	[path],y
 	lda	#'/'
 copyput      	sta   [ptr]
 	long	a
-	inc	ptr
+	incad	ptr
 	short	a
 	iny
 	bra	copyloop

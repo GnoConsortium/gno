@@ -7,7 +7,7 @@
 *   Tim Meekins
 *   Derek Taubert
 *
-* $Id: shellvar.asm,v 1.3 1998/06/30 17:25:57 tribby Exp $
+* $Id: shellvar.asm,v 1.4 1998/07/20 16:23:10 tribby Exp $
 *
 **************************************************************************
 *
@@ -29,9 +29,10 @@ dummyshellvar	start		; ends up in .root
 
 	setcom 60
 
+
 **************************************************************************
 *
-* SET: builtin command
+* SET/SETENV: builtin command
 * syntax: set		             - displays all variables
 *         set ... [var]           - displays the value of var
 *         set [var=value]...      - sets var to value
@@ -44,10 +45,15 @@ set	START
 arg	equ	1
 valbuf	equ	arg+4
 varbuf	equ	valbuf+4
-space	equ	varbuf+4
+exflag	equ	varbuf+4
+space	equ	exflag+2
 argc	equ	space+3
 argv	equ	argc+2
 end	equ	argv+4
+
+;
+; Entry point for set command: clear export flag after setting up params.
+;
 
 ;	 subroutine (4:argv,2:argc),space
 
@@ -58,11 +64,38 @@ end	equ	argv+4
 	phd
 	tcd
 
-	lda	argc
-	dec	a
-	beq	showvars
+	stz	exflag
+	bra	startcmd	Go start the command.
+
+
 ;
-; If one parameter check for a '-' starting the parm
+; Entry point for setenv command: set export flag after setting up params.
+;
+setenv	ENTRY
+
+;	 subroutine (4:argv,2:argc),space
+
+	tsc
+	sec
+	sbc	#space-1
+	tcs
+	phd
+	tcd
+
+	lda	#1
+	sta	exflag
+
+;
+; Beginning of main code for both set and setenv commands
+;
+startcmd	anop
+
+	lda	argc	If no parameter provided,
+	dec	a
+	beq	showvars	 list all variables.
+
+;
+; If parameter provided, check for an illegal '-' starting the parm
 ;
 	ldy	#4
 	lda	[argv],y
@@ -80,217 +113,204 @@ showusage	ldx	#^Usage
 	lda	#Usage
 	jsr	errputs
 	jmp	exit
+
 ;
-; show variables
+; Show all environment variables
 ;
 showvars	anop
-
-	jsl	alloc256
-	sta	varbuf
+	jsl	alloc256	Allocate 256 bytes
+	sta	varbuf	 for name buffer.
 	stx	varbuf+2
 	ora	varbuf+2
 	beq	svwhoops
-	jsl	alloc256
-	sta	valbuf
+	jsl	alloc1024	Allocate 1024 bytes
+	sta	valbuf	 for result buffer.
 	stx	valbuf+2
-	ora	valbuf+2
+	ora	valbuf+2	If memory was not allocated,
 	bne	startshow
 	ldx	varbuf+2
 	lda	varbuf
 	jsl	free256
-svwhoops	ld2	$201,ErrError
+svwhoops	ld2	$201,ErrError		report memory error
 	ErrorGS Err
-	jmp	exit
+	jmp	exit		 and exit.
 
-startshow      lda	#254
-	sta	[valbuf]
+startshow      anop
+	lda	#1022	Store buffer len == 1022 in value
+	sta	[valbuf]	 buffer (save 2 bytes at end for 0).
+	lda	#256	Store buffer len == 256 in name
+	sta	[varbuf]	 buffer.
 	lock	setmutex
-	mv4	varbuf,idxName
-	mv4	valbuf,idxValue
-	ld2	1,idxIndex
-showloop	ReadIndexedGS idxParm
-	ldy	#2
-	lda	[varbuf],y
-	and	#$FF
-	beq	showdone
-	xba
-	sta	[varbuf],y
-	ldy	idxExport
-	beq	noexp
-	xba
-               tax
-	ldy	#4
-	short	a
-upper	lda	[varbuf],y
-	cmp	#'a'
-	bcc	upperfoo
-	cmp	#'z'+1
-	bcs	upperfoo
-	sec
-	sbc	#'a'-'A'
-	sta	[varbuf],y	
-upperfoo	iny
-	dex
-	bne	upper
-	long	a
-noexp	ldx	varbuf+2
-	lda	varbuf
-	clc	
-	adc	#3
-	jsr	putp
-	ldx	#^showeq
-	lda	#showeq
-	jsr	puts
-	ldy	#2
-	lda	[valbuf],y
-	xba
-	sta	[valbuf],y
-	lda	valbuf
-	ldx	valbuf+2
-	clc
-	adc	#3
-	jsr	putp
-	jsr	newline
-	inc	idxIndex
-	bra	showloop
+	mv4	varbuf,idxName	Initialize ReadIndexedGS
+	mv4	valbuf,idxValue	 parameter block.
+	ld2	1,idxIndex	Start index at 1.
 
-showdone	unlock setmutex
+showloop	ReadIndexedGS idxParm	Get next indexed variable.
+	ldy	#2	Get length of name.
+	lda	[varbuf],y
+	beq	showdone	If 0, we've got all the names.
+	cmp	#254	If len > 253,
+	bcs	bumpindx	  we didn't get it.
+
+	ldx	idxExport	X = variable's export flag.
+	ldy	#2	Y = offset in varname of length word.
+	jsr	prnameval	Print varname and varval.
+
+bumpindx	inc	idxIndex	Bump index number.
+	bra	showloop	Handle the next env variable.
+
+;
+; Done showing the list of all variables.
+;
+showdone	anop
+	unlock setmutex	Unlock mutual exclusion.
 	ldx	varbuf+2
 	lda	varbuf
-	jsl	free256
+	jsl	free256	Free the name buffer.
 	ldx	valbuf+2
 	lda	valbuf
-	jsl	free256
-	jmp	exit
+	jsl	free1024	Free the value buffer.
+	jmp	exit	Exit.
+
+
 ;
-; set variables
+; Set the value of a variable (loop begins here)
 ;
 setvar	lock	setmutex
-	lda	argc
-	jeq	doneset
-	ldy	#2
+	lda	argc	If we've run out of parameters,
+	jeq	doneset	 we are done setting values.
 	lda	[argv]
 	sta	arg
+	ldy	#2
 	lda	[argv],y
 	sta	arg+2
+;
+; Examine characters in second argument to determine syntax style
+;
 	ldy	#0
 chkeql	lda	[arg],y
 	and	#$FF
-	beq	orcastyle
-	cmp	#'='
+	beq	orcastyle	No "=": user ORCA-style parsing
+	cmp	#'='	"=" found: use UNIX-style parsing
 	jeq	unixstyle
 	iny
 	bra	chkeql
+
 ;
-; Orca style set. Uses two arguments.
+; No "=" found in second argument. Either ORCA style or a single var show.
 ;
-orcastyle	add2	argv,#4,argv
+orcastyle	add2	argv,#4,argv	Point to next argument.
 	dec	argc
-	beq	showonevar
-	pei	(arg+2)
-	pei	(arg)
-	pea	1
-	pei	(arg+2)
-	pei	(arg)
-	jsr	c2pstr2
-	phx
-	pha
-	sta	varParm
-	stx	varParm+2
+	jeq	showonevar	If only one arg, it's a single show.
+
 	ldy	#2
 	lda	[argv],y
 	pha
-	lda	[argv]
-	pha
-	jsr	c2pstr2
-	phx
-	pha
-	sta	varParm+4
-	stx	varParm+4+2
-	Set_Variable varParm
-	jsl	nullfree
-	jsl	nullfree
-	jsl	updatevars
-	jmp	nextvar
+	lda	[argv]             Create GS/OS string
+	pha		 that contains the value.
+	bra	set1	Complete operation in UNIX-style code.
 
-showonevar     jsl	alloc256
-	sta	valbuf
-	sta	varParm+4
-	stx	valbuf+2
-	stx	varParm+4+2
-	ora	varParm+4+2
-	jeq	nextvar
-	pei	(arg+2)
-	pei	(arg)
-	jsr	c2pstr2
-	phx
-	pha
-	sta	varParm
-	stx	varParm+2
-	Read_Variable varParm
-	lda	[valbuf]
-	and	#$FF
-	beq	notdef	
-	lda	varParm
-	ldx	varParm+2
-	jsr	putp
-	lda	#showeq
-	ldx	#^showeq
-	jsr	puts
-	lda	varParm+4
-	ldx	varParm+6
-	jsr	putp
-	jsr	newline
-doneone	jsl	nullfree
-	lda	valbuf
-	ldx	valbuf+2
-	jsl	free256
-	bra	doneset
-
-notdef	ldx	#^error2
-	lda	#error2
-	jsr	errputs
-	bra	doneone
-
+;
+; UNIX style set. Uses two arguments separated by "=".
+; When we get here, Y-reg = index of "=" character.
+;
 unixstyle      cpy   #0
 	bne	unix0
 	ldx	#^error1
-	lda	#error1
-	jsr	errputs
-	bra	doneset
-unix0	short	a
-	lda	#0
-	sta	[arg],y
-	long	a
-	tya
-	sec
-	adc	arg
+	lda	#error1		Print error message:
+	jsr	errputs		 'Variable not specified'
+	jmp	doneset
+unix0	short	a	Store '\0' on
+	lda	#0	 on top of '='
+	sta	[arg],y	  so it looks
+	long	a	   like a c-string.
+	tya		Add length of variable name
+	sec		 to address of arg to get
+	adc	arg	  address of value.
 	pei	(arg+2)
 	pha
-	jsr	c2pstr2
-	phx
-	pha
-	sta	varParm+4
-	stx	varParm+4+2
+
+set1	jsr	c2gsstr	Convert value to GS/OS string.
+	sta	RSvalue
+	stx	RSvalue+2
+
+	pei	(arg+2)
+	pei	(arg)
+	jsr	c2gsstr	Convert name to GS/OS string.
+	sta	RSname
+	stx	RSname+2
+
+	lda	exflag	Set export flag in parameter block.
+	sta	RSexport
+                     
+	SetGS ReadSetVar	Set variable value & export flag.
+
 	pei	(arg+2)
 	pei	(arg)
 	pea	1
-	pei	(arg+2)
-	pei	(arg)
-	jsr	c2pstr2
-	phx
-	pha
-	sta	varParm
-	stx	varParm+2		
-	Set_Variable varParm
-	jsl	nullfree
-	jsl	updatevars
-	jsl	nullfree
+	jsl	updatevars	Update special shell flags.
+
+	ph4	RSname
+	jsl	nullfree	Free name buffer.
+	ph4	RSvalue
+	jsl	nullfree	Free value buffer.
 
 nextvar	unlock setmutex
 skipvar	add2	argv,#4,argv
 	dec	argc
 	jmp	setvar
+
+;
+; Display the value of a single variable
+;
+showonevar	anop
+
+	jsl	alloc1024	Allocate 1024 bytes
+	sta	valbuf	 for result buffer.
+	sta	RSvalue
+	stx	valbuf+2
+	stx	RSvalue+2
+	ora	valbuf+2	Check for memory error.
+	jeq	nextvar
+	lda	#1022	Store max len == 1022 in result
+	sta	[valbuf]	 buffer (save 2 bytes at end for 0).
+
+	pei	(arg+2)	Create GS/OS string that
+	pei	(arg)	 contains the variable name.
+	jsr	c2gsstr
+	sta	varbuf
+	stx	varbuf+2
+	sta	RSname
+	stx	RSname+2
+                       
+	stz	RSexport
+
+	ReadVariableGS ReadSetVar	Read value of variable.
+
+	lda	RSexport	If export flag is set, it's defined.
+	bne	def
+	lda	exflag	If export is required,
+	bne	notdef	 report 'not defined'.
+	ldy	#2
+	lda	[valbuf],y	If there is no value length
+	bne	def	  print error message:
+
+notdef	ldx	#^error2		'Variable not defined'
+	lda	#error2
+	jsr	errputs
+	bra	doneone
+
+def	ldx	RSexport	X = export flag.
+	ldy	#0	Y = offset in varname to length word.
+	jsr	prnameval	Print varname and varval.
+
+doneone	anop
+	ldx	valbuf+2
+	lda	valbuf
+	jsl	free1024	Free valbuf.
+               ph4	varbuf
+	jsl	nullfree	Free varbuf.
+
 
 doneset	unlock setmutex
 
@@ -303,15 +323,91 @@ exit	lda	space
 	adc	#end-4
 	tcs
 
-	lda	#0
+	lda	#0	Return status = 0.
 
 	rtl     
 
-varParm	ds	4
-	ds	4
-	ds	2
+;
+; Utility subroutine to print name and value in varname and varval
+;  Call with X = export flag, Y = index to length word in varbuf.
+;
+prnameval	anop
+	phy		Hold name length offset on stack.
+	lda	[varbuf],y	Get length of name.
+	and	#$FF	(maximum len is 255)
+	xba		Swap length bytes so result buf
+	sta	[varbuf],y	 can be treated like a p-string.
+	cpx	#0	If export flag is set,
+	bne	needshift	 go upshift the name.
+	ldx	exflag	If we're listing all vars, it's OK.
+	beq	nameok
+	ply		Otherwise, remove length offset
+	bra	goback	 and skip the printing.
+;
+; Variable is exported: need to upshift its name:
+;
+needshift	xba
+               tax		Length in X.
+	iny2		Index to first char in Y.
+	short	a	Switch to 1-byte memory access.
 
-; Parameter block for shell Read_Indexed call (p 421 in ORCA/M manual)
+upper	lda	[varbuf],y	Get next character.
+	cmp	#'a'	If >= 'a'
+	bcc	noshift	 and <= 'z',
+	cmp	#'z'+1
+	bcs	noshift
+	and	#$5F		upshift the char.
+	sta	[varbuf],y
+noshift	iny		Bump the index and
+	dex		 and decrement the counter,
+	bne	upper	  staying in upshift loop until done.
+
+	long	a		Switch back to 1-word access.
+;
+; Name is ready for printing
+;
+nameok	ldx	varbuf+2	
+	clc
+	pla		Get name length offset from stack.
+	ina		Add one, to get p-string length addr.
+	adc	varbuf	Add starting address,
+	bcc	prname
+	inx		 adjusting high-order word if needed.
+prname	jsr	putp	Print name (p-string)
+
+	ldx	#^showeq
+	lda	#showeq
+	jsr	puts	Print " = "
+
+	ldy	#2	Get length word of value.
+	lda	[valbuf],y	If zero,
+	beq	newln	 skip printing the value.
+	tay		Set Y to point to the end of the string.
+	iny4
+	lda	#0	Store zero word at end so it can
+	sta	[valbuf],y	 be treated like a c-string.
+	lda	valbuf
+	ldx	valbuf+2
+	clc
+	adc	#4
+	bcc	prval
+	inx
+prval	jsr	puts	Print value (c-string).
+
+newln	jsr	newline	Print blank line.
+
+goback	rts		Return to caller
+
+
+
+; Parameter block for shell ReadVariableGS/SetGS calls
+ReadSetVar	anop
+	dc	i2'3'	pCount
+RSname	ds	4	Name (pointer to GS/OS string)
+RSvalue	ds	4	Value (ptr to result buf or string)
+RSexport	ds	2	Export flag
+
+; Parameter block for shell ReadIndexedGS call (p 421 in ORCA/M manual)
 idxParm	anop
 	dc	i2'4'	pCount
 idxName	ds	4	Name (pointer to GS/OS result buf)
@@ -337,306 +433,6 @@ ErrError	ds	2	Error number
 
 	END
 
-**************************************************************************
-*
-* SETENV: builtin command
-* syntax: setenv	                - displays all variables
-*         setenv ... [var]           - displays the value of var
-*         setenv [var=value]...      - sets var to value
-*         setenv [var value]...      - sets var to value
-*
-**************************************************************************
-
-setenv	START
-
-arg	equ	1
-valbuf	equ	arg+4
-varbuf	equ	valbuf+4
-space	equ	varbuf+4
-argc	equ	space+3
-argv	equ	argc+2
-end	equ	argv+4
-
-;	 subroutine (4:argv,2:argc),space
-
-	tsc
-	sec
-	sbc	#space-1
-	tcs
-	phd
-	tcd
-
-	lda	argc
-	dec	a
-	beq	showvars
-;
-; If one parameter check for a '-' starting the parm
-;
-	ldy	#4
-	lda	[argv],y
-	sta	arg
-	iny2
-	lda	[argv],y
-	sta	arg+2
-	lda	[arg]
-	and	#$FF
-	cmp	#'-'
-	beq	showusage
-	jmp	skipvar
-
-showusage	ldx	#^Usage
-	lda	#Usage
-	jsr	errputs
-	jmp	exit
-;
-; show variables
-;
-showvars	anop
-
-	jsl	alloc256
-	sta	varbuf
-	stx	varbuf+2
-	ora	varbuf+2
-	beq	svwhoops
-	jsl	alloc256
-	sta	valbuf
-	stx	valbuf+2
-	ora	valbuf+2
-	bne	startshow
-	ldx	varbuf+2
-	lda	varbuf
-	jsl	free256
-svwhoops	ld2	$201,ErrError
-	ErrorGS Err
-	jmp	exit
-
-startshow	lock setmutex
-	mv4	varbuf,varParm+0
-	mv4	valbuf,varParm+4
-	ld2	1,varParm+8
-	PushVariablesGS NullPB
-showloop	Read_Indexed varParm
-	lda	[varbuf]
-	and	#$FF
-	beq	showdone
-               tax
-	ldy	#1
-	short	a
-upper	lda	[varbuf],y
-	cmp	#'a'
-	bcc	upperfoo
-	cmp	#'z'+1
-	bcs	upperfoo
-	sec
-	sbc	#'a'-'A'
-	sta	[varbuf],y	
-upperfoo	iny
-	dex
-	bne	upper
-	long	a
-	lda	varParm
-	ldx	varParm+2
-	jsr	putp
-	ldx	#^showeq
-	lda	#showeq
-	jsr	puts
-	lda	varParm+4
-	ldx	varParm+6
-	jsr	putp
-	jsr	newline
-	inc	varParm+8
-	bra	showloop
-
-showdone	PopVariablesGS NullPB
-	unlock setmutex
-	ldx	varbuf+2
-	lda	varbuf
-	jsl	free256
-	ldx	valbuf+2
-	lda	valbuf
-	jsl	free256
-	jmp	exit
-;
-; set variables
-;
-setvar	lock	setmutex
-	lda	argc
-	jeq	doneset
-	ldy	#2
-	lda	[argv]
-	sta	arg
-	lda	[argv],y
-	sta	arg+2
-	ldy	#0
-chkeql	lda	[arg],y
-	and	#$FF
-	beq	orcastyle
-	cmp	#'='
-	jeq	unixstyle
-	iny
-	bra	chkeql
-;
-; Orca style set. Uses two arguments.
-;
-orcastyle	add2	argv,#4,argv
-	dec	argc
-	beq	showonevar
-	pei	(arg+2)
-	pei	(arg)
-	pea	1
-	pei	(arg+2)
-	pei	(arg)
-	jsr	c2pstr2
-	phx
-	pha
-	sta	varParm
-	stx	varParm+2
-	sta	exportparm
-	stx	exportparm+2
-	ldy	#2
-	lda	[argv],y
-	pha
-	lda	[argv]
-	pha
-	jsr	c2pstr2
-	phx
-	pha
-	sta	varParm+4
-	stx	varParm+4+2
-	Set_Variable varParm
-	Export exportparm
-	jsl	nullfree
-	jsl	nullfree
-	jsl	updatevars
-	jmp	nextvar
-
-showonevar     jsl	alloc256
-	sta	valbuf
-	sta	varParm+4
-	stx	valbuf+2
-	stx	varParm+4+2
-	ora	varParm+4+2
-	jeq	nextvar
-	pei	(arg+2)
-	pei	(arg)
-	jsr	c2pstr2
-	phx
-	pha
-	sta	varParm
-	stx	varParm+2
-	PushVariablesGS NullPB
-	Read_Variable varParm
-	PopVariablesGS NullPB
-	lda	[valbuf]
-	and	#$FF
-	beq	notthere
-	lda	varParm
-	ldx	varParm+2
-	jsr	putp
-	lda	#showeq
-	ldx	#^showeq
-	jsr	puts
-	lda	varParm+4
-	ldx	varParm+6
-	jsr	putp
-	jsr	newline
-doneone	jsl	nullfree
-	ldx	valbuf+2
-	lda	valbuf
-	jsl	free256
-	jmp	doneset
-
-notthere	ldx	#^error2
-	lda	#error2
-	jsr	errputs
-	bra	doneone
-
-unixstyle      cpy   #0
-	bne	unix0
-	ldx	#^error1
-	lda	#error1
-	jsr	errputs
-	bra	doneset
-unix0	short	a
-	lda	#0
-	sta	[arg],y
-	long	a
-	clc		;use sec and kill the iny :)
-	iny
-	tya
-	adc	arg
-	pei	(arg+2)
-	pha
-	jsr	c2pstr2
-	phx
-	pha
-	sta	varParm+4
-	stx	varParm+4+2
-	pei	(arg+2)   
-	pei	(arg)
-	pea	1
-	pei	(arg+2)   
-	pei	(arg)
-	jsr	c2pstr2
-	phx
-	pha
-	sta	varParm
-	stx	varParm+2
-	sta	exportparm
-	stx	exportparm+2		
-	Set_Variable varParm
-	Export exportparm
-	jsl	nullfree
-	jsl	updatevars
-	jsl	nullfree
-
-nextvar	unlock setmutex
-skipvar	add2	argv,#4,argv
-	dec	argc
-	jmp	setvar
-
-doneset	unlock setmutex
-
-exit	lda	space
-	sta	end-3
-	lda	space+1
-	sta	end-2
-	pld
-	tsc
-	adc	#end-4
-	tcs
-
-	lda	#0
-
-	rtl     
-
-varParm	ds	4
-	ds	4
-	ds	2
-
-exportparm     ds    4
-	dc	i'1'
-                             
-setmutex	key
-showeq	dc	c' = ',h'00'
-Usage	dc	c'Usage:',h'0d'
-	dc	 c'  setenv                 - displays all variables',h'0d'
-	dc	 c'  setenv ... [var]       - displays the value of var',h'0d'
-	dc	 c'  setenv [var value]...  - sets var to value',h'0d'
-	dc	 c'  setenv [var=value]...  - sets var to value',h'0d'
-	dc	 h'00'
-error1	dc	c'setenv: Variable not specified',h'0d00'
-error2	dc	c'setenv: Variable not defined',h'0d00'
-
-; Parameter block for shell ErrorGS call (p 393 in ORCA/M manual)
-Err	dc	i2'1'	pCount
-ErrError	ds	2	Error number
-
-; Null parameter block used for shell calls PushVariables
-; (ORCA/M manual p.420) and PopVariablesGS (p. 419)
-NullPB	dc	i2'0'	pCount
-
-	END
 
 **************************************************************************
 *
@@ -660,31 +456,36 @@ end	equ	argv+4
 	phd
 	tcd
 
-	lda	argc
-	dec	a
+	lda	argc	Get parameter count.
+	dec	a	If < 1
 	bne	loop
-	ldx	#^Usage
+	ldx	#^Usage		Print usage string
 	lda	#Usage
 	jsr	errputs
-	bra	done
+	bra	done		  and terminate.
 
-loop	add2	argv,#4,argv
-	dec	argc
-	beq	done
+;
+; Loop to process all the variables to export
+;
+loop	anop
+	dec	argc	Decrement argument counter.
+	beq	done	If zero, all done.
+	add4	argv,#4,argv	Bump argument address pointer.
 
-wait	lock	expmutex
+	lock	expmutex
 
-	ldy	#2
-	lda	[argv],y
-	pha
+	ldy	#2	Convert argv string
+	lda	[argv],y	 from c-string
+	pha		  to a GS/OS string.
 	lda	[argv]
 	pha
-	jsr	c2pstr2
-	phx
-	pha
-	sta	exportparm
-	stx	exportparm+2
-	Export exportparm
+	jsr	c2gsstr
+	sta	ExpName	Store result in
+	stx	ExpName+2	 ExportGS parameter block.
+
+	ExportGS ExportPB	Export the named parameter
+
+	ph4	ExpName	Deallocate the GS/OS string.
 	jsl	nullfree
 
 	unlock expmutex
@@ -707,8 +508,13 @@ done	lda	space
 
 expmutex	key
 
-exportparm     ds    4
-	dc	i'1'
+;
+; Parameter block for shell ExportGS call (p 398 in ORCA/M manual)
+;
+ExportPB	anop
+	dc	i2'2'	pCount
+ExpName	ds	4	Name  (pointer to GS/OS string)
+	dc	i2'1'	Export flag (always on)
 
 Usage	dc	c'Usage: export var ...',h'0d00'
 
@@ -736,37 +542,44 @@ end	equ	argv+4
 	phd
 	tcd
 
-	lda	argc
-	dec	a
+	lda	argc	Get parameter count.
+	dec	a	If < 1
 	bne	loop
-	
-	ldx	#^Usage
+	ldx	#^Usage		Print usage string
 	lda	#Usage
 	jsr	errputs
-	bra	done
+	bra	done		  and terminate.
 
-loop	add2	argv,#4,argv
-	dec	argc
-	beq	done
+;
+; Loop to process all the variables to export
+;
+loop	anop
+	dec	argc	Decrement argument counter.
+	beq	done	If zero, all done.
+	add4	argv,#4,argv	Bump argument address pointer.
 
 	lock	unsmutex
 
-	ldy	#2
-	lda	[argv],y
-	tax
+	ldy	#2	Convert argv string
+	lda	[argv],y	 from c-string
+	pha		  to a GS/OS string.
 	lda	[argv]
-	phx
+	pha
+	jsr	c2gsstr
+	sta	UnsetName	Store result in
+	stx	UnsetName+2	 UnsetVariableGS param block.
+
+	UnsetVariableGS UnsetPB	Unset the named parameter.
+
+	ph4	UnsetName	Deallocate the GS/OS string.
+	jsl	nullfree
+
+	ldy	#2	Update special shell flags.
+	lda	[argv],y
+	pha
+	lda	[argv]
 	pha
 	pea	0
-	phx
-	pha
-	jsr	c2pstr2
-	phx
-	pha
-	sta	unsetparm
-	stx	unsetparm+2
-	UnsetVariable unsetparm
-	jsl	nullfree
 	jsl	updatevars
 
 	unlock unsmutex
@@ -789,7 +602,12 @@ done	lda	space
 
 unsmutex	key
 
-unsetparm      ds    4
+;
+; Parameter block for shell UnsetVariableGS call (p 439 in ORCA/M manual)
+;
+UnsetPB	anop
+	dc	i2'2'	pCount
+UnsetName	ds	4	Name  (pointer to GS/OS string)
 
 Usage	dc	c'Usage: unset var ...',h'0d00'
 
@@ -881,7 +699,14 @@ up8	pei	(var+2)
 	jmp	done	
 
 up9	anop	
-                         
+	pei	(var+2)
+	pei	(var)
+	ph4	#oldpmodename
+	jsr	cmpdcstr
+	bne	done
+	lda	flag
+	sta	varoldpmode
+                          
 done	return      
 
 	END
@@ -949,6 +774,7 @@ nobeepstr	gsstr	'nobeep'
 pushdsilentstr	gsstr	'pushdsilent'
 termstr	gsstr	'term'
 ignoreofstr	gsstr	'ignoreeof'
+oldpathmodestr	gsstr	'oldpathmode'
 
 ; Table of GS/OS string addresses
 evstrtbl	anop
@@ -960,6 +786,7 @@ evstrtbl	anop
 	dc	a4'pushdsilentstr'
 	dc	a4'termstr'
 	dc	a4'ignoreofstr'
+	dc	a4'oldpathmodestr'
 
 	END
 
@@ -979,6 +806,7 @@ nobeepname	dc	c'nobeep',h'00'
 pushdsilname	dc	c'pushdsilent',h'00'
 termname	dc	c'term',h'00'
 ignorename	dc	c'ignoreeof',h'00'
+oldpmodename	dc	c'oldpathmode',h'00'
 
 ; Table of flag values (must be in same order as string addresses)
 evvaltbl	anop
@@ -989,6 +817,7 @@ varnoglob	dc	i2'0'
 varnobeep	dc	i2'0'
 varpushdsil	dc	i2'0'
 varignore	dc	i2'0'
+varoldpmode	dc	i2'0'
 
 evvaltblsz	dc	i2'evvaltblsz-evvaltbl'	# bytes in table
 

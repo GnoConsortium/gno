@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: hash.asm,v 1.3 1998/06/30 17:25:34 tribby Exp $
+* $Id: hash.asm,v 1.4 1998/07/20 16:23:06 tribby Exp $
 *
 **************************************************************************
 *
@@ -57,16 +57,27 @@ dummyhash	start		; ends up in .root
 C1             gequ  11
 C2             gequ  13
 TAB_MULT       gequ  4
+
 ;
 ; Structure for filenames
 ;
+;	struct filenode {
+;		short      dirnum;
+;		char       name[32];
+;		filenode  *next;
+;		};
 fn_dirNum      gequ  0
 fn_name        gequ  fn_dirNum+2
 fn_next        gequ  fn_name+32
 fn_size        gequ  fn_next+4
+
 ;
 ; Structure for hash table
 ;
+;	struct tablenode {
+;		short      dirnum;
+;		char      *name[32];
+;		};
 tn_dirNum      gequ  0
 tn_name        gequ  tn_dirNum+2
 tn_size        gequ  tn_name+32
@@ -259,23 +270,29 @@ hashloop       pei   (files+2)
                tay
                lda   [table],y
 	tax
-               iny
-	iny
+               iny2
                ora   [table],y
                beq   gotit
 
-; let's see if it's the same, skip if so...
+; If it's the same name, skip the duplicate entry
 
-;	pei	(files+2)
-;	lda	files
-;	inc	a
-;	inc	a
-;	pha
-;	lda	[table],y
-;	pha
-;	phx
-;	jsr	cmpcstr
-;	beq	mainloop
+               ldy	h	Calculate address
+	clc		 of hash entry's
+	lda	[table],y	  name field.
+	adc	#tn_name
+	tax
+	iny2
+	lda	[table],y
+	adc	#0
+	pha		High-order word of address.
+	phx		Low-order word of address.
+	pei	(files+2)
+	lda	files
+	inc	a
+	inc	a
+	pha
+	jsr	cmpcstr
+	beq	mainloop
 
                inc   qh
                bra   hashloop
@@ -361,64 +378,70 @@ end	equ	file+4
 	tcd
 
                stz   qh
-               stz   full_path
+               stz   full_path	Set result to NULL.
                stz   full_path+2
 
-	lda	table
-	ora	table+2
-               jeq   done
+	lda	table	If hash table hasn't
+	ora	table+2	 been allocated,
+               jeq   done	  return null string.
 
        	pei   (file+2)
                pei   (file)
                jsr   lowercstr
-mainloop       pei   (file+2)
+mainloop       pei   (file+2)	Get hash(qh,file)
                pei   (file)
                pei   (qh)
                jsr   hash
-               asl  	a
+               asl  	a	Multiply by 4
 	asl	a
-               tay
-               lda   [table],y
+               tay		Use as index into table.
+               lda   [table],y	ptr = table[hash(qh,file)]
                sta   ptr
 	tax
                iny
 	iny
-               ora   [table],y
-	jeq	done
+               ora   [table],y	If == 0,
+	jeq	done	 all done.
+
           	lda   [table],y
                sta   ptr+2
+
                pei   (file+2)
                pei   (file)
                pha		;ptr+2
 	inx		;ptr + #2
 	inx
                phx
-               jsr   cmpcstr
+               jsr   cmpcstr	Compare filename against entry.
                beq   found
                inc   qh
                bra   mainloop
 
+;
+; Found an entry that matches the filename. Calculate full path.
+;
 found          lda   [ptr]
                asl	a
 	asl	a
-               ldx   paths+2
                adc   paths	;(cf=0)
-               stx   ptr+2
                sta   ptr
+               ldx   paths+2
+               stx   ptr+2
                ldy   #2
                lda   [ptr],y
                pha
                lda   [ptr]
                pha
-               jsr   cstrlen
+               jsr   cstrlen	Get length of path.
                pha
                clc
-               adc   #33
+               adc   #33	Add 33 (max prog name size + 1)
                pea   0
                pha
-               jsl   ~NEW
-               sta   full_path
-               stx   full_path+2
+               jsl   ~NEW	Allocate memory,
+               sta   full_path	 storing address at
+               stx   full_path+2	  functional return value.
+
                ldy   #2
                lda   [ptr],y
                pha
@@ -426,7 +449,8 @@ found          lda   [ptr]
                pha
                pei   (full_path+2)
                pei   (full_path)
-               jsr   copycstr
+               jsr   copycstr	Copy pathname into buffer.
+
                pla                      ;length of path
                pei   (file+2)
                pei   (file)
@@ -434,10 +458,12 @@ found          lda   [ptr]
                clc
                adc   full_path
                pha
-               jsr   copycstr
+               jsr   copycstr	Put filename at end of pathname.
 
-done	ldx	full_path+2
+done	ldx	full_path+2	Load return value into Y- & X- regs
 	ldy	full_path
+
+; Adjust stack in preparation for return
 	lda	space
 	sta	end-3
 	lda	space+1
@@ -448,7 +474,8 @@ done	ldx	full_path+2
 	adc	#end-4
 	tcs
 
-	tya
+	tya		A- & X- regs contain ptr (or NULL)
+
 	rtl
 
                END
@@ -538,101 +565,124 @@ space          equ   ptr+4
 
                subroutine (4:dir,2:dirNum,4:files),space
 ;
-; Open directory
+; Open directory name passed as 1st parameter
 ;
                ld2   3,ORec
-               pei   (dir+2)            ;copy this string
-               pei   (dir)
-	jsr	c2gsstr
+               pei   (dir+2)            Turn "dir" c-string into
+               pei   (dir)	 a GS/OS string, allocated
+	jsr	c2gsstr	  via ~NEW.
                sta   ORecPath
                stx   ORecPath+2
-	phx
-	pha
-               Open  ORec
-               bcc   goodopen
-               jsl   nullfree
-               jmp   exit
+	phx		Put GS/OS string addr on stack
+	pha		 so it can be deallocated.
+               Open  ORec	Open that file.
+               bcc   goodopen	If there was an error,
+               jsl   nullfree	 Free the GS/OS string
+               jmp   exit	  and exit.
 
-goodopen       jsl   nullfree
-               mv2   ORecRef,DRecRef
-               stz   DRecBase
-               stz   DRecDisp
-	jsl	alloc256
-               sta   DRecName
-               sta   ptr
+goodopen       jsl   nullfree	Free the GS/OS string.
+
+;
+; Set up parameter block for GetDirEntry
+;
+               mv2   ORecRef,DRecRef	Copy the file ref num from open.
+               stz   DRecBase	Zero the base and
+               stz   DRecDisp	 displacement.
+	jsl	alloc256	Get 256 bytes for name.
+               sta   DRecName	Store address in param block
+               sta   ptr	 and also in direct page var.
                stx   DRecName+2
                stx   ptr+2
+               lda   #254               Set total length of GS/OS buffer in
+               sta   [ptr]	 bufsize word (save byte for 0 at end).
+               GetDirEntry DRec	Make DirEntry call.
 
-               lda   #254               ;Output buffer size (GT never did this?)
-               sta   [ptr]
-               GetDirEntry DRec
-               mv2   DRecEntry,numEntries
+               mv2   DRecEntry,numEntries	Save number of entries.
                ld2   1,(DRecBase,DRecDisp)
-               stz   entry
+               stz   entry		# processed entries = 0.
 
-loop           lda   entry
-               cmp   numEntries
-               jge   done
+loop           lda   entry	If number of processed entries
+               cmp   numEntries	 equals the total number,
+               jge   done	  we are all done.
                GetDirEntry DRec
+
+; Check for filetype $B3: GS/OS Application (S16)
                if2   DRecFileType,eq,#$B3,goodfile
+
+; Check for filetype $B5: GS/OS Shell Application (EXE)
                if2   @a,eq,#$B5,goodfile
+
+; Check for filetype $B0, subtype $0006: Shell command file (EXEC)
                cmp   #$B0
-               jne   nextfile
+               bne   nextfile
                lda   DRecAuxType
                cmp   #$06
-               jne   nextfile
+               bne   nextfile
                lda   DRecAuxType+2
-               jne   nextfile
-goodfile       inc	hash_numexe
-               ldy   #2
-               lda   [ptr],y
-               add2  @a,#4,@y
-               lda   #0
-               sta   [ptr],y
+               bne   nextfile
+;
+; This directory entry points to an executable file.
+; Included it in the file list.
+;
+goodfile       inc	hash_numexe	Bump the (global) # files.
+               ldy   #2	Get length word from GS/OS string
+               lda   [ptr],y	 in result buffer.
+               add2  @a,#4,@y	Use length + 4 as index
+               lda   #0	 to store terminating
+               sta   [ptr],y	  null byte.
                add2  ptr,#4,@a
                pei   (ptr+2)            ;for copycstr
                pha
                pei   (ptr+2)
                pha
-               jsr   lowercstr
+               jsr   lowercstr	Convert name to lower case.
 
-               ldy   #fn_next
+               ldy   #fn_next	temp = files->next.
                lda   [files],y
                sta   temp
                ldy	#fn_next+2
                lda   [files],y
                sta   temp+2
-               ph4   #fn_size
+
+               ph4   #fn_size	temp2 = new entry.
                jsl   ~NEW
                sta   temp2
                stx   temp2+2
-               ldy   #fn_next
+
+               ldy   #fn_next	files->next = temp2
                sta   [files],y
                ldy	#fn_next+2
 	txa
                pha
                sta   [files],y
+
                lda   temp2
                clc
                adc   #fn_name
                pha
                jsr   copycstr
-               lda   dirNum
-               sta   [temp2]
-               ldy   #fn_next
+
+               lda   dirNum	temp2->dirnum = dirNum
+               sta   [temp2]	
+
+               ldy   #fn_next           temp2->next = temp
                lda   temp
-               sta   [temp2],y
+               sta   [temp2],y	
                ldy	#fn_next+2
                lda   temp+2
                sta   [temp2],y
 
-nextfile       inc   entry
-               jmp   loop
+nextfile       inc   entry	Bump entry number
+               jmp   loop	 and stay in the loop.
 
-done           ldx	DRecName+2
+;
+; Done adding entries to the hash table from this directory
+;
+done           ldx	DRecName+2	Free the Name buffer.
 	lda	DRecName
 	jsl	free256
-               ld2   1,ORec
+
+               ld2   1,ORec	ORec.pCount = 1
                Close ORec
 
 exit           return
@@ -671,13 +721,17 @@ DRecAuxType    ds    4	auxType
 hashpath       START
 
                using hashdata
+	using	vardata
 
 len            equ   1
 pathnum        equ   len+2
 ptr            equ   pathnum+2
 files          equ   ptr+4
 pathptr        equ   files+4
-space          equ   pathptr+4
+qflag	equ	pathptr+4
+qptr	equ	qflag+2
+gsosbuf        equ	qptr+4
+space          equ	gsosbuf+4
 end            equ   space+3
 
 ;
@@ -689,8 +743,10 @@ end            equ   space+3
                tcs
                phd
                tcd
+
+	lock	hashmutex
 ;
-; allocate special file node
+; Allocate special file node
 ;
                ph4   #fn_size
                jsl   ~NEW
@@ -699,15 +755,18 @@ end            equ   space+3
                stx   hash_files+2
                stx   files+2
 
+;
+; Allocate memory for ExpandPath GS/OS result string
+;
 	jsl	alloc256
-	sta	EPParm+6
-	stx	EPParm+6+2
+	sta	EPoutputPath
+	stx	EPoutputPath+2
 	sta	ptr
 	stx	ptr+2
 	lda	#254
 	sta	[ptr]
 ;
-; initialize counters and pointers
+; Initialize counters and pointers
 ;
                lda   #0
                sta   hash_numexe
@@ -720,37 +779,38 @@ end            equ   space+3
                sta   [files],y
                sta   [files]
 ;
-; allocate memory for $path variable
+; Determine length of $PATH environment variable string
 ;
-	jsl	alloc256
-               sta   pathvalue
-               stx   pathvalue+2
-	phx
-	pha
-	phx
-	pha
-;
-; read $PATH
-;
-               Read_Variable pathparm
+	ph4	#pathname
+	jsl	getenv
+	sta	gsosbuf	Save address of allocated buffer.
+	stx	gsosbuf+2
+	ora	gsosbuf+2	If null,
+	bne	setptr
+	ldx	#^nopatherr		print error message
+	lda	#nopatherr
+	jsr	errputs
+	jmp	noprint		  and exit.
 
-	jsr	p2cstr
-	stx	pathptr+2
-	sta	pathptr
-	stx	pathvalue+2	;for disposal only
-	sta	pathvalue
-	pla
-	plx
-	jsl	free256	;pushed earlier
+setptr	clc		Add 4 bytes to
+	lda	gsosbuf	 direct page pointer
+	adc	#4	  to get the addr of
+	sta	pathptr	   beginning of text.
+	lda	gsosbuf+2
+	adc	#0
+	sta	pathptr+2
+
 ;
-; begin parsing $path
+; Begin parsing $PATH
 ;
 loop           lda   [pathptr]
                and   #$FF
-               jeq   done
+               jeq   pathdone
 ;
 ; parse next pathname
 ;
+	stz	qflag	Clear quote flag for this path
+
                mv4   pathptr,ptr
                ldy   #0
 despace        lda   [pathptr],y
@@ -764,15 +824,19 @@ despace        lda   [pathptr],y
                bra   despace
 
 ; Found "\"
-gotquote	iny2
+gotquote	anop
+	iny2
+	ldx	qflag	If quote flag hasn't already been set,
+	bne	despace
+	sty	qflag	 set it to index of first "\" + 2.
 	bra	despace
 
 ; Found null byte
-gotspace0	tyx
+gotspace0	tyx			Why put Y-reg in X???
 	bra   gotspace3
 
 ; Found " ", tab, or creturn
-gotspace1      tyx
+gotspace1      tyx			Why put Y-reg in X???
                short a
                lda   #0
                sta   [pathptr],y
@@ -799,25 +863,67 @@ gotspace3      anop
 	ldx	#^toomanyerr
 	lda	#toomanyerr
 	jsr	errputs
-	jmp	done
+	jmp	pathdone
 
+;
+; Convert c string to GS/OS string (allocating space for it)
+;
 numok	pei	(ptr+2)
 	pei	(ptr)
 	jsr	c2gsstr
-	phx
-	pha	
-	sta	EPinputPath
-	stx	EPinputPath+2
-	ExpandPath EPParm
+	phx		Push allocated address onto
+	pha		 stack for later deallocation.
+	sta	EPinputPath	Save address in ExpandPath
+	stx	EPinputPath+2	 parameter block.
+;
+; If any quoted characters were included, the "\" chars must be removed
+;
+	ldy	qflag	Get quote flag (index to "\" char).
+	beq	xpandit	If no "\", go ahead with expansion.
+
+	sta	qptr	Save EPinputPath pointer in
+	stx	qptr+2	 direct page variable.
+	lda	[qptr]	Store length + 2 (since we're indexing
+	inc2	a	 from before length word) in qflag.
+	sta	qflag
+	tyx		X = index of 1st overwritten "\".
+	short	a	Use 1-byte accumulator
+;
+; Copy characters toward front of string, removing "\" chars
+;
+chkloop2	lda	[qptr],y	Get next character.
+	cmp	#'\'	If it's a quote,
+	bne	storeit
+	lda	[qptr]		Decrement length.
+	dec	a
+	sta	[qptr]
+	iny			Skip over "\".
+	lda	[qptr],y		Get character following.
+storeit	phy		Push source index onto stack
+	txy		 so destination index can be
+	sta	[qptr],y	  used to store the character.
+	ply		Restore the source index.
+	inx		Bump destination and
+	iny		 source index registers.
+	cpy	qflag	If source index < length,
+	bcc	chkloop2	 stay in copy loop.
+
+	long	a	Restore long accumulator.
+
+;
+; Convert the input pathname into the corresponding
+; full pathname with colons as separators.
+;
+xpandit	ExpandPath EPParm
 	bcc	epok
 
 	ldx	#^eperrstr	Print error message:
 	lda	#eperrstr	 "Invalid pathname syntax."
 	jsr	errputs
-	jsl	nullfree
-	jmp	next
+	jsl	nullfree	 Free GS/OS string (pushed earlier).
+	jmp	next	 Get the next one.
 
-epok           jsl	nullfree
+epok           jsl	nullfree	Free GS/OS string (addr on stack)
 
 	clc		Set ptr to GS/OS string
 	lda	EPoutputPath	 portion of result buffer.
@@ -835,11 +941,10 @@ epok           jsl	nullfree
 	lda	#0	
 	sta   [ptr],y
 
-	pea	0
-	phy
+	pea	0	Allocate memory the
+	phy		 size of the expanded path.
 	jsl	~NEW
-	phx		;for dir_search
-	pha
+
 	pei	(ptr+2)
 	inc2	ptr
 	pei	(ptr)
@@ -847,58 +952,122 @@ epok           jsl	nullfree
 	pha
 	sta	ptr
 	stx	ptr+2
+
                ldy   pathnum
-               sta   hash_paths,y
-               txa
-               sta   hash_paths+2,y
+               sta   hash_paths,y	Store address of this
+               txa		 path's address in the
+               sta   hash_paths+2,y	  hash path table.
+
                jsr   copycstr
                ldy   len
-               beq   go4it
+               beq   bumppnum
                dey
-               lda   [ptr],y
-               and   #$FF
-               cmp   #':'
-               beq   go4it
+               lda   [ptr],y	If last character
+               and   #$FF	 of path name
+               cmp   #':'	  isn't ":",
+               beq   bumppnum
                iny
-               lda   #':'
-               sta   [ptr],y
-               iny
-               lda   #0
-               sta   [ptr],y
+               lda   #':'		store ":\0"
+               sta   [ptr],y		 at end of string.
 
-go4it          lda   pathnum
-               lsr2  a
-               pha
-               pei   (files+2)
-               pei   (files)
-               jsl   dir_search
-               add2  pathnum,#4,pathnum
+bumppnum	anop
+               add2  pathnum,#4,pathnum	 Bump path pointer.
+next           jmp   loop	Stay in loop.
 
-next           jmp   loop
+;
+; The $PATH entries have been created. Now we need to search each of the
+; directories for executable files and add them to the "files" list.
+; The earliest versions of gsh added files to the list in the order that
+; directories appeared in $PATH, which put the earliest directories' files
+; at the end of the list. Check for existence of $OLDPATHMODE environment
+; variable to see if the user wants this, or would rather have them hashed
+; in the expected order.
+;
+pathdone	anop
+	lda	varoldpmode
+	beq	neworder
+
+;
+; Search directories and add executables to file list starting at the
+; beginning of $PATH and working to the end.
+;
+	stz	pathnum	Start at beginning of path table.
+
+nextpath1	ldy	pathnum	Get offset into hash table.
+	cpy	#32*4
+	bcs	filesdone
+	lda	hash_paths,y	If address of this path
+	ora	hash_paths+2,y	 has not been set,
+	beq	filesdone	  all done.
+	lda   hash_paths,y	Get address of this
+	ldx	hash_paths+2,y	 path's address in the
+	phx		  hash path table.
+	pha
+	tya		Directory number =
+	lsr2	a	 offset / 4
+	pha
+	pei	(files+2)	Pointer to file list.
+	pei	(files)
+	jsl	dir_search	Add executables from this directory.
+               add2  pathnum,#4,pathnum	 Bump path offset.
+	bra	nextpath1
+
+;
+; Search directories and add executables to file list starting at end
+; of $PATH and working back to the beginning. (Note: Loop begins at
+; "neworder", but structuring the code this ways saves an instruction.)
+;
+nextpath2	dey4		Decrement path offset.
+	sty	pathnum
+               lda   hash_paths,y	Get address of this
+               ldx	hash_paths+2,y	 path's address in the
+               phx   	  hash path table.
+	pha
+	tya		Directory number =
+	lsr2	a	 offset / 4
+	pha
+	pei	(files+2)	Pointer to file list.
+	pei	(files)
+	jsl	dir_search	Add executables from this directory.
+neworder	ldy   pathnum	Get offset into hash table.
+	bne	nextpath2	When == 0, no more to do.
 
 
-done           ph4   pathvalue
-               jsl   nullfree
+;
+; Executable files in $PATH have been added to the list. Print
+; number of files, then build the hash table.
+;
+filesdone	anop
+	ph4	gsosbuf	Free memory allocated for
+	jsl	nullfree	 $PATH string.
 
-               lda   hash_print
-               beq   noprint
+               lda   hash_print	If this is the first time,
+               beq   noprint	 don't print the # of files.
 
                Int2Dec (hash_numexe,#hashnum,#3,#0)
 	ldx	#^hashmsg
 	lda	#hashmsg
 	jsr	puts
 
-noprint        ld2   1,hash_print
+noprint        ld2   1,hash_print	Set print flag.
 
+;
+; Free memory allocated for ExpandPath output string
+;
+	lda	EPoutputPath
+	ldx	EPoutputPath+2
+	jsl	free256
+
+;
+; Create the hash table from the file list.
+;
                ph4   hash_files
                jsl   dohash
                sta   hash_table
                stx   hash_table+2
 
-	lda	EPoutputPath
-	ldx	EPoutputPath+2
-	jsl	free256
-
+	unlock hashmutex
+               
                pld
                tsc
                clc
@@ -907,12 +1076,9 @@ noprint        ld2   1,hash_print
 
                rtl
 
-; Parameter block for shell call Read_Variable
-pathparm       anop
-	dc    a4'pathvar'	Address of name
-pathvalue	ds    4	Address to store result
+hashmutex	key		Mutual exclusion key
 
-pathvar        str   'path'
+pathname	gsstr	'path'
 
 hashmsg        dc    c'hashed '
 hashnum        dc    c'000 files',h'0d00'
@@ -924,6 +1090,7 @@ EPoutputPath	ds	4	ptr to outputPath (Result buffer)
 
 eperrstr	dc	c'rehash: Invalid pathname syntax.',h'0d00'
 toomanyerr	dc	c'rehash: Too many paths specified.',h'0d00'
+nopatherr	dc	c'rehash: PATH string is not set.',h'0d00'
 
                END
 
@@ -940,23 +1107,24 @@ dispose_hash   START
 	ora2	hash_table,hash_table+2,@a
 	beq	done
 
-               ldx   #32
-               ldy   #0
-loop1          phx
-               phy
-               lda   hash_paths+2,y
+               ldx   #32	32 different paths, maximum
+               ldy   #0	Start looking at the first entry.
+
+loop1          phx		Save path counter
+               phy		 and index.
+               lda   hash_paths+2,y	Put address for this
+               pha		 path table entry on
+               lda   hash_paths,y	  the stack.
                pha
-               lda   hash_paths,y
-               pha
-               lda   #0
+               lda   #0	Zero out the table entry.
                sta   hash_paths+2,y
                sta   hash_paths,y
-	jsl	nullfree
-next1          ply
-               plx
-               iny4
-               dex
-               bne   loop1
+	jsl	nullfree	Free the entry's memory.
+next1          ply		Restore path index
+               plx		 and counter.
+               iny4		Bump pointer to next address.
+               dex		If more paths to process,
+               bne   loop1	 stay in the loop.
 
                ph4   hash_files
                jsl   free_files
@@ -980,12 +1148,12 @@ done           rts
 
 hashdata       DATA
 
-t_size         ds    2
+t_size         ds    2	t_size = (TAB_MULT * numexe) - 1
 
-hash_paths     dc    32i4'0'            ;32 paths max for now.
+hash_paths     dc    32i4'0'            32 paths max for now.
 hash_files     dc    i4'0'
-hash_table     dc    i4'0'
-hash_numexe    dc    i2'0'
-hash_print     dc    i2'0'
+hash_table     dc    i4'0'	Pointer to table (t_size entries)
+hash_numexe    dc    i2'0'	Number of hashed executables
+hash_print     dc    i2'0'	Print flag; 0 first time through
 
                END

@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: alias.asm,v 1.3 1998/06/30 17:25:07 tribby Exp $
+* $Id: alias.asm,v 1.4 1998/07/20 16:23:01 tribby Exp $
 *
 **************************************************************************
 *
@@ -20,23 +20,30 @@
 *
 * Interfaces defined in this file:
 *
-* alias	
+* alias	subroutine (4:argv,2:argc)
+*	Returns with status=0 in Accumulator
 *
-* unalias	
+* unalias	subroutine (4:argv,2:argc)
+*	Returns with status=0 in Accumulator
+*                                        
+* initalias	jsr/rts with no parameters
 *
-* initalias	
+* expandalias	subroutine (4:cmd)
+*	return 4:buf
 *
-* expandalias	
+* addalias	subroutine (4:aliasname,4:aliasval)
+*	return
 *
-* addalias	
+* removealias	subroutine (4:aliasname)
+*	return
+*                                      
+* findalias	subroutine (4:aliasname),space
+*	return 4:value
 *
-* removealias	
+* startalias	jsl/rtl with no parameters
 *
-* findalias	
-*
-* startalias	
-*
-* nextalias	
+* nextalias	subroutine (4:p)
+*	return 2:hashvalz
 *
 *
 **************************************************************************
@@ -76,13 +83,16 @@ end	equ	argv+4
 	phd
 	tcd
 
-	lda	argc
+	lda	argc	How many arguments were provided?
 	dec	a
-	beq	showall
+	beq	showall	None -- show all alias names.
 	dec	a
-	beq	showone
-	jmp	setalias
+	beq	showone	One -- show a single name.
+	jmp	setalias	More -- set an alias.
 
+;
+; Show all aliases
+;
 showall	jsl	startalias
 showloop	jsl	nextalias
 	sta	arg
@@ -110,6 +120,9 @@ showloop	jsl	nextalias
     
 noshow	jmp	exit
 
+;
+; Show a single alias
+;
 showone	ldy	#4+2
 	lda	[argv],y
 	tax
@@ -117,8 +130,8 @@ showone	ldy	#4+2
 	ldy	#4	
 	lda	[argv],y
 	pha
-	jsr	puts
-	lda	#':'
+	jsr	puts	Print name.
+	lda	#':'	Print ": ".
 	jsr	putchar
 	lda	#' '
 	jsr	putchar
@@ -128,14 +141,18 @@ showone	ldy	#4+2
 	ora	arg+2
 	beq	notthere
 	lda	arg
-	jsr	puts
-	jsr	newline
-	jmp	exit
-notthere	ldx	#^noalias
-	lda	#noalias
+	jsr	puts	Print alias value.
+	jsr	newline	Print newline.
+	jmp	exit	All done.
+
+notthere	ldx	#^noalias	Print message:
+	lda	#noalias	 'Alias not defined'
 	jsr	puts
 	jmp	exit
 
+;
+; Set an alias name
+;
 setalias	ldy	#4+2	;put alias name on stack
 	lda	[argv],y
 	pha
@@ -202,7 +219,7 @@ exit	lda	space
 	adc	#end-4
 	tcs
 
-	lda	#0
+	lda	#0	Return status always 0.
 
 	rtl
 
@@ -413,6 +430,9 @@ next	lda	[cmd]
 	if2	@a,eq,#"'",singquoter
 	if2	@a,eq,#'"',doubquoter
 	bra	next
+;
+; "\" found
+;
 backstabber	lda	[cmd]
 	inc	cmd
 	sta	[outbuf]
@@ -420,6 +440,9 @@ backstabber	lda	[cmd]
 	and	#$FF
 	beq	done
 	bra	next
+;
+; "'" found
+;
 singquoter	lda	[cmd]
 	inc	cmd
 	sta	[outbuf]
@@ -428,15 +451,21 @@ singquoter	lda	[cmd]
 	beq	done
 	if2	@a,ne,#"'",singquoter
 	bra	next
+;
+; '"' found
+;
 doubquoter	lda	[cmd]
 	inc	cmd
 	sta	[outbuf]
 	inc	outbuf
 	and	#$FF
 	beq	done
-	if2	@a,ne,#"'",singquoter
+	if2	@a,ne,#'"',doubquoter
 	bra	next
-                                          
+
+;
+; ";", "|", or "&" found: it's another command
+;
 nextalias	jmp	eatleader
 
 done	ldx	word+2
@@ -793,7 +822,7 @@ hashval        equ   0
 space          equ   hashval+2
 
                subroutine (4:p),space
-
+                                    
                lda   #11
                sta   hashval
 

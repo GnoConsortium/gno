@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: cmd.asm,v 1.3 1998/06/30 17:25:17 tribby Exp $
+* $Id: cmd.asm,v 1.4 1998/07/20 16:23:02 tribby Exp $
 *
 **************************************************************************
 *
@@ -121,7 +121,7 @@ SINGQUOTE      equ   4                  ;single quote string
 ; Main loop: get character and take action based upon state.
 ;
 loop           lda   [buf]
-               inc   buf
+               incad	buf
                and2  @a,#$FF,ch	ch = next character.
                bne   switch
 
@@ -204,7 +204,7 @@ neut4b	if2	@a,ne,#'#',neut5	;comment
 neut4c	lda	[buf]
 	and	#$7F
 	beq	neut4d
-               inc   buf
+               incad	buf
                if2   @a,eq,#13,neut4d
 	if2	@a,eq,#10,neut4d
                bra   neut4c
@@ -219,10 +219,10 @@ startsingle    lda   #SINGQUOTE
 neut8          if2   @a,ne,#'\',neut9
                lda   [buf]
                and   #$FF
-               inc   buf
+               incad	buf
 	if2	@a,eq,#13,neut10a
 neut9	sta   [word]             ;default
-               inc   word
+               incad	word
                lda   #INWORD
 neut10         sta   state
 neut10a        jmp   loop
@@ -242,7 +242,7 @@ gtgt2          lda   [buf]
 	if2	@a,eq,#'&',gtgt3
 	lda   #T_GTGT
                jmp   done
-gtgt3	inc	buf
+gtgt3	incad	buf
 	lda	#T_GTGTAMP
 	jmp	done
 ;
@@ -250,9 +250,9 @@ gtgt3	inc	buf
 ;
 case_inquote   if2   ch,ne,#'\',quote2  ;is it a quoted character?
                lda   [buf]
-               inc   buf
+               incad	buf
 putword        sta   [word]
-               inc   word
+               incad	word
                jmp   loop
 quote2         if2   @a,ne,#'"',putword
                ld2   INWORD,state
@@ -283,7 +283,7 @@ case_inword    if2   ch,eq,#000,endword
                jeq   startsingle
                if2   @a,ne,#'\',putword
                lda   [buf]
-               inc   buf
+               incad	buf
 	and	#$FF
 	if2	@a,eq,#13,word2
                bra   putword
@@ -801,56 +801,60 @@ end            equ   path+4
 
 	lock	mutex
 ;
-; set the variables 0..argc
+; Set the variables 0..argc
 ;
-	lda	argc
-	jeq	skipvar
-               stz   count
-parmloop       lda   count
-               asl2  a
-               tay
-               lda   [argv],y
-               sta   setparm+4
-               iny2
-               lda   [argv],y
-               sta   setparm+6
-               lda   count
-               cmp   #10
-               bcs   num1
-               short a
-               adc   #'0'
-               sta   num+2
-               long  a
-               ld4   num+2,setparm
-               bra   setit
-num1           cmp   #100
-               bcs   num2
-               Int2Dec (@a,#num+1,#2,#0)
-               ld4   num+1,setparm
-               bra   setit
-num2           Int2Dec (@a,#num,#3,#0)
-               ld4   num,setparm
-setit          ph4	setparm
-	jsr	c2pstr2
-	phx
-	pha
-	stx	setparm+2
-	sta	setparm
-	ph4	setparm+4
-	jsr	c2pstr2
-	phx
-	pha
-	stx	setparm+4+2
-	sta	setparm+4
-	Set_Variable setparm
-	jsl	nullfree
-	jsl	nullfree
-               inc   count
-               lda   count
-               cmp   argc
-               jcc   parmloop
+	lda	argc	Get number of variables.
+	jeq	vars_set	If 0, there are none to set.
 
-skipvar        unlock mutex
+               stz   count	Start with argv[0].
+parmloop       lda   count	Get index
+               asl2  a	 into address array.
+               tay
+               lda   [argv],y	Copy argument
+               sta   SetValue	 pointer to
+               iny2		  SetValue
+               lda   [argv],y
+               sta   SetValue+2
+
+               lda   count	If parameter number
+               cmp   #10
+               bcs   digits2or3	 < 10,
+               adc   #'0'		Convert to single digit
+               sta   pname_text		 and store in name string.
+               lda	#1		Set length of string to 1.
+	sta	pname
+               bra   set_value
+
+digits2or3	cmp   #100	If parameter number
+               bcs   digits3	 >= 10 && < 99,
+               ldx	#2		length = 2
+               bra   setit	otherwise
+digits3	ldx	#3		length = 3
+;
+; Store length (2 or 3) and convert number to text
+;
+setit	stx 	pname
+	Int2Dec (@a,#pname_text,pname,#0)
+
+set_value	anop
+	ph4	SetValue	Convert value string
+	jsr	c2gsstr	 to a GS/OS string
+	stx	SetValue+2	  and save in SetGS
+	sta	SetValue	   parameter block.
+
+	SetGS	SetPB	Set $count to the argv string.
+
+	ph4	SetValue	Free the value buffer.
+	jsl	nullfree
+               inc   count	Bump the parameter counter.
+               lda   count	If more to do,
+               cmp   argc
+               jcc   parmloop	   stay in loop.
+
+;
+; Variables have all been set
+;
+vars_set	unlock mutex
 
                ph4   #4                 ;Close parms
                jsl   ~NEW
@@ -969,21 +973,19 @@ noecho         lda   [data]
                and   #$FF
                if2   @a,eq,#'#',ReadLoop
 
-*   execute	subroutine (4:cmdline,2:jobflag)
+*   call execute: subroutine (4:cmdline,2:jobflag)
                pei   (data+2)
                pei   (data)
-*	ph2	#0
-*	ph2	#1
 	pei	(jobflag)
                jsl   execute
 	sta	status
 
-	lda	exitamundo
+	lda	exit_requested
 	bne	almostdone
                bra   ReadLoop
 
 almostdone     anop
-	stz	exitamundo
+	stz	exit_requested
                lda   #1
                sta   [CRec]
                pei   (CRec+2)
@@ -1031,9 +1033,19 @@ NLTable        dc    h'0d'
 Err	dc	i2'1'	pCount
 ErrError	ds	2	Error number
 
-setparm        ds    4
-               ds    4
-num            dc    c'000',h'00'
+;
+; Parameter block for shell SetGS calls (p 427 in ORCA/M manual)
+;
+SetPB	anop
+	dc	i2'3'	pCount
+SetName	dc	i4'pname'	Name  (pointer to GS/OS string)
+SetValue	ds	4	Value (pointer to GS/OS string)
+SetExport	ds	2	Export flag
+;
+; Name of argv parameter ($1 to $999) to be set; GS/OS string
+;
+pname	ds	2	Length
+pname_text	dc	c'000'	Text (up to 3 digits)
 
 mutex          key
 
@@ -1097,10 +1109,8 @@ chkws	lda	[cmdstrt]	Get next character.
 	beq	bump_strt
 	cmp	#9	 or a tab,
 	bne	found_start
-bump_strt	inc	cmdstrt	   bump the start pointer
-	bne	chkws	    and look for more whitespace.
-	inc	cmdstrt+2
-	bra	chkws
+bump_strt	incad	cmdstrt	   bump the start pointer
+	bra	chkws	    and look for more whitespace.
 
 ; Initialize pointer to end of command
 
@@ -1249,7 +1259,7 @@ noecho         anop
                jmp   chk_cmd
 
 
-*   command	l_subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,
+*   command	subroutine (4:waitpid,2:inpipe,2:jobflag,2:inpipe2,
 *		4:pipesem,4:stream)
 loop	pea	0       	;Bank 0		waitpid (hi)
                tdc
@@ -1322,7 +1332,11 @@ nowait         if2   term,eq,#T_EOF,noerrexit
                beq   exit	
                jmp   loop	  process the next command.
 
-noerrexit	stz	waitstatus	;non-forked builtins cannot return an error
+;
+; NOTE: non-forked builtins have no mechanism to return command status
+;
+
+noerrexit	stz	waitstatus
 
 exit           jsl   nullfree
 	lda	term	;make sure we return -1 if error

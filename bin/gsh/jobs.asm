@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: jobs.asm,v 1.3 1998/06/30 17:25:43 tribby Exp $
+* $Id: jobs.asm,v 1.4 1998/07/20 16:23:07 tribby Exp $
 *
 **************************************************************************
 *
@@ -576,44 +576,55 @@ done	anop
 	tcs
 	
 	rtl
+
 ;                     
-; set status return variable
+; Set $status return variable
 ;
 setstatus	ENTRY
 
-	xba
-	and	#$FF
+	xba		Isolate status
+	and	#$FF	 byte.
 
-	cmp	#100
-	bcc	set1
-	Int2Dec (@a,#valstat1+1,#3,#0)
-	lda	#valstat1
-	ldx	#^valstat1
-	bra	set0
+               cmp   #10
+               bcs   digits2or3	 If < 10,
+               adc   #'0'		Convert to single digit
+               sta   valstat_text		 and store in value string.
+               ldx	#1		Set length of string to 1.
+	stx	valstat
+               bra   set_value
 
-set1	cmp	#10
-	bcc	set2
-	Int2Dec (@a,#valstat2+1,#2,#0)
-	lda	#valstat2
-	ldx	#^valstat2
-	bra	set0
-                                             
-set2	Int2Dec (@a,#valstat3+1,#1,#0)
-	lda	#valstat3
-	ldx	#^valstat3
+digits2or3	cmp   #100	If parameter number
+               bcs   digits3	 >= 10 && < 99,
+               ldx	#2		length = 2
+               bra   setit	otherwise
+digits3	ldx	#3		length = 3
+;
+; Store length (2 or 3) and convert number to text
+;
+setit	stx 	valstat
+	Int2Dec (@a,#valstat_text,valstat,#0)
 
-set0	sta	SetParm+4
-	stx	SetParm+6
-	Set_Variable SetParm
+set_value	anop
+	SetGS	SetPB
 
 	rts                          
 
-SetParm	dc	a4'name'
-	ds	4
-name	str	'status'
-valstat1	str	'000'
-valstat2	str	'00'
-valstat3	str	'0'
+;
+; Parameter block for shell SetGS calls (p 427 in ORCA/M manual)
+;
+SetPB	anop
+	dc	i2'3'	pCount
+	dc	i4'status'	Name  (pointer to GS/OS string)
+	dc	i4'valstat'	Value (pointer to GS/OS string)
+	dc	i2'0'	Export flag
+
+status	gsstr	'status'	Name of environment variable
+
+;
+; Value of status: GS/OS string with one to three digits
+;
+valstat	ds	2	Length word
+valstat_text	dc	c'000'	Text (up to three digits)
 
 	END         
 
@@ -972,7 +983,7 @@ init	stz	pid
 	cmp	#'-'
 	jne	getpid
 
-	inc	arg
+	incad	arg
 
 	lda	[arg]
 	and	#$FF
@@ -1677,7 +1688,7 @@ dojobnum	ldy	len
 	dey
 	ldx	str+2
 	lda	str
-	inc   a
+	incad	@xa
 	Dec2Int (@xa,@y,#0),pid
 	lda	pjoblist
 	ldx	pjoblist+2

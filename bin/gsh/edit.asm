@@ -6,12 +6,13 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: edit.asm,v 1.3 1998/06/30 17:25:23 tribby Exp $
+* $Id: edit.asm,v 1.4 1998/07/20 16:23:03 tribby Exp $
 *
 **************************************************************************
 *
 * EDIT.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * The GNO/Shell command-line editor
 *
@@ -651,7 +652,7 @@ t1a	lda	[p],y
 ;
 ; one at a time
 ;
-t2	jsr	dofignore
+t2	jsl	dofignore
 	lda	nummatch
 	beq	meepmeep
 	dec	a
@@ -730,27 +731,29 @@ wordlen	equ	wordnum+2
 varpos	equ	wordlen+2
 newpos	equ	varpos+2
 wordpos	equ	newpos+2
+gsbuf	equ	wordpos+2
+space	equ	gsbuf+4
 
-               jsl	alloc256
-	sta	ReadName
-	stx	ReadName+2
-	phx
-	pha
+	subroutine (0:dummy),space
 
-	Read_Variable varparms
-	jsr	p2cstr
-	sta	var	
-	stx	var+2
-	phx
-	pha
-	jsr	lowercstr
-	lda	ReadName
-	ldx	ReadName+2
-	jsl	free256
+	ph4	#fignore
+	jsl	getenv
 
-	lda	[var]
-	and	#$FF
-	jeq	done
+	sta	gsbuf	If buffer wasn't allocated
+	stx	gsbuf+2
+	ora	gsbuf+2
+	jeq	done	  return to caller.
+
+	clc
+	lda	gsbuf	Text begins after
+	adc	#4	 four bytes of
+	bcc   storevar	  length words.
+	inx
+storevar	sta	var	Store pointer to
+	stx	var+2	 c-string in var.
+	phx		Shift
+	pha		 to
+	jsr	lowercstr	  lower case.
 
 	lda	#0
 	sta	wordnum
@@ -762,14 +765,14 @@ bigloop	asl	a
 	tay
 	lda	matchbuf+2,x
 	sta	word+2
-               pha
+	pha
 	phy
 	jsr	cstrlen
 	sta	wordlen
 	stz	newpos
 figmatch	lda	newpos
 	sta	varpos
-	ldy	varpos	
+	ldy	varpos
 eatspace	lda	[var],y
 	and	#$FF
 	beq	bignext
@@ -777,6 +780,7 @@ eatspace	lda	[var],y
 	bne	yummy
 	iny
 	bra	eatspace
+
 yummy	sty	varpos
 	ldx	#0
 eatstuff       lda	[var],y
@@ -787,6 +791,7 @@ eatstuff       lda	[var],y
 	inx
 	iny
 	bra	eatstuff
+
 gotstuff	sty	newpos
 	cpx	wordlen
 	beq	hgf
@@ -817,18 +822,15 @@ bignext	inc	wordnum
 	cmp	nummatch
 	bcc	bigloop
 
-done	pei	(var+2)
-	pei	(var)
+	pei	(gsbuf+2)	Free memory allocated
+	pei	(gsbuf)	 for the value of $FIGNORE.
 	jsl	nullfree
-	rts
 
-; Parameter block for shell Read_Variable call
-; [predecessor to ReadVariableGS call (p 423 in ORCA/M manual)]
-varparms	anop
-	dc	a4'fignore'	Pointer to name
-ReadName	ds	4	Pointer to result
+done	anop
 
-fignore	str	'fignore'	Env variable name
+	return
+
+fignore	gsstr	'fignore'	Env variable name
 
 	END
 
@@ -1023,12 +1025,12 @@ isolate	cpy	cmdlen
 	beq	gotiso
 	cmp	#'&'
 	beq	gotiso
-	sta	wordbuf,x
+	sta	wordgs_text,x
 	iny
 	inx
 	bra	isolate
 gotiso	lda	#0
-	sta	wordbuf,x
+	sta	wordgs_text,x
 	stx	wordlen
 	sty	cmdloc
 	txa
@@ -1070,115 +1072,93 @@ chkflag	cmp	#';'
 
 gotflag	anop
 ;
-; check if the first character is '$', if so, match for variables ONLY
+; Check if the first character is '$', if so, match for variables ONLY
 ;
-	lda	wordbuf
+	lda	wordgs_text
 	and	#$FF
 	cmp	#'$'
 	jne	filem
 
-	ld2	1,varIndex
-varloop	Read_Indexed varParm
-	lda	buffer
-	jeq	vardone
-	dec	a
+	ld2	1,idxIndex
+varloop	ReadIndexedGS idxParm
+	lda	NameLen
+	beq	vardone
 	cmp	wordlen	;if shorter than word skip
 	jcc	nextvar
+;
+; Scan this variable name to see if it matches wordgs_text
+;
 	ldx	#1
-varscan	lda	wordbuf,x
+varscan	lda	wordgs_text,x
 	and	#$FF
-	beq	goodvar
+	beq	goodvar	Matches (up to current length)
 	jsr	tolower
-	eor	buffer,x
+	eor	NameText-1,x
 	and	#$FF
-	jne	nextvar
+	jne	nextvar	Name doesn't match word.
 	inx
 	bra	varscan
+;
+; We have a match between the variable name and word being typed
+;
+goodvar	stz	sepstyle	Don't use ":" or "/"
 
-goodvar	stz	sepstyle
-	lda	varval
-	and	#$FF
-	tay
-	ldx	#1
-gv00	dey
-	bmi	gv02
-	lda	varval,x
-	and	#$FF
-	cmp	#':'
-	beq	gv00b
-	cmp	#'/'
-	bne	gv00a
-gv00b	sta	sepstyle
-gv00a	inx
-	bra	gv00
-
-gv02	lda	varval	;check if it really is a directory
-	and	#$FF
-	sta	varval-1
-	ld4	varval-1,GFName
-	GetFileInfo GFParm
-	lda	GFType
-	cmp	#$0F
-	beq	gv02a
-	stz	sepstyle
-               
-gv02a	lda	nummatch
+gv02a	anop
+	lda	nummatch	Get the number of matches.
+	asl	a	Multiply by 4 (size of address entry)
 	asl	a
-	asl	a
-	pha
-	lda	buffer
-	and	#$FF
-	inc	a
+	pha		Hold offset on stack.
+	lda	NameLen	Get length of name,
+	inc	a	 and add 3.
 	inc	a
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW
+	jsl	~NEW	Request memory to hold name.
 	sta	0
 	stx	0+2
-	ply
-	sta	matchbuf,y
-	txa
+	ply		Get matchbuf offset from stack.
+	sta	matchbuf,y	Store allocated memory's
+	txa		 address in matchbuf array.
 	sta	matchbuf+2,y
 	inc	nummatch
-	lda	#'$'
-	sta	[0]
-	lda	buffer
-	and	#$FF
-	tax
-	ldy	#1
-gv01	lda	buffer,y
-	sta	[0],y
-	iny
-	dex
-	bne	gv01
-	lda	sepstyle
-	sta	[0],y
 
-nextvar	inc	varIndex
+	lda	#'$'	First character = "$".
+	sta	[0]
+	ldx	NameLen	Get length of name in X-Reg.
+	ldy	#1	Use Y as offset into strings.
+gv01	lda	NameText-1,y	Get next byte of name.
+	sta	[0],y	Store in allocated memory.
+	iny		Bump the index.
+	dex		Decrement the count
+	bne	gv01	Keep copying until done.
+	lda	sepstyle	Store separator style at end.
+	sta	[0],y
+;
+; Done with this variable. Check the next one.
+;
+nextvar	inc	idxIndex
 	jmp	varloop
 
 vardone	rts
+
 ;
-; next lets match by file names
-; we'll start by moving our wordbuf to a pascal string
+; Match by file names; start by moving wordgs_text + trailing "*" to a GS/OS string
 ;
 filem	lda	#1
-	sta	iwparm+4
+	sta	iwFlags
 
-	short	a
 	lda	wordlen
 	inc	a
-	sta	wordpbuf
-	long	a
+	sta	wordgsbuf
 	ldy	wordlen
 	lda	#'*'
-	sta	wordbuf,y
+	sta	wordgs_text,y
 
 	ldx	#0
 	short	a
 	dey
-findsep	lda	wordbuf,y
+findsep	lda	wordgs_text,y
 	cmp	#':'
 	beq	gotsep
 	cmp	#'/'
@@ -1197,7 +1177,7 @@ findsep	lda	wordbuf,y
 	bne	nextsep
 	cpy	#0	;allow boot prefix */
 	bne	gotglob
-	lda	wordbuf+1
+	lda	wordgs_text+1
 	cmp	sepstyle
 	bne	gotglob
 	bra	nextsep
@@ -1211,57 +1191,66 @@ nextsep	dey
 	long	a
 	cpx	#0
 	beq	initit
-	dec	iwparm+4
+	dec	iwFlags
 
-initit	Init_Wildcard iwparm
+initit	InitWildcardGS iwparm
 
-filematch	Next_Wildcard nwparm
-	lda	buffer
-	and	#$FF
+filematch	anop
+	NextWildcardGS nwparm
+	ldy	NameLen	Get length of name.
 	jeq	filemdone
-	cmp	wordlen
+	cpy	wordlen
 	beq	filematch
-	lda	nummatch
+
+	lda	#0	Store null byte at end of name,
+	sta	NameText,y	  so it will act like a c-string.
+
+	lda	nummatch	Get the number of matches.
+	asl	a	Multiply by 4 (size of address entry)
 	asl	a
-	asl	a
-	pha
-	ph4	#buffer
-	jsr	p2cstr
-	ply
-	phx	                   ;for c2gsstr
-	pha
-	sta	matchbuf,y
-	txa
+	pha		Hold offset on stack.
+	iny		Get length of name + 1
+	pea	0
+	phy
+	jsl	~NEW	Request memory to hold name.
+	ply		Get matchbuf offset from stack.
+	sta	matchbuf,y	Store allocated memory's
+	txa		 address in matchbuf array.
 	sta	matchbuf+2,y
-	jsr	c2gsstr
-	phx	                   ;for nullfree
+
+	ph4	#NameText	Copy string from
+	lda	matchbuf+2,y	 name buffer into
+	pha		  matchbuf table entry.
+	lda	matchbuf,y
 	pha
-	sta	GFName
-	stx	GFName+2
-	sta	4
-	stx	6
-	GetFileInfo GFParm
-	jsl	nullfree
-	lda	cmdflag
+	jsr	copycstr
+
+	lda	cmdflag	Are we looking for a command?
 	beq	fm01
-	lda	GFType
-	cmp	#$0F
-	beq	isdir
-	cmp	#$B5
-	beq	notdir
-	cmp	#$B3
-	beq	notdir
-	cmp	#$B0
-	bne	filematch
-	lda	GFAux
-	cmp	#6
-	bne	filematch
-	lda	GFAux+2
-	bne	filematch
-	bra	notdir
-fm01	lda	GFType
+	lda	nwType	Yes: Get the file's type
+	cmp	#$0F	== $0F?
+	beq	isdir		it's a directory
+	cmp	#$B5	== $B5?
+	beq	notdir		it's EXE (shell executable)
+	cmp	#$B3	== $B3?
+	beq	notdir		it's S16 (GS/OS application)
+	cmp	#$B0	== $B0?
+	bne	filematch		it's SRC (shell source code)
+	lda	nwAux		Get file's aux type
+	cmp	#6		== $00000006?
+	bne	filematch	
+	lda	nwAux+2
+	bne	filematch			No; try next wildcard.
+	bra	notdir			It's shell cmd file.
+;
+; Not looking for a command
+;
+fm01	lda	nwType
 	cmp	#$0F
 	bne	notdir
+;
+; File type is $0F: it's a directory
+;
 isdir	lda	nummatch
 	asl	a
 	asl	a
@@ -1271,8 +1260,7 @@ isdir	lda	nummatch
 	sta	0
 	lda	matchbuf+2,x
 	sta	2
-	lda	buffer
-	and	#$FF
+	lda	NameLen	Allocate NameLen+2 bytes of memory
 	inc	a
 	inc	a
 	pea	0
@@ -1292,15 +1280,13 @@ isdir	lda	nummatch
 	pei	(2)
 	pei	(0)
 	jsl	nullfree
-	lda	buffer
-	and	#$FF
-	tay
+	ldy	NameLen
 	lda	sepstyle
 	sta	[8],y
 
 notdir	anop
-	inc	nummatch
-	jmp	filematch
+	inc	nummatch	Bump the match count.
+	jmp	filematch	Try next wildcard.
 
 filemdone	anop
 	lda	cmdflag	;if it's not a command, we're done
@@ -1313,17 +1299,17 @@ q	equ	4
 
 	ldy	wordlen            ;remove '*' from above
 	lda	#0
-	sta	wordbuf,y
+	sta	wordgs_text,y
 
 	lda	hash_table
 	ora	hash_table+2
-	beq	endhash
+	beq	eq_endhash
 	mv4	hash_table,p
 	lda	hash_numexe
 	beq	endhash
 	ldy	#0
 	ldx	t_size
-	beq	endhash
+eq_endhash	beq	endhash
 ; 
 ; loop through every hashed file and add it the string vector
 ;
@@ -1337,8 +1323,8 @@ hashloop	lda	[p],y
 	iny
 	ora	q
 	beq	nexthash
-	inc	q
-	inc	q
+	incad	q
+	incad	q
 	phy
 	phx	
 	pei	(q+2)
@@ -1348,7 +1334,7 @@ hashloop	lda	[p],y
 	bcc	nexthash0
 	tax
 	ldy	#0
-hl	lda	wordbuf,y
+hl	lda	wordgs_text,y
 	and	#$FF
                beq	hl0
 	jsr	tolower
@@ -1400,7 +1386,7 @@ bilup	lda	[p]
 	bcc	binext
 	tax
 	ldy	#0
-bl	lda	wordbuf,y
+bl	lda	wordgs_text,y
 	and	#$FF
                beq	bl0
 	eor	[q],y
@@ -1435,27 +1421,52 @@ done	rts
 startpos	ds	2
 cmdflag	ds	2
 
-iwparm	dc	i4'wordpbuf'
-	dc	i2'1'
+;
+; GS/OS string holding match word + wildcard "*"
+;
+wordgsbuf	ds	2
+wordgs_text	ds	256
 
-nwparm	dc	i4'buffer'
+;
+; Parameter block for shell InitWildcardGS call (p 414 in ORCA/M manual)
+;
+iwparm	dc	i2'2'	pCount
+	dc	i4'wordgsbuf'	pathname with wildcard
+iwFlags	dc	i2'1'	flags
 
-GFParm	dc	i2'4'
-GFName	dc	i4'0'
-	dc	i2'0'
-GFType	dc	i2'0'
-GFAux	dc	i4'0'
+;
+; Parameter block for shell NextWildcardGS call (p 414 in ORCA/M manual)
+;
+nwparm	dc	i2'4'	pCount
+	dc	i4'NameBuf'	pathName
+	dc	i2'0'	access
+nwType	dc	i2'0'	fileType
+nwAux	dc	i4'0'	auxType
 
-
-; Parameter block for shell Read_Indexed call
-; [predecessor to ReadIndexedGS call (p 421 in ORCA/M manual)]
-varParm	anop
-	dc	i4'buffer'	Name (pointer to 256-byte p-string)
-	dc	i4'varval'	Value (pointer to 256-byte p-string)
-varIndex	dc	i2'0'	Index number
-	
-	ds	1	;<- don't futz with me!!
-varval	ds	256
+;
+; Parameter block for shell ReadIndexedGS call (p 421 in ORCA/M manual)
+;
+idxParm	anop
+	dc	i2'4'	pCount
+	dc	i4'NameBuf'	Name (pointer to GS/OS result buf)
+	dc	i4'ResultBuf'	Value (pointer to GS/OS result buf)
+idxIndex	ds	2	Index number
+	ds	2	Export flag
+;
+; GS/OS result buffer to hold name: maximum size = 255 bytes
+;
+NameBuf	dc	i2'259'	Total length of result buf.
+NameLen	ds	2	Name's length returned here.
+NameText	ds	255	Text goes here.
+	ds	2	Room for terminating null bytes.
+;
+; GS/OS result buffer for testing whether a variable is defined.
+; It doesn't have enough room for > 1 byte to be returned, but we
+; only need to get the length of the value.
+;
+ResultBuf	dc	i2'5'	Only five bytes total.
+	ds	2	Value's length returned here.
+	ds	1	Only 1 byte for value.
 
 sepstyle	ds	2
 
@@ -1944,9 +1955,7 @@ numloop	asl	ch
 
 casebreak	lda	ch
 casebreak0	sta	[cp]
-	inc	cp
-	jne	loop
-	inc	cp+2
+	incad	cp
 	jmp	loop
 
 breakloop	lda	#0

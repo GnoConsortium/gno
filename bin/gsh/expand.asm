@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: expand.asm,v 1.3 1998/06/30 17:25:27 tribby Exp $
+* $Id: expand.asm,v 1.4 1998/07/20 16:23:03 tribby Exp $
 *
 **************************************************************************
 *
@@ -219,7 +219,7 @@ globword       stz   filesep
                sta   exppath
                stx   exppath+2
 
-               inc   eptr               ;leave room for pascal length
+               incad	eptr               ;leave room for pascal length
                mv4   eptr,sepptr
 
                ldy   #0
@@ -233,11 +233,11 @@ exploop        lda   [wordbuf],y
                if2   @a,eq,#'/',expsep
                if2   @a,eq,#':',expsep
 expput         sta   [eptr]
-               inc   eptr
+               incad	eptr
                bra   exploop
 expsep         sty   filesep
                sta   [eptr]
-               inc   eptr
+               incad	eptr
                mv4   eptr,sepptr
                bra   exploop
 expslash       lda   [wordbuf],y
@@ -251,7 +251,7 @@ expsingle      lda   [wordbuf],y
                beq   endexp
                if2   @a,eq,#"'",exploop
                sta   [eptr]
-               inc   eptr
+               incad	eptr
                bra   expsingle
 expdouble      lda   [wordbuf],y
                iny
@@ -259,7 +259,7 @@ expdouble      lda   [wordbuf],y
                beq   endexp
                if2   @a,eq,#'"',exploop
                sta   [eptr]
-               inc   eptr
+               incad	eptr
                bra   expdouble
 ;
 ; We really didn't mean to expand the filename, so, copy it back again..
@@ -269,7 +269,7 @@ copyback       lda   [wordbuf],y
                iny
                and   #$FF
                sta   [sepptr]
-               inc   sepptr
+               incad	sepptr
                cmp   #0
                bne   copyback
 ;
@@ -393,7 +393,7 @@ bye            return 4:buf
 ; Subroutine of glob: get a byte from the original command-line
 ;
 g_getbyte	lda   [cmd]
-               inc   cmd
+               incad	cmd
                and   #$FF
                rts
 
@@ -419,21 +419,21 @@ special	pha
 ;
 ; Subroutine of glob: store a byte into the new command-line
 ;
-g_putbyte        short a
-               sta   [ptr]
-               long  a
-               inc   ptr
-               rts
+g_putbyte	short	a
+	sta	[ptr]
+	long	a
+	incad	ptr
+	rts
 
 
 glob_mutex	key
 
 ; Parameter block for InitWildcard shell call (ORCA/M pp 414-415)
-InitWCParm     ds    4	Path name, with wildcard
-               dc    i2'%00000001'	Flags (this bit not documented!!!)
+InitWCParm	ds	4	Path name, with wildcard
+	dc	i2'%00000001'	Flags (this bit not documented!!!)
 
 ; Parameter block for NextWildcard shell call (ORCA/M pp 417-418)
-nWCparm        ds    4	Pointer to returned path name
+nWCparm	ds	4	Pointer to returned path name
 
 nomatch	dc	c'No match: ',h'00'
 ignored	dc	c' ignored',h'0d00'
@@ -444,12 +444,13 @@ ignored	dc	c' ignored',h'0d00'
 *
 * Expand $variables and tildes not in single quotes
 *
-* * Add error checking if out buf gets too big (> 1024)
-* * Get rid of fixed buffers
-*
 **************************************************************************
 
 expandvars     START
+
+; Maximum number of characters in an environment variable or $<
+MAXVAL	equ	512
+
 
 ptr            equ   1
 buf            equ   ptr+4
@@ -536,6 +537,8 @@ nameloop       lda   [cmd]
                if2   @a,cc,#'z'+1,inname
                bra   getval
 inname         jsr   e_getbyte
+	cpx	#255	Only the first 255 characters
+	beq	nameloop	 are significant.
                sta   name,x
                inx
                bra   nameloop
@@ -550,6 +553,8 @@ braceloop      lda   [cmd]
 	beq	getval
 	jsr	e_getbyte
 	if2	@a,eq,#'}',getval
+	cpx	#255	Only the first 255 characters
+	beq	braceloop	 are significant.
 	sta	name,x
 	inx
 	bra	braceloop
@@ -558,83 +563,77 @@ braceloop      lda   [cmd]
 ; get text from standard input
 ;
 stdinexpand    jsr   e_getbyte
-	ReadLine (#value+1,#255,#13,#1),@a
+	ReadLine (#value,#MAXVAL,#13,#1),@a
+	sta	valueln
 	bra	chklen
 
 ;
-; get a value for this variable
+; Get a value for this variable
 ;
-getval         lda   #0
-               sta   name,x
-	ph4	#name
-	jsr	c2pstr2
-	phx
-	pha
-	sta	parm
-	stx	parm+2
-               Read_Variable parm
-	jsl	nullfree
+getval         stx   nameln	Save length of name.
+               ReadVariableGS ReadVarPB	Read its value.
 
-	lda	value	Get length
-chklen	and	#$FF	 byte.
+	lda	valueln	Get value length.
+	cmp	#MAXVAL+1	If > maximum allowed length,
+	bcs	expanded	 we didn't get anything.
+	cmp	#0
+chklen	anop
 	beq	expanded           If 0, nothing to do
 	tax		Save length in X-reg.
 	lda	dflag	If delimiter flag isn't set,
 	beq	storeval	 go store the variable value
 
 ; Check to see if delimiters in the variable need to be switched
-	lda	value	Set up length
-	and	#$FF	 byte in
-	tax		  X-reg and
-	lda	[cmd]	Get next command line
-	and	#$FF	 character.
+	lda	valueln	Set up length in
+	tax		  X-reg and get
+	lda	[cmd]	    next command line
+	and	#$FF	      character.
 	cmp	#"/"	If it's a slash, see if
 	beq	chkvarslash	 variable needs to convert to slash.
 	cmp	#":"	If it's not a colon,
 	bne	storeval	 no need to convert.
-	lda	value+1	Get first character of value.
+	lda	value	Get first character of value.
 	and	#$FF
 	cmp	#"/"	If it's not a slash,
 	bne	storeval	 no need to convert.
 
 ; Convert variable from "/" to ":" delimiter
 	short m
-chk_s	lda	value,x
+chk_s	lda	value-1,x
 	cmp	#"/"
 	bne	bump_s
 	lda	#":"
-	sta	value,x
+	sta	value-1,x
 bump_s	dex
 	bpl	chk_s
 	long	m
 	bra	storeval
 
 chkvarslash	anop
-	lda	value+1	Get first character of value.
+	lda	value	Get first character of value.
 	and	#$FF
 	cmp	#":"	If it's not a colon,
 	bne	storeval	 no need to convert.
 
 ; Convert variable from ":" to "/" delimiter
 	short m
-chk_c	lda	value,x
+chk_c	lda	value-1,x
 	cmp	#":"
 	bne	bump_c
 	lda	#"/"
-	sta	value,x
+	sta	value-1,x
 bump_c	dex
 	bpl	chk_c
 	long	m
 
 ;
-; store the variable value in the out buffer
+; Store the variable's value in the out buffer
 ;
 storeval	anop
-	lda	value	Get length
-	and	#$FF	 byte.
+	lda	valueln	Get length.
 	tay		Save length in Y-reg.
 	ldx   #0	Use X-reg in index value.
-putval         lda   value+1,x
+putval         lda   value,x
                jsr   e_putbyte
                inx
 	dey	
@@ -662,24 +661,38 @@ done           jsr   e_putbyte
                tya
                rtl
 
-e_getbyte	lda   [cmd]
-               inc   cmd
-               and   #$FF
-               rts
+e_getbyte	lda	[cmd]
+	incad	cmd
+	and	#$FF
+	rts
 
-e_putbyte	short a
-               sta   [ptr]
-               long  a
-               inc   ptr
+e_putbyte	short	a
+	sta	[ptr]
+	long	a
+	incad	ptr
                rts
 
 exp_mutex	key
 
-; Parameter block for ReadVariable shell call
-parm           dc    a4'name'	
-               dc    a4'value'
 
-name           ds    256
-value          ds    256
+; GS/OS string to hold variable name
+namestr	anop
+nameln	ds	2	Length of name
+name           ds    256	Room for 255 chars + 0.
+
+
+; GS/OS result buffer to hold up to MAXVAL bytes of value
+valueresult	anop
+	dc	i2'MAXVAL+4'	Length of result buffer
+valueln	ds	2	Length of value
+value          ds    MAXVAL	Room for MAXVAL chars
+
+
+; Parameter block for shell ReadVariableGS calls
+ReadVarPB	anop
+	dc	i2'3'	pCount
+RVname	dc	a4'namestr'	Name (pointer to GS/OS string)
+RVvalue	dc	a4'valueresult'	Value (ptr to result buf or string)
+RVexport	ds	2	Export flag
 
                END

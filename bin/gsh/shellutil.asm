@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: shellutil.asm,v 1.3 1998/06/30 17:25:55 tribby Exp $
+* $Id: shellutil.asm,v 1.4 1998/07/20 16:23:09 tribby Exp $
 *
 **************************************************************************
 *
@@ -213,7 +213,7 @@ end            equ   p+4
                sta   cstr
                stx   cstr+2
                lda   [p]
-	inc	p
+	incad	p
                and   #$FF
                tax
 
@@ -491,8 +491,8 @@ end            equ   cstr+4
                jsl   ~NEW
                sta   gstr
                stx   gstr+2
-	inc	a
-	inc	a
+	incad	@xa
+	incad	@xa
           	pei   (cstr+2)
                pei   (cstr)
                phx
@@ -566,7 +566,7 @@ copy2	lda	[q]
 	sta	[new],y
 	beq	done
 	iny
-	inc	q
+	incad	q
 	bra	copy2	
 
 done           ldx   new+2
@@ -592,11 +592,11 @@ done           ldx   new+2
 
 nullfree	START
 
-	lda	6,s
-	and	#$FF80
-	beq	notbad
-	brk	$db
-notbad	anop
+*	lda	6,s                DEBUG code: break if
+*	and	#$FF80	 address is > $007FFFFF
+*	beq	notbad
+*	brk	$db
+*notbad	anop
 
 	lda	4,s
 	ora	6,s
@@ -648,16 +648,15 @@ newline        ENTRY
 * library getenv(), but lets stay Orca-free, after all, that's why this
 * is written in assembly! :)
 *
-* Borrowed from termcap
+* For gsh 2.0: pass in addr of a GS/OS string, and pass back addr of
+* allocated GS/OS result buffer (with null word added at end), not c-strings.
 *
 **************************************************************************
 
 getenv	START
 
-newval	equ	1
-len	equ	newval+4
-namebuf	equ	len+2
-retval	equ	namebuf+4
+len	equ	1
+retval	equ	len+2
 space	equ	retval+4
 var	equ	space+3
 end	equ	var+4
@@ -671,109 +670,59 @@ end	equ	var+4
 	phd
 	tcd
 
-	stz	retval
-	stz	retval+2
-
 	lock	mutex
 ;
-; get length of variable name
+; Get the variable's length using ReadVariableGS
+;			Set up parameter block:
+	mv4	var,RVname		Addr of name, from user.
+               ld4	TempResultBuf,RVresult	Use temporary result buf.
+	ReadVariableGS ReadVar		Get length.
 ;
-	short	a
-	ldy	#0
-findlen	lda	[var],y
-	beq	gotlen
-	iny
-	bra	findlen
-gotlen	long	a
-	sty	len
+; Allocate memory for value string
 ;
-; allocate a buffer to put the pascal string
-;	
-	iny
-	pea	0
-	phy
-	jsl	~NEW
-	sta	namebuf
-	stx	namebuf+2
-	sta	varparm
-	stx	varparm+2
-	ora	namebuf+2
-	jeq	exit
-;
-; now make a pascal string from the c string
-;	
-	short	ai
-	lda	len
-	sta	[namebuf]
-	ldy	#0
-copyname	lda	[var],y
-	beq	copydone
-               iny
-	sta	[namebuf],y
-	bra	copyname
-copydone	long	ai
-;
-; allocate a return buffer
-;
-	jsl	alloc256
-	sta	newval
-	stx	newval+2
-	sta	varparm+4
-	stx	varparm+6
-	ora	newval+2
-	jeq	exit0
-;
-; Let's go read the variable
-;
-	Read_Variable varparm
-;
-; Was it defined?
-;
-	lda	[newval]
-	and	#$FF
-	jeq	exit1	;return a null if not defined
-;
-; Make a return buffer to return the variable value
-;
-	inc	a
+	lda	TempRBlen	Get length of value.
+	bne	notnull	Return null if 0.
+	sta	retval
+	sta	retval+2
+	bra	exit
+
+notnull	inc2	a	Add 4 bytes for result buf len words.
+	inc2	a
+	sta	len	Save result buf len.
+	inc	a	Add 1 more for terminating null byte.
 	pea	0
 	pha
-	jsl	~NEW
-	sta	retval
+	jsl	~NEW	Request the memory.
+	sta	RVresult	Store address in ReadVariable
+	stx	RVresult+2	 parameter block and
+	sta	retval	  direct page pointer.
 	stx	retval+2
-	ora	retval+2
-	jeq	exit1
-;
-; And copy the resulting value
-;
-	short	ai
-	lda	[newval]
-	tay
-copyval	cpy	#0
-	beq	val1
-	lda	[newval],y
-	dey
-	sta	[retval],y
-	bra	copyval
-val1	lda	[newval]
-	tay
-	lda	#0
-	sta	[retval],y
-	long	ai	
-;
-; hasta la vista, baby
-;
-exit1	ldx	newval+2
-	lda	newval
-	jsl	free256
+	ora	retval+2	If address == NULL,
+	beq	exit	 return NULL to user.
 
-exit0	pei	(namebuf+2)
-	pei	(namebuf)
-	jsl	nullfree
-
+	lda	len	Store result buffer length
+	sta	[retval]	 at beginning of buf.
+;
+; Read the full value into the allocated memory
+;
+	ReadVariableGS ReadVar
+;
+; Add null byte at end of text to make it work as a C string
+;
+	ldy	TempRBlen	Get length of value,
+	iny4		 + 4 (for length words at start)
+	lda	#0	Store zero at end of string.
+	short	a
+	sta	[retval],y
+	long	a
+;
+; All done.
+;
 exit	unlock mutex
+
 	ldy	retval
 	ldx	retval+2
+
 	lda	space+1
 	sta	end-2
 	lda	space
@@ -787,8 +736,19 @@ exit	unlock mutex
 	
 	rtl
                           
-varparm	ds	8
 mutex	key
+
+; Parameter block for shell ReadVariableGS call (p 423 in ORCA/M manual)
+ReadVar	anop
+	dc	i2'3'	pCount
+RVname	ds	4	Pointer to name (passed by user)
+RVresult	ds	4	GS/OS Output buffer ptr
+RVexpflag	ds	2	export flag
+
+; GS/OS result buffer for getting the full length of the PATH env var.
+TempResultBuf	dc	i2'5'	Only five bytes total.
+TempRBlen	ds	2	Value's length returned here.
+	ds	1	Only 1 byte for value.
 
 	END
 

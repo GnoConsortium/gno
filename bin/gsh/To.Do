@@ -1,20 +1,12 @@
-Last updated: June 19, 1998  By: Dave Tribby
+Last updated: July 5, 1998  By: Dave Tribby
 
 For more bug reports, see also http://www.gno.org/~gno/bugs.html
 
 Completed items are reported in file UpdateLog.
 
 
-Initialize internal shell variables to match environment variables
-(echo, nodirexec, nonewline, noglob, nobeep, pushdsilent, term, and ignoreeof)
-when shell first starts.
-
 Gsh requires the v2.0.4 ltermcap to link.  Termcap has changed in v2.0.6,
 and gsh should be updated to reflect this.
-
-When building the EXE hash table, duplicate entries oughta should be ignored.
-
-Make PATH's use consistent with forward parsing.
 
 Identify limits built into gsh and how they can be changed; for example,
 size of $PATH <= 256; max programs in hash table = 256.
@@ -38,6 +30,10 @@ job control needs to save tty information.
 Allow ~user construct (call routines to get user's home directory)
 
 recursive aliases.
+
+In expandvars (expand.asm):
+ Add error checking if out buf gets too big (> 1024)
+ Get rid of fixed buffers
 
 [ -- below this line...probably not -- ]
 

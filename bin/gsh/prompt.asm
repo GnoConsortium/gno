@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: prompt.asm,v 1.3 1998/06/30 17:25:50 tribby Exp $
+* $Id: prompt.asm,v 1.4 1998/07/20 16:23:08 tribby Exp $
 *
 **************************************************************************
 *
@@ -34,58 +34,64 @@ WritePrompt    START
 
 
 prompt	equ	0
-hour           equ   prompt+4
-minute         equ   hour+2
-offset         equ   minute+2
+promptgsbuf	equ	prompt+4
+usergsbuf	equ	promptgsbuf+4
+hour	equ	usergsbuf+4
+minute	equ	hour+2
+offset	equ	minute+2
 pfx	equ	offset+2
-space          equ   pfx+4
+space	equ	pfx+4
 
-year           equ   hour
-monday         equ   minute
-precmd         equ	prompt
+year	equ	hour
+monday	equ	minute
+precmd	equ	prompt
 
                subroutine (0:dummy),space
 
-	ph4	#precmdstr
+	ph4	#precmdstr	If "precmd" alias is defined,
 	jsl	findalias
 	sta	precmd
 	stx	precmd+2
 	ora	precmd+2
 	beq	getvar
 
-	pei	(precmd+2)
+	pei	(precmd+2)	  execute it before parsing prompt.
 	pei	(precmd)
 	ph2	#0
 	jsl	execute
 
-getvar	Read_Variable promptparm
+;
+; Get value of $PROMPT environment variable
+;
+getvar	ph4	#promptname
+	jsl	getenv
 
                php
                sei		;interrupt free environment
 
-               lda   promptbuf
-               and   #$FF
-               bne   parseprompt
-
+	sta	promptgsbuf	Save pointer to GS/OS result buffer.
+	stx	promptgsbuf+2	If there is no memory to hold it,
+	ora	promptgsbuf+2	 it's undefined, or it has a
+	bne	parseprompt	  length of 0,
 	ldx	#^dfltPrompt
 	lda	#dfltPrompt
-	jsr	puts
+	jsr	puts		print the default prompt
+               bra   donemark2		  and exit.
 
-               bra   donemark2
-
-precmdstr	dc	c'precmd',h'00'
-
+;
+; Prompt string begins in result buffer after the two length words
+;
 parseprompt    anop
-
-	ph4	#promptbuf
-	jsr	p2cstr
-	phx		;for disposal
-	pha
-	stx	prompt+2
+	clc
+	lda	promptgsbuf
+	adc	#4
 	sta	prompt
+	lda	promptgsbuf+2
+	adc	#0
+	sta	prompt+2
 
 promptloop     lda   [prompt]
-	inc	prompt
+	incad	prompt
                and   #$FF
                beq   done
                cmp   #'%'
@@ -99,13 +105,19 @@ _putchar       jsr   putchar
 
 done           jsr	standend
 	jsr	cursoron
+
+donemark2	anop
+	pei	(promptgsbuf+2)	Free $PROMPT value buffer
+	pei	(promptgsbuf)
 	jsl	nullfree
-donemark2      plp
+
+	plp		Restore interrupts.
+
 	jsr	flush
-               return
+	return
 
 special        lda   [prompt]
-	inc	prompt
+	incad	prompt
                and   #$FF
                beq   done
                cmp   #'%'
@@ -313,11 +325,25 @@ ptilde         anop
 ;                          
 ; Write user name
 ;
-puser          Read_Variable userparm
-	ldx	#^buf2
-	lda	#buf2
-	jsr	putp
-               jmp   promptloop
+puser          ph4	#username	Get value of $USER
+	jsl	getenv
+	sta	usergsbuf	If buffer wasn't allocated
+	stx	usergsbuf+2
+	ora	usergsbuf+2
+	beq	goploop	 ignore it.
+
+	clc
+	lda	usergsbuf	Text begins after
+	adc	#4	 four bytes of
+	bcc   printit	  length words.
+	inx
+printit	jsr	puts
+
+	pei	(usergsbuf+2)	Free $USER value buffer
+	pei	(usergsbuf)
+	jsl	nullfree
+
+goploop	jmp	promptloop
 ;
 ; Write date as mm/dd/yy
 ;
@@ -366,7 +392,7 @@ pdate2         ReadTimeHex (@a,year,monday,@a)
 ; check for \ quote
 ;
 quoteit	lda   [prompt]
-	inc	prompt
+	incad	prompt
                and   #$FF
                jeq   done
 	cmp	#'n'
@@ -391,35 +417,40 @@ WriteNum       cmp   #10
                bcs   write1
                adc   #'0'
 	jmp	putchar
+
 write1         cmp   #100
                bcs   write2
                Int2Dec (@a,#num+2,#2,#0)
 	ldx	#^num+2
 	lda	#num+2
 	jmp	puts
+
 write2         cmp   #1000
                bcs   write3
                Int2Dec (@a,#num+1,#3,#0)
 	ldx	#^num+1
 	lda	#num+1
 	jmp	puts
+
 write3         Int2Dec (@a,#num,#4,#0)
 	ldx	#^num
 	lda	#num
 	jmp	puts
 
+
+; Name of alias to execute before prompt
+precmdstr	dc	c'precmd',h'00'
+
+
+; Parameter block for GetPrefix GS/OS call
 GPParm         dc    i2'2'
                dc    i2'0'
 GPpfx	dc    a4'0'
-promptparm     dc    a4'promptname'
-               dc    a4'promptbuf'
-promptname     str   'prompt'
+
+promptname     gsstr	'prompt'
+username	gsstr	'user'
+
 dfltPrompt     dc    c'% ',h'00'
 num            dc    c'0000',h'00'
-promptbuf      ds    256
-userparm       dc    a4'user'
-               dc    a4'buf2'
-user           str   'user'
-buf2           ds    256
 
                END

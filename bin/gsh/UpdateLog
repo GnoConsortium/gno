@@ -1,6 +1,65 @@
 GSH 2.0 UPDATES
 ^^^^^^^^^^^^^^^
 
+Jul 19 98    [dmt] Changed edit.asm to use ReadIndexedGS, InitWildcardGS,
+	     NextWildcardGS, instead of their obsolete counterparts.
+
+Jul 18 98    [dmt] Changed Set_Variable, Export, UnsetVariable in cmd.asm,
+	     shellvar.asm, jobs.asm, and term.asm to use new shell interface
+	     (SetGS, ExportGS, UnsetVariableGS).
+	     In InitTerm (term.asm), do not set TERM to gnocon if it is
+	     already set.
+
+Jul 17 98    [dmt] Changed final Read_Variable call (in edit.asm) to use
+	     getenv instead.  Changed ReadVariableGS calls in hash.asm
+	     and builtin.asm to also use getenv.
+
+Jul 16 98    [dmt] Changed Read_Variable calls in history.asm and prompt.asm
+	     to use getenv instead.
+
+Jul 15 98    [dmt] Changed getenv (shellutil.asm) to use  ReadVariableGS
+	     instead of Read_Variable to get value. getenv's input parameter
+	     is now a pointer to a GS/OS string (not a C-string), and it
+	     returns a pointer to a GS/OS result buffer with a terminating
+	     null byte added. This interface change affected calls to
+	     getenv in orca.asm and term.asm.
+
+Jul 14 98    [dmt] Changed expandvars (expand.asm) to use ReadVariableGS
+	     to get the value of an environment variable, allowing values
+	     over 256 characters in length.
+
+Jul 13 98    [dmt] Rewrote shellvar.asm to use newer shell calls to access
+	     environment variables, so that they can be > 256 characters.
+	     Combined set and setenv into the same routine, with different
+	     entry points.
+
+Jul 12 98    [dmt] In rehash command (hash.asm), read the PATH environment
+	     variable with ReadVariableGS instead of Read_Variable, allowing
+	     detection of true length and total length > 256 (PR # 9).
+
+Jul  9 98    [dmt] Removed the df command (from builtin.asm).
+	     Defined macro incad to increment a 4-byte address, checking
+	     for overflow; replaced instances of "inc ptr" with "incad ptr".
+
+Jul  8 98    [dmt] Changed column offset table to use a 1-word rather
+	     than 1-byte entry. This resolves PR#14 (hash wouldn't
+	     print beyond first 256 filenames).
+
+Jul  7 98    [dmt] Fixed defect in unalias (alias.asm) where the double
+	     quote portion of the scanner would look for a terminating
+	     single quote. This resolves PR#69.
+
+Jul  5 98    [dmt] Changed default order for copying files in $PATH dirs
+	     into executable list, so earlier paths files are found first.
+	     Added environment variable flag $OLDPATHMODE to make gsh
+	     behave in the old (backwards order) way when necessary.
+	     Discard duplicate filenames when hashing.
+	     Fix PR#73: directory in $PATH with escaped space (\ ) is
+	     not searched. Needed to remove the "\" before sending
+	     pathname to ExpandPathGS.
+
+Jun 29 98    [dmt] Changes up to this point checked-in to master archive.
+
 Jun 28 98    [dmt] Added InitVar routine to shellvar.asm to read values
 	     of all environment variables tracked in vardata.
 
@@ -25,7 +84,7 @@ Jun 21 98    [dmt] Added loop to execute(), in cmd.asm, to extract a single
 	     b) Odd things randomly happened when tab was the first
 		character of multiple consecutive lines.
 
-Jun 20 98    [dmt] Changed pointer arithmetic from dec or inc to acd or sbc
+Jun 20 98    [dmt] Changed pointer arithmetic from dec or inc to adc or sbc
 	     to allow for boundary condition in shell.asm.
 	     In ShellExec (cmd.asm), save status from call to execute and
 	     pass back to caller in Accumulator.

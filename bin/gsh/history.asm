@@ -6,12 +6,13 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: history.asm,v 1.3 1998/06/30 17:25:37 tribby Exp $
+* $Id: history.asm,v 1.4 1998/07/20 16:23:07 tribby Exp $
 *
 **************************************************************************
 *
 * HISTORY.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * Routines for dealing with history buffers.
 *
@@ -71,7 +72,8 @@ InsertHistory  START
 ptr2	equ	0
 ptr	equ	ptr2+4
 len	equ	ptr+4
-space	equ	len+2
+histvalptr	equ	len+2
+space	equ	histvalptr+4
 
 	subroutine (4:cmd),space
 
@@ -112,11 +114,33 @@ space	equ	len+2
 ;
 putdone	anop
 
-               Read_Variable RVParm
-               lda   buffer
-               and   #$FF
-               beq   alldone
-               Dec2Int (#buffer+1,@a,#0),@a
+;
+; Get value of $HISTORY environment variable
+;
+	ph4	#historyStr
+	jsl	getenv
+	sta	histvalptr	Save pointer to GS/OS result buffer.
+	stx	histvalptr+2
+	ora	histvalptr+2	If buffer wasn't allocated,
+	jeq	goback	 all done.
+;
+; Call Dec2Int to convert value of string into an integer
+;
+	pha		Reserve room on stack for result.
+	lda	histvalptr	Get pointer to $HISTORY value.
+	ldx	histvalptr+2
+	clc		Add 4 to address to skip
+	adc	#4	 over length words.
+	bcc	pushaddr
+	inx
+pushaddr	phx		Push address onto stack.
+	pha
+	ldy	#2
+	lda	[histvalptr],y
+	pha		Push length.
+	pea	0	Push signedFlag = 0 (unsigned)
+	Tool	$280b	Dec2Int.
+	pla		Get result.
                sta   size
                beq   alldone
 ;
@@ -165,10 +189,11 @@ dispose        lda	ptr2
                ldy   #histNext+2
                bra   dispose
 
-alldone        return
+alldone	pei	(histvalptr+2)
+	pei	(histvalptr)
+	jsl	nullfree
 
-RVParm         dc    a4'historyStr'
-               dc    a4'buffer'
+goback	return
 
 size           ds    2
 
@@ -339,6 +364,11 @@ SaveHistory    START
                using HistoryData
                using global
 
+svhisvalptr	equ	0
+space	equ	svhisvalptr+4
+
+               subroutine ,space
+
 	lda	historyFN
 	sta	DestroyParm+2
 	sta	CreateParm+2
@@ -347,14 +377,35 @@ SaveHistory    START
 	sta	DestroyParm+4
 	sta	CreateParm+4
 	sta	OpenParm+6
-
-               Read_Variable RVParm
-               lda   buffer
-               and   #$FF
-               jeq   done
-               Dec2Int (#buffer+1,@a,#0),size
-               lda   size
-               jeq   done
+;
+; Get value of $SAVEHISTORY environment variable
+;
+	ph4	#savehistStr
+	jsl	getenv
+	sta	svhisvalptr	Save pointer to GS/OS result buffer.
+	stx	svhisvalptr+2
+	ora	svhisvalptr+2	If buffer wasn't allocated,
+	jeq	goback	 all done.
+;
+; Call Dec2Int to convert value of string into an integer
+;
+	pha		Reserve room on stack for result.
+	lda	svhisvalptr	Get pointer to $HISTORY value.
+	ldx	svhisvalptr+2
+	clc		Add 4 to address to skip
+	adc	#4	 over length words.
+	bcc	pushaddr
+	inx
+pushaddr	phx		Push address onto stack.
+	pha
+	ldy	#2
+	lda	[svhisvalptr],y
+	pha		Push length.
+	pea	0	Push signedFlag = 0 (unsigned)
+	Tool	$280b	Dec2Int
+	pla		Get result.
+	sta	size
+	jeq	done
 ;
 ; Create and write history to file
 ;
@@ -400,10 +451,12 @@ next           dec   size
 
 doneclose      Close CloseParm
 
-done           rts
+done	pei	(svhisvalptr+2)	Free $SAVEHISTORY value buffer
+	pei	(svhisvalptr)
+	jsl	nullfree
 
-RVParm         dc    a4'savehistStr'
-               dc    a4'buffer'
+goback	return
+
 
 DestroyParm    dc    i2'1'
                dc    a4'historyFN'
@@ -587,15 +640,15 @@ count          ds    2
 ;
 ;=========================================================================
 
-HistoryData    DATA
+HistoryData	DATA
 
-lasthist       dc    i2'0'
-numhist        dc    i2'0'
-currenthist    ds    4
-historyptr     dc    i4'0'
-historyStr     str   'HISTORY'
-savehistStr    str   'SAVEHIST'
-histName       dc	c'/history',i1'0'
+lasthist	dc	i2'0'
+numhist	dc	i2'0'
+currenthist	ds	4
+historyptr	dc	i4'0'
+historyStr	gsstr	'HISTORY'
+savehistStr	gsstr	'SAVEHIST'
+histName	dc	c'/history',i1'0'
 historyFN	ds	4
 
                END

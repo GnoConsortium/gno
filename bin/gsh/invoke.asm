@@ -6,7 +6,7 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: invoke.asm,v 1.4 1998/06/30 17:25:40 tribby Exp $
+* $Id: invoke.asm,v 1.5 1998/07/20 16:23:07 tribby Exp $
 *
 **************************************************************************
 *
@@ -30,7 +30,7 @@
 *  invoke	subroutine (2:argc,4:argv,4:sfile,4:dfile,4:efile,2:app,
 *		2:eapp,2:bg,4:cmd,2:jobflag,2:pipein,2:pipeout,
 *		2:pipein2,2:pipeout2,4:pipesem)
-*	return 2:val
+*	return 2:rtnval
 *
 **************************************************************************
 
@@ -245,13 +245,13 @@ invoke      	START
 p	equ	0
 biflag	equ	p+4
 ptr	equ	biflag+2
-val            equ   ptr+4
-dir            equ   val+2
-space          equ   dir+4 
+rtnval	equ	ptr+4	Return pid, -1 (error), or 0 (no fork)
+dir	equ	rtnval+2
+space	equ	dir+4 
 
  subroutine (2:argc,4:argv,4:sfile,4:dfile,4:efile,2:app,2:eapp,2:bg,4:cmd,2:jobflag,2:pipein,2:pipeout,2:pipein2,2:pipeout2,4:pipesem),space
 
-	ld2	-1,val
+	ld2	-1,rtnval
 	stz	biflag	;not a built-in
 
                lda   argc	Get number of arguments.
@@ -296,7 +296,7 @@ checkfile	anop
 	cmp	#-1
 	jne	trybuiltin
 
-; Command is not listed in the built-in table
+; Command is not listed in the built-in table. See if it was hashed
 
                pei   (dir+2)
                pei   (dir)
@@ -456,7 +456,7 @@ doDir          lock	cdmutex
 	mv4   GRecPath,PRecPath
                SetPrefix PRec
 	unlock cdmutex
-	stz	val
+	stz	rtnval	Return value: no fork done.
 	jmp	free
 
 ;
@@ -556,7 +556,7 @@ noforkbuiltin	anop
 	pei	(argv+2)
 	pei	(argv)
 	jsl	builtin
-	stz	val
+	stz	rtnval	Return value: no fork done.
 	bra	done
 
 *
@@ -575,8 +575,10 @@ notfound	pei	(ptr+2)
 	ldx	#^err2	Print error message:
 	lda	#err2	 'Command not found.'
 	jsr	errputs
+
 	lda	pipein
 	beq	notfound0
+
 	ssignal _semaphore
 	sdelete _semaphore
 	mv4	pjoblist,p
@@ -603,7 +605,7 @@ skipfrarg	pei	(cmd+2)
 	pei	(cmd)
 	jsl	nullfree
 
-	return 2:val
+	return 2:rtnval
 ;
 ;
 ; stuff to do just before forking
@@ -636,7 +638,7 @@ prefork	lock	mutex
 ;
 ; stuff to do right after forking
 ;
-postfork	sta	val
+postfork	sta	rtnval
 	lda	pipein
 	beq	postfork2
                sta	CloseRef
@@ -645,7 +647,7 @@ postfork2	lda	pipeout
 	beq	postfork3
                sta	CloseRef
 	Close CloseParm
-postfork3	lda	val
+postfork3	lda	rtnval
 	cmp	#-1
 	bne	postfork4	
 	ldx	#^deadstr	Print error message:

@@ -6,12 +6,13 @@
 *   Jawaid Bazyar
 *   Tim Meekins
 *
-* $Id: sv.asm,v 1.3 1998/06/30 17:26:02 tribby Exp $
+* $Id: sv.asm,v 1.4 1998/07/20 16:23:10 tribby Exp $
 *
 **************************************************************************
 *
 * SV.ASM
 *   By Tim Meekins
+*   Modified by Dave Tribby for GNO 2.0.6
 *
 * String Vector routines.
 *
@@ -43,33 +44,31 @@ space	equ	ptr+4
 	lda	size
 	inc	a	;for size and count
 	inc	a	;at least one null entry
-	asl	a
+	asl	a	Multiply by 4 (bytes/entry).
 	asl	a
 	pea	0
 	pha
-	jsl	~NEW
-	sta	ptr
-	stx	ptr+2
+	jsl	~NEW	Allocate the memory
+	sta	ptr	 and save address in
+	stx	ptr+2	  direct page variable.
 
-	ldy	#2
-	lda	size
-	sta	[ptr],y
-	lda	#0
+	ldy	#2	Store number of entries
+	lda	size	 as the value of the
+	sta	[ptr],y	  first entry's high byte
+	lda	#0	   and zero as the low byte.
 	sta	[ptr]
-	ldy	#4
 
-	ldx	size
+	ldy	#4	Set Y to index to 2nd entry.
+	ldx	size	X = num of entries following.
 
-init	sta	[ptr],y
-	iny
-	iny
+init	sta	[ptr],y	Set all entries
+	iny2		 to 0x00000000.
 	sta	[ptr],y
-	iny
-	iny
+	iny2
 	dex
 	bpl	init	;not bne so that extra null at end
 
-	add4	ptr,#4,ptr
+	add4	ptr,#4,ptr	Set ptr to point at second entry.
 
 	return 4:ptr
 
@@ -89,52 +88,54 @@ space	equ	base+4
 
 	subroutine (4:vect,4:string,2:allocflag),space
 
-	sub4	vect,#4,base
+	sub4	vect,#4,base	base points to entry # 0.
 
 	ldy	#2
-	lda	[base],y
-	cmp	[base]
-	beq	exit	;ack, the vector is full!
+	lda	[base],y	If number of entries in table
+	cmp	[base]	 == number in use,
+	beq	exit	  the vector is full!
 ;
 ; 1 = allocate memory, 0 = use string as is...
 ;
-	lda	allocflag
+	lda	allocflag	If "allocate memory" flag is set,
 	beq	asis
 	
-	pei	(string+2)
-	pei	(string)
+	pei	(string+2)		Determine length of
+	pei	(string)		 new string.
 	jsr	cstrlen
 	inc	a
 	pea	0
 	pha
-	jsl	~NEW
-	sta	p
+	jsl	~NEW		Allocate memory for it.
+	sta	p                          Store address in p/p+1.
 	stx	p+2
 
-	pei	(string+2)
-	pei	(string)
+	pei	(string+2)		Copy the string into
+	pei	(string)		 the new memory.
 	phx
 	pha
 	jsr	copycstr
-               bra	doit
+               bra	doit	else
 
-asis	mv4	string,p
+asis	mv4	string,p		Just copy address to p/p+1.
 
+;
+; p contains address of string to be added to the vector.
+;
 doit	lda	[base]
-	tax
+	tax		X = number of entries in use.
 	asl	a
 	asl	a
-	tay
-	lda	p
+	tay		Y = offset to next avail entry.
+	lda	p	Set entry to address of added string.
 	sta	[vect],y
-	iny
-	iny
+	iny2
 	lda	p+2
 	sta	[vect],y
 
 	txa	
 	inc	a
-	sta	[base]
+	sta	[base]	Bump the number of entries in use.
 
 exit	return
 
@@ -153,27 +154,27 @@ space	equ	p+4
 
 	subroutine (4:vect),space
 
-	sub4	vect,#4,p
+	sub4	vect,#4,p	p points to head of vector
 
-loop	lda	[p]
-	beq	done
+	lda	[p]	Get number of entries in use.
+	beq	done	Done if zero.
+
+loop	asl	a
 	asl	a
-	asl	a
-	tay
+	tay		Y points to last used entry.
 	lda	[vect],y
 	tax
-	iny
-	iny
+	iny2
 	lda	[vect],y
 	pha
 	phx
-	jsl	nullfree
+	jsl	nullfree	Free memory used by this entry.
 	lda	[p]
 	dec	a
-	sta	[p]
-	bra	loop
+	sta	[p]	Number used = number used - 1.
+	bne	loop	If more to do, stay in loop.
 
-done	pei	(p+2)
+done	pei	(p+2)	Free the vector itself.
 	pei	(p)
 	jsl	nullfree
 
@@ -197,35 +198,32 @@ space	equ	maxlen+2
 
 	subroutine (4:sv),space
 	
-	sub4	sv,#4,base
+	sub4	sv,#4,base	base = ptr to entry 0.
 ;
 ; Find the maximum string length
 ;
 	lda	#1
 	sta	maxlen
 
-	ldy	#0
-	lda	#0
+	lda	#0	Keep track of entry number in Acc.
 lenloop	pha
+	asl	a
+	asl	a
+	tay		Y = offset to entry number.
 	lda	[sv],y
 	tax
-	iny
-	iny
+	iny2
 	lda	[sv],y
-	iny
-	iny
-	phy
 	pha
 	phx
-	jsr	cstrlen
-	cmp	maxlen
+	jsr	cstrlen	Get length of entry's string.
+	cmp	maxlen	If > maxlen,
 	bcc	nextlen
-	sta	maxlen
-nextlen	ply
-	pla
-	inc	a
-	cmp	[base]
-	bcc	lenloop
+	sta	maxlen	  set maxlen to this length.
+nextlen	pla
+	inc	a	Bump entry number.
+	cmp	[base]	If not done,
+	bcc	lenloop	 stay in loop.
 ;
 ; add one for a space
 ;
@@ -259,6 +257,7 @@ okcol	stx	numcol
 	beq	foocol
 	inc	numrow
 foocol	anop
+
 ;
 ; find the index for each column...
 ;                                  
@@ -266,22 +265,20 @@ foocol	anop
 	tax
 	clc
 mkidxloop	sta	offtbl,x
-	inx
+	inx2
 	adc	numrow
 	cmp	[base]
 	bcc	mkidxloop
 ;
 ; well....I think we can print now (yay!)
 ;
-	ldx	#0
+	asl	numcol	Double numcol since it's compared
+	ldx	#0	 against X to end the loop.
 printloop	lda	offtbl,x
-	and	#$FF
 	cmp	[base]
 	bcs	nextprint0
 	inc	a
-	short	a
 	sta	offtbl,x
-	long	a
 	phx
 	dec	a
 	asl	a
@@ -289,8 +286,7 @@ printloop	lda	offtbl,x
 	tay
 	lda	[sv],y
 	tax
-	iny
-	iny
+	iny2
 	lda	[sv],y
 	pha
 	phx
@@ -307,7 +303,7 @@ tabit	cmp	maxlen
 	inc	a
 	bra	tabit
 nextprint	plx
-	inx
+	inx2
 	cpx	numcol
 	bcc	printloop
 nextprint0	jsr	newline
@@ -317,7 +313,10 @@ nextprint0	jsr	newline
 
 doneprint	return
 
-offtbl	ds	7
+;
+; Offset table: one entry for each column
+;
+offtbl	ds	14
 
 	END
 
@@ -375,8 +374,7 @@ space	equ	idx1+2
 	tay
 	lda	[sv],y
 	sta	ptr1
-	iny
-	iny
+	iny2
 	lda	[sv],y
 	sta	ptr1+2
 	add2	left,right,@a
@@ -388,8 +386,7 @@ space	equ	idx1+2
 	sta	ptr2
 	lda	ptr1
 	sta	[sv],y
-	iny
-	iny
+	iny2
 	lda	[sv],y
 	sta	ptr2+2
 	lda	ptr1+2
@@ -397,8 +394,7 @@ space	equ	idx1+2
 	ldy	idx1
 	lda	ptr2
 	sta	[sv],y
-	iny
-	iny
+	iny2
 	lda	ptr2+2
 	sta	[sv],y
 ;
@@ -412,8 +408,7 @@ space	equ	idx1+2
 	tay	
 	lda	[sv],y
 	sta	vleft
-	iny
-	iny
+	iny2
 	lda	[sv],y
 	sta	vleft+2
 ;
@@ -435,8 +430,7 @@ okloop	anop
 	tay
 	lda	[sv],y
 	tax
-	iny
-	iny
+	iny2
 	lda	[sv],y
 	pha
 	phx
@@ -455,8 +449,7 @@ okloop	anop
 	tay
 	lda	[sv],y
 	sta	ptr1
-	iny
-	iny
+	iny2
 	lda	[sv],y
 	sta	ptr1+2
 	lda	i
@@ -467,8 +460,7 @@ okloop	anop
 	sta	ptr2
 	lda	ptr1
 	sta	[sv],y
-	iny
-	iny
+	iny2
 	lda	[sv],y
 	sta	ptr2+2
 	lda	ptr1+2
@@ -476,8 +468,7 @@ okloop	anop
 	ldy	idx1
 	lda	ptr2
 	sta	[sv],y
-	iny
-	iny
+	iny2
 	lda	ptr2+2
 	sta	[sv],y
 
@@ -493,8 +484,7 @@ endloop	lda	left
 	tay
 	lda	[sv],y
 	sta	ptr1
-	iny
-	iny
+	iny2
 	lda	[sv],y
 	sta	ptr1+2
 	lda	last
@@ -505,8 +495,7 @@ endloop	lda	left
 	sta	ptr2
 	lda	ptr1
 	sta	[sv],y
-	iny
-	iny
+	iny2
 	lda	[sv],y
 	sta	ptr2+2
 	lda	ptr1+2
@@ -514,8 +503,7 @@ endloop	lda	left
 	ldy	idx1
 	lda	ptr2
 	sta	[sv],y
-	iny
-	iny
+	iny2
 	lda	ptr2+2
 	sta	[sv],y
 ;
