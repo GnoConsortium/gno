@@ -1,5 +1,7 @@
 /*
  * Resources for version and comment
+ *
+ * $Id: tail.rez,v 1.2 1997/09/26 06:23:30 gdr Exp $
  */
 #define PROG "tail"
 #define DESC "Print the last part of a file."

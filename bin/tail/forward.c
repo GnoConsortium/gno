@@ -42,6 +42,8 @@
  * Changes not related to compiler are replaced using #ifndef __GNO__
  *
  * Added prototyped headers, surrounded by #ifndef __STDC__
+ *
+ * $Id: forward.c,v 1.2 1997/09/26 06:23:29 gdr Exp $
  */
 
 #ifndef __GNO__ /* Don't need what strings for GNO */

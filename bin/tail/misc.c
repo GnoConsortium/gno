@@ -40,6 +40,8 @@
  * Constructs unacceptable to compiler are replaced using #ifndef __ORCAC__
  *
  * Added prototyped headers, surrounded by #ifndef __STDC__
+ *
+ * $Id: misc.c,v 1.2 1997/09/26 06:23:29 gdr Exp $
  */
 
 

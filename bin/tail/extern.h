@@ -31,6 +31,8 @@
  * SUCH DAMAGE.
  *
  *	@(#)extern.h	8.1 (Berkeley) 6/6/93
+ *
+ * $Id: extern.h,v 1.2 1997/09/26 06:23:30 gdr Exp $
  */
 
 #define	WR(p, size) \
