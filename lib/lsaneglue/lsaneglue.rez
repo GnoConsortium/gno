@@ -1,0 +1,30 @@
+/*
+ * Resources for version and comment
+ * 
+ * $Id: lsaneglue.rez,v 1.1 1998/02/08 03:16:54 gdr-ftp Exp $
+ */
+
+#define LIB	"lsaneglue for GNO"
+#define SOENKE	"S" $"9A" "nke Behrens"
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 0, 0,	/* Version */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	LIB,
+	SOENKE
+};
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	LIB "\n"
+        SOENKE
+};

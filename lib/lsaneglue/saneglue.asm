@@ -69,7 +69,7 @@
 *
 
 dummy	start
-	copy 13:ainclude:e16.sane ; Apple-supplied SANE EQUs
+	copy :lang:orca:libraries:ainclude:e16.sane ; Apple-supplied SANE EQUs
 	end
 
 ****************************************************************

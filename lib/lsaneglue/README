@@ -14,7 +14,7 @@ Installation
 ============
 
 In GNO/ME, run "dmake install".
-This will copy a changed sane.h to /lang/orca/include and the library
+This will copy a changed sane.h to /usr/include and the library
 lsaneglue to 13.
 If, on your system, includes are kept in a different directory (say
 13/orcacdefs), either copy the files manually or edit the file

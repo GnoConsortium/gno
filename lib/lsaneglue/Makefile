@@ -8,12 +8,17 @@
 
 .INCLUDE .IGNORE: ../../paths.mk
 
-LIBDIR = 13
+LIBDIR = /lib
 # Change INCDIR to 13/orcacdefs if you are using the "old-style"
-# path naming convention
-# Or set to /lang/orca/include if you wish to completely replace
-# ORCA/C's sane.h.
+# path naming convention.
+# Or set to /lang/orca/libraries/orcacdefs if you wish to completely
+# replace ORCA/C's sane.h.
 INCDIR = /usr/include
+
+# This is the directory containing the Apple and ByteWorks macro include
+# file subdirectories.  It is critical that ':' be used as the path
+# delimiter.
+IDIR	= :lang:orca:libraries
 
 # You should not have to modify anything beyond this point
 
@@ -30,35 +35,34 @@ findfpe: findfpe.o findfpcp.o
 	occ -o findfpe findfpe.o findfpcp.o
 
 saneglue.mac: saneglue.asm saneglue.macro
-	macgen saneglue.asm saneglue.mac saneglue.mac saneglue.macro \
-	13:ainclude:m16.sane 13:orcainclude:m16.orca
+	macgen -P saneglue.asm saneglue.mac saneglue.macro \
+	$(IDIR):ainclude:m16.sane $(IDIR):orcainclude:m16.orca
 
 findfpcp.mac: findfpcp.asm
-	macgen findfpcp.asm findfpcp.mac findfpcp.mac \
-	13:orcainclude:m16.orca
+	macgen -P findfpcp.asm findfpcp.mac \
+	$(IDIR):orcainclude:m16.orca
 
-$(LIB): saneglue.o findfpcp.o
+$(LIB): saneglue.o findfpcp.o $(LIB).r
 	$(RM) $(LIB)
-	makelib $(LIB) +saneglue.o +findfpcp.o
-	copyfork $(LIB).r $(LIB)
+	makelib -P $(LIB) +saneglue.o +findfpcp.o
+	catrez -d $@ $(LIB).r
 
 install:
-	cp -f sane.h $(INCDIR)
-	cp -f $(LIB) $(LIBDIR)
+	install -d $(INCDIR) $(LIBDIR)
+	install sane.h $(INCDIR)
+	install $(LIB) $(LIBDIR)
 
 MI_LIBDIR	= $(RELEASE_DIR)/lib
 MI_INCDIR	= $(RELEASE_DIR)/usr/include
 MI_MANDIR	= $(RELEASE_DIR)/usr/man/man3
 MI_INSTALL	= $(RELEASE_DIR)/install
 
-makeinstall: $(LIB) sane.h saneglue.3 mkso.data
-	$(INSTALL) -d $(MI_LIBDIR)
-	$(INSTALL) -d $(MI_INCDIR)
-	$(INSTALL) -d $(MI_MANDIR)
-	$(INSTALL) $(LIB) $(MI_LIBDIR)
-	$(INSTALL) sane.h $(MI_INCDIR)
-	$(INSTALL) saneglue.3 $(MI_MANDIR)
-	$(INSTALL) mkso.data $(MI_INSTALL)/mkso.lsaneglue
+release: $(LIB) sane.h saneglue.3 mkso.data
+	install -d $(MI_LIBDIR) $(MI_INCDIR) $(MI_MANDIR) $(MI_INSTALL)
+	install $(LIB) $(MI_LIBDIR)
+	install sane.h $(MI_INCDIR)
+	install saneglue.3 $(MI_MANDIR)
+	install mkso.data $(MI_INSTALL)/mkso.lsaneglue
 
 findfpcp.o:: findfpcp.mac
 saneglue.o:: saneglue.mac
