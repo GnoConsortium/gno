@@ -2,7 +2,7 @@
  * exec(2) library calls.  Written as part of lenviron by Devin Reade
  * for GNO v2.0.3.  Incorporated into libc as of GNO v2.0.6.
  *
- * $Id: exec.c,v 1.1 1997/02/28 05:12:50 gdr Exp $
+ * $Id: exec.c,v 1.2 1997/09/21 16:17:20 gdr Exp $
  *
  * This file is formatted with tabs every 3 columns.  The remainder of
  * the comments in this section are from the lenviron v1.1.3 implementation.
@@ -37,17 +37,12 @@
 segment "libc_sys__";
 #endif
 
-#pragma debug 0
-#pragma memorymodel 0
-
 /*
- * Use bits 0, 1, 2, 6 (== decimal 71) for optimization.  In Orca/C v2.1.0,
- * bits 4 and 5 are still reported to be buggy.
+ * Use bits 1, 2, 6 (== decimal 71) for optimization.  In Orca/C v2.1.0,
+ * bits 0, 4 and 5 are still reported to be buggy.
  *
- * Around variadic routines, we also add in optimization bit 3 (== 79).
+ * Around variadic routines, we also add in optimization bit 3 (== 78).
  */
-
-/* pragma optimize 71 */
 
 #include <sys/types.h>
 #include <types.h>
@@ -511,8 +506,7 @@ execve (const char *path, char * const *argv, char * const *envp) {
 }   
 
 /* no stack repair code on variadic function definitions */
-/* pragma optimize 79 */
-#pragma optimize 8
+#pragma optimize 78
 #pragma debug 0
 
 int
