@@ -1,7 +1,7 @@
 *******
 * soon
 *
-* $Id: TO.DO,v 1.3 1997/09/21 22:46:04 gdr Exp $
+* $Id: TO.DO,v 1.4 1997/09/29 05:29:46 gdr Exp $
 *
 *******
 
@@ -132,22 +132,3 @@ man(1) implementation: create a database in the user's home directory
 	modification date of the respective directories and generate a
 	warning if the db is out-of-date.
 
-The following have their macro version in ctype.h (except isblank()),
-but should have library versions as well:
-
-isalnum
-isalpha
-isascii
-isblank
-iscntrl
-iscsym
-iscsymf
-isdigit
-isgraph
-islower
-isodigit
-isprint
-ispunct
-isspace
-isupper
-isxdigit
