@@ -2,11 +2,9 @@
 #
 # Modified for GNO (Apple IIgs) and dmake(1) by Steve Reeves, January 1998
 #
-# $Id: Makefile,v 1.1 1998/02/17 02:50:27 gdr-ftp Exp $
+# $Id: Makefile,v 1.2 1998/02/19 02:24:35 gdr-ftp Exp $
 
 PROG=	uname
-
-BINDIR=	/usr/bin
 
 DEFINES+=	-DNOID
 
