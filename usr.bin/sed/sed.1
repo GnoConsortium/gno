@@ -303,27 +303,17 @@ to the standard output.
 Write the pattern space to the standard output in a visually unambiguous
 form.
 This form is as follows:
-.HP
-.IR backslash
-.BR \\\\\\\\
-.HP
-.IR alert
-.BR \\\\a
-.HP
-.IR form-feed
-.BR \\\\f
-.HP
-.IR newline
-.BR \\\\n
-.HP
-.IR carriage-return
-.BR \\\\r
-.HP
-.IR tab
-.BR \\\\t
-.HP
-.IR "vertical tab"
-.BR \\\\v
+.RS
+.nf
+\fIbackslash\fR\0\0\0\0\0\0\0\fB\\\&\\\fR
+\fIalert\fR\0\0\0\0\0\0\0\0\0\0\0\fB\\\&a\fR
+\fIform-feed\fR\0\0\0\0\0\0\0\fB\\\&f\fR
+\fInewline\fR\0\0\0\0\0\0\0\0\0\fB\\\&n\fR
+\fIcarriage-return\fR\0\fB\\\&r\fR
+\fItab\fR\0\0\0\0\0\0\0\0\0\0\0\0\0\fB\\\&t\fR
+\fIvertical\0tab\fR\0\0\0\0\fB\\\&v\fR
+.fi
+.RE
 .PP
 Nonprintable characters are written as three-digit octal numbers (with a
 preceding backslash) for each byte in the character (most significant byte
