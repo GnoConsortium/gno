@@ -6,7 +6,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: const.mk,v 1.6 1998/02/09 08:43:58 taubert Exp $
+# $Id: const.mk,v 1.7 1999/03/19 05:53:33 gdr-ftp Exp $
 #
 # It is critical that 13/orcacdefs/defaults.h is set up correctly,
 # including #defines for __appleiigs__ and __GNO__.  For the purpose
@@ -19,8 +19,6 @@ INCLUDES +=
 ASFLAGS	 += -r
 CFLAGS   += -r -w $(DEFINES) $(INCLUDES)
 LDFLAGS	 +=
-INSTALL   = /usr/bin/install
-CATREZ	  = /usr/bin/catrez
 
 # Where libraries get installed.   Most libraries should go into the
 # USRLIBDIR; only "special" libraries belong in LIBDIR

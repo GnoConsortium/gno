@@ -2,7 +2,7 @@
 # Compilation constants for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binconst.mk,v 1.11 1999/01/07 07:28:14 gdr-ftp Exp $
+# $Id: binconst.mk,v 1.12 1999/03/19 05:53:31 gdr-ftp Exp $
 #
 # Devin Reade, 1997.
 #
@@ -15,16 +15,8 @@ LDLIBS	+= $(LDADD:s,-l,-l/usr/lib/lib,)
 # WARNING:  You *must* use descu v1.0.4 or later for these builds.
 DESCU		= /usr/sbin/descu
 COPYFORK	= /usr/orca/bin/copyfork
-CATREZ		= /usr/bin/catrez
-INSTALL		= /usr/bin/install
 MACGEN		= 17/macgen
 MACGEN_FLAGS	+= -P
-
-# Temporary directory needed in some weird cases.
-.IMPORT .IGNORE: TMPDIR
-.IF $(TMPDIR) == $(NULL)
-TMPDIR		= 14
-.END
 
 # $(DESC_SRC) is the created source file for the describe(1) database.
 # DESC_DIR	= $(RELEASE_DIR)/usr/lib

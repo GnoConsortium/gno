@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.2 1999/02/08 05:53:37 gdr-ftp Exp $
+# $Id: Makefile,v 1.3 1999/03/19 05:53:33 gdr-ftp Exp $
 #
 
 .INCLUDE: /src/gno/paths.mk
@@ -35,12 +35,6 @@ install:
 
 # Implicit rule to handle Rez source on case sensitive Appleshare servers
 .IF $(APPLESHARE_CASE_SENSITIVE) != $(NULL)
-
-.IMPORT .IGNORE: TMPDIR
-.IF $(TMPDIR) == $(NULL)
-TMPDIR		= 14
-.END
-
 %.r : %.rez
 	$(INSTALL) $< $(TMPDIR)/$<
 	$(REZ) -o $@ -c $(REZFLAGS) $(TMPDIR)/$<

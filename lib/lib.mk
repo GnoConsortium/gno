@@ -1,5 +1,5 @@
 #
-#	$Id: lib.mk,v 1.7 1998/12/22 16:11:42 gdr-ftp Exp $
+#	$Id: lib.mk,v 1.8 1999/03/19 05:53:33 gdr-ftp Exp $
 #
 
 .INCLUDE:	/src/gno/paths.mk
@@ -57,10 +57,6 @@ force: $(OBJS)
 	$(CC) -o $(OBJ_DIR)$*.o $(CFLAGS) -c $<
 
 # Implicit rule to handle Rez source on case sensitive Appleshare servers
-.IMPORT .IGNORE: TMPDIR
-.IF $(TMPDIR) == $(NULL)
-TMPDIR		= 14
-.END
 .IF $(APPLESHARE_CASE_SENSITIVE) != $(NULL)
 %.r : %.rez
 	$(INSTALL) $< $(TMPDIR)/$<

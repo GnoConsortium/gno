@@ -1,5 +1,5 @@
 #
-# $Id: Makefile,v 1.1 1998/12/22 15:57:32 gdr-ftp Exp $
+# $Id: Makefile,v 1.2 1999/03/19 05:53:32 gdr-ftp Exp $
 #
 
 .INCLUDE:	/src/gno/paths.mk
@@ -8,8 +8,6 @@
 # In this directory, we're currently only copying some files verbatim,
 # which makes our targets very simple.
 #
-
-INSTALL		= /usr/bin/install
 
 build:
 	@/bin/true

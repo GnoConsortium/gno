@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: paths.mk,v 1.10 1998/12/22 16:13:41 gdr-ftp Exp $
+# $Id: paths.mk,v 1.11 1999/03/19 05:53:31 gdr-ftp Exp $
 #
 
 # This one isn't really a path, but it affects the creation of path
@@ -73,3 +73,13 @@ ORCA_DIST	= /lang/orca
 # to avoid backward references during linking.
 
 ORCA_SRC	= /src/lib/orcalibs/Source
+
+# Paths to various programs
+CATREZ		= /usr/bin/catrez
+INSTALL		= /usr/bin/install
+
+# Temporary directory needed in some weird cases.
+.IMPORT .IGNORE: TMPDIR
+.IF $(TMPDIR) == $(NULL)
+TMPDIR		= 14
+.END
