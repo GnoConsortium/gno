@@ -87,7 +87,7 @@ extern char	*__progname;		/* Program name, from crt0. */
 #ifdef USE_PORTS
 #include	<sys/ports.h>
 static int	openPort(void);
-static int	sendPort(int port, const void *buf, int len);
+static int	sendPort(int port, const void *buf, int len, int insertTime);
 static void	closePort(int port);
 #endif
 
@@ -124,40 +124,14 @@ static ssize_t writehook(
 	return 0;
 }
 
-#ifdef __ORCAC__
-#pragma optimize 78
-#pragma debug 0
-#endif
-
 /*
  * syslog, vsyslog --
  *	print message on log file; output is intended for syslogd(8).
+ * syslogmt, vsyslogmt --
+ *	These are GNO-specific multithreading safe versions of the
+ *	above two routines.  Note that the allowed format specifier
+ *	set is more limited.  See the man page for details.
  */
-void
-#if __STDC__
-syslog(long pri, const char *fmt, ...)
-#else
-syslog(pri, fmt, va_alist)
-	int pri;
-	char *fmt;
-	va_dcl
-#endif
-{
-	va_list ap;
-
-#if __STDC__
-	va_start(ap, fmt);
-#else
-	va_start(ap);
-#endif
-	vsyslog(pri, fmt, ap);
-	va_end(ap);
-}
-
-#ifdef __ORCAC__
-#pragma optimize 0
-#pragma debug 25
-#endif
 
 void
 vsyslog(long pri, const char *fmt, va_list ap)
@@ -281,7 +255,7 @@ vsyslog(long pri, const char *fmt, va_list ap)
 	if (!connected)
 		openlog(LogTag, LogStat | LOG_NDELAY, 0);
 #ifdef USE_PORTS
-	if (sendPort(LogFile, tbuf, cnt) >= 0)
+	if (sendPort(LogFile, tbuf, cnt, 0) >= 0)
 		return;
 #else
 	if (send(LogFile, tbuf, cnt, 0) >= 0)
@@ -327,7 +301,222 @@ vsyslog(long pri, const char *fmt, va_list ap)
 	}
 }
 
+#ifdef __GNO__
+/*
+ * Copy a maximum of <maxcnt> characters from <src> into the buffer
+ * pointed to by mt_bufptr.  Decrement the variable mt_bytesLeft by
+ * the number of characters copied.  The copy will stop either when
+ * <maxcnt> characters have been copied, a NULL-terminator is found
+ * in <src>, or when mt_bytesLeft reaches zero.
+ *
+ * mt_bufptr is left pointing at the (inserted) NULL-terminator at
+ * the end of the copied string.
+ *
+ * Implicitly uses the variables mt_bufptr, mt_bytesLeft, p, and i,
+ * which are local to vsyslogmt().
+ */
+#define STRNCPY2BUF(src,maxcnt) \
+{ \
+	i = maxcnt; \
+	p = (src); \
+	while ((i>0) && (mt_bytesLeft > 0) && (*p != '\0')) { \
+		*mt_bufptr++ = *p++; \
+		i--; \
+		mt_bytesLeft--; \
+	} \
+	*mt_bufptr = '\0'; \
+}
+
+/*
+ * STRCPY2BUF is to STRNCPY2BUF like strcpy() is to strncpy().
+ * Does not use the local variable 'i'.
+ */
+#define STRCPY2BUF(src) \
+{ \
+	p = (src); \
+	while ((mt_bytesLeft > 0) && (*p != '\0')) { \
+		*mt_bufptr++ = *p++; \
+		mt_bytesLeft--; \
+	} \
+	*mt_bufptr = '\0'; \
+}
+
+void
+vsyslogmt(long pri, const char *fmt, va_list ap)
+{
+#define _SYSLOG_BUFFERLEN_MT	128
+	char mt_buffer[_SYSLOG_BUFFERLEN_MT];
+	char *mt_bufptr;
+	int mt_bytesLeft;
+	int i;
+	char *local_LogTag;
+	int local_LogFile;
+	char *p;
+	char *stdp;
+	time_t now;
+	int fd, saved_errno;
+#define MT_BYTES_USED	(_SYSLOG_BUFFERLEN_MT - mt_bytesLeft)
+
+	/* Check for invalid bits. */
+	if (pri & ~(LOG_PRIMASK|LOG_FACMASK)) {
+		syslogmt(INTERNALLOG,
+		    "syslog: unknown facility/priority: %x", pri);
+		pri &= LOG_PRIMASK|LOG_FACMASK;
+	}
+
+	/* Check priority against setlogmask values. */
+	if (!(LOG_MASK(LOG_PRI(pri)) & LogMask))
+		return;
+
+	saved_errno = errno;
+
+	/* Set default facility if none specified. */
+	if ((pri & LOG_FACMASK) == 0)
+		pri |= LogFacility;
+
+	/* Build the message. */
+	mt_bufptr = mt_buffer;
+	mt_bytesLeft = _SYSLOG_BUFFERLEN_MT;	/* not off-by-one */
+	time(&now);
+	p = sprintmt(mt_bufptr, mt_bytesLeft, "<%ld>", pri);
+	mt_bytesLeft -= (p - mt_bufptr);
+	mt_bufptr = p;
+#if 0
+/* %%% ctime is not thread safe %%% */
+	STRNCPY2BUF(ctime(&now)+4, ((mt_bytesLeft < 15) ? mt_bytesLeft : 15));
+	STRCPY2BUF(" ");
+#endif
+
+	/* mark the beginning of the string for stderr, if necessary */
+	if (LogStat & LOG_PERROR) {
+		stdp = mt_bufptr;
+	}
+
+	/*
+	 * Unlike this section of code in vsyslog(), we cannot set
+	 * LogTag if it is NULL.  In fact, we can't even call __prognameGS(),
+	 * because that routine is not thread safe.  We _can_ reference
+	 * the string __progname, but it may not be initialized to anything
+	 * but "(unknown)" at this point.
+	 *
+	 * Note that if someone called openlog() in a non-multithreaded
+	 * portion of their code prior to this point, that LogTag will
+	 * be suitably initialized, anyway.
+	 */
+	local_LogTag = LogTag;
+	if (local_LogTag == NULL) {
+		local_LogTag = __progname;
+	}
+	if (local_LogTag != NULL) {
+		STRCPY2BUF(local_LogTag);
+	}
+	if (LogStat & LOG_PID) {
+		p = sprintmt(mt_bufptr, mt_bytesLeft, "[%d]", getpid());
+		mt_bytesLeft -= (p - mt_bufptr);
+		mt_bufptr = p;
+	}
+	if (local_LogTag != NULL) {
+		STRCPY2BUF(": ");
+	}
+
+	/*
+	 * Unlike the code in vsyslog(), we don't bother to check for "%m"
+	 * here, because vsprintmt will expand that one for us.
+	 *
+	 * We do, however, have to restore errno, since that may have been
+	 * corrupted in our code above.
+	 */
+	errno = saved_errno;
+
+	/* 
+	 * expand the user's format string 
+	 */
+	p = vsprintmt(mt_bufptr, mt_bytesLeft, fmt, ap);
+	mt_bytesLeft -= (p - mt_bufptr);
+	mt_bufptr = p;
+
+	/* Output to stderr if requested. */
+	if (LogStat & LOG_PERROR) {
+#ifdef BROKEN_WRITEV
+		write(STDERR_FILENO, stdp, MT_BYTES_USED - (stdp - mt_buffer));
+		write(STDERR_FILENO, "\r", 1);
+#else
+		struct iovec iov[2];
+		register struct iovec *v = iov;
+
+		v->iov_base = stdp;
+		v->iov_len = MT_BYTES_USED - (stdp - mt_buffer);
+		++v;
+#ifdef __appleiigs__
+		v->iov_base = "\r";
+#else
+		v->iov_base = "\n";
+#endif
+		v->iov_len = 1;
+		(void)writev(STDERR_FILENO, iov, 2);
+#endif	/* BROKEN_WRITEV */
+	}
+
+	/* Get connected, output the message to the local logger. */
+#ifdef USE_PORTS
+	local_LogFile = LogFile;
+	if (local_LogFile == -1) {	/* an openlog wasn't done? */
+		local_LogFile = openPort();
+	}
+	if (sendPort(local_LogFile, mt_buffer, MT_BYTES_USED, 1) >= 0) {
+		return;
+	}
+#else	/* not USE_PORTS -- no output if someone forgot to openlog() */
+	if (!connected)
+		openlog(LogTag, LogStat | LOG_NDELAY, 0);
+	if (send(LogFile, mt_buffer, MT_BYTES_USED, 0) >= 0)
+		return;
+#endif
+
+	/*
+	 * Output the message to the console; don't worry about blocking,
+	 * if console blocks everything will.  Make sure the error reported
+	 * is the one from the syslogd failure.
+	 */
+	 
+#ifdef __ORCAC__	/* watch for stack trashing */
+#define	OPEN(path, flags, mode) open(path, flags)
+#else
+#define OPEN(path, flags, mode) open(path, flags, mode)
+#endif
+	if (LogStat & LOG_CONS &&
+	    (fd = OPEN(_PATH_CONSOLE, O_WRONLY, 0)) >= 0) {
+#undef OPEN
+#ifdef BROKEN_WRITEV
+		p = strchr(mt_buffer, '>') + 1;
+		write(fd, p, MT_BYTES_USED - (p - mt_buffer));
+		write(fd, "\r", 1);
+#else
+		struct iovec iov[2];
+		register struct iovec *v = iov;
+
+		p = strchr(mt_buffer, '>') + 1;
+		v->iov_base = p;
+		v->iov_len = MT_BYTES_USED - (p - mt_buffer);
+		++v;
+#ifdef __appleiigs__
+		v->iov_base = "\r";
+		v->iov_len = 1;
+#else
+		v->iov_base = "\r\n";
+		v->iov_len = 2;
+#endif
+		(void)writev(fd, iov, 2);
+#endif	/* BROKEN_WRITEV */
+		(void)close(fd);
+	}
+}
+#endif /* __GNO__ */
+
+
+#ifndef USE_PORTS
 static struct sockaddr SyslogAddr;	/* AF_UNIX address of local logger */
+#endif
 
 void
 openlog(const char *ident, int logstat, long logfac)
@@ -400,41 +589,75 @@ openPort(void) {
 }
 
 static int
-sendPort(int port, const void *buf, int len) {
-	static SyslogDataBuffer_t data;
-	static pid_t pid = 0;
+sendPort(int port, const void *buf, int len, int insertTime) {
+	SyslogDataBuffer_t data;
 	long answer;
 	
 	if (port == -1) {
+		/* not a valid port; silent error */
 		return 0;
 	}
-	if (pid == 0) {
-		data.magic  = SYSLOG_MAGIC;
-		data.sender = pid = getpid();
-	}
-	if (len > MSG_BUF_LEN) {
-		len = MSG_BUF_LEN;
-	}
-	memcpy(data.msg_buffer, buf, len);
-	data.len = len;
-
+	data.sdb_magic    = _SYSLOG_MAGIC;
+	data.sdb_version  = _SYSLOG_STRUCT_VERSION;
+	data.sdb_buflen   = len+1;
+	data.sdb_msglen   = len;
+	data.sdb_busywait = 1;
+	data.sdb_needtime = insertTime;
+	data.sdb_buffer   = buf;
+	
 	/* send the data */
 	psend (port, (long) &data);
 
+#if 1
+	/* Wait for a reply.  We use a busy-wait here so that we can avoid
+	 * the following methods and their associated problems:
+	 *
+	 *	procreceive:	using it would preclude user code from using it
+	 *			since we might throw away their messages and
+	 *			vice versa.
+	 *	signals:	We don't have a special signal for this purpose,
+	 *			and it would be bad to either overload an
+	 *			already assigned signal, or to use up either
+	 *			SIGUSR1 or SIGUSR2.
+	 *	ports:		if the user fails to set up a port queue in
+	 *			the parent process, then we have no way to get
+	 *			the message out.  If they *do* set it up, then
+	 *			we could get *our* messages going to our
+	 *			siblings.
+	 *	ptys		We can't use these without a parent/child
+	 *			relationship between syslogd and every process
+	 *			that calls syslog(3).  Perhaps this is why
+	 *			Phil Vandry had initd/syslogd as part of the
+	 *			same executable, originally?
+	 *
+	 * As it turns out, a busy wait isn't _too_ bad because syslogd will
+	 * release our busy wait as soon as it has copied our buffer.  In
+	 * addition, syslogd has a port queue that is only one slot deep,
+	 * so if another process got to syslogd before us, we'll be blocked
+	 * on our send, anyway.
+	 *
+	 * We could optimize this busy wait by somehow forcing the kernel
+	 * to schedule us out.  We don't want to use sleep(3), because its
+	 * implementation relies on signals.
+	 */
+	 while (data.sdb_busywait);
+	 
+#else	/* 0 */
 	/* wait for a reply */
-	while((answer = procreceive()) != SYSLOG_MAGIC) {
+	while((answer = procreceive()) != _SYSLOG_MAGIC) {
 		/* try to write a message to the console */
 		int fd;
 		char *s;
 #define BAD_MAGIC ": bad magic from syslogd\r"
 		if ((fd = open(_PATH_CONSOLE, O_WRONLY)) >= 0) {
-			s = __prognameGS();
+			s = __progname;
 			write(fd, s, strlen(s));
 			write(fd, BAD_MAGIC, sizeof(BAD_MAGIC)-1);
 			close(fd);
 		}
 #undef BAD_MAGIC
 	}
+#endif	/* 0 */
 	return len;
 }
 
@@ -443,4 +666,43 @@ closePort(int port) {
 	return;
 }
 
+#endif	/* USE_PORTS */
+
+#ifdef __ORCAC__
+#pragma optimize 78
+#pragma debug 0
 #endif
+
+void
+#if __STDC__
+syslog(long pri, const char *fmt, ...)
+#else
+syslog(pri, fmt, va_alist)
+	int pri;
+	char *fmt;
+	va_dcl
+#endif
+{
+	va_list ap;
+
+#if __STDC__
+	va_start(ap, fmt);
+#else
+	va_start(ap);
+#endif
+	vsyslog(pri, fmt, ap);
+	va_end(ap);
+}
+
+#ifdef __GNO__
+void
+syslogmt(long pri, const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsyslogmt(pri, fmt, ap);
+	va_end(ap);
+}
+#endif	/* __GNO__ */
+
