@@ -1,8 +1,0 @@
-Name:    rmdir
-Version: 1.0 (28 Nov 94)
-Author:  Devin Reade.
-Contact: <gdr@myrias.ab.ca>
-Where:   /bin
-FTP:     cco.caltech.edu, grind.isca.uiowa.edu
-
-   Remove empty directories.
