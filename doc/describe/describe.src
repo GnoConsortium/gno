@@ -1,8 +1,8 @@
 #=============================================================================
 # List of shell applications for GNO/ME and ORCA/Shell
-# Last revision: Tue Jan 13 01:15:33 1998
+# Last revision: Sat Jan 17 21:29:17 1998
 #
-# $Id: describe.src,v 1.1 1998/01/14 05:10:07 gdr Exp $
+# $Id: describe.src,v 1.2 1998/01/17 21:30:28 gdr Exp $
 #=============================================================================
 #
 #     About this file
@@ -442,7 +442,7 @@ FTP:     -
 Shows the date and time (optionally, continuously).
 
 Name:    descc
-Version: 1.0.4
+Version: 1.0.5
 Shell:   ORCA/Shell, GNO/ME
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
@@ -462,7 +462,7 @@ FTP:     trenco.myrias.com, ground.isca.uiowa.edu
 Shell-based binscii decoder.
 
 Name:    describe
-Version: 1.0.4
+Version: 1.0.5
 Shell:   ORCA/Shell, GNO/ME
 Author:  James Brookes
 Contact: jamesb@ecst.csuchico.edu
@@ -475,7 +475,7 @@ contact, where the utility is, as well as where the utility can be FTPd
 from on the InterNet.
 
 Name:    descu
-Version: 1.0.4
+Version: 1.0.5
 Shell:   ORCA/Shell, GNO/ME
 Author:  Devin Reade
 Contact: gdr@myrias.ab.ca
