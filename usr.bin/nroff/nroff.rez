@@ -1,0 +1,18 @@
+/*
+ * $Id: nroff.rez,v 1.1 1997/03/14 06:22:29 gdr Exp $
+ */
+
+#include "Types.Rez"
+
+resource rVersion (0x1, purgeable3, nocrossbank) {
+
+	{ 1, 2, 0,	/* version 1.2.0 */
+	  release,	/* development|alpha|beta|final|release */
+          0		/* non-final release number */
+        },
+        verBritain,	/* close enough */
+        "nroff",
+        "Text Processing Typesetter\n"
+        "Devin Reade <gdr@myrias.com>\n"
+        "Canada"
+};

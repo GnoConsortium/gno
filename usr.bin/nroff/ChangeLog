@@ -1,0 +1,39 @@
+CHANGES
+-------
+
+2.0
+	- Maintenance of nroff has been taken over by Devin Reade,
+	  <gdr@myrias.com>
+	- Fixed a significant number of memory trashing bugs with the
+	  help of Insight.
+	- Optimized for speed, mainly by translating some functions
+	  into inline code via macros.
+	- Prototyped, indented and otherwise cleaned up code.  Made use
+	  of some GNO v2.0.6 libc routines to reduce source code size.
+	- Indented source.
+
+=== The remaining versions listed below were by Mike Horwath,		===
+=== <mfrankow@seq.hamline.edu> and Jawaid Bazyar <bazyar@hypermall.com>	===
+
+1.1p3.4
+	Well, guess what?  I caused a hell of an error in the last
+	version of this, and now it is fixed.  The problem stemmed
+	from a library error and has been fixed.  All thanks to Jawaid
+	for creating and fixing the error all by himself.  (no flame
+	to ya Jawaid...heh)
+
+1.1p3.3
+        Fixed the problem with nroffing the LESS manpage.  I don't
+	really know how the hell I fixed it, but that bug is now gone.
+	I also optimized the source to a great extent.  There is no real
+	speed increase in output, but the executable is MUCH smaller
+	than the original posted version.  Enjoy.
+
+4/21/92 jb
+	Fixed double-line problem when redirecting and piping the output
+	of nroff.  (It sticks \r's in the output text all over the place.
+	I simply filter them out in prchar.)
+
+[previous versions]
+        Well, first release.  The versions suck for now till I can
+	figure out a better way to do it.  It worked, but had bugs.

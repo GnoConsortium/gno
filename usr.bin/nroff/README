@@ -1,0 +1,38 @@
+nroff - Text Processing Typesetter
+----------------------------------
+
+	This is 'nroff 1.2' for GNO/ME 1.0.  This is fairly close to
+	the real Unix nroff, although there are still some things that
+	this one doesn't do that it should.
+
+	This software was ported by Mike Horwath and Jawaid Bazyar for
+	the GNO Multitasking Environment.  Various bug fixes were applied
+	by Devin Reade.
+
+Installation
+------------
+
+	Type 'dmake install' in this directory, or copy the following
+	files:
+
+		nroff		-->	/usr/bin/nroff
+		tmac.an		-->	/usr/lib/tmac/tmac.an
+		tmac.s		-->	/usr/lib/tmac/tmac.s
+		nroff.1		-->	/usr/man/man1/nroff.1
+		man.7		-->	/usr/man/man7/man.7
+		ms.7		-->	/usr/man/man7/ms.7
+
+	If you want to put the macro files somewhere other than in
+	/usr/lib/tmac, then set your TMACDIR environment variable to
+	point to the directory in which they reside.
+
+Compatibility
+-------------
+	This software works with any GNO-compatible shell (Orca suffices,
+	but pipes don't work very well under Orca, and according to
+	dozens of GNO users, GNO is "simply superior".)
+
+Bugs
+----
+	This program uses recursion, Not A Good Thing on the IIgs.
+	It really needs a rewrite.

@@ -1,0 +1,9 @@
+Name:    nroff
+Version: 1.2 (17 Mar 97)
+Shell:   ORCA/Shell, GNO/ME
+Author:  Various.  Maintained by Devin Reade.
+Contact: gdr@myrias.com
+Where:   /usr/bin
+FTP:     apple2.caltech.edu, ground.isca.uiowa.edu
+
+  Text Processing Typesetter
