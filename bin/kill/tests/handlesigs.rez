@@ -1,0 +1,30 @@
+/*
+ * Resources for version and comment
+ * $Id: handlesigs.rez,v 1.1 1998/02/08 23:47:14 tribby Exp $
+ */
+#define PROG "handlesigs"
+#define DESC "Report when signals are detected."
+
+#include "Types.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 0, 0,	/* Version 1.0.0 */
+	  development,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,	/* Country */
+	PROG,	/* Program name */
+        DESC " Not for release; used for GNO/ME testing."
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG " v1.0 (January 1998)\n"
+	"GNO utility: " DESC "\n"
+	"Written by Dave Tribby."
+};

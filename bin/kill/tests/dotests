@@ -1,0 +1,100 @@
+# Tests for kill command; invoked by command file "fulltests"
+#   Written by Dave Tribby (January 1998)
+#   $Id: dotests,v 1.1 1998/02/08 23:47:10 tribby Exp $
+
+# Location of the kill command to be tested
+set testcmd="../kill"
+
+# Record starting time
+echo -n "Testing command $testcmd beginning at"
+date
+
+set cmp="sigout.list"
+set dest="/tmp/$cmp"
+set cmdname="/tmp/testsigs"
+set testprog="./handlesigs"
+echo "Starting process ($testprog) that will handle signals"
+echo "### NOTE: The non-error tests cannot be run because gsh will not"
+echo "###       put the test program ($testprog) in the background."
+echo "###       The following steps do work if run manually..."
+echo "### $testprog $testcmd $cmdname > $dest & "
+echo "### sleep 10"
+### echo "Sending all legal signals to $testprog via script $cmdname"
+echo "### chtyp -l exec $cmdname"
+echo "### $cmdname"
+### echo "Checking results against control file $cmp (no differences expected)"
+echo "### cmp $cmp $dest"
+### echo "  Completion status = $status"
+echo "###  Completion status = cannot run test from gsh ###"
+echo "" 
+
+set cmp="signame.list"
+set dest="/tmp/$cmp"
+echo "Getting list of legal signal names"
+$testcmd -l > $dest
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="signames.list"
+set dest="/tmp/$cmp"
+echo "Getting list of legal signal names, one at a time"
+$testcmd -l 1 > $dest
+$testcmd -l 2 >> $dest
+$testcmd -l 3 >> $dest
+$testcmd -l 4 >> $dest
+$testcmd -l 5 >> $dest
+$testcmd -l 6 >> $dest
+$testcmd -l 7 >> $dest
+$testcmd -l 8 >> $dest
+$testcmd -l 9 >> $dest
+$testcmd -l 10 >> $dest
+$testcmd -l 11 >> $dest
+$testcmd -l 12 >> $dest
+$testcmd -l 13 >> $dest
+$testcmd -l 14 >> $dest
+$testcmd -l 15 >> $dest
+$testcmd -l 16 >> $dest
+$testcmd -l 17 >> $dest
+$testcmd -l 18 >> $dest
+$testcmd -l 19 >> $dest
+$testcmd -l 20 >> $dest
+$testcmd -l 21 >> $dest
+$testcmd -l 22 >> $dest
+$testcmd -l 23 >> $dest
+$testcmd -l 24 >> $dest
+$testcmd -l 25 >> $dest
+$testcmd -l 26 >> $dest
+$testcmd -l 27 >> $dest
+$testcmd -l 28 >> $dest
+$testcmd -l 29 >> $dest
+$testcmd -l 30 >> $dest
+$testcmd -l 31 >> $dest
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+
+echo "***** Error Messages *****"
+
+echo ""
+echo "Expected error: unknown signal (number)"
+$testcmd -500 123
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+echo "Expected error: unknown signal (number)"
+$testcmd -l 500
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+echo "Expected error: unknown signal (name)"
+$testcmd -bogus 123
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+echo "Expected error: illegal process id"
+$testcmd -1 bad_id
+echo "  Error completion status = $status (expected: 1)"

@@ -1,0 +1,2 @@
+hup int quit ill trap abrt emt fpe kill bus segv sys pipe alrm term urg
+stop tstp cont chld ttin ttou io xcpu xfsz vtalrm prof winch info usr1 usr2
