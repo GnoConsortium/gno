@@ -1,9 +1,7 @@
 /*
  * Resources for version and comment
- * 
- * $Id: lseg.rez,v 1.2 1997/09/26 06:36:01 gdr Exp $
+ * $Id: lseg.rez,v 1.3 1997/09/28 16:41:13 gdr Exp $
  */
-
 #define PROG "lseg"
 #define DESC "List segments of an Object Module Format file."
 
@@ -14,7 +12,7 @@
  */
 resource rVersion (1, purgeable3) {
 	{ 1, 1, 0,	/* Version 1.1.0 */
-	  beta,		/* development|alpha|beta|final|release */
+	  release,	/* development|alpha|beta|final|release */
 	  0 },		/* non-final release number */
 	verUS,	/* Country */
 	PROG,	/* Program name */

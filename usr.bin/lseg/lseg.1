@@ -1,13 +1,14 @@
-.\" Man page by Dave Tribby, September 1997
 .\"
-.\" $Id: lseg.1,v 1.2 1997/09/21 22:05:58 gdr Exp $
+.\"     $Id: lseg.1,v 1.3 1997/09/28 16:41:12 gdr Exp $
 .\"
 .TH LSEG 1 "September 1997" "GNO" "Commands and Applications"
 .SH NAME
 .BR lseg
 \- list segments in an Object Module Format file
 .SH SYNOPSIS
-.BR lseg " file ..."
+.BR lseg
+.RB [ -d ]
+.IR file " ..."
 .SH DESCRIPTION
 .BR lseg
 lists segments in an OMF (object module format) file. Four kinds
@@ -21,29 +22,77 @@ A full description of OMF files is provided in Appendix F of
 .IR "Apple IIGS GS/OS Reference" .
 .PP
 .BR lseg
-prints a report that includes the type and size of each segment
-of each file. Any file that is not a valid OMF file is so noted.
+prints a report that includes the type, size, and name of each segment of each
+.IR file .
+Any file that is not a valid OMF file is so noted.
 .PP
 .BR lseg
 can be used on executable files in the following ways: to help discover
-the location of stack segments (for later editing to smaller sizes), as an
+the location of stack segments (for later editing to appropriate sizes), as an
 aid in determining how to segment large C files whose segments
 exceed the bank size, and for deciding which segments to recombine
 after excessive segmentation.
 .PP
-For object and library files,
 .BR lseg
 examines each code segment and tries to figure out how
 many bytes of local storage are allocated from the stack at execution
 time. This will be determined only if the startup code matches a recognized
 algorithm, such as those used by ORCA/C. If it can be determined, the
-value is printed at the end of the line preceeded by
-string "Stack bytes:".
-Note that this value does not include parameters passed into the routine,
-nor does it include any other use of the stack by the routine. If a
-segment has an unusually large stack allocation, examine its source code
+value is printed in the column labeled "Stack".
+This value does not include parameters passed into the routine,
+or other use of the stack by the routine.
+.PP
+You can combine
+.BR lseg
+with other tools to ensure your program allocates the correct
+amount of run-time stack space:
+.RS 1
+.IP
+Run
+.BR lseg
+on your program's object file to identify routines with significant
+local storage. If a
+segment has an unusually large allocation, examine its source code
 and see whether arrays can be made static (if the routine is not
 recursive) or can be allocated from standard memory by
 .IR malloc (3).
+.IP
+Add calls to the
+.BR stack (3)
+routines
+.BR _beginStackCheck " and " _endStackCheck
+to report overall run-time storage allocation.
+.IP
+You can also use ORCA/C's
+.BR "#pragma debug"
+with a parameter that sets bit 0 (a value of 1), which causes the
+run-time code to check stack space at the beginning
+of each function and halt the program if there is not enough.
+.IP
+Run
+.BR lseg
+on your program's linked file to determine if it has a "Direct-page/Stack"
+segment. (If not, the system will allocate 4096 bytes of stack when it runs.)
+You can set this value with
+.BR "#pragma stacksize"
+in programs compiled by ORCA/C.
+.PP
+If your program uses significantly less stack space at run-time than
+is specified in the Direct-page/Stack segment, reduce the size so more is
+available to other programs that run at the same time.
+If your program uses more stack space than allocated, it can cause
+serious problems such as system crashes.
+.PP
+Note: Be sure to remove run-time checking in the final version of you
+program after you determine the appropriate stack size.
+.PP
+.BR lseg
+returns status of 0 on success, and >0 if an error (e.g., file
+not found) occurs.
+.SH OPTIONS
+.BR lseg
+recognizes one option:
+.IP \fB-d\fR
+Print the segment and stack sizes in decimal rather than hexidecimal.
 .SH AUTHOR
 Jawaid Bazyar for GNO/ME 1.0; updated by Dave Tribby for GNO/ME 2.0.6.

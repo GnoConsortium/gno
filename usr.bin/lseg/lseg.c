@@ -6,17 +6,18 @@
  *   Version 1.1 [v1.1] updated by Dave Tribby (Sept. 1997)
  *     - A few changes for GNO/ME 2.0.6
  *     - Added display of allocated stack bytes for code segments
- *     - Reformatted output to align names and make room for new info
+ *     - Reformatted output to use a table format and make room for new info
  *     - Sanity check to see whether file is an OMF file
  *     - Use first field as block count for OMF version 1 files
- *     - Continue processing files even if one cannot be opened
+ *     - Continue processing files even if one of them cannot be opened
  *     - Use standard error reporting interfaces
+ *     - Print values in hex unless -d (decimal) flag is set
  *
- * $Id: lseg.c,v 1.2 1997/09/21 22:05:59 gdr Exp $
+ * $Id: lseg.c,v 1.3 1997/09/28 16:41:13 gdr Exp $
  */
 
 /* Update for 2.0.6: Move optimization and stack size to Makefile
-/* #pragma optimize -1      /* Doesn't work for ORCA/C 2.1 */
+/* #pragma optimize -1
 /* #pragma stacksize 1024
  */
 
@@ -28,6 +29,10 @@
 #include <errno.h>
 #include <unistd.h>	/* GNO 2.0.6: read() and close() moved to here */
 #include <err.h>	/* GNO 2.0.6: use standard error reporting */
+
+/* [v1.1] Use library routine rather than macro, so that program  */
+/*        code is less complicated and can be optimized by ORCA/C */
+#undef putchar
 
 typedef struct OMFhead {
     longword BYTECNT;
@@ -51,29 +56,32 @@ typedef struct OMFhead {
     longword tempOrg;
 } OMFhead;
 
-char *segTypes[] = {
-"Code",
-"Data",
-"Jump-table",
-"Unknown",
-"Pathname",
-"Unknown",
-"Unknown",
-"Unknown",
+char *segTypes[] = {   /* [v1.1] Omit "unknown" for undefined segment types */
+"Code              ",
+"Data              ",
+"Jump-table        ",
+"",
+"Pathname          ",
+"",
+"",
+"",
 "Library Dictionary",
-"Unknown",
-"Unknown",
-"Unknown",
-"Unknown",
-"Unknown",
-"Unknown",
-"Unknown",
-"Initialization",
-"Unknown",
-"Direct-page/Stack"};
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"Initialization    ",
+"",
+"Direct-page/Stack "};
 
 
-/* --- Start of new routines [v1.1] --- */
+/* --- Start of new code [v1.1] --- */
+
+/* Option for decimal rather than hex output */
+int decimal_output=FALSE;
 
 /* Snippit of code to be analyzed for allocated stack size */
 static char code[8];
@@ -160,7 +168,13 @@ void checkCodeStack(int fd)
    int value;
 
    while ( (value = readSegRec(fd)) == 0 );
-   if (value > 0) printf("  Stack bytes: %d", value);
+   if (value > 0)
+       if (decimal_output)
+           printf("%6d ", value);
+       else
+           printf("0x%04X ", value);
+   else
+       printf("       ");
 }
 
 /* Is the file under consideration not an OMF file? */
@@ -179,23 +193,16 @@ int notOMF(OMFhead *headPnt)
 
 void prntAscii(char *s, int l)
 {
-    /* Pad with blanks if < 18 chars [v1.1] */
-    int pad;
-
-    pad = 18 - l;
     putchar('"');
     while (l--) {
 	*s &= 0x7F;
 	if (*s < ' ') {
 	    putchar('^');
             putchar(*s+'@');
-            pad--;
 	} else putchar(*s);
         s++;
     }	
     putchar('"');
-    while (pad-- > 0)
-       putchar(' ');
 }
 
 char name[256];
@@ -203,26 +210,24 @@ char name[256];
  *  The caller is responsible for opening the file, passing its refNum,
  *  and closing it after we're done
  */
-void scanOMF(int fd)
+void scanOMF(int fd, char *fname)
 {
 OMFhead header;
 longword off = 0l;
 PositionRecGS p;
 int kind;
-int stsize = 0;
+int i;
 
     p.pCount = 2;
     p.refNum = fd;
     GetEOF(&p);
 
     while (off < p.position) {
-        /* printf("offset: %ld\t\t",off); */
-        printf("    ");
         lseek(fd, off, SEEK_SET);
         read(fd,&header,sizeof(header));
         /* First time through, check validity of OMF header [v1.1] */
         if (off == 0  &&  notOMF(&header))   {
-           printf("Not a recognized OMF file\n");
+           printf("Note: %s is not a recognized OMF file\n", fname);
            return;
         }
         lseek(fd, off+header.DISPNAME+10, SEEK_SET);
@@ -233,22 +238,39 @@ int stsize = 0;
             name[0] = header.LABLEN;
             read(fd, name+1, header.LABLEN);
         }
-        prntAscii(name+1,name[0]);
+        printf("%s",fname);
+        i = strlen(fname);
+        while (i++ < 20) putchar(' ');
+
         kind = header.KIND & 0x1F;
-        if (kind < 0x13)   {
-            printf(" %s segment (%02X) %06lX bytes",
-                           segTypes[kind],kind,header.LENGTH);
-           /* Check code segment for stack allocation [v1.1] */
-           if (kind == 0) {
-              /* Position to beginning of data */
-              lseek(fd, off+header.DISPDATA, SEEK_SET);
-              /* Check the code */
-              checkCodeStack(fd);
-           }
+        switch (kind)   {
+            case 0x00:
+                if (decimal_output)
+                   printf(" %s %8ld ", segTypes[kind],header.LENGTH);
+                else
+                   printf(" %s 0x%06lX ", segTypes[kind],header.LENGTH);
+                /* Check code segment for stack allocation [v1.1] */
+                /* Position to beginning of data */
+                lseek(fd, off+header.DISPDATA, SEEK_SET);
+                /* Check the code */
+                checkCodeStack(fd);
+                break;
+            case 0x01:
+            case 0x02:
+            case 0x04:
+            case 0x08:
+            case 0x10:
+            case 0x12:
+                if (decimal_output)
+                   printf(" %s %8ld        ", segTypes[kind],header.LENGTH);
+                else
+                   printf(" %s 0x%06lX        ", segTypes[kind],header.LENGTH);
+                break;
+            default:
+                printf(" unknown (0x%02X)     ", kind);
+            }
+        prntAscii(name+1,name[0]);
         putchar('\n');
-        }         
-        if (kind == 0x12)   /* got a stack segment */
-	    stsize = (word) header.LENGTH;
         /* In OMF version 1, the first field is a block count */
         if (header.VERSION == 1)
            off += (header.BYTECNT * 512);
@@ -257,21 +279,16 @@ int stsize = 0;
         /* Check for unusual case that causes infinite loop [v1.1] */
         if (header.BYTECNT == 0) break;
     }
-    /* The default stack size for programs is 4096 */
-    if (stsize)
-    	printf("\tStack size: %d\n", stsize);
-    else
-        printf("\tDefault stack size: 4096\n");
 }
 
 void usage(void)
 {
-    fprintf(stderr,"usage: lseg filename...\n");
+    fprintf(stderr,"usage: lseg [-d] filename...\n");
     exit(1);
 }
 
 
-/* Added for 2.0.6: Check on how much stack space a C program uses. */
+/* [v1.1] Check on how much stack space a C program uses. */
 #if defined(__STACK_CHECK__)
 #ifndef _GNO_GNO_H_
 #include <gno/gno.h>
@@ -287,21 +304,41 @@ int main(int argc, char *argv[])
 {
 int fd;
 int exit_status=0;
+int ch;
 
 #if defined(__STACK_CHECK__)
-	_beginStackCheck();
-	atexit(report_stack);
+    _beginStackCheck();
+    atexit(report_stack);
 #endif
 
-    if (argc == 1) usage();
-    argv++; argc--;
+    /* Get option, if present */
+    while ((ch = getopt(argc, argv, "d")) != EOF) {
+        switch(ch) {
+            case 'd':
+                decimal_output = TRUE;
+                break;
+            default:
+                usage();
+            }
+        }
+    argc -= optind;
+    argv = argv + optind;
+
+    /* Make sure that at least one filename was provided */
+    if (argc < 1) usage();
+
+    /* Print header [v1.1] */
+printf(
+"File                 Type               Size     Stack  Name\n");
+printf(
+"-------------------- ------------------ -------- ------ ----------------\n");
+    
     while (argc-- > 0) {
 	if ((fd = open(*argv, O_RDONLY)) < 0) {
             exit_status = 1;
 	    warn("%s", *argv);
         } else {
-            printf("File: %s\n",*argv);
-            scanOMF(fd);
+            scanOMF(fd,*argv);
             close(fd);
         }
         ++argv;
