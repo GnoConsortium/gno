@@ -1,4 +1,4 @@
-$Id: README.install,v 1.6 1999/02/15 01:05:58 gdr-ftp Exp $
+$Id: README.install,v 1.7 1999/02/15 18:56:17 gdr-ftp Exp $
 
 The install scripts assumes that your _new_ distribution will be installed
 on to the two volumes /gno (ProDOS) and /gno-hfs (HFS).  It also assumes
@@ -58,8 +58,9 @@ You should now do the following steps:
 	     A vi tutorial and quick reference guide may be found at
 	     http://www.jaws.umn.edu/~tobkin/vi.
 	     
-	     See the kernel reference manual for a description of the
-	     namespace file.
+	     For a description of the namespace file, see the kernel
+	     reference manual, or the namespace(5) manual page at
+	     http://www.gno.org/~gno/man/man5/namespace.5.html
 	     
 	 5.  During the extraction process, the following files were placed
 	     into the /gno/System directory:
