@@ -1,0 +1,145 @@
+# Tests for uniq command; invoked by command file "fulltests"
+#   Written by Dave Tribby (November 1997)
+#   $Id: dotests,v 1.1 1997/12/02 05:15:26 gdr Exp $
+
+# Location of the uniq command to be tested
+set testcmd="../uniq"
+
+# Record starting time
+echo -n "Testing command $testcmd beginning at"
+date
+
+set src="in.file"
+set cmp="ulines"
+set dest="/tmp/$cmp"
+echo "Unique lines past column 27 in $src"
+cat  $src | $testcmd -s 27 > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="uclines"
+set dest="/tmp/${cmp}A"
+echo "Unique lines past column 27 with count in $src"
+$testcmd -c -s 27 < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set dest="/tmp/${cmp}B"
+echo "Unique lines past field 4 with count in $src"
+$testcmd -c -f 4 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set dest="/tmp/${cmp}C"
+echo "Unique lines past column 27 with count (obsolescent) in $src"
+$testcmd -c +27 < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set dest="/tmp/${cmp}D"
+echo "Unique lines past field 4 with count (obsolescent) in $src"
+$testcmd -c -4 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set src="in.file.shift"
+set dest="/tmp/${cmp}E"
+echo "Unique lines past field 4, shifted, with count in $src"
+$testcmd -c -i -f 4 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set src="in.file"
+set cmp="nuclines"
+set dest="/tmp/${cmp}A"
+echo "Unique lines past column 25 with count in $src"
+$testcmd -c -s 25 < $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set dest="/tmp/${cmp}B"
+echo "Unique lines past field 3 with count in $src"
+$testcmd -c -f 3 $src > $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="uulines"
+set dest="/tmp/${cmp}"
+echo "Unique lines past column 27, excluding repeated, in $src"
+$testcmd -u -s 27 $src $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set cmp="udlines"
+set dest="/tmp/${cmp}"
+echo "Unique lines past column 27, excluding unrepeated, in $src"
+$testcmd -d -s 27 $src $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+set src="in.file.shift"
+set cmp="udlines"
+set dest="/tmp/${cmp}A"
+echo "Unique lines past column 27, shifted, excluding unrepeated, in $src"
+$testcmd -d -i -s 27 $src $dest
+echo "  Completion status = $status"
+echo "Checking results against control file $cmp (no differences expected)"
+cmp $cmp $dest
+echo "  Completion status = $status"
+echo ""
+
+
+echo "***** Error Messages *****"
+
+set dest="/tmp/err.cond"
+
+echo ""
+echo "Expected error: illegal option"
+$testcmd -x $src $dest
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+echo "Expected error: illegal combination of options (usage printed)"
+$testcmd -c -d $src $dest
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+echo "Expected error: illegal combination of options (usage printed)"
+$testcmd -c -u $src $dest
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+set src="badname"
+echo "Expected error: $src: no such file or directory"
+$testcmd $src > $dest
+echo "  Error completion status = $status (expected: 1)"

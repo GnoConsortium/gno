@@ -1,0 +1,10 @@
+Name:    split
+Version: 2.0 (November 1997)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ground.isca.uiowa.edu apple2.caltech.edu trenco.myrias.com
+
+ Split a file into pieces.
+  

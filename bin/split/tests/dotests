@@ -1,0 +1,145 @@
+# Tests for split command; invoked by command file "fulltests"
+#   Written by Dave Tribby (November 1997)
+#   $Id: dotests,v 1.1 1997/12/02 05:15:26 gdr Exp $
+
+# Location of the split command to be tested
+set testcmd="../split"
+
+# Location of binary and ASCII files used in test
+set bfile="$testcmd"
+set afile="../split.c"
+
+# Location of sed command (used to strip unwanted blanks at end of echo)
+set sedcmd="/src/gno/usr.bin/sed/sed"
+
+# Alias for rm command
+alias rm "cp -p rm"
+
+# Record starting time
+echo -n "Testing command $testcmd beginning at"
+date
+
+set src="$afile"
+set dest="x"
+set cmp="/tmp/split.c"
+set lines="1000"
+echo "Splitting $src using defaults"
+$testcmd < $src
+echo "  Completion status = $status"
+cat ${dest}a? > $cmp
+echo "Checking combined files against original (no differences expected)"
+cmp $src $cmp
+echo "  Completion status = $status"
+echo ""
+
+rm ${dest}a* $cmp
+
+set src="$afile"
+set dest="/tmp/z"
+set cmp="/tmp/split.c"
+set lines="100"
+echo "Splitting $src into $lines line pieces"
+$testcmd -l $lines $src $dest
+echo "  Completion status = $status"
+cat /tmp/z* > $cmp
+echo "Checking combined files against original (no differences expected)"
+cmp $src $cmp
+echo "  Completion status = $status"
+echo "Checking length of file against requested length"
+set count="/tmp/count"
+cat ${dest}aa | wc -l > $count
+echo "     $lines" | $sedcmd -e's/ *$//' > ${count}2
+cmp $count ${count}2
+echo "  Completion status = $status"
+echo ""
+
+rm ${dest}* $cmp $count ${count}2
+
+set src="$bfile"
+set dest="/tmp/z"
+set cmp="/tmp/split"
+set chars="3500"
+echo "Splitting $src into $chars character pieces"
+$testcmd -b $chars $src $dest
+echo "  Completion status = $status"
+cat /tmp/z* > $cmp
+echo "Checking combined files against original (no differences expected)"
+cmp $src $cmp
+echo "  Completion status = $status"
+echo "Checking length of file against requested length"
+set count="/tmp/count"
+cat ${dest}aa | wc -c > $count
+echo "    $chars" | $sedcmd -e's/ *$//' > ${count}2
+cmp $count ${count}2
+echo "  Completion status = $status"
+echo ""
+
+rm ${dest}* $cmp $count ${count}2
+
+set src="$bfile"
+set dest="/tmp/z"
+set cmp="/tmp/split"
+set numk="4"
+set chars="4096"
+echo "Splitting $src into ${numk}K character pieces"
+$testcmd -b ${numk}k $src $dest
+echo "  Completion status = $status"
+cat /tmp/z* > $cmp
+echo "Checking combined files against original (no differences expected)"
+cmp $src $cmp
+echo "  Completion status = $status"
+echo "Checking length of file against requested length"
+set count="/tmp/count"
+cat ${dest}aa | wc -c > $count
+echo "    $chars" | $sedcmd -e's/ *$//' > ${count}2
+cmp $count ${count}2
+echo "  Completion status = $status"
+echo ""
+
+rm ${dest}* $cmp $count ${count}2
+
+set src="$afile"
+set dest="/tmp/z"
+set cmp="/tmp/split.c"
+set lines="100"
+echo "Splitting $src into $lines line pieces (obsolescent)"
+$testcmd -$lines $src $dest
+echo "  Completion status = $status"
+cat /tmp/z* > $cmp
+echo "Checking combined files against original (no differences expected)"
+cmp $src $cmp
+echo "  Completion status = $status"
+echo "Checking length of file against requested length"
+set count="/tmp/count"
+cat ${dest}aa | wc -l > $count
+echo "     $lines" | $sedcmd -e's/ *$//' > ${count}2
+cmp $count ${count}2
+echo "  Completion status = $status"
+echo ""
+
+
+
+echo "***** Error Messages *****"
+
+set dest="/tmp/err.cond"
+
+echo ""
+echo "Expected error: illegal option"
+$testcmd -x $src > $dest
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+echo "Expected error: illegal byte count"
+$testcmd -b 12x $src > $dest
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+echo "Expected error: illegal line count"
+$testcmd -l 12x $src > $dest
+echo "  Error completion status = $status (expected: 1)"
+
+echo ""
+set src="badname"
+echo "Expected error: $src: no such file or directory"
+$testcmd $src > $dest
+echo "  Error completion status = $status (expected: 1)"
