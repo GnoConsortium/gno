@@ -1,7 +1,7 @@
 #
 # prog.mk    version 1.1.0  (August 31, 1997)
 #
-# $Id: prog.mk,v 1.2 1997/09/24 06:43:53 gdr Exp $
+# $Id: prog.mk,v 1.3 1997/09/26 06:11:07 gdr Exp $
 #
 
 # This makefile is intended for use with dmake(1) and occ(1) on Apple IIGS
@@ -28,7 +28,7 @@
 #  *  To set a stack size, use
 #         STACK=<size>
 #     where <size> indicates the ORCA/C "#pragma stacksize <size>" value.
-#     The default size is 768.
+#     The default size is 1024.
 #
 #  *  To define compiler macros, use
 #         DEFINES=-D<name>[=<value>]
@@ -58,12 +58,12 @@ OBJS=$(SRCS:s/.c/.o/:f)
 
 # Was special optimizing requested?
 .IF $(OPTIMIZE) == $(NULL)
-	OPTIMIZE	=  72
+	OPTIMIZE	=  78
 .END
 
 # Use stack size of 768 bytes if STACK macro isn't already defined
 .IF $(STACK) == $(NULL)
-	STACK	=  768
+	STACK	=  1024
 .END
 
 # Compile and load flags passed to occ
@@ -86,7 +86,7 @@ RELMAN	= $(RELEASE_DIR)$(MANDIR)
 
 # Place files where they will subsequently be archived in a binary
 # distribution.
-release:
+release: $(PROG) $(PROG).1 $(DESC)
 	$(INSTALL) -d $(RELBIN) $(RELMAN)/man1 $(DESC_DIR)
 	$(INSTALL) $(PROG) $(RELBIN)
 	$(INSTALL) $(PROG).1 $(RELMAN)/man1
