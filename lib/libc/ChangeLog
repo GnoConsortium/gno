@@ -1,0 +1,27 @@
+Since beta-970304: (Devin Reade, <gdr@myrias.com>)
+
+	Added the following routines to the build:
+	- the fts*(3) family of routines
+	- fdopen(3) (doesn't appear to be working yet)
+	- fgetln(3) hack
+	- chmod(2)
+	- fchmod(2)
+	- the queue(3) family of macros
+	- psignal(3), with sys_signame, sys_siglist arrays
+	
+	Use sys_nerr and sys_errlist from libc vice ORCALib by eliminating
+	the _gno_ prefix.
+
+	Changed NSIG in <sys/signal.h> to 32 vice 31; sys_siglist is a
+	character array from zero to 31, inclusive.
+
+	Added various library test programs.
+	
+	Added in conchecks in sys/trap.asm, sys/trap.mac, sys/syscall.c
+	to ensure that the GNO kernel is indeed running and is at least
+	the minimum required for the call.  This is currently disabled
+	(by changing the macro in sys/trap.mac and conditional compilation
+	in sys/syscall.c) due to performance concerns raised on the 
+	gno-devel mailing list.
+
+	Added the ChangeLog file.
