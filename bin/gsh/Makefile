@@ -1,7 +1,7 @@
 #
 # makefile for building gsh.  This is for use with dmake.
 #
-# $Id: Makefile,v 1.8 1999/01/08 07:38:47 gdr-ftp Exp $
+# $Id: Makefile,v 1.9 1999/01/15 06:50:35 gdr-ftp Exp $
 #
 # Devin Reade, February 1998.
 #
@@ -41,9 +41,7 @@ SRCS	= $(MAINSRC) \
 # ltermcap library from GNO v2.0.4.
 #
 # LDADD	= -ltermcap
-###LDLIBS	+= -l/trenco3/lib.206/ltermcap
-###LDLIBS	+= -l/h1/orca/libraries/ltermcap
-LDLIBS	+= -l/usr/lib/libtermcap
+LDLIBS	+= -l/usr/lib/libtermcap.204
 
 # For debugging: produce a link map
 ## LDFLAGS	+= -M
