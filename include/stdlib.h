@@ -126,12 +126,13 @@ size_t	 wcstombs __P((char *, const wchar_t *, size_t));
 int	 putenv __P((const char *));
 int	 setenv __P((const char *, const char *, int));
 
-#if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
 					/* GNO-specific routines */
 int	 environInit __P((void));	/* formerly initenv(3) */
 void	 environPop __P((void));	/* formerly popenv(3)  */
 int	 environPush __P((void));	/* formerly pushenv(3) */
-#endif
+
+char *	 ecvt __P((double, size_t, int *, int *));	/* non-BSD */
+char *	 fcvt __P((double, size_t, int *, int *));	/* non-BSD */
 
 double	 drand48 __P((void));
 double	 erand48 __P((unsigned short[3]));
@@ -165,9 +166,7 @@ int	 getloadavg __P((double [], int));
 extern char *optarg;			/* getopt(3) external variables */
 extern int opterr, optind, optopt;
 int	 getopt __P((int, char * const *, const char *));
-#if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
 int	 getopt_restart __P((void));	/* GNO v2.0.4 backward compatible */
-#endif
 
 extern char *suboptarg;			/* getsubopt(3) external variable */
 int	 getsubopt __P((char **, char * const *, char **));
