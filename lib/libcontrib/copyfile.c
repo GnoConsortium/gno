@@ -1,5 +1,5 @@
 /*
- * $Id: copyfile.c,v 1.2 1998/03/25 04:04:20 gdr-ftp Exp $
+ * $Id: copyfile.c,v 1.3 1998/04/10 21:36:08 gdr-ftp Exp $
  */
 
 /* Change the arg types of GS/OS parameter blocks. Must be before #includes */
@@ -294,6 +294,9 @@ DEBUG(("creating %s\n", expandedTo->bufString.text));
 	inforec.pCount = 5;
 	inforec.pathname = &(expandedTo->bufString);
 	inforec.access = 0x00c3;
+	if ((flags & LC_COPY_REZ) == 0) {
+		inforec.storageType = standardFile;
+	}
 	CreateGS(&inforec);
 	if ((i = _toolErr) != 0) {
 		errno = _mapErr(i);
@@ -319,6 +322,8 @@ DEBUG(("copying file\n"));
 			openrec.resourceNumber = 0x0001;
 			break;
 		}
+
+DEBUG(("doing fork %d (%s)\n", i, (i==0) ? "data", "rez"));
 
 		/* open the input file */
 		openrec.pCount = 4;
