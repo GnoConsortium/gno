@@ -234,12 +234,10 @@ with a priority not set in
 are rejected.
 The mask for an individual priority
 .I pri
-is calculated by the macro
-.BR LOG_MASK pri ;
+is calculated by the macro \fBLOG_MASK\fR(\fIpri\fR);
 the mask for all priorities up to and including
 .I toppri
-is given by the macro
-.BR LOG_UPTO toppri ; .
+is given by the macro \fBLOG_UPTO\fR(\fItoppri\fR);.
 The default allows all priorities to be logged.
 .SH RETURN VALUES
 The routines
