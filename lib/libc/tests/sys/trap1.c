@@ -1,7 +1,7 @@
 /*
  * Test by Devin Reade
  *
- * $Id: trap1.c,v 1.2 1997/02/28 05:43:54 gdr Exp $
+ * $Id: trap1.c,v 1.3 1997/07/27 23:34:49 gdr Exp $
  */
 
 #include <sys/types.h>
@@ -35,10 +35,10 @@ int main (int argc, char **argv) {
      FAIL();
   } else if (kernelVersion < 0x0204) {
 	   printf("there are no tests for kernel version %d.%d.%d\n",
-		       VERSION_TRIPLE(0x0204));
+		       VERSION_TRIPLE(kernelVersion));
 	} else {
 	   printf("running tests for kernel version %d.%d.%d\n",
-		       VERSION_TRIPLE(0x0204));
+		       VERSION_TRIPLE(kernelVersion));
   }
 
 	printf("SYSTEM CALL\t\t\tRETURN VALUE\n");
