@@ -1,21 +1,11 @@
 /*************************************************
  * Start of GNO v2.0.6 definitions.
  *
- * $Id: defaults.h,v 1.2 1997/02/28 04:56:19 gdr Exp $
+ * $Id: defaults.h,v 1.3 1997/09/04 15:49:31 gdr Exp $
  */
 
 #define	__appleiigs__
 #define	__GNO__
-
-/*
- * __ORCAC_VERSION should be:
- *	undefined	for Orca/C earlier than v2.1.0
- *	210		for Orca/C v2.1.0 - v2.1.1b1
- *	211		for Orca/C v2.1.1b2 and higher
- * Note that if you have Orca/C v2.0.x or earlier, it doesn't even
- * include this file by default.
- */
-#define __ORCAC_VERSION	211
 
 /*
  * These should be identically equal.  Orca/C headers use one, BSD headers
