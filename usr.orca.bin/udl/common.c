@@ -1,10 +1,13 @@
+#ifdef __CCFRONT__
+#line 2
+#endif
 /*
  * udl - Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
  *       and Apple (CR).
  *
  * Routines common to both the Unix and Apple IIgs versions.
  *
- * $Id: common.c,v 1.4 1995/02/08 05:25:15 gdr Exp $
+ * $Id: common.c,v 1.5 1995/02/08 05:47:48 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
  */
@@ -857,16 +860,35 @@ char *mktemp(const char *base)
         *p1 = 'A';
         p1--;
       } else {
-        *p1++;
+        *p1 += 1;
         break;
       }
 
     /* Make sure the file name does not already exist */
-    if (stat(st,&tstat) == 0)
-    {
+#ifdef GNO
+    if (needsgno() == TRUE) {
+#endif
+      if (stat(st,&tstat) == 0)
+      {
     	free (st);
     	st = mktemp (base);
+      }
+#ifdef GNO
+    } else { /* ORCA/Shell doesn't like stat one little bit */
+      FILE *fp;
+      if ((fp = fopen(st,"r")) != NULL)
+      {
+      	fclose(fp);
+      	free (st);
+      	st = mktemp (base);
+      } else if ((fp = fopen(st,"a")) == NULL) {
+      	free(st);
+      	st = mktemp (base);
+      } else {
+      	fclose(fp);
+      }
     }
+#endif
 
     return st;
 }
@@ -888,7 +910,7 @@ char *get_path (const char *name)
 
   strcpy(filebuffer, name);
 
-  for (i = strlen(filebuffer) - 1; i >= 0 && filebuffer[i] != dirbrk; i--)
+  for (i = strlen(filebuffer) - 1; i > 0 && filebuffer[i] != dirbrk; i--)
     ; /* empty loop to find end of path in name */
 
   if (i != 0)

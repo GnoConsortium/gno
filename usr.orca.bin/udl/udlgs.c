@@ -1,10 +1,13 @@
+#ifdef __CCFRONT__
+#line 2
+#endif
 /*
  * udl - Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
  *       and Apple (CR).
  *
  * Apple IIgs specific routines.
  *
- * $Id: udlgs.c,v 1.4 1995/02/08 05:25:22 gdr Exp $
+ * $Id: udlgs.c,v 1.5 1995/02/08 05:47:55 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
  */
@@ -183,7 +186,9 @@ int main(int argc,char *argv[]) {
     } else {
       InitWild.flags = 0;
     }
-    
+
+    dirbrk = ':'; /* enforced by NextWildcardGS */
+
     /* loop through all command line args */
     for (; optind < argc; optind++) {
       size_t i;
@@ -259,7 +264,7 @@ int main(int argc,char *argv[]) {
     infile = tryopen(current_file,"rwb");
     tempfile = mktemp(strcat(get_path(current_file), "udltmpXX"));
     outfile = tryopen(tempfile,"wb");
-    
+
     if (careful) {
       converted = TRUE; /* always */
       

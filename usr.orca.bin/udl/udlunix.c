@@ -1,10 +1,13 @@
+#ifdef __CCFRONT__
+#line 2
+#endif
 /*
  * udl - Convert EOL formats freely between MS-DOS (CR/LF), Unix/Amiga (LF),
  *       and Apple (CR).
  *
  * Unix specific routines.
  *
- * $Id: udlunix.c,v 1.4 1995/02/08 05:25:24 gdr Exp $
+ * $Id: udlunix.c,v 1.5 1995/02/08 05:47:57 gdr Exp $
  *
  * Copyright (c) 1993-1995 Soenke Behrens, Devin Glyn Reade
  */
