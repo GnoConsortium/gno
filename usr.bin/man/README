@@ -1,0 +1,14 @@
+--------------------------------------------
+Name:     makewhatis
+Version:  1.0
+Author:   Devin Reade <glyn@cs.ualberta.ca>
+Computer: Apple IIgs
+Requires: Gno v2.x
+--------------------------------------------
+
+Description:  Generates the whatis database for apropos(1) and whatis(1)
+              See the man page for a detailed description.
+
+Installation:
+	Copy makewhatis to /usr/sbin and makewhatis.1 to $(USRMAN)/man1.
+	Alternately, you can type "dmake install" from this directory.
