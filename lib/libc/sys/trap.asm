@@ -6,7 +6,7 @@
 *        v2.0.6
 *        Copyright 1991-1997, Procyon Inc.
 *
-*	$Id: trap.asm,v 1.2 1997/07/27 23:33:36 gdr Exp $
+*	$Id: trap.asm,v 1.3 1998/05/30 15:36:15 gdr-ftp Exp $
 *
 	case  on
 	mcopy trap.mac
@@ -309,7 +309,7 @@ argc	equ	name+4
 
 * int   exec(char *filename,char *cmdline) inline(0x0C03, udispatch);
 *
-*	This function is provided in syscall.c
+*	This function is provided in exec.c
 *
 *exec	START	libc_sys__
 *retval	equ	1
