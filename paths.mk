@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: paths.mk,v 1.8 1998/03/08 17:12:34 gdr-ftp Exp $
+# $Id: paths.mk,v 1.9 1998/05/30 14:18:04 gdr-ftp Exp $
 #
 
 # This one isn't really a path, but it affects the creation of path
@@ -54,12 +54,3 @@ ORCA_DIST	= /lang/orca
 # to avoid backward references during linking.
 
 ORCA_SRC	= /src/lib/orcalibs/Source
-
-# These are the directories that will wind up becoming the distributions
-# disks.  We want to be able to ship on floppy, although the preferred
-# method will be via ftp.
-
-DISKS		= $(RELEASE_DIR)/disks
-DISK1		= $(DISKS)/gno.disk1
-DISK2		= $(DISKS)/gno.disk2
-DISK3		= $(DISKS)/gno.disk3
