@@ -1,0 +1,43 @@
+###
+#
+# GNO 2.0.6 system gsh login file.  This file is parsed by all gsh login
+# shells.
+#
+# $Id: glogin,v 1.1 1999/01/18 01:51:13 gdr-ftp Exp $
+#
+###
+
+#
+# Setup the other prefixes to emulate ORCA for the benefit of utilities
+# If you're using ORCA 2.0 stuff, be sure to set prefixes 13-17 also
+#
+
+prefix 31 \*
+
+prefix	13	/lib
+prefix	14	/tmp          
+prefix	15	/lang/orca/shell
+prefix	16	/lang/orca/languages
+prefix	17	/lang/orca/utilities
+
+prefix 2 13
+prefix 3 14
+prefix 4 15
+prefix 5 16
+prefix 6 17
+
+# Versions of gsh prior to 2.0d4 always parsed the PATH environment variable
+# backwards.  As of v2.0d4, gsh will parse PATH backward if and only if the
+# OLDPATHMODE environment variable is set.
+#
+# For the moment, we still have gsh using its old behavior because some
+# programs (notably dmake(1)) are currently compiled to expect this behavior.
+# After these programs are updated, this environment variable should no longer
+# be set.
+setenv OLDPATHMODE 1
+
+# You may want to use /lang/orca/shell/editor for EDITOR if you have it.
+setenv EDITOR		/bin/vi
+setenv MAKESTARTUP	/usr/lib/startup.mk
+setenv MANPATH		/usr/man:/usr/local/man:/usr/orca/man
+setenv TMACDIR		/usr/lib/tmac
