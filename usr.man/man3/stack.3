@@ -1,11 +1,15 @@
 .\" Man page by Devin Reade.
 .\"
-.\" $Id: stack.3,v 1.3 1998/03/28 16:47:51 gdr-ftp Exp $
+.\" $Id: stack.3,v 1.4 1998/03/28 18:38:02 gdr-ftp Exp $
 .\"
 .TH STACK 3 "26 March 1998" GNO "Library Routines"
 .SH NAME
+.BR _assertStack ,
 .BR _beginStackCheck ,
-.BR _endStackCheck
+.BR _endStackCheck ,
+.BR _getStackBottom ,
+.BR _reportStack ,
+.BR __REPORT_STACK
 \- report stack usage
 .SH SYNOPSIS
 #include <gno/gno.h>
@@ -20,6 +24,8 @@ int  \fB_endStackCheck\fR (void);
 unsigned int \fB_getStackBottom\fR (void);
 .br
 void \fB_reportStack\fR (void);
+.br
+void \fB__REPORT_STACK\fR (void);
 .SH DESCRIPTION
 The
 .BR _beginStackCheck
@@ -54,6 +60,13 @@ just call
 immediately after 
 .IR main
 and nothing else is required.
+Alternately, you may also call the macro
+.BR __REPORT_STACK() 
+which resolves to a call to 
+.BR __reportStack 
+if and only if the macro
+.BR __STACK_CHECK__
+is defined.
 .LP
 The 
 .BR _getStackBottom
@@ -107,19 +120,16 @@ The most common way to make use of these routines is to call
 .BR _reportStack
 as your first step in 
 .IR main .
-The GNO base sources make use of the 
-macro __STACK_CHECK__ to control whether or not this check is done.
-You may want to use the same macro.
+The GNO base sources make use of the macros __STACK_CHECK__ and
+__REPORT_STACK to control whether or not this check is done.
+You may want to use the same macros.
 .nf
 
   #include <gno/gno.h>
 
   void main (int argc, char **argv) {
 
-  #ifdef __STACK_CHECK__
-    _reportStack();
-  #endif
-
+    __REPORT_STACK();
     ... <program continues> ...
 
 .fi
