@@ -1,0 +1,25 @@
+write v2.1 README file.
+
+write v2.1 _requires_ at least GNO v2.0.5 or the multi-user update.
+
+What's changed:
+   - changed error messages to go to stderr (previously to stdout).
+   - added several checks on ut_type to insure validation of utmp entry and
+     not write to entries marked UT_INVISIBLE.
+   - fixed bug which would have caused problems in an fputs() command iff
+     the length of the line name was the maximum allowed.
+   - have it on authority that the CRs appended to the ends of the output
+     lines will be correctly translated.  This was questionable when 2.0 was
+     sent out.
+
+Special thanks to Phil Vandry again for suggestions - he sent me source after
+the MU upgrade, but it got corrupted.  He sent me a new copy, and I used it to
+modify the new code.  Thanks :-)
+
+Please send all requests to:
+America On-Line: WDPhoenix (@aol.com)
+Delphi:          WDPHOENIX (@delphi.com)
+US Snail:        Les Barstow
+                 275 Route 10 East
+                 Suite 220-136
+                 Succasunna, NJ 07876

@@ -1,0 +1,42 @@
+.\" Man page converted from formatted ascii to nroff source by 
+.\" Devin Reade, 10 April 1998.
+.\"
+.\" $Id: write.1,v 1.1 1998/04/10 20:03:53 gdr-ftp Exp $
+.\"
+.TH WRITE 1 "8 March 1994" GNO "Commands and Applications"
+.SH NAME
+write \- write messages to a user's terminal
+.SH SYNOPSIS
+.B write 
+.IR username " [" message ]
+.SH DESCRIPTION
+.BR write
+writes messages to all terminals belonging to
+.IR username .
+If an optional 
+.I message
+is included on the command line, then that message is the one sent to the
+user.  If no message is included on the command line, 
+.BR write
+takes input from standard input until a blank line is encountered.
+It sends each line of input as it is received.
+.SH ERRORS
+.BR write
+returns in error if the user does not exist or if the user is not
+currently signed on.  Executing 
+.BR write
+with no arguments or with an option argument returns a usage message.
+.SH BUGS
+Old versions of the GNO multiuser package are incompatible with this version of
+.BR write ;
+use
+.BR write
+version 1.0 if you have not updated the multiuser package.
+.SH OTHER
+This program is Copyright 1993, 1994 by Leslie M. Barstow III.
+It may be distributed freely provided it is accompanied by this manpage.
+write uses routines from the ORCA Libraries, Copyright by ByteWorks, Inc.
+.SH AUTHOR
+Leslie Barstow, <phoenix@faerealm.faerealm.com>.
+.SH FILES
+/var/adm/utmp
