@@ -1,5 +1,5 @@
 #
-#	$Id: lib.mk,v 1.5 1998/02/17 00:33:08 gdr-ftp Exp $
+#	$Id: lib.mk,v 1.6 1998/03/08 18:09:03 gdr-ftp Exp $
 #
 
 .INCLUDE:	/src/gno/paths.mk
@@ -30,7 +30,7 @@ OPTIMIZE*= 78
 CFLAGS	+= -O$(OPTIMIZE)
 
 # build is the default target
-build: $(OBJ_DIR) $(LIBTARGET)
+build: $(OBJ_DIR) $(LOCAL_SETUP) $(LIBTARGET)
 
 # create the object directory hierarchy if necessary
 $(OBJ_DIR):
