@@ -1,7 +1,8 @@
 # Tests for cut command; invoked by command file "fulltests"
 #   Written by Dave Tribby (August 1997)
+#   $Id: dotests,v 1.2 1997/10/03 04:06:34 gdr Exp $
 
-# Can generate a set of test files by the following:
+# You can generate a set of test files with the following:
 #     ll /bin > cut.f1.columns
 #     tr ' ' '\t' < cut.f1.columns | tr -s '\t' > cut.f1.tab
 #     tr '\t' ';' < cut.f1.tab > cut.f1.semi
