@@ -1,0 +1,58 @@
+Script started on: Mon Sep 01 15:07:57 1997
+[61] test=> dotests ; exit 
+Testing command ../wc beginning at Mon Sep  1 15:08:09 1997
+Counting bytes, lines, and words (default) of file500.txt 
+ ==> 872 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.clw (no differences expected) 
+  Completion status = 0 
+ 
+Counting bytes, lines, and words (explicit) of file500.txt 
+ ==> 872 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.clw (no differences expected) 
+  Completion status = 0 
+ 
+Counting bytes, lines, and words (default) of file500.txt using stdin 
+ ==> 872 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.clwB (no differences expected) 
+  Completion status = 0 
+ 
+Counting bytes of file500.txt 
+ ==> 872 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.c (no differences expected) 
+  Completion status = 0 
+ 
+Counting lines of file500.txt 
+ ==> 872 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.l (no differences expected) 
+  Completion status = 0 
+ 
+Counting words of file500.txt 
+ ==> 872 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file f500.w (no differences expected) 
+  Completion status = 0 
+ 
+Counting bytes, lines, and words (default) of f*.* 
+ ==> 872 stack bytes used <== 
+  Completion status = 0 
+Checking results against control file multi.clw (no differences expected) 
+  Completion status = 0 
+ 
+***** Error Messages ***** 
+ 
+Expected error: illegal option 
+wc: illegal option -- x
+usage: wc [-clw] [files]
+ ==> 1827 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+ 
+Expected error: badname: no such file or directory 
+wc: badname: open: no such file or directory
+ ==> 1938 stack bytes used <== 
+  Error completion status = 1 (expected: 1) 
+Script done on: Mon Sep 01 15:09:13 1997
