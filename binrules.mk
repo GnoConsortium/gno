@@ -2,7 +2,7 @@
 # Standard compilation rules for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binrules.mk,v 1.7 1998/03/08 17:12:31 gdr-ftp Exp $
+# $Id: binrules.mk,v 1.8 1998/12/31 21:26:34 gdr-ftp Exp $
 #
 # Devin Reade, Dave Tribby, 1997.
 #
@@ -39,6 +39,14 @@ clean:
 # Remove intermediate files and program file
 clobber: clean
 	-$(RM) $(OBJ_DIR)$(PROG)
+
+# Implicit rule to handle Rez source on case sensitive Appleshare servers
+.IF $(APPLESHARE_CASE_SENSITIVE) != $(NULL)
+%.r : %.rez
+	$(INSTALL) $< $(TMPDIR)/$<
+	$(REZ) -o $@ -c $(REZFLAGS) $(TMPDIR)/$<
+	$(RM) -f $(TMPDIR)/$<
+.END
 
 # Implicit rule to handle ProDOS-renamed object files
 %.o: %.O;

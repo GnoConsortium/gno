@@ -2,7 +2,7 @@
 # Compilation constants for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binconst.mk,v 1.9 1998/04/22 05:07:19 gdr-ftp Exp $
+# $Id: binconst.mk,v 1.10 1998/12/31 21:26:34 gdr-ftp Exp $
 #
 # Devin Reade, 1997.
 #
@@ -19,6 +19,12 @@ CATREZ		= /usr/bin/catrez
 INSTALL		= /usr/bin/install
 MACGEN		= 17/macgen
 MACGEN_FLAGS	+= -P
+
+# Temporary directory needed in some weird cases.
+.IMPORT .IGNORE: TMPDIR
+.IF $(TMPDIR) == $(NULL)
+TMPDIR		= 14
+.END
 
 # $(DESC_SRC) is the created source file for the describe(1) database.
 DESC_DIR	= $(RELEASE_DIR)/usr/lib
