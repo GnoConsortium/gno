@@ -1,7 +1,7 @@
 # 0
 # 1  The first column is the "real" man page; the second is the .so link.
 # 2
-# 3  $Id: mkso.data,v 1.6 1997/10/08 07:09:08 gdr Exp $
+# 3  $Id: mkso.data,v 1.7 1997/12/08 15:15:19 gdr Exp $
 # 4
 man2/alarm.2		man2/alarm10.2
 man2/chdir.2		man2/fchdir.2
@@ -219,8 +219,10 @@ man3/setjmp.3		man3/longjmp.3
 man3/setjmp.3		man3/longjmperror.3
 man3/setjmp.3		man3/siglongjmp.3
 man3/setjmp.3		man3/sigsetjmp.3
+man3/stack.3		man3/_assertStack.3
 man3/stack.3		man3/_beginStackCheck.3
 man3/stack.3		man3/_endStackCheck.3
+man3/stack.3		man3/_getMinStack.3
 man3/strcasecmp.3	man3/stricmp.3
 man3/strcasecmp.3	man3/strincmp.3
 man3/strcasecmp.3	man3/strncasecmp.3
