@@ -33,7 +33,7 @@
 .\"
 .\"     @(#)funopen.3	8.1 (Berkeley) 6/9/93
 .\"
-.TH FUNOPEN 3 "17 September 1997" GNO "Library Routines"
+.TH FUNOPEN 3 "28 April 1998" GNO "Library Routines"
 .SH NAME
 .BR funopen ,
 .BR fropen ,
@@ -116,6 +116,13 @@ and
 as calls to
 .BR funopen 
 with only a read or write function specified.
+.SH GNO IMPLEMENTATION NOTE
+Since the underlying (BSD) implementation makes assumptions about the newline
+character, the returned stream is always in text (newline translation) mode.
+If you need to have a stream open in binary mode, you must call
+.BR fsetbinary (3)
+on the returned file pointer; this state information is not carried over
+from the previous file pointer.
 .SH RETURN VALUES
 Upon successful completion, 
 .BR funopen 
@@ -149,6 +156,7 @@ specified for the routine
 .BR fclose (3),
 .BR fopen (3),
 .BR fseek (3),
+.BR fsetbinary (3),
 .BR setbuf (3)
 .SH HISTORY
 The
