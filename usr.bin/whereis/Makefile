@@ -1,7 +1,7 @@
 #
 # This makefile is intended for use with dmake(1) on Apple IIGS
 #
-# $Id: Makefile,v 1.1 1997/09/30 04:22:43 gdr Exp $
+# $Id: Makefile,v 1.2 1997/10/30 04:06:11 gdr Exp $
 #
 # Devin Reade, September 1997
 #
@@ -33,7 +33,7 @@ DEFINES		+=
 INCLUDES	+= -I$(RELINC)
 CFLAGS		+= -r $(INCLUDES) -O$(OPTIMIZE) $(DEFINES) -s$(STACK)
 
-LDLIBS		+= -l$(RELLIB)/lcontrib
+LDLIBS		+= -l$(RELLIB)/libcontrib
 
 .INCLUDE:	/src/gno/binrules.mk
 
