@@ -1,0 +1,189 @@
+.\"
+.\" $Id: init.8,v 1.1 1997/02/28 05:12:12 gdr Exp $
+.\"
+.TH INIT 8 "27 October 1993" GNO "System Administration"
+.SH NAME
+\fBinit\fR \- start and kill processes
+.SH DESCRIPTION
+.B init
+is the component of the UNIX operating system that is responsible
+for creating processes once the system has finished booting and for
+maintaining those processes, including killing them.
+.sp
+At any time, the system is in one of 12 states or run levels. At
+each run level, a different group of processes is allowed to run.
+Generally, when the run level changes, init kills the processes which
+it created under the old run level, and creates a new set for the new
+run level.
+.sp
+Run levels are identified with single characters in the set
+.RB [ bs0123456789 ].
+.BR B 
+and 
+.BR S
+are also accepted as equivalents to 
+.BR b
+and 
+.BR s .
+Some of these run levels have special meaning and are listed below. 
+Except for 
+.BR b ,
+all run levels can have their meaning changed via 
+.IR runl
+commands in 
+.BR /etc/inittab .
+.sp
+Except for levels 
+.BR 0 , 
+.BR 5 
+and 
+.BR 6 ,
+the actual state of the machine after
+.B init
+switches to a level is completely defined by the processes which run,
+which are configurable in
+.BR /etc/inittab .
+It is therefore possible to use all but those three run levels for
+purposes other than their intended one. Their meaning as described
+here are the conventional meaning. It is encouraged that the
+conventions be followed.
+.IP "\fBb\fR (boot)"
+This is the run level that is selected by default. Any
+initialization processes should be run under this level.
+By default, init switches to run level 
+.BR s
+(single user) after
+starting processes at this level. The
+.B bootlevel
+command in
+.I /etc/rchost
+may be used to modify this behavior.
+.IP \fB0\fR
+This is the system shutdown level. Switching to this level will cause
+the system to shut down after any level 
+.BR 0
+processes have been run.
+.IP \fB1\fR
+This run level is defined as the administration state.
+.IP "\fB2\fR, \fB3\fR, \fB4\fR"
+These are multi user run levels.
+Level 
+.BR 2
+is standard. Level 
+.BR 3
+is multi user with networking, and level 
+.BR 4
+is an alternate multi user set up.
+.IP \fB5\fR
+Under UNIX, this is the firmware monitor run level. Under GNO, switching
+to this level causes GNO to quit. The disparity arises from the fact
+that there is no such thing as quitting UNIX.
+.IP \fB6\fR
+Switching to this level causes the system to reboot.
+.IP \fBs\fR
+This is the single user run level.
+.IP "\fB7\fR, \fB8\fR"
+These are local run levels. Any local terminals are active, as well as
+any local area networks (level
+.BR 8 ),
+but no dialups are active and no
+modem based networking is available.
+.IP \fB9\fR
+This level is undefined.
+.SH SIGNALS
+The following signals can be sent to init to force certain conditions.
+Note that these are intended as low level commands;
+.BR init (1)
+should be used to issue these signals.
+.IP \fBSIGHUP\fR
+Causes init to reread 
+.BR /etc/inittab ,
+kill processes that have been removed from it, and start processes that 
+were newly added.
+.sp 1
+.BR init
+depends on the process names (see
+.BR inittab (5))
+to compare the old copy of the table with the new one.
+.IP \fBSIGTERM\fR
+Causes 
+.BR init
+to switch to the kill default run level. This is 
+.BR 0 
+unless it is changed in 
+.BR /etc/inittab .
+Normally, the effect is a system shutdown.
+.IP \fBSIGUSR1\fR
+Causes init to try to receive a message (see
+.BR procrecv (2))
+and act on it. The message is typically sent by
+.BR init (1)
+and contains status inquiries or run level change requests.
+.IP \fBSIGUSR2\fR
+Causes 
+.BR init
+to exit its
+.BR sigpause (2)
+and check for any pending events (which is useful if a timing bug has caused 
+.BR init
+to go to sleep while it had pending events).
+.SH NOTES
+Under real UNIX, there are fewer run levels.
+.LP
+When switching to some run levels, 
+.BR init 
+automatically issues a 
+.I runl
+command to carry out the apropriate action for that run level. 
+This action can be overridden with another 
+.I runl 
+command, possibly 
+.BR n
+to cancel any special action at all.
+.LP
+If 
+.BR init 
+becomes idle and has no children, it switch to the idle run level,
+which is 
+.BR 5
+by default.
+.LP
+If a LOG_EMERG message is received by
+.BR syslogd (8),
+.BR init
+will switch to the panic run level, 
+.BR 6
+by default.
+.LP
+When a child of 
+.BR init 
+dies, any entry it has in the
+.BR utmp (5)
+database will be removed before any other action is taken. Also, stray bogus
+entries are removed whenever they are noticed.
+.LP
+At startup time,
+.BR init
+tries to read the file
+.BR /etc/rchost
+and set certain system globals according to the information in that file.
+.SH FILES
+.BR /etc/inittab
+.br
+.BR /usr/sbin/initd
+.br
+.BR /var/adm/utmp
+.br
+.BR /var/adm/wtmp
+.br
+.BR /etc/rchost
+.SH "SEE ALSO"
+.LP
+.BR init (1),
+.BR inittab (5),
+.BR rchost (5),
+.BR utmp (5),
+.BR getty (8),
+.BR syslogd (8)
+.SH AUTHOR
+Phillip Vandry, <vandry@cam.org>
