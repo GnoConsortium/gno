@@ -1,0 +1,149 @@
+#
+# installboot1
+#
+# $Id: installboot1,v 1.1 1998/04/22 04:57:35 gdr-ftp Exp $
+#
+
+echo "Before running this script, you should have set your DOWNLOAD_DIR"
+echo "environment variable.  If this was done, then the following line"
+echo "will show the full pathname of the gno.01.shk file.  If you did"
+echo "not set your environment variable then it will appear as /gno.01.shk"
+echo "and the extraction will fail.  If you see error messages, you can"
+echo "type ^C (control-C) to stop.  (Waiting 3 seconds, then starting"
+echo "extraction.)"
+sleep 3
+
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.01.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+# right about now, I would kill for a shell that had flow control constructs
+
+setenv FILE "$DOWNLOAD_DIR/gno.02.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.03.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.04.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.05.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.06.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.07.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.08.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.09.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.10.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.11.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.12.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.13.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.14.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.15.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+setenv FILE "$DOWNLOAD_DIR/gno.16.shk"
+echo "Extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+
+###########################################
+
+echo "Creating empty directories required by GNO ..."
+install -dV	doc
+install -dV	lang/orca/languages	lang/orca/shell
+install -dV	lang/orca/libraries/orcacdefs
+install -dV	usr/games		usr/guest/operator
+install -dV	usr/local/bin		usr/local/doc	usr/local/etc
+install -dV	usr/local/include	usr/local/lib
+install -dV	usr/local/man/man1 usr/local/man/man2 usr/local/man/man3
+install -dV	usr/local/man/man4 usr/local/man/man5 usr/local/man/man6
+install -dV	usr/local/man/man7 usr/local/man/man8
+install -dV	usr/local/man/cat1 usr/local/man/cat2 usr/local/man/cat3
+install -dV	usr/local/man/cat4 usr/local/man/cat5 usr/local/man/cat6
+install -dV	usr/local/man/cat7 usr/local/man/cat8
+install -dV	usr/man/cat1 usr/man/cat2 usr/man/cat3
+install -dV	usr/man/cat4 usr/man/cat5 usr/man/cat6
+install -dV	usr/man/cat7 usr/man/cat8
+install -dV	usr/sbin
+install -dV	var/adm var/run var/spool
+
+echo "creating log files"
+touch		var/adm/messages
+touch		var/adm/debug
+touch		var/adm/utmp var/adm/wtmp var/adm/lastlog
+chtyp -tbin -a0	var/adm/utmp var/adm/wtmp var/adm/lastlog
+
+
+###########################################
+
+echo "All done extractions."
+echo " "
+echo "You should now proceed to extract the gnohfs.shk archive, as described"
+echo "in /gno.boot/README.install."

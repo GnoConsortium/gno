@@ -1,0 +1,46 @@
+$Id: README.install,v 1.1 1998/04/22 04:57:31 gdr-ftp Exp $
+
+The install scripts assumes that your _new_ distribution will be installed
+on to the two volumes /gno (ProDOS) and /gno-hfs (HFS).  It also assumes
+these volumes already exist and are _empty_.  You may use other volume names,
+but you will have to edit certain files before you run your distribution.
+If your volumes are named something else, replace the names in the cd commands
+below with the appropriate name.
+ 
+You should now do the following steps:
+	1.  Set your DOWNLOAD_DIR environment variable to the directory
+	    containing the binary distribution NuFX (*.shk) files.
+	    These files are named gno.01.shk, gno.02.shk, and so forth.
+	    For example, if your files were in /download, you would type:
+		setenv DOWNLOAD_DIR /download
+
+	2.  Issue the commands:
+		cd /gno
+		/gno.boot/installboot1
+
+	3.  Issue the commands:
+		cd /gno-hfs
+		/gno.boot/installboot2
+
+	4.  You should now edit the file /gno/etc/namespace.  If your
+	    files were extracted onto a volume other than /gno, you will
+	    have to replace all the ":gno:" strings with the appropriate
+	    path.
+
+	    You may want to put /usr onto a different partition; it will
+	    get fairly large over time.
+
+	    If you have a RAM disk, you should consider having it renamed
+	    to /tmp using renram5(8) or mktmp(8), in which case its entry
+	    should be removed from the namespace file.
+	    
+	    See the kernel reference manual for a description of this file.
+
+	5.  If you are not short of disk space, you should create .so links
+	    for your manual pages.  (See the mkso(8) man page for an
+	    explanation.)  You can do this by executing the following
+	    commands:
+
+	    	cd /gno/usr/man
+	    	mkso -v -H /gno-hfs mkso.data
+	    	

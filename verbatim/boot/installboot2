@@ -1,0 +1,24 @@
+#
+# installboot2
+#
+# $Id: installboot2,v 1.1 1998/04/22 04:57:36 gdr-ftp Exp $
+#
+
+setenv FILE "$DOWNLOAD_DIR/gnohfs.shk"
+
+echo "Before running this script, you should have set your DOWNLOAD_DIR"
+echo "environment variable.  If this was done, then the following line"
+echo "will show the full pathname of the gnohfs.shk file.  If you did"
+echo "not set your environment variable then it will appear as /gnohfs.shk"
+echo "and the extraction will fail.  (Waiting 3 seconds, then starting"
+echo "extraction.)"
+sleep 3
+echo " "
+echo "Now extracting $FILE ..."
+echo " "
+yankit xvf $FILE
+echo " "
+echo "All done extraction."
+echo " "
+echo "You should now finish the installation process as is documented"
+echo "in the README.install file on the /gno.boot disk."

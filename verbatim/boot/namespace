@@ -1,0 +1,11 @@
+:bin		:gno.boot:bin
+:dev		:gno.boot:dev
+:doc		:gno.boot:doc
+:etc		:gno.boot:etc
+:home		:gno.boot:home
+:lang		:gno.boot:lang
+:lib		:gno.boot:lib
+:sbin		:gno.boot:sbin
+:tmp		:gno.boot:tmp
+:usr		:gno.boot:usr
+:var		:gno.boot:var
