@@ -42,7 +42,9 @@
 #define	FNM_PATHNAME	0x02	/* Slash must be matched by slash. */
 #define	FNM_PERIOD	0x04	/* Period must be matched by period. */
 #ifndef _POSIX_SOURCE
-#define FNM_CASEFOLD	0x08	/* Case insensitive match (GNO-specific) */
+#define	FNM_CASEFOLD	0x08	/* Case insensitive search. */
+#define	FNM_LEADING_DIR	0x10	/* Ignore /<tail> after Imatch. */
+#define	FNM_IGNORECASE	FNM_CASEFOLD
 #endif
 
 #ifndef _SYS_CDEFS_H_
@@ -50,9 +52,7 @@
 #endif
 
 __BEGIN_DECLS
-#ifndef	_POSIX_SOURCE
 int	 fnmatch __P((const char *, const char *, int));
-#endif
 __END_DECLS
 
 #endif /* !_FNMATCH_H_ */
