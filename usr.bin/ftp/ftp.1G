@@ -31,6 +31,8 @@
 .\"
 .\"	@(#)ftp.1	6.18 (Berkeley) 7/30/91
 .\"
+.\" $Id: ftp.1G,v 1.2 1998/02/15 00:31:01 gdr-ftp Exp $
+.\"
 .TH FTP 1 "October 1997" GNO "Commands and Applications"
 .SH NAME
 .BR ftp
@@ -56,7 +58,7 @@ as report on data transfer statistics.
 .IP "\fB-n\fR"
 Restrains
 .BR ftp
-from attempting \*(Lqauto-login\*(Rq upon initial connection.
+from attempting \`auto-login\' upon initial connection.
 If auto-login is enabled,
 .BR ftp
 will check the
@@ -231,7 +233,7 @@ Set the file transfer
 .BR form
 to
 .IR format  .
-The default format is \*(Lqfile\*(Rq.
+The default format is \`file\'.
 .IP "\fBget\fR \fIremote-file\fR [\fIlocal-file\fR]"
 Retrieve the
 .IR remote-file
@@ -412,7 +414,7 @@ Set the file transfer
 .BR mode
 to
 .IR mode-name  .
-The default mode is \*(Lqstream\*(Rq mode.
+The default mode is \`stream\' mode.
 .IP "\fBmodtime\fR \fIfile-name\fR"
 Show the last modification time of the file on the remote machine.
 .IP "\fBmput\fR \fIlocal-files\fR"
@@ -742,7 +744,7 @@ Set the file transfer
 .IR structure
 to
 .IR struct-name .
-By default \*(Lqstream\*(Rq structure is used.
+By default \`stream\' structure is used.
 .IP \fBsunique\fR
 Toggle storing of files on remote machine under unique file names.
 Remote ftp server must support ftp protocol STOU command for
@@ -788,7 +790,7 @@ is completed if the remote server did not require it
 for logging in.
 Unless
 .BR ftp
-is invoked with \*(Lqauto-login\*(Rq disabled, this
+is invoked with \`auto-login\' disabled, this
 process is done automatically on initial connection to
 the FTP server.
 .IP \fBverbose\fR
@@ -852,9 +854,9 @@ with the argument supplied, and reads (writes) from the stdout
 (stdin).
 If the shell command includes spaces, the argument
 must be quoted; e.g.
-\*(Lq" ls -lt"\*(Rq.
+\`" ls -lt"\'.
 A particularly
-useful example of this mechanism is: \*(Lqdir more\*(Rq.
+useful example of this mechanism is: \`dir more\'.
 .IP 3.
 Failing the above checks, if ``globbing'' is enabled,
 local file names are expanded
@@ -902,8 +904,8 @@ The FTP specification specifies many parameters which may
 affect a file transfer.
 The
 .BR type
-may be one of \*(Lqascii\*(Rq, \*(Lqimage\*(Rq (binary),
-\*(Lqebcdic\*(Rq, and \*(Lqlocal byte size\*(Rq (for PDP-10's and PDP-20's
+may be one of \`ascii\', \`image\' (binary),
+\`ebcdic\', and \`local byte size\' (for PDP-10's and PDP-20's
 mostly).
 .BR Ftp
 supports the ascii and image types of file transfer,
@@ -1033,7 +1035,7 @@ command appeared in 4.2BSD.
 Correct execution of many commands depends upon proper behavior
 by the remote server.
 .LP
-An error in the treatment of carriage returns in the 4.2BSD 
+An error in the treatment of carriage returns in the 4.2BSD
 ascii-mode transfer code has been corrected.
 This correction may result in incorrect transfers of binary files
 to and from 4.2BSD servers using the ascii type.
