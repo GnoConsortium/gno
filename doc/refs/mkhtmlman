@@ -2,7 +2,7 @@
 #
 # Devin Reade, November 1997.
 #
-# $Id: mkhtmlman,v 1.4 1998/01/26 07:13:12 gdr-ftp Exp $
+# $Id: mkhtmlman,v 1.5 1998/01/27 06:25:34 gdr-ftp Exp $
 
 man2html=/usr/local/bin/man2html
 TMPDIR=${TMPDIR:-/tmp}
@@ -48,6 +48,7 @@ for section in 1 2 3 4 5 6 7 8; do
 	| grep -v sed/tests` ; do
 	[ "$F" = 00.DUMMY ] && continue;
 	f=`basename $F`
+	f2=`echo $f | perl -pe 's/\.[^\.]+$//;'`
 	echo "$f" >> $listfile
 	if [ -f $F'G' ]; then
 	    F="$F"G
@@ -56,7 +57,7 @@ for section in 1 2 3 4 5 6 7 8; do
 	    echo "creating $dest/$f.html"
 	    nroff -man $F | $man2html -nodepage | \
 	    perl -p -e \
-    's/<BODY>/<title>GNO: '"$f($section)"'<\/title><body bgcolor=\#ffffff>/;' \
+    's/<BODY>/<title>GNO: '"$f2($section)"'<\/title><body bgcolor=\#ffffff>/;'\
 		> $dest/$f.html
 	fi
     done
