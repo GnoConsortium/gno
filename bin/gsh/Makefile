@@ -1,7 +1,7 @@
 #
 # makefile for building gsh.  This is for use with dmake.
 #
-# $Id: Makefile,v 1.7 1998/09/08 16:53:04 tribby Exp $
+# $Id: Makefile,v 1.8 1999/01/08 07:38:47 gdr-ftp Exp $
 #
 # Devin Reade, February 1998.
 #
@@ -51,6 +51,8 @@ LDLIBS	+= -l/usr/lib/libtermcap
 # Make sure our macro files get built before trying to assemble source files.
 # LOCAL_SETUP	= macros
 
+CUSTOM_RELEASE	= TRUE
+
 .INCLUDE : /src/gno/prog.mk
 
 # We give a custom implicit rule for *.o files so that we don't get
@@ -95,6 +97,13 @@ MACROS	= \
 	$(OBJ_DIR)sv.mac \
 	$(OBJ_DIR)term.mac
 
+MANPAGES_1 = \
+	man/alias.1 \
+	man/cd.1 \
+	man/clear.1 \
+	man/exit.1 \
+	man/gsh.1 
+
 macros:	$(MACROS)
 
 $(OBJ_DIR)%.mac: %.asm
@@ -106,9 +115,20 @@ $(MACROS): $(LOCAL_MACRO_SRC)
 $(OBJ_DIR)alias.mac: $(MACRO_SRC)
 	$(MACGEN) $(MACGEN_FLAGS) alias.asm $@ $(MACRO_SRC)
 
-#bork:
-#	@echo OBJS are $(OBJS)
-#	gsh -c ${mktmp echo $(JINCL) $(JDEFS) $< > $@}
+# Place files where they will subsequently be archived in a binary
+# distribution.
+release: $(OBJ_DIR)$(PROG) $(MANPAGES_1) $(DESC)
+	$(INSTALL) -d $(RELBIN) $(RELMAN)/man1 $(DESC_DIR)
+	$(INSTALL) $(OBJ_DIR)$(PROG) $(RELBIN)
+	$(INSTALL) $(MANPAGES_1) $(RELMAN)/man1
+	$(DESCU) -o $(DESC_SRC) $(DESC_SRC) $(DESC)
+
+# Install files into a live system.  This doesn't update the describe
+# database.
+install: $(OBJ_DIR)$(PROG) $(MANPAGES_1)
+	$(INSTALL) -d $(BINDIR) $(MANDIR)/man1
+	$(INSTALL) $(OBJ_DIR)$(PROG) $(BINDIR)
+	$(INSTALL) $(MANPAGES_1) $(MANDIR)/man1
 
 $(ODIR)alias.o:		$(OBJ_DIR)alias.mac
 $(ODIR)bufpool.o:	$(OBJ_DIR)bufpool.mac

@@ -1,0 +1,9 @@
+Name:    gsh
+Version: 2.0 (31 December 1998)
+Shell:   GNO
+Author:  Dave Tribby (from FreeBSD code)
+Contact: tribby@cup.hp.com
+Where:   /bin
+FTP:     ftp.gno.org
+
+ The GNO Shell.
