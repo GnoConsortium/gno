@@ -1,0 +1,195 @@
+#
+# Example SLIP connection script for slipdial v1.0 for GNO/ME and GSTCP.
+#
+# This script is intended for installations where the IIgs is on a direct
+# serial connection to the SLIP server.
+#
+# This script should be called 'slipscript' and placed in /usr/sbin.  It
+# will be launched by tcpip when an attempt to reference a non-local address
+# is made, eg: ping, telnet, ftp.  This script is designed to handle static
+# slip pretty much as-is, but if you have dynamic slip there are examples
+# included which should be sufficient to get you going.  The relevant sections
+# are commented out with bangs (!).
+#
+# All the important strings are assigned at the top of the script for easy
+# access and modification.
+#
+#    $Id: slpscrpt.direct,v 1.1 1999/02/13 06:48:57 gdr-ftp Exp $
+#
+
+#
+#    String definitons.
+#
+
+#    These are the user names and passwords we use to get access to
+#    our SLIP server.
+
+$username   = "myGSlogin"
+$password   = "myPasswd"
+
+#    $localip is what the IIgs will use.  $remoteip will be used by your
+#    SLIP host.
+
+$localip  = "192.168.51.2"
+$remoteip = "192.168.51.1"
+$netmask  = "255.255.255.255"
+
+#    These are the prompts that we will watch for to see when we should
+#    send our user name and password.  The first letter of "login:" and
+#    "password:" have been left off here because some system use lower
+#    case and some use uppercase.
+
+$userwait = "ogin:"
+$passwait = "assword:"
+
+#
+# Information on debugging this script:
+#
+# There are probably enough messages put out by this script that you can
+# determine what is going wrong without adding more debug output. However,
+# if you wish to add more messages, there are two mechanisms by which 
+# you can do so.  The first is to print stuff to stderr:
+#	stderr("This is my debug message.")
+#
+# The second method is to use the syslogd facility.  You can do this by
+# inserting lines like this:
+#	system("$loggerdebug This is my debug message.")
+# Don't try to test the return code from system().
+#
+# Note the lack of a trailing semicolon in both cases.  This can easily
+# bite C and Perl programmers.
+#
+# Also note that debug output will only show up on console if /usr/sbin/tcpip
+# was started from the console rather than from /etc/inittab.
+#
+# The current mechanism of using syslogd is a bit of a hack; you don't
+# want to leave your debugging information in after you get the script
+# running because that can significantly lengthen the time it takes to
+# connect to your server.
+#
+# Debug messages should always call $loggerdebug rather than $loggerinfo.
+# The latter is used for messages that should never be deleted from this
+# script; they are useful for when things go awry.
+#
+$loggerdebug = "/usr/bin/logger -t slipscript -p daemon.debug"
+$loggerinfo  = "/usr/bin/logger -t slipscript -p daemon.info"
+
+#
+#    Program start.
+#
+
+#    First, open up our port
+
+ifequ ($1,"slipb")                 # $1 is the second commandline argument,
+   $portname = ".ttya"             # which should be either slipa or slipb.
+eifequ ($1,"slipa")
+   $portname = ".ttyb"
+else
+   goto(noarg)
+$port = open($portname)
+ifequ ($port)                      # If we got an error opening the port, abort
+   goto(abort)
+
+# Here is an example debug message.
+# $message = "opened port $portname"
+# stderr("$message")
+# system("$loggerdebug $message")
+
+#
+#    Connect to remote host.
+#
+#    Now, we have a series of sends/waits to get to the slip server.
+#    This is dependant on what the system you are trying to connect to is
+#    like and MUST be edited!  The below is just an EXAMPLE.
+#
+#    We send a few carriage returns so that we can hopefully get our
+#    login prompt.  If we still don't see the prompt, throw an error.
+#
+send($port,"\r")
+send($port,"\r")   
+send($port,"\r")   
+$offline = wait($port,$userwait,5)
+ifnot ($offline)
+        goto(hangup)
+
+#    provide our SLIP login name                    
+send($port,$username)
+
+#    wait for the "Password:" string and send our password
+$gotpass = wait($port,$passwait,5)
+ifnot ($gotpass)
+	goto(hangup)
+send($port,$password)
+
+#    Here we assume that the account we're using immediately starts the
+#    SLIP protcol once the login has succeeded.  If this is not the case,
+#    then you should add in a few more wait/send pairs (as appropriate)
+#    to start SLIP on your server.
+
+#    For Dyanamic IP Only - we can now pick off the IP address that is our
+#    address.  If you also need to get your router's IP address, you can do
+#    a getip() for that too.
+                    
+!$gotip = getip($localip,$port,"Your IP address is "," Server address")
+!ifnot ($gotip)
+!   goto(hangup)         # We didn't get an IP back, so abort.
+
+#    Now wait for the banner that says our server is entering SLIP mode.
+$gotslip = wait($port,"Starting SLIP",5)
+ifnot ($gotslip)
+	goto(hangup)
+                    
+$success = system("/sbin/ifconfig $1 $localip $remoteip netmask $netmask")
+#    Here we would normally check the result of system() to see if the
+#    ifconfig call was successful.  However, there is a bug right now in
+#    that system() will always return a failure code, so we skip this test.
+# $ifnot ($success)         
+#   goto(hangup)         # An error occured system()ing ifconfig or ifconfig
+                         # was unable to execute properly, so abort.
+
+#                   
+#    Done.  We are now online, so close up and exit success
+#
+
+:done
+   close($port)
+   system("$loggerinfo connect $1 local $localip remote $remoteip netmask $netmask")
+   exit(0)
+
+#
+#    Unsuccessful completion handlers follow
+#
+
+#    Hangup - we made a connection, but didn't get slip started for some reason
+
+:hangup
+   $message = "Unable to start SLIPping to remote host -- Giving up"
+   stderr("$message")
+   system("$loggerinfo $message")
+   close($port)
+   exit(1)
+
+#    No connection made.
+
+:noconnect
+   $message = "Unable to make connection to remote host -- Giving up"
+   stderr("$message")
+   system("$loggerinfo $message")
+   close($port)
+   exit(1)
+
+#    No argument given on the commandline for slipa or slipb.
+
+:noarg
+   $message = "Unable to find sliptype parameter -- Giving up"
+   stderr("$message")
+   system("$loggerinfo $message")
+   exit(1)
+
+#    Abort!  We can't even open a port, so just quit
+
+:abort
+   $message = "Error opening port $1 -- Giving up"
+   stderr("$message")
+   system("$loggerinfo $message")
+   exit(1)
