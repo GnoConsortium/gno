@@ -1,0 +1,6 @@
+date.asm is 41% faster and one third of the size of date.c, the
+original. Also uses 60% less stack space. Assembly can really make a
+hell of a difference.
+
+Will work under GNO or ORCA. Also fixes two small problems with the
+original date utility.

@@ -1,0 +1,34 @@
+date
+====
+
+I wrote this just so I could see how much smaller than asm version would be
+as compared to the C version. It turned out to be a great deal smaller, and
+faster too - even with its additional options which I added later.
+
+-V Version info.
+
+-u continuously update the date on the screen. Killing the process will
+   force a "clean" exit.
+
+mkfs
+====
+
+Basically FormatGS and EraseDiskGS in one. I was tired of using an old "Init"
+program from ORCA 1.x, so I wrote a GNO one. This one supports specifying
+the file system by name in addition to the options the old Init used to
+support.
+
+See the manpage for details.
+
+cal
+===
+
+Yeah, I did it again. I wrote a program that already existed. (notice that all
+the files in this archive are this type of program). So what, it didn't take
+long!
+
+I didn't rewrite this one from scratch. I just added a few lines to the "cal"
+that came with GNO (1.0) so that it would print a calendar for the current
+month if no month is specified. This is how UNIX cal behaves.
+
+This is the very first thing I did when I got ORCA/C (Finally!) last week.
