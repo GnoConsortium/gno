@@ -1,0 +1,29 @@
+.\"
+.\" $Id: center.1,v 1.1 1999/02/16 06:04:11 gdr-ftp Exp $
+.\"
+.TH CENTER 1 "15 February 1999" GNO "Commands and Applications"
+.SH NAME
+.BR center
+\- print centered text to stdout
+.SH SYNOPSIS
+.BR center
+.I columns
+.I file
+.SH DESCRIPTION
+.BR center
+is a simple utility for centering text on a screen.
+.I columns
+is the number of columns that are considered to be the width of a full screen.
+The default and maximum widths are both 80 columns.
+Text is read from the input file
+.I file
+and printed to stdout.
+.SH BUGS
+.B center 
+should be able to read from stdin.
+.LP
+.B center
+would be more useful if it took arbitrary screen widths into account,
+including over 80 columns.  Less than about 5 or 10 is probably unnecessary.
+.SH AUTHOR
+Marek Pawlowski.

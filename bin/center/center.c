@@ -3,6 +3,8 @@
    Takes input from stdin, center's it, and puts it to
    stdout.
 
+   v1.1 compiled for GNO Base Distribution.  Devin Reade, 15 February 1999
+
    Usage:  center [Columns] [File]
 
    Columns   The number of columns are to be considered
@@ -22,34 +24,45 @@
       marekp@pnet91.cts.com
       marekp@cerf.net
 
+   $Id: center.c,v 1.2 1999/02/16 06:04:11 gdr-ftp Exp $
+
 */
-#pragma stacksize 1024
 
 #include <stdio.h>
+#include <string.h>
 #include <ctype.h>
-#define VERSION "1.00"
+#include <gno/gno.h>
+
+#define VERSION "1.1"
+
+static void center(FILE *stream, int t);
 
 char input[81];
 char output[81];
 
-main(argc, argv)
-int argc;
-char **argv;
+static void usage(const char *file);
+
+int
+main(int argc, char **argv)
 {
-   int t, i, x, s, fflag;
+   int t, i, x, s, fflag, len, c;
    FILE *in;
 
-/* _INITGNOSTDIO();
-   setvbuf(stdin,NULL,_IOLBF,256l);  */
-   if (argc > 3)
-      usage(argv[0]);
+   __REPORT_STACK();
+   if (argc > 3) {
+     usage(argv[0]);
+   }
 
    s = 1;
 
    if(argc > 1) {
+      len = strlen(argv[1]);
       for(x = 0 ; x <= (strlen(argv[1])-1) ; x++) {
          s = isdigit(argv[1][x]);
          t = atoi(argv[1]);
+	 if (t>80) {
+	   t = 80;
+	 }
       }
    }
 
@@ -60,7 +73,10 @@ char **argv;
 
    if (argc == 3) {
       in = fopen(argv[2], "r");
-      if(!in) error(argv[1], argv[2]);
+      if (!in) {
+	fprintf(stderr, "%s: cannot open %s\n", argv[1], argv[2]);
+	exit(1);
+      }
       fflag = 1;
    }
 
@@ -69,27 +85,28 @@ char **argv;
          center(in, t);
       else
          center(stdin, t);
-   }
-
-   else
+   } else {
       usage(argv[0]);
+   }
+   return 0;
 }
 
 /* Function to call on other subroutines to result in a completely
    centered line! */
 
-center(stream, t)
-FILE *stream;
-int t;
+static void
+center(FILE *stream, int t)
 {
-   int x, i;
+   int x, i, j;
 
    while(feof(stream) == 0) {
       fgets(input, 80, stream);
 
       i = (t - strlen(input)) / 2;
 
-      fillit(i, 0);
+      for (j = 0; j<i; j++) {
+	output[j] = ' ';
+      }
 
       for(x = 0 ; x <= strlen(input) ; x++)
          output[i+x] = input[x];
@@ -98,36 +115,10 @@ int t;
    }
 }
 
-/* Function to tell the person that the filename offered
-   not be opened for reading */
-
-error(name, file)
-char *name;
-char *file;
-{
-   fprintf(stderr, "%s: cannot open %s\n", name, file);
-   exit(0);
-}
-
 /* Function to display the usage of the utility */
-
-usage(file)
-char *file;
+static void
+usage(const char *file)
 {
    fprintf(stderr, "Usage: %s [columns] [file]\n", file);
-   exit(0);
-}
-
-/* Function to fill in the left side of text with the appropriate
-   number of spaces */
-
-fillit(ntf, start)
-int ntf;             /* Number To Fill */
-int start;           /* Start filling at.. */
-{
-   int x;
-
-   for(x = start ; x <= ntf ; x++) {
-      output[x] = ' ';
-   }
+   exit(1);
 }

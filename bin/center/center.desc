@@ -1,0 +1,9 @@
+Name:    center
+Version: 1.1
+Shell:   GNO
+Author:  Marek Pawlowski.  Maintained by Devin Reade.
+Contact: gdr@trenco.gno.org
+Where:   /bin
+FTP:     ftp.gno.org
+
+Take text from a file (or stdin), center it, and print it to stdout.
