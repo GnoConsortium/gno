@@ -1,9 +1,9 @@
 # Tests for catrez command; invoked by command file "fulltests"
 #   Written by Dave Tribby (August 1997)
-#   $Id: dotests,v 1.1 1997/09/30 05:09:25 gdr Exp $
+#   $Id: dotests,v 1.2 1998/03/08 17:31:02 gdr-ftp Exp $
 
 # Location of the catrez command to be tested
-set testcmd="../catrez"
+set testcmd="/obj/gno/usr.bin/catrez/catrez"
 
 # Record starting time
 echo -n "Testing command $testcmd beginning at"
