@@ -1,10 +1,10 @@
 #
-# $Id: Makefile,v 1.2 1997/05/03 19:40:45 gdr Exp $
+# $Id: Makefile,v 1.3 1997/07/27 23:09:09 gdr Exp $
 #
 
 .INCLUDE: 	../../const.mk
 
-OBJS	= fgetln.o mktemp.o perror.o tempnam.o
+OBJS	= fdopen.o fgetln.o mktemp.o perror.o tempnam.o
 
 default:	$(OBJS)
 
