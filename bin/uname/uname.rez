@@ -1,7 +1,7 @@
 /*
  * Resources for uname
  *
- * $Id: uname.rez,v 1.1 1998/02/17 02:50:32 gdr-ftp Exp $
+ * $Id: uname.rez,v 1.2 1998/06/17 05:13:38 stever Exp $
  */
 
 #define PROG "uname"
@@ -30,3 +30,4 @@ resource rComment (1, purgeable3) {
 	"GNO utility: " DESC "\n"
 	"Ported from FreeBSD code by Steve Reeves."
 };
+
