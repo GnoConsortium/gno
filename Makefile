@@ -2,7 +2,7 @@
 # This file is intended for use with dmake.  There are constructs in 
 # here that (as yet) make it unsuitable to be used on the GS.
 #
-# $Id: Makefile,v 1.4 1997/11/01 19:49:27 gdr Exp $
+# $Id: Makefile,v 1.5 1997/12/22 01:11:08 gdr Exp $
 #
 XFER	= xfer
 TMP	= /tmp/gnobuild
@@ -32,7 +32,7 @@ NOT_YET= \
 
 srcxfer: $(XFER_LIST)
 
-ROOTFILES = Makefile binconst.mk binrules.mk paths.mk prog.mk
+ROOTFILES = Makefile binconst.mk binrelease.mk binrules.mk paths.mk prog.mk
 
 $(XFER)/root.shk: $(ROOTFILES)
 	@echo "making $@"; \
@@ -44,10 +44,10 @@ $(XFER)/root.shk: $(ROOTFILES)
 	fi; \
 	cwd=`pwd`; \
 	mkdir -p $(TMP); \
-	cp -r -p $< $(TMP); \
+	cp -r -p $(ROOTFILES) $(TMP); \
 	$(RM) -rf `find $(TMP) -name CVS -print `; \
 	$(UDL) -gR $(TMP); \
-	(cd $(TMP); $(NULIB) -cf $$cwd/$@ $< ); \
+	(cd $(TMP); $(NULIB) -cf $$cwd/$@ $(ROOTFILES) ); \
 	$(RM) -rf $(TMP)
 
 # make sure the filename fits
