@@ -33,7 +33,7 @@
 .\" SUCH DAMAGE.
 .\"
 .\"	@(#)kill.1	8.2 (Berkeley) 4/28/95
-.\"	$Id: kill.1,v 1.1 1998/02/09 00:19:20 tribby Exp $
+.\"	$Id: kill.1,v 1.2 1999/02/13 19:53:47 gdr-ftp Exp $
 .\"
 .TH KILL 1 "January 1998" "GNO" "Commands and Applications"
 .SH NAME
@@ -66,11 +66,11 @@ utility sends a signal to the processes specified by the
 operand(s).
 .PP
 The options are as follows:
-.IP \fB-s\fR \fIsignal_name\fR
+.IP "\fB-s\fR \fIsignal_name\fR"
 A symbolic signal name specifying the signal to be sent instead of the
 default
 .BR TERM .
-.IP \fB-l\fR [\fIexit_status\fR]
+.IP "\fB-l\fR [\fIexit_status\fR]"
 If no operand is given, list the signal names; otherwise, write
 the signal name corresponding to
 .IR exit_status .
