@@ -3,7 +3,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: Makefile,v 1.7 1997/10/30 04:52:44 gdr Exp $
+# $Id: Makefile,v 1.8 1997/11/01 19:16:29 gdr Exp $
 #
 
 .INCLUDE:	../../../paths.mk
@@ -32,11 +32,11 @@ obj:	$(OBJS)
 # We can avoid the problem by preprocessing this file with a stand-alone
 # cpp(1).  This problem has been reported to Byte Works.
 #
-JINCL	= -I/src/gno/include -I/lang/orca/include
+JINCL	= -I$(INCLUDE_GNO) -I$(INCLUDE_ORCA)
 JDEFS	= -D__ORCAC__ -D__appleiigs__ -D__GNO__ -DSPLIT_FILE_2
 
 junk.c:		vfprintf.c
-	cpp $(JINCL) $(JDEFS) $< > $@
+	gsh -c ${mktmp cpp $(JINCL) $(JDEFS) $< > $@}
 
 vfprintf1.o:	vfprintf.c
 	$(CC) -c -o $@ $(CFLAGS) -DSPLIT_FILE_1 $<
