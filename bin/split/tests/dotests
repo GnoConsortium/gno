@@ -1,16 +1,16 @@
 # Tests for split command; invoked by command file "fulltests"
 #   Written by Dave Tribby (November 1997)
-#   $Id: dotests,v 1.1 1997/12/02 05:15:26 gdr Exp $
+#   $Id: dotests,v 1.2 1998/04/28 05:08:38 gdr-ftp Exp $
 
 # Location of the split command to be tested
-set testcmd="../split"
+set testcmd="/obj/gno/bin/split/split"
 
 # Location of binary and ASCII files used in test
 set bfile="$testcmd"
 set afile="../split.c"
 
 # Location of sed command (used to strip unwanted blanks at end of echo)
-set sedcmd="/src/gno/usr.bin/sed/sed"
+set sedcmd="/obj/gno/usr.bin/sed/sed"
 
 # Alias for rm command
 alias rm "cp -p rm"
