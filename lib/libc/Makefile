@@ -10,26 +10,17 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.7 1998/02/08 03:47:22 gdr-ftp Exp $
+# $Id: Makefile,v 1.8 1998/02/09 08:44:06 taubert Exp $
 #
 
-LIB	= c
+LIB=	c
+# assert.a must be copied from $(ORCA_SRC)/ORCALib/obj into $(OBJ_DIR)
+OBJS=	assert.a
 
-.INCLUDE: ../../paths.mk
-.INCLUDE: ../const.mk
+# This library goes into /lib.
+USE_SLASH_LIB= true
 
-USE_SLASH_LIB	= true			# This library goes into /lib.
-
-ORCALIB_OBJ	= \
-	$(ORCA_SRC)/orcalib/obj/assert.a
-
-libc:	$(ORCALIB_OBJ)
-	$(MAKELIB) $(MAKELIBFLAGS) -l $@ $^
-
-$(ORCALIB_OBJ):;	true
-
-.INCLUDE:		../librelease.mk
+.INCLUDE: /src/gno/lib/lib.mk
 
 $(LIBTARGET):: lib$(LIB).r
-	$(CATREZ) -d $@ lib$(LIB).r
-
+	$(CATREZ) -d $@ $<

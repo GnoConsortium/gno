@@ -6,7 +6,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: const.mk,v 1.5 1998/02/08 03:47:15 gdr-ftp Exp $
+# $Id: const.mk,v 1.6 1998/02/09 08:43:58 taubert Exp $
 #
 # It is critical that 13/orcacdefs/defaults.h is set up correctly,
 # including #defines for __appleiigs__ and __GNO__.  For the purpose
@@ -16,7 +16,7 @@
 
 DEFINES  +=
 INCLUDES +=
-ASFLAGS	 += -r -c
+ASFLAGS	 += -r
 CFLAGS   += -r -w $(DEFINES) $(INCLUDES)
 LDFLAGS	 +=
 INSTALL   = /usr/bin/install
@@ -33,6 +33,6 @@ RELUSRLIB	= $(RELEASE_DIR)$(USRLIBDIR)
 MAKELIB		= 17/makelib.apw
 MAKELIBFLAGS	= -w -r -p
 
-# This is the name of the library we're building.  We define LIBPFX if
-# it's not in the current directory.
-LIBTARGET	= $(LIBPFX)lib$(LIB)
+# This is the name of the library we're building.
+LIBPFX    *= $(OBJ_DIR)
+LIBTARGET  = $(LIBPFX)lib$(LIB)

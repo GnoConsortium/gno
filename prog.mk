@@ -1,7 +1,7 @@
 #
 # prog.mk    version 1.1.0  (August 31, 1997)
 #
-# $Id: prog.mk,v 1.4 1997/10/30 04:26:58 gdr Exp $
+# $Id: prog.mk,v 1.5 1998/02/09 08:43:49 taubert Exp $
 #
 
 # This makefile is intended for use with dmake(1) and occ(1) on Apple IIGS
@@ -37,15 +37,8 @@
 #  stack size to 4096, and to set the "__STACK_CHECK__" macro:
 #         dmake DEBUG=25 STACK=4096 DEFINES=-D__STACK_CHECK__
 
-#
-#	Created by Dave Tribby, July 1997
-#
-
 .INCLUDE:	/src/gno/paths.mk
 .INCLUDE:	/src/gno/binconst.mk
-
-# Objects are source file names with .c changed to .o
-OBJS=$(SRCS:s/.c/.o/:f)
 
 #
 #  Check for user-specified compile/load options
@@ -57,14 +50,10 @@ OBJS=$(SRCS:s/.c/.o/:f)
 .END
 
 # Was special optimizing requested?
-.IF $(OPTIMIZE) == $(NULL)
-	OPTIMIZE	=  78
-.END
+OPTIMIZE*= 78
 
 # Use stack size of 768 bytes if STACK macro isn't already defined
-.IF $(STACK) == $(NULL)
-	STACK	=  1024
-.END
+STACK	*= 1024
 
 # Compile and load flags passed to occ
 #   -r: don't create .root file (used on all but main file)
@@ -72,12 +61,8 @@ CFLAGS	+= -r -O$(OPTIMIZE) $(DEFINES) -s$(STACK)
 
 
 # If installation directories were not set, use defaults
-.IF $(BINDIR) == $(NULL)
-	BINDIR		= /bin
-.END
-.IF $(MANDIR) == $(NULL)
-	MANDIR		= /usr/man
-.END
+BINDIR	*= /bin
+MANDIR	*= /usr/man
 
 RELBIN	= $(RELEASE_DIR)$(BINDIR)
 RELMAN	= $(RELEASE_DIR)$(MANDIR)

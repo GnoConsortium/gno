@@ -1,4 +1,4 @@
-#	$Id: Makefile,v 1.1 1998/02/02 08:18:19 taubert Exp $
+#	$Id: Makefile,v 1.2 1998/02/09 08:43:55 taubert Exp $
 
 .INCLUDE: /src/gno/paths.mk
 
@@ -12,11 +12,16 @@ OBJS=	main.o patch.o kern.o sys.o signal.o ctool.o sem.o \
 CFLAGS+=-DKERNEL
 .SOURCE: ../drivers
 
-$(PROG): $(OBJS)
+$(OBJ_DIR)$(PROG): $(OBJS)
 	gsh -c ${mktmp prefix 13 /lang/orca/libraries; $(LD) $(LDFLAGS) -o $@ $<}
 	compile +w $(PROG).rez keep=$@
 	chtyp -t s16 $@
-$(PROG): $(PROG).rez
+	$(CP) $@ /ren/gno.new/kern.new
+$(OBJ_DIR)$(PROG): $(PROG).rez
+
+#%.o : %.c
+#	$(CC) $(CFLAGS) -c $< -o $@
+#	@gsh -c ${mktmp cd $(OBJ_DIR); nameobj -p $@}
 
 # dependencies
 

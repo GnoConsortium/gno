@@ -7,15 +7,28 @@
 #
 # Devin Reade, 1997
 #
-# $Id: paths.mk,v 1.4 1998/01/26 00:44:20 gdr-ftp Exp $
+# $Id: paths.mk,v 1.5 1998/02/09 08:43:47 taubert Exp $
 #
 
 # SRC_DIR is the top-level GNO source distribution directory (containing
 # $(SRC_DIR)/gno, $(SRC_DIR)/gno/lib, and so forth).  It also corresponds
 # to the top level of the CVS repository.
 # I recommend using /src and defining it in /etc/namespace.
+#
+# OBJ_DIR can be used to store the resulting object and binary files on
+# a separate partition from the source.  This is very handy when the
+# source is stored on an AppleShare volume.  If you don't need this
+# feature, you can either define /obj in /etc/namespace to be the same
+# as /src, or simply comment out the OBJ_DIR line here.
 
 SRC_DIR		= /src
+CWD		= $(PWD:s,:,/,g)
+OBJ_DIR		= /obj$(CWD:s,${SRC_DIR},,)
+
+.SOURCE.a :	$(OBJ_DIR)
+.SOURCE.o :	$(OBJ_DIR)
+.SOURCE.r :	$(OBJ_DIR)
+.SOURCE.root :	$(OBJ_DIR)
 
 # RELEASE_DIR is the directory into which we will put the created
 # distribution files.

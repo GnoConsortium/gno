@@ -2,7 +2,7 @@
 # Compilation constants for utilities (directories ./bin, ./sbin,
 # ./usr.bin, ./usr.sbin).  These are not used when building the libraries.
 #
-# $Id: binconst.mk,v 1.4 1998/01/24 07:35:15 taubert Exp $
+# $Id: binconst.mk,v 1.5 1998/02/09 08:43:44 taubert Exp $
 #
 # Devin Reade, 1997.
 #
@@ -10,7 +10,7 @@
 DEFINES	+=
 CFLAGS	+= -w
 LDFLAGS	+=
-LDLIBS	+= $(LDADD:s/-l/-l:usr:lib:lib/)
+LDLIBS	+= $(LDADD:s,-l,-l/usr/lib/lib,)
 
 # WARNING:  You *must* use descu v1.0.4 or later for these builds.
 DESCU		= /usr/sbin/descu
@@ -23,18 +23,13 @@ DESC_DIR	= $(RELEASE_DIR)/usr/lib
 DESC_SRC	= $(DESC_DIR)/describe.src
 
 # If no source files were defined, use program name
-.IF $(SRCS) == $(NULL)
-	SRCS	= $(PROG).c
-.END
+SRCS	*= $(PROG).c
 
 # If no main file was defined, use program name
-.IF $(MAIN) == $(NULL)
-	MAIN	= $(PROG)
-.END
+MAIN	*= $(PROG)
 
 # Define DESC if it's not already done.
-.IF $(DESC) == $(NULL)
-	DESC	= $(PROG).desc
-.END
+DESC	*= $(PROG).desc
 
-OBJS	= $(SRCS:s/.c/.o/:f)
+# Objects are source file names with .c changed to .o
+OBJS	+= $(SRCS:s/.c/.o/:f)

@@ -1,23 +1,19 @@
 #
 # Makefile for libc/stdtime.
 #
-# $Id: Makefile,v 1.2 1997/10/03 04:44:25 gdr Exp $
+# $Id: Makefile,v 1.3 1998/02/09 08:45:04 taubert Exp $
 #
 
-.INCLUDE:	../../../paths.mk
-.INCLUDE: 	../../const.mk
-
-OBJS	= asctime.o difftime.o localtime.o strftime.o
+LIB=	c
+LIBPFX=	$(OBJ_DIR)../
+OBJS=	asctime.o difftime.o localtime.o strftime.o
 
 CFLAGS	+= -v
 
 default:
 	@echo do not use this directory yet
 
-build .PHONY:	../libc
-obj:	$(OBJS)
-
-.INCLUDE:	../rules.mk
+.INCLUDE: /src/gno/lib/lib.mk
 
 asctime.o::	private.h
 difftime.o::	private.h
