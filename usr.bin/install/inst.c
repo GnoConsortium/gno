@@ -5,10 +5,10 @@
  * For copying and distribution information, see the file "COPYING"
  * accompanying this file.
  *
- * $Id: inst.c,v 1.5 1998/04/24 00:54:03 gdr-ftp Exp $
+ * $Id: inst.c,v 1.6 1999/01/16 19:30:56 gdr-ftp Exp $
  */
 
-#define VERSION "1.2"
+#define VERSION "1.3"	/* version also in inst.rez, inst.1, inst.desc */
 #define EMAIL   "<gdr@trenco.gno.org>"
 
 #define	__USE_DYNAMIC_GSSTRING__
@@ -285,6 +285,7 @@ copyfiles(int argc, char **argv, int action, mode_t mode)
 	GSStringPtr src, dest, newname;
         int total, i, result, printWhen;
 	unsigned short flags;
+	char sep;
 #define PRINT_NEVER  0	/* used for printWhen (verbose mode) */
 #define PRINT_BEFORE 1
 #define PRINT_AFTER  2
@@ -330,9 +331,13 @@ copyfiles(int argc, char **argv, int action, mode_t mode)
 	} else {
 		printWhen = PRINT_NEVER;
 	}
+	if (total > 0) {
+	  sep = (strchr(argv[total], ':') != NULL) ? ':' : '/';
+	}
 	for (i=0; i<total; i++) {
 		if (printWhen == PRINT_BEFORE) {
-			fprintf(stderr, "%s\n", argv[total]);
+			fprintf(stderr, "%s%c%s\n", argv[total], sep, 
+				basename(argv[i]));
 		}
 	        if ((src = __C2GSMALLOC(argv[i])) == NULL) {
 			err(1, nodup, "source", argv[i]);
