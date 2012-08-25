@@ -1,0 +1,1195 @@
+<!--
+;; $Id: commands.docbook,v 1.1 2012/08/25 07:19:01 gdr Exp $
+-->
+
+<chapter id="gsh-commands">
+<title>Builtin Command Reference</title>
+
+<sect1>
+<title>Builtin vs External Commands</title>
+
+<para>
+The term "built-ins" is used to
+describe commands that exist within the shell itself. These
+utilities run faster than external commands because the code is
+already loaded into memory. Files of type "EXE", on the
+other hand, must be loaded into memory by gsh and
+executed. If an EXE command is executed again, it might, again,
+have to be loaded into memory. This results in longer execution
+time for the program.
+</para>
+
+<para>
+gsh has a number of built-in commands which allow you to work with the
+shell, the GNO kernel, and the shell environment.
+</para>
+
+<para>
+The following section describes the
+commands that are built-in to gsh. The "[..]"
+character sequence represents an optional argument to a command.
+The term "SIGNAL" is used to represent one of the signal names
+or numbers listed in Appendix D Signals. The sequence
+"..." means the command accepts multiple arguments of
+the same type as the argument before the "..."
+sequence. The sequence "{..}" is used to represent a
+set, which is a list of possible arguments to choose from.
+</para>
+
+</sect1>
+
+<sect1 id="gsh-commands-builtin">
+<title>Builtin Shell Commands</title>
+
+
+<variablelist>
+
+<varlistentry>
+<term>
+bindkey [-l] 
+<replaceable>function</replaceable> <replaceable>string</replaceable>
+</term>
+<listitem>
+<para>
+Bindkey is used to customize the shell's
+command-line editor. Any key on the keyboard can be mapped to any
+of a number of functions. The various functions are as follows:
+</para>
+
+<para>
+<table colsep="1" frame="all" rowsep="1" tocentry="1" shortentry="0"
+orient="land" pgwide="0">
+<title>bindkey Functions</title>
+<tgroup cols="2">
+<colspec align="left"/>
+<thead>
+<row>
+    <entry align="center">Function</entry>
+    <entry align="center">Meaning</entry>
+</row>
+</thead>
+<tbody>
+<row>
+    <entry>
+    backward-char
+    </entry>
+    <entry>
+    move cursor left
+    </entry>
+</row>
+<row>
+    <entry>
+    backward-delete-char
+    </entry>
+    <entry>
+    delete character to the left
+    </entry>
+</row>
+<row>
+    <entry>
+    backward-word
+    </entry>
+    <entry>
+    move cursor left one word
+    </entry>
+</row>
+<row>
+    <entry>
+    beginning-of-line
+    </entry>
+    <entry>
+    move cursor to beginning of line
+    </entry>
+</row>
+<row>
+    <entry>
+    clear-screen
+    </entry>
+    <entry>
+    clear screen and redraw prompt
+    </entry>
+</row>
+<row>
+    <entry>
+    complete-word
+    </entry>
+    <entry>
+    perform filename completion
+    </entry>
+</row>
+<row>
+    <entry>
+    delete-char
+    </entry>
+    <entry>
+    delete character under cursor
+    </entry>
+</row>
+<row>
+    <entry>
+    down-history
+    </entry>
+    <entry>
+    replace command line with next history
+    </entry>
+</row>
+<row>
+    <entry>
+    end-of-line
+    </entry>
+    <entry>
+    move cursor to end of line
+    </entry>
+</row>
+<row>
+    <entry>
+    forward-char
+    </entry>
+    <entry>
+    move cursor to the right
+    </entry>
+</row>
+<row>
+    <entry>
+    forward-word
+    </entry>
+    <entry>
+    mvoe cursor one word to the right
+    </entry>
+</row>
+<row>
+    <entry>
+    kill-end-of-line
+    </entry>
+    <entry>
+    delete line from the cursor to end of line
+    </entry>
+</row>
+<row>
+    <entry>
+    kill-whole-line
+    </entry>
+    <entry>
+    delete the entire command line
+    </entry>
+</row>
+<row>
+    <entry>
+    list-choices
+    </entry>
+    <entry>
+    list file completion matches
+    </entry>
+</row>
+<row>
+    <entry>
+    newline
+    </entry>
+    <entry>
+    finished editing, accept command line
+    </entry>
+</row>
+<row>
+    <entry>
+    raw-char
+    </entry>
+    <entry>
+    character as-is
+    </entry>
+</row>
+<row>
+    <entry>
+    redisplay
+    </entry>
+    <entry>
+    redisplay the command line
+    </entry>
+</row>
+<row>
+    <entry>
+    toggle-cursor
+    </entry>
+    <entry>
+    toggle between insert and overwrite cursor
+    </entry>
+</row>
+<row>
+    <entry>
+    undefined-char
+    </entry>
+    <entry>
+    this key does nothing
+    </entry>
+</row>
+<row>
+    <entry>
+    up-history
+    </entry>
+    <entry>
+    replace command line with previous history
+    </entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</para>
+
+<para>
+Keys are bound to functions, not
+vice-versa. This means that you can have any number of commands
+refer to the same function. For example, the default bindings
+have <userinput>CTRL-A</userinput> and <userinput>OA-&lt;</userinput>
+both bound to <userinput>beginning-of-line</userinput>.
+</para>
+
+<para>
+Most of the function names are
+self-explanatory, and are explained in Chapter 2, but a few
+deserve discussion. 
+<userinput>raw-char</userinput>
+is what you should bind a key that should be
+inserted into the command-line as-is. The regular printable ASCII
+set, such as the letters a-z, numbers, etc. are bound to
+<userinput>raw-char</userinput>.
+Control characters should not be bound to 
+<userinput>raw-char</userinput>
+because the command-line editor will become confused (most control characters
+act as special GNO/ME console feature codes - see the 
+<ulink url="http://www.gno.org/~gno/kern.html">GNO Kernel Reference
+Manual</ulink>).
+</para>
+
+<para>
+Any keystroke that should be rejected by
+the editor should be bound to 
+<userinput>undefined-char</userinput>.
+By default, this includes control characters and OA-sequences that
+are not assigned to any editing features. Any key bound to
+<userinput>undefined-char</userinput>
+will cause gsh to beep and ignore the key.
+</para>
+
+<para>
+You can actually bind key sequences, not
+just keystrokes, to functions. There is no limit other than
+memory to how many characters are in a command sequence.
+</para>
+
+<para>
+Because terminals do not have the OA (Open Apple) key, OA is actually
+mapped by the kernel to a two-character sequence consisting of 
+<userinput>ESC</userinput>
+and the key. For example, OA-Y would actually produce 
+<userinput>ESC-Y</userinput>.
+</para>
+
+<para>
+Control characters in the
+<replaceable>string</replaceable>
+are represented in ^X format; e.g. CTRL-A is represented by ^A.
+ESC (and OA) is represented by ^[.
+</para>
+
+<informalexample id="ex-bindkey">
+<screen id="sc-bindkey">
+<prompt>gno% </prompt> <userinput>bindkey kill-end-of-line ^K</userinput>
+    map Ctrl-K to kill-end-of-line (like Emacs)
+<prompt>gno% </prompt> <userinput>bindkey clear-screen ^[^X</userinput>
+    map OA-Clear to clear-screen
+</screen>
+</informalexample>
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+commands
+</term>
+<listitem>
+<para>
+Displays a list of all built-in shell commands.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+cd [<replaceable>pathname</replaceable>]
+</term>
+<term>
+chdir [<replaceable>pathname</replaceable>]
+</term>
+<listitem>
+<para>
+Changes the current working directory to 
+<replaceable>pathname</replaceable>.
+If <replaceable>pathname</replaceable>
+is not given, the default home directory (i.e. the value of the HOME
+environment variable) is used. This makes it easy
+to move back to your home directory. Under gsh, unlike
+most UNIX shells, the cd is not necessary, except to change
+automatically to your HOME directory. If the first word on the command line
+is neither a builtin nor an external command, but is instead the name of
+a directory, a cd is implied and performed on the directory unless the 
+NODIREXEC variable has been set.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+clear
+</term>
+<listitem>
+<para>
+This command takes no arguments. When invoked, the screen will be cleared.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+dirs
+</term>
+<listitem>
+<para>
+See <userinput>pushd</userinput>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+echo [-n] [<replaceable>arg</replaceable> ...]
+</term>
+<listitem>
+<para>
+Expands the "<replaceable>arg</replaceable>" 
+expression(s) and outputs them to the screen. If the -n flag is specified,
+a newline character is <emphasis>not</emphasis> output after the last
+<replaceable>arg</replaceable> expression.
+Special escape sequences may also be included in the
+arguments, similar to those used in C strings:
+</para>
+
+<informaltable colsep="1" frame="all" rowsep="1"
+shortentry="0" tocentry="0" orient="land" pgwide="0">
+<tgroup cols="2">
+<colspec align="left"/>
+<tbody>
+<row>
+<entry>\b</entry>
+<entry>backspace</entry>
+</row>
+<row>
+<entry>\f</entry>
+<entry>form feed (clears screen)</entry>
+</row>
+<row>
+<entry>\n</entry>
+<entry>newline</entry>
+</row>
+<row>
+<entry>\r</entry>
+<entry>carridge return</entry>
+</row>
+<row>
+<entry>\t</entry>
+<entry>tab</entry>
+</row>
+<row>
+<entry>\<replaceable>nnn</replaceable></entry>
+<entry>a decimal ASCII code</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+exit
+</term>
+<listitem>
+<para>
+Exits the shell or terminates a shell script.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+history
+</term>
+<listitem>
+<para>
+This command displays the list of previous
+command-line entries. The number of entries saved is set in the 
+HISTORY variable.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+pushd [<replaceable>newdir</replaceable> | +<replaceable>n</replaceable>]
+</term>
+<term>
+popd [+<replaceable>n</replaceable>]
+</term>
+<term>
+dirs
+</term>
+<listitem>
+<para>
+These three commands maintain the shell's directory stack.
+Let's say you're working in a directory
+/src/myprogs/class/program.1/, 
+and you want to temporarily go to another directory. Instead of having to 
+<userinput>cd</userinput> 
+there and
+<userinput>cd</userinput> 
+back to a very long directory name (i.e., lots of typing), you can use
+the pushd command, like so:
+</para>
+
+<screen id="sc-pushd">
+<prompt>gno% </prompt> <userinput>pwd</userinput>
+/src/myprogs/class/program.1
+<prompt>gno% </prompt> <userinput>pushd /etc</userinput>
+<prompt>gno% </prompt> <userinput>pwd</userinput>
+/etc
+<prompt>gno% </prompt> <userinput>popd</userinput>
+<prompt>gno% </prompt> <userinput>pwd</userinput>
+/src/myprogs/class/program.1
+</screen>
+
+<para>
+The 
+<userinput>pushd</userinput>
+command stores the current directory on a stack,
+and then changes the current directory to the argument
+<replaceable>newdir</replaceable>.
+When you want to go back to the original directory, type popd. The shell
+will pull the last directory off the stack and make that directory
+the current directory.
+If no argument is given, then the current directory is swapped with the
+directory that is currently on the top of the directory stack.
+If a digit argument, +<replaceable>n</replaceable>, is given, then
+the current directory will be swapped with the directory in the
+<replaceable>n</replaceable>th position on the directory stack.
+</para>
+
+<para>
+The <userinput>popd</userinput>
+command, when given without an argument, will pop the directory that
+is on top of the directory stack, and make that directory the current
+directory.  When given an argument of +<replaceable>n</replaceable>,
+<userinput>popd</userinput>
+will remove the 
+<replaceable>n</replaceable>th 
+directory from the stack. It does not change
+to that directory.
+</para>
+
+<para>
+The <userinput>dirs</userinput>
+command displays the current directory stack.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+pwd
+</term>
+<listitem>
+<para>
+Displays the current working directory.
+This is useful if you have not configured the PROMPT string
+to print your current working directory.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+source
+</term>
+<listitem>
+<para>
+When a script is executed, gsh
+creates a new process to run the script. As a result, scripts
+cannot change the parent shell's environment.
+Instead of executing the script directly, you may use the 
+<userinput>source</userinput>
+command which does not create a new process to execute the script.  Thus, the
+<userinput>source</userinput>
+command is effectively exactly like typing all the
+commands in the script from the keyboard.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+tset
+</term>
+<listitem>
+<para>
+The 
+<userinput>tset</userinput>
+command causes the shell to reread the /etc/termcap
+file and reset its output system to use the terminal type
+specified in the TERM environment variable. On startup, after reading the 
+gshrc file, gsh
+automatically does a 
+<userinput>tset</userinput>.
+gsh also automatically does a tset whenever
+the TERM variable is changed with the 
+<userinput>set</userinput>
+command.  You would
+use tset manually if, for example, a utility changed the value of
+TERM.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+which <replaceable>command</replaceable> [...]
+</term>
+<listitem>
+<para>
+Let's say that you are working on a new
+version of the venerable shell utility 
+<userinput>ls</userinput>.
+Since a search of the hash table is done before searching the current
+directory, you might accidentally be using the wrong version of the command.
+You make changes and run the new program, but your changes don't
+seem to appear! Use the 
+<userinput>which</userinput>
+command to check your sanity.  Which also comes in
+handy in locating duplicate program names in the PATH 
+directories (for example, an 
+<userinput>ls</userinput>
+in both /bin and /usr/bin.)
+</para>
+
+<para>
+The way to access a utility in the current
+directory which has the same name as a program in the PATH is to
+prefix the command name with 
+'<userinput>.</userinput>', as in
+'<userinput>./ls</userinput>'.
+See also
+<userinput>rehash</userinput> and
+<userinput>unhash</userinput>.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect1>
+
+<sect1 id="gsh-commands-kern">
+<title>Kernel Commands</title>
+
+<para>
+gsh provides a set of commands to control the GNO kernel. These commands
+mainly deal with job control. See the chapter on
+<emphasis>Process Management</emphasis> in the 
+<ulink url="http://www.gno.org/~gno/kern.html">GNO Kernel Reference 
+Manual</ulink>.
+</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+bg (%<replaceable>job</replaceable> | <replaceable>pid</replaceable>)
+</term>
+<listitem>
+<para>
+Starts the specified job, if stopped, and places it in the background.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+fg (%<replaceable>job</replaceable> | <replaceable>pid</replaceable>)
+</term>
+<listitem>
+<para>
+Starts the specified job, if stopped, and places it in the foreground.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+jobs [-l]
+</term>
+<listitem>
+<para>
+Displays a list of the shell's jobs. If the <command>-l</command>
+switch is specified, the process id is
+included in the job list.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+kill {[-<replaceable>SIGNAL</replaceable>] | %<replaceable>job</replaceable> | <replaceable>pid</replaceable> | [-l] }
+</term>
+<listitem>
+<para>
+The kill command will send the signal <replaceable>SIGNAL</replaceable>
+to the process number <replaceable>pid</replaceable>. 
+The <command>ps</command> command documented below describes how
+to list all process ID's currently executing.
+</para>
+<para>
+<replaceable>SIGNAL</replaceable>
+can be either a numeric value or string representing the signal
+to be sent to the process. All signals are documented in
+the chapter on <emphasis>Interprocess Communication</emphasis> in the
+<ulink url="http://www.gno.org/~gno/kern.html">GNO Kernel Reference
+Manual</ulink>.
+Alternatively, specifying the <command>-l</command> option will list all
+the signals and their names.
+</para>
+<para>
+If the process number isn't known, but the
+job number is, replace the pid with a '%' followed by the job
+number.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+ps
+</term>
+<listitem>
+<para>
+This command takes no arguments. When
+invoked, a list of all currently running processes is displayed:
+</para>
+<screen>
+[2] 9:52pm root&gt; <command>ls -lR :hard:gno &gt; /ram5/dev &amp;</command>
+[1] + 35 Running ls -lR :hard:gno &amp;
+[3] 9:53pm root&gt; <command>ps</command>
+  ID STATE   TT MMID  UID TIME COMMAND
+   1 ready   co 1002 0000 0:26 NullProcess
+   2 ready   co 1005 0000 0:02 gsh
+  35 ready   co 100A 0000 0:01 ls -lR :hard:gno
+  36 running co 1007 0000 0:00 ps
+[4] 9:53pm root&gt; 
+[1] + Done ls -lR :hard:gno
+</screen>
+
+<para>
+The fields of the <command>ps</command> output are as shown below:
+</para>
+
+<!-- starting nested list level 2 -->
+<variablelist>
+
+<varlistentry>
+<term>
+ID
+</term>
+<listitem>
+<para>
+A unique process ID assigned to a command by GNO. Use this number
+to reference any process.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+STATE
+</term>
+<listitem>
+<para>
+Current state of the process. Each process can be in any of the
+following states:
+</para>
+
+<!-- starting nested list level 3 -->
+
+<variablelist>
+
+<varlistentry>
+<term>
+RUNNING
+</term>
+<listitem>
+<para>
+The process is currently in execution.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+READY
+</term>
+<listitem>
+<para>
+The process is not currently executing, but is ready to be
+executed as soon as it is assigned a time slice.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+BLOCKED
+</term>
+<listitem>
+<para>
+The process is waiting for a slow I/O operation to
+complete (for instance, a read from a TTY).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+NEW
+</term>
+<listitem>
+<para>
+The process has been created, but has not executed yet.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+SUSPENDED
+</term>
+<listitem>
+<para>
+The process was stopped with SIGSTOP, SIGTSTP, SIGTTIN, or SIGTTOU.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+WAITING
+</term>
+<listitem>
+<para>
+The process is waiting on a semaphore "signal" operation.
+Programs waiting for data from a pipe have this state.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+WAITSIGCH
+</term>
+<listitem>
+<para>
+The process is waiting to receive a SIGCHLD signal.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+PAUSED
+</term>
+<listitem>
+<para>
+The process is waiting for any signal.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+<!-- done nested list level 3 -->
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+TTY
+</term>
+<listitem>
+<para>
+Terminal connected to the process.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+MMID
+</term>
+<listitem>
+<para>
+Memory Manager ID assigned to the process.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+UID
+</term>
+<listitem>
+<para>
+ID of the user who initiated the process.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+TIME
+</term>
+<listitem>
+<para>
+How much CPU time this process has used. This is not the elapsed
+time of the process.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+COMMAND
+</term>
+<listitem>
+<para>
+Command-line string used to invoke process.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+<!-- done nested list level 2 -->
+
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+setdebug { <replaceable>val</replaceable> | {+|-}<replaceable>flag</replaceable> }
+</term>
+<listitem>
+<para>
+Turns GNO kernel debugging code on or off.
+The value passed consists of a bit field, where each bit
+specifies a different type of debugging code to activate. An
+alternate method is to provide a list of debug flags, either
+preceded by a '+' or a '-'. Those preceded by a '+' are
+activated, and those preceeded with a '-' are deactivated. All
+debugging is deactivated by passing a value of 0. Running
+setdebug wtth no arguments returns a list of the debugging flags.
+Legal flags include:
+</para>
+
+<!-- tribby:  could you verify which calls gsh is making to the 
+kernel, and verify that the debug values listed in <gno/gno.h> are
+in fact correct?  That has not yet been checked.  -->
+
+<para>
+<table colsep="1" frame="all" rowsep="1" tocentry="1" shortentry="0"
+orient="land" pgwide="0">
+<title>Kernel Debug Flags</title>
+<tgroup cols="2">
+<colspec align="left"/>
+<thead>
+<row>
+    <entry align="center">Flag</entry>
+    <entry align="center">Meaning</entry>
+</row>
+</thead>
+<tbody>
+<row>
+    <entry>
+    gsostrace
+    </entry>
+    <entry>
+    Trace GS/OS calls.
+    </entry>
+</row>
+<row>
+    <entry>
+    gsosblocks
+    </entry>
+    <entry>
+    Trace GS/OS parameter blocks.
+    </entry>
+</row>
+<row>
+    <entry>
+    gsoserrors
+    </entry>
+    <entry>
+    Trace GS/OS errors.
+    </entry>
+</row>
+<row>
+    <entry>
+    pathtrace
+    </entry>
+    <entry>
+    Trace GS/OS pathnames.
+    </entry>
+</row>
+<row>
+    <entry>
+    sigtrace
+    </entry>
+    <entry>
+    Trace signals.
+    </entry>
+</row>
+<row>
+    <entry>
+    systrace
+    </entry>
+    <entry>
+    Trace GNO Kernel system calls.
+    </entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</para>
+
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+stop { %<replaceable>job</replaceable> | <replaceable>pid</replaceable> }
+</term>
+<listitem>
+<para>
+Stops the execution of all processes in a specified job.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+<!-- done nested list level 1 -->
+</sect1>
+
+<sect1 id="gsh-commands-environ">
+<title>Environment Commands</title>
+
+<para>The last set of commands, environment
+commands, modify the <command>gsh</command> environment. Many of these
+commands have been used in other parts of this manual and,
+therefore, should not be new.
+</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+alias [<replaceable>name</replaceable>] [<replaceable>value</replaceable>]
+</term>
+<listitem>
+<para>
+Creates an alias for a string. When this
+alias is referenced as a command, <replaceable>value</replaceable>
+will be expanded
+into the command line. For commands that require many arguments
+or have several steps, you could set up an alias to save typing.
+You can also use aliases to create new names for commands. To
+obtain a list of all aliases, invoke <command>alias</command>
+with no arguments.
+To list the value of a specific alias, invoke <command>alias</command>
+with <replaceable>name</replaceable> only.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+export [<replaceable>variable</replaceable> ...]
+</term>
+<listitem>
+<para>
+When a shell environment variable is marked
+as exportable, any process that is created from within the
+current process (most likely <command>gsh</command>), will be passed copies
+of the exported variables. 
+See <command>setenv</command> and
+<xref linkend="gsh-shellvars-scope"/>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+hash
+</term>
+<listitem>
+<para>
+Displays a list of all commands currently
+in the shell's hash table; i.e., a list of commands in the
+various $PATH directories.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+prefix [<replaceable>prefixnum</replaceable> 
+[<replaceable>prefixname</replaceable>]]
+</term>
+<listitem>
+<para>
+GNO maintains a list of 32 'prefixes' for
+each process. Prefixes allow the user to reference a directory
+with a number. While <command>gsh</command> provides this ability with
+environment variables, the prefix command exists to support the
+ORCA compilers and other utilities that are dependent on certain
+GS/OS prefixes. 
+<xref linkend="gsh-app-prefix"/> contains a list of these prefixes and
+their "default" meanings, as documented in the 
+"Apple IIgs GS/OS Reference".
+</para>
+<para>
+If <replaceable>refixname</replaceable> is not given, then the value of
+<replaceable>prefixnum</replaceable> is displayed.
+If neither argument is given, a list of currently assigned
+prefixes is displayed.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+rehash
+</term>
+<listitem>
+<para>
+To decrease the time spent searching for a
+command, <command>gsh</command> builds a hash table of all commands which were
+found in the pathnames set in the $PATH environment variable. When a
+command is invoked, only this list is searched. When the $PATH environment
+variable is changed, <command>gsh</command> must rebuild this list. The
+<command>rehash</command> command tells <command>gsh</command> to rebuild
+the list.
+</para>
+<para>
+While the old list is still active, if $PATH is
+changed and one of the previous search paths is no longer online,
+<command>gsh</command> will try and execute the command from the offline
+device, resulting in a command failure.
+</para>
+<!-- tribby:  that last bit is perhaps misleading.  It sounds like only
+the directories are hashed, not the actual commands.  I suspect that
+it is really the commands - gdr -->
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+set [<replaceable>var</replaceable> [<replaceable>value</replaceable>]] [...]
+</term>
+<term>
+set <replaceable>value</replaceable>=<replaceable>value</replaceable> [...]
+</term>
+<term>
+setenv [<replaceable>var</replaceable> <replaceable>value</replaceable>] [...]
+</term>
+<listitem>
+<para>
+Use these command to create or modify environment variables. If 
+<command>set</command> is invoked with no arguments, a list of the current
+environment variables is displayed. If only <replaceable>var</replaceable>
+is given as an argument, the value of <replaceable>var</replaceable>
+is displayed. To set or reset a variable, use both the 
+<replaceable>var</replaceable> and <replaceable>value</replaceable>
+arguments. There are two ways to set a variable, either by 
+"<replaceable>var</replaceable> <replaceable>value</replaceable>", or by
+"<replaceable>var</replaceable>=<replaceable>value</replaceable>".
+To set multiple variables at once, simply
+list them all on the command line as shown above.
+</para>
+<para>
+<command>setenv</command> works just like <command>set</command>,
+but automatically exports the variable(s) or lists
+only exported variables.
+</para>
+<para>
+When using <command>set</command> or <command>setenv</command> to view
+a list of variables, exported variable names appear in all capital letters.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+unalias <replaceable>name</replaceable> [...]
+</term>
+<listitem>
+<para>
+To remove an alias from the alias list, use
+this command. To remove multiple aliases with one command,
+specify all the aliases on the command line.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+unhash
+</term>
+<listitem>
+<para>
+To disable the internal hash table created
+with the <command>rehash</command>
+command, use this command. This is useful if you
+wish to use only utilities in the current working directory
+(during testing, for example).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+unset <replaceable>var</replaceable> [...]
+</term>
+<listitem>
+<para>
+To remove a variable from the environment, use <command>unset</command>.
+<command>unset</command> accepts multiple names if more than one variable is
+to be deleted. Future attempts to access the variable 
+<replaceable>var</replaceable> will result
+in an error or a NULL string, depending on the circumstances.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect1>
+</chapter>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+  "/usr/share/sgml/docbook/xml-dtd-4.3-1.0-30.1/docbookx.dtd"
+  [
+  <!ENTITY gshStart SYSTEM "start.docbook">
+  <!ENTITY gshInteract SYSTEM "interact.docbook">
+  <!ENTITY gshProduct SYSTEM "product.docbook">
+  <!ENTITY gshCommands SYSTEM "commands.docbook">
+  <!ENTITY gshVars SYSTEM "vars.docbook">
+  <!ENTITY gshPrefix SYSTEM "prefix.docbook">
+  <!ENTITY gshErrors SYSTEM "errors.docbook">
+  <!ENTITY gshComply SYSTEM "comply.docbook">
+  <!ENTITY gshTermcap SYSTEM "termcap.docbook">
+  <!ENTITY gshGlossary SYSTEM "glossary.docbook">
+]>
+
+<!--
+  In the above DTD block the canonical location for the DTD
+  would be:
+
+  "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+
+  But instead on the official build machine we use the following
+  local DTD because it makes the build MUCH faster:
+
+  "/usr/share/sgml/docbook/xml-dtd-4.3-1.0-30.1/docbookx.dtd"
+-->
+
+<!-- 
+-->
+
+
+<book>
+
+<bookinfo>
+<title>GNO Shell Users' Manual</title>
+
+<authorgroup>
+  <author>
+    <firstname>Tim</firstname>
+    <surname>Meekins</surname>
+  </author>
+
+  <author>
+    <firstname>Albert</firstname>
+    <surname>Chin</surname>
+  </author>
+
+  <author>
+    <firstname>Jawaid</firstname>
+    <surname>Bazyar</surname>
+  </author>
+
+
+  <author>
+    <firstname>Andrew</firstname>
+    <surname>Roughan</surname>
+  </author>
+
+
+  <author>
+    <firstname>Devin</firstname>
+    <surname>Reade</surname>
+  </author>
+</authorgroup>
+
+<copyright>
+<year>1991-2012</year>
+<holder>Procyon Enterprises</holder>
+</copyright>
+
+<pubdate>25 Aug 2012</pubdate>
+
+</bookinfo>
+
+<toc/>
+
+<!--
+ Now list the chapters in the order in which you want them to appear.
+-->
+
+
+&gshStart;
+&gshInteract;
+&gshProduct;
+&gshCommands;
+&gshVars;
+&gshPrefix;
+&gshErrors;
+&gshComply;
+&gshTermcap;
+&gshGlossary;
+
+</book>

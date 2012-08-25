@@ -1,0 +1,215 @@
+<!--
+;; $Id: start.docbook,v 1.1 2012/08/25 07:19:03 gdr Exp $
+-->
+
+<chapter id="gsh-start">
+<title>Getting Started with the GNO Shell</title>
+
+<para><quote><emphasis>
+Computer operating systems are among the most complex objects created by
+mankind...
+</emphasis>
+</quote>
+-- Douglas Comer, Operating System Design, the XINU Approach
+</para>
+
+<section>
+<title>Introduction</title>
+
+<para>
+The GNO shell is an integral part of the
+GNO Multitasking Environment (GNO/ME). The GNO shell provides the
+interface between the user and the GNO Kernel. While both work
+together, the jobs they perform are quite different. This manual
+documents the functions of the shell.
+</para>
+
+<para>The user interacts with the shell through a
+command-line interface. Command-line interfaces provide a unique
+way of interacting with the operating system. Unlike GUIs
+(Graphical User Interfaces), with which you are already familiar
+with by using programs such as the Finder and ShrinkIt! GS, all
+commands are typically entered using the keyboard. The shell
+interprets commands and passes them to the kernel for control and
+execution.</para>
+
+<para>The command-line interface will be
+unfamiliar to some people However, once the command-line
+interface has been mastered, the user should have no difficulty
+using any current or future GNO applications. Those of you
+already familiar with Unix interfaces, such as the C shell,
+Bourne shell, and Korn shell, or the ORCA shell on the Apple
+IIGS, will begin to realize the advantages which GNO/ME is able
+to provide.</para>
+
+<para>The way this manual is presented allows the
+complete beginner to simply work through the chapters in a
+chronological prder. 
+<xref linkend="gsh-interact"/>
+familiarises the user with
+entering basic commands whereas the more powerful GNO/ME features
+are introduced in 
+<xref linkend="gsh-productive"/>.
+<xref linkend="gsh-commands"/>
+documents the commands which are built into the GNO Shell and 
+<xref linkend="gsh-shellvars"/>
+explains shell
+variables which give the user control over how their installation
+functions.</para>
+
+</section>
+<section id="gsh-start-custom">
+<title>Customizing the Shell Environment</title>
+
+<para>When <command>gsh</command>, the implementation of the
+GNO Shell, is executed, it reads in and processes the <filename>gshrc</filename>
+file. This file contains start-up instructions for the shell,
+which can be used to customize the operation of the shell and
+other aspects of the system. It is created by the GNO Installer
+during the installation process.
+</para>
+
+<para>
+The following is a sample <filename>gshrc</filename> file
+(line numbers have been added for convenience):
+</para>
+
+<informalexample>
+<screen>
+1	###
+2	#
+3	# GNO 2.0 gshrc file
+4	#
+5	###
+6	#
+7	# Initialize our environment
+8	#
+9	set path=&quot;:hard:gno:bin :hard:gno:usr:bin&quot;
+10	set prompt=&quot;[%h] %S%t%s %C&gt; &quot;
+11	set home=&quot;:hard:gno:user:root&quot;
+12	set term=gnocon
+13	export path prompt home term
+14	setenv history=100 savehist=25
+15	###
+16	#
+17	#Set up standard prefixes for utilities.
+18	#
+19	###
+20	prefix 2 :software:orca:libraries
+21	prefix 3 :software:orca
+22	prefix 4 :software:orca:shell
+23	prefix 5 :software:orca:languages
+24	prefix 6 :software:orca:utilities
+25	prefix 7 :tmp
+26	###
+27	#
+28	# Set up prefixes for Orca2.0(tm)'s benefit
+29	#
+30	###
+31	prefix 13 :software:orca:libraries
+32	prefix 14 :software:orca
+33	prefix 15 :software:orca:shell
+34	prefix 16 :software:orca:languages
+35	prefix 17 :software:orca:utilities
+36	alias ls 'ls -CF'
+37	alias dir 'ls -al'
+38	alias cp 'cp -i'
+39	alias rm 'cp -p rm'
+40	alias mv 'cp -p mv'
+41	setenv usrman='/usr/man'
+42	set fignore='.a .root .sym'
+43	alias zcat 'compress -cd'
+44	setenv pager=less
+45	setenv less=-e
+46	set nonewline=1
+47	#
+48	# Move to home directory
+49	#
+50	cd
+</screen>
+</informalexample>
+
+<para>When you install GNO/ME, the GNO installer
+knows where to find the GNO utilities and any ORCA utilities you
+may have. Unfortunately it does not know where all the other
+utilities and applications that you may wish to use are located.
+It is therefore necessary to edit the setup file in order to tell
+the GNO shell where these programs are on your hard disk.</para>
+
+<para>The setup file, <filename>gshrc</filename>, is located in
+the /usr directory of the path where you installed GNO/ME. You
+can use any text editor from the desktop to edit the <filename>gshrc</filename>
+file, or if you are already familiar with the editor vi
+you can use this utility after launching the GNO kernel.</para>
+
+<para>Line 9 is the statement that we are
+concerned with. <userinput>Hard</userinput> represents the name of your
+particular hard drive volume where you have installed GNO/ME.</para>
+
+<screen>
+9	set path=":hard:gno:bin :hard:gno:usr:bin"
+</screen>
+
+<para>You will see that spaces have been inserted
+between pathnames. The space is the pathname separator and the
+colon has been used as the path delimiter for this specific
+variable, PATH. As an exercise, add your system directory to this
+statement. Line 9 should now look like this:</para>
+
+<screen>
+9	set path=":hard:gno:bin:hard:gno:usr:bin :hard:system"
+</screen>
+
+<para>What you have just done allows the GNO
+shell to find the Finder application. Now go ahead and add
+any pathnames that hold utilities or applications that you will
+use frequently from GNO/ME. It should also be noted that it is
+possible to have more than one pathname containing EXE, SYS16, or
+EXEC files; this is impossible under ORCA. The PATH variable is
+discussed thoroughly in 
+<xref linkend="gsh-shellvars"/>.
+</para>
+
+<para>For now, the remaining lines of the <filename>gshrc</filename>
+file do not need editing. As you gain an understanding of the
+system you may wish to make further changes to the <filename>gshrc</filename>
+file. Make sure you save the file before you exit the editor.</para>
+
+<para>It is possible to modify these instructions
+while the GNO shell is active, but any changes will be lost upon
+exiting <command>gsh</command>. If you wish the changes to remain effective
+for the next session you must add them to the <filename>gshrc</filename> file.</para>
+
+<para>By customizing the <filename>gshrc</filename> file it is
+possible to make the GNO environment more like UNIX, the ORCA
+environment, or something completly different. Customization of
+the GNO environment leads to greater user productivity.</para>
+
+</section>
+
+<section>
+<title>Invoking gsh</title>
+
+<para>GNO/ME can be launched from a program
+launcher, such as the System 6.0 Finder. Launch the GNO Kernel
+program, <command>kern</command> by double clicking on it. The GNO kernel
+automatically executes the supplied GNO shell, <command>gsh</command>.
+</para>
+
+<para>The prompt,
+<quote>gsh# </quote>
+indicates that <command>gsh</command> is ready to receive input from the
+keyboard.</para>
+
+<para>To start a new <command>gsh</command> from the
+command-line simply type <command>gsh</command>.
+If multiple copies of the <command>gsh</command>
+process are undesirable, use the command <command>source gsh</command>
+instead. This is useful for testing changes made to the
+<filename>gshrc</filename> file. 
+<command>source</command> is a built-in comand which is discussed in
+<xref linkend="gsh-commands"/>.
+</para>
+
+</section>
+</chapter>

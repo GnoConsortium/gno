@@ -1,0 +1,99 @@
+<!--
+;; $Id: termcap.docbook,v 1.1 2012/08/25 07:19:03 gdr Exp $
+-->
+
+<appendix id="gsh-app-termcap">
+<title>Termcaps</title>
+
+<para>
+"Termcap" is short for "terminal capability",
+and is the name of a database which applications can
+use to do full-screen output on any kind of terminal. The termcap
+database contains records for the various supported terminals,
+each of which contains fields of the form
+<screen>
+<replaceable>cap</replaceable>=<replaceable>value</replaceable>
+</screen>
+<replaceable>Cap</replaceable> is a two-letter code that
+represents a cursor movement, screen mode change (such as inverse
+or underline mode), and various other things. 
+<replaceable>Value</replaceable> is
+usually a sequence of control characters that is sent to a
+terminal to initiate the desired action. 
+<replaceable>Value</replaceable> can also be
+'boolean', or yes/no, values, for such things as "Does this
+terminal support cursor movement?". The termcap file is
+documented in termcap(5) manual page.
+</para>
+
+<para>
+The termcap library does not specifically require GNO/ME.
+</para>
+
+<para>
+The following terminal types are supported in the GNO/ME termcap file:
+</para>
+
+<para>
+<informaltable colsep="1" frame="all" rowsep="1" tocentry="0" shortentry="0"
+orient="land" pgwide="0">
+<tgroup cols="2">
+<colspec align="left"/>
+<tbody>
+<row>
+    <entry>gnocon</entry>
+    <entry>GNO Console</entry>
+</row>
+<row>
+    <entry>CONSOLE</entry>
+    <entry>GS/OS .console driver</entry>
+</row>
+<row>
+    <entry>ptse</entry>
+    <entry>Proterm Special Emulation</entry>
+</row>
+<row>
+    <entry>vt100</entry>
+    <entry>DEC VT-100 terminal</entry>
+</row>
+<row>
+    <entry>ansisys</entry>
+    <entry>MS-DOS ANSI.SYS</entry>
+</row>
+<row>
+    <entry>xerox820</entry>
+    <entry>Xerox 820-II CP/M terminal</entry>
+</row>
+<row>
+    <entry>iw1</entry>
+    <entry>Apple ImageWriter I printer</entry>
+</row>
+<row>
+    <entry>iw-alt</entry>
+    <entry>Alternate ImageWriter I printer</entry>
+</row>
+<row>
+    <entry>deskjet</entry>
+    <entry>Hewlett Packard DeskJet 500 printer</entry>
+</row>
+</tbody>
+</tgroup>
+</informaltable>
+</para>
+
+<para>
+The printer entries allow a formatted
+electronic manual page to be sent to the printer. For example,
+the following script would bring up the manual page for <command>ls</command>,
+format it for the DeskJet 500, and print it with italics and
+boldface:
+</para>
+
+<screen>
+set temp=$term
+set term=deskjet
+man $1 &gt; .ttyb
+set term=$temp
+</screen>
+
+</appendix>

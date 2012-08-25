@@ -1,0 +1,472 @@
+<!--
+;; $Id: glossary.docbook,v 1.1 2012/08/25 07:19:02 gdr Exp $
+-->
+
+<glossary id="gsh-glossary">
+<title>Glossary</title>
+
+<!--
+;;
+;; Make sure you keep all these entries properly sorted.  They will
+;; appear exactly in the order in which you see them here; no automated
+;; sorting is done.
+;;
+;; Here is a glossary entry template for you to cut and paste:
+;;
+<glossentry>
+	<glossterm></glossterm>
+	<glossdef>
+	<para>
+	</para>
+	</glossdef>
+	</glossentry>
+;;
+;;
+-->
+
+<glossentry>
+	<glossterm>Alias</glossterm>
+	<glossdef><para>
+	A name used as an
+        abbreviation for one or more commands. An alias allows
+        you to replace any command string with a short sequence
+        of characters.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Applesoft</glossterm>
+	<glossdef><para>
+	An implementation of BASIC for the Apple II.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>APW</glossterm>
+	<glossdef><para>
+	Apple Programmer's Workshop. Similar to ORCA.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>BASIC</glossterm>
+	<glossdef><para>
+	Beginners All-purpose Symbolic Instruction Code.  A simple computer
+        language.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Built-in Command</glossterm>
+	<glossdef><para>
+        A command processed by <command>gsh</command>. These commands are not
+        external to the shell, but are included within the 
+	<command>gsh</command> program.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Command</glossterm>
+	<glossdef><para>
+	An action for <command>gsh</command> to perform. Commands can be
+	either simple or compound. A simple command is an alias assignment,
+        variable assignment, I/O redirection, or built-in
+        command. A compound command is a pipeline.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Directory</glossterm>
+	<glossdef><para>
+	A special
+        type of file that contains a list of other files; usually
+        used to categorize files related in some way.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Environment</glossterm>
+	<glossdef><para>
+	The state of a process, which includes information such as
+        its open files, current directory (working directory),
+        and local and global variables. Three environments exist
+        under <command>gsh</command>:
+	<variablelist>
+
+	<varlistentry>
+	<term>Child Environment</term>
+	<listitem>
+	<para>
+	The environment of the child process.
+	</para>
+	</listitem>
+	</varlistentry>
+
+	<varlistentry>
+	<term>Current Environment</term>
+	<listitem>
+	<para>
+	The environment of the current process.
+	</para>
+	</listitem>
+	</varlistentry>
+
+	<varlistentry>
+	<term>Parent Environment</term>
+	<listitem>
+	<para>
+	The environment of the parent process.
+	</para>
+	</listitem>
+	</varlistentry>
+
+	</variablelist>
+	</para></glossdef></glossentry>
+	
+<glossentry>
+	<glossterm>Environment file</glossterm>
+	<glossdef><para>
+        A file that is interpreted by an application to allow the
+        user to customize its operation. For <command>gsh</command>, this
+        file is <filename>gshrc</filename>.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Export</glossterm>
+	<glossdef><para>
+	A way to pass a variable from a parent process to child process.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>File</glossterm>
+	<glossdef><para>
+	An object used
+        to store data and/or programs. On the IIgs, files
+        are tagged with types such as EXE, SRC, TXT, and so forth.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Filter</glossterm>
+	<glossdef><para>
+	A command
+        that reads from its standard input and writes to its
+        standard output. For example, a filter program could be
+        written to convert all characters to upper case. Filters
+        are used mainly in pipelines.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Flag</glossterm>
+	<glossdef><para>
+	A character
+        used to represent an option to a command. Flags are
+        either short or long options whose character
+        representations are "-" and "+".
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Glob</glossterm>
+	<glossdef><para>
+	Slang for Pathname Expansion.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>GNO/ME</glossterm>
+	<glossdef><para>
+	GNO Multitasking Environment. The complete package including
+        the GNO kernel and the GNO Shell.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>GNO Kernel</glossterm>
+	<glossdef><para>
+	Heart of GNO/ME.  Executes processes when asked by the GNO Shell.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>GNO Shell</glossterm>
+	<glossdef><para>
+	Provides
+        an interface between the user and the GNO kernel.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>gsh</glossterm>
+	<glossdef><para>
+	GNO Implementation of a UNIX-like shell.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>GS/OS</glossterm>
+	<glossdef><para>
+	16 bit
+        Operating System for the Apple IIgs.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>History</glossterm>
+	<glossdef><para>
+	A variable
+        number of command-lines saved by <command>gsh</command> for future
+        reference. The number of command-lines saved is dependent
+        on the HISTORY environment variable.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>History file</glossterm>
+	<glossdef><para>
+	A file
+        containing command-lines entered while in a <command>gsh</command>
+        session. The number of command-lines saved is dependent
+        on the SAVEHIST environment variable.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Interrupt</glossterm>
+	<glossdef><para>
+	A signal
+        generated by a sequence of keyboard characters or by a
+        command that terminates the current executing process,
+        unless the process has set up a trap to handle the
+        interrupt signal.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>I/O Redirection</glossterm>
+	<glossdef><para>
+	The
+        process of changing the standard input, standard output,
+        and standard error associated with a process so that it
+        is redirected to a file instead of the console.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Job</glossterm>
+	<glossdef><para>
+	A set of related
+        processes. A job can be either:
+
+	<variablelist>
+
+	<varlistentry>
+	<term>Background Job</term>
+	<listitem>
+	<para>
+	A process
+        that executes with the current process. Background jobs
+        are not associated with the terminal.
+	</para>
+	</listitem>
+	</varlistentry>
+
+	<varlistentry>
+	<term>Foreground Job</term>
+	<listitem>
+	<para>
+	A process
+        that is currently executing and which is associated with
+        the terminal.
+	</para>
+	</listitem>
+	</varlistentry>
+
+	</variablelist>
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Multiprocessing</glossterm>
+	<glossdef><para>
+        Indicates a machine with more than one CPU.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Multitasking</glossterm>
+	<glossdef><para>
+        The ability to run more than one program at a time, or the
+        illusion of more than one program running at a time;
+        usually the latter.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>ORCA</glossterm>
+	<glossdef><para>
+	Shell programing
+        environment for the Apple //gs. Also a type of whale.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Path Search</glossterm>
+	<glossdef><para>
+	The means of searching a pathname list for a command or
+        script.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Pathname</glossterm>
+	<glossdef><para>
+	A string used to identify a file.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Pathname Completion</glossterm>
+	<glossdef><para>
+        The means of generating all pathnames matching a given pattern.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Pathname Expansion</glossterm>
+	<glossdef><para>
+	The means of replacing a pattern with a list of pathnames
+        matching that pattern.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Pattern</glossterm>
+	<glossdef><para>
+	A string of
+        characters used to match literal characters and/or
+        multiple characters.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Permission</glossterm>
+	<glossdef><para>
+	Each file
+        has certain permissions associated with it: destroy,
+        rename, backup, invisible, write, and read.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Pipe</glossterm>
+	<glossdef><para>
+	A conduit
+        through which a stream of characters can pass from one
+        process to another. This is accomplished by linking the
+        standard output of one process to the standard input of a
+        second process.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Pipeline</glossterm>
+	<glossdef><para>
+	Two or more
+        processes connected together by pipes.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Process</glossterm>
+	<glossdef><para>
+	A single
+        thread of execution that consists of a program and an
+        execution environment.  If a process creates another process,
+	the creator is known as the <emphasis>parent process</emphasis>;
+	the created process is known as the <emphasis>child process</emphasis>.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Process ID</glossterm>
+	<glossdef><para>
+	Each active process is uniquely identified by a positive
+        integer called the process id.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>ProDOS</glossterm>
+	<glossdef><para>
+	8-bit Disk
+        Operating System for Apple II computers.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Prompt</glossterm>
+	<glossdef><para>
+	A message
+        displayed by <command>gsh</command> when it is ready to receive a
+        command.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Quoting</glossterm>
+	<glossdef><para>
+	A means of
+        including special characters as arguments to a command or
+        as the command name. Certain characters have certain
+        meanings to <command>gsh</command> and quoting them makes
+	<command>gsh</command> ignore them.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Reserved Word</glossterm>
+	<glossdef><para>
+	A word
+        that is treated specially by <command>gsh</command>. This word is
+        part of the <command>gsh</command> grammar.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Script</glossterm>
+	<glossdef><para>
+	A sequence of
+        commands contained in a file.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Signal</glossterm>
+	<glossdef><para>
+	An asynchronous message that consists of a number or name
+        that can be sent from one process to another.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Standard Error</glossterm>
+	<glossdef><para>
+        The file associated with error messages for a process. This
+        file is usually the terminal.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Standard Input</glossterm>
+	<glossdef><para>
+        The file associated with a processes input. This file is
+        usually the terminal.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Standard Output</glossterm>
+	<glossdef><para>
+        The file associated with a processes output. This file is
+        usually the terminal.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Tilde Expansion</glossterm>
+	<glossdef><para>
+        Words beginning with "~" are treated
+        specially by <command>gsh</command>. The "~" is
+        expanded to the value of the HOME environment variable.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>UNIX</glossterm>
+	<glossdef><para>
+	Popular
+        operating system which has growing use in education and
+        business. One of the first operating systems to support
+        multitasking.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Variable</glossterm>
+	<glossdef><para>
+	A named
+        location in <command>gsh</command> that contains text. The text of a
+        variable can be expanded in a command by preceding the
+        variable name with a dollar sign ($).
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Wildcard</glossterm>
+	<glossdef><para>
+	See Pattern and Pathname Expansion.
+	</para></glossdef></glossentry>
+
+<glossentry>
+	<glossterm>Working directory</glossterm>
+	<glossdef><para>
+        The current directory.
+	</para></glossdef></glossentry>
+
+</glossary>

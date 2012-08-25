@@ -1,0 +1,401 @@
+<!--
+;; $Id: errors.docbook,v 1.1 2012/08/25 07:19:01 gdr Exp $
+-->
+
+<appendix id="gsh-app-errors">
+<title>Gsh Errors</title>
+
+<para>
+<command>gsh</command> tries, when an error occurs, to
+output an informative error message that will lead you to the
+solution of your problem. This appendix documents all <command>gsh</command>
+error messages and what the probable cause of the problem might
+be. There are five classes of errors: generic gsh, command-entry,
+syntax, execution, and builtin. Each error is discussed
+separately.
+</para>
+
+<sect1>
+<title>Generic gsh Errors</title>
+
+<para>
+These errors can typically occur at any
+time and may not be directly related to something the user has
+done. Some of them are trivial, and some are very serious and
+should be reported immediately via the
+<ulink url="http://www.gno.org/~gno/bugs.html">GNOBugs</ulink>
+web page.
+</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+gsh: There are stopped jobs.
+</term>
+<listitem>
+<para>
+All stopped jobs must be killed before exiting the
+shell. Use the <command>jobs</command> and <command>kill</command> commands.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect1>
+
+<sect1>
+<title>Command Editing Errors</title>
+
+<para>
+Command editing errors occur when entering
+information on the command-line. If you try to move the cursor
+too far to the left or right of your command-line (i.e. before
+the first character or after the last character), an error will
+occur. At present, gsh indicates a command-entry error by generating
+the bell character (^G), which beeps the speaker.
+This is to notify you that the action you requested is not possible.
+</para>
+
+</sect1>
+
+<sect1>
+<title>Syntax Errors</title>
+
+<para>
+Syntax errors occur while gsh is trying to
+understand the command you have entered on the command-line.
+Problems arise when you wish to quote an argument (") and
+only enter one quote.
+</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+gsh: Missing ending ".
+</term>
+<listitem>
+<para>
+A second " wasn't supplied when quoting text.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+gsh: Missing ending '.
+</term>
+<listitem>
+<para>
+A second ' wasn't supplied when quoting text.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+gsh: Too many arguments, so no dessert tonight.
+</term>
+<listitem>
+<para>
+The command-line contained too many arguments which exceeded the available
+memory allocated by <command>gsh</command>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+gsh: Not enough memory for arguments.
+</term>
+<listitem>
+<para>
+No memory was available for allocating command-line arguments.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+gsh: Extra '&lt;' encountered.
+</term>
+<term>
+gsh: Extra '&gt;' or '&gt;&gt;' encountered.
+</term>
+<term>
+gsh: Extra '&gt;&amp;' or '&gt;&gt;&amp;' encountered
+</term>
+<listitem>
+<para>
+Text may be redirected to only one file.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+gsh: No file specified for '&lt;'.
+</term>
+<term>
+gsh: No file specified for '&gt;' or '&gt;&gt;'.
+</term>
+<term>
+gsh: No file specified for '&gt;&amp;' or '&gt;&gt;&amp;'.
+</term>
+<listitem>
+<para>
+A file must be specified when redirecting I/O.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+gsh: '|' conflicts with '&gt;' or '&gt;&gt;'.
+</term>
+<term>
+gsh: '|' conflicts with '&lt;'.
+</term>
+<listitem>
+<para>
+Piping is another form of redirection, thus
+pipes and redirections cannot be mixed.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect1>
+
+<sect1>
+<title>Execution Errors</title>
+
+<para>
+After <command>gsh</command> parses the command-line,
+it will then execute the command and pass any arguments to the
+command. If, however, the command does not exist, <command>gsh</command> will
+report an error. The reason the command does not exist could be
+either the command name was typed wrong or the command does not
+exist.
+</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+$0: Command not found.
+</term>
+<listitem>
+<para>
+$0 represents the command to be executed.
+Either the command name was entered incorrectly or the command
+does not exist. Recheck the spelling of the command and check
+$PATH to make sure the command exists in the pathname list.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$0: Not executable.
+</term>
+<listitem>
+<para>
+$0 represents the command to be executed.  Check to ensure that the
+filetype is correct.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+heh heh, next time you'll need to specify a command before redirecting.
+</term>
+<listitem>
+<para>
+Redirection was specified but the command-line had no command.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+Cannot fork (too many processes?)
+</term>
+<listitem>
+<para>
+An error was encountered forking a process.
+The most likely culprit is there are too many processes running.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect1>
+
+<sect1>
+<title>Builtin Command Errors</title>
+
+<para>
+These are errors which can be returned by
+many of the builtin commands. Every builtin also contains a
+usage message on the proper invocation method.
+</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+cd: Not a directory
+</term>
+<listitem>
+<para>
+Tried to change the cwd to a file that isn't a directory.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+prefix: could not set prefix, pathname may not exist.
+</term>
+<listitem>
+<para>
+GS/OS Prefix command failed, most likely
+the pathname did not exist or the disk is damaged.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+setdebug: Unknown flag
+</term>
+<listitem>
+<para>
+An unknown flag was sent to 
+<command>setdebug</command>.  Run
+<command>setdebug</command> with 
+no arguments for a list of possible flags.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+ps: error in kvm_open()
+</term>
+<listitem>
+<para>
+<command>ps</command> was unable to access the process data
+structure.  If the kernel data structures are damaged to the point that
+this error occurs, it is likely that you will not be able to see this
+error.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+set: Variable not specified
+</term>
+<listitem>
+<para>
+A variable was not passed to set, for example, 
+"<command>set =bar</command>".
+Make sure the variable name was specified
+without the preceding dollar sign. For example, if foo is not
+set, then 
+"<command>set $foo=bar</command>"
+would be expanded to
+"<command>set =bar</command>",
+resulting in this error.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+kill: Invalid signal number
+</term>
+<term>
+kill: Invalid signal name
+</term>
+<listitem>
+<para>
+See the signal(2) manual page for a list of valid signal names and numbers.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+fg: No job to foreground.
+</term>
+<term>
+bg: No job to background.
+</term>
+<term>
+stop: No job to stop.
+</term>
+<listitem>
+<para>
+There aren't currently any jobs so the attempted command is useless.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+fg: No such job.
+</term>
+<term>
+bg: No such job.
+</term>
+<term>
+stop: No such job.
+</term>
+<term>
+kill: No such job.
+</term>
+<listitem>
+<para>
+The specified job (or process) doesn't exist.
+</para>
+</listitem>
+</varlistentry>
+
+
+<varlistentry>
+<term>
+fg: Gee, this job is already in the foreground.
+</term>
+<term>
+bg: Gee, this job is already in the background.
+</term>
+<term>
+stop: Gee, this job is already stopped.
+</term>
+<listitem>
+<para>
+Well, this should be self-explanatory.
+Also, some of these should be impossible to get, unless you're
+bound and determined to crash gsh, but then, these errors will
+keep you from crashing it, so, what's the point? 
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect1>
+</appendix>

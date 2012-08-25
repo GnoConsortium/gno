@@ -1,0 +1,132 @@
+<!--
+;; $Id: prefix.docbook,v 1.1 2012/08/25 07:19:02 gdr Exp $
+-->
+
+<appendix id="gsh-app-prefix">
+<title>Prefix Conventions</title>
+
+<para>
+When <command>gsh</command> is started, GS/OS assigns
+certain values to individual prefixes, and usually the
+<filename>gshrc</filename>
+file also sets some prefixes. A total of 32 prefixes are
+available to the user. The following list documents each prefix
+and the purpose of each.
+</para>
+
+<para>
+If version 2.x of the ORCA languages are being used, then prefixes 9 and 13
+through 18 should mirror prefixes 1 through 7.  For a discussion on
+the differences in these two prefix sets, see your ORCA language reference
+manual.
+</para>
+
+<para>
+<table colsep="1" frame="all" rowsep="1" tocentry="1" shortentry="0"
+orient="land" pgwide="0">
+<title>GS/OS Prefix Conventions</title>
+<tgroup cols="2">
+<!-- tribby:  This table would, of course, look better if the prefix numbers
+ were given a narrow column and the prefix descriptions a wide column.
+ However, experimenting with the documented parameters does not seem to
+ give good results.  This should be revisited at a later time (ie:  once
+ I get around to asking some questions on the sgmltools mailing list) -->
+<colspec colnum="1" align="center"/>
+<colspec colnum="2" align="left"/>
+<thead>
+<row>
+    <entry align="center">Number</entry>
+    <entry align="center">Description</entry>
+</row>
+</thead>
+<tbody>
+<row>
+    <entry>@</entry>
+    <entry>
+    AppleShare prefix. If GNO resides on an
+    AppleShare volume, this prefix is set to the pathname of
+    the user's directory on the file server; otherwise, this
+    prefix is set to the same pathname as prefix number 9.
+    </entry>
+</row>
+<row>
+    <entry>*</entry>
+    <entry>
+    Boot volume prefix. It is not
+    possible to modify the value of this prefix with the
+    shell's <command>prefix</command> command. The only other way to
+    access this prefix is the GS/OS <function>_GetBootVol</function> call.
+    </entry>
+</row>
+<row>
+    <entry>0</entry>
+    <entry>
+    Prefix 0 is the current working
+    directory. It is the prefix that is changed by the <command>cd</command>
+    command.
+    </entry>
+</row>
+<row>
+    <entry>1, 9</entry>
+    <entry>
+    This is the directory in which the currently executing program resides.
+    In the shell, this is usually <filename>/bin</filename>.
+    The kernel sets these prefixes appropriately for each
+    program that is executed.
+    </entry>
+</row>
+<row>
+    <entry>2, 13</entry>
+    <entry>
+    These prefixes should be set to the pathname of the ORCA libraries
+    directory.
+    </entry>
+</row>
+<row>
+    <entry>3, 14</entry>
+    <entry>
+    These prefixes should be set to the same directory as contains
+    the ORCA/Shell program, <filename>ORCA.SYS16</filename>.
+    </entry>
+</row>
+<row>
+    <entry>4, 15</entry>
+    <entry>
+    These prefixes should be set to the pathname of the ORCA "shell"
+    directory.  This is the directory that contains the files, 
+    <filename>Editor</filename>,
+    <filename>SysTabs</filename>,
+    <filename>SysCmnd</filename>,
+    and so forth.
+    </entry>
+</row>
+<row>
+    <entry>5, 16</entry>
+    <entry>
+    These prefixes should be set to the pathname of the ORCA languages
+    directory.
+    </entry>
+</row>
+<row>
+    <entry>6, 17</entry>
+    <entry>
+    These prefixes should be set to the pathname of the ORCA utilities
+    directory.
+    </entry>
+</row>
+<row>
+    <entry>7, 18</entry>
+    <entry>
+    This should be set to a temp directory; one that can be used by various
+    programs for scratch files.  Using a RAMDisk for this purpose can speed
+    up many programs.  See also the <command>renram5</command>(8) and
+    <command>mktmp</command>(8) commands.
+    </entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</para>
+
+
+</appendix>

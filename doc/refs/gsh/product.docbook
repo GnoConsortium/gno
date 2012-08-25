@@ -1,0 +1,1007 @@
+<!--
+;; $Id: product.docbook,v 1.1 2012/08/25 07:19:02 gdr Exp $
+-->
+
+<chapter id="gsh-productive">
+<title>Using the GNO Shell More Productively</title>
+
+<para><quote><emphasis>
+And then one day, hooray! Another way for gnomes to say hooray!
+</emphasis>
+</quote>
+-- Syd Barret, The Gnome
+</para>
+
+
+<sect1>
+<title>What Does This Command Do?</title>
+
+<para>
+If you are unfamiliar with what a
+particular command actually does or what arguments it accepts,
+you can check quickly by using the electronic manual. GNO/ME
+includes a utility called <command>man</command> which displays the manual
+pages for a command whose name you supply as an argument. The
+<command>man</command>
+utility uses another utility called <command>more</command> to actually
+display the pages nicely on the screen.
+</para>
+
+</sect1>
+<sect1>
+<title>Option Arguments</title>
+
+<para>
+As mentioned in 
+<xref linkend="gsh-interact-exec"/>,
+arguments are passed to a command to extend its
+usefulness. The arguments presented in the last chapter were
+words, such as <filename>foo</filename>, <filename>bar</filename> and 
+<filename>foo.c</filename>. Standards exist under UNIX for
+programs to accept command-line option arguments. Option
+arguments (as the name suggests) are optional. There are two
+standards, short options and long options. Short options are
+characters that represent commands, whereas long options contain
+the entire option name.
+</para>
+
+<para>
+Consider the following output of the <command>CATALOG</command> command
+from ProDOS:
+</para>
+
+<screen>
+/DEV
+NAME        TYPE BLOCKS MODIFIED        CREATED       ENDFILE
+
+FINDER.DATA $C9       1 21-OCT-91 22:38 14-APR-90 18:24   260 
+FINDER.ROOT $C9       1 22-OCT-91 17:12  6-OCT-91 15:40    82 
+GENESYS     DIR       1 21-OCT-91 23:37 25-APR-91 15:46   512 
+GSBUG       DIR       1 21-OCT-91 23:38 19-JUL-90 16:48   512 
+MERLIN      DIR       2 22-OCT-91  2:50 30-APR-91 20:21  1024 
+LIFEGUARD   $B3      73  4-SEP-87  4:51 25-DEC-89 20:22 36608 
+ORCA        DIR       2 22-OCT-91 17:12 14-SEP-89 18:27  1024 
+GNO         DIR       2 22-OCT-91 17:12 13-AUG-91 16:36  1024 
+FAST.ANIM   DIR       2 21-OCT-91 23:44 11-MAY-91 10:50  1024 
+MICOL       DIR       2 22-OCT-91  3:10 14-JAN-90  2:46  1024 
+SRC         DIR       1 21-OCT-91 23:44  7-AUG-91 20:30   512 
+NIFTYLIST   DIR       2 21-OCT-91 23:44 29-JUL-91  4:04  1024 
+MCSRC       DIR       1 21-OCT-91 23:45  7-AUG-91 20:34   512 
+
+BLOCKS FREE:43923     BLOCKS USED:21185    TOTAL BLOCKS:65108
+</screen>
+
+<para>
+It is impossible to get any variation in
+the format of this output. While the GNO/ME utility <command>ls</command>
+serves the same purpose as the command <command>CATALOG</command> 
+from Applesoft BASIC, it has a wide number of options which can tailor the
+output to specific needs. Here is how <command>ls</command> can be used to
+give similar output to the <command>CATALOG</command> command:
+</para>
+
+<screen>
+<prompt>gno% </prompt> ls -l
+:dev
+total 45k
+drw--rd 0000 dir         512 Oct 21 23:45 1991 MCSrc
+drw--rd 0000 dir        1024 Oct 21 23:44 1991 NiftyList
+drw--rd 0000 dir        1024 Oct 21 23:44 1991 fast.anim
+drw--rd 0000 dir         512 Oct 21 23:37 1991 genesys
+drw--rd 0000 dir        1024 Oct 22 17:29 1991 gno
+drw--rd 0000 dir         512 Oct 21 23:38 1991 gsbug
+drw--rd 0000 dir        1024 Oct 22 02:50 1991 merlin
+drw--rd 0000 dir        1024 Oct 22 03:10 1991 micol
+drw--rd 0100 dir        1024 Oct 22 17:28 1991 orca
+drw--rd 0000 dir         512 Oct 21 23:44 1991 src
+</screen>
+
+<para>
+The <command>-l</command>
+short option argument tells <command>ls</command> to format the
+output in long format. <command>ls</command> supports only short options.
+If <command>ls</command> <emphasis>did</emphasis> support long options,
+the above command could be changed to <command>ls +format-long</command>.
+This is clearly more descriptive of what function <command>ls</command>
+will perform. For users to new to the UNIX environment,
+long format options are more user-friendly. However, advanced UNIX users prefer
+short options because of their brevity.
+</para>
+
+<para>
+As indicated above, <command>ls</command> has a wide
+number of options available to format the output. Use the command
+"<command>ls -?</command>" to get a short list of these
+options. It is left as an exercise for the user to discover how
+these options affect the output of <command>ls</command>. For a complete
+description of the <command>ls</command> command and its options use the
+command <command>man ls</command>.
+</para>
+
+<para>
+As an example of the usage and importance
+of long options, the following is the result of the <command>+help</command>
+option given to the <command>coff</command> utility.
+Note the use of both short and long options:
+</para>
+
+<screen>
+coff [-OPTIONS] filename [segment..] [loadsegment..]
+
+  OPTIONS        DESCRIPTION
+  -v [+version]  display coff's version number
+  -D [+default]  disable default options
+  -d [+asm]      dump segment body in 65816-format disassembly
+  -T [+tool]     interpret Toolbox, GS/OS, ProDOS, ROM calls
+  -x [+hex]      dump segment body in hex (can be used with '+asm')
+  -l [+label]    print expressions using labels (default is offsets)
+  -t [+infix]    display expressions in infix form
+  -p [+postfix]  display expressions in postfix form (default)
+  -m [+merlin]   format of '+asm' to use merlin opcodes (default)
+  -o [+orca]     format of '+asm' to use orca/m opcodes
+  -a [+shorta]   assume 8-bit accumulator for disassembly
+  -i [+shorti]   assume 8-bit index registers for disassembly
+  -s [+header]   dump segment headers only
+  -n [+noheader] do not print segment headers
+  -f [+nooffset] do not print offset into file
+  -h [+help]     print this information, then quit
+  filename       name of file to dump
+  [segment]      names of segments in file to dump
+  [loadsegment]  names of load segments in file to dump
+</screen>
+
+<para>
+The long options are much more descriptive,
+and provide a very easy way to remember options of programs. If
+an option passed to a shell utility program is not understood by
+that program, you will generally receive an error message stating
+that the option is not understood. If the program is
+user-friendly, a brief list of supported options will also be
+displayed.
+</para>
+</sect1>
+
+<sect1>
+<title>Entering Multiple Commands</title>
+
+<para>
+It is possible to give multiple commands to
+the GNO shell for processing. To execute multiple commands, place
+a semi-colon, ";", between them. The commands will be
+executed sequentially in the order they are entered on the
+command-line. Take care not to exceed the 4096 character
+command-line buffer. It is possible to execute multiple commands
+at the same time, this feature is discussed in
+<xref linkend="gsh-productive-bg"/>.
+</para>
+
+<para>
+As an example, 
+to run the <command>echo</command> command and the <command>ls</command>
+command in succession, enter the following on the command line:
+<screen>
+<prompt>% </prompt><command>echo Running ls ; ls -l</command>
+</screen>
+</para>
+
+<para>
+The output of the preceeding command will
+display the string "Running ls" followed by the output of the
+"<command>ls -l</command>" command.
+</para>
+
+</sect1>
+
+<sect1 id="gsh-productive-alias">
+<title>Using Aliases</title>
+
+<para>
+<command>gsh</command> provides a built-in command, 
+<command>alias</command>, which
+allows any command you would type on the command-line to be
+renamed. You are not limited to renaming a single command name.
+Rather, you could rename an entire command-line, which could
+allow you to use the name "backup" to execute the command 
+"backup +source /system +destination /tape.drive".
+The <command>alias</command> command is also a very powerful means of
+customizing your GNO environment to emulate other computing
+environments.
+</para>
+
+<para>
+To emulate the ORCA environment, the
+following aliases could be entered into your <filename>gshrc</filename> file,
+or a script called <filename>orca.alias</filename> that 
+<filename>gshrc</filename> would run:
+</para>
+
+<screen>
+<command>alias copy cp</command>
+<command>alias cat "ls -l"</command>
+<command>alias catalog "ls -l"</command>
+<command>alias move mv</command>
+<command>alias rename mv</command>
+<command>alias delete rm</command>
+<command>alias type cat</command>
+<command>alias prefix cd</command>
+<command>alias create mkdir</command>
+</screen>
+
+<para>
+If you alias a string containing multiple
+words, you must enclose the string in quotes, as done for the
+catalog alias.  <command>gsh</command> interprets the string as one value. If
+you do not include both the opening and closing quotes, the alias
+command will notify you of your error.
+</para>
+
+<para>
+You can view any alias' that are set by entering the 
+<command>alias</command>
+command without any arguments. The setting of a
+particular alias can be viewed by entering one argument
+consisting of the name of the alias to view.
+</para>
+
+<para>
+If you wish to remove an alias, use the command
+<command>unalias</command>
+with the aliased name as the argument. To remove
+the aliases from the <filename>orca.alias</filename>
+file given above, you could do the following:
+<screen>
+<prompt>%</prompt><command>unalias copy cat catalog move rename delete type prefix create</command>
+</screen>
+</para>
+
+<para>
+Unlike the <command>alias</command> command, the <command>unalias</command>
+command can take multiple arguments. See 
+<xref linkend="gsh-commands-builtin"/>
+for further discussion of the <command>alias</command> and
+<command>unalias</command> commands.
+</para>
+
+</sect1>
+
+<sect1 id="gsh-productive-redirect">
+<title>Redirecting Input and Output</title>
+
+<para>
+Most shell utilities write their output to
+the screen. However, under GNO/ME, like ORCA, it is possible to
+redirect that output to a file or a GS/OS device. The
+output of the <command>ls</command> command above was imported into this
+manual by redirecting it to a file. In addition to redirecting
+the output of a shell utility, it is also possible to redirect
+the input of that utility. Consider the following <command>gsh</command>
+session:
+</para>
+
+<screen>
+[1]% <command>echo this is a test</command>
+this is a test
+[2]% <command>echo this is a test &gt; file1</command>
+[3]% <command>cat file1</command>
+this is a test
+[4]% <command>cat &lt; file1</command>
+this is a test
+</screen>
+
+<para>
+In the example above, <command>cat</command> takes
+input from "standard input". In command 3 above, <command>cat</command>
+takes as an argument the filename <filename>file1</filename>
+and writes the contents
+of that file to "standard output". Where no filename
+argument is given, <command>cat</command> reads input from standard input and
+writes the output to standard output.
+</para>
+
+<para>
+In the case of command 4 above, <command>cat</command>
+contains no arguments and therefore reads from standard input.
+However, <command>gsh</command> interprets the "&lt;" redirection
+operator and opens the file <filename>file1</filename>
+for use as standard input. Therefore, <command>cat</command>
+will take its input from <filename>file1</filename>,
+even though it thinks it is reading input from
+standard input. This input redirection is transparent to the
+utility, making it work with most shell utilities.
+</para>
+
+<para>
+Command 2 above created a new file called
+file1. If this file had existed prior to the command then it
+would have been erased. It is possible to append output to the
+end of the file by using the "&gt;&gt;"
+redirection operator. Consider the following <command>gsh</command> session:
+</para>
+
+<screen>
+[5]% <command>echo second line &gt;&gt; file1</command>
+[6]% <command>cat file1</command>
+this is a test
+second line
+</screen>
+
+<para>
+Output that is sent to "standard error",
+can also be redirected. The "&gt;&amp;" operator
+redirects standard error to a file and "&gt;&gt;&amp;"
+appends standard error to the end of the file. Below is a summary
+of the redirection operators:
+</para>
+
+<para>
+<table colsep="1" frame="all" rowsep="1" tocentry="1" shortentry="0"
+orient="land" pgwide="0">
+<title>GSH Redirection Operators</title>
+<tgroup cols="4">
+<colspec align="left"/>
+<thead>
+<row>
+    <entry></entry>
+    <entry align="center">stdin</entry>
+    <entry align="center">stdout</entry>
+    <entry align="center">stderr</entry>
+</row>
+</thead>
+<tbody>
+<row>
+    <entry align="center">redirect input from file</entry>
+    <entry align="center">&lt;</entry>
+    <entry align="center"></entry>
+    <entry align="center"></entry>
+</row>
+<row>
+    <entry align="center">redirect output to file</entry>
+    <entry align="center"></entry>
+    <entry align="center">&gt;</entry>
+    <entry align="center">&gt;&amp;</entry>
+</row>
+<row>
+    <entry align="center">redirect output to EOF</entry>
+    <entry align="center"></entry>
+    <entry align="center">&gt;&gt;</entry>
+    <entry align="center">&gt;&gt;&amp;</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</para>
+
+<para>
+Output can be redirected to a storage
+device, printer, modem, or any other valid GNO or GS/OS device.
+This provides a very powerful means of communicating directly
+with these devices from within <command>gsh</command>. One quick and dirty
+example of redirection allows a background version of <command>gsh</command>
+to be run on a terminal connected directly through the modem
+serial port:
+</para>
+
+<screen>
+[1]% <command>gsh &lt; ttya &gt; ttya &gt;&amp; ttya &amp;</command>
+</screen>
+
+</sect1>
+
+<sect1>
+<title>Pipelines</title>
+
+<para>
+In addition to the redirection operators,
+there is one additional operator which gives control over how
+input and output are handled. The operator is a 
+<command>pipeline</command>, "|".
+Pipelines allow the standard output of one
+command to be used as the standard input to another command. This
+is almost equivalent to running the first command with its output
+redirected to a temporary file, then running the second command
+with its input redirected from the temporary file, then removing
+the temporary file. Pipelines make useful "filter" processes
+where the output of one command can be sent to another command
+which filters the output to whatever parameters you give the
+second command. As an example, you could display all the
+filenames with the character "a" in their name:
+</para>
+
+<screen>
+[1]% <command>echo foo &gt; file1</command>
+[2]% <command>echo abc &gt;&gt; file1</command>
+[3]% <command>echo aabc &gt;&gt; file1</command>
+[4]% <command>echo GNO &gt;&gt; file1</command>
+[5]% <command>echo standard &gt;&gt; file1</command>
+[6]% <command>echo oof &gt;&gt; file1</command>
+[7]% <command>cat file1</command>
+foo
+abc
+aabc
+GNO
+standard
+oof
+[8]% <command>cat file1 | grep 'a'</command>
+abc
+aabc
+standard
+</screen>
+
+<para>
+Pipelines are useful when you wish to view
+lines of text in a file that contain a phrase, or if you want to
+connect two programs directly, bypassing intermediate files. It
+is also possible to connect multiple commands with multiple
+pipelines.
+</para>
+
+<para>Pipelines are frequently used for paging
+output. The <command>coff</command> program mentioned previously prints the
+output of an OMF disassembly to the screen but does not pause when a key
+is pressed. In order to pause the display, the output must be
+piped through a paging utility. The ORCA shell requires that you
+wait for the entire command to complete execution before the
+pipeline is processed. However, GNO/ME executes both commands
+concurrently which allows the <command>coff</command> utility to execute
+while the paging utility displays the program output. GNO/ME
+comes with two page utilities, 
+<command>more</command> and <command>less</command>.
+Complete desciptions of 
+<command>coff</command>,
+<command>more</command>, and
+<command>less</command>
+can be found in the electronic manual using the <command>man</command> command.
+</para>
+
+</sect1>
+<sect1 id="gsh-productive-bg">
+<title>Background Execution of Commands</title>
+
+<para>
+A major benefit of GNO/ME is <emphasis>multitasking</emphasis>.
+Multitasking is a means of running multiple applications at once
+(not literally but very close). On the Apple IIGS, GNO/ME
+accomplishes pre-emptive multitasking by switching among
+applications that are running in the background. Any GNO/ME
+utility can be run in the background. Applications running in the
+background generally run for the same period of time (GNO/ME
+switches between applications 20 times a second).
+</para>
+
+<para>
+To background a shell utility, place the "&amp;"
+character at the end of the command-line. The
+GNO shell displays a unique process ID and job number for each
+backgrounded command.
+</para>
+
+<para>
+It is possible to use the background character "&amp;"
+to separate commands as with the ";" character.
+Each command with a trailing "&amp;"
+is executed in the background.
+</para>
+
+<para>
+Up to 32 processes can executed concurrently under the GNO Kernel.
+</para>
+
+<para>
+Warning: When you exit the GNO Shell all
+processes will be terminated including any you may have running
+in the background.
+</para>
+
+<para>
+Below is a sample session with background tasks:
+</para>
+
+<screen>
+[5] script&gt; <command>ps</command>
+  ID STATE   TT MMID  UID TIME COMMAND
+   1 ready   co 1002 0000 0:45 NullProcess
+   2 ready   co 1007 0000 0:05 gsh
+ 138 running co 1006 0000 0:00 ps
+[6] script&gt; <command>cmpl +p script.c keep=script &gt; outputfile &amp;</command>
+[1] + 141 Running cmpl +p script.c keep=script &amp;
+[7] script&gt; <command>ps</command>
+  ID STATE   TT MMID  UID TIME COMMAND
+   1 ready   co 1002 0000 0:45 NullProcess
+   2 ready   co 1007 0000 0:05 gsh
+ 141 waiting co 1006 0000 0:00 cmpl +p script.c keep=script
+ 142 ready   co 100B 0000 0:00 5/cc
+ 143 running co 100D 0000 0:00 ps
+[8] script&gt; <command>cmpl +p script.asm keep=script1 &gt; output2 &amp; ps ; ls -s</command>
+[2] - 145 Running cmpl +p script.asm keep=script1 &amp;
+  ID STATE   TT MMID  UID TIME COMMAND
+   1 ready   co 1002 0000 0:45 NullProcess
+   2 ready   co 1007 0000 0:05 gsh
+ 141 waiting co 1006 0000 0:00 cmpl +p script.c keep=script
+ 144 ready   co 100E 0000 0:07 5/linker
+ 145 ready   co 100D 0000 0:00 cmpl +p script.asm keep=script1
+ 146 running co 100F 0000 0:00 ps
+ 147 ready   co 1011 0000 0:00 5/asm65816
+   3 barf     1 outputfile  6 script.asm   1 script.root
+   1 foobar  19 script      3 script.c    36 script.sym
+   1 output2  6 script.a    6 script.mac   1 typescript
+[9] script&gt; <command>cp script.asm script2 &amp;</command>
+[3] 150 Running cp script.asm script2 &amp;
+
+[2] - Done cmpl +p script.asm keep=script1 &amp;
+
+[1] + Done cmpl +p script.c keep=script &amp;
+
+[3] - Done cp script.asm script2 &amp;
+
+[10] script&gt; <command>ps</command>
+  ID STATE   TT MMID  UID TIME COMMAND
+   1 ready   co 1002 0000 0:45 NullProcess
+   2 ready   co 1007 0000 0:05 gsh
+ 151 running co 1006 0000 0:00 ps
+</screen>
+
+<para>
+The first command line sends the 
+<command>ps</command>
+command to the shell. 
+<command>ps</command>
+lists the processes currently being executed by the
+GNO kernel. The processes named <command>gsh</command> and 
+<command>NullProcess</command>
+are always present. For a complete description of the 
+<command>ps</command> command, see
+<xref linkend="gsh-commands-kern"/>.
+</para>
+
+<para>
+When a command is executing in the
+background, keyboard input is not sent to it. However, output is
+still treated in the same way. If the command sends output to the
+standard output or standard error, the screen will become
+cluttered. Try this example:
+</para>
+
+<screen>
+<prompt>[1]% </prompt>ls -l&amp;
+<prompt>[2]% </prompt>ls -l
+</screen>
+
+<para>
+Both the output of commands #1 and #2 will
+be sent to the screen. After command #1 is entered and you begin
+typing command #2, you will see the output of the first 
+"<command>ls -l</command>"
+command being sent to the screen while you enter command #2.
+Utilities which produce output should have their standard output
+and standard error redirected to a file when they are executed in
+the background. See 
+<xref linkend="gsh-productive-redirect"/>.
+</para>
+
+<para>
+Executing commands in the background
+hinders the performance of the Apple IIGS. This is not too
+noticeable when one or two commands are being executed but
+performance will degrade more noticably as more commands are
+started. The Apple IIGS was not designed as a multitasking
+computer so the performance of GNO/ME should be understandable.
+If you have an accelerator (such as the Transwarp GS or Zip GS)
+installed, performance of multiple tasks will be acceptable.
+</para>
+
+</sect1>
+<sect1>
+<title>Job Control</title>
+
+<para>
+Now that command backgrounding and
+multitasking have been discussed, some more definitions can be
+mentioned. A process is a command which has been submitted to the
+shell for execution. 
+<command>gsh</command> contains a set of special
+commands which make dealing with processes much easier. <command>gsh</command>
+treats each command entered at the command-line as a <command>job</command>,
+where a single job may contain multiple processes. For example:
+</para>
+
+<screen>
+% <command>ls</command>           <emphasis>one command, one process, one job</emphasis>
+% <command>ls ; ps</command>      <emphasis>two commands, two processes, two jobs</emphasis>
+% <command>ls &amp; ps</command>  <emphasis>two commands, two processes, two jobs</emphasis>
+% <command>ls | more</command>    <emphasis>two processes, one job</emphasis>
+</screen>
+
+<para>
+When a job is run from the shell, it can be
+in several modes of operation. Jobs can be in any of three
+states: "running", "stopped", or "done". A job can
+be executing in either the foreground or the background.
+</para>
+
+<para>
+Commands exist to place a job in any mode
+of operation. When a job is run directly from a command-line it
+is running and it is in the foreground. Since the command-line
+cannot be accessed, two special keys have been defined:
+<command>^C</command> kills the job and 
+<command>^Z</command> will stop the job. When the job is killed, it is
+gone forever, but a stopped job can be restarted. When a job is
+stopped, the kernel suspends each of the processes in the job.
+</para>
+
+<para>
+Jobs that are running in the background or
+have been stopped can be accessed using several built-in
+commands. The <command>bg</command> command will place a job in the
+background, placing it in the running state if necessary. The 
+<command>fg</command>
+command will similarly place a job in the foreground, and the 
+<command>stop</command>
+command will stop a backgrounded job. The <command>kill</command> command
+will terminate a job.
+</para>
+
+<para>
+Each time job control is accessed, a
+special job status line is displayed following the command. The
+first item on the left in brackets is the job number. Next is a
+single character, either a '+', '-', or a blank.  The '+' designates the
+currently accessed job, the '-' is the previously accessed job, and all
+other jobs are not specified. The 
+<command>jobs</command>
+command will display a list of all jobs.
+</para>
+
+<para>
+Have another look at the example in
+<xref linkend="gsh-productive-bg"/>; 
+now more of the notation will be understandable.
+</para>
+
+<para>
+Each of the special commands,
+<command>bg</command>,
+<command>fg</command>,
+<command>stop</command>, and
+<command>kill</command>,
+take an argument which specifies the job to perform the
+operation on. The argument is either a number specifying the
+process id, or a '%' followed by one of the following:
+'+' or '-' for the current job,
+a '-' for the previous job, 
+or a number to specify any
+specific job. If nothing follows the '%' or the argument is
+missing, then the current job is the default.
+</para>
+
+<para>
+There is one additional way that a job may
+be stopped. If the job is placed in the background and it
+attempts to read from the console, the job will be stopped, and
+the status line says "(tty input)" as the reason for the job
+being stopped. The job should be foregrounded so that the user
+may enter input to the program. It can then be placed back in the
+background as necessary (with <command>^Z</command> and
+<command>bg</command>).
+</para>
+
+</sect1>
+<sect1>
+<title>Working with Pathnames</title>
+
+<para>
+To move easily to directories descended
+from the home directory, <command>gsh</command> provides the "~"
+(tilde) character. This character represents the home directory.
+Therefore, if your home directory was
+<filename>:hard:gno:home:root</filename>,
+you could use the command 
+"<command>cd ~</command>" to
+move to the home directory (note that 
+"<command>cd</command>"
+without any arguments
+also defaults to the home directory). To move to subdirectories
+of the home directory, you could use the command 
+The tilde character is recognized by <command>gsh</command> before
+the command is interpreted.
+</para>
+
+<para>
+Another special sequence, "<filename>..</filename>",
+when used as part of a pathname, will strip the last path between
+pathname seperators. For example, the pathname
+"<filename>/dev/gno/..</filename>" would be expanded to 
+"<filename>/dev</filename>". 
+The "<filename>/gno</filename>" portion of the path
+is stripped as it is before the periods.
+This provides an excellent way to backup into your directories.
+"Backing up" is limited by the volume directory of the
+device being used.
+</para>
+
+<para>Additionally, the character "<filename>.</filename>"
+can be used to signify the current directory.
+</para>
+
+</sect1>
+<sect1 id="gsh-product-expand">
+<title>Pathname Expansion</title>
+
+<para>
+Many utilities supplied with <command>gsh</command>
+take, as an argument, a filename or filenames. The shell utilities 
+<command>cat</command>, 
+<command>ls</command>, 
+<command>grep</command>, and 
+<command>cp</command> 
+can take multiple filenames as arguments. If you wish to invoke any
+of these utilities on filenames that have a sequence of
+characters in common (ie. 
+<filename>AND</filename>,
+<filename>APPLE</filename>,
+<filename>SHK</filename>,
+<filename>TXT</filename>,
+<filename>FILE2</filename>,
+<filename>FILE3</filename>,
+etc), <command>gsh</command> provides special characters,
+called regular expressions or wildcards, which match multiple
+filenames without having to enter all filename arguments
+manually.
+</para>
+
+<para>
+<table colsep="1" frame="all" rowsep="1" tocentry="1" shortentry="0"
+orient="land" pgwide="0">
+<title>GSH Wildcard Operators</title>
+<tgroup cols="2">
+<colspec align="left"/>
+<tbody>
+<row>
+    <entry><command>*</command></entry>
+    <entry>Matches any string of characters.</entry>
+</row>
+<row>
+    <entry><command>?</command></entry>
+    <entry>Matches a single character.</entry>
+</row>
+<row>
+    <entry><command>[</command>abc<command>]</command></entry>
+    <entry>Matches any of the characters enclosed in brackets.</entry>
+</row>
+<row>
+    <entry><command>[^</command>abc<command>]</command></entry>
+    <entry>Matches any of the characters not enclosed in brackets.</entry>
+</row>
+<row>
+    <entry><command>[</command>a<command>-</command>c<command>]</command></entry>
+    <entry>Matches the ascending sequence of characters enclosed in brackets.</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</para>
+
+<para>
+This method of matching filenames is known
+as "globbing". <command>gsh</command> performs globbing on the word
+prior to executing the command. The following <command>gsh</command> session
+illustrates file globbing:
+</para>
+
+<screen>
+[1]% <command>cd /dev/gno/utilities</command>
+[2]% <command>ls</command>
+:dev:gno:utilities
+CONV      Crunch    CrunchIIGS DeRez      DiskCheck
+DumpObj   Duplicate EMACS      Equal      Express
+Files     LinkIIGS  MakeBin    MakeDirect OrcaDumpIIGS
+Prizm     ResEqual  Search     canon      choose
+clrff     cmdfix    coff       compact    count
+detab     dir       dirff      dumpfile   eject
+emacs.doc emacs.hlp emacs.rc   emacs.tut  help
+init      join      link       macgen     makelib
+mem       online    pageeject  pause      pwd
+src 
+[3]% <command>ls e*</command>
+:dev:gno:utilities
+EMACS     Equal     Express    eject      emacs.doc 
+emacs.hlp emacs.rc  emacs.tut
+[4]% <command>echo *r *m</command>
+dir Prizm mem
+[5]% <command>echo *i*</command>
+cmdfix CrunchIIGS Prizm DiskCheck Duplicate Files init
+join LinkIIGS makelib MakeBin MakeDirect link dirff
+dumpfile online OrcaDumpIIGS dir
+[6]% <command>echo NoMatch*</command>
+No match.
+[7]% <command>echo [a-f]*</command>
+coff canon cmdfix compact Crunch CrunchIIGS DeRez DiskCheck
+DumpObj Duplicate EMACS emacs.doc emacs.hlp emacs.rc
+emacs.tut Equal Express Files choose clrff count detab CONV
+dirff dumpfile eject dir
+[8]% <command>echo [a-fs-t]*</command>
+coff canon cmdfix compact Crunch CrunchIIGS DeRez DiskCheck
+DumpObj Duplicate EMACS emacs.doc emacs.hlp emacs.rc
+emacs.tut Equal Express Files choose clrff count detab
+Search src CONV dirff dumpfile eject dir
+[9]% <command>echo emacs?*</command>
+EMACS emacs.doc emacs.hlp emacs.rc emacs.tut
+[10]% <command>echo [^a-f]*</command>
+Prizm help init join LinkIIGS makelib MakeBin MakeDirect
+link mem ResEqual Search src online pageeject pause
+OrcaDumpIIGS pwd macgen
+[11]% <command>echo [^a-fs-t]*</command>
+Prizm help init join LinkIIGS makelib MakeBin MakeDirect
+link mem ResEqual online pageeject pause OrcaDumpIIGS pwd
+macgen
+[12]% <command>echo ???</command>
+mem src pwd dir
+[13]% <command>echo ?</command>
+No match.
+[14]% <command>echo "???"</command>
+???
+[15]% <command>do you have a light?</command>
+No match.
+</screen>
+
+<para>
+As can be seen by the above example,
+character matches are case insensitive. The ProDOS file system
+treats the filenames "<filename>file</filename>" and
+"<filename>FILE</filename>" as the same
+file. <command>gsh</command> recognizes this and does not detract from the
+underlying file system.
+</para>
+
+<para>
+File globbing makes passing arguments to
+commands much easier and much more powerful. You could easily use
+"<filename>*.c</filename>" as an argument in a number of ways:
+</para>
+
+<screen>
+[1]% <command>ls *.C</command>    <emphasis>lists all filenames ending in ".C"</emphasis>
+[2]% <command>cc *.C</command>    <emphasis>compiles all files ending in ".C"</emphasis>
+[3]% <command>more *.C</command>  <emphasis>displays contents of all files ending in ".C"</emphasis>
+</screen>
+
+</sect1>
+
+<sect1>
+<title>Quoting Special Characters</title>
+
+<para>
+Beginning with Apple IIgs System Software 6.0, GS/OS is
+able to read files from Macintosh
+computers. The Macintosh uses a filesystem known as HFS, which
+allows filenames to contain any character except the colon (":").
+Because a filename such as "emacs?*" is valid under HFS, care must be taken or
+unexpected results will occur. The word "emacs?*" was
+used as a regular expression above to specify a list of filenames
+beginning with the word "emacs" and one or more
+trailing characters. <command>gsh</command> does provide a way to pass an
+argument which contains special shell characters to a command.
+This is known as quoting an argument. There are three different
+ways to quote an expression:
+</para>
+
+<orderedlist>
+
+<listitem>
+<para>
+The single quote will quote everything
+between the single quote marks. Thus, to display the contents of
+a file on an HFS volume named "<filename>emacs?*</filename>", use the
+command:
+<command>more 'emacs?*'</command>
+</para>
+</listitem>
+
+<listitem>
+<para>
+The double quote will quote everything
+between the double quote marks except variables;
+<command>echo "emacs?* $home"</command>
+will product "emacs?* /dev/gno".
+See <xref linkend="gsh-shellvars"/>
+for more on variables.
+</para>
+</listitem>
+
+<listitem>
+<para>
+The backslash is used to quote one
+character. To pass "emacs?*" as a regular using the backslash,
+one could enter the following:
+<command>ls emacs\?\*</command>
+</para>
+</listitem>
+
+</orderedlist>
+
+<para>
+One additional purpose of the quoting
+mechanism built into <command>gsh</command> is to add spaces to command
+arguments. Each command and its arguments is separated by a
+space. Multiple spaces between arguments are treated as one
+space. Thus, consider the following:</para>
+
+<screen>
+% <command>echo a       b c</command>
+a b c
+% <command>echo 'a       b c'</command>
+a       b c
+</screen>
+
+</sect1>
+<sect1 id="gsh-product-locate">
+<title>How gsh Finds a Command</title>
+
+<para>
+<command>gsh</command> has a special variable, PATH, which
+specifies the directories and order of directories to search for
+shell utilities. This variable is often setup in the <filename>gshrc</filename>
+file although it can be changed as often as needed. The purpose
+of the PATH environment variable was discussed in 
+<xref linkend="gsh-start-custom"/>.
+</para>
+
+<para>
+When <command>gsh</command> starts up, it searches all
+directories specified in the PATH environment
+variable and establishes a table of all commands,
+called a hash table. Because of this table, <command>gsh</command>
+"knows" where a command is and can execute the command
+much faster than searching through all directories every time the
+command is entered.
+</para>
+
+<para>
+The search process begins with alias names.
+See <xref linkend="gsh-productive-alias"/>.
+If an alias is
+found that matches the command, the alias is replaced with its
+value and the command-line is again parsed. If it was not an
+alias, <command>gsh</command> checks to see if it was a special built-in
+utility. The search process then searches for the name in the
+hash table. If an entry is found in the hash table, the path name
+of the command is retrieved and the command is executed. If an
+entry is not found, the current path is searched. If the command
+name is not found, an error results.
+</para>
+
+<para>
+When the PATH environment variable is
+changed, <command>gsh</command> does not automatically recreate the command
+hash table. You need to issue the command 
+<command>rehash</command> to
+recreate the hash table. The more pathnames specified, the
+greater the delay in starting <command>gsh</command> and in invoking the
+<command>rehash</command> command.
+The following shell script changes PATH
+and invokes the
+rehash command in one step.
+</para>
+
+<screen>
+echo Resetting PATH variable $PATH to $1
+set path=$1
+rehash
+</screen>
+
+<para>
+The $1 variable will be expanded with the first argument
+passed to the script.
+</para>
+
+<para>
+<command>rehash</command>
+should also be used if a new utility is copied to one of the
+directories specified in the PATH variable. Of course, it is
+possible to specify the absolute pathname of any command, but
+this is undesirable if the command is frequently used.
+</para>
+
+</sect1>
+
+</chapter>

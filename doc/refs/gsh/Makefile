@@ -25,10 +25,19 @@ gsh.ltr.ps:	gsh.sgml $(CHAPTERS)
 	sgmltools -b ps gsh.sgml
 	mv gsh.ps gsh.ltr.ps
 
+bork:
+	true; echo "result is $$?"; exit 0
+
+#	echo "$(SHELLMETAS)"
+
 gsh.sgml: main.sgml $(CHAPTERS)
-	@date="`../getdate -date main.sgml $(CHAPTERS)`"; \
+	mydate=`../getdate -date main.sgml $(CHAPTERS)`; \
 	echo "generating $@"; \
-	perl -pe "s,%%%date%%%,$$date,g;" < main.sgml > $@
+	true perl -pe "s,%%%date%%%,$$mydate,g;"
+
+# < main.sgml
+
+# > $@
 
 clean:
 	rm -f gsh.sgml *~

@@ -1,0 +1,475 @@
+<!--
+;; $Id: vars.docbook,v 1.1 2012/08/25 07:19:03 gdr Exp $
+-->
+
+<chapter id="gsh-shellvars">
+<title>Shell Variables</title>
+
+<sect1>
+<title>Using Shell Variables</title>
+
+<para>
+<command>gsh</command> supports variables in the
+shell environment. These variables can be used by any shell
+utility or script. Many EXE files and shell scripts predefine
+certain shell variables that contain formatting options or other
+options for a specific utility. As an example, the <command>ls</command>
+utility looks for the variable TERM that defines the
+terminal type currently being used. When <command>ls</command> is started, it
+reads the value of the TERM  variable and avoids printing Apple II specific
+MouseText characters if the set terminal type does not support them.
+</para>
+
+<para>
+<command>gsh</command> has set aside certain variables
+for its specific use. Shell utilities should be aware of these
+variables and use them appropriately. Use caution when changing
+shell variables, because the change could affect more than just
+the shell.
+</para>
+
+</sect1>
+
+<sect1 id="gsh-shellvars-scope">
+<title>Scope of Shell Variables</title>
+
+<para>
+There are two types of processes that are
+involved in any discussion of a multitasking system.  The original
+process, <command>gsh</command> for example, is called a parent process.
+If <command>gsh</command>
+invokes a process, such as 
+<command>ls</command>, 
+<command>cp</command>, or 
+<command>mv</command>,
+that process is called a child process. It is possible for any
+process to define a variable. These variables will not be made
+available to other processes unless the program that defined the
+variable specifically makes them available. 
+</para>
+
+<para>
+The <command>export</command> command makes variables
+defined by one process available to its children. See the example
+<filename>gshrc</filename> shell script shown in 
+<xref linkend="gsh-start-custom"/>.
+In the case of the shell, most of its
+variables are exported and, therefore, all shell utilities can
+read the value of a shell variable. However, programs cannot
+change the value of a shell variable. In general, executables
+share their environment with that of the shell, so that a utility
+can change variables in its parent's environment. This allows
+communication between programs and the shell.
+<!-- tribby:  that last paragraph seems to be self contradictory;
+can a child process affect the parent's environment variables or not? -->
+</para>
+</sect1>
+
+<sect1 id="gsh-shellvars-predef">
+<title>Description of Predefined Shell Variables</title>
+
+<para>
+The following variables have special meaning to <command>gsh</command>.
+Shell variable names are not case sensitive.
+</para>
+
+<variablelist>
+
+<varlistentry>
+<term>
+$0, $1, $2, ...
+</term>
+<listitem>
+<para>
+String values that contain the arguments to
+a shell script. Variable 0 contains the name of the
+script. The first argument begins with variable 1 and so
+on.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$&lt;
+</term>
+<listitem>
+<para>
+When encountered, the variable is expanded
+using a value obtained from standard input. This provides
+a means of obtaining user input in script files. Note
+that the shell variables are expanded before the
+command-line is executed 
+(See <xref linkend="gsh-shellvars-access"/>.)
+When prompting the user for input,
+be sure that the prompt is in a separate command-line
+than the $&lt;. Also, if the user wishes to enter a value
+with spaces, he must quote what he types with
+double-quotes.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$ECHO
+</term>
+<listitem>
+<para>
+A boolean value that, if defined, will
+cause commands in a shell script to be echoed to standard
+output.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$FIGNORE
+</term>
+<listitem>
+<para>
+This variable, if set, contains a list of
+filename suffixes. When doing command or filename
+completion, <command>gsh</command> will ignore any filename with a
+suffix listed in FIGNORE.  For example, you might want to 
+<command>set fignore=".A .ROOT .SYM"</command>
+to ignore object files and other compiler droppings.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$HISTORY
+</term>
+<listitem>
+<para>
+A numeric value that contains the number of
+history commands (command-lines) remembered. If the value
+is 0 or HISTORY is undefined, all commands will be
+remembered. Previous command-lines can be called back
+with the UP-ARROW and DOWN-ARROW.
+(See <xref linkend="gsh-interact-hist"/>.)
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$HOME
+</term>
+<listitem>
+<para>
+The HOME directory is the main directory of the
+shell; it is the directory <command>gsh</command> defaults to when it
+starts. The tilde ("~") character can be used
+as a shorthand method of accessing the HOME directory
+(as discussed in <xref linkend="gsh-product-expand"/>).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$IGNOREEOF
+</term>
+<listitem>
+<para>
+A boolean value that, if enabled, will
+prevent <command>^D</command> from exiting the shell.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$NOBEEP
+</term>
+<listitem>
+<para>
+A boolean value that, if set, will prevent <command>gsh</command>
+from sounding the speaker when errors occur while editing
+a command-line.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$NODIREXEC
+</term>
+<listitem>
+<para>
+A boolean value that, if set, will disable <command>gsh</command>'s
+feature of treating directory names as commands; i.e. if
+a directory is specified as a command, <command>gsh</command> will
+move to that directory as though the cd command was being
+used.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$NOGLOB
+</term>
+<listitem>
+<para>
+A boolean value that, if set, will
+disable filename globbing. Command arguments will be
+passed to their commands "as-is", without any
+wildcard expansion.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$NONEWLINE
+</term>
+<listitem>
+<para>
+A boolean value that, if set, will disable
+extraneous carriage returns being output before and after command
+execution. Examples given in this manual have
+this option set.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$PATH
+</term>
+<listitem>
+<para>
+A string value that defines the pathnames
+where shell scripts, EXE utilities, and SYS16 programs
+can be found 
+(See <xref linkend="gsh-product-locate"/>).
+Because GS/OS uses colons as separators in pathnames, <command>gsh</command>
+cannot allow colons to be used as separators in the PATH
+variable, as UNIX does. If one of the path entries has a
+space within it (which is possible with the HFS FST),
+then the space should be quoted with a backslash, "\".
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$PRECMD
+</term>
+<listitem>
+<para>
+This is actually a special <emphasis>alias</emphasis> and not an environment
+variable.
+If PRECMD is defined then its value is taken as a a command to be executed
+just before gsh prints the prompt for a command line. For example, 
+<command>alias precmd qtime</command> will print the time in English
+text before every prompt.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$PROMPT
+</term>
+<listitem>
+<para>
+When <command>gsh</command> prompts you to enter a
+command, the prompt that appears before the cursor can be
+customized for your <command>gsh</command> environment. If PROMPT
+is undefined, the default prompt of "% " is
+used. The prompt string recognizes certain character
+sequences in the PROMPT variable and interprets them accordingly.
+The following are the special characters:
+</para>
+<para>
+<table colsep="1" frame="all" rowsep="1" tocentry="1" shortentry="0"
+orient="land" pgwide="0">
+<title>Prompt Special Characters</title>
+<tgroup cols="2">
+<colspec align="left"/>
+<tbody>
+<row>
+    <entry>%h, %!, !</entry>
+    <entry>current history number</entry>
+</row>
+<row>
+    <entry>%t, %@</entry>
+    <entry>current time of day in 12 hour am/pm format</entry>
+</row>
+<row>
+    <entry>%d, %/</entry>
+    <entry>current working directory</entry>
+</row>
+<row>
+    <entry>%~</entry>
+    <entry>current working directory with tilde replacement</entry>
+</row>
+<row>
+    <entry>%c, %C, %.</entry>
+    <entry>trailing component of current working directory</entry>
+</row>
+<row>
+    <entry>%S, %s</entry>
+    <entry>inverse mode on (%s) and off (%S)</entry>
+</row>
+<row>
+    <entry>%U, %u</entry>
+    <entry>
+    begin and end underline mode (only on terminals that support
+    underline; gnocon will use inverse mode instead)
+    </entry>
+</row>
+<row>
+    <entry>%%</entry>
+    <entry>the single "%" character</entry>
+</row>
+<row>
+    <entry>%n</entry>
+    <entry>user name (as defined by $USER)</entry>
+</row>
+<row>
+    <entry>%W</entry>
+    <entry>date in mm/dd/yy format</entry>
+</row>
+<row>
+    <entry>%D</entry>
+    <entry>date in yy-mm-dd format</entry>
+</row>
+<row>
+    <entry>\n</entry>
+    <entry>newline</entry>
+</row>
+<row>
+    <entry>\r</entry>
+    <entry>carriage return</entry>
+</row>
+<row>
+    <entry>\t</entry>
+    <entry>horizontal tab</entry>
+</row>
+<row>
+    <entry>\b</entry>
+    <entry>bell</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$PUSHDSILENT
+</term>
+<listitem>
+<para>
+If this variable is defined, <command>gsh</command>
+will not print the directory stack after any of the
+directory stack commands.
+(See <command>pushd</command> and <command>popd</command> in
+<xref linkend="gsh-commands-builtin"/>.)
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$SAVEHIST
+</term>
+<listitem>
+<para>
+A numeric value that contains the number of
+commands to save to disk when exiting <command>gsh</command>. These
+commands are then read back in when <command>gsh</command> is
+restarted which allows old commands to be reused. If the
+value is 0 or SAVEHIST is undefined, no commands will be saved to disk.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$TERM
+</term>
+<listitem>
+<para>
+This variable contains the name of the
+terminal emulation that the shell and other applications
+should use. By default, it is "gnocon".  When
+the shell encounters a <command>set term</command> command, 
+it automatically calls the the <command>tset</command> to reload the
+termcap information.  
+See also <xref linkend="gsh-app-termcap"/>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$TERMCAP
+</term>
+<listitem>
+<para>
+This variable specifies the location of the <filename>termcap</filename>
+file. The shell and other applications look for <filename>termcap</filename>
+in the <filename>/etc</filename> directory, but if TERMCAP is set,
+the fully specified termcap file is used instead. This
+allows users to install custom termcap entries.
+See also <xref linkend="gsh-app-termcap"/>.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+$USER
+</term>
+<listitem>
+<para>
+A string that represents the login name of the
+current user. This variable is usually set by <command>login</command>(8).
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect1>
+
+<sect1 id="gsh-shellvars-access">
+<title>Accessing Shell Variables</title>
+
+<para>
+Shell variables are defined or changed with the
+<command>set</command> command.  The <command>unset</command> command
+is used to delete a variable. 
+See <xref linkend="gsh-commands-environ"/>
+for more information on the <command>set</command> and 
+<command>unset</command> commands.
+</para>
+
+<para>
+To access shell variables from the command
+line or a shell script, use the character "$" followed
+by the variable name. The dollar sign character will expand the
+variable to its value. If you wish to use the dollar sign
+character in a string from the command line, remember to enclose
+it in single quotes or use the "\" escape character. If
+you use double quotes, the shell will try to expand the variable.
+To differentiate the variable name from characters that may
+immediately follow it, the variable name may be optionally
+surrounded with braces, "{" and "}".This
+provides a very powerful way of user interaction with shell
+scripts. 
+</para>
+
+</sect1>
+
+</chapter>

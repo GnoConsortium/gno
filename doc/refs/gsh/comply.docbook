@@ -1,0 +1,60 @@
+<!--
+ $Id: comply.docbook,v 1.1 2012/08/25 07:19:01 gdr Exp $
+-->
+
+<appendix id="gsh-app-comply">
+<title>Non-Compliant Applications</title>
+
+<para>
+GNO/ME wasn't really designed with the
+intention of making 
+<emphasis>every</emphasis>
+program you currently run work under
+GNO/ME; that task would have been impossible. Our main goal was
+to provide a UNIX-based multitasking environment; that we have
+done. We made sure as many existing applications as we had time
+to track and debug worked with GNO/ME.
+</para>
+
+<para>
+However, due to the sheer number of
+applications and authors, there are some programs that just plain
+don't work; and some that mostly work, except for annoyances such
+as two cursors appearing, or keyboard characters getting "lost".
+The problem here is that some programs use their own text drivers
+(since TextTools output was very slow at one time); since GNO/ME
+doesn't know about these custom drivers, it goes on buffering
+keyboard characters and displaying the cursor. There is a way,
+however, to tell GNO/ME about these programs that break GNO/ME's
+rules.
+</para>
+
+<para>
+We've defined an auxType for S16 and EXE
+files, to allow distinction between programs that are GNO/ME
+compliant and those that are not. Setting the auxType of an
+application to $DC00 disables the interrupt driven keyboard
+buffering and turns off the GNO/ME cursor. Desktop programs use
+the GNO/ME keyboard I/O via the Event Manager, and thus should 
+<emphasis>not</emphasis>
+have their auxType changed.
+</para>
+
+<para>
+You can change a program's auxType with the
+following shell command:
+<screen>
+<command>chtyp -a \$DC00</command> <filename>filename</filename>
+</screen>
+</para>
+
+<para>
+where <filename>filename</filename> is the name of the
+application. As more programmers become aware of GNO/ME and work
+to make their software compatible with it, this will become less
+of a problem, but for older applications that are unlikely to
+ever change $DC00 is a
+reasonable approach.
+</para>
+
+</appendix>
