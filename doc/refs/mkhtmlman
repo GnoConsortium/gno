@@ -2,30 +2,24 @@
 #
 # Devin Reade, November 1997.
 #
-# $Id: mkhtmlman,v 1.9 1999/02/21 23:37:13 gdr-ftp Exp $
+# $Id: mkhtmlman,v 1.10 2012/08/25 07:22:00 gdr Exp $
 
-man2html=/usr/local/bin/man2html
 TMPDIR=${TMPDIR:-/tmp}
 
 #
 # Make sure we know where everything is going.
 #
-if [ -z "$GNOROOT" ]; then
-	echo "GNOROOT variable not set"
-	exit 1
-fi
-if [ -z "$MANHTML" ]; then
-	echo "MANHTML variable not set"
-	exit 1
-fi
-if [ -z "$NAME" ]; then
-	echo "NAME variable not set"
-	exit 1
-fi
-if [ -z "$ADDR" ]; then
-	echo "ADDR variable not set"
-	exit 1
-fi
+# GNOROOT is the root of the GNO source tree.
+# MANHTML is the directory where we will be putting our manual pages.
+# 
+MYDIR=`dirname $0`
+
+[ -z "$GNOROOT" ] && GNOROOT=$MYDIR/../..
+[ -z "$MANHTML" ] && MANHTML=$MYDIR/work
+[ -z "$NAME" ] && NAME="Fake Name"
+[ -z "$ADDR" ] && ADDR="nobody@example.com"
+
+
 if [ ! -x ./newer ]; then
 	echo "./newer does not exist"
 	exit 1
@@ -74,7 +68,7 @@ for section in 1 2 3 4 5 6 7 8; do
 	echo "$f" >> $listfile
 	if ! ./newer $dest/$f.html $F; then
 	    echo "creating $dest/$f.html"
-	    nroff -man$macro $F | $man2html -nodepage | \
+	    nroff -man$macro $F | man2html -nodepage | \
 	    perl -p -e \
     's/<BODY>/<title>GNO: '"$f2($section)"'<\/title><body bgcolor=\#ffffff textcolor=\#000000 linkcolor=\#0000FF vlinkcolor=\#001177 alinkcolor=\#001177>/;'\
 		> $dest/$f.html

@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997.
 #
-# $Id: Makefile,v 1.14 1999/02/21 23:37:11 gdr-ftp Exp $
+# $Id: Makefile,v 1.15 2012/08/25 07:22:00 gdr Exp $
 #
 
 # Set this to 'true' (without the quotes) for local links (used
@@ -18,7 +18,7 @@ DRAFT	=
 # at the bottom of each of the HTML pages.  Do NOT use '<' or '>' in the
 # address.
 NAME		= Devin Reade
-ADDRESS		= gdr@trenco.gno.org
+ADDRESS		= gdr@gno.org
 
 # Pathnames for various programs.
 DVIPS		= dvips
@@ -34,12 +34,12 @@ PSD		= psd
 
 .IF $(DRAFT) == true
 	# This is the root of the html tree used in the generated sources.
-	HTML_ROOT	= file:/home/gdr/src/gno/doc/refs/$(HTMLD)
+	HTML_ROOT	= file:/home/gdr/src/gno/doc/refs/$(HTMLD)/
 
 	# This is the directory where the remaining gifs may be found
 	GIFDIR		= file:/home/gdr/graphics
 .ELSE
-	HTML_ROOT	= http://www.gno.org/~gno
+	HTML_ROOT	= http://www.gno.org/gno/
 	GIFDIR		= http://www.gno.org/icons
 .END
 FTP_ROOT	= ftp://ftp.gno.org/pub/apple2/gs.specific/gno
@@ -77,7 +77,6 @@ DVIPS_FLAGS	=
 LATEX_FLAGS	=
 TEX2HTML_FLAGS	= -info "" -local_icons -dir $(HTMLD) -up_url refs.html \
 		  -up_title "GNO Reference Manuals"
-TEXINPUTS	= ':/usr/local/lib/latex2html'
 
 DVI	= intro.dvi    kern.dvi
 PS_LTR	= intro.ltr.ps kern.ltr.ps gsh-ltr-ps
@@ -279,7 +278,7 @@ $(HTMLD)/%.html: %.tex
 %.dvi: %.tex
 	@for i in 1 2 3; do \
 		echo "****** latex pass $$i"; \
-		TEXINPUTS=$(TEXINPUTS) $(LATEX) $(LATEX_FLAGS) $<; \
+		$(LATEX) $(LATEX_FLAGS) $<; \
 		if [ "$*" = intro ]; then \
 			echo "****** running bibtex"; \
 			bibtex $*; \

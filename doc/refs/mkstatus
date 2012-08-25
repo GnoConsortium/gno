@@ -5,7 +5,7 @@
 #
 # Usage:   mkstatus infile outfile.html
 #
-# $Id: mkstatus,v 1.2 1999/02/21 23:37:13 gdr-ftp Exp $
+# $Id: mkstatus,v 1.3 2012/08/25 07:22:00 gdr Exp $
 #
 
 # check usage and open files
@@ -28,11 +28,10 @@ printf(outfp
        "<html>\n" .
        "<head>\n" .
        "<title>GNO Status: Programs</title>\n" .
-       '<base HREF="http://www.gno.org/">' . "\n" .
        "</head>\n" .
        "<body bgcolor=#ffffff textcolour=#000000 " .
        "linkcolour=#0000FF vlinkcolour=#001177 alinkcolour=#001177>\n" .
-       '<A HREF="gno"><IMG src="http://www.gno.org/icons/back.gif"' .
+       '<A HREF="/gno"><IMG src="/gno/icons/back.gif"' .
        'alt="Back to the GNO Documentation Page"' .
        'align="right" width="24" height="24" border="0"></A>' . "\n" .
        "<BR CLEAR=RIGHT>\n");
@@ -120,7 +119,7 @@ printf(outfp
 printf(outfp
        "If you would like to work on a given utility, make sure you pick\n".
        "one that has not already been claimed.  Before starting, you should\n".
-       "then contact ".'<A HREF="mailto:gdr@trenco.gno.org">Devin Reade</A> '.
+       "then contact ".'<A HREF="mailto:gdr@gno.org">Devin Reade</A> '.
        "to ensure your name gets on the list.  This should eliminate\n".
        "duplicated work<p>\n");
 
@@ -293,7 +292,7 @@ printf(outfp
        "<hr>\n" .
        "Devin Reade\n" .
        "<br>\n" .
-       '<A HREF="mailto:gdr@trenco.gno.org">gdr@trenco.gno.org</A>' ."\n".
+       '<A HREF="mailto:gdr@gno.org">gdr@gno.org</A>' ."\n".
        "<p></body></html>\n");
 
 
