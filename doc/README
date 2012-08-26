@@ -1,0 +1,41 @@
+Unlike the rest of the source, we don't build the docs under
+the GS itself.  Currently (summer 2012) the build machine is
+a CentOS 5.x server.  (The GS cannot handle the tool chain
+currently used to build docs.)  Incidentally, this is why the
+makefiles in this hierarchy are called GNUmakefile instead of
+Makefile; there is no GNU make for the GS, so you can't 
+accidentally trigger a make in this directory on a GS (or if
+you do, it won't get very far.
+
+CONFIGURATION
+=============
+
+Create the file etc/constpriv.mk and add this line:
+	GNO_PUBLIC_HTML = /home/myname/public_html/gno
+
+Of course, change that to whereever you prefer.  This file is
+ignored by the repository, so you will not see it checked in.
+
+DOCUMENT BUILD
+==============
+
+To build the documents, you will need to have installed:
+	GNU make
+	docbook
+	tetex-latex
+	latex-dvips
+	latex2html
+
+In order to build the reference manuals, do the following:
+	make
+
+That will cause the documentation to be generated into the 'gen'
+hierarchy.
+
+DOCUMENT INSTALLATION
+=====================
+
+This should normally only be done for the official GNO web server.
+
+To install the reference manuals:
+	make install

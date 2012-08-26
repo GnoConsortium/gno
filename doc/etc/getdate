@@ -1,0 +1,74 @@
+#! /usr/bin/perl -s
+#
+# Extract the date from the RCS Id string in a file.
+#
+# $Id: getdate,v 1.1 2012/08/26 02:27:36 gdr Exp $
+#
+
+use strict;
+
+my @month;
+push(@month,
+     "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+     "Oct", "Nov", "Dec" );
+
+# for ($i=0; $i<12; $i++) {
+#     printf("month %d is %s\n", $i, $month[$i]);
+# }
+
+my $printdate = 0;
+my $printversion = 0;
+
+if (defined($::date)) {
+    $printdate = 1;
+}
+if (defined($::version)) {
+    $printversion = 1;
+}
+
+my %sortedDates;
+my %sortedVersions;
+
+my $date = "(unspecified date)";
+my $version = "(unspecified version)";
+
+while(<>) {
+    if (/\$Id([^\$]*)\$/) {
+	$_ = $1;
+
+	if (/^:\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+/) {
+	    my $file=$1;
+	    my $v=$2;
+	    my $rawdate=$3;
+	    my $time=$4;
+	    if ($rawdate =~ m,(\d+)[-/](\d+)[-/](\d+),) {
+		my $year = $1;
+		my $m = $2;
+		my $day = $3;
+		my $mon = @month[int($2) - 1];
+		my $d = "$day $mon $year";
+		my $fakedate = int($day) + 100 * int($m) + 10000 * int($year);
+		$sortedDates{"$fakedate"} = $d;
+		$sortedVersions{"$fakedate"} = $v;
+	    }
+	}
+    }
+}
+
+my @fakes = sort(keys(%sortedDates));
+my $lastFake = pop @fakes;
+if (defined($lastFake)) {
+    $date = $sortedDates{$lastFake};
+    $version = $sortedVersions{$lastFake};
+}
+
+if ($printdate) {
+    printf("%s\n", $date);
+} elsif ($printversion) {
+    printf("%s\n", $version);
+} else {
+    printf("getdate: bad invocation\n");
+    exit(1);
+}
+
+exit(0);
