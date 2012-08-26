@@ -1,6 +1,0 @@
-alias        commands     fg           prefix       setdebug     unhash       
-bg           dirs         hash         ps           setenv       unset        
-bindkey      echo         history      pushd        source       which        
-cd           edit         jobs         pwd          stop         
-chdir        exit         kill         rehash       tset         
-clear        export       popd         set          unalias      
