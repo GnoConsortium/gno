@@ -35,7 +35,7 @@
  * This is an old implementation and needs to be replaced; just not quite
  * yet -- gdr
  *
- * $Id: getpwent.c,v 1.2 1997/09/21 06:05:00 gdr Exp $
+ * $Id: getpwent.c,v 1.3 2012/08/26 02:54:59 gdr Exp $
  *
  * This file is formatted with tab stops every 8 characters.
  */
@@ -43,8 +43,6 @@
 #ifdef __ORCAC__
 segment "libc_gen__";
 #endif
-
-#define _PATH_PASSWD "/etc/passwd"
 
 #if defined(LIBC_SCCS) && !defined(lint)
 static char sccsid[] = "@(#)getpwent.c	5.21 (Berkeley) 3/14/91";
@@ -59,7 +57,6 @@ static char sccsid[] = "@(#)getpwent.c	5.21 (Berkeley) 3/14/91";
 #include <err.h>
 
 #define LENGTH 128
-#define _PATH_PASSWD "/etc/passwd"
 
 static struct passwd	_pw_passwd;		/* password structure */
 static char		pwline[LENGTH];		/* line in /etc/passwd */

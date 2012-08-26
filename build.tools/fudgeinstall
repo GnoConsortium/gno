@@ -6,7 +6,7 @@
 # 
 # Devin Reade, September 1997.
 #
-# $Id: fudgeinstall,v 1.9 1999/02/15 21:39:11 gdr-ftp Exp $
+# $Id: fudgeinstall,v 1.10 2012/08/26 02:54:59 gdr Exp $
 
 # What is our release directory?  (The second one must be HFS, and 
 # may be the same as the first.)
@@ -93,7 +93,7 @@ install -dV $RELDIR/var/run
 install -dV $RELDIR/var/spool
 
 echo "installing files in /"
-install -V	$ROOT/kern.971027		$RELDIR/kern
+# kern		done
 install -V	$SRC/gno/verbatim/initrc	$RELDIR
 
 echo "installing files in /HFSinclude"
@@ -120,7 +120,7 @@ echo "installing files in /bin"
 # aroff		done
 # binprint	done
 # cat		done
-install -V	/bin/center	$RELDIR/bin
+# center	done
 install -V	/usr/orca/bin/chmod	$RELDIR/bin
 # chtyp		done
 # cmp		done
@@ -170,10 +170,10 @@ install -V	/bin/vi		$RELDIR/bin
 # wc		done
 # yes		done
 
-echo "installing files in /dev"
-install -V	/dev/modem	$RELDIR/dev
-install -V	/dev/printer	$RELDIR/dev
-install -V	/dev/null	$RELDIR/dev
+# echo "installing files in /dev"
+# /dev/modem	done
+# /dev/null	done
+# /dev/printer	done
 
 echo "installing files in /etc"
 # don't need cronlog, crontab yet

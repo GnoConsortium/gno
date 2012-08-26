@@ -4,7 +4,7 @@
  * have sufficient bits for the facility/priority values, and at the time
  * his sources weren't available for modification.
  *
- * $Id: syslogd2.c,v 1.1 1998/10/31 19:02:47 gdr-ftp Exp $
+ * $Id: syslogd2.c,v 1.2 2012/08/26 02:55:00 gdr Exp $
  */
 
 /*
@@ -27,6 +27,9 @@
  *	  set up so that we can't get interrupted by SIGHUP or SIGTERM
  *	  while we're in the SIGALRM handler.
  *	- should logInternal be using the internal "none" priority?
+ *	- logMessage should be modified to ensure that there is a trailing
+ *	  newline.  Internal messages (at least) via logInternal are currently
+ *	  missing newlines.
  */
  
 /*
@@ -71,10 +74,14 @@
 #include <stdarg.h>
 #include <string.h>
 #include <fcntl.h>
+#include <memory.h>
+#include <misctool.h>
 #ifdef __STACK_CHECK__
 #include <err.h>
 #endif
 #include <assert.h>
+#include <ctype.h>	/* debugging only */
+#include "syslogd.h"
 
 #ifndef EOF
 #define EOF (-1)
@@ -85,8 +92,7 @@
 #if 0
 static void	die (const char *message);
 #endif
-static int	logMessage (long facpri, char *msg, int len);
-static void	logInternal (const char *message, ...);
+static int	logMessage (int facpri, char *msg, int len);
 static int	writeConsole (const char *buf, size_t size);
 #if 0
 static void	handle_HUP (int sig, int code);
@@ -99,17 +105,25 @@ char	MessageBuffer[_SYSLOG_BUFFERLEN];
 int	MessageBufferLen = 0;		/* number of used chars in MessageBuffer */
 int	bytesToCopy;
 
-long	FacPri;				/* facility/priorty */
+int	FacPri;				/* facility/priorty */
 time_t	Now;
 
 char *	LogFile = NULL;			/* temporary kludge */
 int	LogConsole = 0;			/* temporary kludge */
 
+static void handleVersionZero (SyslogDataBuffer0_t *dataptr0);
+
 int
 main(int argc, char **argv) {
-        int fd, ch;
-        SyslogDataBuffer_t *dataptr;
+        int fd, ch, isVersionZero;
+	union {
+		SyslogDataBuffer0_t *v0;
+	        SyslogDataBuffer_t *vN;
+	} datap;
         char *p, *q;
+	Handle datahandle;
+	Word oldID, myID;
+
 #ifdef DEBUG
 	int loopcount = 0;
 #endif
@@ -120,8 +134,11 @@ main(int argc, char **argv) {
 	 * to have to call atexit() since we may be in a signal handler
 	 * when we have to die.
 	 */
-	 _beginStackCheck();
+	_beginStackCheck();
 #endif
+
+	/* We'll be needing our mem mgr ID later ... */
+	myID = _getUserID();
 
 	while ((ch = getopt(argc, argv, "cF:")) != EOF) {
 		switch(ch) {
@@ -142,6 +159,7 @@ main(int argc, char **argv) {
 		char *myname;
 		myname = __prognameGS();
 		writeConsole(argv[0], strlen(argv[0]));
+		writeConsole("/", 1);
 		writeConsole(myname, strlen(myname));
 	}
 #endif
@@ -180,10 +198,27 @@ main(int argc, char **argv) {
 		logInternal("couldn't create port: %s", strerror(errno));
 		exit(1);
 	}
+	logInternal("DEBUG: got port %d", Port);
+#undef  __SYSLOG_PORT_NAME
+#define __SYSLOG_PORT_NAME "syslogd_test"
+
 	if (pbind (Port, __SYSLOG_PORT_NAME) == -1) {
+#if 0
+		logInternal("DEBUG: Bound port first time");
+		/* KLUDGE KLUDGE KLUDGE
+		 * Kill off the old v1 syslogd
+		 */
+		kill(3, SIGTERM);
+		sleep(1);
+		if (pbind(Port, __SYSLOG_PORT_NAME) == -1) {
+#endif
 		logInternal("couldn't bind port: %s", strerror(errno));
 		exit(1);
+#if 0
+		}
+#endif
 	}
+	logInternal("DEBUG: bound to port");
 
 	/* now loop forever waiting for messages */
 	for (;;) {
@@ -198,14 +233,87 @@ main(int argc, char **argv) {
 		}
 #endif
 	
+		logInternal("Entering loop");
+
 		/* block until a message comes in */
-		dataptr = (SyslogDataBuffer_t *) preceive(Port);
+		datahandle = (Handle) preceive(Port);
+
+		/* paranoia */
+		if (datahandle == NULL) {
+			logInternal("Received NULL pointer. Discarded.");
+			continue;
+		}
+		CheckHandle(datahandle);
+		if (_toolErr) {
+			if (_toolErr == handleErr) {
+				logInternal("invalid handle 0x%lx: message dropped",
+					    (unsigned long) datahandle);
+			} else {
+				logInternal("CheckHandle on 0x%lx failed with code %d",
+					    (unsigned long) datahandle,
+					    _toolErr);
+			}
+			continue;
+		}
+
+		/* Change the memory block to be owned by our ID */
+		oldID = SetHandleID(myID, datahandle);
+
+		/* lock the handle */
+		HLock(datahandle);
+		if (_toolErr) {
+			logInternal("HLock on 0x%lx failed with code %d",
+				    (unsigned long) datahandle, _toolErr);
+		}
+
+		/* , and
+		 * free up the old ID
+		 */
+
+		{
+		  int *iptr, j;
+		  char *cptr, c;
+
+		  iptr = (int *) *datahandle;
+		  cptr = (char *) &iptr[5];
+		  logInternal("buffer: %d %d %d %d %d:\r",
+			      iptr[0], iptr[1], iptr[2], iptr[3], iptr[4]);
+		  for (j=0; j<iptr[4]; j++) {
+		    c = cptr[j];
+		    logInternal("GSString[%d] = 0x%x '%c'",
+				j, (int) c, isprint(c) ? c : '?');
+		  }
+		  continue;
+		}
+#ifdef BORK
+		/* dereference the handle */
+		datap.vN = (SyslogDataBuffer_t *) *datahandle;
+
+		/* determine if it's an old version zero message */
+		isVersionZero = (datap.v0->sdb0_version == 0);
+
+		if (isVersionZero) {
+			handleVersionZero(datap.v0);
+			HUnlock(datahandle); /* ignore errors */
+			
+			continue;
+		} else {
+			DeleteID (oldID);
+			logInternal("not version zero");
+			HUnlock(datahandle); /* ignore errors */
+			continue;
+		}
+
+		if (isVersionZero) {
+			FacPri = datap.v0->sdb0_prio;
+		} else {
 
 		/* verify that this isn't a garbage pointer */
-		if (dataptr->sdb_magic != _SYSLOG_MAGIC) {
+		if (datap.vN->sdb_magic != _SYSLOG_MAGIC) {
 			logInternal("Bad magic number 0x%X; message "
 				    "discarded. Caller may hang.",
-				    dataptr->sdb_magic);
+				    datap.vN->sdb_magic);
+			HUnlock(datahandle); /* ignore errors */
 			continue;
 		}
 
@@ -213,11 +321,12 @@ main(int argc, char **argv) {
 		 * Do the library and daemon agree on the format of the
 		 * SyslogDataBuffer_t structure?
 		 */
-		if (dataptr->sdb_version != _SYSLOG_STRUCT_VERSION) {
+		if (datap.vN->sdb_version != _SYSLOG_STRUCT_VERSION) {
 			logInternal("Message version mismatch.  Expected %d "
 				    "got %d. Message discarded. Caller may hang.",
 				    _SYSLOG_STRUCT_VERSION,
-				    dataptr->sdb_version);
+				    datap.vN->sdb_version);
+			HUnlock(datahandle); /* ignore errors */
 			continue;
 		}
 		
@@ -230,8 +339,8 @@ main(int argc, char **argv) {
 		 * This should be changed so that we immediately copy the
 		 * buffer and any other required info, then release the caller.
 		 */
-		p = dataptr->sdb_buffer;
-		bytesToCopy = dataptr->sdb_msglen;
+		p = datap.vN->sdb_buffer;
+		bytesToCopy = datap.vN->sdb_msglen;
 		if (*p == '<') {
 			p++;
 			FacPri = strtol(p, &q, 10);
@@ -243,10 +352,12 @@ main(int argc, char **argv) {
 			} else {
 				p = q;
 			}
-			bytesToCopy -= (p - dataptr->sdb_buffer);
+			bytesToCopy -= (p - datap.vN->sdb_buffer);
 		} else {
 			FacPri = LOG_MAKEPRI(LOG_USER, LOG_NOTICE);
 		}
+		}
+
 		/*
 		 * At this point, p points the point in the caller's buffer
 		 * where we should start copying bytes.  bytesToCopy
@@ -256,7 +367,7 @@ main(int argc, char **argv) {
 		 * If the 'needtime' flag is set, we now copy a time stamp
 		 * into our own buffer (the user's buffer is untouched).
 		 */
-		if (dataptr->sdb_needtime) {
+		if (datap.vN->sdb_needtime) {
 			time(&Now);
 			q = ctime(&Now) + 4;
 			q[16] = '\0';
@@ -303,14 +414,38 @@ main(int argc, char **argv) {
 		 * See the comments in the syslog(3) code as to why we do
 		 * it with a busy-wait.
 		 */
-		dataptr->sdb_busywait = 0;
+		datap.vN->sdb_busywait = 0;
 
 		/* print the message */
 		logMessage(FacPri, MessageBuffer, MessageBufferLen);
+#endif /* BORK */
 	}
 	
 	/*NOTREACHED*/
 	return 0;
+}
+
+static void
+handleVersionZero (SyslogDataBuffer0_t *dataptr0) 
+{
+	int *offset;	/* offset from dataptr0 of current string */
+	int *length;
+	char *string;
+	
+	if (dataptr0->sdb0_numstrings == 0) {
+		logInternal("[zero length message]");
+		return;
+	}
+	offset = (int *) ((char *) dataptr0 + sizeof(SyslogDataBuffer0_t));
+	length = (int *) ((char *) dataptr0 + *offset);
+	string = ((char *) length) + sizeof(int);
+
+	logMessage(dataptr0->sdb0_prio, string, *length);
+	if (dataptr0->sdb0_numstrings > 1) {
+		logInternal("Cannot handle multiple strings.  Last %d ignored",
+			    dataptr0->sdb0_numstrings -1);
+	}
+	return;
 }
 
 /*
@@ -325,7 +460,7 @@ main(int argc, char **argv) {
  *	LogFile			(temporary kludge)
  */
 static int
-logMessage (long facpri, const char *msg, int len) {
+logMessage (int facpri, const char *msg, int len) {
 	int result = 0;
 
 	if (LogConsole) {
@@ -427,7 +562,7 @@ writeConsole (const char *buf, size_t size) {
 #pragma optimize 78
 #pragma debug 0
 
-static void
+void
 logInternal (const char *message, ...) {
 #define BUFFER_SIZE 256
 	static char buffer[BUFFER_SIZE];
@@ -444,11 +579,17 @@ logInternal (const char *message, ...) {
 	p = ctime(&now) + 4;
 	p[16] = '\0';
 	p = sprintmt(buffer, BUFFER_SIZE, "%s syslogd[%d]: ", p, getpid());
+#if 1
+	p = vsprintmt(p, BUFFER_SIZE - (p - buffer), message, ap);
+#else
 	p = vsprintmt(p, p - buffer, message, ap);
-
-	logMessage(LOG_MAKEPRI(LOG_DAEMON, LOG_CRIT), buffer, p - buffer);
+#endif
 
 #if 0
+	/* this is the one we *should* be using */
+	logMessage(LOG_MAKEPRI(LOG_DAEMON, LOG_CRIT), buffer, p - buffer);
+#else
+	/* for debugging only */
 	if ((p - buffer) < BUFFER_SIZE) {
 		*p++ = '\r';
 		*p = '\0';

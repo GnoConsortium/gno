@@ -11,7 +11,7 @@
 *									*
 * Devin Reade, 10 April 1998.						*
 *									*
-* $Id: status.bin,v 1.21 1999/04/29 15:48:51 gdr-ftp Exp $		*
+* $Id: status.bin,v 1.22 2012/08/26 02:54:58 gdr Exp $		*
 *									*
 *************************************************************************
 
@@ -95,7 +95,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /bin/conv			Y							# should be replaced by /usr/bin/udl
 /bin/cp				Y	Y
 /bin/csh
-/bin/date			Y	Y	tl	Y
+/bin/date			Y	Y	mober	Y				# uploaded to mail distrib on trenco
 /bin/dd
 /bin/df				N	Y	evan	Y	T	Y	Y	Y	RI
 /bin/domainname
@@ -128,7 +128,7 @@ Program				204	Req	Owner	Source	Man	Compile	Test	Target	Target	[Note]	  Comments
 /bin/purge			Y	Y	.	Y	.	.	.	Y
 /bin/pwd			N	Y	dave	Y	T	Y	Y	Y	RI
 /bin/rcp			N	Y	dt	Y	T	Y	.	Y	RI
-/bin/rm				Y	Y	tribby
+/bin/rm				Y	Y	tribby	Y	T	Y	Y	Y	RI
 /bin/rmail			N	N
 /bin/rmdir			N	Y	gdr	Y	T	Y	Y	Y	RI
 /bin/sh				N	Y	gdr

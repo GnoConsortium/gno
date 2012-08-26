@@ -1,12 +1,12 @@
 #
-# $Id: Makefile,v 1.2 1998/10/31 19:02:47 gdr-ftp Exp $
+# $Id: Makefile,v 1.3 2012/08/26 02:54:59 gdr Exp $
 #
 
 PROG	= syslogd
 MAIN	= syslogd2
 SRCS	= syslogd2.c
 
-CFLAGS	+= -D__STACK_CHECK__
+CFLAGS	+= -D__STACK_CHECK__ -v
 STACK	= 4096
 BINDIR	= /usr/sbin
 CHAPTER	= 8

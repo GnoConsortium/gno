@@ -1,4 +1,4 @@
-$Id: status.lib,v 1.8 1999/01/09 21:28:35 gdr-ftp Exp $
+$Id: status.lib,v 1.9 2012/08/26 02:54:58 gdr Exp $
 
 Key for Code Status column:
 	R == reviewed
@@ -352,6 +352,7 @@ strncasecmp		libc/str/case.c		C	3	string.h
 strsep			libc/string/str.c	C	3	string.h
 stty			libc/gen/compat.c	C	3	sgtty.h
 suboptarg	[var]	libc/stdlib/getsubopt.c	C	3	stdlib.h
+swab			libc/string/swab.c	C	3	string.h
 swait			libc/sys/trap.asm	T	2	gno/gno.h
 sys_errlist 	[var]	libc/stdio/perror.c	T	3	stdio.h
 sys_nerr    	[var]	libc/stdio/perror.c	T	3	stdio.h
@@ -399,7 +400,7 @@ writev			libc/sys/syscall.c	T	2	sys/uio.h
 zopen			libc/stdio/				stdio.h
 
 Notes:
-	[var]	symbol is a variable, not a fuction
+	[var]	symbol is a variable, not a function
 	[A]	function needs to be modified before use
 	[B]	these sets of routines rely on a modified utmp/wtmp file
 		structure.  Therefore a large list of routines and programs
@@ -538,6 +539,7 @@ BANK			MODEL		COMPLETE
 	78	0	0	Y	N	libc/string/case.c
 	78	0	0	Y	N	libc/string/str.c
 	78	0	0	Y	Y	libc/string/strerror.c
+	78	0	0	Y	N	libc/string/swab.c
 
 	78	0	0	Y		libc/sys/exec.c
 	78	0	0	Y		libc/sys/syscall.c

@@ -1,7 +1,7 @@
 /*
  * newuser - add a new user to the system -- James Brookes
  *
- * $Id: newuser.c,v 1.3 1999/02/15 00:22:11 gdr-ftp Exp $
+ * $Id: newuser.c,v 1.4 2012/08/26 02:54:59 gdr Exp $
  *
  * Changes for version 1.2 (Modifications by Devin Reade)
  *	- account home directories are now made in /home rather than /user
@@ -503,7 +503,7 @@ main (int argc, char **argv)
 	    acct_name, pass1, uid, gid, name, HOME, acct_name, DEFAULT_SHELL);
     fclose(FOutPtr);
     syslog(LOG_INFO, "created account %s pending validation", acct_name);
-    printf("\nYour account will be available after the system administrator");
+    printf("\nYour account will be available after the system administrator ");
     printf("has had a\nchance to review it.\n");
   }
   closelog();

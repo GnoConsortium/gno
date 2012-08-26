@@ -2,7 +2,43 @@
 # This file is intended for use with dmake.  There are constructs in 
 # here that (as yet) make it unsuitable to be used on the GS.
 #
-# $Id: Makefile,v 1.5 1997/12/22 01:11:08 gdr Exp $
+# $Id: Makefile,v 1.6 2012/08/26 02:54:57 gdr Exp $
+#
+
+.INCLUDE:	/src/gno/paths.mk
+
+INSTALL	*=	/usr/bin/install
+CHTYP	*=	/bin/chtyp
+
+headerInstall .USESHELL:
+	$(CHTYP) -lasm $(SRC_DIR)/gno/ainclude/m*
+	$(CHTYP) -lrez $(SRC_DIR)/gno/rinclude/*.rez
+	$(CHTYP) -lcc $(SRC_DIR)/gno/include/*.h
+	$(CHTYP) -lcc $(SRC_DIR)/gno/include/arpa/*.h
+	$(CHTYP) -lcc $(SRC_DIR)/gno/include/gno/*.h
+	$(CHTYP) -lcc $(SRC_DIR)/gno/include/machine/*.h
+	$(CHTYP) -lcc $(SRC_DIR)/gno/include/net/*.h
+	$(CHTYP) -lcc $(SRC_DIR)/gno/include/netinet/*.h
+	$(CHTYP) -lcc $(SRC_DIR)/gno/include/protocols/*.h
+	$(CHTYP) -lcc $(SRC_DIR)/gno/include/rpc/*.h
+	$(CHTYP) -lcc $(SRC_DIR)/gno/include/sys/*.h
+	$(CHTYP) -lcc $(SRC_DIR)/gno/orcacdefs/*.h
+	$(INSTALL) $(SRC_DIR)/gno/ainclude/m* /usr/ainclude
+	$(INSTALL) $(SRC_DIR)/gno/rinclude/*.rez /usr/rinclude
+	$(INSTALL) $(SRC_DIR)/gno/include/*.h /usr/include
+	$(INSTALL) $(SRC_DIR)/gno/include/arpa/*.h /usr/include/arpa
+	$(INSTALL) $(SRC_DIR)/gno/include/gno/*.h /usr/include/gno
+	$(INSTALL) $(SRC_DIR)/gno/include/machine/*.h /usr/include/machine
+	$(INSTALL) $(SRC_DIR)/gno/include/net/*.h /usr/include/net
+	$(INSTALL) $(SRC_DIR)/gno/include/netinet/*.h /usr/include/netinet
+	$(INSTALL) $(SRC_DIR)/gno/include/protocols/*.h /usr/include/protocols
+	$(INSTALL) $(SRC_DIR)/gno/include/rpc/*.h /usr/include/rpc
+	$(INSTALL) $(SRC_DIR)/gno/include/sys/*.h /usr/include/sys
+	$(INSTALL) $(SRC_DIR)/gno/orcacdefs/*.h /lib/orcacdefs
+
+#
+# The remaining macros, targets, and recipies were used before trenco
+# was fully serving the GNO stuff.
 #
 XFER	= xfer
 TMP	= /tmp/gnobuild

@@ -7,7 +7,7 @@
 #
 # Devin Reade, 1997
 #
-# $Id: paths.mk,v 1.11 1999/03/19 05:53:31 gdr-ftp Exp $
+# $Id: paths.mk,v 1.12 2012/08/26 02:54:58 gdr Exp $
 #
 
 # This one isn't really a path, but it affects the creation of path
@@ -33,7 +33,7 @@ PRODOS_OBJS	= true
 # 
 # To turn this off, completely comment it out; don't just change the value.
 
-# APPLESHARE_CASE_SENSITIVE = true
+APPLESHARE_CASE_SENSITIVE = true
 
 # SRC_DIR is the top-level GNO source distribution directory (containing
 # $(SRC_DIR)/gno, $(SRC_DIR)/gno/lib, and so forth).  It also corresponds

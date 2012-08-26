@@ -85,7 +85,7 @@ __OFLAG = -a0
    AR     := makelib    #ar     # archiver
    ARFLAGS+= #ruv
 
-   RM      := /bin/cp -p rm     # remove a file command
+   RM      := /bin/rm           # remove a file command
    RMFLAGS +=
 
    CP      := /bin/cp           # copy files command

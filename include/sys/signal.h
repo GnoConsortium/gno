@@ -36,7 +36,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)signal.h	8.2 (Berkeley) 1/21/94
- * $Id: signal.h,v 1.3 1997/07/28 02:55:56 gdr Exp $
+ * $Id: signal.h,v 1.4 2012/08/26 02:54:59 gdr Exp $
  */
 
 #ifndef	_SYS_SIGNAL_H_
@@ -46,6 +46,20 @@
 
 #if !defined(_ANSI_SOURCE) && !defined(_MACHINE_SIGNAL_H_)
 #include <machine/signal.h>	/* sigcontext; codes for SIGILL, SIGFPE */
+#endif
+
+#ifdef KERNEL
+/*
+ * The kernel doesn't currently use these macros, but if they ever get 
+ * into the kernel sources, they'd really cause havoc; the numbers differ
+ * between GNO and ORCA/C
+ */
+#undef SIGABRT
+#undef SIGFPE
+#undef SIGILL
+#undef SIGINT
+#undef SIGSEGV
+#undef SIGTERM
 #endif
 
 #define	SIGHUP	1	/* hangup */

@@ -1,5 +1,5 @@
 /*
- * $Id: localtime.c,v 1.1 1997/09/21 06:22:10 gdr Exp $
+ * $Id: localtime.c,v 1.2 2012/08/26 02:54:59 gdr Exp $
  *
  * This file is formatted for tab stops every 8 columns.
  */
@@ -1278,6 +1278,8 @@ register struct tm * const		tmp;
 #endif /* defined TM_GMTOFF */
 }
 
+#ifndef __ORCAC__
+
 char *
 #ifdef USE_PROTOS
 ctime(const time_t * const timep)
@@ -1294,6 +1296,7 @@ const time_t * const	timep;
 */
 	return asctime(localtime(timep));
 }
+#endif /* __ORCAC__ */
 
 /*
 ** Adapted from code provided by Robert Elz, who writes:

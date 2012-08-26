@@ -14,7 +14,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- * $Id: strftime.c,v 1.1 1997/09/21 06:22:10 gdr Exp $
+ * $Id: strftime.c,v 1.2 2012/08/26 02:54:59 gdr Exp $
  *
  * This file is formatted for tab stops every 8 columns.
  */
@@ -22,11 +22,14 @@
 #ifdef __ORCAC__
 segment "libc_stdtm";
 #define NOID
+#define CONST
+#else
+#define CONST const
 #endif
 
 #ifdef LIBC_RCS
 static const char rcsid[] =
-	"$Id: strftime.c,v 1.1 1997/09/21 06:22:10 gdr Exp $";
+	"$Id: strftime.c,v 1.2 2012/08/26 02:54:59 gdr Exp $";
 #endif
 
 #ifndef lint
@@ -52,7 +55,9 @@ static const char	sccsid[] = "@(#)strftime.c	5.4 (Berkeley) 3/14/89";
 #include <locale.h>
 #include <rune.h>		/* for _PATH_LOCALE */
 #include <sys/stat.h>
-
+#ifdef __ORCAC__
+#include <string.h>		/* for memcpy() */
+#endif
 #define LOCALE_HOME _PATH_LOCALE
 
 struct lc_time_T {
@@ -69,12 +74,16 @@ struct lc_time_T {
 };
 
 static struct lc_time_T		localebuf;
+#ifdef __ORCAC__
+#define Locale	(&C_time_locale)
+#else
 static struct lc_time_T *	_loc P((void));
 static int using_locale;
 
 #define Locale	(using_locale ? &localebuf : &C_time_locale)
+#endif
 
-static const struct lc_time_T	C_time_locale = {
+static CONST struct lc_time_T	C_time_locale = {
 	{
 		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -121,7 +130,7 @@ static const struct lc_time_T	C_time_locale = {
 
 static char *	_add P((const char *, char *, const char *));
 static char *	_conv P((int, const char *, char *, const char *));
-static char *	_fmt P((const char *, const struct tm *, char *, const char *));
+static char *	_fmt P((const char *, CONST struct tm *, char *, CONST char *));
 static char *   _secs P((const struct tm *, char *, const char *));
 
 size_t strftime P((char *, size_t, const char *, const struct tm *));
@@ -152,8 +161,8 @@ strftime(s, maxsize, format, t)
 
 static char *
 #ifdef USE_PROTOS
-_fmt(const char *format, const struct tm *const t, char *pt,
-	const char *const ptlim)
+_fmt(const char *format, CONST struct tm *CONST t, char *pt,
+	CONST char *CONST ptlim)
 #else
 _fmt(format, t, pt, ptlim)
 	const char *format;
@@ -415,9 +424,12 @@ label:
 					pt, ptlim);
 				continue;
 			case 'Z':
+#ifndef __ORCAC__
+			/* we don't currently have the tm_zone field */
 				if (t->tm_zone != NULL)
 					pt = _add(t->tm_zone, pt, ptlim);
 				else
+#endif
 				if (t->tm_isdst == 0 || t->tm_isdst == 1) {
 					pt = _add(tzname[t->tm_isdst],
 						pt, ptlim);
@@ -476,7 +488,15 @@ _secs(t, pt, ptlim)
 	struct tm tmp;
 
 	/* Make a copy, mktime(3) modifies the tm struct. */
+#ifdef __ORCAC__
+	/*
+	 * ORCA/C pukes with an "illegal operand for the indirection
+	 * operator" message
+	 */
+	memcpy(&tmp, t, sizeof(struct tm));
+#else
 	tmp = *t;
+#endif
 	s = mktime(&tmp);
 	(void) sprintf(buf, "%ld", s);
 	return _add(buf, pt, ptlim);
@@ -496,6 +516,8 @@ _add(str, pt, ptlim)
 		++pt;
 	return pt;
 }
+
+#if 0	/* we don't seem to need this yet, so don't build it; it's untested */
 
 extern char *_PathLocale;
 
@@ -607,6 +629,12 @@ no_locale:
 	 * setlocale() assumes that we left the old locale alone.
 	 */
 	locale_buf = locale_buf_C;
+#ifdef __ORCAC__
+	memcpy(&localebuf, &C_time_locale, sizeof(struct lc_time_T));
+#else
 	localebuf = C_time_locale;
+#endif
 	return -1;
 }
+
+#endif	/* 0 */
