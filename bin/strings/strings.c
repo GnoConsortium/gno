@@ -52,7 +52,6 @@ extern int getopt(int,char **,char*);
         exit(2);
     }
     if (inRow < 4) inRow = 4;
-    printf("optind: %d argc: %d\n",optind,argc);
     argv += optind;
     buffer = (unsigned char *)malloc(bufSize);
     string = (unsigned char *)malloc(stringSize);
