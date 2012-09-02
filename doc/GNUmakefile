@@ -29,3 +29,4 @@ include $(SRCROOT)/doc/etc/tailcat.mk
 
 clobber::
 	-/bin/rm -rf $(OUTPUT_DIR)
+
