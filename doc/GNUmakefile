@@ -29,3 +29,5 @@ include $(SRCROOT)/doc/etc/tailcat.mk
 
 clobber::
 	-/bin/rm -rf $(OUTPUT_DIR)
+
+# non-substantive comment for commits mail test
