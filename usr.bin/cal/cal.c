@@ -1,4 +1,4 @@
-/* static char rcsid[] = "$Header: /nobackup/gdr/copy-of-cvs-from-tekarra/gno/usr.bin/cal/cal.c,v 1.1 1998/03/09 15:29:53 gdr-ftp Exp $";
+/* 
 
 #ifdef __ORCAC__
 #pragma stacksize 1024
