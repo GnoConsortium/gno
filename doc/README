@@ -39,3 +39,4 @@ This should normally only be done for the official GNO web server.
 
 To install the reference manuals:
 	make install
+
