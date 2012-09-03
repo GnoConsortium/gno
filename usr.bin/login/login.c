@@ -153,6 +153,17 @@ int permit_passwd = 0;
 	 * -f is used to skip a second login authentication
 	 * -h is used by other servers to pass the name of the remote
 	 *    host to login so that it may be placed in utmp and wtmp
+	 *
+	 * The TMTerm NDA expects the GNO 2.0.4 multi-user update login.
+	 * The commandline passed is:
+	 *    login -Ph TMTERM root TERM=vt100 
+	 *
+	 * -P Sup­press the pass­word prompt and log the user in with­out one. 
+	 *   This switch will have no effect unless a user name is given on 
+	 *   the com­mand line and the user has root priv­iledges or is log­ging 
+	 *   in as him­self.
+	 * 
+	 *  this is equivalent to -f
 	 */
 	*full_hostname = '\0';
 	domain = NULL;
@@ -163,8 +174,11 @@ int permit_passwd = 0;
 
 	fflag = hflag = pflag = 0;
 	uid = getuid();
-	while ((ch = getopt(argc, argv, "fh:p")) != EOF)
+	while ((ch = getopt(argc, argv, "fh:pP")) != EOF)
 		switch (ch) {
+#ifdef __GNO__
+		case 'P':
+#endif		
 		case 'f':
 			fflag = 1;
 			break;
@@ -181,6 +195,7 @@ int permit_passwd = 0;
 		case 'p':
 			pflag = 1;
 			break;
+
 		case '?':
 		default:
 			if (!uid)
@@ -430,6 +445,15 @@ int permit_passwd = 0;
 	/* Destroy environment unless user has requested its preservation. */
 	if (!pflag)
 		environ = envinit;
+
+#ifdef __GNO__
+	// set parameters from the command line.
+	for (cnt = 1; cnt < argc; ++cnt)
+	{
+		(void)putenv(argv[cnt]);
+	}
+#endif
+
 	(void)setenv("HOME", pwd->pw_dir, 1);
 	(void)setenv("SHELL", pwd->pw_shell, 1);
 	if (term[0] == '\0')
