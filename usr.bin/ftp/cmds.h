@@ -45,6 +45,7 @@ void     mget           (int argc, char **argv);
 void     status         (int argc, char **argv);
 void     cd             (int argc, char **argv);
 void     lcd            (int argc, char **argv);
+void     lpwd           (int argc, char **argv);
 void     delete         (int argc, char **argv);
 void     mdelete        (int argc, char **argv);
 void     renamefile     (int argc, char **argv);

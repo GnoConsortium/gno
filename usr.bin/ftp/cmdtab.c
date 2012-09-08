@@ -34,6 +34,7 @@ char	hashhelp[] =	"toggle printing `#' for each buffer transferred";
 char	helphelp[] =	"print local help information";
 char	idlehelp[] =	"get (set) idle timer on remote side";
 char	lcdhelp[] =	"change local working directory";
+char	lpwdhelp[] =	"print local working directory";
 char	lshelp[] =	"list contents of remote directory";
 char	macdefhelp[] =  "define a macro";
 char	mdeletehelp[] =	"delete multiple files";
@@ -105,6 +106,7 @@ struct cmd cmdtab[] = {
 	{ "idle",	 idlehelp,	0,	1,	1,	idle },
 	{ "image",	 binaryhelp,	0,	1,	1,	setbinary },
 	{ "lcd",	 lcdhelp,	0,	0,	0,	lcd },
+	{ "lpwd",	 lpwdhelp,	0,	0,	0,	lpwd },
 	{ "ls",		 lshelp,	1,	1,	1,	ls },
 	{ "macdef",	 macdefhelp,	0,	0,	0,	macdef },
 	{ "mdelete",	 mdeletehelp,	1,	1,	1,	mdelete },

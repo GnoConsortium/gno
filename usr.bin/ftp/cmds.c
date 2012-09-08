@@ -987,6 +987,18 @@ static char buf[MAXPATHLEN];
 	code = 0;
 }
 
+void lpwd(int argc, char **argv)
+{
+	static char buf[MAXPATHLEN];
+
+	if (getcwd(buf, sizeof(buf)) != NULL)
+		    printf("Local directory %s\n", buf);
+	else
+		    fprintf(stderr, "getcwd: %s\n", strerror(errno));
+	code = 0;
+}
+
+
 /*
  * Delete a single file.
  */
