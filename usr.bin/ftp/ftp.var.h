@@ -61,6 +61,7 @@ extern int	mapflag;		/* use mapin mapout templates on file names */
 extern int	code;			/* return/reply code for ftp command */
 extern int	crflag;			/* if 1, strip car. rets. on ascii gets */
 extern char	pasv[64];		/* passive port for proxy data connection */
+extern int	passivemode;		/* passive mode enabled */
 extern char	*altarg;		/* argv[1] with no shell-like preprocessing  */
 extern char	ntin[17];		/* input translation table */
 extern char	ntout[17];		/* output translation table */

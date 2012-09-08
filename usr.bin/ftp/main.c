@@ -53,6 +53,7 @@ static char homedir[MAXPATHLEN];
 	doglob = 1;
 	interactive = 1;
 	autologin = 1;
+	passivemode = 1;
 	argc--, argv++;
 	while (argc > 0 && **argv == '-') {
 		for (cp = *argv + 1; *cp; cp++)
