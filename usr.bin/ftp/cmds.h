@@ -10,6 +10,7 @@ void     setbell        (int argc, char **argv);
 void     settrace       (int argc, char **argv);
 void     sethash        (int argc, char **argv);
 void     setverbose     (int argc, char **argv);
+void     setpassive     (int argc, char **argv);
 void     setport        (int argc, char **argv);
 void     setprompt      (int argc, char **argv);
 void     setglob        (int argc, char **argv);

@@ -1864,6 +1864,12 @@ LOOP:
 	return(new);
 }
 
+void setpassive(int argc, char **argv)
+{
+	code = togglevar(argc, argv, &passivemode,
+		verbose ? "Passive mode" : (char *)NULL);
+}
+
 void setsunique (int argc, char **argv)
 {
 	code = togglevar(argc, argv, &sunique, "Store unique");

@@ -49,6 +49,7 @@ char	newerhelp[] =	"get file if remote file is newer than local file ";
 char	nlisthelp[] =	"nlist contents of remote directory";
 char	nmaphelp[] =	"set templates for default file name mapping";
 char	ntranshelp[] =	"set translation table for default file name mapping";
+char	passivehelp[] =	"enter passive transfer mode";
 char	porthelp[] =	"toggle use of PORT cmd for each data connection";
 char	prompthelp[] =	"force interactive prompting on multiple commands";
 char	proxyhelp[] =	"issue command on alternate connection";
@@ -122,6 +123,7 @@ struct cmd cmdtab[] = {
 	{ "nlist",	 nlisthelp,	1,	1,	1,	ls },
 	{ "ntrans",	 ntranshelp,	0,	0,	1,	setntrans },
 	{ "open",	 connecthelp,	0,	0,	1,	setpeer },
+	{ "passive",	 passivehelp,	0,	0,	0,	setpassive },
 	{ "prompt",	 prompthelp,	0,	0,	0,	setprompt },
 	{ "proxy",	 proxyhelp,	0,	0,	1,	doproxy },
 	{ "sendport",	 porthelp,	0,	0,	0,	setport },
