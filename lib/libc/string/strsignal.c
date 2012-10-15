@@ -2,9 +2,6 @@
  * Copyright (c) 1988, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
- * This code is derived from software contributed to Berkeley by
- * Jeffrey Mogul.
- *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -13,6 +10,10 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
  * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
@@ -31,107 +32,47 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)swab.c	8.1 (Berkeley) 6/4/93";
+static char sccsid[] = "@(#)strerror.c	8.1 (Berkeley) 6/4/93";
 #endif /* LIBC_SCCS and not lint */
 #include <sys/cdefs.h>
 __FBSDID("$FreeBSD$");
 
-#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <signal.h>
 
 #ifdef __ORCAC__
-
-void
-swab(const void * __restrict from, void * __restrict to, ssize_t len)
-{
-
-	asm {
-
-		ldy #0
-
-		// if (len < 0) return;
-
-		ldx <len+2	// number of banks
-		bmi done
-		beq partial
-
-bloop:
-		// partially unrolled - 8 bytes at a time.
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		bne bloop
-
-		dex	// # of banks
-		beq partial
-		inc <from+2
-		inc <to+2
-		bra bloop
-
-partial:
-		lda <len
-		lsr a
-		beq done
-
-		tax
-
-		ldy #0
-ploop:
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-		dex
-		bne ploop
-
-done:
-	}
-
-}
-
-
-#else
-
-void
-swab(const void * __restrict from, void * __restrict to, ssize_t len)
-{
-	unsigned long temp;
-	int n;
-	char *fp, *tp;
-
-	if (len <= 0)
-		return;
-	n = len >> 1;
-	fp = (char *)from;
-	tp = (char *)to;
-#define	STEP	temp = *fp++,*tp++ = *fp++,*tp++ = temp
-	/* round to multiple of 8 */
-	for (; n & 0x7; --n)
-		STEP;
-	for (n >>= 3; n > 0; --n) {
-		STEP; STEP; STEP; STEP;
-		STEP; STEP; STEP; STEP;
-	}
-}
+//     extern const int sys_nsig; missing.
+#define sys_nsig NSIG
 #endif
+
+char *
+strsignal(int num)
+{
+#define	UPREFIX	"Unknown signal: "
+	static char ebuf[40] = UPREFIX;		/* 64-bit number + slop */
+	unsigned int signum;
+	char *p, *t;
+	char tmp[40];
+
+	signum = num;				/* convert to unsigned */
+	if (signum < sys_nsig)
+		return ((char *)sys_siglist[signum]);
+
+	/* Do this by hand, so we don't link to stdio(3). */
+	t = tmp;
+	if (num < 0)
+		signum = -signum;
+	do {
+		*t++ = "0123456789"[signum % 10];
+	} while (signum /= 10);
+	if (num < 0)
+		*t++ = '-';
+	for (p = ebuf + sizeof(UPREFIX) - 1;;) {
+		*p++ = *--t;
+		if (t <= tmp)
+			break;
+	}
+	*p = '\0';
+	return (ebuf);
+}

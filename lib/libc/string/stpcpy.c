@@ -1,9 +1,8 @@
 /*
+ * Copyright (c) 1999
+ *	David E. O'Brien
  * Copyright (c) 1988, 1993
  *	The Regents of the University of California.  All rights reserved.
- *
- * This code is derived from software contributed to Berkeley by
- * Jeffrey Mogul.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -13,7 +12,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 4. Neither the name of the University nor the names of its contributors
+ * 3. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -31,107 +30,73 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)swab.c	8.1 (Berkeley) 6/4/93";
+static char sccsid[] = "@(#)strcpy.c	8.1 (Berkeley) 6/4/93";
 #endif /* LIBC_SCCS and not lint */
 #include <sys/cdefs.h>
 __FBSDID("$FreeBSD$");
 
-#include <unistd.h>
+#include <string.h>
 
 #ifdef __ORCAC__
 
-void
-swab(const void * __restrict from, void * __restrict to, ssize_t len)
+char *
+stpcpy(char * __restrict to, const char * __restrict from)
 {
-
-	asm {
-
+	#define LONG_M rep #0x20
+	#define SHORT_M sep #0x20
+	asm
+	{
 		ldy #0
-
-		// if (len < 0) return;
-
-		ldx <len+2	// number of banks
-		bmi done
-		beq partial
-
-bloop:
-		// partially unrolled - 8 bytes at a time.
+		SHORT_M
+loop:
+		// partially unrolled - 4 bytes/loop
 		lda [from],y
-		xba
 		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		bne bloop
-
-		dex	// # of banks
-		beq partial
-		inc <from+2
-		inc <to+2
-		bra bloop
-
-partial:
-		lda <len
-		lsr a
 		beq done
+		iny
 
-		tax
-
-		ldy #0
-ploop:
 		lda [from],y
-		xba
 		sta [to],y
+		beq done
 		iny
-		iny
-		dex
-		bne ploop
 
+		lda [from],y
+		sta [to],y
+		beq done
+		iny
+
+		lda [from],y
+		sta [to],y
+		beq done
+		iny
+
+		bne loop
+		// y overflow, jump to next bank.
+		// these are performed with short-M,
+		// but it's 24 bit address so it's ok.
+		inc <to+2
+		inc <from+2
+		bra loop
 done:
+		LONG_M
+		tya
+		clc
+		adc <to
+		sta <to
+		lda #0
+		adc <to+2
+		sta <to+2
 	}
-
+	return to;
 }
-
 
 #else
 
-void
-swab(const void * __restrict from, void * __restrict to, ssize_t len)
+char *
+stpcpy(char * __restrict to, const char * __restrict from)
 {
-	unsigned long temp;
-	int n;
-	char *fp, *tp;
 
-	if (len <= 0)
-		return;
-	n = len >> 1;
-	fp = (char *)from;
-	tp = (char *)to;
-#define	STEP	temp = *fp++,*tp++ = *fp++,*tp++ = temp
-	/* round to multiple of 8 */
-	for (; n & 0x7; --n)
-		STEP;
-	for (n >>= 3; n > 0; --n) {
-		STEP; STEP; STEP; STEP;
-		STEP; STEP; STEP; STEP;
-	}
+	for (; (*to = *from); ++from, ++to);
+	return(to);
 }
 #endif

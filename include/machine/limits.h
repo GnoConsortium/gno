@@ -38,6 +38,10 @@
 #define	SSIZE_MAX	LONG_MAX	/* max value for a ssize_t */
 
 #if !defined(_POSIX_SOURCE)
+
+#define LONG_BIT		32
+#define WORD_BIT		16
+
 #define	SIZE_T_MAX	ULONG_MAX	/* max value for a size_t */
 
 #endif /* !_POSIX_SOURCE */

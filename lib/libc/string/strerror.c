@@ -1,107 +1,109 @@
+/*-
+ * Copyright (c) 1988, 1993
+ *	The Regents of the University of California.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this software
+ *    must display the following acknowledgement:
+ *	This product includes software developed by the University of
+ *	California, Berkeley and its contributors.
+ * 4. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ */
+
+#if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)strerror.c	8.1 (Berkeley) 6/4/93";
+#endif /* LIBC_SCCS and not lint */
+#include <sys/cdefs.h>
+__FBSDID("$FreeBSD$");
+
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+
+#define	UPREFIX		"Unknown error: "
+
 /*
- * Implementation by Devin Reade.
- *
- * $Id: strerror.c,v 1.3 1998/02/04 15:16:19 gdr-ftp Exp $
- *
- * This file is formatted with tab stops every 8 columns.
+ * Define a buffer size big enough to describe a 64-bit signed integer
+ * converted to ASCII decimal (19 bytes), with an optional leading sign
+ * (1 byte); finally, we get the prefix and a trailing NUL from UPREFIX.
  */
 
 #ifdef __ORCAC__
-segment "libc_str__";
+#define	EBUFSIZE	30
+#else
+#define	EBUFSIZE	(20 + sizeof(UPREFIX))
 #endif
 
-#include <sys/errno.h>		/* for ELAST */
-#include <stdio.h>		/* for remainder */
-
-const char * const sys_errlist[] = {
-
-/* the following are used by both GNO and the Orca/Shell */
-
-	"unknown error",			/*  0 */
-	"domain error",				/*  1 */
-	"result too large",			/*  2 */
-	"not enough memory",			/*  3 */
-	"no such file or directory",		/*  4 */
-	"I/O error",				/*  5 */
-	"invalid argument",			/*  6 */
-	"bad file descriptor",			/*  7 */
-	"too many open files",			/*  8 */
-	"permission denied",			/*  9 */
-	"file exists",				/* 10 */
-	"no space left on device",		/* 11 */
-
-/* the following are GNO-specific */
-
-	"operation not permitted",		/* 12 */
-	"no such process",			/* 13 */
-	"interrupted system call",		/* 14 */
-	"arg list too long",			/* 15 */
-	"exec format error",			/* 16 */
-	"no child processes",			/* 17 */
-	"resource unavailable",			/* 18 */
-	"not a directory",			/* 19 */
-	"inappropriate ioctl for device",	/* 20 */
-	"broken pipe",				/* 21 */
-	"illegal seek",				/* 22 */
-	"block device required",		/* 23 */
-	"is a directory",			/* 24 */
-	"not a socket",				/* 25 */
-	"destination address required",		/* 26 */
-	"message too long",			/* 27 */
-	"wrong protocol for socket",		/* 28 */
-	"protocol not available",		/* 29 */
-	"protocol not supported",		/* 30 */
-	"socket type not supported",		/* 31 */
-	"operation not supported on socket",	/* 32 */
-	"protocol family not supported",	/* 33 */
-	"address family not supported",		/* 34 */
-	"address already in use",		/* 35 */
-	"can't assign requested address",	/* 36 */
-	"network is down",			/* 37 */
-	"network is unreachable",		/* 38 */
-	"network dropped connection on reset",	/* 39 */
-	"connection aborted",			/* 40 */
-	"connection reset by peer",		/* 41 */
-	"no buffer space available",		/* 42 */
-	"socket is already connected",		/* 43 */
-	"socket is not connected",		/* 44 */
-	"can't send after socket shutdown",	/* 45 */
-	"too many references: can't splice",	/* 46 */
-	"connection timed out",			/* 47 */
-	"connection refused",			/* 48 */
-	"operation would block",		/* 49 */
-	"operation now in progress",		/* 50 */
-	"operation already in progress",	/* 51 */
-	"bad address",				/* 52 */
-	"no such device",			/* 53 */
-	"host is down",				/* 54 */
-	"no route to host",			/* 55 */
-#define SYS_NERR 56	/* 55 + 1 for zeroth entry */
-};
-
-#if (ELAST + 1 != SYS_NERR)
-#error message table out of sync
+/*
+ * Doing this by hand instead of linking with stdio(3) avoids bloat for
+ * statically linked binaries.
+ */
+static void
+errstr(int num, char *buf, size_t len)
+{
+	char *t;
+	unsigned int uerr;
+#ifdef __ORCAC__
+	char tmp[8];
+#else
+	char tmp[EBUFSIZE];
 #endif
 
-const int
-sys_nerr = SYS_NERR;
+	t = tmp + sizeof(tmp);
+	*--t = '\0';
+	uerr = (num >= 0) ? num : -num;
+	do {
+		*--t = "0123456789"[uerr % 10];
+	} while (uerr /= 10);
+	if (num < 0)
+		*--t = '-';
+	strlcpy(buf, UPREFIX, len);
+	strlcat(buf, t, len);
+}
 
-const char * const *
-_errnoText = sys_errlist;	/* backward compatible */
+int
+strerror_r(int errnum, char *strerrbuf, size_t buflen)
+{
+
+	if (errnum < 1 || errnum >= sys_nerr) {
+		errstr(errnum, strerrbuf, buflen);
+		return (EINVAL);
+	}
+	if (strlcpy(strerrbuf, sys_errlist[errnum], buflen) >= buflen)
+		return (ERANGE);
+	return (0);
+}
 
 char *
-strerror (int errnum)
+strerror(int num)
 {
-	/*
-	 * the size of buff must be no less than
-	 *	strlen(sys_errlist[0]) + max number of digits in an int + 3
-	 * ==  13 + 5 + 3 == 21
-	 */
-	static char buff[30];
-	
-	if (errnum > 0 && errnum < sys_nerr) {
-		return sys_errlist[errnum];
-	}
-	sprintf(buff, "unknown error: %d", errnum);
-	return buff;
+	static char ebuf[EBUFSIZE];
+
+	if (num > 0 && num < sys_nerr)
+		return ((char *)sys_errlist[num]);
+	errno = EINVAL;
+	errstr(num, ebuf, sizeof(ebuf));
+	return (ebuf);
 }
+

@@ -6,10 +6,6 @@
  * This file is formatted with tab stops every 8 columns.
  */
 
-#ifdef __ORCAC__
-segment "libc_str__";
-#endif
-
 #include <string.h>
 #include <ctype.h>
 

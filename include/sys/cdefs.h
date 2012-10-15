@@ -109,4 +109,19 @@
 #define __pure2
 #define __attribute__(x)
 
+/*
+ * We use `__restrict' as a way to define the `restrict' type qualifier
+ * without disturbing older software that is unaware of C99 keywords.
+ */
+#if __STDC_VERSION__ < 199901
+#define __restrict
+#else
+#define __restrict      restrict
+#endif
+
+/* Source compatibility only, ID string not emitted in object file */
+#ifndef __FBSDID
+#define __FBSDID(s) struct __fbsdid_hack
+#endif
+
 #endif /* !_SYS_CDEFS_H_ */

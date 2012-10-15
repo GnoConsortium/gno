@@ -23,6 +23,11 @@
 	CFLAGS+= -G$(DEBUG)
 .END
 
+# check for a segment.
+.IF $(SEGMENT) != $(NULL)
+	CFLAGS+= -S $(SEGMENT)
+.END
+
 # Was special optimizing requested?
 OPTIMIZE*= 78
 

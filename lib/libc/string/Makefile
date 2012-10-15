@@ -7,6 +7,13 @@
 LIB	= c
 LIBPFX	= $(OBJ_DIR)../
 NO_REZ	= true
-SRCS	= case.c str.c strerror.c swab.c
+SEGMENT	= libc_str__
+SRCS	= bmem.c case.c ffs.c ffsl.c fls.c flsl.c \
+	  memccpy.c memmem.c memrchr.c \
+	  stpcpy.c stpncpy.c str.c strcasestr.c \
+	  strerror.c strlcat.c strlcpy.c strmode.c \
+	  strndup.c strnlen.c strnstr.c strsignal.c \
+	  strtok.c swab.c
+	  
 
 .INCLUDE: /src/gno/lib/lib.mk
