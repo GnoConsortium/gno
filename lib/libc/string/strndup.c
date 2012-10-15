@@ -1,9 +1,8 @@
+/*      $NetBSD: strndup.c,v 1.3 2007/01/14 23:41:24 cbiere Exp $       */
+
 /*
  * Copyright (c) 1988, 1993
  *	The Regents of the University of California.  All rights reserved.
- *
- * This code is derived from software contributed to Berkeley by
- * Jeffrey Mogul.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,108 +29,23 @@
  * SUCH DAMAGE.
  */
 
-#if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)swab.c	8.1 (Berkeley) 6/4/93";
-#endif /* LIBC_SCCS and not lint */
 #include <sys/cdefs.h>
 __FBSDID("$FreeBSD$");
 
-#include <unistd.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
-#ifdef __ORCAC__
-
-void
-swab(const void * __restrict from, void * __restrict to, ssize_t len)
+char *
+strndup(const char *str, size_t n)
 {
+	size_t len;
+	char *copy;
 
-	asm {
-
-		ldy #0
-
-		// if (len < 0) return;
-
-		ldx <len+2	// number of banks
-		bmi done
-		beq partial
-
-bloop:
-		// partially unrolled - 8 bytes at a time.
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		bne bloop
-
-		dex	// # of banks
-		beq partial
-		inc <from+2
-		inc <to+2
-		bra bloop
-
-partial:
-		lda <len
-		lsr a
-		beq done
-
-		tax
-
-		ldy #0
-ploop:
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-		dex
-		bne ploop
-
-done:
-	}
-
+	len = strnlen(str, n);
+	if ((copy = malloc(len + 1)) == NULL)
+		return (NULL);
+	memcpy(copy, (const void *)str, len);
+	copy[len] = '\0';
+	return (copy);
 }
-
-
-#else
-
-void
-swab(const void * __restrict from, void * __restrict to, ssize_t len)
-{
-	unsigned long temp;
-	int n;
-	char *fp, *tp;
-
-	if (len <= 0)
-		return;
-	n = len >> 1;
-	fp = (char *)from;
-	tp = (char *)to;
-#define	STEP	temp = *fp++,*tp++ = *fp++,*tp++ = temp
-	/* round to multiple of 8 */
-	for (; n & 0x7; --n)
-		STEP;
-	for (n >>= 3; n > 0; --n) {
-		STEP; STEP; STEP; STEP;
-		STEP; STEP; STEP; STEP;
-	}
-}
-#endif

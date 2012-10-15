@@ -1,9 +1,9 @@
-/*
- * Copyright (c) 1988, 1993
+/*-
+ * Copyright (c) 1990, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
  * This code is derived from software contributed to Berkeley by
- * Jeffrey Mogul.
+ * Chris Torek.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,108 +30,31 @@
  * SUCH DAMAGE.
  */
 
-#if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)swab.c	8.1 (Berkeley) 6/4/93";
-#endif /* LIBC_SCCS and not lint */
 #include <sys/cdefs.h>
 __FBSDID("$FreeBSD$");
 
-#include <unistd.h>
+#include <ctype.h>
+#include <string.h>
 
-#ifdef __ORCAC__
-
-void
-swab(const void * __restrict from, void * __restrict to, ssize_t len)
+/*
+ * Find the first occurrence of find in s, ignore case.
+ */
+char *
+strcasestr(const char *s, const char *find)
 {
+	char c, sc;
+	size_t len;
 
-	asm {
-
-		ldy #0
-
-		// if (len < 0) return;
-
-		ldx <len+2	// number of banks
-		bmi done
-		beq partial
-
-bloop:
-		// partially unrolled - 8 bytes at a time.
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-
-		bne bloop
-
-		dex	// # of banks
-		beq partial
-		inc <from+2
-		inc <to+2
-		bra bloop
-
-partial:
-		lda <len
-		lsr a
-		beq done
-
-		tax
-
-		ldy #0
-ploop:
-		lda [from],y
-		xba
-		sta [to],y
-		iny
-		iny
-		dex
-		bne ploop
-
-done:
+	if ((c = *find++) != 0) {
+		c = tolower((unsigned char)c);
+		len = strlen(find);
+		do {
+			do {
+				if ((sc = *s++) == 0)
+					return (NULL);
+			} while ((char)tolower((unsigned char)sc) != c);
+		} while (strncasecmp(s, find, len) != 0);
+		s--;
 	}
-
+	return ((char *)s);
 }
-
-
-#else
-
-void
-swab(const void * __restrict from, void * __restrict to, ssize_t len)
-{
-	unsigned long temp;
-	int n;
-	char *fp, *tp;
-
-	if (len <= 0)
-		return;
-	n = len >> 1;
-	fp = (char *)from;
-	tp = (char *)to;
-#define	STEP	temp = *fp++,*tp++ = *fp++,*tp++ = temp
-	/* round to multiple of 8 */
-	for (; n & 0x7; --n)
-		STEP;
-	for (n >>= 3; n > 0; --n) {
-		STEP; STEP; STEP; STEP;
-		STEP; STEP; STEP; STEP;
-	}
-}
-#endif

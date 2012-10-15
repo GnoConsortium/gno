@@ -1,0 +1,5 @@
+strcoll (locale)
+strxfrm (locale)
+
+ffsll (long long)
+flsll (long long)

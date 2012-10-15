@@ -8,7 +8,7 @@ LIB	= c
 LIBPFX	= $(OBJ_DIR)../
 NO_REZ	= true
 SRC_ASM	= setjmp.asm
-SRC_C	= basename.c bmem.c compat.c dirent.c err.c fnmatch.c fts.c \
+SRC_C	= basename.c compat.c dirent.c err.c errlist.c fnmatch.c fts.c \
 	  getcwd.c getgrent.c getlogin.c getpass.c getpwent.c \
 	  getttyent.c hostname.c \
 	  popen.c psignal.c pwcache.c scandir.c siglist.c sleep.c \
