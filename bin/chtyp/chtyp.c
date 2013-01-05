@@ -140,6 +140,6 @@ static void usage(void)
 static void version(void)
 {
     (void) fprintf(stderr,
-		"V 2.0.0 Copyright 1997 by Evan Day, day@engr.orst.edu\n");
+		"V 2.0.1 Copyright 1997 by Evan Day, day@engr.orst.edu\n");
     usage();
 }
