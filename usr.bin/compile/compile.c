@@ -91,9 +91,11 @@ langInfo langTable[] = {
    {9, "link", NULL},
    {10, "apwc", NULL},
    {11, "pascal", NULL},
-   {16, "modula2", NULL},
+   //{16, "modula2", NULL},
    {21, "rez", NULL},
+   {260, "basic", NULL},
    {265, "linker", NULL},
+   {272, "modula2", NULL},
    {-1,"",NULL}};
 
 char *invoke;
