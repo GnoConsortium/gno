@@ -2,7 +2,7 @@
 
 .INCLUDE: /src/gno/paths.mk
 
-TARGETS = $(OBJ_DIR)modem $(OBJ_DIR)printer $(OBJ_DIR)null
+TARGETS = $(OBJ_DIR)modem $(OBJ_DIR)printer $(OBJ_DIR)null $(OBJ_DIR)zero $(OBJ_DIR)full
 
 build: all
 
@@ -23,6 +23,15 @@ $(OBJ_DIR)null: null.o
 	$(LD) $(LDFLAGS) -o $@ $<
 	chtyp -t 187 -a 32257 $@
 
+$(OBJ_DIR)zero: zero.o
+	$(LD) $(LDFLAGS) -o $@ $<
+	chtyp -t 187 -a 32257 $@
+
+$(OBJ_DIR)full: full.o
+	$(LD) $(LDFLAGS) -o $@ $<
+	chtyp -t 187 -a 32257 $@
+
+
 $(OBJ_DIR)console: console.o inout.o box.o conpatch.o
 	$(LD) $(LDFLAGS) -o $@ $<
 	chtyp -t 187 -a 32257 $@
@@ -30,6 +39,8 @@ $(OBJ_DIR)console: console.o inout.o box.o conpatch.o
 $(OBJ_DIR)modem::   modem.r;	$(CATREZ) -d $@ $<
 $(OBJ_DIR)printer:: printer.r;	$(CATREZ) -d $@ $<
 $(OBJ_DIR)null::    null.r;	$(CATREZ) -d $@ $<
+$(OBJ_DIR)zerp::    zero.r;	$(CATREZ) -d $@ $<
+$(OBJ_DIR)full::    full.r;	$(CATREZ) -d $@ $<
 $(OBJ_DIR)console:: console.r;	$(CATREZ) -d $@ $<
 
 release: all
@@ -52,9 +63,11 @@ install:
 box.o: box.mac console.equates
 conpatch.asm: conpatch.mac
 console.root: port.mac console.equates kern.equates ../gno/inc/tty.inc
+full.root: port.mac ../gno/inc/tty.inc
 inout.root: inout.mac console.equates kern.equates ../gno/inc/tty.inc
 msccf.root: sccf.mac equates md.equates sccf.asm ../gno/inc/tty.inc
 null.root: port.mac ../gno/inc/tty.inc
 port.root: port.mac equates ../gno/inc/tty.inc
 psccf.root: sccf.mac equates pr.equates sccf.asm ../gno/inc/tty.inc
+zero.root: port.mac ../gno/inc/tty.inc
 

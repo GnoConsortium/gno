@@ -1,0 +1,33 @@
+/*
+ * Resources for version and comment
+ *
+ */
+
+#define PROG "/dev/zero"
+#define DESC "ZERO Device Driver\n"
+              
+#include "Types.rez"
+#include "builddate.rez"
+
+/*
+ * Version
+ */
+resource rVersion (1, purgeable3) {
+	{ 1, 0, 0,	/* Version  */
+	  release,	/* development|alpha|beta|final|release */
+	  0 },		/* non-final release number */
+	verUS,		/* Country */
+	PROG,		/* Program name */
+        DESC
+        BUILD_DATE
+};
+
+
+/*
+ * Comment
+ */
+resource rComment (1, purgeable3) {
+	PROG "\n"
+	DESC
+	BUILD_DATE
+};
