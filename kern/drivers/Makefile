@@ -39,7 +39,7 @@ $(OBJ_DIR)console: console.o inout.o box.o conpatch.o
 $(OBJ_DIR)modem::   modem.r;	$(CATREZ) -d $@ $<
 $(OBJ_DIR)printer:: printer.r;	$(CATREZ) -d $@ $<
 $(OBJ_DIR)null::    null.r;	$(CATREZ) -d $@ $<
-$(OBJ_DIR)zerp::    zero.r;	$(CATREZ) -d $@ $<
+$(OBJ_DIR)zero::    zero.r;	$(CATREZ) -d $@ $<
 $(OBJ_DIR)full::    full.r;	$(CATREZ) -d $@ $<
 $(OBJ_DIR)console:: console.r;	$(CATREZ) -d $@ $<
 
