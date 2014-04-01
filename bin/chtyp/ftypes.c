@@ -126,6 +126,7 @@ static struct lang_list {
 } langs[] = {
 	{ "apwtxt",    0xb0, 0x0001},
 	{ "asm",       0xb0, 0x0003},
+	{ "ibasic",    0xb0, 0x0004},
 	{ "pascal",    0xb0, 0x0005},
 	{ "exec",      0xb0, 0x0006},
 	{ "cc",        0xb0, 0x0008},
@@ -134,13 +135,16 @@ static struct lang_list {
 	{ "desktop",   0xb0, 0x000c},
 	{ "rez",       0xb0, 0x0015},
 	{ "tmlpascal", 0xb0, 0x001e},
+	{ "gsoft",     0xb0, 0x0104},
+	{ "modula2",   0xb0, 0x0110},
 	{ "disasm",    0xb0, 0x0115},
 	{ "sdeasm",    0xb0, 0x0503},
 	{ "sdecmd",    0xb0, 0x0506},
 	{ "ps",        0xb0, 0x0719},
+	{ "mdbasic",   0xb0, 0x0a04},
 };
 
-#define NUM_LANGS 14
+#define NUM_LANGS 18
 
 int find_type(char *type_str, int *f, long *a) 
 {
