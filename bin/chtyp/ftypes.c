@@ -141,9 +141,10 @@ static struct lang_list {
 	{ "sdeasm",    0xb0, 0x0503},
 	{ "sdecmd",    0xb0, 0x0506},
 	{ "ps",        0xb0, 0x0719},
+	{ "mdbasic",   0xb0, 0x0a04},
 };
 
-#define NUM_LANGS 17
+#define NUM_LANGS 18
 
 int find_type(char *type_str, int *f, long *a) 
 {
