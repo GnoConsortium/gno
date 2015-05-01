@@ -18,4 +18,9 @@ typedef int jmp_buf[6];
 void            longjmp(jmp_buf, int);
 int             setjmp(jmp_buf);
 
+#ifndef __KeepNamespacePure__
+void            _longjmp(jmp_buf, int);
+int             _setjmp(jmp_buf);
+#endif
+
 #endif
