@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <sgtty.h>
 #include <sys/ioctl.h>
 #include <gno/gno.h>
 #include <unistd.h>
@@ -37,8 +38,13 @@ typedef struct opts {
 #define START_C         30
 #define QUIT_C          31
 #define ERASE_C         32
-#define INTR_C		33
-#define EOF_C		34
+#define INTR_C          33
+#define EOF_C           34
+#define WERASE_C        35
+#define RPRNT_C         36
+#define FLUSH_C         37
+#define LNEXT_C         38
+#define DSUSP_C         39
 
 char *baudtbl[] = {
 "0",
@@ -92,6 +98,11 @@ opts_s options[] = {
     "erase",	ERASE_C,
     "intr",	INTR_C,
     "eof",	EOF_C,
+    "werase",   WERASE_C,
+    "rprnt",    RPRNT_C,
+    "flush",    FLUSH_C,
+    "lnext",    LNEXT_C,
+    "dsusp",    DSUSP_C,
     "",		0
 };
 
@@ -150,6 +161,7 @@ char *doctrl(char c)
 {
 static char ss[3] = "  ";
 
+    if (c == -1) c = ' ';
     if (c == 0x7F) {
     	ss[0] = '^';
 	ss[1] = '?';
@@ -230,6 +242,10 @@ int i,item;
 	        ltc.t_suspc = parsechar(argv[i+1]);
 	        i++;
         	break;
+        case DSUSP_C:
+                ltc.t_dsuspc = parsechar(argv[i+1]);
+                i++;
+                break;
         case STOP_C:
             	tc.t_stopc = parsechar(argv[i+1]);
 	        i++;
@@ -250,6 +266,22 @@ int i,item;
 		tc.t_eofc = parsechar(argv[i+1]);
 		i++;
 		break;
+        case WERASE_C:
+                ltc.t_werasc = parsechar(argv[i+1]);
+                i++;
+                break;
+        case FLUSH_C:
+                ltc.t_flushc = parsechar(argv[i+1]);
+                i++;
+                break;
+        case LNEXT_C:
+                ltc.t_lnextc = parsechar(argv[i+1]);
+                i++;
+                break;
+        case RPRNT_C:
+                ltc.t_rprntc = parsechar(argv[i+1]);
+                i++;
+                break;
 	case ECHO_ON:
 	        sg.sg_flags |= ECHO;
         	break;
