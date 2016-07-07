@@ -122,7 +122,7 @@ main (int argc, char *argv[]) {
     int		ifp = 0;
     char	       *ptmp;
     char	       *pterm;
-    char		capability[100];
+    static char		capability[100];
     char	       *pcap;
     char	       *ps;
 
@@ -198,6 +198,21 @@ main (int argc, char *argv[]) {
      *   we currently use standout mode for all weirdness
      *   like BOLD, italic, etc.
      */
+
+    #undef PC
+    pcap = capability;
+    if (tgetstr("pc", &pcap)) {
+        PC = capability[0];
+    } 
+    else PC = 0;
+
+    pcap = s_italic;
+    tgetstr("us", &pcap);
+
+    pcap = e_italic;
+    tgetstr("ue", &pcap);
+    if (s_italic[0] && !e_italic[0]) s_italic[0] = '\0';
+
     pcap = capability;
     if ((ps = tgetstr ("so", &pcap)) != NULL) {
 	/*
@@ -205,18 +220,25 @@ main (int argc, char *argv[]) {
 	 *   better to use tputs() to strip it...
 	 */
 	/*	while (*ps && *ps != 0x1b)	ps++;  */
+    /* tputs uses leading (and embedded) digits as the delay. */
 	strcpy (s_standout, ps);
 	strcpy (s_bold, ps);
-	strcpy (s_italic, ps);
+	if (!s_italic[0]) strcpy (s_italic, ps);
     } else { 
 	err(1, "couldn't get standout mode");
 	/*NOTREACHED*/
     }
+
+
+    pcap = capability;
     if ((ps = tgetstr ("se", &pcap)) != NULL) {
 	/*	while (*ps && *ps != 0x1b)	ps++; */
 	strcpy (e_standout, ps);
 	strcpy (e_bold, ps);
-	strcpy (e_italic, ps);
+	if (!e_italic[0]) strcpy (e_italic, ps);
+    } else { 
+        err(1, "couldn't get end standout mode");
+        /*NOTREACHED*/
     }
     
     /*
