@@ -131,6 +131,8 @@ getlin (char *out_buf, FILE *in_buf) {
 	    c  = strlen (out_buf);
 	    return (c == 0 ? EOF : c);
 	}
+	if (c == '\r') c = '\n';
+
 	*q++ = c;
 	if (c == '\n') {
 	    break;
