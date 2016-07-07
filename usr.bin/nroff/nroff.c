@@ -53,6 +53,8 @@ segment "main______";
 #include "unix/sunos.h"
 #endif
 
+#include <libgen.h>
+
 #include "nroff.h"
 #include "macros.h"
 #include "io.h"

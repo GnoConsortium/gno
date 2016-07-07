@@ -548,7 +548,11 @@ expesc (char *src, char *dest, size_t len) {
      *   end the string and return it in original buf
      */
     *t = EOS;
-    /* gdr: this seems to defeat the expansion we just did. */
+
+	if (strlen(dest) > len-1) {
+	    errx(-1, "buffer overflow at %s:%d", __FILE__, __LINE__);
+	}
+
     strcpy (src, dest);
 }
 
@@ -669,18 +673,22 @@ specialchar (register char *s) {
  *	resets current and last font in dc struct (last used for .ft
  *	with no args)
  */
-#undef SHORT_STANDOUT
 
 void
 fontchange (char fnt, char *s) {
     int	tmp;
+    unsigned i;
     
     *s = '\0';
     switch (fnt) {
     case 'R':				/* Times Roman */
 	if (dc.dofnt == YES) {
 #ifdef SHORT_STANDOUT
-	    s[0] = E_STANDOUT; s[1] = 0;
+		i = 0;
+		if (dc.fontbits & (1 << 2)) s[i++] = E_ITALIC;
+		if (dc.fontbits & (1 << 3)) s[i++] = E_BOLD;
+		s[i++] = 0;
+		dc.fontbits = 0;
 #else
 	    strcpy (s, e_standout);
 #endif
@@ -691,9 +699,10 @@ fontchange (char fnt, char *s) {
     case 'I':				/* Times italic */
 	if (dc.dofnt == YES) {
 #ifdef SHORT_STANDOUT
-	    s[0] = S_STANDOUT; s[1] = 0;
+	    s[0] = S_ITALIC; s[1] = 0;
+	    dc.fontbits |= (1 << 2);
 #else
-	    strcpy (s, s_standout);
+	    strcpy (s, s_italic);
 #endif
 	}
 	dc.lastfnt = dc.thisfnt;
@@ -702,9 +711,10 @@ fontchange (char fnt, char *s) {
     case 'B':				/* Times bold */
 	if (dc.dofnt == YES) {
 #ifdef SHORT_STANDOUT
-	    s[0] = S_STANDOUT; s[1] = 0;
+	    s[0] = S_BOLD; s[1] = 0;
+	    dc.fontbits |= (1 << 3);
 #else
-	    strcpy (s, s_standout); 
+	    strcpy (s, s_bold); 
 #endif
 	}
 	dc.lastfnt = dc.thisfnt;
@@ -719,21 +729,27 @@ fontchange (char fnt, char *s) {
 	if (dc.dofnt == YES) {
 	    if (dc.lastfnt == 1) {
 #ifdef SHORT_STANDOUT
-		s[0] = E_STANDOUT; s[1] = 0;
+		i = 0;
+		if (dc.fontbits & (1 << 2)) s[i++] = E_ITALIC;
+		if (dc.fontbits & (1 << 3)) s[i++] = E_BOLD;
+		s[i++] = 0;
+		dc.fontbits = 0;
 #else
 		strcpy (s, e_standout); /* to R */
 #endif
 	    } else if (dc.lastfnt == 2) {
 #ifdef SHORT_STANDOUT
-		s[0] = S_STANDOUT; s[1] = 0;
+		s[0] = S_ITALIC; s[1] = 0;
+		dc.fontbits |= (1 << 2);
 #else
-		strcpy (s, s_standout); /* to I */
+		strcpy (s, s_italic); /* to I */
 #endif
 	    } else if (dc.lastfnt == 3) {
 #ifdef SHORT_STANDOUT
-		s[0] = S_STANDOUT; s[1] = 0;
+		s[0] = S_BOLD; s[1] = 0;
+		dc.fontbits |= (1 << 3);
 #else
-		strcpy (s, s_standout); /* to B */
+		strcpy (s, s_bold); /* to B */
 #endif
 	    } else {
 		*s = '\0';		/* nothing */
