@@ -15,7 +15,7 @@ gno|gnocon|gno-console|GNO Console Driver:\
 #
 CONSOLE|gsoscon|gsos-console|GSOS Console Driver:\
 	:cl=^L:cd=^K:cb=^C:co#80:cr=^M:cv=^F%+ :bl=^G:do=^J:ho=^Y:\
-	:nd=^\:nl=^J:sr=^V:sf=^W:ae=^N:am:bs:bw:cm=^^%r%+ %+ :li#24:\
+	:nd=^\:nl=^J:ae=^N:am:bs:bw:cm=^^%r%+ %+ :li#24:\
 	:ce=^]:eA=^O^[:eo:il=^N:i3=^L:is=^L^N:kd=^J:kl=^H:kr=^U:ku=^K:\
 	:le=^H:ll=^^ 8:mb=^O:md=^O:me=^N:mh=^O:mr=^O:rs=^N:se=^N:so=^O:\
 	:ue=^N:up=^_:us=^O:as=^O^[:bc=^H:r1=^N:r2=^N:r3=^N:\
@@ -25,11 +25,11 @@ CONSOLE|gsoscon|gsos-console|GSOS Console Driver:\
 #
 pt|pse|proterm-special|Proterm Special Emulation:\
 	:ae=^N:am:al=^V:bl=^T^A^E@:bs:bw:cl=^L:cm=^^%r%+ %+ :co#80:ce=^Y:\
-	:cd=^W:dc=^D:dl=^Z:do=^J:eo:eA=^P:ho=^X:ic=^F:il=^N:i3=^L:\
+	:cd=^W:dc=^D:dl=^Z:do=^J:eo:eA=^P:ho=^X:ic=^F:il=^N:i1=^N:i3=^L:\
 	:is=^L^N:kd=^J:kl=^H:kr=^U:ku=^K:le=^H:li#24:ll=^^ 8:mb=^O:md=^O:\
 	:me=^N:mh=^O:mr=^O:nd=^U:nl=\n+^A:pt:rs=^N:se=^N:so=^O:ta=^I:\
 	:ue=^N:up=^K:us=^O:xn:ns:as=^P:bc=^H:r1=^N:r2=^N:r3=^N:\
-	:ms:mi:sf=^J:sr=^K:as=^P:i1=^N:i3=^N:NP:dn=^J:
+	:ms:mi:sf=^J:sr=^K:NP:dn=^J:
 #
 # DEC VT-100
 # 
@@ -42,6 +42,25 @@ d0|vt100|vt100-am|vt100am|dec-vt100|dec vt100:\
 	:ho=\E[H:k1=\EOP:k2=\EOQ:k3=\EOR:k4=\EOS:pt:sr=2*\EM:vt#3:xn:\
 	:ku=\EOA:kd=\EOB:kr=\EOC:kl=\EOD:kb=^H:al=\E[L:\
 	:sc=\E7:rc=\E8:cs=\E[%i%d;%dr:bl=^G:
+#
+# xterm / OS X Terminal.app
+#
+xterm|xterm-16color|xterm-256color|xterm and compatible terminal emulators:\
+	:am:bs:km:mi:ms:xn:co#80:it#8:li#24:\
+	:AL=\E[%dL:DC=\E[%dP:DL=\E[%dM:DO=\E[%dB:IC=\E[%d@:\
+	:K2=\EOE:LE=\E[%dD:RI=\E[%dC:SF=\E[%dS:SR=\E[%dT:\
+	:UP=\E[%dA:ae=\E(B:al=\E[L:as=\E(0:bl=^G:bt=\E[Z:cd=\E[J:\
+	:ce=\E[K:cl=\E[H\E[2J:cm=\E[%i%d;%dH:cr=^M:\
+	:cs=\E[%i%d;%dr:ct=\E[3g:dc=\E[P:dl=\E[M:do=^J:ec=\E[%dX:\
+	:ei=\E[4l:ho=\E[H:im=\E[4h:is=\E[!p\E[?3;4l\E[4l\E>:\
+	:k1=\EOP:k2=\EOQ:k3=\EOR:k4=\EOS:k5=\E[15~:k6=\E[17~:\
+	:k7=\E[18~:k8=\E[19~:k9=\E[20~:kD=\E[3~:kI=\E[2~:kN=\E[6~:\
+	:kP=\E[5~:kb=^H:kd=\EOB:ke=\E[?1l\E>:kh=\EOH:kl=\EOD:\
+	:kr=\EOC:ks=\E[?1h\E=:ku=\EOA:le=^H:mb=\E[5m:md=\E[1m:\
+	:me=\E[0m:mm=\E[?1034h:mo=\E[?1034l:mr=\E[7m:nd=\E[C:\
+	:rc=\E8:sc=\E7:se=\E[27m:sf=^J:so=\E[7m:sr=\EM:st=\EH:ta=^I:\
+	:te=\E[?1049l:ti=\E[?1049h:ue=\E[24m:up=\E[A:us=\E[4m:\
+	:vb=\E[?5h\E[?5l:ve=\E[?12l\E[?25h:vi=\E[?25l:vs=\E[?12;25h:
 #
 # MS-DOS ANSI.SYS
 #
