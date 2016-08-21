@@ -399,8 +399,8 @@ static void
 puttl (register char *p, int *lim, int pgno) {
     register int	i;
     char		pn[8];
-    char		t[MAXLINE];
-    char		h[MAXLINE];
+    static char		t[MAXLINE];
+    static char		h[MAXLINE];
     char		delim;
     
     itoda (pgno, pn, 6);

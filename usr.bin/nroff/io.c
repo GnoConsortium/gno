@@ -177,7 +177,7 @@ pbstr (char *str) {
 void
 put (char *p) {
     register int	j;
-    char		os[MAXLINE];
+    static char		os[MAXLINE];
     
     if (pg.lineno == 0 || pg.lineno > pg.bottom) {
 	phead ();
