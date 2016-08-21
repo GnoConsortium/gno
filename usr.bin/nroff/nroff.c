@@ -101,7 +101,7 @@ char		       *printer = ".ttyb";	/* this probably won't */
 
 static char		termcap[1024];		/* _must_ be 1024 */
 static char  *progname;
-static char    *version = "(GNO) v1.2, 5 Mar 97 gdr";
+static char    *version = "(GNO) v1.2.2, 20 Aug 2016 kws";
 
 /*
  * End of global variable definitions.

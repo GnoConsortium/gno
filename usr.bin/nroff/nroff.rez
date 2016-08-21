@@ -6,7 +6,7 @@
 
 resource rVersion (0x1, purgeable3, nocrossbank) {
 
-	{ 1, 2, 1,	/* version */
+	{ 1, 2, 2,	/* version */
 	  release,	/* development|alpha|beta|final|release */
           0		/* non-final release number */
         },
