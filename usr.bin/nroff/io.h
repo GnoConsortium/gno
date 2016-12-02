@@ -40,26 +40,29 @@
 
 #else 
 
+#ifdef SHORT_STANDOUT
 
 #define PRCHAR(c, fp) \
 { \
-    __i = c; \
-    switch(__i) { \
-    case S_STANDOUT: __s = s_standout;    break; \
-    case E_STANDOUT: __s = e_standout;    break; \
-    case S_BOLD:     __s = s_bold;        break; \
-    case E_BOLD:     __s = e_bold;        break; \
-    case S_ITALIC:   __s = s_italic;      break; \
-    case E_ITALIC:   __s = e_italic;      break; \
-    case 13:         __s = (char *)0x01L; break; \
-    default:         __s = NULL; \
-    } \
-    switch((unsigned long)__s) { \
-    case 0L:  putc(c, fp);  break;    \
-    case 1L:  ;             break;    \
-    default:  fpGLOB = fp; tputs(__s, 1, tprchar); \
+    unsigned char x = (unsigned char)c; \
+    fpGLOB = fp; \
+    switch(x) { \
+    case S_STANDOUT: tputs(s_standout, 1, tprchar);    break; \
+    case E_STANDOUT: tputs(e_standout, 1, tprchar);    break; \
+    case S_BOLD:     tputs(s_bold, 1, tprchar);        break; \
+    case E_BOLD:     tputs(e_bold, 1, tprchar);        break; \
+    case S_ITALIC:   tputs(s_italic, 1, tprchar);      break; \
+    case E_ITALIC:   tputs(e_italic, 1, tprchar);      break; \
+    case 13:         break; \
+    default:        putc(c,fp); \
     } \
 }
+
+#else
+
+#define PRCHAR(c,fp) putc(c,fp)
+
+#endif
 
 #define PRCHAR2(c,fp) putc(c,fp)
 

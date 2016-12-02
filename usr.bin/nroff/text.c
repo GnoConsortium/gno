@@ -399,8 +399,8 @@ static void
 puttl (register char *p, int *lim, int pgno) {
     register int	i;
     char		pn[8];
-    char		t[MAXLINE];
-    char		h[MAXLINE];
+    static char		t[MAXLINE];
+    static char		h[MAXLINE];
     char		delim;
     
     itoda (pgno, pn, 6);
@@ -443,7 +443,8 @@ putwrd (register char *wrdbuf) {
     int     	w;
     int     	last;
     int     	llval;
-    int     	nextra;
+    int         nextra;
+    int     	esc;
     
     /*
      *   check if this word puts us over the limit
@@ -452,7 +453,8 @@ putwrd (register char *wrdbuf) {
     last  = strlen (wrdbuf) + co.outp;
     llval = dc.rmval - dc.tival;
     /* if (((co.outp > 0) && ((co.outw + w) > llval))*/
-    co.outesc += countesc (wrdbuf);
+    esc = countesc (wrdbuf);
+    co.outesc += esc;
     if (((co.outp > 0) && ((co.outw + w - co.outesc) > llval))
 	||(last > MAXLINE)) {
 	/*
@@ -467,7 +469,7 @@ putwrd (register char *wrdbuf) {
 	     *      Do not take in the escape char of the
 	     *      word that didn't fit on this line anymore
 	     */
-	    co.outesc -= countesc (wrdbuf);
+	    co.outesc -= esc;
 	    
 	    /* 
 	     *	Check whether last word was end of
@@ -501,7 +503,7 @@ putwrd (register char *wrdbuf) {
 	 *   esc count.
 	 */
 	robrk ();
-	co.outesc = countesc (wrdbuf);
+	co.outesc = esc;
     }
     
     /*
@@ -694,10 +696,12 @@ width (char *s) {
     
     w = 0;
     for (; *s != '\0'; s++) {
-	ASSERT((*s != '\n' && *s != '\r'), ("\n"));
-	if ((*s >= 32) && (*s < 127)) {
+        char c = *s;
+	ASSERT((c != '\n' && c != '\r'), ("\n"));
+	if ((c >= 32) && (c < 127)) {
 	    ++w;
-	} else if (*s == '\b' || *s == 128) {
+	} 
+    else if (c == '\b') {
 	    --w;
 	}
 	/* ignore high-bit chars and other control chars */

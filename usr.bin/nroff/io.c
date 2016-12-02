@@ -131,6 +131,8 @@ getlin (char *out_buf, FILE *in_buf) {
 	    c  = strlen (out_buf);
 	    return (c == 0 ? EOF : c);
 	}
+	if (c == '\r') c = '\n';
+
 	*q++ = c;
 	if (c == '\n') {
 	    break;
@@ -175,7 +177,7 @@ pbstr (char *str) {
 void
 put (char *p) {
     register int	j;
-    char		os[MAXLINE];
+    static char		os[MAXLINE];
     
     if (pg.lineno == 0 || pg.lineno > pg.bottom) {
 	phead ();

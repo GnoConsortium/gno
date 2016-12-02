@@ -49,7 +49,7 @@ segment "escape____";
 #include "escape.h"
 #include "macros.h"
 
-static int specialchar (char *s, char *c);
+static char *specialchar (char *s);
 
 /*
  * expesc
@@ -417,20 +417,12 @@ expesc (char *src, char *dest, size_t len) {
 		break;
 
 	    case '(':	/*   \(xx	special char			*/
-		s  += 2;
-	    
-		/*
-		 *   it returns num char to skip and sets c to
-		 *   the ascii value of the char
-		 */
-		inc = specialchar (s, &c);
-		
-		/*
-		 *   skip proper num char in s and add c to target
-		 */
-		if (inc) {
-		    s   += inc;
-		    *t++ = c;
+	    {
+	    	char *cp;
+	    	s += 2;
+	    	cp = specialchar(s);
+	    	while (*cp) *t++ = *cp++;
+			s  += 2;
 		}
 		break;
 
@@ -556,7 +548,11 @@ expesc (char *src, char *dest, size_t len) {
      *   end the string and return it in original buf
      */
     *t = EOS;
-    /* gdr: this seems to defeat the expansion we just did. */
+
+	if (strlen(dest) > len-1) {
+	    errx(-1, "buffer overflow at %s:%d", __FILE__, __LINE__);
+	}
+
     strcpy (src, dest);
 }
 
@@ -564,10 +560,10 @@ expesc (char *src, char *dest, size_t len) {
 
 /*
  * specialchar
- *	handles \(xx escape sequences for special characters (atari-specific)
+ *	handles \(xx escape sequences for special characters
  */
-static int
-specialchar (register char *s, register char *c) {
+static char *
+specialchar (register char *s) {
     register char	c1;
     register char	c2;
     
@@ -577,8 +573,32 @@ specialchar (register char *s, register char *c) {
     /*
      *   symbols (std font)
      */
-    if (c1 == 'e' && c2 == 'm') {*c = 0x2D; return 2;}	/* dash */
-    if (c1 == 'h' && c2 == 'y') {*c = 0x2D; return 2;}	/* hyphen */
+    if (c1 == 'e' && c2 == 'm') {return "-";}	/* dash */
+    if (c1 == 'h' && c2 == 'y') {return "-";}	/* hyphen */
+    if (c1 == 'L' && c2 == 'q') { return "``"; } /* Left quote */
+    if (c1 == 'R' && c2 == 'q') { return "''"; } /* Right quote */
+    if (c1 == 'o' && c2 == 'q') { return "`"; } /* open quote */
+    if (c1 == 'c' && c2 == 'q') { return "'"; } /* close quote */
+    if (c1 == 'r' && c2 == 'g') { return "(r)"; } /* registered */
+    if (c1 == 'c' && c2 == 'o') { return "(c)"; }	/* copyrite */
+    if (c1 == 't' && c2 == 'm') { return "(tm)"; }	/* trademark */
+    if (c1 == 'b' && c2 == 'u') { return "*"; }	/* bullet */
+
+    if (c1 == 'p' && c2 == 'l') { return "+"; }	/* math plus */
+    if (c1 == 'm' && c2 == 'i') { return "-"; }	/* math minus */
+    if (c1 == 'e' && c2 == 'q') { return "="; }	/* math equal */
+    if (c1 == '*' && c2 == '*') { return "*"; }	/* math star */
+    if (c1 == 's' && c2 == 'l') { return "/"; }	/* slash */
+    if (c1 == 'u' && c2 == 'l') { return "_"; }	/* underrule */
+    if (c1 == 'a' && c2 == 'p') { return "~"; }	/* approximates */
+    if (c1 == '1' && c2 == '4') { return "1/4"; }	/* 1/4 */
+    if (c1 == '1' && c2 == '2') { return "1/2"; }	/* 1/2 */
+    if (c1 == '3' && c2 == '4') { return "3/4"; }	/* 3/4 */
+
+
+    return "";
+
+#if 0
     if (c1 == 'b' && c2 == 'u') {*c = 0xF9; return 2;}	/* bullet */
     if (c1 == 's' && c2 == 'q') {*c = 0xF9; return 2;}	/* square */
     if (c1 == 'r' && c2 == 'u') {*c = 0x5F; return 2;}	/* rule */
@@ -640,7 +660,8 @@ specialchar (register char *s, register char *c) {
     if (c1 == '*' && c2 == 'm') {*c = 0xE6; return 2;}	/* mu */
     
     *c = ' ';
-    return 0;	
+    return 0;
+#endif
 }
 
 
@@ -652,18 +673,22 @@ specialchar (register char *s, register char *c) {
  *	resets current and last font in dc struct (last used for .ft
  *	with no args)
  */
-#undef SHORT_STANDOUT
 
 void
 fontchange (char fnt, char *s) {
     int	tmp;
+    unsigned i;
     
     *s = '\0';
     switch (fnt) {
     case 'R':				/* Times Roman */
 	if (dc.dofnt == YES) {
 #ifdef SHORT_STANDOUT
-	    s[0] = E_STANDOUT; s[1] = 0;
+		i = 0;
+		if (dc.fontbits & (1 << 2)) s[i++] = E_ITALIC;
+		if (dc.fontbits & (1 << 3)) s[i++] = E_BOLD;
+		s[i++] = 0;
+		dc.fontbits = 0;
 #else
 	    strcpy (s, e_standout);
 #endif
@@ -674,9 +699,10 @@ fontchange (char fnt, char *s) {
     case 'I':				/* Times italic */
 	if (dc.dofnt == YES) {
 #ifdef SHORT_STANDOUT
-	    s[0] = S_STANDOUT; s[1] = 0;
+	    s[0] = S_ITALIC; s[1] = 0;
+	    dc.fontbits |= (1 << 2);
 #else
-	    strcpy (s, s_standout);
+	    strcpy (s, s_italic);
 #endif
 	}
 	dc.lastfnt = dc.thisfnt;
@@ -685,9 +711,10 @@ fontchange (char fnt, char *s) {
     case 'B':				/* Times bold */
 	if (dc.dofnt == YES) {
 #ifdef SHORT_STANDOUT
-	    s[0] = S_STANDOUT; s[1] = 0;
+	    s[0] = S_BOLD; s[1] = 0;
+	    dc.fontbits |= (1 << 3);
 #else
-	    strcpy (s, s_standout); 
+	    strcpy (s, s_bold); 
 #endif
 	}
 	dc.lastfnt = dc.thisfnt;
@@ -702,21 +729,27 @@ fontchange (char fnt, char *s) {
 	if (dc.dofnt == YES) {
 	    if (dc.lastfnt == 1) {
 #ifdef SHORT_STANDOUT
-		s[0] = E_STANDOUT; s[1] = 0;
+		i = 0;
+		if (dc.fontbits & (1 << 2)) s[i++] = E_ITALIC;
+		if (dc.fontbits & (1 << 3)) s[i++] = E_BOLD;
+		s[i++] = 0;
+		dc.fontbits = 0;
 #else
 		strcpy (s, e_standout); /* to R */
 #endif
 	    } else if (dc.lastfnt == 2) {
 #ifdef SHORT_STANDOUT
-		s[0] = S_STANDOUT; s[1] = 0;
+		s[0] = S_ITALIC; s[1] = 0;
+		dc.fontbits |= (1 << 2);
 #else
-		strcpy (s, s_standout); /* to I */
+		strcpy (s, s_italic); /* to I */
 #endif
 	    } else if (dc.lastfnt == 3) {
 #ifdef SHORT_STANDOUT
-		s[0] = S_STANDOUT; s[1] = 0;
+		s[0] = S_BOLD; s[1] = 0;
+		dc.fontbits |= (1 << 3);
 #else
-		strcpy (s, s_standout); /* to B */
+		strcpy (s, s_bold); /* to B */
 #endif
 	    } else {
 		*s = '\0';		/* nothing */

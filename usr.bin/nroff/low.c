@@ -462,6 +462,11 @@ getwrd (register char *src, register char *dest) {
 
 int
 countesc (register char *p) {
+
+	#ifdef SHORT_STANDOUT
+	return 0;
+	#else
+
     register char  *pp;
     register int	num;
     
@@ -515,6 +520,7 @@ countesc (register char *p) {
 	pp++;
     }
     return num;
+    #endif
 }
 
 

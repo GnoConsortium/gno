@@ -53,6 +53,8 @@ segment "main______";
 #include "unix/sunos.h"
 #endif
 
+#include <libgen.h>
+
 #include "nroff.h"
 #include "macros.h"
 #include "io.h"
@@ -99,7 +101,7 @@ char		       *printer = ".ttyb";	/* this probably won't */
 
 static char		termcap[1024];		/* _must_ be 1024 */
 static char  *progname;
-static char    *version = "(GNO) v1.2, 5 Mar 97 gdr";
+static char    *version = "(GNO) v1.2.2, 20 Aug 2016 kws";
 
 /*
  * End of global variable definitions.
@@ -120,7 +122,7 @@ main (int argc, char *argv[]) {
     int		ifp = 0;
     char	       *ptmp;
     char	       *pterm;
-    char		capability[100];
+    static char		capability[100];
     char	       *pcap;
     char	       *ps;
 
@@ -196,6 +198,21 @@ main (int argc, char *argv[]) {
      *   we currently use standout mode for all weirdness
      *   like BOLD, italic, etc.
      */
+
+    #undef PC
+    pcap = capability;
+    if (tgetstr("pc", &pcap)) {
+        PC = capability[0];
+    } 
+    else PC = 0;
+
+    pcap = s_italic;
+    tgetstr("us", &pcap);
+
+    pcap = e_italic;
+    tgetstr("ue", &pcap);
+    if (s_italic[0] && !e_italic[0]) s_italic[0] = '\0';
+
     pcap = capability;
     if ((ps = tgetstr ("so", &pcap)) != NULL) {
 	/*
@@ -203,18 +220,25 @@ main (int argc, char *argv[]) {
 	 *   better to use tputs() to strip it...
 	 */
 	/*	while (*ps && *ps != 0x1b)	ps++;  */
+    /* tputs uses leading (and embedded) digits as the delay. */
 	strcpy (s_standout, ps);
 	strcpy (s_bold, ps);
-	strcpy (s_italic, ps);
+	if (!s_italic[0]) strcpy (s_italic, ps);
     } else { 
 	err(1, "couldn't get standout mode");
 	/*NOTREACHED*/
     }
+
+
+    pcap = capability;
     if ((ps = tgetstr ("se", &pcap)) != NULL) {
 	/*	while (*ps && *ps != 0x1b)	ps++; */
 	strcpy (e_standout, ps);
 	strcpy (e_bold, ps);
-	strcpy (e_italic, ps);
+	if (!e_italic[0]) strcpy (e_italic, ps);
+    } else { 
+        err(1, "couldn't get end standout mode");
+        /*NOTREACHED*/
     }
     
     /*
@@ -321,13 +345,9 @@ static void
 init (void) {
     
     
-#ifdef MINIX
     register int	i;
-#else
-    register long	i;
-#endif
     time_t		tval;
-    char	       *ctim;
+    struct tm *tm;
     
     /*
      *   misc global flags, etc...
@@ -335,8 +355,8 @@ init (void) {
     mc_space   = 2;
     mc_char    = '|';
     tval       = time (0L);
-    ctim       = ctime (&tval);
-    
+    tm         = localtime(&tval);
+
     /*
      *   basic document controls...
      */
@@ -423,14 +443,8 @@ init (void) {
     i++;
   
     strcpy (rg[i].rname, "dw");		/* day of week (1-7) */
-    rg[i].rval  = 0;
-    if      (!strncmp (&ctim[0], "Sun", 3))      rg[i].rval  = 1; 
-    else if (!strncmp (&ctim[0], "Mon", 3))      rg[i].rval  = 2;
-    else if (!strncmp (&ctim[0], "Tue", 3))      rg[i].rval  = 3;
-    else if (!strncmp (&ctim[0], "Wed", 3))      rg[i].rval  = 4;
-    else if (!strncmp (&ctim[0], "Thu", 3))      rg[i].rval  = 5;
-    else if (!strncmp (&ctim[0], "Fri", 3))      rg[i].rval  = 6;
-    else if (!strncmp (&ctim[0], "Sat", 3))      rg[i].rval  = 7;
+    rg[i].rval = tm->tm_wday + 1;
+
     rg[i].rauto = 1;
     rg[i].rflag = RF_READ | RF_WRITE;
     rg[i].rfmt  = '1';
@@ -438,7 +452,8 @@ init (void) {
     
     strcpy (rg[i].rname, "dy");		/* day of month (1-31) */
     rg[i].rauto = 1;
-    rg[i].rval  = atoi (&ctim[8]);
+    rg[i].rval  = tm->tm_mday;
+
     rg[i].rflag = RF_READ | RF_WRITE;
     rg[i].rfmt  = '1';
     i++;
@@ -458,19 +473,7 @@ init (void) {
     i++;
     
     strcpy (rg[i].rname, "mo");		/* current month (1-12) */
-    rg[i].rval  = 0;
-    if      (!strncmp (&ctim[4], "Jan", 3))      rg[i].rval  = 1;
-    else if (!strncmp (&ctim[4], "Feb", 3))      rg[i].rval  = 2;
-    else if (!strncmp (&ctim[4], "Mar", 3))      rg[i].rval  = 3;
-    else if (!strncmp (&ctim[4], "Apr", 3))      rg[i].rval  = 4;
-    else if (!strncmp (&ctim[4], "May", 3))      rg[i].rval  = 5;
-    else if (!strncmp (&ctim[4], "Jun", 3))      rg[i].rval  = 6;
-    else if (!strncmp (&ctim[4], "Jul", 3))      rg[i].rval  = 7;
-    else if (!strncmp (&ctim[4], "Aug", 3))      rg[i].rval  = 8;
-    else if (!strncmp (&ctim[4], "Sep", 3))      rg[i].rval  = 9;
-    else if (!strncmp (&ctim[4], "Oct", 3))      rg[i].rval  = 10;
-    else if (!strncmp (&ctim[4], "Nov", 3))      rg[i].rval  = 11;
-    else if (!strncmp (&ctim[4], "Dec", 3))      rg[i].rval  = 12;
+    rg[i].rval  = tm->tm_mon+1;
     rg[i].rauto = 1;
     rg[i].rflag = RF_READ | RF_WRITE;
     rg[i].rfmt  = '1';
@@ -499,28 +502,28 @@ init (void) {
   
     strcpy (rg[i].rname, "yr");		/* last 2 dig of current year*/
     rg[i].rauto = 1;
-    rg[i].rval  = atoi (&ctim[22]);
+    rg[i].rval  = tm->tm_year % 100;
     rg[i].rflag = RF_READ | RF_WRITE;
     rg[i].rfmt  = '1';
     i++;
     
     strcpy (rg[i].rname, "hh");		/* current hour (0-23) */
     rg[i].rauto = 1;
-    rg[i].rval  = atoi (&ctim[11]);
+    rg[i].rval  = tm->tm_hour;
     rg[i].rflag = RF_READ | RF_WRITE;
     rg[i].rfmt  = 2 | 0x80;
     i++;
     
     strcpy (rg[i].rname, "mm");		/* current minute (0-59) */
     rg[i].rauto = 1;
-    rg[i].rval  = atoi (&ctim[14]);
+    rg[i].rval  = tm->tm_min;
     rg[i].rflag = RF_READ | RF_WRITE;
     rg[i].rfmt  = 2 | 0x80;
     i++;
     
     strcpy (rg[i].rname, "ss");		/* current second (0-59) */
     rg[i].rauto = 1;
-    rg[i].rval  = atoi (&ctim[17]);
+    rg[i].rval  = tm->tm_sec;
     rg[i].rflag = RF_READ | RF_WRITE;
     rg[i].rfmt  = 2 | 0x80;
     i++;

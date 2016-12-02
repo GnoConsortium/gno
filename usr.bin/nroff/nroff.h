@@ -3,6 +3,9 @@
 
 #include "config.h"			/* os/compiler options */
 
+#define SHORT_STANDOUT
+
+
 #ifndef NEWLINE
 #define NEWLINE	'\n'
 #endif
@@ -338,6 +341,7 @@ struct docctl
 	int	flevel;		/* nesting depth for source cmd, init = 0 */
 	int	lastfnt;	/* previous used font */
 	int	thisfnt;	/* current font, init = 1 (1=R,2=I,3=B,4=S) */
+	int fontbits;   /* currently active fonts. */
 	int	escon;		/* whether esc parsing is on, init = YES */
 	int	nr[26];		/* number registers */
 	int	nrauto[26];	/* number registers auto increment */
